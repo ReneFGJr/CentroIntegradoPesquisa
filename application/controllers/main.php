@@ -32,7 +32,7 @@ class main extends CI_Controller {
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Menu Principal';
-		$data['menu'] = 0;
+		$data['menu'] = 1;
 		$this -> load -> view('header/cab',$data);
 		
 		for ($r=0;$r < 100;$r++)

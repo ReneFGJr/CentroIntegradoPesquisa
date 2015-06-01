@@ -1,5 +1,4 @@
-<div id="cab_nav">
-	<ul>
+<div id="cab_nav"><ul>
 		<li>
 			<A href="#">HOME</A>
 		</li>
