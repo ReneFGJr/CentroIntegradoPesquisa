@@ -65,6 +65,19 @@ class login extends CI_Controller {
 		exit ;
 	}
 
+	function logout() {
+		/* Model */
+		$this -> load -> model('login/josso_login_pucpr');
+		$this -> josso_login_pucpr -> logout();
+		
+		/* Redireciona */
+		$link = index_page();
+		if (strlen($link) > 0) { $link .= '/';
+		}
+		$link = base_url($link . 'login');
+		redirect($link);
+	}
+
 	function index() {
 		global $dd, $acao;
 		//form_sisdoc_getpost();
@@ -121,7 +134,8 @@ class login extends CI_Controller {
 		$data['versao'] = $this -> lang -> line('versao');
 
 		$data['lg_name'] = $login;
-		$data['lg_password'] = $this -> input -> get_post('dd2'); ;
+		$data['lg_password'] = $this -> input -> get_post('dd2');
+		;
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);

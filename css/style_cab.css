@@ -19,12 +19,21 @@
 		color: #FFFFFF;
 		text-align: right;
 	}
-#cab_title
+#titu1
 	{
 		position:fixed;
 		top: 6px;
-		font-size: 25px;
+		font-size: 32px;
 		margin-left: 250px;
+		color: #FFFFFF;
+	}	
+#titu2
+	{
+		font-family: RobotoThin, CICPG, Arial, Helvetica, sans-serif;
+		position:fixed;
+		top: -30px;
+		font-size: 16px;
+		margin-left: 350px;
 		color: #FFFFFF;
 	}	
 	

@@ -18,7 +18,18 @@ class main extends CI_Controller {
 		//$this -> lang -> load("app", "english");
 	}
 
+	function security() {
+
+		/* Segurança */
+		$this -> load -> model('login/josso_login_pucpr');
+		$this -> josso_login_pucpr -> security();
+
+	}
+
 	function index() {
+		/* Security */
+		$this->security();
+		
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
@@ -32,15 +43,14 @@ class main extends CI_Controller {
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Menu Principal';
-		$data['menu'] = 1;
-		$this -> load -> view('header/cab',$data);
-		
-		for ($r=0;$r < 100;$r++)
-			{
-				echo '<BR>OK';
-			}
-		
-		$this -> load -> view('header/foot');		
+		$data['menu'] = 0;
+		$this -> load -> view('header/cab', $data);
+
+		for ($r = 0; $r < 100; $r++) {
+			echo '<BR>OK';
+		}
+
+		$this -> load -> view('header/foot');
 	}
 
 }

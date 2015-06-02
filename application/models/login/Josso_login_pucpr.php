@@ -22,8 +22,28 @@ class josso_login_pucpr extends CI_Model {
 			$this -> session -> set_userdata($dados);
 		} else {
 			$dados = $this -> session -> userdata();
+			$josso = $this -> session -> userdata('josso');
+			if (strlen($josso)==0)
+				{
+					$link = base_url('index.php/login');
+					redirect($link);
+				} else {
+					$this -> session -> set_userdata($dados);
+					return(1);
+				}
+			return(0);
 		}
 	}
+	
+	/* Logout
+	 * 
+	 */
+	function logout()
+		{
+			$dados = array('cracha'=>'','cpf' => '', 'josso' => '', 'nome' => '');
+			$this -> session -> set_userdata($dados);
+			return(1);
+		}
 
 	/* Consulta no servidor SOAP
 	 *
@@ -37,7 +57,7 @@ class josso_login_pucpr extends CI_Model {
 
 		$client = new soapclient($wsdl, true);
 		$response = $client -> call('autenticarUsuario', $param);
-
+		
 		if (count($response['return']) > 0) {
 			/* Analisa conteudo */
 			$line = $response['return'];

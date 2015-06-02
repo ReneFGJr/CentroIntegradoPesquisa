@@ -1,6 +1,9 @@
 <div id="cab_screen" class="cab_admin">
 	<div id="caber">
-		<div id="cab_title" class="cab_title">
+		<div id="titu1" class="cab_title">
+			<?php echo $title_page;?>
+		</div>
+		<div id="titu2" class="cab_title">
 			<?php echo $title_page;?>
 		</div>
 		<div id="cab_logo_1" ></div>
