@@ -14,9 +14,9 @@ class login extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
-		
+
 		$this -> load -> library("nuSoap_lib");
-		
+
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
 		$this -> load -> helper('form');
@@ -25,9 +25,44 @@ class login extends CI_Controller {
 		$this -> load -> library('session');
 		$this -> lang -> load("app", "portuguese");
 		date_default_timezone_set('America/Sao_Paulo');
-		
-		
+
 		//$this -> lang -> load("app", "english");
+	}
+
+	function ac($id, $chk) {
+		if ($chk != checkpost_link($id)) {
+			echo checkpost_link($id);
+		} else {
+			$id = round($id);
+			$sql = "select * from usuario where id_us = " . $id;
+			$rlt = $this -> db -> query($sql);
+			$line = $rlt -> result_array();
+
+			/* Model */
+			$this -> load -> model('login/josso_login_pucpr');
+
+			if (count($line) > 0) {
+				/* Recupera dados */
+				$line = $line[0];
+				$this -> josso_login_pucpr -> cpf = $line['us_pf'];
+				$this -> josso_login_pucpr -> email = $line['us_email'];
+				$this -> josso_login_pucpr -> josso = $line['jossoSession'];
+				$this -> josso_login_pucpr -> nome = $line['us_nome'];
+				$this -> josso_login_pucpr -> cracha = '';
+				$this -> josso_login_pucpr -> nomeEmpresa = '';
+				$this -> josso_login_pucpr -> nomeFilial = '';
+				$this -> josso_login_pucpr -> loged = 1;
+				$this -> josso_login_pucpr -> security();
+				$this -> josso_login_pucpr -> historico_insere($this -> cpf);
+				$link = index_page();
+				if (strlen($link) > 0) { $link .= '/';
+				}
+				$link = base_url($link . 'main');
+				redirect($link);
+			}
+		}
+		echo 'ERRO DE ACESSO!';
+		exit ;
 	}
 
 	function index() {
@@ -50,21 +85,22 @@ class login extends CI_Controller {
 			$login = $this -> input -> get_post('dd1');
 			$password = $this -> input -> get_post('dd2');
 			$ok = $this -> josso_login_pucpr -> consulta_login($login, $password);
-			
+
 			switch($ok) {
-				case (1):
+				case (1) :
 					$link = index_page();
-					if (strlen($link) > 0) { $link .= '/'; }
-					$link = base_url($link.'main');					
+					if (strlen($link) > 0) { $link .= '/';
+					}
+					$link = base_url($link . 'main');
 					redirect($link);
-					exit;
+					exit ;
 					break;
-				case (-1):
-					$data['login_error'] = '<div id="login_erro">'.$this -> lang -> line('login_erro_01').'</div>';
-					break;	
+				case (-1) :
+					$data['login_error'] = '<div id="login_erro">' . $this -> lang -> line('login_erro_01') . '</div>';
+					break;
 				default :
-					$data['login_error'] = 'Empty '.$ok;
-					break;					
+					$data['login_error'] = 'Empty ' . $ok;
+					break;
 			}
 		}
 
@@ -85,8 +121,7 @@ class login extends CI_Controller {
 		$data['versao'] = $this -> lang -> line('versao');
 
 		$data['lg_name'] = $login;
-		$data['lg_password'] = $this -> input -> get_post('dd2');
-		;
+		$data['lg_password'] = $this -> input -> get_post('dd2'); ;
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
