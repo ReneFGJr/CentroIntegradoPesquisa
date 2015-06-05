@@ -12,7 +12,7 @@ $lang['cab_expediente_06'] = 'Iniciação Científica';
 $lang['cab_expediente_07'] = 'Fundo de Pesquisa';
 $lang['cab_expediente_08'] = 'Comitê de Ética com Seres Humanos (CEP)';
 $lang['cab_expediente_09'] = 'Comitê de Ética no Uso de Animais (CEUA)';
-$lang['cab_expediente_10'] = 'Animais (para pesquisa)';
+$lang['cab_expediente_10'] = 'Biotério';
 
 
 $lang['about_expediente'] = 'Expediente';

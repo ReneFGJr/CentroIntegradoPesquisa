@@ -18,5 +18,21 @@ if ($menu == 1) {
 }
 ?>
 <div id="cab_print">
-	IMPRESSORA
+	<table width="100%" >
+		<tr>
+			<td>
+				<img src="<?php echo base_url('img/logo/logo_pucpr.png');?>" height="40">
+				<img src="<?php echo base_url('img/logo_cip.png');?>" height="30">
+				
+				</td>
+			<td align="center" class="lt6"><?php echo $title_page;?></td>
+			<td align="right" class="lt0"><?php
+				echo date("d/m/Y H:i");
+				echo '<BR>http://cip.pucpr.br'
+			?></td>
+		</tr>
+		<tr>
+			<td colspan=3><hr size=1></td>
+		</tr>
+	</table>
 </div>

@@ -1,5 +1,5 @@
 <div id="main_menu">
-	<h1><?php echo $title_menu;?></h1>
+<h1><?php echo $title_menu;?></h1>
 <?php
 for ($r = 0; $r < count($menu); $r++) {
 	$tipo = $menu[$r][2];
