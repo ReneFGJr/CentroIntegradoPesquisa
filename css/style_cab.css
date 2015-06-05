@@ -135,3 +135,63 @@ body
 		padding: 4px;
 		display: inline;		
 	}
+	
+/* MENU PRINCIPAL */
+.icone-iniciacao-cientifica-cor{
+	color: #b82955;
+}
+
+.icone-iniciacao-cientifica {
+	color: #b82955;
+	border-bottom: solid 10px #b82955;
+}
+.icone-cip {
+	padding: 5px 15px 5px 15px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	background-image: -moz-linear-gradient(top,  rgba(221, 221, 221, 1) 0%, rgba(238, 238, 238, 1) 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(221, 221, 221, 1)), color-stop(100%,rgba(238, 238, 238, 1)));
+	background-image: -webkit-linear-gradient(top,  rgba(221, 221, 221, 1) 0%,rgba(238, 238, 238, 1) 100%);
+	background-image: -o-linear-gradient(top,  rgba(221, 221, 221, 1) 0%,rgba(238, 238, 238, 1) 100%);
+	background-image: -ms-linear-gradient(top,  rgba(221, 221, 221, 1) 0%,rgba(238, 238, 238, 1) 100%);
+	background-image: linear-gradient(to bottom,  rgba(221, 221, 221, 1) 0%,rgba(238, 238, 238, 1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#DDDDDD', endColorstr='#EEEEEE',GradientType=0 );
+	width: 240px;
+	height: 140px;
+	opacity: 1;
+	border: 0px 0px 0px 15px solid #1D48F7;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-ms-border-radius: 7px;
+	-o-border-radius: 7px;
+	box-shadow: 4px 5px 10px 0px #AAAAAA;
+	-webkit-box-shadow: 4px 5px 10px 0px #AAAAAA;
+	-moz-box-shadow: 4px 5px 10px 0px #AAAAAA;
+	-ms-box-shadow: 4px 5px 10px 0px #AAAAAA;
+	-o-box-shadow: 4px 5px 10px 0px #AAAAAA;
+	text-decoration: none;
+	text-align: left;
+	float: left;
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
+.icone-cip:hover {
+	box-shadow: 4px 5px 10px 0px #606060;
+	-webkit-box-shadow: 4px 5px 10px 0px #606060;
+	-moz-box-shadow: 4px 5px 10px 0px #606060;
+	-ms-box-shadow: 4px 5px 10px 0px #606060;
+	-o-box-shadow: 4px 5px 10px 0px #606060;
+	cursor: pointer;
+	text-decoration: none;
+	opacity: 1;
+}
+.no-undeline 
+    { text-decoration: none; }
+    
+#main_menu
+	{
+		width: 80%;
+		border: 1px solid #000000;
+		display:table;
+		margin-left: 10px;
+	}
