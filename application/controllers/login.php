@@ -18,7 +18,7 @@ class login extends CI_Controller {
 		$this -> load -> library("nuSoap_lib");
 
 		$this -> load -> library('form_validation');
-		//$this -> load -> database();
+		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');

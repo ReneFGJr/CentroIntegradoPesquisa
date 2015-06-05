@@ -18,7 +18,7 @@ $link = 'index.php/';
 		</li></a><a href="<?php echo base_url($link.'login/myaccount');?>">
 		<li>
 			<i class="icon-refresh"></i>
-			Atualizar dados
+			<?php echo $this->lang->line('cab_update');?>
 		</li></a><a href="<?php echo base_url($link.'admin');?>">
 		<li>
 			<i class="icon-wrench"></i> Administração

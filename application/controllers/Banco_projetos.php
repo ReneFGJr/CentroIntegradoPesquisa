@@ -14,21 +14,18 @@ class banco_projetos extends CI_Controller {
 		$this -> load -> library('session');
 		$this -> lang -> load("app", "portuguese");
 		date_default_timezone_set('America/Sao_Paulo');
-
-		//$this -> lang -> load("app", "english");
+		/* Security */
+		$this -> security();
 	}
-	
+
 	function security() {
 
 		/* Segurança */
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> security();
-	}	
+	}
 
-	function index() {
-		/* Security */
-		$this->security();
-		
+	function cab() {
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
@@ -42,11 +39,13 @@ class banco_projetos extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Menu Principal';
-		$data['menu'] = 1;
+		$data['title_page'] = 'Banco de Projetos';
+		$data['menu'] = 0;
 		$this -> load -> view('header/cab', $data);
-		
-		$this -> load -> view('header/cab_image_slide', $data);
+	}
+
+	function index() {
+		$this->cab();
 	}
 
 }

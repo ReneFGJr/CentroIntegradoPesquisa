@@ -6,8 +6,7 @@
 		<div id="titu2" class="cab_title">
 			<?php echo $title_page;?>
 		</div>
-		<div id="cab_logo_1" ></div>
-		<div id="cab_logo_2" ></div>
+		<A href="<?php echo base_url('index.php/main');?>"> <div id="cab_logo_1" ></div> <div id="cab_logo_2" ></div> </A>
 		<?php
 		$this -> load -> view('header/cab_user');
 		?>

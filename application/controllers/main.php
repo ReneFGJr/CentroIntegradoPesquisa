@@ -40,13 +40,45 @@ class main extends CI_Controller {
 		$data['menu'] = 0;
 		$this -> load -> view('header/cab', $data);
 
+		/* Chamadas editais */
+		$this -> load -> view('observatorio/chamadas_resumo',$data);
+
 		/* Menu */
 		$menu = array();
+		array_push($menu,array('Inciação Científica','Administração do Programa de Iniciação Científica e Tecnológia da PUCPR','BTA','/pibicpr'));
+		array_push($menu,array('CIP','Administração do Centro Integrado de Pesquisa, Administração','BTA','/cip'));
+		
 		array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip'));
 		array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp'));
 		array_push($menu,array('Banco de Projetos','Pesquisa realizadas na PUCPR','BTN','/banco_projetos'));
+		array_push($menu,array('Inciação Científica','Programa de Iniciação Científica e Tecnológia da PUCPR','BTN','/pibic'));
+		
 		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu Principal';
 		$this -> load -> view('header/main_menu',$data);
+		
+		$this -> load -> view('header/foot');
+	}
+	function expediente() {
+		
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'style_cab.css');
+		array_push($js, 'js_cab.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+		$data['title_page'] = $this->lang->line('about_expediente');
+		
+		$data['menu'] = 0;
+		$this -> load -> view('header/cab', $data);
+
+		$this -> load -> view('expediente/index',$data);
 		
 		$this -> load -> view('header/foot');
 	}
