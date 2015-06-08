@@ -40,12 +40,23 @@ class banco_projetos extends CI_Controller {
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Banco de Projetos';
-		$data['menu'] = 0;
+		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
 
 	function index() {
 		$this->cab();
+		$data = array();
+		$this -> load -> view('banco_projetos/index', $data);
+		$this -> load -> view('header/foot', $data);
 	}
+
+	function view($id) {
+		$this->cab();
+		$data = array();
+		$this -> load -> view('banco_projetos/view', $data);
+		$this -> load -> view('banco_projetos/view_publications', $data);
+		$this -> load -> view('header/foot', $data);
+	}	
 
 }
