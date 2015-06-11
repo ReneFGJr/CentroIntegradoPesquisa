@@ -48,6 +48,8 @@ class main extends CI_Controller {
 		array_push($menu,array('Inciação Científica','Administração do Programa de Iniciação Científica e Tecnológia da PUCPR','BTA','/pibicpr'));
 		array_push($menu,array('CIP','Administração do Centro Integrado de Pesquisa, Administração','BTA','/cip'));
 		
+		array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTN','/csf'));
+		
 		array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip'));
 		array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp'));
 		array_push($menu,array('Banco de Projetos','Pesquisa realizadas na PUCPR','BTN','/banco_projetos'));

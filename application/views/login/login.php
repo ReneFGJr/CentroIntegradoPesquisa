@@ -11,7 +11,7 @@
 		<?php
 			$link = index_page();
 			if (strlen($link) > 0) { $link .= '/'; }
-			$link = base_url($link.'login');
+			$link = base_url($link.'login'.$link_debug);
 			echo form_open($link);?>
 		
 			<?php
@@ -37,6 +37,7 @@
 			<BR>
 
 			<?php echo $login_error;?>
+			<div id="modo"><?php echo $modo;?></div>
 		<?php echo form_close(); ?>
 	</div>
 	

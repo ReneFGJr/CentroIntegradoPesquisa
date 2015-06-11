@@ -1,8 +1,13 @@
 <?php
 class josso_login_pucpr extends CI_Model {
 	var $producao = 'https://sarch.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
+	//var $producao = 'http://midori.cwb.pucpr.br:8280/services/AutenticacaoSOA?wsdl';
+	
 	var $homologacao = 'http://haiti.cwb.pucpr.br:8280/services/AutenticacaoSOA?wsdl';
-	var $desenvolvimento = '';
+	
+	var $desenvolvimento = 'https://rhea.cwb.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
+	
+	//var $desenvolvimento = 'https://sarch.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
 
 	var $cpf = '';
 	var $email = '';
@@ -48,16 +53,41 @@ class josso_login_pucpr extends CI_Model {
 	/* Consulta no servidor SOAP
 	 *
 	 */
-	function nusoap_consulta($login, $pass) {
+	function nusoap_consulta($login, $pass, $debug=0) {
 		/* Initialize parameter */
 		$param = array('login' => $login, 'senha' => $pass);
 
 		/* create the client for my rpc/encoded web service */
-		$wsdl = $this -> producao;
+		require("_server_type.php");
+		switch ($server_type)
+			{
+			case '3':
+				$wsdl = $this -> producao;
+				break;
+			case '2':
+				$wsdl = $this -> homologacao;
+				break;
+			default:
+				$wsdl = $this -> desenvolvimento;
+				break;
+			}
+		
 
 		$client = new soapclient($wsdl, true);
 		$response = $client -> call('autenticarUsuario', $param);
-		
+		if ($debug==1)
+			{
+				echo '<h1>'.$wsdl.'</h1>';
+				echo '<PRE>';
+				print_r($response);
+				echo '</PRE>';
+				
+				echo '<PRE>';
+				print_r($client);
+				echo '</PRE>';
+				
+				exit;
+			}
 		if (count($response['return']) > 0) {
 			/* Analisa conteudo */
 			$line = $response['return'];
@@ -72,7 +102,8 @@ class josso_login_pucpr extends CI_Model {
 			$this -> nomeFilial = $line['nomeFilial'];
 			$this -> loged = 1;
 			$this -> security();
-			$this -> historico_insere($this->cpf);
+			$this -> ativa_usuario($login,$pass);
+			$this -> historico_insere($this->cpf,'LOGIN');
 			return (1);
 		} else {
 			return (-1);
@@ -80,24 +111,64 @@ class josso_login_pucpr extends CI_Model {
 		return (-2);
 	}
 
+	function ativa_usuario($login,$pass)
+		{
+		$sql = "select * from logins where us_login = '$login' ";
+		$qr = $this -> db -> query($sql);
+		$qr = $qr -> result_array();
+		
+		if (count($qr)==0)
+			{
+				$nome = $this->nome;
+				$data = date("Ymd");
+				$cpf = $this->cpf;
+				$pass_crypt = md5($pass.date("Ym"));
+				$login = UpperCase($login);
+				
+				$sql = "insert into logins 
+						(
+						us_nome, us_login, us_senha,
+						us_lastupdate, us_cpf, us_dt_admissao,
+						us_cracha, us_id
+						) 
+						value
+						('$nome','$login','$pass_crypt',
+						$data,'$cpf','$data',
+						'','')				
+				";
+				$this->db->query($sql);				
+			} else {
+				
+			}
+		}
+
 	/* Registra historico de acesso
 	 *
 	 */
-	function historico_insere($login) {
+	function historico_insere($login,$proto) {
 		$ip = ip();
-		$sql = "insert usuario_login ";
+		$cpf = $this->cpf;
+		$data = date("Ymd");
+		$hora = date("H:i:s");
+		$sql = "insert into logins_log 
+				(ul_data, ul_hora, ul_ip, ul_proto, ul_cpf)
+				values
+				($data,'$hora','$ip','$proto','$cpf')		
+		";
+		$this->db->query($sql);
+		return(1);
 	}
 
 	/* Entrada do login
 	 *
 	 *
 	 */
-	function consulta_login($login, $pass) {
+	function consulta_login($login, $pass, $debug=0) {
 		/* Verifica se foi locado recentemente */
 		if ($this -> valida_senha_anterior($login, $pass)) {
 			return (1);
 		} else {
-			$ok = $this -> nusoap_consulta($login, $pass);
+			$ok = $this -> nusoap_consulta($login, $pass, $debug);
 			return ($ok);
 		}
 	}
@@ -108,7 +179,7 @@ class josso_login_pucpr extends CI_Model {
 	function valida_senha_anterior($login, $pass) {
 		$login = troca($login, "'", "");
 		$login = UpperCaseSql($login);
-		$sql = "select * from usuario where us_login = '$login' ";
+		$sql = "select * from logins where us_login = '$login' ";
 		$qr = $this -> db -> query($sql);
 		$qr = $qr -> result_array();
 
@@ -117,7 +188,6 @@ class josso_login_pucpr extends CI_Model {
 		} else {
 			return (0);
 		}
-		echo $sql;
 	}
 
 }

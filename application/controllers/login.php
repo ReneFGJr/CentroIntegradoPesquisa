@@ -69,7 +69,7 @@ class login extends CI_Controller {
 		/* Model */
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> logout();
-		
+
 		/* Redireciona */
 		$link = index_page();
 		if (strlen($link) > 0) { $link .= '/';
@@ -77,6 +77,44 @@ class login extends CI_Controller {
 		$link = base_url($link . 'login');
 		redirect($link);
 	}
+	
+	function debug() {
+		global $dd, $acao;
+		//form_sisdoc_getpost();
+		$data['login_error'] = '';
+
+		/* Carrega modelo */
+		$err = $this -> load -> model('login/josso_login_pucpr');
+		$login = '';
+		$password = '';
+
+		$acao = $this -> input -> post('acao');
+
+		if (isset($acao) and (strlen($acao) > 0)) {
+			/* ZERA ERROS
+			 */
+			$data['login_error'] = '';
+
+			$login = $this -> input -> get_post('dd1');
+			$password = $this -> input -> get_post('dd2');
+			$ok = $this -> josso_login_pucpr -> consulta_login($login, $password, 1);
+			exit;
+		}
+
+		/* Monta telas */
+		$data['login_versao'] = 'DEBUG';
+		$data['versao'] = '';
+		$data['login_name'] = '';
+		$data['lg_name'] = '';
+		$data['login_password'] = '';
+		$data['lg_password'] = '';
+		$data['login_entrar'] = 'ENTRAR';
+		$data['modo'] = 'DEBUG';
+		$data['link_debug'] = '/debug';
+		$this -> load -> view('header/header', $data);
+		$this -> load -> view('login/login');
+	}
+	
 
 	function index() {
 		global $dd, $acao;
@@ -132,10 +170,26 @@ class login extends CI_Controller {
 		$data['login_entrar'] = $this -> lang -> line('login_entrar');
 		$data['login_versao'] = $this -> lang -> line('login_versao');
 		$data['versao'] = $this -> lang -> line('versao');
+		$data['link_debug'] = '';
 
 		$data['lg_name'] = $login;
-		$data['lg_password'] = $this -> input -> get_post('dd2');
-		;
+		$data['lg_password'] = $this -> input -> get_post('dd2'); ;
+
+		require ("_server_type.php");
+		switch ($server_type) {
+			case '1' :
+				$data['modo'] = 'Modo: <B>Desenvolvimento</B>';
+				break;
+			case '2' :
+				$data['modo'] = 'Modo: <B>Homologação</B>';
+				break;
+			case '3' :
+				$data['modo'] = 'Modo: <B>Produção</B>';
+				break;
+			default :
+				$data['modo'] = 'Não definido';
+				break;
+		}
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);

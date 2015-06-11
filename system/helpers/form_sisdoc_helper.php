@@ -9,6 +9,7 @@
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	http://codeigniter.com
  * @since	Version 2.1.0
+ * @version 0.15.25a
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -24,6 +25,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 $dd = array();
 
+function sonumero($it) {
+	$rlt = '';
+	for ($ki = 0; $ki < strlen($it); $ki++) {
+		$ord = ord(substr($it, $ki, 1));
+		if (($ord >= 48) and ($ord <= 57)) { $rlt = $rlt . substr($it, $ki, 1);
+		}
+	}
+	return $rlt;
+}
+
 function load_page($url) {
 	$options = array(CURLOPT_RETURNTRANSFER => true, // return web page
 	CURLOPT_HEADER => false, // don't return headers
@@ -33,7 +44,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,  // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,   // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -50,17 +61,6 @@ function load_page($url) {
 	$header['content'] = $content;
 	return $header;
 }
-
-/* Recupera IP
- * @author Rene F. Gabriel Junior <renefgj@gmail.com>
- * @versao v0.15.23
- */
-function ip()
-	{
-		$ip = trim($_SERVER['REMOTE_ADDR']);
-		if ($ip == '::1') { $ip = '127.0.0.1'; }
-		return($ip);
-	}
 
 function strzero($ddx, $ttz) {
 	$ddx = round($ddx);
@@ -123,6 +123,17 @@ function object_to_array($object) {
 	return (array)$object;
 }
 
+/* Recupera IP
+ * @author Rene F. Gabriel Junior <renefgj@gmail.com>
+ * @versao v0.15.23
+ */
+function ip() {
+	$ip = trim($_SERVER['REMOTE_ADDR']);
+	if ($ip == '::1') { $ip = '127.0.0.1';
+	}
+	return ($ip);
+}
+
 /*
  * http://www.kathirvel.com/php-convert-or-cast-array-to-object-object-to-array/
  */
@@ -158,6 +169,7 @@ function form_sisdoc_getpost() {
 	for ($k = 0; $k < 100; $k++) {
 		$varf = 'dd' . $k;
 		if (isset($vars[$varf])) {
+
 			$varf = $vars[$varf];
 			$dd[$k] = post_security($varf);
 		} else {
@@ -625,7 +637,7 @@ if (!function_exists('form_edit')) {
 
 		/* mostra */
 		$start_c = ($start - $offset);
-		if ($start_c < 1) { $start_c = 1;
+		if ($start_c < 1) { $start_c = 0;
 		}
 
 		$sql = "select $fld from " . $tabela . ' ' . $wh;
