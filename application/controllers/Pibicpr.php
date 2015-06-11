@@ -36,7 +36,7 @@ class pibicpr extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'IniciaÃ§Ã£o CientÃ­fica';
+		$data['title_page'] = 'Iniciação Científica';
 		$data['menu'] = 0;
 		$this -> load -> view('header/cab', $data);
 
@@ -61,7 +61,7 @@ class pibicpr extends CI_Controller {
 		array_push($menu, array('Avaliadores IC', 'Avaliadores Internos', 'ITE', '/pibicpr/avaliadoresIN'));
 		array_push($menu, array('Avaliadores IC', 'Avaliadores Externos', 'ITE', '/pibicpr/avaliadoresOUT'));
 		
-		array_push($menu, array('Ãres do conhecimento', 'Ãreas CNPq/CAPES', 'ITE', '/pibicpr/areasdoconhecimento'));
+		array_push($menu, array('Áres do conhecimento', 'Áreas CNPq/CAPES', 'ITE', '/pibicpr/areasdoconhecimento'));
 
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Principal';
@@ -71,4 +71,6 @@ class pibicpr extends CI_Controller {
 	}
 
 }
+?>
+
 ?>

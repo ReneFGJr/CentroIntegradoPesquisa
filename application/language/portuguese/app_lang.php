@@ -3,17 +3,21 @@ $lang['versao'] = 'v0.15.23';
 
 /* Cabecalho */
 $lang['cab_update'] = 'Atualizar dados';
-$lang['cab_expediente_01'] = 'PrÃ³-Reitoria de Pesquisa';
-$lang['cab_expediente_02'] = 'Diretoria de PÃ³s-GraduaÃ§Ã£o Stricto Sensu';
+$lang['cab_expediente_01'] = 'Pró-Reitoria de Pesquisa';
+$lang['cab_expediente_02'] = 'Diretoria de Pós-Graduação Stricto Sensu';
 $lang['cab_expediente_03'] = 'Diretoria de Pesquisa';
 $lang['cab_expediente_04'] = 'Centro Integrado de Pesquisa';
-$lang['cab_expediente_05'] = 'ObservatÃ³rio';
-$lang['cab_expediente_06'] = 'IniciaÃ§Ã£o CientÃ­fica';
+$lang['cab_expediente_05'] = 'Observatório';
+$lang['cab_expediente_06'] = 'Iniciação Científica';
 $lang['cab_expediente_07'] = 'Fundo de Pesquisa';
-$lang['cab_expediente_08'] = 'ComitÃª de Ã‰tica com Seres Humanos (CEP)';
-$lang['cab_expediente_09'] = 'ComitÃª de Ã‰tica no Uso de Animais (CEUA)';
-$lang['cab_expediente_10'] = 'BiotÃ©rio';
+$lang['cab_expediente_08'] = 'Comitê de Ética com Seres Humanos (CEP)';
+$lang['cab_expediente_09'] = 'Comitê de Ética no Uso de Animais (CEUA)';
+$lang['cab_expediente_10'] = 'Biotério';
 
+$lang['cab_admin'] = 'Administração';
+$lang['cab_logout'] = 'Sair';
+
+$lang['title_admin'] = 'Usuários do sistema';
 
 $lang['about_expediente'] = 'Expediente';
 
@@ -21,7 +25,7 @@ $lang['about_expediente'] = 'Expediente';
 $lang['login_entrar'] = 'ENTRAR';
 $lang['login_name'] = 'Login de rede';
 $lang['login_password'] = 'Senha';
-$lang['login_versao'] = 'versÃ£o';
+$lang['login_versao'] = 'versão';
 
 $lang['login_erro_01'] = 'Login ou senha incorreta';
 

@@ -19,8 +19,8 @@ class admin extends CI_Controller {
 	}
 
 	function security() {
-
-		/* SeguranÃ§a */
+			
+		/* Seguranca */
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> security();
 	}
@@ -40,7 +40,7 @@ class admin extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'CiÃªncia sem Fronteiras';
+		$data['title_page'] = 'Administração';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
@@ -84,7 +84,7 @@ class admin extends CI_Controller {
 		$tela['tela'] = row($form, $id);
 		$url = base_url('author');
 
-		$tela['title'] = 'UsuÃ¡rios do sistema';
+		$tela['title'] = $this->lang->line('title_admin');
 
 		$this -> load -> view('form/form', $tela);	
 

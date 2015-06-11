@@ -22,12 +22,15 @@ class josso_login_pucpr extends CI_Model {
 	 *
 	 */
 	function security() {
+		
 		if ($this -> loged > 0) {
 			$dados = array('cracha'=>$this->cracha,'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);
 			$this -> session -> set_userdata($dados);
 		} else {
+			
 			$dados = $this -> session -> userdata();
-			$josso = $this -> session -> userdata('josso');
+			$josso = $this -> session -> userdata('nome');
+			
 			if (strlen($josso)==0)
 				{
 					$link = base_url('index.php/login');

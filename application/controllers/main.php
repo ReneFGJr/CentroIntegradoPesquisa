@@ -17,7 +17,7 @@ class main extends CI_Controller {
 		
 		/* Security */
 		$this -> load -> model('login/josso_login_pucpr');
-		$this -> josso_login_pucpr -> security();
+		//$this -> josso_login_pucpr -> security();
 
 		//$this -> lang -> load("app", "english");
 	}
@@ -45,15 +45,15 @@ class main extends CI_Controller {
 
 		/* Menu */
 		$menu = array();
-		array_push($menu,array('InciaÃ§Ã£o CientÃ­fica','AdministraÃ§Ã£o do Programa de IniciaÃ§Ã£o CientÃ­fica e TecnolÃ³gia da PUCPR','BTA','/pibicpr'));
-		array_push($menu,array('CIP','AdministraÃ§Ã£o do Centro Integrado de Pesquisa, AdministraÃ§Ã£o','BTA','/cip'));
+		array_push($menu,array('Inciação Científica','Administração do Programa de Iniciação Científica e Tecnológia da PUCPR','BTA','/pibicpr'));
+		array_push($menu,array('CIP','Administração do Centro Integrado de Pesquisa, Administração','BTA','/cip'));
 		
-		array_push($menu,array('Programa CsF','CiÃªncia sem Fronteiras','BTN','/csf'));
+		array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTN','/csf'));
 		
-		array_push($menu,array('CIP','Centro Integrado de Pesquisa, AdministraÃ§Ã£o','BTN','/cip'));
+		array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip'));
 		array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp'));
 		array_push($menu,array('Banco de Projetos','Pesquisa realizadas na PUCPR','BTN','/banco_projetos'));
-		array_push($menu,array('InciaÃ§Ã£o CientÃ­fica','Programa de IniciaÃ§Ã£o CientÃ­fica e TecnolÃ³gia da PUCPR','BTN','/pibic'));
+		array_push($menu,array('Inciação Científica','Programa de Iniciação Científica e Tecnológia da PUCPR','BTN','/pibic'));
 		
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Principal';
@@ -86,3 +86,4 @@ class main extends CI_Controller {
 	}
 
 }
+?>

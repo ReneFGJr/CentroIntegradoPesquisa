@@ -29,35 +29,35 @@ class login extends CI_Controller {
 		//$this -> lang -> load("app", "english");
 	}
 
-	function ac($id, $chk) {
+	function ac($id=0, $chk='') {
+		/* Remover */
+		$chk = checkpost_link($id);
+		
 		if ($chk != checkpost_link($id)) {
 			echo checkpost_link($id);
 		} else {
 			$id = round($id);
-			$sql = "select * from usuario where id_us = " . $id;
+			$sql = "select * from logins where id_us = " . $id;
+			
 			$rlt = $this -> db -> query($sql);
-			$line = $rlt -> result_array();
-
+			$rlt = $rlt -> result_array();
+			$line = $rlt[0];
+			
 			/* Model */
 			$this -> load -> model('login/josso_login_pucpr');
 
-			if (count($line) > 0) {
+			if (count($rlt) > 0) {
 				/* Recupera dados */
-				$line = $line[0];
-				$this -> josso_login_pucpr -> cpf = $line['us_pf'];
-				$this -> josso_login_pucpr -> email = $line['us_email'];
-				$this -> josso_login_pucpr -> josso = $line['jossoSession'];
+				$this -> josso_login_pucpr -> cpf = $line['us_cpf'];
+				//$this -> josso_login_pucpr -> josso = $line['jossoSession'];
 				$this -> josso_login_pucpr -> nome = $line['us_nome'];
 				$this -> josso_login_pucpr -> cracha = '';
 				$this -> josso_login_pucpr -> nomeEmpresa = '';
 				$this -> josso_login_pucpr -> nomeFilial = '';
 				$this -> josso_login_pucpr -> loged = 1;
 				$this -> josso_login_pucpr -> security();
-				$this -> josso_login_pucpr -> historico_insere($this -> cpf);
-				$link = index_page();
-				if (strlen($link) > 0) { $link .= '/';
-				}
-				$link = base_url($link . 'main');
+				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'],'ADR');
+				$link = base_url('index.php/main');
 				redirect($link);
 			}
 		}
@@ -74,7 +74,7 @@ class login extends CI_Controller {
 		$link = index_page();
 		if (strlen($link) > 0) { $link .= '/';
 		}
-		$link = base_url($link . 'login');
+		$link = base_url('index.php/login');
 		redirect($link);
 	}
 	
@@ -181,13 +181,13 @@ class login extends CI_Controller {
 				$data['modo'] = 'Modo: <B>Desenvolvimento</B>';
 				break;
 			case '2' :
-				$data['modo'] = 'Modo: <B>HomologaÃ§Ã£o</B>';
+				$data['modo'] = 'Modo: <B>Homologação</B>';
 				break;
 			case '3' :
-				$data['modo'] = 'Modo: <B>ProduÃ§Ã£o</B>';
+				$data['modo'] = 'Modo: <B>Produção</B>';
 				break;
 			default :
-				$data['modo'] = 'NÃ£o definido';
+				$data['modo'] = 'Não definido';
 				break;
 		}
 

@@ -17,7 +17,7 @@
 			<td width="33%"><b>Minha conta</b>
 			<BR>
 			<a HREF="<?php echo base_url('/index.php/login/myaccount');?>" class="link_foot"><?php echo $this -> lang -> line('cab_update');?></A></td>
-			<td width="33%"><b>Pró-Reitoria de Pesquisa</b>
+			<td width="33%"><b><?php echo $this -> lang -> line('cab_expediente_01');?></b>
 			<BR>
 			<a HREF="<?php echo base_url('/index.php/main/expediente#1');?>" class="link_foot"><?php echo $this -> lang -> line('cab_expediente_01');?></A>
 			<BR>

@@ -24,7 +24,7 @@
 			
 			/* Login user */ 
 			echo $login_password.'<BR>';
-			$data = array('name'=>'dd2','class'=>'formulario-entrada','id'=>'login_password','value'=>$lg_password);
+			$data = array('name'=>'dd2','class'=>'formulario-entrada','id'=>'login_password','value'=>'');
 			echo form_password($data);
 			
 			echo '<BR><BR>';			

@@ -14,13 +14,13 @@ $link = 'index.php/';
 	<ul>
 		<a href="<?php echo base_url($link.'login/logout');?>">
 		<li>
-			<i class="icon-remove"></i> Sair
+			<i class="icon-remove"></i> <?php echo $this -> lang -> line('cab_logout');?>
 		</li></a><a href="<?php echo base_url($link.'login/myaccount');?>">
 		<li>
 			<i class="icon-refresh"></i>
 			<?php echo $this->lang->line('cab_update');?>
 		</li></a><a href="<?php echo base_url($link.'admin');?>">
 		<li>
-			<i class="icon-wrench"></i> Administração
+			<i class="icon-wrench"></i> <?php echo $this -> lang -> line('cab_admin');?>
 		</li></a>
 </div>

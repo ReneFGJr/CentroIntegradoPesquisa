@@ -39,7 +39,7 @@ class csf extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'CiÃªncia sem Fronteiras';
+		$data['title_page'] = 'Ciência sem Fronteiras';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 		$this->load->view('header/content_open');
