@@ -104,6 +104,14 @@ function UpperCase($d) {
 	return $d;
 }
 
+function mask_cpf($cpf)
+	{
+		$cpf = sonumero($cpf);
+		strzero($cpf,12);
+		$cpf = substr($cpf,0,3).'.'.substr($cpf,3,3).'.'.substr($cpf,6,3).'-'.substr($cpf,9,2);
+		return($cpf);
+	}
+
 function db_query($sql) {
 	global $dbn;
 	$dbn = 0;
@@ -142,6 +150,7 @@ function array_to_object($array) {
  */
 
 function stodbr($data = 0) {
+	$data = sonumero($data);
 	if ($data < 19100101) {
 		return ('');
 	} else {

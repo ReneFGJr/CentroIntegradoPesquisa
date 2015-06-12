@@ -60,8 +60,14 @@ class admin extends CI_Controller {
 		$this -> cab();
 		$data = array();	
 		
-		$this->load->model('sga_pucpr');
-		$this->sga_pucpr->ws_sc_findCracha('89108296');
+		if (!checkpost_link($id) == $check)
+			{
+				redirect("index.php/main");
+			}
+		
+		$this->load->model('logins');
+		$data = $this->logins->le($id);
+		$this -> load -> view('login/login_show', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

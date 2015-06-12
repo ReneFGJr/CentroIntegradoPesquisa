@@ -104,6 +104,9 @@ a.lt1 {
 .border1 {
 	border: 1px solid #000000;
 }
+.borderb1 {
+	border-bottom: 1px solid #000000;
+}
 .radius10 {
 	border-radius: 10px;
 }
