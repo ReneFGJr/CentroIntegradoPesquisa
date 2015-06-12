@@ -8,9 +8,9 @@ class csfs extends CI_model
 						<th width="20">
 						<th width="200">programa</th>
 						<th>chamada</th>
-						<th width="200">situaÃ§Ã£o</th>
+						<th width="200">situação</th>
 						<th width="300">universidade</th>
-						<th width="60">saÃ­da</th>
+						<th width="60">saída</th>
 						<th width="60">retorno</th>
 					</tr>
 					';
@@ -22,7 +22,7 @@ class csfs extends CI_model
 			$sx .= '</td>';
 			
 			$sx .= '<td>';
-			$sx .= 'CiÃªncia sem Fronteiras';
+			$sx .= 'Ciencia sem Fronteiras';
 			$sx .= '</td>';
 
 			$sx .= '<td>';

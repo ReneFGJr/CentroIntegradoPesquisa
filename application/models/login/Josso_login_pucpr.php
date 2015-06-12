@@ -74,7 +74,6 @@ class josso_login_pucpr extends CI_Model {
 				$wsdl = $this -> desenvolvimento;
 				break;
 			}
-		
 
 		$client = new soapclient($wsdl, true);
 		$response = $client -> call('autenticarUsuario', $param);

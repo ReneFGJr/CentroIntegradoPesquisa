@@ -9,12 +9,12 @@ if (!isset($link_form)) {
 ?>
 <div id="form_search">
 	<form method="post" action="<?php echo $link_form;?>">
-		Deseja fazer uma busca rápida?
+		<?php echo $this->lang->line('fast_search');?>
 		<BR>
 		<table cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
-				<input type="text" name="dd89" id="dd89" class="form_search_in" value="<?php echo $dd89;?>" placeholder="Procure por assuntos, pesquisadores, pesquisas... ">
+				<input type="text" name="dd89" id="dd89" class="form_search_in" value="<?php echo $dd89;?>" placeholder="<?php echo $this->lang->line('fast_search_place');?>">
 				</td>
 				<td>
 				<input type="submit" name="acao" id="acao" class="form_search_bt" value="BUSCA">

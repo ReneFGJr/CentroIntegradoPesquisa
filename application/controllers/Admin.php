@@ -56,11 +56,12 @@ class admin extends CI_Controller {
 	
 	function logins_view($id = 0,$check = '')
 		{
-		$this->load->model('logins');
+		
 		$this -> cab();
 		$data = array();	
 		
-		$this->logins->ws_sc_findCracha('89108296');
+		$this->load->model('sga_pucpr');
+		$this->sga_pucpr->ws_sc_findCracha('89108296');
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

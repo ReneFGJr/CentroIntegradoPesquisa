@@ -178,7 +178,7 @@ class login extends CI_Controller {
 		require ("_server_type.php");
 		switch ($server_type) {
 			case '1' :
-				$data['modo'] = 'Modo: <B>Desenvolvimento</B>';
+				$data['modo'] = 'Modo: <A href="'.base_url('index.php/login/ac/2').'"><B>Desenvolvimento</B></A>';
 				break;
 			case '2' :
 				$data['modo'] = 'Modo: <B>Homologação</B>';

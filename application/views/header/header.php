@@ -7,6 +7,7 @@ header ('Content-type: text/html; charset=ISO-8859-1');
 <link rel="shortcut icon" type="image/x-icon" href="http://www.pucpr.br/favicon.ico" />
 <link rel="stylesheet" href="<?php echo base_url('css/fonts_cicpg.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style.css');?>">
+<link rel="stylesheet" href="<?php echo base_url('css/style_form.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style_font-awesome.css');?>">
 
 <?php

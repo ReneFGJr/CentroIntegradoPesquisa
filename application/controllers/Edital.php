@@ -1,5 +1,5 @@
 <?php
-class csf extends CI_Controller {
+class edital extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -20,7 +20,7 @@ class csf extends CI_Controller {
 
 	function security() {
 
-		/* SeguranÃ§a */
+		/* SeguranCa */
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> security();
 	}
@@ -28,6 +28,7 @@ class csf extends CI_Controller {
 	function cab() {
 		/* Carrega classes adicionais */
 		$css = array();
+		array_push($css, 'form_sisdoc.css');
 		$js = array();
 		array_push($css, 'style_cab.css');
 		array_push($js, 'js_cab.js');
@@ -39,11 +40,11 @@ class csf extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Ciência sem Fronteiras';
+		$data['title_page'] = msg('fomento_editais');
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
-		$data['logo'] = base_url('img/logo/logo_csf.png');
+		$data['logo'] = base_url('img/logo/logo_observatorio.jpg');
 		$this -> load -> view('header/logo', $data);
 	}
 
@@ -53,36 +54,34 @@ class csf extends CI_Controller {
 
 		$this -> load -> view('form/form_busca.php');
 
-		$this -> load -> view('csf/menu.php');
+		$this -> load -> view('fomento/ultimas_atualizacoes.php');
+
+		$this -> load -> view('fomento/menu.php');
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function novo() {
-		$this -> load -> model('estudantes');
-		$this -> load -> model('sga_pucpr');
-
+	function row($id = 0) {
 		$this -> cab();
 		$data = array();
-		$data['title'] = msg('csf_title_novo');
-		$data['tela'] = '';
-		$this -> load -> view('form/form', $data);
+		$this -> load -> model('fomento_editais');
 
-		/* Busca aluno */
-		$dd10 = $this -> input -> post('dd10');
-		$aluno = '';
-		if (strlen($dd10) > 0) {
-			$aluno = $this -> estudantes -> findStudentByCracha($dd10);
-		}
+		$form = new form;
+		$form -> tabela = $this -> fomento_editais -> tabela;
+		$form -> see = true;
+		$form = $this -> fomento_editais -> row($form);
 
-		if (strlen($aluno) > 0) {
-			$alunoDados = $this->estudantes->readByCracha($aluno);
-			$this -> load -> view('usuario/view',$alunoDados);
-		} else {
-			/* Mostra formulario de consulta do aluno */
-			$this -> load -> view('estudante/estudante_busca_cracha');
-		}
+		$form -> row_edit = base_url('index.php/edital/edit/');
+		$form -> row_view = base_url('index.php/edital/view/');
+		$form -> row = base_url('index.php/edital/row/');
+
+		$tela['tela'] = row($form, $id);
+		$url = base_url('author');
+
+		$tela['title'] = msg('title_fomento_editais');
+
+		$this -> load -> view('form/form', $tela);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -90,17 +89,27 @@ class csf extends CI_Controller {
 
 	function view($id = 0, $chk = '') {
 		$this -> cab();
-		$data = array();
-
-		$this -> load -> model('csfs');
-
-		$this -> load -> view('usuario/view', $data);
-
-		$data['content'] = $this -> csfs -> mostra_bolsa($id);
-		$this -> load -> view('content', $data);
-
+		$this -> load -> model('fomento_editais');
+		
+		$tela = '<table width="100%" border=0>';
+		$tela .= '<tr valign="top">';
+		$tela .= '<td>';
+		$tela .= $this->fomento_editais->public_selector($id);
+		
+		$tela .= '<td>';
+		$tela .= $this->fomento_editais->show_edital($id);
+		
+		$tela .= '</table>';
+		
+		$data['content'] = $tela;
+		$data['id'] = $id;
+		
+		$this -> load -> view('fomento/resumo',$data);
+		$this -> load -> view('content',$data);
+		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
 }
+?>

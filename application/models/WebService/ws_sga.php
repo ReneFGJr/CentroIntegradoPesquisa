@@ -1,7 +1,7 @@
 <?php
 class ws_sga extends CI_model {
 	var $producao = 'https://sarch.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
-	var $homologacao = 'https://sarch.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
+	var $homologacao = 'http://haiti.cwb.pucpr.br:8280/services/ServicoConsultaPibic?wsdl';
 	var $desenvolvimento = 'https://sarch.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
 
 	function findStudentByCracha($cracha) {
@@ -44,11 +44,15 @@ class ws_sga extends CI_model {
 			/* Retorna vazio */
 			return ('');
 		}
-		/* Modelo 1 - Somente um curso */
-		if (count($DadoAluno) == 1) {
 
-		}
-		if (count($DadoAluno) > 1) {
+		/* Modelo 1 - Somente um curso */
+		if (strlen(trim($DadoAluno['pessoa'])) > 0) {
+			$DadoAluno['tipo'] = '2';
+			/* Aluno */
+			$this -> load -> model('usuarios');
+			$this -> usuarios -> insere_usuario($DadoAluno);
+			return ($DadoAluno);
+		} else {
 			/* Cursos ativos */
 			$pref1 = array();
 
@@ -79,14 +83,22 @@ class ws_sga extends CI_model {
 				}
 
 			}
-			if (count($pref1) > 0)
-				{
-					return($pref1[0]);
-				}
-			if (count($pref3) > 0)
-				{
-					return($pref3[0]);
-				}
+			if (count($pref1) > 0) {
+				$DadoAluno = $pref1;
+				$DadoAluno['tipo'] = '2';
+				/* Aluno */
+				$this -> load -> model('usuarios');
+				$this -> usuarios -> insere_usuario($DadoAluno);
+				return ($pref1[0]);
+			}
+			if (count($pref3) > 0) {
+				$DadoAluno = $pref1;
+				$DadoAluno['tipo'] = '2';
+				/* Aluno */
+				$this -> load -> model('usuarios');
+				$this -> usuarios -> insere_usuario($DadoAluno);
+				return ($pref3[0]);
+			}
 			return ($pref1[0]);
 		}
 

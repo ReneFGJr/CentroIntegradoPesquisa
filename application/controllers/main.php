@@ -17,7 +17,7 @@ class main extends CI_Controller {
 		
 		/* Security */
 		$this -> load -> model('login/josso_login_pucpr');
-		//$this -> josso_login_pucpr -> security();
+		$this -> josso_login_pucpr -> security();
 
 		//$this -> lang -> load("app", "english");
 	}
@@ -41,15 +41,17 @@ class main extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 
 		/* Chamadas editais */
-		$this -> load -> view('observatorio/chamadas_resumo',$data);
+		$this -> load -> view('fomento/chamadas_resumo',$data);
 
 		/* Menu */
 		$menu = array();
 		array_push($menu,array('Inciação Científica','Administração do Programa de Iniciação Científica e Tecnológia da PUCPR','BTA','/pibicpr'));
 		array_push($menu,array('CIP','Administração do Centro Integrado de Pesquisa, Administração','BTA','/cip'));
+		array_push($menu,array('Fomento','Observatório de Pesquisa','BTA','/edital'));
 		
 		array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTN','/csf'));
 		
+		array_push($menu,array('Fomento','Observatório de Pesquisa','BTN','/edital'));
 		array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip'));
 		array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp'));
 		array_push($menu,array('Banco de Projetos','Pesquisa realizadas na PUCPR','BTN','/banco_projetos'));

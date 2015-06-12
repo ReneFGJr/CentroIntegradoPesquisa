@@ -104,10 +104,6 @@ function UpperCase($d) {
 	return $d;
 }
 
-function msg($x) {
-	return ($x);
-}
-
 function db_query($sql) {
 	global $dbn;
 	$dbn = 0;
