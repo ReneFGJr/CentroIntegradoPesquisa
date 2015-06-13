@@ -156,7 +156,6 @@ class fomento_editais extends CI_model {
 								</table>
 				</table>			
 			';
-		$sx = utf8_decode($sx);
 		return ($sx);
 	}
 

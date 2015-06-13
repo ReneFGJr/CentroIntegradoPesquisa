@@ -25,6 +25,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 $dd = array();
 
+function mst($txt)
+	{
+		$txt = troca($txt,chr(13),'<br/>');
+		return($txt);
+	}
+
 function sonumero($it) {
 	$rlt = '';
 	for ($ki = 0; $ki < strlen($it); $ki++) {

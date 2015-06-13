@@ -54,6 +54,31 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 	
+	function centro_resultado($id = 0)
+		{
+		$this->load->model('centro_resultados');
+		$this -> cab();
+		$data = array();
+		
+		$form = new form;
+		$form->tabela = $this->centro_resultados->tabela;
+		$form->see = true;
+		$form = $this->centro_resultados->row($form);
+		
+		$form -> row_edit = base_url('index.php/admin/centro_resultado_edit/');
+		$form -> row_view = '';
+		$form -> row = base_url('index.php/admin/centro_resultado/');
+
+		$tela['tela'] = row($form, $id);
+
+		$tela['title'] = $this->lang->line('title_centro_resultado');
+
+		$this -> load -> view('form/form', $tela);	
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}	
+	
 	function logins_view($id = 0,$check = '')
 		{
 		
