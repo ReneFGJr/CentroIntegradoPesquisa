@@ -20,7 +20,7 @@ class csf extends CI_Controller {
 
 	function security() {
 
-		/* Segurança */
+		/* Seguranca */
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> security();
 	}
@@ -60,8 +60,10 @@ class csf extends CI_Controller {
 	}
 
 	function novo() {
+		/* Models */
 		$this -> load -> model('estudantes');
 		$this -> load -> model('sga_pucpr');
+		$this -> load -> model('csfs');
 
 		$this -> cab();
 		$data = array();
@@ -70,15 +72,26 @@ class csf extends CI_Controller {
 		$this -> load -> view('form/form', $data);
 
 		/* Busca aluno */
-		$dd10 = $this -> input -> post('dd10');
+		$dd1 = $this -> input -> post('dd1');
 		$aluno = '';
-		if (strlen($dd10) > 0) {
-			$aluno = $this -> estudantes -> findStudentByCracha($dd10);
+		if (strlen($dd1) > 0) {
+			$aluno = $this -> estudantes -> findStudentByCracha($dd1);
 		}
 
 		if (strlen($aluno) > 0) {
+			/* Parte II do formulario */
 			$alunoDados = $this->estudantes->readByCracha($aluno);
 			$this -> load -> view('usuario/view',$alunoDados);
+			
+			/* Montar formulario */
+			$cp = $this->csfs->cp_novo($aluno);
+			$form = new form;
+			$data['tela'] = $form->editar($cp,'');
+			$data['title'] = '';
+			
+			echo '==>'.$form->saved;
+			
+			$this->load->view('form/form',$data);
 		} else {
 			/* Mostra formulario de consulta do aluno */
 			$this -> load -> view('estudante/estudante_busca_cracha');

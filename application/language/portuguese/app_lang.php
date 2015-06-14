@@ -18,6 +18,33 @@ $lang['versao'] = 'v0.15.25';
 /* Formulário de consulta */
 $lang['busca'] = 'BUSCA';
 
+/* Nome do mes */
+$lang['mes_01'] = 'Janeiro';
+$lang['mes_02'] = 'Fevereiro';
+$lang['mes_03'] = 'Março';
+$lang['mes_04'] = 'Abril';
+$lang['mes_05'] = 'Maio';
+$lang['mes_06'] = 'Junho';
+$lang['mes_07'] = 'Julho';
+$lang['mes_08'] = 'Agosto';
+$lang['mes_09'] = 'Setembro';
+$lang['mes_10'] = 'Outubro';
+$lang['mes_11'] = 'Novembro';
+$lang['mes_12'] = 'Dezembro';
+
+$lang['mes_01a'] = 'JAN.';
+$lang['mes_02a'] = 'FEV.';
+$lang['mes_03a'] = 'MAR.';
+$lang['mes_04a'] = 'ABR.';
+$lang['mes_05a'] = 'MAIO';
+$lang['mes_06a'] = 'JUN.';
+$lang['mes_07a'] = 'JUL.';
+$lang['mes_08a'] = 'AGO.';
+$lang['mes_09a'] = 'SET.';
+$lang['mes_10a'] = 'OUT.';
+$lang['mes_11a'] = 'NOV.';
+$lang['mes_12a'] = 'DEZ.';
+
 /* Cabecalho */
 $lang['cab_update'] = 'Atualizar dados';
 $lang['cab_expediente_01'] = 'Pró-Reitoria de Pesquisa';

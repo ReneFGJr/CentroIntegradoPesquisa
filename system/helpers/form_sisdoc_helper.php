@@ -25,11 +25,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 $dd = array();
 
-function mst($txt)
-	{
-		$txt = troca($txt,chr(13),'<br/>');
-		return($txt);
-	}
+function mst($txt) {
+	$txt = troca($txt, chr(13), '<br/>');
+	return ($txt);
+}
 
 function sonumero($it) {
 	$rlt = '';
@@ -50,7 +49,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,   // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10, // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -110,13 +109,12 @@ function UpperCase($d) {
 	return $d;
 }
 
-function mask_cpf($cpf)
-	{
-		$cpf = sonumero($cpf);
-		strzero($cpf,12);
-		$cpf = substr($cpf,0,3).'.'.substr($cpf,3,3).'.'.substr($cpf,6,3).'-'.substr($cpf,9,2);
-		return($cpf);
-	}
+function mask_cpf($cpf) {
+	$cpf = sonumero($cpf);
+	strzero($cpf, 12);
+	$cpf = substr($cpf, 0, 3) . '.' . substr($cpf, 3, 3) . '.' . substr($cpf, 6, 3) . '-' . substr($cpf, 9, 2);
+	return ($cpf);
+}
 
 function db_query($sql) {
 	global $dbn;
@@ -357,64 +355,64 @@ function load_file_local($file) {
 /* Funcao */
 function UpperCaseSQL($d) {
 	$d = strtoupper($d);
-	$d = troca($d, '√ß', 'C');
-	$d = troca($d, '√á', 'C');
-	$d = troca($d, '√±', 'N');
-	$d = troca($d, '√ë', 'N');
+	$d = troca($d, '«', 'C');
+	$d = troca($d, 'Á', 'C');
+	$d = troca($d, '—', 'N');
+	$d = troca($d, 'Ò', 'N');
 
-	$d = troca($d, '√£', 'A');
-	$d = troca($d, '√§', 'A');
-	$d = troca($d, '√†', 'A');
-	$d = troca($d, '√°', 'A');
-	$d = troca($d, '√¢', 'A');
+	$d = troca($d, '¡', 'A');
+	$d = troca($d, '¿', 'A');
+	$d = troca($d, '¬', 'A');
+	$d = troca($d, 'ƒ', 'A');
+	$d = troca($d, '¬', 'A');
 
-	$d = troca($d, '√É', 'A');
-	$d = troca($d, '√Ñ', 'A');
-	$d = troca($d, '√Ä', 'A');
-	$d = troca($d, '√Å', 'A');
-	$d = troca($d, '√Ç', 'A');
+	$d = troca($d, '·', 'A');
+	$d = troca($d, '‡', 'A');
+	$d = troca($d, '„', 'A');
+	$d = troca($d, '‚', 'A');
+	$d = troca($d, '‰', 'A');
 
-	$d = troca($d, '√´', 'E');
-	$d = troca($d, '√®', 'E');
-	$d = troca($d, '√©', 'E');
-	$d = troca($d, '√™', 'E');
+	$d = troca($d, '…', 'E');
+	$d = troca($d, '»', 'E');
+	$d = troca($d, ' ', 'E');
+	$d = troca($d, 'À', 'E');
 
-	$d = troca($d, '√ã', 'E');
-	$d = troca($d, '√à', 'E');
-	$d = troca($d, '√â', 'E');
-	$d = troca($d, '√ä', 'E');
+	$d = troca($d, 'È', 'E');
+	$d = troca($d, 'Ë', 'E');
+	$d = troca($d, 'Í', 'E');
+	$d = troca($d, 'Î', 'E');
 
-	$d = troca($d, '√Ø', 'I');
-	$d = troca($d, '√¨', 'I');
-	$d = troca($d, '√≠', 'I');
-	$d = troca($d, '√Æ', 'I');
+	$d = troca($d, 'Õ', 'I');
+	$d = troca($d, 'Ã', 'I');
+	$d = troca($d, 'Œâ', 'I');
+	$d = troca($d, 'œ', 'I');
 
-	$d = troca($d, '√è', 'I');
-	$d = troca($d, '√å', 'I');
-	$d = troca($d, '√ç', 'I');
-	$d = troca($d, '√é', 'I');
+	$d = troca($d, 'Ì', 'I');
+	$d = troca($d, 'Ï', 'I');
+	$d = troca($d, 'Ó', 'I');
+	$d = troca($d, 'Ô', 'I');
 
-	$d = troca($d, '√µ', 'O');
-	$d = troca($d, '√∂', 'O');
-	$d = troca($d, '√≤', 'O');
-	$d = troca($d, '√≥', 'O');
-	$d = troca($d, '√¥', 'O');
+	$d = troca($d, '”', 'O');
+	$d = troca($d, '“', 'O');
+	$d = troca($d, '’', 'O');
+	$d = troca($d, '÷', 'O');
+	$d = troca($d, '‘', 'O');
 
-	$d = troca($d, '√ï', 'O');
-	$d = troca($d, '√ñ', 'O');
-	$d = troca($d, '√í', 'O');
-	$d = troca($d, '√ì', 'O');
-	$d = troca($d, '√î', 'O');
+	$d = troca($d, 'ïÛ', 'O');
+	$d = troca($d, 'ñÚ', 'O');
+	$d = troca($d, 'íı', 'O');
+	$d = troca($d, 'ìˆ', 'O');
+	$d = troca($d, 'îÙ', 'O');
 
-	$d = troca($d, '√º', 'U');
-	$d = troca($d, '√π', 'U');
-	$d = troca($d, '√∫', 'U');
-	$d = troca($d, '√ª', 'U');
+	$d = troca($d, '⁄', 'U');
+	$d = troca($d, 'Ÿ', 'U');
+	$d = troca($d, '€', 'U');
+	$d = troca($d, '‹', 'U');
 
-	$d = troca($d, '√ú', 'U');
-	$d = troca($d, '√ô', 'U');
-	$d = troca($d, '√ö', 'U');
-	$d = troca($d, '√õ', 'U');
+	$d = troca($d, '˙', 'U');
+	$d = troca($d, '˘ô', 'U');
+	$d = troca($d, '˚', 'U');
+	$d = troca($d, '¸', 'U');
 
 	return $d;
 }
@@ -426,11 +424,19 @@ function LowerCaseSQL($term) {
 }
 
 // ------------------------------------------------------------------------
+/* FORM CLASS
+ *
+ *
+ *
+ *
+ */
 class form {
+	var $id = 0;
 	var $cp = array();
 	var $data = array();
 	var $post = array();
 	var $tabela = '';
+	var $saved = 0;
 
 	/* row */
 	var $fd = array();
@@ -443,6 +449,26 @@ class form {
 	var $row_view = '';
 	var $row_edit = '';
 	var $offset = 30;
+
+	function editar($cp, $tabela) {
+		$ed = new form;
+
+		/* Valida botao */
+		$bt = 0;
+		for ($r = 0; $r < count($cp); $r++) {
+			if (UpperCaseSQL(substr($cp[$r][0], 0, 2)) == '$B') { $bt = 1;
+			}
+		}
+		if ($bt == 0) { array_push($cp, array('$B8', '', msg('submit'), False, False));
+		}
+
+		/* Monta forum·rio */
+		$ed -> cp = $cp;
+		$t = form_edit($ed);
+		print_r($ed);
+		return ($t);
+	}
+
 }
 
 /* Paginacao */
@@ -471,7 +497,6 @@ function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 	}
 
 	/* PAGINACAO */
-	//echo '==>'.$tot.'= (inicial):'.$pagi.'= (final):'.$pagf;
 	if ($pagf > $tot) { $pagf = $tot;
 	}
 	for ($r = $pagi; $r < ($pagf + 1); $r++) {
@@ -720,6 +745,10 @@ if (!function_exists('form_edit')) {
 
 	function form_save($obj) {
 		/* recupera post */
+		/* Retorna se nao existir tabela */
+		if (strlen($obj -> tabela) == 0) {
+			return ('');
+		}
 		$CI = &get_instance();
 		$post = $CI -> input -> post();
 
@@ -770,7 +799,6 @@ if (!function_exists('form_edit')) {
 			$query = $CI -> db -> query($sql);
 			return (1);
 		}
-
 		return (0);
 	}
 
@@ -842,6 +870,8 @@ if (!function_exists('form_edit')) {
 		/* Save in table */
 		if ($recupera == 0) {
 			$saved = form_save($obj);
+			$obj->saved = $saved;
+			
 			if ($saved == 1) {
 				/* Redireciona */
 				if (strlen($obj -> row) > 0) {
@@ -861,7 +891,11 @@ if (!function_exists('form_edit')) {
 
 		if ($recupera == 1) {
 			/* recupera dados do banco */
-			$data = le_dados($obj);
+			if (strlen($obj -> tabela) > 0) {
+				$data = le_dados($obj);
+			} else {
+				$recupera = 0;
+			}
 		} else {
 			$data = array();
 		}
@@ -896,7 +930,7 @@ if (!function_exists('form_edit')) {
 		return ($sx);
 	}
 
-	/* Formul√°rio */
+	/* Formulario */
 	function form_field($cp, $vlr) {
 		global $dd, $ddi;
 		/* Zera tela */
@@ -914,6 +948,12 @@ if (!function_exists('form_edit')) {
 		$readonly = $cp[4];
 
 		$tt = substr($type, 1, 1);
+
+		/* exessoes */
+		if (substr($type, 0, 4) == '$MES') { $tt = 'MES';
+		}
+
+		/* form */
 		$max = 100;
 		$size = 100;
 		$dados = array();
@@ -935,11 +975,92 @@ if (!function_exists('form_edit')) {
 		}
 
 		//$dados = array('name'=>'dd'.$ddi, 'id'=>'dd'.$ddi,'value='.$dd[$ddi],'maxlenght'=>$max,'size'=>$size,$class=>'');
-
 		switch ($tt) {
+			/* Button */
+			case 'B' :
+				$tela .= $tr . $tdl . $td;
+				$dados = array('name' => 'acao', 'id' => 'acao', 'value' => $label);
+				$tela .= form_submit($dados);
+				$tela .= $tdn . $trn;
+				break;
+
+			/* Oculto */
+			case 'H' :
+				$dados = array($dn => $vlr);
+				$tela .= form_hidden($dados);
+				break;
+
+			/* Select Box - Mes */
+			case 'MES' :
+				$options = array('' => '::select an option::');
+
+				/* recupera dados */
+				for ($r = (date("Y") + 4); $r > 1990; $r--) {
+					$vlra = $r;
+					$options[$vlra] = '===' . $r . '===';
+					//array_push($options,array('2019'));
+					$ar = array();
+					for ($y = 12; $y > 0; $y--) {
+						$vlrs = $r . strzero($y, 2) . '01';
+						$cpt = $r . '/' . msg('mes_' . strzero($y, 2));
+						$op = array($vlr => $cpt);
+						$ar[$vlrs] = $cpt;
+						//array_push($options,$op);
+					}
+					$options[$vlra] = $ar;
+				}
+
+				$dados = array('name' => $dn, 'id' => $dn, 'size' => 1, 'class' => 'form_select');
+				$tela .= $tr;
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= $tdl . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
+				}
+				if (strlen($vlr) == 0) { $vlr = date("Ym") . '01';
+				}
+				$tela .= '<TD>';
+				$tela .= form_dropdown($dados, $options, $vlr);
+				break;
+
+			/* Select Box */
+			case 'Q' :
+				$ntype = trim(substr($type, 2, strlen($type)));
+				$ntype = troca($ntype, ':', ';') . ';';
+				$param = splitx(';', $ntype);
+				$options = array('' => '::select an option::');
+
+				/* recupera dados */
+				$sql = "select * from (" . $param[2] . ") as tabela ";
+				$CI = &get_instance();
+				$query = $CI -> db -> query($sql);
+				foreach ($query->result_array() as $row) {
+					/* recupera ID */
+					$flds = trim($param[0]);
+					$vlrs = trim($param[1]);
+					$flds = $row[$flds];
+					$vlrs = $row[$vlrs];
+					$options[$flds] = $vlrs;
+				}
+
+				$dados = array('name' => $dn, 'id' => $dn, 'size' => 1, 'class' => 'form_select');
+
+				$tela .= $tr;
+
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= $tdl . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
+				}
+				$tela .= '<TD>';
+				$tela .= form_dropdown($dados, $options, $vlr);
+				break;
+
 			/* String */
 			case 'S' :
-			/* TR da tabela */
+				/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -956,11 +1077,6 @@ if (!function_exists('form_edit')) {
 				$tela .= $tdn . $trn;
 				break;
 
-			/* Oculto */
-			case 'H' :
-				$dados = array($dn => $vlr);
-				$tela .= form_hidden($dados);
-				break;
 			/* Update */
 			case 'U' :
 				if (round($vlr) == 0) { $vlr = date("Ymd");
@@ -989,39 +1105,6 @@ if (!function_exists('form_edit')) {
 				$tela .= $td . form_textarea($data);
 				$tela .= $tdn . $trn;
 				break;
-			/* Select Box */
-			case 'Q' :
-				$ntype = trim(substr($type, 2, strlen($type)));
-				$ntype = troca($ntype, ':', ';') . ';';
-				$param = splitx(';', $ntype);
-				$options = array('' => '::select an option::');
-
-				/* recupera dados */
-				$sql = "select * from (" . $param[2] . ") as tabela ";
-				$CI = &get_instance();
-				$query = $CI -> db -> query($sql);
-				foreach ($query->result_array() as $row) {
-					/* recupera ID */
-					$flds = trim($param[0]);
-					$vlrs = trim($param[1]);
-					$flds = $row[$flds];
-					$vlrs = $row[$vlrs];
-					$options[$flds] = $vlrs;
-				}
-
-				$dados = array('name' => $dn, 'id' => $dn, 'size' => 1, 'class' => 'form_select');
-
-				$shirts_on_sale = array('small', 'large');
-
-				/* label */
-				if (strlen($label) > 0) {
-					$tela .= $tdl . $label . ' ';
-				}
-				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
-				}
-				$tela .= '<TD>';
-				$tela .= form_dropdown($dados, $options, $vlr);
-				break;
 			/* Password */
 			case 'P' :
 				if (strlen($label) > 0) {
@@ -1029,14 +1112,6 @@ if (!function_exists('form_edit')) {
 				}
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => $max, 'size' => $size);
 				$tela .= form_password($dados);
-				break;
-
-			/* Button */
-			case 'B' :
-				$tela .= $tr . $tdl . $td;
-				$dados = array('name' => 'acao', 'id' => 'acao', 'value' => $label);
-				$tela .= form_submit($dados);
-				$tela .= $tdn . $trn;
 				break;
 		}
 		$ddi++;

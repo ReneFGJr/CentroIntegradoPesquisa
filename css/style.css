@@ -16,6 +16,10 @@ body {
 	font-size: 13px;
 	color: #333333;
 }
+.bold
+	{
+		font-weight: bold;
+	}
 /* Cores */
 .grey {
 	color: #606060;

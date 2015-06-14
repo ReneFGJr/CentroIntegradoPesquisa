@@ -8,9 +8,9 @@ if (!(isset($img_foto))) {
 	}
 }
 ?>
-<table width="80%" class="lt1" border=0 cellpadding="3">
+<table width="80%" class="lt1" border=0 cellpadding="1">
 	<tr valign="top">
-		<td rowspan=10 width="10" ><img id="photo" src="<?php echo $img_foto;?>" height="200"></td>
+		<td rowspan=10 width="10" ><img id="photo" src="<?php echo $img_foto;?>" height="150"></td>
 		<td width="10%" align="right" class="lt1">nome:</td><td class="lt4"><B><?php echo $us_nome; ?></B></td>
 	</tr>
 	
@@ -43,6 +43,6 @@ if (!(isset($img_foto))) {
 	</tr>
 
 	<tr>
-		<td colspan=2><div style="min-height: 150px;"></div></td>
+		<td colspan=2><div style="min-height: 5px;"></div></td>
 	</tr>
 </table>
