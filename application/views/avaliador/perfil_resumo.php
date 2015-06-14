@@ -1,6 +1,6 @@
 <table width="300" align="right" class="lt1 border1 m10r m10b radius10 shadown"  m10r m10b>
 	<tr>
-		<td colspan=5 class="lt2"><B>Resumo das avaliaÃ§Ãµes</B></td>
+		<td colspan=5 class="lt2"><B>Resumo das avaliações</B></td>
 	</tr>
 	<tr>
 		<th>ano</th>
@@ -38,3 +38,4 @@
 	</tr>
 
 </table>
+

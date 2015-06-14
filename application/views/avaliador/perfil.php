@@ -4,11 +4,11 @@
 	</tr>
 	<tr valign="top">
 		<td class="lt0" align="right" width="80">Nome:</td>
-		<td class="lt3"><B>Abili L√°zaro Castro de Lima</B></td>
+		<td class="lt3"><B>Abili L·zaro Castro de Lima</B></td>
 	</tr>
 	<tr valign="top" class="border1">
-		<td class="lt0" align="right" width="80">Institui√ß√£o:</td>
-		<td><B>Universidade Federal do Paran√° (UFPR)</B></td>
+		<td class="lt0" align="right" width="80">InstituiÁ„o:</td>
+		<td><B>Universidade Federal do Paran· (UFPR)</B></td>
 	</tr>
 	<tr valign="top">
 		<td class="lt0" align="right" width="80">Contatos:</td>
@@ -26,3 +26,4 @@
 		<td class="lt0" colspan=2><A HREF="#" class="link lt0">EDITAR</A></B></td>
 	</tr>
 </table>
+e>

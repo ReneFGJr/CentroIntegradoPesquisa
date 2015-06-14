@@ -38,6 +38,8 @@ class main extends CI_Controller {
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Menu Principal';
 		$data['menu'] = 0;
+		$this -> load -> view('header/content_open.php');
+		
 		$this -> load -> view('header/cab', $data);
 
 		/* Chamadas editais */
@@ -62,6 +64,7 @@ class main extends CI_Controller {
 		$data['title_menu'] = 'Menu Principal';
 		$this -> load -> view('header/main_menu',$data);
 		
+		$this -> load -> view('header/content_close.php');
 		$this -> load -> view('header/foot');
 	}
 	function expediente() {
