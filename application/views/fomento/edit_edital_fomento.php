@@ -1,22 +1,22 @@
 <?php
 	require("cab.php");
-
 	$classAction = "action_edit_edital_fomento.php";
 ?>
 
 <html>
 <head> 
-<title>Edital fomento</title>
+	<title>Edital fomento</title>
 </head>
 <body>
 
-	<h1> Edição de dados do edital Fomento</h1> 
   <h2> Preencha o formulário abaixo</h2><br />
 
-	<form method="post" action="<? $classAction ?>" >
+	<form method="post" action="<?php '.$classAction.' ?>" >
 	
 	<!-- Dados do Edital -->
-	
+<fieldset>
+	<legend> ATUALIZAR DADOS DO EDITAL </legend>	
+
 <fieldset>
 	 <legend>Dados do edital</legend>
 	 <table cellspacing="5">
@@ -30,6 +30,23 @@
 			<td><label for="idioma">Idioma: </label></td>
 				<td align="left"><input type="text" name="idioma"></td>
 		</TR>
+
+		<TR>
+				<td><label for="status">Status: </label></td>
+				<td align="left"><input type="text" name="status"></td>
+
+				<td><label for="urlext">Url Externa: </label></td>
+				<td align="left"><input type="text" name="urlext"></td>
+
+				<td><label for="autor">Autor: </label></td>
+				<td align="left"><input type="text" name="autor"></td>
+
+				<td><label for="corpo">Corpo: </label></td>
+				<td align="left"><input type="text" name="corpo"></td>
+
+				<td><label for="totVisualizacoes">Total de Visualizações: </label></td>
+				<td align="left"><input type="text" name="totVisualizacoes"></td>
+		</TR>		
 		
 		<TR>	
 		<td><label for="chamada">Chamada: </label></td>
@@ -43,6 +60,10 @@
 		  </td>
 	  </TR>
 	 </table>
+
+
+
+
 </fieldset>	
 <br />	
 
@@ -80,7 +101,7 @@
 
 <!-- Edital -->
 <fieldset>
-	<legend>Dados do edital</legend>
+	<legend> Textos </legend>
 	 <table cellspacing="2">
 	 	<TR>
 			<td>
@@ -169,15 +190,16 @@
 				<td align="left"><input type="text" name="texto12" size="50"></td>
 			<td>
 	 	</TR>
-	 	<TR
+	 	
 
 	 	</tr>
 	</table>	
-</fieldset>			
+</fieldset>		
+</fieldset>		
 <br />	
 
 <!-- Botoes -->
-<input type="submit" value="Enviar">
+<input type="submit" value="Atualizar">
 <input type="reset" value="Limpar">
 
 </form>
