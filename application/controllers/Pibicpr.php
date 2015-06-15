@@ -71,6 +71,5 @@ class pibicpr extends CI_Controller {
 	}
 
 }
-?>
 
 ?>
