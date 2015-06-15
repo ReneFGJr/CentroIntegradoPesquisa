@@ -3,13 +3,15 @@
 	$classAction = "action_edit_edital_fomento.php";
 ?>
 
+
 <html>
 <head> 
-	<title>Edital fomento</title>
+<title>Edital fomento</title>
 </head>
 <body>
 
   <h2> Preencha o formulário abaixo</h2><br />
+
 
 	<form method="post" action="<?php '.$classAction.' ?>" >
 	
@@ -31,22 +33,53 @@
 				<td align="left"><input type="text" name="idioma"></td>
 		</TR>
 
-		<TR>
-				<td><label for="status">Status: </label></td>
-				<td align="left"><input type="text" name="status"></td>
+						<TR>
+								<td><label for="status">Status: </label></td>
+								<td align="left"><input type="text" name="status"></td>
 
-				<td><label for="urlext">Url Externa: </label></td>
-				<td align="left"><input type="text" name="urlext"></td>
+						</TR>
+						<TR>	
+								<td><label for="urlext">Url Externa: </label></td>
+								<td align="left"><input type="text" name="urlext"></td>
+						</TR>
+						<TR>
+								<td><label for="autor">Autor: </label></td>
+								<td align="left"><input type="text" name="autor"></td>
+						</TR>
+						<TR>
+								<td><label for="corpo">Corpo: </label></td>
+								<td align="left"><input type="text" name="corpo"></td>
+						</TR>
+						<TR>
+								<td><label for="totVisualizacoes">Total de Visualizações: </label></td>
+								<td align="left"><input type="text" name="totVisualizacoes"></td>
+						</TR>
+						<TR>
+								<td><label for="local">Local: </label></td>
+								<td align="left"><input type="text" name="local"></td>
+						</TR>
+						<TR>
+								<td><label>Data do envio: </label></td>
+							  <td align="left">
+							  	<input type="text" name="dia" size="2" maxlength="2" value="dd"> 
+							  	<input type="text" name="mes" size="2" maxlength="2" value="mm"> 
+							  	<input type="text" name="ano" size="4" maxlength="4" value="aaaa">
+							  </td>
+						</TR>
+						<TR>
 
-				<td><label for="autor">Autor: </label></td>
-				<td align="left"><input type="text" name="autor"></td>
-
-				<td><label for="corpo">Corpo: </label></td>
-				<td align="left"><input type="text" name="corpo"></td>
-
-				<td><label for="totVisualizacoes">Total de Visualizações: </label></td>
-				<td align="left"><input type="text" name="totVisualizacoes"></td>
-		</TR>		
+								<td><label for="login">Login: </label></td>
+								<td align="left"><input type="text" name="login"></td>
+						</TR>
+						<TR>
+								<td><label for="titemail">Titulo do Email: </label></td>
+								<td align="left"><input type="text" name="titEmail"></td>		
+						</TR>
+						<TR>
+								<td><label for="editalTipo">Edital tipo: </label></td>
+								<td align="left"><input type="text" name="editalTipo"></td>
+						</TR>
+				
 		
 		<TR>	
 		<td><label for="chamada">Chamada: </label></td>
