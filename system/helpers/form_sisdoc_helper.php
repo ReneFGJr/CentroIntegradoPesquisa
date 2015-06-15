@@ -152,6 +152,22 @@ function array_to_object($array) {
 /*
  * Rene
  */
+ 
+ function cr()
+ 	{
+ 		/* retorna um Nova linha e Retorno de Carro */
+ 		return(chr(13).chr(10));
+ 	}
+
+function stosql($data = 0) {
+	$data = sonumero($data);
+	if ($data < 19100101) {
+		return ('0000-00-00');
+	} else {
+		$dt = substr($data, 0, 4) . '-' . substr($data, 4, 2) . '-' . substr($data, 6, 2);
+		return ($dt);
+	}
+}
 
 function stodbr($data = 0) {
 	$data = sonumero($data);
@@ -448,6 +464,7 @@ class form {
 
 	var $row_view = '';
 	var $row_edit = '';
+	var $row = '';
 	var $offset = 30;
 
 	function editar($cp, $tabela) {
@@ -464,8 +481,9 @@ class form {
 
 		/* Monta forumário */
 		$ed -> cp = $cp;
-		$t = form_edit($ed);
-		print_r($ed);
+		$result = form_edit($ed);
+		$t = $result['tela'];
+		$this->saved = $result['saved'];
 		return ($t);
 	}
 
@@ -602,7 +620,7 @@ if (!function_exists('form_edit')) {
 			}
 			if (isset($post['dd1'])) { $term = $post['dd1'];
 			}
-			$term = troca($term, "'", "Â´");
+			$term = troca($term, "'", "´");
 		}
 
 		$fd = $obj -> fd;
@@ -850,10 +868,30 @@ if (!function_exists('form_edit')) {
 		$row = $query -> row();
 		return ($row);
 	}
+	
+	function valida_post($cp)
+		{
+		/* recupera post */
+		$CI = &get_instance();
+		$post = $CI -> input -> post();
+		/* define como default */
+		$saved = 1;
+		for ($r=0;$r < count($cp);$r++)
+			{
+				$requer = $cp[$r][3];
+				if ($requer == true)
+					{
+						$vlr = $CI->input->post('dd'.$r);
+						if (strlen($vlr) == 0) { $saved = 0; }		
+					}				
+			}
+		return($saved);
+		}
 
 	function form_edit($obj) {
 		$dd = array($obj -> id);
-
+		$saved = 0;
+		
 		/* recupera post */
 		$CI = &get_instance();
 		$post = $CI -> input -> post();
@@ -869,20 +907,8 @@ if (!function_exists('form_edit')) {
 
 		/* Save in table */
 		if ($recupera == 0) {
-			$saved = form_save($obj);
-			$obj->saved = $saved;
-			
-			if ($saved == 1) {
-				/* Redireciona */
-				if (strlen($obj -> row) > 0) {
-					$url_pre = $obj -> row;
-				} else {
-					$url_pre = uri_string();
-					$url_pre = substr($url_pre, 0, strpos($url_pre, '/')) . '/row';
-				}
-				redirect($url_pre);
-				//redirect($link, 'location', 301);
-			}
+			/* Valida */
+			$saved = valida_post($cp);
 		}
 
 		$tela = '';
@@ -920,7 +946,8 @@ if (!function_exists('form_edit')) {
 		$tela .= '</table>';
 		$tela .= form_close();
 
-		return ($tela);
+		$data = array('tela'=>$tela,'saved'=>$saved);
+		return ($data);
 	}
 
 	/* Botao novo */

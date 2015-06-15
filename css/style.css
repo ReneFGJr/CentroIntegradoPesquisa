@@ -20,6 +20,17 @@ body {
 	{
 		font-weight: bold;
 	}
+	
+.link
+	{
+		color: #000080;
+		text-decoration: none;
+	}
+.link:hover
+	{
+		color: #000000;
+		text-decoration: underline;
+	}	
 /* Cores */
 .grey {
 	color: #606060;

@@ -48,12 +48,34 @@ class csf extends CI_Controller {
 	}
 
 	function index() {
+		/* Models */
+		$this -> load -> model('csfs');
+
 		$this -> cab();
 		$data = array();
 
 		$this -> load -> view('form/form_busca.php');
 
-		$this -> load -> view('csf/menu.php');
+		$data['content'] = $this -> csfs -> csf_resumo();
+
+		$this -> load -> view('content', $data);
+		$this -> load -> view('csf/menu');
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function status($sta, $check) {
+		/* Models */
+		$this -> load -> model('csfs');
+
+		$this -> cab();
+		$data = array();
+
+		$data['content'] = $this -> csfs -> lista_status($sta);
+
+		$this -> load -> view('content', $data);
+		$this -> load -> view('csf/menu');
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -80,22 +102,59 @@ class csf extends CI_Controller {
 
 		if (strlen($aluno) > 0) {
 			/* Parte II do formulario */
-			$alunoDados = $this->estudantes->readByCracha($aluno);
-			$this -> load -> view('usuario/view',$alunoDados);
-			
+			$alunoDados = $this -> estudantes -> readByCracha($aluno);
+			$this -> load -> view('usuario/view', $alunoDados);
+
 			/* Montar formulario */
-			$cp = $this->csfs->cp_novo($aluno);
+			$cp = $this -> csfs -> cp_novo($aluno);
 			$form = new form;
-			$data['tela'] = $form->editar($cp,'');
+			$data['tela'] = $form -> editar($cp, '');
 			$data['title'] = '';
-			
-			echo '==>'.$form->saved;
-			
-			$this->load->view('form/form',$data);
+
+			if ($form -> saved > 0) {
+				/* insere registro */
+				$edital = $this -> input -> post('dd2');
+				$saida = $this -> input -> post('dd3');
+				$pais = $this -> input -> post('dd4');
+				$this -> csfs -> insere_candidato($aluno, $edital, $saida, $pais);
+				redirect(base_url('index.php/csf'));
+			}
+
+			$this -> load -> view('form/form', $data);
 		} else {
 			/* Mostra formulario de consulta do aluno */
 			$this -> load -> view('estudante/estudante_busca_cracha');
 		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function ajax($id=0,$chk='')
+		{
+			echo "OLA ".date("d/m/Y H:i:s");
+		}
+
+	function ver($id = 0, $chk = '') {
+		/* Models */
+		$this -> load -> model('estudantes');
+		$this -> load -> model('sga_pucpr');
+		$this -> load -> model('csfs');
+
+		$this -> cab();
+		
+		$line = $this->csfs->le($id);
+		$data = $line;
+		
+		$aluno = trim($line['us_cracha']);  
+		$aluno_id = $line['id_us'];
+		
+		/* Parte II do formulario */
+		$alunoDados = $this -> estudantes -> readByCracha($aluno);
+		$this -> load -> view('usuario/view', $alunoDados);
+		
+		$data['content'] = '<BR><BR>'.$this->csfs->mostra_todas_csf($aluno_id);
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
