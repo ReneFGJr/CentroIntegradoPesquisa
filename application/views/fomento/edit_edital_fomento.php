@@ -1,6 +1,6 @@
 <?php
 	require("cab.php");
-	
+
 	$classAction = "action_edit_edital_fomento.php";
 ?>
 
@@ -168,7 +168,8 @@
 			</td>
 				<td align="left"><input type="text" name="texto12" size="50"></td>
 			<td>
-	 			</TR>
+	 	</TR>
+	 	<TR
 
 	 	</tr>
 	</table>	
