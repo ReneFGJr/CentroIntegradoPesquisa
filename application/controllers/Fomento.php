@@ -1,6 +1,6 @@
 <?php
 class Fomento extends CI_Controller {
-		
+	
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -21,6 +21,12 @@ class Fomento extends CI_Controller {
 		$this -> josso_login_pucpr -> security();
 
 		//$this -> lang -> load("app", "english");
+	}
+	
+	public function index(){
+	
+	$this ->load->model('action_edit_edital_fomento');
+		
 	}
 
 	public function cab() {
@@ -54,18 +60,11 @@ class Fomento extends CI_Controller {
 		$this -> load -> view('header/foot');			
 		}
 		
-	public function listar(){
-		
-		
-	}	
-	
 	public function salvar(){
-		//campos
-		$post = $this -> input -> post('');
-		$post = $this -> input -> post(''); 
+		
+		
 		
 	}
-
 	
 
 }
