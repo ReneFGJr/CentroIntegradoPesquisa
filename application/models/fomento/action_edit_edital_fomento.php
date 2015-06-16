@@ -1,6 +1,7 @@
 <?php
 
 class action_edit_edital_fomento extends CI_model {
+		
 	var $tabela = 'fomento_editais';
 	
 	function editar_edital_fomento($id = 1){
@@ -13,7 +14,6 @@ class action_edit_edital_fomento extends CI_model {
 		return ($line);
 	
 	}
-	
 	
 	
 	

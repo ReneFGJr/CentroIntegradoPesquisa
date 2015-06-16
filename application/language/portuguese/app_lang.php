@@ -15,6 +15,14 @@ function msg($t)
 
 $lang['versao'] = 'v0.15.25';
 
+/*fomento*/
+$lang['fm_titulo'] = 'Titulo';
+$lang['fm_agencia'] = 'Agência';
+$lang['fm_idioma'] = 'Idioma';
+$lang['fm_data_envio'] = 'Data de envio';
+
+
+
 /* Formulário de consulta */
 $lang['busca'] = 'BUSCA';
 
