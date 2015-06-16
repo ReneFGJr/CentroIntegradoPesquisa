@@ -3,7 +3,6 @@
 	$classAction = "action_edit_edital_fomento.php";
 ?>
 
-
 <html>
 <head> 
 <title>Edital fomento</title>
@@ -11,7 +10,6 @@
 <body>
 
   <h2> Preencha o formulário abaixo</h2><br />
-
 
 	<form method="post" action="<?php '.$classAction.' ?>" >
 	
