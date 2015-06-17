@@ -24,6 +24,9 @@ class equipamentos extends CI_model {
 			array_push($cp,array('$T80:4','pe_descricao_2',msg('eq_descricao_2'),False,True));
 			array_push($cp,array('$T80:4','pe_descricao_3',msg('eq_ativo_1'),False,True));
 			array_push($cp,array('$O 1:SIM&0:NÃO','pe_ativo',msg('eq_ativo_2'),True,True));
+			
+			array_push($cp,array('$B','',msg('enviar'),false,True));
+			
 			return($cp);
 		}
 	

@@ -16,11 +16,38 @@ function msg($t)
 $lang['versao'] = 'v0.15.25';
 
 /*fomento*/
-$lang['fm_titulo'] = 'Titulo';
+$lang['fm_titulo'] = 'Titulo da chamada';
+$lang['fm_titulo_email'] = 'Titulo do e-mail(opcional)';
 $lang['fm_agencia'] = 'Agência';
 $lang['fm_idioma'] = 'Idioma';
+$lang['fm_chamada'] = 'Chamada';
+$lang['fm_status'] = 'Status';
+$lang['fm_autor'] = 'Autor';
+$lang['fm_corpo'] = 'Corpo';
+$lang['fm_url_externa'] = 'Link da chamada';
+$lang['fm_total_visualizacoes'] = 'Total de visualizações';
+$lang['fm_local'] = 'Local';
 
-$lang['fm_data_envio'] = 'Data de envio';
+$lang['fm_texto_1'] = 'Objetivo(s)';
+$lang['fm_texto_2'] = 'Recursos';
+$lang['fm_texto_3'] = 'Elegibilidade';
+$lang['fm_texto_4'] = 'Contato';
+$lang['fm_texto_5'] = '';
+$lang['fm_texto_6'] = 'Áreas e categorias';
+$lang['fm_texto_7'] = '';
+$lang['fm_texto_8'] = '';
+$lang['fm_texto_9'] = '';
+$lang['fm_texto_10'] = '';
+$lang['fm_texto_11'] = 'Submissão da proposta';
+$lang['fm_texto_12'] = 'Contato na instituição';
+
+
+/*datas*/
+$lang['fm_data_01'] = 'Data de envio';
+$lang['fm_data_02'] = 'Deadline (eletrônico)';
+$lang['fm_data_03'] = 'Deadline (envio da documentação';
+$lang['fm_data_04'] = '';
+
 
 
 
