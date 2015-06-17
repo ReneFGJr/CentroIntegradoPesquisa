@@ -85,5 +85,32 @@ class equipamento extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function edit($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('equipamentos');
+		$cp = $this->equipamentos->cp();
+		$data = array();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		
+		$form = new form;
+		$form->id = $id;
+		
+		$tela = $form->editar($cp,$this->equipamentos->tabela);
+		$data['title'] = msg('eq_equipamento_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form',$data);
+		
+		/* Salva */
+		if ($form->saved > 0)
+			{
+				redirect(base_url('index.php/equipamento'));
+			}
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 }

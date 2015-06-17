@@ -460,7 +460,7 @@ class form {
 	var $mk = array();
 	var $edit = false;
 	var $see = false;
-	var $new = false;
+	var $novo = false;
 
 	var $row_view = '';
 	var $row_edit = '';
@@ -469,7 +469,8 @@ class form {
 
 	function editar($cp, $tabela) {
 		$ed = new form;
-
+		$ed->id = $this->id;
+		$ed->tabela = $tabela;
 		/* Valida botao */
 		$bt = 0;
 		for ($r = 0; $r < count($cp); $r++) {
@@ -629,7 +630,7 @@ if (!function_exists('form_edit')) {
 		/* parametros */
 		$edit = $obj -> edit;
 		$see = $obj -> see;
-		$new = $obj -> new;
+		$novo = $obj -> novo;
 
 		/* campo ID */
 		$fld = $fd[0];
@@ -909,6 +910,10 @@ if (!function_exists('form_edit')) {
 		if ($recupera == 0) {
 			/* Valida */
 			$saved = valida_post($cp);
+			if ($saved > 0)
+				{
+					form_save($obj);
+				}
 		}
 
 		$tela = '';
@@ -1046,6 +1051,39 @@ if (!function_exists('form_edit')) {
 				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
 				if (strlen($vlr) == 0) { $vlr = date("Ym") . '01';
+				}
+				$tela .= '<TD>';
+				$tela .= form_dropdown($dados, $options, $vlr);
+				break;
+
+			/* Select Box */
+			case 'O' :
+				$ntype = trim(substr($type, 2, strlen($type)));
+				$ntype = troca($ntype, '&', ';') . ';';
+				$param = splitx(';', $ntype);
+				
+				$options = array('' => '::select an option::');
+				for ($r=0;$r < count($param);$r++)
+					{
+						if (count(trim($param[$r])) > 0)
+							{
+								$nterm = splitx(':',$param[$r].':');
+								$key = $nterm[0];
+								$valor = $nterm[1];
+								$options[$key] = $valor;
+							}
+					}
+
+				/* recupera dados */
+				$dados = array('name' => $dn, 'id' => $dn, 'size' => 1, 'class' => 'form_select');
+
+				$tela .= $tr;
+
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= $tdl . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
 				$tela .= '<TD>';
 				$tela .= form_dropdown($dados, $options, $vlr);
