@@ -8,6 +8,14 @@ a.botao-excluir {
 	background-color: #800000;
 	color: #FFFFFF;
 }
+
+.botao-grande
+	{
+	padding: 10px 20px 10px 20px;
+	margin-left: 10px;
+	}
+
+/* Corpo */
 body {
 	margin: 0px;
 	padding: 0px;

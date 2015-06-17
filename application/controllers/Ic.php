@@ -1,5 +1,5 @@
 <?php
-class equipamento extends CI_Controller {
+class ic extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -27,6 +27,7 @@ class equipamento extends CI_Controller {
 		$css = array();
 		$js = array();
 		array_push($css, 'style_cab.css');
+		array_push($css, 'switch_onoff.css');
 		array_push($css, 'form_sisdoc.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
@@ -37,7 +38,7 @@ class equipamento extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Pró-Equipamentos';
+		$data['title_page'] = 'Iniciação Científica';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
@@ -45,30 +46,49 @@ class equipamento extends CI_Controller {
 	function index($id = 0) {
 
 		/* Load Models */
-		$this -> load -> model('equipamentos');
+		//$this -> load -> model('ics');
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
 
-		$form = new form;
-		$form -> tabela = $this -> equipamentos -> tabela;
-		$form -> see = true;
-		$form = $this -> equipamentos -> row($form);
+		$tela['title'] = $this -> lang -> line('title_ic');
+		$tela['tela'] = '';
 
-		$form -> row_edit = base_url('index.php/equipamento/edit');
-		$form -> row_view = base_url('index.php/equipamento/view');
-		$form -> row = base_url('index.php/equipamento/');
-
-		$tela['tela'] = row($form, $id);
-
-		$tela['title'] = $this -> lang -> line('title_equipamento');
-
-		$this -> load -> view('form/form', $tela);
+		$this -> load -> view('ic/menu', $tela);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function acompanhamento()
+		{
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this->ics->cp_switch();
+		$data = array();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		
+		$form = new form;
+		$form->id = 1; /* IC */
+		
+		$tela = $form->editar($cp,$this->ics->tabela_acompanhamento);
+		
+		$data['title'] = msg('ic_acomanhamento_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form',$data);
+		
+		/* Salva */
+		if ($form->saved > 0)
+			{
+				redirect(base_url('index.php/ic/'));
+			}
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}
 
 	function view($id = 0, $check = '') {
 		/* Load Models */
@@ -77,41 +97,13 @@ class equipamento extends CI_Controller {
 		$this -> cab();
 		$this -> load -> view('header/content_open');
 		
-		$data = $this->equipamentos->le($id);
-
-		$this -> load -> view('equipamento/view', $data);
-		//$this -> load -> view('dgp/view_mygroups', $data);
-		//$this -> load -> view('dgp/view_indicadores', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 	
 	function edit($id = 0, $check = '') {
 		/* Load Models */
-		$this -> load -> model('equipamentos');
-		$cp = $this->equipamentos->cp();
-		$data = array();
-
-		$this -> cab();
-		$this -> load -> view('header/content_open');
-		
-		$form = new form;
-		$form->id = $id;
-		
-		$tela = $form->editar($cp,$this->equipamentos->tabela);
-		$data['title'] = msg('eq_equipamento_title');
-		$data['tela'] = $tela;
-		$this -> load -> view('form/form',$data);
-		
-		/* Salva */
-		if ($form->saved > 0)
-			{
-				redirect(base_url('index.php/equipamento'));
-			}
-		
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
 	}	
 
 }
-?>
+

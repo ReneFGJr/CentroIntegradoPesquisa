@@ -130,10 +130,60 @@ class csf extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function ajax($id=0,$chk='')
-		{
-			echo "OLA ".date("d/m/Y H:i:s");
+	function ajax_acao($id = 0, $ack = '', $chk = '') {
+		$this->load->model("csfs");
+		
+
+		$form = new form;
+		$form -> id = $id;
+		$form -> tabela = $this->csfs->tabela;
+		switch ($chk) {
+			case 'homologar' :
+				$cp = $this->csfs->cp_homologar();
+				$url = base_url('index.php/csf/ajax_acao/'.$id.'/'.$ack.'/'.$chk);
+				$tela = $form -> editar($cp, $this->csfs->tabela);
+				$rst = $form->ajax_submit($cp,$url,$ack);
+
+				if ($rst == '1')
+					{	/* saved */
+						$dh1 = $this->input->post('dd1');
+						$dh2 = $this->input->post('dd2');
+						$comment = 'Pais:['.$dh1.'],Previsao:['.$dh2.']';
+						$this->csfs->inserir_historico($id,2,$comment);
+						$tela = '<font color="green">'.msg('save successful').'</font>';
+					} else {
+						$tela .= ''.$rst;
+					}
+				echo $tela;	
+				break;
 		}
+		
+	}
+
+	function ajax($id = 0, $ack = '', $chk = '') {
+		$this -> load -> model('csfs');
+		$data = $this -> csfs -> le($id);
+
+		$sta = $data['csf_status'];
+		$data['ack'] = $ack;
+		$data['id'] = $id;
+		$content = '';
+
+		switch ($sta) {
+			case 1 :
+			/* Em homologacao */
+				$bts = array('cancelar' => 1, 'homologar' => 1);
+				$data = array_merge($bts, $data);
+				$this -> load -> view('csf/ajax_botao_acao.php', $data);
+				break;
+			default :
+				$content = 'Not found:' . $sta;
+				$data['content'] = $content;
+				$this -> load -> view('content', $data);
+				break;
+		}
+
+	}
 
 	function ver($id = 0, $chk = '') {
 		/* Models */
@@ -142,18 +192,18 @@ class csf extends CI_Controller {
 		$this -> load -> model('csfs');
 
 		$this -> cab();
-		
-		$line = $this->csfs->le($id);
+
+		$line = $this -> csfs -> le($id);
 		$data = $line;
-		
-		$aluno = trim($line['us_cracha']);  
+
+		$aluno = trim($line['us_cracha']);
 		$aluno_id = $line['id_us'];
-		
+
 		/* Parte II do formulario */
 		$alunoDados = $this -> estudantes -> readByCracha($aluno);
 		$this -> load -> view('usuario/view', $alunoDados);
-		
-		$data['content'] = '<BR><BR>'.$this->csfs->mostra_todas_csf($aluno_id);
+
+		$data['content'] = '<BR><BR>' . $this -> csfs -> mostra_todas_csf($aluno_id);
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');

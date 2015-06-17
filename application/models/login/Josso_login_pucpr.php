@@ -9,6 +9,7 @@ class josso_login_pucpr extends CI_Model {
 	
 	//var $desenvolvimento = 'https://sarch.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
 
+	var $id = 0;
 	var $cpf = '';
 	var $email = '';
 	var $josso = '';
@@ -24,7 +25,7 @@ class josso_login_pucpr extends CI_Model {
 	function security() {
 		
 		if ($this -> loged > 0) {
-			$dados = array('cracha'=>$this->cracha,'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);
+			$dados = array('id_us'=>$this->id,'cracha'=>$this->cracha,'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);
 			$this -> session -> set_userdata($dados);
 		} else {
 			

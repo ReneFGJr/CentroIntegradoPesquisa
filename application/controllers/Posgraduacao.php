@@ -1,5 +1,5 @@
 <?php
-class equipamento extends CI_Controller {
+class posgraduacao extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -29,7 +29,6 @@ class equipamento extends CI_Controller {
 		array_push($css, 'style_cab.css');
 		array_push($css, 'form_sisdoc.css');
 		array_push($js, 'js_cab.js');
-		array_push($js, 'unslider.min.js');
 
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
@@ -37,7 +36,7 @@ class equipamento extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Pró-Equipamentos';
+		$data['title_page'] = 'Pós-Graduação Stricto Sensu';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
@@ -45,24 +44,26 @@ class equipamento extends CI_Controller {
 	function index($id = 0) {
 
 		/* Load Models */
-		$this -> load -> model('equipamentos');
+		$this -> load -> model('programas_pos');
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
 
 		$form = new form;
-		$form -> tabela = $this -> equipamentos -> tabela;
+		$form -> tabela = $this -> programas_pos -> tabela;
 		$form -> see = true;
-		$form = $this -> equipamentos -> row($form);
+		$form -> edit = true;
+		
+		$form = $this -> programas_pos -> row($form);
 
-		$form -> row_edit = base_url('index.php/equipamento/edit');
-		$form -> row_view = base_url('index.php/equipamento/view');
-		$form -> row = base_url('index.php/equipamento/');
+		$form -> row_edit = base_url('index.php/posgraduacao/edit');
+		$form -> row_view = base_url('index.php/posgraduacao/view');
+		$form -> row = base_url('index.php/posgraduacao/');
 
 		$tela['tela'] = row($form, $id);
 
-		$tela['title'] = $this -> lang -> line('title_equipamento');
+		$tela['title'] = $this -> lang -> line('title_posgraduacao');
 
 		$this -> load -> view('form/form', $tela);
 
@@ -72,24 +73,20 @@ class equipamento extends CI_Controller {
 
 	function view($id = 0, $check = '') {
 		/* Load Models */
+		$data = array();
 		$this -> load -> model('equipamentos');
 
 		$this -> cab();
 		$this -> load -> view('header/content_open');
 		
-		$data = $this->equipamentos->le($id);
-
-		$this -> load -> view('equipamento/view', $data);
-		//$this -> load -> view('dgp/view_mygroups', $data);
-		//$this -> load -> view('dgp/view_indicadores', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 	
 	function edit($id = 0, $check = '') {
 		/* Load Models */
-		$this -> load -> model('equipamentos');
-		$cp = $this->equipamentos->cp();
+		$this -> load -> model('programas_pos');
+		$cp = $this->programas_pos->cp();
 		$data = array();
 
 		$this -> cab();
@@ -98,15 +95,15 @@ class equipamento extends CI_Controller {
 		$form = new form;
 		$form->id = $id;
 		
-		$tela = $form->editar($cp,$this->equipamentos->tabela);
-		$data['title'] = msg('eq_equipamento_title');
+		$tela = $form->editar($cp,$this->programas_pos->tabela);
+		$data['title'] = msg('eq_programas_pos_title');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form',$data);
 		
 		/* Salva */
 		if ($form->saved > 0)
 			{
-				redirect(base_url('index.php/equipamento'));
+				redirect(base_url('index.php/programas_pos'));
 			}
 		
 		$this -> load -> view('header/content_close');
@@ -114,4 +111,3 @@ class equipamento extends CI_Controller {
 	}	
 
 }
-?>

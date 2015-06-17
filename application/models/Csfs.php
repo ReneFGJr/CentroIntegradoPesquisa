@@ -1,6 +1,33 @@
 <?php
 class csfs extends CI_model {
 	var $tabela = "csf";
+	function inserir_historico($protocolo,$status,$text='')
+		{
+			$data = date("Y-m-d");
+			$hora = date("H:i:s");
+			$user = $this -> session -> userdata('cpf');
+			$sql = "insert into csf_historico 
+					(
+					slog_protocolo, slog_usuario, slog_status,
+					slog_data, slog_hora, slog_text
+					) values (
+					'$protocolo','$user','$status',
+					'$data','$hora','$text');
+			";
+			$this->db->query($sql);
+			return(True);
+		}
+	function cp_homologar()
+		{
+			$cp = array();
+			$cp = array();
+			$sql_pais = 'iso3:nome:select * from pais order by nome';
+			array_push($cp, array('$H8', 'id_csf', '', False, False));
+			array_push($cp, array('$Q '.$sql_pais, 'csf_pais', msg('csf_pais'), True, True));
+			array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
+			array_push($cp, array('$HV', 'csf_status', '2', True, True));
+			return($cp);			
+		}
 
 	function create_view() {
 		$cp = '*';
@@ -27,7 +54,6 @@ class csfs extends CI_model {
 		$sql = "select * from csf_view where id_csf = " . $id;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
-
 		$line = $rlt[0];
 		return ($line);
 	}
@@ -103,12 +129,12 @@ class csfs extends CI_model {
 			$sx .= '</td>';
 			
 			$sx .= '<td class="borderb1">';
-			$img = '<img src="'.base_url('img/icon/icone_editar.png').'" border=0 height="24" onclick="mostra(\'#csf'.$r.'\','.$line['id_csf'].');" class="link">';
+			$img = '<img src="'.base_url('img/icon/icone_editar.png').'" border=0 height="24" onclick="mostra(\'csf'.$r.'\','.$line['id_csf'].');" class="link">';
 			$sx .= $img;
 			$sx .= '</td>';
 			
 			$sx .= '<tr><td colspan=10>';
-			$sx .= '<div id="csf'.$r.'" style="display:none; width: 100%;">xx</div>';
+			$sx .= '<div id="csf'.$r.'" style="display:none; width: 100%;">aguarde ...</div>';
 			$sx .= '</td></tr>';			
 		}
 		$sx .= '<tr><td colspan=10 class="lt0">* Previsão</td></tr>';
@@ -118,16 +144,18 @@ class csfs extends CI_model {
 		<script>
 			function mostra($id,$reg)
 				{
-					$($id).fadeIn();
-					var $url = "'.base_url('index.php/csf/ajax/').'/"+$reg;
+					
+					$idr = "#"+$id;
+					$($idr).fadeIn();
+					var $url = "'.base_url('index.php/csf/ajax/').'/"+$reg+"/"+$id;
 					$.ajax({
 					        url: $url,
 					        type: "post",
 					        success: function(data){
-					            $($id).html(\'Submitted successfully\' + data);
+					            $($idr).html(data);
 					        },
 					        error:function(data){
-					            $($id).html(\'There is error while submit\' + data);
+					            $($idr).html(data);
 					        }
 					    });					
 				}

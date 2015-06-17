@@ -1,6 +1,7 @@
 <!--- LOGIN --->
 <div id="login_cab">
 	<div id="login_logos">
+		<img src="<?php echo base_url('img/imagem_lampada_cabecalho.png');?>" style="width: 30%;">
 		<div id="login_logos_img"></div>
 		<div id="login_versao"><?php echo $login_versao;?> <?php echo $versao;?></div>
 	</div>
