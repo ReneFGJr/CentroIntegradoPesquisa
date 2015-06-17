@@ -1,5 +1,6 @@
 <?php
-class pibicpr extends CI_Controller {
+class Fomento extends CI_Controller {
+	
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -21,8 +22,14 @@ class pibicpr extends CI_Controller {
 
 		//$this -> lang -> load("app", "english");
 	}
+	
+	public function index(){
+	
+	$this ->load->model('action_edit_edital_fomento');
+		
+	}
 
-	function cab() {
+	public function cab() {
 
 		/* Carrega classes adicionais */
 		$css = array();
@@ -36,39 +43,29 @@ class pibicpr extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Iniciação Científica';
-		$data['menu'] = 0;
+		$data['title_page'] = 'Edital Fomento';
+		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
-
 	}
 	
-	function avaliadoresIN()
+	public function editEditalFomento()
 		{
 		$this -> cab();
-		$this -> load -> view('header/content_open');		
-		$this -> load -> view('avaliador/perfil');
-		$this -> load -> view('avaliador/perfil_resumo');
-		$this -> load -> view('avaliador/perfil_areas');
-		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/content_open');
 		
+		//chama a View		
+		$this -> load -> view('fomento/edit_edital_fomento.php');
+		
+		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot');			
 		}
-
-	function index() {
-		$this -> cab();
-		/* Menu */
-		$menu = array();
-		array_push($menu, array('Avaliadores IC', 'Avaliadores Internos', 'ITE', '/pibicpr/avaliadoresIN'));
-		array_push($menu, array('Avaliadores IC', 'Avaliadores Externos', 'ITE', '/pibicpr/avaliadoresOUT'));
 		
-		array_push($menu, array('Áres do conhecimento', 'Áreas CNPq/CAPES', 'ITE', '/pibicpr/areasdoconhecimento'));
-
-		$data['menu'] = $menu;
-		$data['title_menu'] = 'Menu Principal';
-		$this -> load -> view('header/main_menu', $data);
-
-		$this -> load -> view('header/foot');
+	public function salvar(){
+		
+		
+		
 	}
+	
 
 }
 
