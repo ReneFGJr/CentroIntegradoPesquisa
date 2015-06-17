@@ -1,7 +1,6 @@
 <?php
-$dados = $this -> session -> userdata();
-$nome = $dados['nome'];
-$cracha = $dados['cracha'];
+$nome = $this -> session -> userdata('nome');
+$cracha = $this -> session -> userdata('cracha');
 
 $link = 'index.php/';
 ?>

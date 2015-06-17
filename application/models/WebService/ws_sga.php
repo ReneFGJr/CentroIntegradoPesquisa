@@ -34,10 +34,9 @@ class ws_sga extends CI_model {
 				$wsdl = $this -> desenvolvimento;
 				break;
 		}
-
+		
 		$client = new soapclient($wsdl, true);
 		$response = $client -> call('opPesquisarPorCodigo', $param);
-
 		$DadoAluno = $response['DadoAluno'];
 
 		if (count($DadoAluno) == 0) {
@@ -46,7 +45,7 @@ class ws_sga extends CI_model {
 		}
 
 		/* Modelo 1 - Somente um curso */
-		if (strlen(trim($DadoAluno['pessoa'])) > 0) {
+		if (isset($DadoAluno['pessoa'])) {
 			$DadoAluno['tipo'] = '2';
 			/* Aluno */
 			$this -> load -> model('usuarios');
@@ -83,8 +82,9 @@ class ws_sga extends CI_model {
 				}
 
 			}
+
 			if (count($pref1) > 0) {
-				$DadoAluno = $pref1;
+				$DadoAluno = $pref1[0];
 				$DadoAluno['tipo'] = '2';
 				/* Aluno */
 				$this -> load -> model('usuarios');
@@ -92,7 +92,7 @@ class ws_sga extends CI_model {
 				return ($pref1[0]);
 			}
 			if (count($pref3) > 0) {
-				$DadoAluno = $pref1;
+				$DadoAluno = $pref3[0];
 				$DadoAluno['tipo'] = '2';
 				/* Aluno */
 				$this -> load -> model('usuarios');

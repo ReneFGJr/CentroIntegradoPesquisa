@@ -62,15 +62,14 @@ $eq_disponibilidade = '
 	</table>
 ';
 
-$eq_similar = 
-'<table width="100" class="lt0">
-<tr><td align="center"><img src="'.base_url('img/equipamento/pd_0000002.jpg').'" border=0 width="70">
+$eq_similar = '<table width="100" class="lt0">
+<tr><td align="center"><img src="' . base_url('img/equipamento/pd_0000002.jpg') . '" border=0 width="70">
 <BR>Microscópio Digital<BR>Maredal</td></tr>
-<tr><td align="center"><BR><BR><img src="'.base_url('img/equipamento/pd_0000002a.jpg').'" border=0 width="70">
+<tr><td align="center"><BR><BR><img src="' . base_url('img/equipamento/pd_0000002a.jpg') . '" border=0 width="70">
 <BR>Microscópio Digital<BR>Maredal</td></tr>
-<tr><td align="center"><BR><BR><img src="'.base_url('img/equipamento/pd_0000002b.jpg').'" border=0 width="70">
+<tr><td align="center"><BR><BR><img src="' . base_url('img/equipamento/pd_0000002b.jpg') . '" border=0 width="70">
 <BR>Microscópio Digital<BR>Maredal</td></tr>
-<tr><td align="center"><BR><BR><img src="'.base_url('img/equipamento/pd_0000002c.jpg').'" border=0 width="70">
+<tr><td align="center"><BR><BR><img src="' . base_url('img/equipamento/pd_0000002c.jpg') . '" border=0 width="70">
 <BR>Microscópio Digital<BR>Maredal</td></tr>
 </table>
 ';
@@ -84,7 +83,8 @@ $eq_cat_contabil_nome = 'Equipamentos de Laboratório';
 $eq_escola = 'Escola de Saúde de Biociências';
 $eq_localizacao = 'Laboratório de Genética';
 $eq_modelo = 'PKMA-123';
-$eq_preco = 'R$ '.number_format(1415,2,',','.');
+$eq_procedencia = 'IMPORTADO';
+$eq_preco = 'R$ ' . number_format(1415, 2, ',', '.');
 
 $eq_descricao = mst('Summary
 The OM118-M3 is an excellent monocular starter microscope and is combined here with a choice of 3 useful accessory options. The microscope includes 3 objectives (4x, 10x, 40x) and a WF10x eyepiece.
@@ -117,61 +117,66 @@ CD-ROM Software disc, 30mm collar, 30.5mm collar (collars not included with OCS 
 <table width="98%" border=0 cellpadding=5 cellspacing=2 align="center" class="lt1">
 	<tr valign="top">
 		<td rowspan=20 width="300" align="center">
-			<div id="picture"><img src="<?php echo $eq_img;?>" width="300"></div>
-		</td>
+		<div id="picture"><img src="<?php echo $eq_img;?>" width="300">
+		</div></td>
 		<td colspan=4 class="lt6 borderb1"><?php echo $pe_nome;?></td>
-		<td width="10" rowspan=20><div style="width:10px;"></div>
-		<td width="150" rowspan=20 style="border-left: 1px solid #333333">
-			<B><?php echo msg('eq_similares');?></B>
-			<?php echo $eq_similar;?>
-		</td>
+		<td width="10" rowspan=20><div style="width:10px;"></div><td width="150" rowspan=20 style="border-left: 1px solid #333333"><B><?php echo msg('eq_similares');?></B><?php echo $eq_similar;?></td>
 	</tr>
-	
-	<tr><td colspan=4><div style="min-height: 20px;"></div></td></tr>
-	
+	<tr>
+		<td colspan=4><div style="min-height: 20px;"></div></td>
+	</tr>
 	<tr>
 		<td align="right" width="80"><?php echo msg('eq_marca');?></td>
 		<td class="lt2 border1" width="40%"><?php echo $pe_marca;?></td>
-		
 		<td align="right" width="80"><?php echo msg('eq_part_number');?></td>
 		<td class="lt2 border1" width="40%"><?php echo $eq_part_number;?></td>
 	</tr>
-	
 	<tr>
 		<td align="right"><?php echo msg('eq_modelo');?></td>
 		<td class="lt2 border1"><?php echo $pe_modelo;?></td>
-		
 		<td align="right"><?php echo msg('eq_preco');?></td>
-		<td class="lt2 border1">R$ <?php echo Number_format($pe_preco,2,',','.');?></td>
-	</tr>	
-
+		<td class="lt2 border1">R$ <?php echo Number_format($pe_preco, 2, ',', '.');?></td>
+	</tr>
 	<tr>
 		<td align="right"><?php echo msg('eq_protudo_tipo');?></td>
 		<td class="lt2 border1"><?php echo $pet_descricao;?></td>
-		
 		<td align="right"><?php echo msg('eq_cat_contabil_nome');?></td>
 		<td class="lt2 border1"><?php echo $pec_descricao;?></td>
 	</tr>
-	
-	<tr><td colspan=4 class="borderb1"><div style="min-height: 20px;"></div></td></tr>
-	
+	<tr>
+		<td align="right"><?php echo msg('');?></td>
+		<td class="lt2 border1"><?php //echo $pet_descricao;//?></td>
+		<td align="right"><?php echo msg('eq_procedencia');?></td>
+		<td class="lt2 border1"><?php echo $eq_procedencia;?></td>
+	</tr>	
+	<tr>
+		<td colspan=4 class="borderb1"><div style="min-height: 20px;"></div></td>
+	</tr>
 	<tr>
 		<td align="left" colspan=4><?php echo msg('eq_disponibilidade');?></td>
 	</tr>
 	<tr>
 		<td class="lt2 border1" colspan=4><?php echo $eq_disponibilidade;?></td>
-	</tr>	
+	</tr>
 	
-	<tr><td colspan=4 class="borderb1"><div style="min-height: 20px;"></div></td></tr>
-
 	<tr>
-		
-		<td class="lt1" colspan=4>
-			<?php echo $eq_descricao;?></td>
-	</tr>	
-	
+		<td colspan=4>
+			<ul>
+				<li>Projetos vinculados</li>
+				<li>Responsável do laboratório</li>
+				<li>Necessidade de materias para uso</li>
+				<li>Politica de uso de material / material</li>
+				<li>Tipos do uso do equipamento</li>
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td colspan=4 class="borderb1"><div style="min-height: 20px;"></div></td>
+	</tr>
+	<tr>
+		<td class="lt1" colspan=4><?php echo $eq_descricao;?></td>
+	</tr>
 	<tr>
 		<td colspan="4"><div style="min-height: 200px;"></div></td>
 	</tr>
-		
 </table>
