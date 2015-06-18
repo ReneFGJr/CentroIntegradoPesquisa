@@ -151,6 +151,7 @@ class csf extends CI_Controller {
 						$comment = 'Pais:['.$dh1.'],Previsao:['.$dh2.']';
 						$this->csfs->inserir_historico($id,2,$comment);
 						$tela = '<font color="green">'.msg('save successful').'</font>';
+						reload();
 					} else {
 						$tela .= ''.$rst;
 					}
@@ -168,6 +169,7 @@ class csf extends CI_Controller {
 						$comment = 'Justificativa:['.$dh1.']';
 						$this->csfs->inserir_historico($id,9,$comment);
 						$tela = '<font color="green">'.msg('save successful').'</font>';
+						reload();
 					} else {
 						$tela .= ''.$rst;
 					}
@@ -186,6 +188,7 @@ class csf extends CI_Controller {
 						$comment = 'Pais:['.$dh1.'],Previsao:['.$dh2.']';
 						$this->csfs->inserir_historico($id,3,$comment);
 						$tela = '<font color="green">'.msg('save successful').'</font>';
+						reload();
 					} else {
 						$tela .= ''.$rst;
 					}
@@ -203,6 +206,7 @@ class csf extends CI_Controller {
 						$comment = 'Justificativa:['.$dh1.']';
 						$this->csfs->inserir_historico($id,10,$comment);
 						$tela = '<font color="green">'.msg('save successful').'</font>';
+						reload();
 					} else {
 						$tela .= ''.$rst;
 					}
@@ -220,8 +224,9 @@ class csf extends CI_Controller {
 						$dh2 = $this->input->post('dd2');
 						$dh5 = $this->input->post('dd5');
 						$comment = 'Pais:['.$dh1.'],Previsao:['.$dh2.'],Parceira:['.$dh5.']';
-						$this->csfs->inserir_historico($id,3,$comment);
+						$this->csfs->inserir_historico($id,4,$comment);
 						$tela = '<font color="green">'.msg('save successful').'</font>';
+						reload();
 					} else {
 						$tela .= ''.$rst;
 					}
@@ -239,6 +244,7 @@ class csf extends CI_Controller {
 						$comment = 'Justificativa:['.$dh1.']';
 						$this->csfs->inserir_historico($id,10,$comment);
 						$tela = '<font color="green">'.msg('save successful').'</font>';
+						reload();
 					} else {
 						$tela .= ''.$rst;
 					}
@@ -256,6 +262,7 @@ class csf extends CI_Controller {
 						$comment = 'Justificativa:['.$dh1.']';
 						$this->csfs->inserir_historico($id,8,$comment);
 						$tela = '<font color="green">'.msg('save successful').'</font>';
+						reload();
 					} else {
 						$tela .= ''.$rst;
 					}
@@ -272,8 +279,9 @@ class csf extends CI_Controller {
 					{	/* saved */
 						$dh1 = $this->input->post('dd1');
 						$comment = 'Justificativa:['.$dh1.']';
-						$this->csfs->inserir_historico($id,8,$comment);
+						$this->csfs->inserir_historico($id,5,$comment);
 						$tela = '<font color="green">'.msg('save successful').'</font>';
+						reload();
 					} else {
 						$tela .= ''.$rst;
 					}
@@ -369,8 +377,16 @@ class csf extends CI_Controller {
 		
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">'.msg('scf_historico').'</legend>' . $this->csfs->mostra_historico($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
-
-		$this -> load -> view('header/content_close');
+		
+		$this -> load -> model('geds');
+		$this->geds->tabela = 'csf_ged';
+		$this->geds->protodolo = $id;
+		$data['content'] = $this->geds->list_files($id,False);		
+		$this -> load -> view('content', $data);
+		
+		$data['content'] = $this->geds->form_upload($id);
+		$this -> load -> view('content', $data);
+		
 		$this -> load -> view('header/foot', $data);
 	}
 
@@ -378,15 +394,52 @@ class csf extends CI_Controller {
 		$this -> cab();
 		$data = array();
 
+		/* Model */
 		$this -> load -> model('csfs');
 
 		$this -> load -> view('usuario/view', $data);
 
 		$data['content'] = $this -> csfs -> mostra_bolsa($id);
 		$this -> load -> view('content', $data);
+		
+		
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	/**** GEDS */
+	function ged($id = 0, $proto = '', $tipo = '', $check = '') {
+		$this -> load -> database();
+
+		$this -> load -> library('session');
+		$this -> load -> helper('url');
+		$this -> lang -> load("app", "portuguese");
+
+		$this -> load -> model('geds');
+
+		$this -> geds -> tabela = 'csf_ged';
+		$this -> geds -> page = base_url('index.php/csf/ged/'.$id);
+
+		$data['content'] = $this -> geds -> form($id, $proto, $tipo);
+		$this -> load -> view('content', $data);
+	}
+
+	function ged_download($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'csf_ged';
+		$this -> geds -> file_path = '_document/';
+		$this -> geds -> download($id);
+	}
+
+	function ged_excluir($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'csf_ged';
+		$this -> geds -> file_path = '_document/';
+		$this -> geds -> file_delete($id);
+	}	
 
 }

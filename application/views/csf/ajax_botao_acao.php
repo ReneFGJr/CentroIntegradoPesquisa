@@ -22,7 +22,7 @@ if (!isset($troca_universidade)) { $troca_universidade = 0;
 }
 if (!isset($troca_pais)) { $troca_pais = 0;
 }
-if (!isset($desistente)) { $desistente = 0;
+if (!isset($retorno)) { $retorno = 0;
 }
 if (!isset($desistente)) { $desistente = 0;
 }
@@ -66,14 +66,6 @@ if ($desistente == 1) {
 	echo '<input type="button" value="' . msg('csf_bt_desistente') . '" class="botao-grande" onclick="bt_enviar(\'desistente\');" >';
 }
 
-if ($viagem == 1) {
-	echo '<input type="button" value="' . msg('csf_bt_viagem') . '" class="botao-grande" onclick="bt_enviar(\'homologar_viagem\');" >';
-}
-
-if ($fim_viagem == 1) {
-	echo '<input type="button" value="' . msg('csf_bt_fim_viagem') . '" class="botao-grande" onclick="bt_enviar(\'fim_viagem\');" >';
-}
-
 if ($troca_universidade == 1) {
 	echo '<input type="button" value="' . msg('csf_bt_troca_universidade') . '" class="botao-grande" onclick="bt_enviar(\'troca_universidade\');" >';
 }
@@ -82,7 +74,17 @@ if ($troca_pais == 1) {
 	echo '<input type="button" value="' . msg('csf_bt_troca_pais') . '" class="botao-grande" onclick="bt_enviar(\'troca_pais\');" >';
 }
 
+if ($retorno == 1) {
+	echo '<input type="button" value="' . msg('csf_bt_retorno') . '" class="botao-grande" onclick="bt_enviar(\'retorno\');" >';
+}
 
+if ($viagem == 1) {
+	echo '<input type="button" value="' . msg('csf_bt_viagem') . '" class="botao-grande" onclick="bt_enviar(\'homologar_viagem\');" >';
+}
+
+if ($fim_viagem == 1) {
+	echo '<input type="button" value="' . msg('csf_bt_fim_viagem') . '" class="botao-grande" onclick="bt_enviar(\'fim_viagem\');" >';
+}
 
 echo '
 <script>

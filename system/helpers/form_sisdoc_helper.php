@@ -131,6 +131,16 @@ function object_to_array($object) {
 	return (array)$object;
 }
 
+function reload($tipo='J')
+	{
+		$sx = '
+		<script>
+			location.reload();
+		</script>
+		';
+		echo $sx;
+	}
+
 /* Recupera IP
  * @author Rene F. Gabriel Junior <renefgj@gmail.com>
  * @versao v0.15.23
