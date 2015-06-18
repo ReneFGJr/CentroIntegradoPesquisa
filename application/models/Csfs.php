@@ -332,7 +332,7 @@ class csfs extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 
-		$sx = '<table width="500" align="left" class="border1 tabela00">';
+		$sx = '<table width="500" class="border1 tabela00">';
 		$sx .= '<tr>
 						<th>situação</th>
 						<th>estudantes</th>

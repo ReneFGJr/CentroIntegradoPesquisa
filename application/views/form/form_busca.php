@@ -9,9 +9,11 @@ if (!isset($link_form)) {
 ?>
 <div id="form_search">
 	<form method="post" action="<?php echo $link_form;?>">
-		<?php echo $this->lang->line('fast_search');?>
 		<BR>
-		<table cellpadding="0" cellspacing="0">
+		<table cellpadding="0" cellspacing="0" align="center">
+			<tr>
+				<td colspan=2><?php echo $this->lang->line('fast_search');?></td>
+			</tr>
 			<tr>
 				<td>
 				<input type="text" name="dd89" id="dd89" class="form_search_in" value="<?php echo $dd89;?>" placeholder="<?php echo $this->lang->line('fast_search_place');?>">
