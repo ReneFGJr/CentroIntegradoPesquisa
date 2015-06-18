@@ -45,7 +45,7 @@ class Fomentos extends CI_model {
 			array_push($cp,array('$D','ed_data_2',msg('fm_data_02'),false,True));
 			array_push($cp,array('$D','ed_data_3',msg('fm_data_03'),false,True));
 			array_push($cp,array('$O : &0:Não&1:Sim', 'ed_fluxo_continuo', msg('fm_fluxo_continuo'), True, True));
-			array_push($cp,array('$C', 'ed_document_require', msg('fm_assinatura'), False, True));
+			array_push($cp,array('$C1', 'ed_document_require', msg('fm_assinatura'), False, True));
 			
 			
 			
