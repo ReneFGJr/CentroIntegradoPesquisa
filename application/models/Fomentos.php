@@ -27,7 +27,7 @@ class Fomentos extends CI_model {
 			array_push($cp,array('$T70:3','ed_titulo',msg('fm_titulo'),True,True));
 			array_push($cp,array('$S70','ed_titulo_email',msg('fm_titulo_email'),false,True));
 			//array_push($cp,array('$Q agf_nome:agf_codigo:select * from agencia_de_fomento where agf_ativo=1 order by agf_nome', 'fm_agencia', '', False, True));
-			array_push($cp,array('$O : &Observatório:Observatório&IC:IC', 'ed_local', msg('fm_disseminador'), False, True));
+			array_push($cp,array('$O Observatório:Observatório&IC:IC', 'ed_local', msg('fm_disseminador'), False, True));
 			/* tipos */
 			$op_tipo = '';
 			$tp = $this -> tipo_edital();
@@ -36,15 +36,15 @@ class Fomentos extends CI_model {
 				$op_tipo .= ':';
 				$op_tipo .= trim($tp[$r]);
 			}
-			array_push($cp,array('$O : ' . $op_tipo, 'ed_edital_tipo', msg('fm_tipo_edital'), true, True));
-			array_push($cp,array('$O : &pt_BR:Portugues&us_EN:Inglês','ed_idioma',msg('fm_idioma'),true,True));
+			array_push($cp,array('$O ' . $op_tipo, 'ed_edital_tipo', msg('fm_tipo_edital'), true, True));
+			array_push($cp,array('$O pt_BR:Portugues&us_EN:Inglês','ed_idioma',msg('fm_idioma'),true,True));
 			array_push($cp,array('$S20', 'ed_chamada', msg('fm_chamada'), True, True));
 			//array_push($cp, array('$H8', '', '', False, True));
 			array_push($cp,array('$D','ed_data_1',msg('fm_data_01'),false,True));
 			array_push($cp,array('$M', '', $info, False, True));
 			array_push($cp,array('$D','ed_data_2',msg('fm_data_02'),false,True));
 			array_push($cp,array('$D','ed_data_3',msg('fm_data_03'),false,True));
-			array_push($cp,array('$O : &0:Não&1:Sim', 'ed_fluxo_continuo', msg('fm_fluxo_continuo'), True, True));
+			array_push($cp,array('$O 0:Não&1:Sim', 'ed_fluxo_continuo', msg('fm_fluxo_continuo'), True, True));
 			array_push($cp,array('$C1', 'ed_document_require', msg('fm_assinatura'), False, True));
 			
 			

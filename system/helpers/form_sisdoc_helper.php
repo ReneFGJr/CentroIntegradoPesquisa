@@ -934,12 +934,27 @@ if (!function_exists('form_edit')) {
 			$sq2 = '';
 			$sv = 0;
 			for ($r = 1; $r < count($cp); $r++) {
+				/* verifica se existe parametro */
 				$vlr = $CI -> input -> post('dd' . $r);
+				$cpt = $cp[$r][0];
 				/* Checkbox */
 				if (substr($cpt, 0, 3) == '$SW') {
 					if (strlen($vlr) == 0) { $vlr = '0';
 					}
 				}
+				/* Checkbox */
+				if (substr($cpt, 0, 2) == '$N') {
+					if (strlen($vlr) == 0) { $vlr = '0';
+					}
+					$vlr = troca($vlr,'.','');
+					$vlr = troca($vlr,',','.');
+				}
+				/* Data */
+				if (substr($cpt, 0, 2) == '$D') {
+					$vlr = strzero(sonumero($vlr),8);
+					$vlr = substr($vlr,4,4).'-'.substr($vlr,2,2).'-'.substr($vlr,0,2);					
+				}				
+
 				/* Salvar */
 				if (isset($vlr)) {
 
@@ -1244,6 +1259,24 @@ if (!function_exists('form_edit')) {
 				$tela .= form_submit($dados);
 				$tela .= $tdn . $trn;
 				break;
+			case 'C' :
+			/* TR da tabela */
+				$tela .= $tr;
+
+				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
+				if ($readonly == false) { $dados['readonly'] = 'readonly';
+				}
+				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr); ;
+
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= '<td>' . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
+				}
+
+				$tela .= $tdn . $trn;
+				break;				
 
 			/* Oculto */
 			case 'H' :
@@ -1401,6 +1434,15 @@ if (!function_exists('form_edit')) {
 				  </script>
 				';
 				break;
+
+			case 'M' :
+			/* TR da tabela */
+				$tela .= $tr;
+
+				/* label */
+				$tela .= '<td colspan=1>' . '<span class="lt1">'.$label.'</span>';
+				$tela .= $tdn . $trn;
+				break;					
 				
 			/* form_number */
 			case 'N' :
