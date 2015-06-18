@@ -1,6 +1,6 @@
 <?php
 $editar = 1;
-$link = '<a href="'.base_url('index.php/Fomento/edit/'.$id.'/'.checkpost_link($id)).'">';
+$link = '<a href="'.base_url('index.php/edital/edit/'.$id.'/'.checkpost_link($id)).'">';
 ?>
 <table>
 	<tr>

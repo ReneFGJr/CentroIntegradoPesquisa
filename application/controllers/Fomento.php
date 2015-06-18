@@ -101,7 +101,7 @@ class Fomento extends CI_Controller {
 		/* Salva */
 		if ($form->saved > 0)
 			{
-				redirect(base_url('index.php/fomento'));
+				redirect(base_url('index.php/edital/row'));
 			}
 		
 		$this -> load -> view('header/content_close');

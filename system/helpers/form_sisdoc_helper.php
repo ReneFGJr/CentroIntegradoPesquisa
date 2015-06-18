@@ -1467,7 +1467,7 @@ if (!function_exists('form_edit')) {
 				break;
 			/* Update */
 			case 'U' :
-				if (round($vlr) == 0) { $vlr = date("Ymd");
+				if (round($vlr) == 0) { $vlr = date("Y-m-d");
 				}
 				$dados = array($dn => $vlr);
 				$tela .= form_hidden($dados);

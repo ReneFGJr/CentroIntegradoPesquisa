@@ -1,5 +1,5 @@
 <?php
-	$classAction = "index.php/Fomento/editEditalFomento.php";
+	$classAction = "index.php/edital/editEditalFomento.php";
 ?>
 
 <html>

@@ -14,7 +14,7 @@ class Fomentos extends CI_model {
 			array_push($cp,array('$S50','ed_idioma',msg('fm_idioma'),false,True));
 			array_push($cp,array('$S20','ed_autor',msg('fm_autor'),true,True));
 			
-			array_push($cp,array('$U','ed_data',msg('fm_data_01'),false,True));
+			array_push($cp,array('$D','ed_data',msg('fm_data_01'),false,True));
 			array_push($cp,array('$D','ed_data_1',msg('fm_data_02'),false,True));
 			array_push($cp,array('$D','ed_data_2',msg('fm_data_03'),false,True));
 			array_push($cp,array('$D','ed_data_3',msg('fm_data_04'),false,True));

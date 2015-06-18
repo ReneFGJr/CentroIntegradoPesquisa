@@ -90,23 +90,49 @@ class edital extends CI_Controller {
 	function view($id = 0, $chk = '') {
 		$this -> cab();
 		$this -> load -> model('fomento_editais');
-		
+
 		$tela = '<table width="100%" border=0>';
 		$tela .= '<tr valign="top">';
 		$tela .= '<td>';
-		$tela .= $this->fomento_editais->public_selector($id);
-		
+		$tela .= $this -> fomento_editais -> public_selector($id);
+
 		$tela .= '<td>';
-		$tela .= $this->fomento_editais->show_edital($id);
-		
+		$tela .= $this -> fomento_editais -> show_edital($id);
+
 		$tela .= '</table>';
-		
+
 		$data['content'] = $tela;
 		$data['id'] = $id;
-		
-		$this -> load -> view('fomento/resumo',$data);
-		$this -> load -> view('content',$data);
-		
+
+		$this -> load -> view('fomento/resumo', $data);
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function edit($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('fomentos');
+		$cp = $this -> fomentos -> cp();
+		$data = array();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> fomentos -> tabela);
+		$data['title'] = msg('fm_titulo');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/edital/row'));
+		}
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}

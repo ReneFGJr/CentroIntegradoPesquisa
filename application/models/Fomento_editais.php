@@ -77,7 +77,7 @@ class fomento_editais extends CI_model {
 		 */
 			$sql = "select * from fomento_categoria
 						left join fomento_edital_categoria on catp_categoria = id_ct and catp_produto = $id and ct_ativo = 1
-						where ct_ref = $idr order by ct_descricao";
+						where id_ct = $idr order by ct_descricao";
 
 			$rlt2 = $this -> db -> query($sql);
 			$rlt2 = $rlt2 -> result_array($rlt2);
