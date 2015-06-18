@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.7.1
+-- version 4.4.8
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Jun 15, 2015 at 12:31 PM
--- Server version: 5.6.20-log
--- PHP Version: 5.4.31
+-- Host: 10.100.4.24
+-- Generation Time: Jun 18, 2015 at 04:25 PM
+-- Server version: 5.6.19
+-- PHP Version: 5.4.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `ajax_areadoconhecimento` (
-`id_aa` bigint(20) unsigned NOT NULL,
+  `id_aa` bigint(20) unsigned NOT NULL,
   `a_cnpq` char(16) DEFAULT NULL,
   `a_descricao` char(100) DEFAULT NULL,
   `a_codigo` char(7) DEFAULT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `ajax_areadoconhecimento` (
   `a_ativo` char(1) DEFAULT NULL,
   `a_submit` char(1) DEFAULT NULL,
   `a_journal` char(1) DEFAULT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1389 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `ajax_areadoconhecimento`
@@ -648,8 +648,7 @@ INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codi
 (603, '3.03.03.07-9', 'Usinagem', '0000492', '', 0, '', '1', '1'),
 (604, '3.03.04.00-8', 'Metalurgia Fisica', '0000493', '', 0, '', '1', '1'),
 (605, '3.03.04.01-6', 'Estrutura dos Metais e Ligas', '0000494', '', 0, '', '1', '1'),
-(606, '3.03.04.02-4', 'Propriedades Físicas dos Metais e Ligas', '0000495', '', 0, '', '1', '1');
-INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codigo`, `a_geral`, `a_semic`, `a_ativo`, `a_submit`, `a_journal`) VALUES
+(606, '3.03.04.02-4', 'Propriedades Físicas dos Metais e Ligas', '0000495', '', 0, '', '1', '1'),
 (607, '3.03.04.03-2', 'Propriedades Mecânicas dos Metais e Ligas', '0000496', '', 0, '', '1', '1'),
 (608, '3.03.04.05-9', 'Corrosão', '0000498', '', 0, '', '1', '1'),
 (609, '3.03.05.01-2', 'Extração e Transformação de Materiais', '0000500', '', 0, '', '1', '1'),
@@ -658,7 +657,8 @@ INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codi
 (612, '3.04.01.00-3', 'Materiais Elétricos', '0000505', '', 0, '', '1', '1'),
 (613, '3.04.01.01-1', 'Materiais Condutores', '0000506', '', 0, '', '1', '1'),
 (614, '3.03.00.00-2', 'Engenharia de Materiais e Metalúrgica', '0000475', '', 1, '', '1', '1'),
-(615, '3.04.00.00-7', 'Engenharia Elétrica', '0000504', '', 1, '', '1', '1'),
+(615, '3.04.00.00-7', 'Engenharia Elétrica', '0000504', '', 1, '', '1', '1');
+INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codigo`, `a_geral`, `a_semic`, `a_ativo`, `a_submit`, `a_journal`) VALUES
 (616, '3.02.00.00-8', 'Engenharia de Minas', '0000464', '', 0, '', '1', '1'),
 (617, '3.04.01.04-6', 'Materiais Dielétricos, Piesoelétricos e Ferroelétricos', '0000509', '', 0, '', '1', '1'),
 (618, '3.04.01.06-2', 'Materiais e Dispositivos Magnéticos', '0000511', '', 0, '', '1', '1'),
@@ -1230,8 +1230,7 @@ INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codi
 (1184, 'X.X.X.X.A', 'Metafísica', '0001168', '', 0, '', '0', '1'),
 (1185, '7.07.01.02-4', 'Metodologia, Instrumentação e Equipamento em Psicologia', '0001220', '', 0, '', '1', '1'),
 (1186, '7.07.01.03-2', 'Construção e Validade de Testes, Escalas e Outras Medidas Psicológicas', '0001221', '', 0, '', '1', '1'),
-(1187, '7.07.01.04-0', 'Técnicas de Processamento Estatístico, Matemático e Computacional em Psicologia', '0001222', '', 0, '', '1', '1');
-INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codigo`, `a_geral`, `a_semic`, `a_ativo`, `a_submit`, `a_journal`) VALUES
+(1187, '7.07.01.04-0', 'Técnicas de Processamento Estatístico, Matemático e Computacional em Psicologia', '0001222', '', 0, '', '1', '1'),
 (1188, '7.07.02.01-2', 'Processos Perceptuais e Motores', '0001224', '', 0, '', '1', '1'),
 (1189, '7.07.02.02-0', 'Processos de Aprendizagem, Memória e Motivação', '0001225', '', 0, '', '1', '1'),
 (1190, '7.07.00.00-1', 'Psicologia', '0001217', '', 1, '', '1', '1'),
@@ -1248,7 +1247,8 @@ INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codi
 (1201, '7.07.06.00-0', 'Psicologia Cognitiva', '0001240', '', 0, '', '1', '1'),
 (1202, '7.07.07.01-4', 'Processos Perceptuais e Cognitivos (Desenvolvimento)', '0001242', '', 0, '', '1', '1'),
 (1203, '7.07.07.02-2', 'Desenvolvimento Social e da Personalidade', '0001243', '', 0, '', '1', '1'),
-(1204, '7.07.08.00-2', 'Psicologia do Ensino e da Aprendizagem', '0001244', '', 0, '', '1', '1'),
+(1204, '7.07.08.00-2', 'Psicologia do Ensino e da Aprendizagem', '0001244', '', 0, '', '1', '1');
+INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codigo`, `a_geral`, `a_semic`, `a_ativo`, `a_submit`, `a_journal`) VALUES
 (1205, '7.07.08.01-0', 'Planejamento Institucional', '0001245', '', 0, '', '1', '1'),
 (1206, '7.07.08.02-9', 'Programação de Condições de Ensino', '0001246', '', 0, '', '1', '1'),
 (1207, '7.07.08.03-7', 'Treinamento de Pessoal', '0001247', '', 0, '', '1', '1'),
@@ -1437,17 +1437,36 @@ INSERT INTO `ajax_areadoconhecimento` (`id_aa`, `a_cnpq`, `a_descricao`, `a_codi
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `bolsa_modalidade`
+--
+
+CREATE TABLE IF NOT EXISTS `bolsa_modalidade` (
+  `id_bmod` int(11) NOT NULL,
+  `bmod_modalidade` varchar(60) DEFAULT NULL COMMENT '[1 - Não Definido], ...',
+  `bmod_ativo` tinyint(1) DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabela vinculada a usuario_bolsa. Mostra quais tipos de bolsas o usuario possui';
+
+--
+-- Dumping data for table `bolsa_modalidade`
+--
+
+INSERT INTO `bolsa_modalidade` (`id_bmod`, `bmod_modalidade`, `bmod_ativo`) VALUES
+(1, 'Não Definido', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `centro_resultado`
 --
 
 CREATE TABLE IF NOT EXISTS `centro_resultado` (
-`id_cr` bigint(20) unsigned NOT NULL,
+  `id_cr` bigint(20) unsigned NOT NULL,
   `cr_nr` int(11) NOT NULL,
   `cr_descricao` varchar(200) NOT NULL,
   `cr_ordenador_necessidade` char(8) NOT NULL,
   `cr_ordenador_gasto` char(8) NOT NULL,
   `cr_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=597 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `centro_resultado`
@@ -1760,7 +1779,7 @@ INSERT INTO `centro_resultado` (`id_cr`, `cr_nr`, `cr_descricao`, `cr_ordenador_
 --
 
 CREATE TABLE IF NOT EXISTS `csf` (
-`id_csf` bigint(20) unsigned NOT NULL,
+  `id_csf` bigint(20) unsigned NOT NULL,
   `csf_aluno` int(11) NOT NULL DEFAULT '0',
   `csf_orientador` int(11) NOT NULL DEFAULT '0',
   `csf_modalidade` int(11) NOT NULL,
@@ -1777,7 +1796,7 @@ CREATE TABLE IF NOT EXISTS `csf` (
   `csf_curso` int(11) NOT NULL DEFAULT '0',
   `csf_chamada` int(11) NOT NULL DEFAULT '0',
   `csf_parceiro` int(11) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf`
@@ -1791,22 +1810,111 @@ INSERT INTO `csf` (`id_csf`, `csf_aluno`, `csf_orientador`, `csf_modalidade`, `c
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `csf_ged`
+--
+
+CREATE TABLE IF NOT EXISTS `csf_ged` (
+  `id_doc` bigint(20) unsigned NOT NULL,
+  `doc_dd0` int(7) DEFAULT NULL,
+  `doc_tipo` char(5) DEFAULT NULL,
+  `doc_ano` char(4) DEFAULT NULL,
+  `doc_filename` text,
+  `doc_status` char(1) DEFAULT NULL,
+  `doc_data` int(11) DEFAULT NULL,
+  `doc_hora` char(8) DEFAULT NULL,
+  `doc_arquivo` text,
+  `doc_extensao` char(4) DEFAULT NULL,
+  `doc_size` float DEFAULT NULL,
+  `doc_versao` char(4) DEFAULT NULL,
+  `doc_ativo` int(11) DEFAULT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `csf_ged`
+--
+
+INSERT INTO `csf_ged` (`id_doc`, `doc_dd0`, `doc_tipo`, `doc_ano`, `doc_filename`, `doc_status`, `doc_data`, `doc_hora`, `doc_arquivo`, `doc_extensao`, `doc_size`, `doc_versao`, `doc_ativo`) VALUES
+(1, 7, 'DIVER', '2015', 'ic por campus.docx', '@', 20150618, '10:18:17', '_document/2015/06/-9cde0-ic por campus.docx', 'docx', 24682, '0', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `csf_ged_tipo`
+--
+
+CREATE TABLE IF NOT EXISTS `csf_ged_tipo` (
+  `id_doct` bigint(20) unsigned NOT NULL,
+  `doct_nome` char(50) DEFAULT NULL,
+  `doct_codigo` char(5) DEFAULT NULL,
+  `doct_publico` int(11) DEFAULT NULL,
+  `doct_avaliador` int(11) DEFAULT NULL,
+  `doct_autor` int(11) DEFAULT NULL,
+  `doct_restrito` int(11) DEFAULT NULL,
+  `doct_ativo` int(11) DEFAULT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `csf_ged_tipo`
+--
+
+INSERT INTO `csf_ged_tipo` (`id_doct`, `doct_nome`, `doct_codigo`, `doct_publico`, `doct_avaliador`, `doct_autor`, `doct_restrito`, `doct_ativo`) VALUES
+(1, 'Documentos diversos', 'DIVER', 1, 1, 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `csf_historico`
+--
+
+CREATE TABLE IF NOT EXISTS `csf_historico` (
+  `id_slog` bigint(20) unsigned NOT NULL,
+  `slog_protocolo` int(7) NOT NULL,
+  `slog_usuario` varchar(15) NOT NULL,
+  `slog_status` int(11) NOT NULL,
+  `slog_data` date NOT NULL DEFAULT '0000-00-00',
+  `slog_hora` char(8) NOT NULL,
+  `slog_text` text NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `csf_historico`
+--
+
+INSERT INTO `csf_historico` (`id_slog`, `slog_protocolo`, `slog_usuario`, `slog_status`, `slog_data`, `slog_hora`, `slog_text`) VALUES
+(1, 5, '', 2, '0000-00-00', '19:26:04', ''),
+(2, 4, '72952105987', 2, '0000-00-00', '19:26:39', ''),
+(3, 6, '72952105987', 2, '0000-00-00', '19:27:25', ''),
+(4, 3, '72952105987', 2, '2015-06-17', '19:28:20', ''),
+(5, 4, '72952105987', 2, '2015-06-17', '19:32:39', ''),
+(6, 6, '72952105987', 2, '2015-06-17', '19:33:30', ''),
+(7, 5, '72952105987', 2, '2015-06-17', '19:33:55', ''),
+(8, 3, '72952105987', 2, '2015-06-17', '19:38:03', 'Pais:[DEU],Previsao:[20150601]');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `csf_parceiro`
 --
 
 CREATE TABLE IF NOT EXISTS `csf_parceiro` (
-`id_cp` bigint(20) unsigned NOT NULL,
+  `id_cp` bigint(20) unsigned NOT NULL,
   `cp_descricao` char(80) NOT NULL,
   `cp_pais` int(11) NOT NULL DEFAULT '0',
-  `cp_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+  `cp_ativo` tinyint(4) NOT NULL DEFAULT '1',
+  `cp_contato` text NOT NULL,
+  `cp_email_1` char(80) NOT NULL,
+  `cp_email_2` char(80) NOT NULL,
+  `cp_phone_1` char(20) NOT NULL,
+  `cp_phone_2` char(20) NOT NULL,
+  `cp_site` char(250) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_parceiro`
 --
 
-INSERT INTO `csf_parceiro` (`id_cp`, `cp_descricao`, `cp_pais`, `cp_ativo`) VALUES
-(1, 'Alemanha/DAAD', 5, 1);
+INSERT INTO `csf_parceiro` (`id_cp`, `cp_descricao`, `cp_pais`, `cp_ativo`, `cp_contato`, `cp_email_1`, `cp_email_2`, `cp_phone_1`, `cp_phone_2`, `cp_site`) VALUES
+(1, 'Alemanha/DAAD', 5, 1, '', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -1815,11 +1923,11 @@ INSERT INTO `csf_parceiro` (`id_cp`, `cp_descricao`, `cp_pais`, `cp_ativo`) VALU
 --
 
 CREATE TABLE IF NOT EXISTS `csf_status` (
-`id_cs` bigint(20) unsigned NOT NULL,
+  `id_cs` bigint(20) unsigned NOT NULL,
   `cs_descricao` char(80) NOT NULL,
   `cs_ativo` tinyint(4) NOT NULL DEFAULT '1',
   `cs_contabiliza` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_status`
@@ -1867,15 +1975,12 @@ CREATE TABLE IF NOT EXISTS `csf_view` (
 ,`us_cpf` varchar(15)
 ,`us_cracha` varchar(15)
 ,`us_emplid` varchar(15)
-,`us_login` varchar(80)
-,`us_pass` varchar(100)
-,`us_email` varchar(150)
 ,`us_link_lattes` varchar(100)
-,`us_ativo` tinyint(1)
-,`us_teste` tinyint(1)
-,`us_origem` tinyint(1)
-,`us_professor_tipo` tinyint(1)
-,`us_aluno_tipo` varchar(45)
+,`us_ativo` tinyint(1) unsigned
+,`us_teste` tinyint(1) unsigned
+,`us_origem` int(2)
+,`us_professor_tipo` int(2)
+,`us_usuario_cursando` int(11)
 ,`us_regime` varchar(10)
 ,`us_genero` char(1)
 ,`usuario_tipo_ust_id` int(11)
@@ -1893,13 +1998,13 @@ CREATE TABLE IF NOT EXISTS `csf_view` (
 ,`nome` varchar(80)
 ,`id_ed` bigint(20) unsigned
 ,`ed_titulo` text
-,`ed_data` int(11)
+,`ed_data` date
 ,`ed_agencia` char(7)
 ,`ed_idioma` char(5)
 ,`ed_chamada` char(30)
-,`ed_data_1` int(11)
-,`ed_data_2` int(11)
-,`ed_data_3` int(11)
+,`ed_data_1` date
+,`ed_data_2` date
+,`ed_data_3` date
 ,`ed_texto_1` text
 ,`ed_texto_2` text
 ,`ed_texto_3` text
@@ -1918,7 +2023,7 @@ CREATE TABLE IF NOT EXISTS `csf_view` (
 ,`ed_url_externa` char(200)
 ,`ed_total_visualizacoes` int(11)
 ,`ed_local` char(15)
-,`ed_data_envio` int(11)
+,`ed_data_envio` date
 ,`ed_document_require` char(1)
 ,`ed_login` char(15)
 ,`ed_titulo_email` char(100)
@@ -1929,6 +2034,7 @@ CREATE TABLE IF NOT EXISTS `csf_view` (
 ,`cp_pais` int(11)
 ,`cp_ativo` tinyint(4)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -1936,64 +2042,64 @@ CREATE TABLE IF NOT EXISTS `csf_view` (
 --
 
 CREATE TABLE IF NOT EXISTS `fomento_categoria` (
-`id_ct` bigint(20) unsigned NOT NULL,
-  `ct_descricao` char(50) DEFAULT NULL,
+  `id_ct` int(11) unsigned NOT NULL,
+  `ct_descricao` varchar(60) DEFAULT NULL,
   `ct_main` char(1) DEFAULT NULL,
-  `ct_ref` int(5) DEFAULT NULL,
-  `ct_ordem` int(11) DEFAULT NULL,
-  `ct_ativo` int(11) DEFAULT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=46 ;
+  `ct_auto_ref` int(11) unsigned DEFAULT NULL,
+  `ct_ativo` tinyint(1) unsigned DEFAULT '1',
+  `ct_ordem` int(2) unsigned DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `fomento_categoria`
 --
 
-INSERT INTO `fomento_categoria` (`id_ct`, `ct_descricao`, `ct_main`, `ct_ref`, `ct_ordem`, `ct_ativo`) VALUES
-(1, 'Bolsa Capacitação', '', 16, 16, 1),
-(2, 'Mobilidade Internacional', '', 16, 10, 1),
-(3, 'Prêmios', '', 16, 18, 1),
-(4, 'Pesquisador na empresa', '', 16, 6, 1),
-(5, 'Organização de eventos', '', 16, 5, 1),
-(6, 'Tipo de edital', '1', 0, 5, 1),
-(7, 'Corpo Docente & Discente', '1', 0, 1, 1),
-(8, 'Professores stricto sensu', '', 1, 1, 1),
-(9, 'Professores doutores', '', 1, 2, 1),
-(10, 'Professores mestres', '', 1, 3, 1),
-(11, 'Todos os professores (SS e graduação)', '', 1, 4, 1),
-(12, 'Secretarias & Decanatos', '1', 0, 2, 1),
-(13, 'Decanos', '', 1, 1, 1),
-(14, 'Bolsas de Iniciação Científica', '', 16, 2, 1),
-(15, 'Escola de Negócios', '', 35, 13, 1),
-(16, 'Escola de Educação e Humanidades', '', 35, 19, 1),
-(17, '==teste PDI==', '', 16, 20, 1),
-(18, 'Pesquisador visitante', '', 16, 19, 1),
-(19, 'Projeto Institucional', '', 16, 7, 1),
-(20, 'Coordenadores de programas PG', '', 6, 2, 1),
-(21, 'Secretarias PPG', '', 6, 3, 1),
-(22, 'Discentes', '1', 0, 3, 1),
-(23, 'Discentes PPG', '', 10, 1, 1),
-(24, 'Discentes IC', '', 10, 2, 1),
-(25, 'Discentes doutorandos', '', 10, 3, 1),
-(26, 'Discentes mestrandos', '', 10, 3, 1),
-(27, 'Discentes egressos', '', 10, 6, 1),
-(28, 'Bolsas Pós-Doutorado', '', 16, 2, 1),
-(29, 'Bolsas produtividade', '', 16, 8, 1),
-(30, 'Bolsas Sênior', '', 16, 13, 1),
-(31, 'Bolsas de mestrado e doutorado', '', 16, 11, 1),
-(32, 'Apoio a editoração e publicação de periódicos', '', 16, 20, 1),
-(33, 'Escola Politécnica', '', 35, 5, 1),
-(34, 'Pesquisa básica e aplicada', '', 16, 1, 1),
-(35, 'Participação em eventos', '', 16, 9, 1),
-(36, 'Ciência sem Fronteiras', '', 16, 17, 1),
-(37, 'Fundação Araucária e o Fundo Newton', '', 16, 1, 1),
-(38, 'Bolsa Graduação', '1', 16, 20, 1),
-(39, 'Escola de Saúde e Biociências', '', 35, 1, 1),
-(40, 'Escolas da PUCPR', '1', 0, 11, 1),
-(41, 'Escola de Arquitetura e Design', '', 35, 10, 1),
-(42, 'Escola de Ciências Agrárias e Medicina Veterinária', '', 35, 13, 1),
-(43, 'Escola de Comunicação e Artes', '', 35, 16, 1),
-(44, 'Escola de Direito', '', 35, 16, 1),
-(45, 'Escola de Medicina', '', 35, 17, 1);
+INSERT INTO `fomento_categoria` (`id_ct`, `ct_descricao`, `ct_main`, `ct_auto_ref`, `ct_ativo`, `ct_ordem`) VALUES
+(1, 'Corpo Docente & Discente', '1', 0, 1, 1),
+(2, 'Professores stricto sensu', '', 1, 1, 1),
+(3, 'Professores doutores', '', 1, 1, 2),
+(4, 'Professores mestres', '', 1, 1, 3),
+(5, 'Todos os professores (SS e graduação)', '', 1, 1, 4),
+(6, 'Secretarias & Decanatos', '1', 0, 1, 2),
+(7, 'Decanos', '', 1, 1, 1),
+(8, 'Coordenadores de programas PG', '', 6, 1, 2),
+(9, 'Secretarias PPG', '', 6, 1, 3),
+(10, 'Discentes', '1', 0, 1, 3),
+(11, 'Discentes PPG', '', 10, 1, 1),
+(12, 'Discentes IC', '', 10, 1, 2),
+(13, 'Discentes doutorandos', '', 10, 1, 3),
+(14, 'Discentes mestrandos', '', 10, 1, 3),
+(15, 'Discentes egressos', '', 10, 1, 6),
+(16, 'Tipo de edital', '1', 0, 1, 5),
+(17, 'Pesquisa básica e aplicada', '', 16, 1, 1),
+(18, 'Bolsas de Iniciação Científica', '', 16, 1, 2),
+(19, 'Bolsas Pós-Doutorado', '', 16, 1, 2),
+(20, 'Organização de eventos', '', 16, 1, 5),
+(21, 'Bolsas produtividade', '', 16, 1, 8),
+(22, 'Bolsas Sênior', '', 16, 1, 13),
+(23, 'Projeto Institucional', '', 16, 1, 7),
+(24, 'Bolsas de mestrado e doutorado', '', 16, 1, 11),
+(25, 'Pesquisador visitante', '', 16, 1, 19),
+(26, 'Prêmios', '', 16, 1, 18),
+(27, 'Participação em eventos', '', 16, 1, 9),
+(28, 'Pesquisador na empresa', '', 16, 1, 6),
+(29, 'Ciência sem Fronteiras', '', 16, 1, 17),
+(30, 'Apoio a editoração e publicação de periódicos', '', 16, 1, 20),
+(31, 'Fundação Araucária e o Fundo Newton', '', 16, 1, 1),
+(32, 'Mobilidade Internacional', '', 16, 1, 10),
+(33, 'Bolsa Graduação', '1', 16, 1, 20),
+(34, 'Bolsa Capacitação', '', 16, 1, 16),
+(35, 'Escolas da PUCPR', '1', 0, 1, 11),
+(36, 'Escola de Saúde e Biociências', '', 35, 1, 1),
+(37, '==teste PDI==', '', 16, 1, 20),
+(38, 'Escola Politécnica', '', 35, 1, 5),
+(39, 'Escola de Arquitetura e Design', '', 35, 1, 10),
+(40, 'Escola de Ciências Agrárias e Medicina Veterinária', '', 35, 1, 13),
+(41, 'Escola de Comunicação e Artes', '', 35, 1, 16),
+(42, 'Escola de Direito', '', 35, 1, 16),
+(43, 'Escola de Educação e Humanidades', '', 35, 1, 19),
+(44, 'Escola de Medicina', '', 35, 1, 17),
+(45, 'Escola de Negócios', '', 35, 1, 13);
 
 -- --------------------------------------------------------
 
@@ -2002,15 +2108,15 @@ INSERT INTO `fomento_categoria` (`id_ct`, `ct_descricao`, `ct_main`, `ct_ref`, `
 --
 
 CREATE TABLE IF NOT EXISTS `fomento_editais` (
-`id_ed` bigint(20) unsigned NOT NULL,
+  `id_ed` bigint(20) unsigned NOT NULL,
   `ed_titulo` text,
-  `ed_data` int(11) DEFAULT NULL,
+  `ed_data` date DEFAULT NULL,
   `ed_agencia` char(7) DEFAULT NULL,
   `ed_idioma` char(5) DEFAULT NULL,
   `ed_chamada` char(30) DEFAULT NULL,
-  `ed_data_1` int(11) DEFAULT NULL,
-  `ed_data_2` int(11) DEFAULT NULL,
-  `ed_data_3` int(11) DEFAULT NULL,
+  `ed_data_1` date DEFAULT NULL,
+  `ed_data_2` date DEFAULT NULL,
+  `ed_data_3` date DEFAULT NULL,
   `ed_texto_1` text,
   `ed_texto_2` text,
   `ed_texto_3` text,
@@ -2029,20 +2135,20 @@ CREATE TABLE IF NOT EXISTS `fomento_editais` (
   `ed_url_externa` char(200) DEFAULT NULL,
   `ed_total_visualizacoes` int(11) DEFAULT NULL,
   `ed_local` char(15) DEFAULT NULL,
-  `ed_data_envio` int(11) DEFAULT NULL,
+  `ed_data_envio` date DEFAULT NULL,
   `ed_document_require` char(1) DEFAULT NULL,
   `ed_login` char(15) DEFAULT NULL,
   `ed_titulo_email` char(100) DEFAULT NULL,
   `ed_edital_tipo` char(2) DEFAULT NULL,
   `ed_fluxo_continuo` int(11) DEFAULT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `fomento_editais`
 --
 
 INSERT INTO `fomento_editais` (`id_ed`, `ed_titulo`, `ed_data`, `ed_agencia`, `ed_idioma`, `ed_chamada`, `ed_data_1`, `ed_data_2`, `ed_data_3`, `ed_texto_1`, `ed_texto_2`, `ed_texto_3`, `ed_texto_4`, `ed_texto_5`, `ed_texto_6`, `ed_texto_7`, `ed_texto_8`, `ed_texto_9`, `ed_texto_10`, `ed_texto_11`, `ed_texto_12`, `ed_status`, `ed_autor`, `ed_corpo`, `ed_url_externa`, `ed_total_visualizacoes`, `ed_local`, `ed_data_envio`, `ed_document_require`, `ed_login`, `ed_titulo_email`, `ed_edital_tipo`, `ed_fluxo_continuo`) VALUES
-(1, 'CsF (Alemanha)', 2015, NULL, 'pt_BR', 'ED.001', 2015, 2015, 2015, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 'CSF', NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 'teste', NULL, '111', 'pt_BR', NULL, NULL, NULL, NULL, 'qwe', 'qwe', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2051,11 +2157,11 @@ INSERT INTO `fomento_editais` (`id_ed`, `ed_titulo`, `ed_data`, `ed_agencia`, `e
 --
 
 CREATE TABLE IF NOT EXISTS `fomento_edital_categoria` (
-`id_catp` bigint(20) unsigned NOT NULL,
+  `id_catp` bigint(20) unsigned NOT NULL,
   `catp_produto` int(7) DEFAULT NULL,
   `catp_categoria` char(5) DEFAULT NULL,
   `catp_ativo` int(11) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -2064,7 +2170,7 @@ CREATE TABLE IF NOT EXISTS `fomento_edital_categoria` (
 --
 
 CREATE TABLE IF NOT EXISTS `logins` (
-`id_us` bigint(20) unsigned NOT NULL,
+  `id_us` bigint(20) unsigned NOT NULL,
   `us_nome` char(120) DEFAULT NULL,
   `us_login` char(40) DEFAULT NULL,
   `us_senha` char(100) DEFAULT NULL,
@@ -2074,7 +2180,7 @@ CREATE TABLE IF NOT EXISTS `logins` (
   `us_cracha` char(15) DEFAULT NULL,
   `us_perfil` text,
   `us_id` char(15) DEFAULT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `logins`
@@ -2090,20 +2196,21 @@ INSERT INTO `logins` (`id_us`, `us_nome`, `us_login`, `us_senha`, `us_lastupdate
 --
 
 CREATE TABLE IF NOT EXISTS `logins_log` (
-`id_ul` bigint(20) unsigned NOT NULL,
+  `id_ul` bigint(20) unsigned NOT NULL,
   `ul_data` int(11) NOT NULL,
   `ul_hora` char(8) NOT NULL,
   `ul_ip` char(15) NOT NULL,
   `ul_proto` char(5) NOT NULL,
   `ul_cpf` char(15) NOT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `logins_log`
 --
 
 INSERT INTO `logins_log` (`id_ul`, `ul_data`, `ul_hora`, `ul_ip`, `ul_proto`, `ul_cpf`) VALUES
-(1, 20150615, '08:33:58', '127.0.0.1', 'LOGIN', '72952105987');
+(2, 20150615, '08:33:58', '127.0.0.1', 'LOGIN', '72952105987'),
+(3, 20150618, '11:11:39', '10.96.155.106', 'ADR', '72952105987');
 
 -- --------------------------------------------------------
 
@@ -2112,11 +2219,11 @@ INSERT INTO `logins_log` (`id_ul`, `ul_data`, `ul_hora`, `ul_ip`, `ul_proto`, `u
 --
 
 CREATE TABLE IF NOT EXISTS `logins_perfil` (
-`id_usp` bigint(20) unsigned NOT NULL,
+  `id_usp` bigint(20) unsigned NOT NULL,
   `usp_codigo` char(4) DEFAULT NULL,
   `usp_descricao` char(50) DEFAULT NULL,
   `usp_ativo` int(11) DEFAULT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=39 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `logins_perfil`
@@ -2169,13 +2276,13 @@ INSERT INTO `logins_perfil` (`id_usp`, `usp_codigo`, `usp_descricao`, `usp_ativo
 --
 
 CREATE TABLE IF NOT EXISTS `logins_perfil_ativo` (
-`id_up` bigint(20) unsigned NOT NULL,
+  `id_up` bigint(20) unsigned NOT NULL,
   `up_perfil` tinyint(4) DEFAULT '0',
   `up_data` date DEFAULT '0000-00-00',
   `up_data_end` date DEFAULT '0000-00-00',
   `up_ativo` tinyint(11) DEFAULT NULL,
   `up_user` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -2184,12 +2291,12 @@ CREATE TABLE IF NOT EXISTS `logins_perfil_ativo` (
 --
 
 CREATE TABLE IF NOT EXISTS `pais` (
-`id` bigint(20) unsigned NOT NULL,
+  `id` bigint(20) unsigned NOT NULL,
   `iso` char(2) NOT NULL,
   `iso3` char(3) NOT NULL,
   `numcode` char(3) NOT NULL,
   `nome` varchar(80) NOT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=245 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pais`
@@ -2444,11 +2551,51 @@ INSERT INTO `pais` (`id`, `iso`, `iso3`, `numcode`, `nome`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `programa_pos`
+--
+
+CREATE TABLE IF NOT EXISTS `programa_pos` (
+  `id_pp` int(11) unsigned NOT NULL,
+  `pp_nome` varchar(100) NOT NULL,
+  `pp_sigla` varchar(10) NOT NULL,
+  `pp_cursos` tinyint(1) DEFAULT '1' COMMENT 'se = 1 somente mestrado\nse = 2 mestrado e doutorado\nse = 3 mestrado, doutorado e pós-doutorado',
+  `pp_conceito` int(2) DEFAULT NULL COMMENT 'conceito do curso de pos',
+  `pp_dt_inicio` date DEFAULT NULL COMMENT 'data de inicio do programa',
+  `pp_email` varchar(100) DEFAULT NULL COMMENT 'email do programa',
+  `pp_fone1` varchar(14) DEFAULT NULL COMMENT 'fone do programa',
+  `pp_fone2` varchar(14) DEFAULT NULL COMMENT 'fone do programa',
+  `pp_ativo` tinyint(1) unsigned NOT NULL DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1 COMMENT='relaciona todos os programas de pos graduação vinculados a um usuario';
+
+--
+-- Dumping data for table `programa_pos`
+--
+
+INSERT INTO `programa_pos` (`id_pp`, `pp_nome`, `pp_sigla`, `pp_cursos`, `pp_conceito`, `pp_dt_inicio`, `pp_email`, `pp_fone1`, `pp_fone2`, `pp_ativo`) VALUES
+(1, 'Bioética', 'PPGB', 1, 3, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(2, 'Ciência Animal', 'PPGCA', 1, 3, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(3, 'Ciências da Saúde', 'PPGCS', 2, 5, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(4, 'Direito', 'PPGD', 2, 5, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(5, 'Educação', 'PPGE', 2, 5, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(6, 'Engenharia de Produção e Sistemas', 'PPGEPS', 2, 4, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(7, 'Engenharia Mecânica', 'PPGEM', 2, 5, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(8, 'Filosofia', 'PPGF', 1, 4, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(9, 'Gestão Urbana', 'PPGTU', 2, 5, '0000-00-00', '@pucpr.br', '41 3271-1664', '', 1),
+(10, 'Informática', 'PPGIa', 2, 4, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(11, 'Odontologia', 'PPGO', 2, 4, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(12, 'Programa de Pós-Graduação em Administração', 'PPAD', 2, 5, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(13, 'Programa de Pós-Graduação em Gestão de Cooperativas', 'PPGCOOP', 1, 3, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(14, 'Tecnologia em Saúde', 'PPGTS', 1, 4, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1),
+(15, 'Teologia', 'PPGT', 1, 4, '0000-00-00', '@pucpr.br', '41 9999-9999', '41 8888-8888', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `pro_equipamento`
 --
 
 CREATE TABLE IF NOT EXISTS `pro_equipamento` (
-`id_pe` bigint(20) unsigned NOT NULL,
+  `id_pe` bigint(20) unsigned NOT NULL,
   `pe_nome` char(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pe_marca` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pe_modelo` char(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
@@ -2459,7 +2606,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento` (
   `pe_descricao_2` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pe_descricao_3` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pe_ativo` int(11) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pro_equipamento`
@@ -2477,10 +2624,10 @@ INSERT INTO `pro_equipamento` (`id_pe`, `pe_nome`, `pe_marca`, `pe_modelo`, `pe_
 --
 
 CREATE TABLE IF NOT EXISTS `pro_equipamento_contabil` (
-`id_pec` bigint(20) unsigned NOT NULL,
+  `id_pec` bigint(20) unsigned NOT NULL,
   `pec_descricao` varchar(80) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pec_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pro_equipamento_contabil`
@@ -2507,7 +2654,7 @@ INSERT INTO `pro_equipamento_contabil` (`id_pec`, `pec_descricao`, `pec_ativo`) 
 --
 
 CREATE TABLE IF NOT EXISTS `pro_equipamento_item` (
-`id_pei` bigint(20) unsigned NOT NULL,
+  `id_pei` bigint(20) unsigned NOT NULL,
   `pei_equipamento` int(11) NOT NULL,
   `pei_patrimonio` char(30) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pei_serial` char(30) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
@@ -2519,7 +2666,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_item` (
   `pei_valor` double NOT NULL,
   `pei_obs_2` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pei_ativo` tinyint(4) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -2528,7 +2675,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_item` (
 --
 
 CREATE TABLE IF NOT EXISTS `pro_equipamento_laboratorio` (
-`id_pel` bigint(20) unsigned NOT NULL,
+  `id_pel` bigint(20) unsigned NOT NULL,
   `pel_descricao` char(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pel_escola` int(11) NOT NULL,
   `pel_responsavel` int(11) NOT NULL,
@@ -2537,7 +2684,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_laboratorio` (
   `pel_lat` double NOT NULL,
   `pel_log` double NOT NULL,
   `pel_ativo` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -2546,11 +2693,11 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_laboratorio` (
 --
 
 CREATE TABLE IF NOT EXISTS `pro_equipamento_status` (
-`id_pes` bigint(20) unsigned NOT NULL,
+  `id_pes` bigint(20) unsigned NOT NULL,
   `pes_descricao` char(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pes_color` char(7) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pes_ativo` tinyint(4) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pro_equipamento_status`
@@ -2576,11 +2723,11 @@ INSERT INTO `pro_equipamento_status` (`id_pes`, `pes_descricao`, `pes_color`, `p
 --
 
 CREATE TABLE IF NOT EXISTS `pro_equipamento_tipo` (
-`id_pet` bigint(20) unsigned NOT NULL,
+  `id_pet` bigint(20) unsigned NOT NULL,
   `pet_descricao` char(80) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pet_contabil` int(11) NOT NULL,
   `pet_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pro_equipamento_tipo`
@@ -2597,12 +2744,12 @@ INSERT INTO `pro_equipamento_tipo` (`id_pet`, `pet_descricao`, `pet_contabil`, `
 --
 
 CREATE TABLE IF NOT EXISTS `unidade` (
-`id_u` bigint(20) unsigned NOT NULL,
+  `id_u` bigint(20) unsigned NOT NULL,
   `u_descricao` char(200) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `u_sigla` char(10) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `u_decano` char(8) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `u_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `unidade`
@@ -2629,38 +2776,51 @@ INSERT INTO `unidade` (`id_u`, `u_descricao`, `u_sigla`, `u_decano`, `u_ativo`) 
 --
 
 CREATE TABLE IF NOT EXISTS `usuario` (
-`id_us` bigint(20) unsigned NOT NULL,
+  `id_us` bigint(20) unsigned NOT NULL,
   `us_nome` varchar(250) DEFAULT NULL,
   `us_cpf` varchar(15) DEFAULT NULL,
   `us_cracha` varchar(15) DEFAULT NULL,
   `us_emplid` varchar(15) DEFAULT NULL,
-  `us_login` varchar(80) DEFAULT NULL,
-  `us_pass` varchar(100) DEFAULT NULL,
-  `us_email` varchar(150) DEFAULT NULL,
   `us_link_lattes` varchar(100) DEFAULT NULL,
-  `us_ativo` tinyint(1) DEFAULT '1',
-  `us_teste` tinyint(1) DEFAULT '0',
-  `us_origem` tinyint(1) DEFAULT '0' COMMENT '0 - PUCPR\n1 - Externo',
-  `us_professor_tipo` tinyint(1) DEFAULT '0' COMMENT '0 - Gradua��o\n1 - Stricto Sensu',
-  `us_aluno_tipo` varchar(45) DEFAULT NULL,
+  `us_ativo` tinyint(1) unsigned DEFAULT '1',
+  `us_teste` tinyint(1) unsigned DEFAULT '0',
+  `us_origem` int(2) DEFAULT '1' COMMENT '[1 - Não Definido], [2 - PUCPR], [3 - Externo]',
+  `us_professor_tipo` int(2) DEFAULT '1' COMMENT '[1 - Não Definido], [2 - Stricto Sensu], [3 - Graduação]',
+  `us_usuario_cursando` int(11) DEFAULT '1' COMMENT '[1 - Não Definido], [2 - Inativo],  [3 - Graduação], [4 - Mestrado], [5 - Doutorado], [5 - Pós-Doutorado]',
   `us_regime` varchar(10) DEFAULT NULL COMMENT 'Horista / TI / TP',
-  `us_genero` char(1) DEFAULT NULL COMMENT '''M'' = masculino\n''F'' = feminino',
-  `usuario_tipo_ust_id` int(11) NOT NULL,
-  `usuario_funcao_usf_id` int(11) NOT NULL,
-  `usuario_titulacao_ust_id` int(11) NOT NULL,
+  `us_genero` char(1) DEFAULT NULL COMMENT '[''M'' = masculino], [''F'' = feminino]',
+  `usuario_tipo_ust_id` int(11) NOT NULL DEFAULT '1' COMMENT '[1 - Não Definido], [2 - Professor], [3 - Aluno], [4 - Colaborador], [5 - Externo]',
+  `usuario_funcao_usf_id` int(11) NOT NULL DEFAULT '1' COMMENT '[1 - Não Definido], [2 - Professor Auxiliar de Ensino], [3 - Professor Assistente], [4 - Professor Adjunto], [5 - Professor Titular],',
+  `usuario_titulacao_ust_id` int(11) NOT NULL DEFAULT '1' COMMENT '[1 - Não Definido], [2 - Técnico], [3 - Graduação], [4 - Especialista], [5 - Mestre], [6 - Doutor], [7 - Pós-Doutorado], [8 - Residência Médica],',
   `us_dt_nascimento` date NOT NULL DEFAULT '0000-00-00'
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `usuario`
 --
 
-INSERT INTO `usuario` (`id_us`, `us_nome`, `us_cpf`, `us_cracha`, `us_emplid`, `us_login`, `us_pass`, `us_email`, `us_link_lattes`, `us_ativo`, `us_teste`, `us_origem`, `us_professor_tipo`, `us_aluno_tipo`, `us_regime`, `us_genero`, `usuario_tipo_ust_id`, `usuario_funcao_usf_id`, `usuario_titulacao_ust_id`, `us_dt_nascimento`) VALUES
-(1, 'Rene Faustino Gabriel Junior', '72952105987', '88958022', '', NULL, NULL, NULL, NULL, 1, 0, 0, 0, NULL, NULL, NULL, 2, 0, 0, '1969-10-05'),
-(2, '', '', '', '', NULL, NULL, NULL, NULL, 1, 0, 0, 0, NULL, NULL, NULL, 2, 0, 0, '0000-00-00'),
-(3, 'Jefferson Fellipe Jahnke', '02350263959', '88936956', '', NULL, NULL, NULL, NULL, 1, 0, 0, 0, NULL, NULL, NULL, 2, 0, 0, '1977-11-04'),
-(4, 'Flávio Justino Fêo', '84204052991', '88943483', '', NULL, NULL, NULL, NULL, 1, 0, 0, 0, NULL, NULL, NULL, 2, 0, 0, '1976-10-23'),
-(5, 'Milena Binhame Albini', '06706138940', '88961973', '', NULL, NULL, NULL, NULL, 1, 0, 0, 0, NULL, NULL, NULL, 2, 0, 0, '1987-07-23');
+INSERT INTO `usuario` (`id_us`, `us_nome`, `us_cpf`, `us_cracha`, `us_emplid`, `us_link_lattes`, `us_ativo`, `us_teste`, `us_origem`, `us_professor_tipo`, `us_usuario_cursando`, `us_regime`, `us_genero`, `usuario_tipo_ust_id`, `usuario_funcao_usf_id`, `usuario_titulacao_ust_id`, `us_dt_nascimento`) VALUES
+(1, 'Rene Faustino Gabriel Junior', '72952105987', '88958022', '', NULL, 1, 0, 1, 1, 1, NULL, 'M', 3, 1, 1, '1969-10-05'),
+(2, 'Jefferson Fellipe Jahnke', '02350263959', '88936956', '', NULL, 1, 0, 1, 1, 1, NULL, 'M', 3, 1, 1, '1977-11-04'),
+(3, 'Flávio Justino Fêo', '84204052991', '88943483', '', NULL, 1, 0, 1, 1, 1, NULL, 'M', 3, 1, 1, '1976-10-23'),
+(4, 'Milena Binhame Albini', '06706138940', '88961973', '', NULL, 1, 0, 1, 1, 1, NULL, 'F', 3, 1, 1, '1987-07-23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_bolsa`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_bolsa` (
+  `id_usb` int(11) unsigned NOT NULL,
+  `usuario_id_us` int(11) NOT NULL COMMENT 'vincula o id do usuario dono da bolsa',
+  `tipo_bolsa_id_bmod` int(11) NOT NULL DEFAULT '1' COMMENT 'vincula qual modalidade é a bolsa',
+  `usb_vlr` float(9,2) DEFAULT NULL,
+  `usb_dt_inicio` date DEFAULT NULL COMMENT 'inicio da vigencia',
+  `usb_dt_termino` date DEFAULT NULL COMMENT 'fim da vigencia',
+  `usb_vigencia` int(2) DEFAULT NULL COMMENT 'vigencia em meses',
+  `usb_ativo` tinyint(1) DEFAULT '1' COMMENT '0 - inativa\n1 - ativa'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabela que armazena o historico de bolsas do usuario. vinculada a usuario e bolsa_modalidade';
 
 -- --------------------------------------------------------
 
@@ -2669,7 +2829,7 @@ INSERT INTO `usuario` (`id_us`, `us_nome`, `us_cpf`, `us_cracha`, `us_emplid`, `
 --
 
 CREATE TABLE IF NOT EXISTS `usuario_complemento` (
-`usuario_id_us` bigint(20) unsigned NOT NULL,
+  `usuario_id_us` int(11) unsigned NOT NULL,
   `usc_rua` varchar(150) DEFAULT NULL,
   `usc_complemento` varchar(45) DEFAULT NULL,
   `usc_bairro` varchar(80) DEFAULT NULL,
@@ -2677,11 +2837,6 @@ CREATE TABLE IF NOT EXISTS `usuario_complemento` (
   `usc_cidade` varchar(80) DEFAULT NULL,
   `usc_pais` varchar(60) DEFAULT NULL,
   `usc_uf` char(2) DEFAULT NULL,
-  `usc_fone_residencial` varchar(15) DEFAULT NULL,
-  `usc_fone_celular` varchar(15) DEFAULT NULL,
-  `usc_fone_comercial` varchar(15) DEFAULT NULL,
-  `usc_fone_recado` varchar(15) DEFAULT NULL,
-  `usc_dt_nascimento` date DEFAULT NULL,
   `usc_raca_cor` varchar(20) DEFAULT NULL,
   `usc_nacionalidade` varchar(45) DEFAULT NULL,
   `usc_rg` varchar(20) DEFAULT NULL,
@@ -2690,7 +2845,167 @@ CREATE TABLE IF NOT EXISTS `usuario_complemento` (
   `usc_cpf_mae` varchar(15) DEFAULT NULL,
   `usc_nome_pai` varchar(150) DEFAULT NULL,
   `usc_cpf_pai` varchar(15) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabela com dados complementares menos utilziados (pode ser que ainda necessite de mais dados)';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_cracha`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_cracha` (
+  `id_usc` int(11) unsigned NOT NULL,
+  `usc_cracha` varchar(15) DEFAULT NULL COMMENT 'numeros dos crachas utilizados por um usuario',
+  `usc_dt_inicio` date DEFAULT NULL COMMENT 'inicio da utilização do numero',
+  `usc_dt_fim` date DEFAULT NULL COMMENT 'fim da utilização do numero',
+  `usc_ativo` tinyint(1) DEFAULT '1' COMMENT 'numero atual ativo (replicado para a tabela usuario)',
+  `usuario_id_us` int(11) NOT NULL COMMENT 'cincula com o id da tabela usuario'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabela para armazenar todos os numeros de cracha utilizados por um usuario';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_cursando`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_cursando` (
+  `id_usc` int(11) unsigned NOT NULL,
+  `usc_nome` varchar(60) DEFAULT NULL COMMENT '[1 - Não Definido],\n[2 - Inativo], \n[3 - Graduação],\n[4 - Mestrado],\n[5 - Doutorado],\n[5 - Pós-Doutorado]\n',
+  `usc_ativo` tinyint(1) DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='O que o usuario está cursando atualmente';
+
+--
+-- Dumping data for table `usuario_cursando`
+--
+
+INSERT INTO `usuario_cursando` (`id_usc`, `usc_nome`, `usc_ativo`) VALUES
+(1, 'Não Definido', 1),
+(2, 'Inativo', 1),
+(3, 'Graduação', 1),
+(4, 'Mestrado', 1),
+(5, 'Doutorado', 1),
+(6, 'Pós-Doutorado', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_email`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_email` (
+  `id_usm` int(11) unsigned NOT NULL,
+  `usuario_id_us` int(11) NOT NULL COMMENT 'vicula com o id da tabela usuario',
+  `usm_tipo` char(4) DEFAULT NULL COMMENT 'Tipos de email - pessoal, corporativo',
+  `usm_email` varchar(100) DEFAULT NULL,
+  `usm_ativo` tinyint(1) DEFAULT '1',
+  `usm_email_preferencial` tinyint(1) DEFAULT '0' COMMENT '[0 - não], [1 - sim]'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='tabela com todos os email do usuario';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_fone`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_fone` (
+  `id_ufs` int(11) unsigned NOT NULL,
+  `usuario_id_us` int(11) NOT NULL COMMENT 'vincula com id da tabela usuario',
+  `usf_tipo` char(3) DEFAULT NULL COMMENT 'Tipos de fone: [1 - celular], [2 - residencial], [3 - comercial], [4 - outro]',
+  `usf_fone` varchar(15) DEFAULT NULL,
+  `usf_ativo` tinyint(1) DEFAULT '1',
+  `usf_fone_preferencial` tinyint(1) DEFAULT '1' COMMENT '[0 - não], [1 - sim]'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='todos os tipos de telefone de um usuario';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_funcao`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_funcao` (
+  `usf_id` int(11) unsigned NOT NULL,
+  `usf_nome` varchar(60) DEFAULT NULL COMMENT '[1 - Não Definido],[2 - Professor Auxiliar de Ensino],[3 - Professor Assistente],[4 - Professor Adjunto],[5 - Professor Titular], ...',
+  `usf_ativo` tinyint(1) DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COMMENT='Tabela com as funções dos professores \r\n[1 - Professor Auxiliar de Ensino]\r\n[2 - Professor Assistente]\r\n[3 - Professor Adjunto]\r\n[4 - Professor Titular]';
+
+--
+-- Dumping data for table `usuario_funcao`
+--
+
+INSERT INTO `usuario_funcao` (`usf_id`, `usf_nome`, `usf_ativo`) VALUES
+(1, 'Não Definido', 1),
+(2, 'Professor Auxiliar de Ensino', 1),
+(3, 'Professor Assistente', 1),
+(4, 'Professor Adjunto', 1),
+(5, 'Professor Titular', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_hora`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_hora` (
+  `usuario_id_us` int(11) unsigned NOT NULL COMMENT 'vincula com id da tabela usuario',
+  `ush_administrativa` int(2) DEFAULT NULL,
+  `ush_pedagogica` int(2) DEFAULT NULL,
+  `ush_direcao` int(2) DEFAULT NULL,
+  `ush_letiva` int(2) DEFAULT NULL,
+  `ush_stricto_sensu` int(2) DEFAULT NULL,
+  `ush_permanencia` int(2) DEFAULT NULL,
+  `ush_permanencia_de` int(2) DEFAULT NULL,
+  `ush_total` int(2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tabela com a quantidade e tipo de horas trabalhadas por colaboradores e professores';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_tipo`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_tipo` (
+  `ust_id` int(11) unsigned NOT NULL,
+  `ust_nome` varchar(45) DEFAULT NULL COMMENT '[1 - Não Definido], [2 - Professor], [3 - Aluno], [4 - Colaborador], [5 - Externo]',
+  `ust_ativo` tinyint(1) DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COMMENT='Tabela com o tipo do usuário (função Atual):\r\n1 - Professor\r\n2 - Aluno\r\n3 - Secretária\r\n4 - Colaborador';
+
+--
+-- Dumping data for table `usuario_tipo`
+--
+
+INSERT INTO `usuario_tipo` (`ust_id`, `ust_nome`, `ust_ativo`) VALUES
+(1, 'Não Definido', 1),
+(2, 'Professor', 1),
+(3, 'Aluno', 1),
+(4, 'Colaborador', 1),
+(5, 'Externo', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_titulacao`
+--
+
+CREATE TABLE IF NOT EXISTS `usuario_titulacao` (
+  `ust_id` int(11) unsigned NOT NULL,
+  `ust_nome` varchar(50) DEFAULT NULL COMMENT '[1 - Não Definido],\n[2 - Técnico],\n[3 - Graduação],\n[4 - Especialista],\n[5 - Mestre],\n[6 - Doutor],\n[7 - Pós-Doutorado],\n[8 - Residência Médica],',
+  `ust_sigla` varchar(10) DEFAULT NULL,
+  `ust_ativo` tinyint(1) DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 COMMENT='Tabela com a titulação atual do usuario';
+
+--
+-- Dumping data for table `usuario_titulacao`
+--
+
+INSERT INTO `usuario_titulacao` (`ust_id`, `ust_nome`, `ust_sigla`, `ust_ativo`) VALUES
+(1, 'Não Definido', 'ND.', 1),
+(2, 'Técnico', 'Tec.', 1),
+(3, 'Graduação', 'BSc.', 1),
+(4, 'Especialista', 'Esp.', 1),
+(5, 'Mestre', 'MsC.', 1),
+(6, 'Doutor', 'Dr.', 1),
+(7, 'Pós-Doutor', 'Pós-Dr.', 1),
+(8, 'Residência Médica', 'Res. MD.', 1);
 
 -- --------------------------------------------------------
 
@@ -2699,258 +3014,188 @@ CREATE TABLE IF NOT EXISTS `usuario_complemento` (
 --
 DROP TABLE IF EXISTS `csf_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `csf_view` AS (select `csf`.`id_csf` AS `id_csf`,`csf`.`csf_aluno` AS `csf_aluno`,`csf`.`csf_orientador` AS `csf_orientador`,`csf`.`csf_modalidade` AS `csf_modalidade`,`csf`.`csf_saida` AS `csf_saida`,`csf`.`csf_saida_previsao` AS `csf_saida_previsao`,`csf`.`csf_retorno` AS `csf_retorno`,`csf`.`csf_retorno_previsao` AS `csf_retorno_previsao`,`csf`.`csf_pa_intercambio` AS `csf_pa_intercambio`,`csf`.`csf_pais` AS `csf_pais`,`csf`.`csf_universidade` AS `csf_universidade`,`csf`.`csf_status` AS `csf_status`,`csf`.`csf_obs` AS `csf_obs`,`csf`.`csf_area` AS `csf_area`,`csf`.`csf_curso` AS `csf_curso`,`csf`.`csf_chamada` AS `csf_chamada`,`csf`.`csf_parceiro` AS `csf_parceiro`,`usuario`.`id_us` AS `id_us`,`usuario`.`us_nome` AS `us_nome`,`usuario`.`us_cpf` AS `us_cpf`,`usuario`.`us_cracha` AS `us_cracha`,`usuario`.`us_emplid` AS `us_emplid`,`usuario`.`us_login` AS `us_login`,`usuario`.`us_pass` AS `us_pass`,`usuario`.`us_email` AS `us_email`,`usuario`.`us_link_lattes` AS `us_link_lattes`,`usuario`.`us_ativo` AS `us_ativo`,`usuario`.`us_teste` AS `us_teste`,`usuario`.`us_origem` AS `us_origem`,`usuario`.`us_professor_tipo` AS `us_professor_tipo`,`usuario`.`us_aluno_tipo` AS `us_aluno_tipo`,`usuario`.`us_regime` AS `us_regime`,`usuario`.`us_genero` AS `us_genero`,`usuario`.`usuario_tipo_ust_id` AS `usuario_tipo_ust_id`,`usuario`.`usuario_funcao_usf_id` AS `usuario_funcao_usf_id`,`usuario`.`usuario_titulacao_ust_id` AS `usuario_titulacao_ust_id`,`usuario`.`us_dt_nascimento` AS `us_dt_nascimento`,`csf_status`.`id_cs` AS `id_cs`,`csf_status`.`cs_descricao` AS `cs_descricao`,`csf_status`.`cs_ativo` AS `cs_ativo`,`csf_status`.`cs_contabiliza` AS `cs_contabiliza`,`pais`.`id` AS `id`,`pais`.`iso` AS `iso`,`pais`.`iso3` AS `iso3`,`pais`.`numcode` AS `numcode`,`pais`.`nome` AS `nome`,`fomento_editais`.`id_ed` AS `id_ed`,`fomento_editais`.`ed_titulo` AS `ed_titulo`,`fomento_editais`.`ed_data` AS `ed_data`,`fomento_editais`.`ed_agencia` AS `ed_agencia`,`fomento_editais`.`ed_idioma` AS `ed_idioma`,`fomento_editais`.`ed_chamada` AS `ed_chamada`,`fomento_editais`.`ed_data_1` AS `ed_data_1`,`fomento_editais`.`ed_data_2` AS `ed_data_2`,`fomento_editais`.`ed_data_3` AS `ed_data_3`,`fomento_editais`.`ed_texto_1` AS `ed_texto_1`,`fomento_editais`.`ed_texto_2` AS `ed_texto_2`,`fomento_editais`.`ed_texto_3` AS `ed_texto_3`,`fomento_editais`.`ed_texto_4` AS `ed_texto_4`,`fomento_editais`.`ed_texto_5` AS `ed_texto_5`,`fomento_editais`.`ed_texto_6` AS `ed_texto_6`,`fomento_editais`.`ed_texto_7` AS `ed_texto_7`,`fomento_editais`.`ed_texto_8` AS `ed_texto_8`,`fomento_editais`.`ed_texto_9` AS `ed_texto_9`,`fomento_editais`.`ed_texto_10` AS `ed_texto_10`,`fomento_editais`.`ed_texto_11` AS `ed_texto_11`,`fomento_editais`.`ed_texto_12` AS `ed_texto_12`,`fomento_editais`.`ed_status` AS `ed_status`,`fomento_editais`.`ed_autor` AS `ed_autor`,`fomento_editais`.`ed_corpo` AS `ed_corpo`,`fomento_editais`.`ed_url_externa` AS `ed_url_externa`,`fomento_editais`.`ed_total_visualizacoes` AS `ed_total_visualizacoes`,`fomento_editais`.`ed_local` AS `ed_local`,`fomento_editais`.`ed_data_envio` AS `ed_data_envio`,`fomento_editais`.`ed_document_require` AS `ed_document_require`,`fomento_editais`.`ed_login` AS `ed_login`,`fomento_editais`.`ed_titulo_email` AS `ed_titulo_email`,`fomento_editais`.`ed_edital_tipo` AS `ed_edital_tipo`,`fomento_editais`.`ed_fluxo_continuo` AS `ed_fluxo_continuo`,`csf_parceiro`.`id_cp` AS `id_cp`,`csf_parceiro`.`cp_descricao` AS `cp_descricao`,`csf_parceiro`.`cp_pais` AS `cp_pais`,`csf_parceiro`.`cp_ativo` AS `cp_ativo` from (((((`csf` left join `usuario` on((`usuario`.`id_us` = `csf`.`csf_aluno`))) left join `csf_status` on((`csf`.`csf_status` = `csf_status`.`id_cs`))) left join `pais` on((`csf`.`csf_pais` = `pais`.`iso3`))) left join `fomento_editais` on((`csf`.`csf_chamada` = `fomento_editais`.`id_ed`))) left join `csf_parceiro` on((`csf`.`csf_parceiro` = `csf_parceiro`.`id_cp`))));
+CREATE ALGORITHM=UNDEFINED DEFINER=`cip`@`%` SQL SECURITY DEFINER VIEW `csf_view` AS (select `csf`.`id_csf` AS `id_csf`,`csf`.`csf_aluno` AS `csf_aluno`,`csf`.`csf_orientador` AS `csf_orientador`,`csf`.`csf_modalidade` AS `csf_modalidade`,`csf`.`csf_saida` AS `csf_saida`,`csf`.`csf_saida_previsao` AS `csf_saida_previsao`,`csf`.`csf_retorno` AS `csf_retorno`,`csf`.`csf_retorno_previsao` AS `csf_retorno_previsao`,`csf`.`csf_pa_intercambio` AS `csf_pa_intercambio`,`csf`.`csf_pais` AS `csf_pais`,`csf`.`csf_universidade` AS `csf_universidade`,`csf`.`csf_status` AS `csf_status`,`csf`.`csf_obs` AS `csf_obs`,`csf`.`csf_area` AS `csf_area`,`csf`.`csf_curso` AS `csf_curso`,`csf`.`csf_chamada` AS `csf_chamada`,`csf`.`csf_parceiro` AS `csf_parceiro`,`usuario`.`id_us` AS `id_us`,`usuario`.`us_nome` AS `us_nome`,`usuario`.`us_cpf` AS `us_cpf`,`usuario`.`us_cracha` AS `us_cracha`,`usuario`.`us_emplid` AS `us_emplid`,`usuario`.`us_link_lattes` AS `us_link_lattes`,`usuario`.`us_ativo` AS `us_ativo`,`usuario`.`us_teste` AS `us_teste`,`usuario`.`us_origem` AS `us_origem`,`usuario`.`us_professor_tipo` AS `us_professor_tipo`,`usuario`.`us_usuario_cursando` AS `us_usuario_cursando`,`usuario`.`us_regime` AS `us_regime`,`usuario`.`us_genero` AS `us_genero`,`usuario`.`usuario_tipo_ust_id` AS `usuario_tipo_ust_id`,`usuario`.`usuario_funcao_usf_id` AS `usuario_funcao_usf_id`,`usuario`.`usuario_titulacao_ust_id` AS `usuario_titulacao_ust_id`,`usuario`.`us_dt_nascimento` AS `us_dt_nascimento`,`csf_status`.`id_cs` AS `id_cs`,`csf_status`.`cs_descricao` AS `cs_descricao`,`csf_status`.`cs_ativo` AS `cs_ativo`,`csf_status`.`cs_contabiliza` AS `cs_contabiliza`,`pais`.`id` AS `id`,`pais`.`iso` AS `iso`,`pais`.`iso3` AS `iso3`,`pais`.`numcode` AS `numcode`,`pais`.`nome` AS `nome`,`fomento_editais`.`id_ed` AS `id_ed`,`fomento_editais`.`ed_titulo` AS `ed_titulo`,`fomento_editais`.`ed_data` AS `ed_data`,`fomento_editais`.`ed_agencia` AS `ed_agencia`,`fomento_editais`.`ed_idioma` AS `ed_idioma`,`fomento_editais`.`ed_chamada` AS `ed_chamada`,`fomento_editais`.`ed_data_1` AS `ed_data_1`,`fomento_editais`.`ed_data_2` AS `ed_data_2`,`fomento_editais`.`ed_data_3` AS `ed_data_3`,`fomento_editais`.`ed_texto_1` AS `ed_texto_1`,`fomento_editais`.`ed_texto_2` AS `ed_texto_2`,`fomento_editais`.`ed_texto_3` AS `ed_texto_3`,`fomento_editais`.`ed_texto_4` AS `ed_texto_4`,`fomento_editais`.`ed_texto_5` AS `ed_texto_5`,`fomento_editais`.`ed_texto_6` AS `ed_texto_6`,`fomento_editais`.`ed_texto_7` AS `ed_texto_7`,`fomento_editais`.`ed_texto_8` AS `ed_texto_8`,`fomento_editais`.`ed_texto_9` AS `ed_texto_9`,`fomento_editais`.`ed_texto_10` AS `ed_texto_10`,`fomento_editais`.`ed_texto_11` AS `ed_texto_11`,`fomento_editais`.`ed_texto_12` AS `ed_texto_12`,`fomento_editais`.`ed_status` AS `ed_status`,`fomento_editais`.`ed_autor` AS `ed_autor`,`fomento_editais`.`ed_corpo` AS `ed_corpo`,`fomento_editais`.`ed_url_externa` AS `ed_url_externa`,`fomento_editais`.`ed_total_visualizacoes` AS `ed_total_visualizacoes`,`fomento_editais`.`ed_local` AS `ed_local`,`fomento_editais`.`ed_data_envio` AS `ed_data_envio`,`fomento_editais`.`ed_document_require` AS `ed_document_require`,`fomento_editais`.`ed_login` AS `ed_login`,`fomento_editais`.`ed_titulo_email` AS `ed_titulo_email`,`fomento_editais`.`ed_edital_tipo` AS `ed_edital_tipo`,`fomento_editais`.`ed_fluxo_continuo` AS `ed_fluxo_continuo`,`csf_parceiro`.`id_cp` AS `id_cp`,`csf_parceiro`.`cp_descricao` AS `cp_descricao`,`csf_parceiro`.`cp_pais` AS `cp_pais`,`csf_parceiro`.`cp_ativo` AS `cp_ativo` from (((((`csf` left join `usuario` on((`usuario`.`id_us` = `csf`.`csf_aluno`))) left join `csf_status` on((`csf`.`csf_status` = `csf_status`.`id_cs`))) left join `pais` on((`csf`.`csf_pais` = `pais`.`iso3`))) left join `fomento_editais` on((`csf`.`csf_chamada` = `fomento_editais`.`id_ed`))) left join `csf_parceiro` on((`csf`.`csf_parceiro` = `csf_parceiro`.`id_cp`))));
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `ajax_areadoconhecimento`
+-- Indexes for table `bolsa_modalidade`
 --
-ALTER TABLE `ajax_areadoconhecimento`
- ADD UNIQUE KEY `id_aa` (`id_aa`);
+ALTER TABLE `bolsa_modalidade`
+  ADD PRIMARY KEY (`id_bmod`);
 
 --
--- Indexes for table `centro_resultado`
+-- Indexes for table `csf_ged`
 --
-ALTER TABLE `centro_resultado`
- ADD UNIQUE KEY `id_cr` (`id_cr`);
+ALTER TABLE `csf_ged`
+  ADD UNIQUE KEY `id_doc` (`id_doc`);
 
 --
--- Indexes for table `csf`
+-- Indexes for table `csf_ged_tipo`
 --
-ALTER TABLE `csf`
- ADD UNIQUE KEY `id_csf` (`id_csf`);
+ALTER TABLE `csf_ged_tipo`
+  ADD UNIQUE KEY `id_doct` (`id_doct`);
 
 --
--- Indexes for table `csf_parceiro`
+-- Indexes for table `csf_historico`
 --
-ALTER TABLE `csf_parceiro`
- ADD UNIQUE KEY `id_cp` (`id_cp`);
-
---
--- Indexes for table `csf_status`
---
-ALTER TABLE `csf_status`
- ADD UNIQUE KEY `id_cs` (`id_cs`);
+ALTER TABLE `csf_historico`
+  ADD UNIQUE KEY `id_slog` (`id_slog`);
 
 --
 -- Indexes for table `fomento_categoria`
 --
 ALTER TABLE `fomento_categoria`
- ADD UNIQUE KEY `id_ct` (`id_ct`);
-
---
--- Indexes for table `fomento_editais`
---
-ALTER TABLE `fomento_editais`
- ADD UNIQUE KEY `id_ed` (`id_ed`);
-
---
--- Indexes for table `fomento_edital_categoria`
---
-ALTER TABLE `fomento_edital_categoria`
- ADD UNIQUE KEY `id_catp` (`id_catp`);
-
---
--- Indexes for table `logins`
---
-ALTER TABLE `logins`
- ADD UNIQUE KEY `id_us` (`id_us`);
+  ADD PRIMARY KEY (`id_ct`);
 
 --
 -- Indexes for table `logins_log`
 --
 ALTER TABLE `logins_log`
- ADD UNIQUE KEY `id_ul` (`id_ul`);
+  ADD UNIQUE KEY `id_ul` (`id_ul`);
 
 --
--- Indexes for table `logins_perfil`
+-- Indexes for table `programa_pos`
 --
-ALTER TABLE `logins_perfil`
- ADD UNIQUE KEY `id_usp` (`id_usp`);
-
---
--- Indexes for table `logins_perfil_ativo`
---
-ALTER TABLE `logins_perfil_ativo`
- ADD UNIQUE KEY `id_up` (`id_up`);
-
---
--- Indexes for table `pais`
---
-ALTER TABLE `pais`
- ADD UNIQUE KEY `id` (`id`);
-
---
--- Indexes for table `pro_equipamento`
---
-ALTER TABLE `pro_equipamento`
- ADD UNIQUE KEY `id_pe` (`id_pe`);
-
---
--- Indexes for table `pro_equipamento_contabil`
---
-ALTER TABLE `pro_equipamento_contabil`
- ADD UNIQUE KEY `id_pec` (`id_pec`);
-
---
--- Indexes for table `pro_equipamento_item`
---
-ALTER TABLE `pro_equipamento_item`
- ADD UNIQUE KEY `id_pei` (`id_pei`);
-
---
--- Indexes for table `pro_equipamento_laboratorio`
---
-ALTER TABLE `pro_equipamento_laboratorio`
- ADD UNIQUE KEY `id_pel` (`id_pel`);
-
---
--- Indexes for table `pro_equipamento_status`
---
-ALTER TABLE `pro_equipamento_status`
- ADD UNIQUE KEY `id_pes` (`id_pes`);
-
---
--- Indexes for table `pro_equipamento_tipo`
---
-ALTER TABLE `pro_equipamento_tipo`
- ADD UNIQUE KEY `id_pet` (`id_pet`);
-
---
--- Indexes for table `unidade`
---
-ALTER TABLE `unidade`
- ADD UNIQUE KEY `id_u` (`id_u`);
+ALTER TABLE `programa_pos`
+  ADD PRIMARY KEY (`id_pp`);
 
 --
 -- Indexes for table `usuario`
 --
 ALTER TABLE `usuario`
- ADD UNIQUE KEY `id_us` (`id_us`);
+  ADD PRIMARY KEY (`id_us`);
 
 --
--- Indexes for table `usuario_complemento`
+-- Indexes for table `usuario_bolsa`
 --
-ALTER TABLE `usuario_complemento`
- ADD UNIQUE KEY `usuario_id_us` (`usuario_id_us`);
+ALTER TABLE `usuario_bolsa`
+  ADD PRIMARY KEY (`id_usb`);
+
+--
+-- Indexes for table `usuario_cracha`
+--
+ALTER TABLE `usuario_cracha`
+  ADD PRIMARY KEY (`id_usc`);
+
+--
+-- Indexes for table `usuario_cursando`
+--
+ALTER TABLE `usuario_cursando`
+  ADD PRIMARY KEY (`id_usc`);
+
+--
+-- Indexes for table `usuario_email`
+--
+ALTER TABLE `usuario_email`
+  ADD PRIMARY KEY (`id_usm`);
+
+--
+-- Indexes for table `usuario_fone`
+--
+ALTER TABLE `usuario_fone`
+  ADD PRIMARY KEY (`id_ufs`);
+
+--
+-- Indexes for table `usuario_funcao`
+--
+ALTER TABLE `usuario_funcao`
+  ADD PRIMARY KEY (`usf_id`);
+
+--
+-- Indexes for table `usuario_hora`
+--
+ALTER TABLE `usuario_hora`
+  ADD PRIMARY KEY (`usuario_id_us`);
+
+--
+-- Indexes for table `usuario_tipo`
+--
+ALTER TABLE `usuario_tipo`
+  ADD PRIMARY KEY (`ust_id`);
+
+--
+-- Indexes for table `usuario_titulacao`
+--
+ALTER TABLE `usuario_titulacao`
+  ADD PRIMARY KEY (`ust_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `ajax_areadoconhecimento`
+-- AUTO_INCREMENT for table `csf_ged`
 --
-ALTER TABLE `ajax_areadoconhecimento`
-MODIFY `id_aa` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1389;
+ALTER TABLE `csf_ged`
+  MODIFY `id_doc` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
--- AUTO_INCREMENT for table `centro_resultado`
+-- AUTO_INCREMENT for table `csf_ged_tipo`
 --
-ALTER TABLE `centro_resultado`
-MODIFY `id_cr` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=597;
+ALTER TABLE `csf_ged_tipo`
+  MODIFY `id_doct` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
--- AUTO_INCREMENT for table `csf`
+-- AUTO_INCREMENT for table `csf_historico`
 --
-ALTER TABLE `csf`
-MODIFY `id_csf` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
---
--- AUTO_INCREMENT for table `csf_parceiro`
---
-ALTER TABLE `csf_parceiro`
-MODIFY `id_cp` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT for table `csf_status`
---
-ALTER TABLE `csf_status`
-MODIFY `id_cs` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
+ALTER TABLE `csf_historico`
+  MODIFY `id_slog` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `fomento_categoria`
 --
 ALTER TABLE `fomento_categoria`
-MODIFY `id_ct` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=46;
---
--- AUTO_INCREMENT for table `fomento_editais`
---
-ALTER TABLE `fomento_editais`
-MODIFY `id_ed` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT for table `fomento_edital_categoria`
---
-ALTER TABLE `fomento_edital_categoria`
-MODIFY `id_catp` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `logins`
---
-ALTER TABLE `logins`
-MODIFY `id_us` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+  MODIFY `id_ct` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=46;
 --
 -- AUTO_INCREMENT for table `logins_log`
 --
 ALTER TABLE `logins_log`
-MODIFY `id_ul` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+  MODIFY `id_ul` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
--- AUTO_INCREMENT for table `logins_perfil`
+-- AUTO_INCREMENT for table `programa_pos`
 --
-ALTER TABLE `logins_perfil`
-MODIFY `id_usp` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=39;
---
--- AUTO_INCREMENT for table `logins_perfil_ativo`
---
-ALTER TABLE `logins_perfil_ativo`
-MODIFY `id_up` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `pais`
---
-ALTER TABLE `pais`
-MODIFY `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=245;
---
--- AUTO_INCREMENT for table `pro_equipamento`
---
-ALTER TABLE `pro_equipamento`
-MODIFY `id_pe` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
---
--- AUTO_INCREMENT for table `pro_equipamento_contabil`
---
-ALTER TABLE `pro_equipamento_contabil`
-MODIFY `id_pec` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
---
--- AUTO_INCREMENT for table `pro_equipamento_item`
---
-ALTER TABLE `pro_equipamento_item`
-MODIFY `id_pei` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `pro_equipamento_laboratorio`
---
-ALTER TABLE `pro_equipamento_laboratorio`
-MODIFY `id_pel` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `pro_equipamento_status`
---
-ALTER TABLE `pro_equipamento_status`
-MODIFY `id_pes` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
---
--- AUTO_INCREMENT for table `pro_equipamento_tipo`
---
-ALTER TABLE `pro_equipamento_tipo`
-MODIFY `id_pet` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
---
--- AUTO_INCREMENT for table `unidade`
---
-ALTER TABLE `unidade`
-MODIFY `id_u` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
+ALTER TABLE `programa_pos`
+  MODIFY `id_pp` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=16;
 --
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-MODIFY `id_us` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+  MODIFY `id_us` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
--- AUTO_INCREMENT for table `usuario_complemento`
+-- AUTO_INCREMENT for table `usuario_bolsa`
 --
-ALTER TABLE `usuario_complemento`
-MODIFY `usuario_id_us` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
+ALTER TABLE `usuario_bolsa`
+  MODIFY `id_usb` int(11) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `usuario_cracha`
+--
+ALTER TABLE `usuario_cracha`
+  MODIFY `id_usc` int(11) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `usuario_email`
+--
+ALTER TABLE `usuario_email`
+  MODIFY `id_usm` int(11) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `usuario_fone`
+--
+ALTER TABLE `usuario_fone`
+  MODIFY `id_ufs` int(11) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `usuario_funcao`
+--
+ALTER TABLE `usuario_funcao`
+  MODIFY `usf_id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT for table `usuario_tipo`
+--
+ALTER TABLE `usuario_tipo`
+  MODIFY `ust_id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT for table `usuario_titulacao`
+--
+ALTER TABLE `usuario_titulacao`
+  MODIFY `ust_id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

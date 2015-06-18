@@ -902,6 +902,18 @@ if (!function_exists('form_edit')) {
 					if (strlen($vlr) == 0) { $vlr = '0';
 					}
 				}
+				/* Checkbox */
+				if (substr($cpt, 0, 2) == '$N') {
+					if (strlen($vlr) == 0) { $vlr = '0';
+					}
+					$vlr = troca($vlr,'.','');
+					$vlr = troca($vlr,',','.');
+				}
+				/* Data */
+				if (substr($cpt, 0, 2) == '$D') {
+					$vlr = strzero(sonumero($vlr),8);
+					$vlr = substr($vlr,4,4).'-'.substr($vlr,2,2).'-'.substr($vlr,0,2);					
+				}				
 				/* Excessoes */
 				if (isset($vlr)) {
 					/* verefica se o campo na gravavel */
@@ -995,6 +1007,39 @@ if (!function_exists('form_edit')) {
 		$CI = &get_instance();
 		$query = $CI -> db -> query($sql);
 		$row = $query -> row();
+		
+		$cp = $obj->cp;
+		for ($r=0;$r < count($cp);$r++)
+			{
+				$tp = $cp[$r][0];
+				$fld = $cp[$r][1];
+				
+				if (substr($tp,0,2) == '$D')
+					{
+						$vlr = $row->$fld;
+						$vlr = sonumero($vlr);
+						$vlr = substr($vlr,6,2).'/'.substr($vlr,4,2).'/'.substr($vlr,0,4);
+						if ($vlr == '00/00/0000') { $vlr = ''; }
+						$row->$fld = $vlr;
+						
+					}
+				if (substr($tp,0,2) == '$N')
+				{
+					$fld = $cp[$r][1];
+					if (strlen($fld) > 0)
+						{
+							$row->$fld = number_format($row->$fld,2,',','.');
+						}
+				}
+				if (substr($tp,0,2) == '$I')
+				{
+					$fld = $cp[$r][1];
+					if (strlen($fld) > 0)
+						{
+							$row->$fld = number_format($row->$fld,0,',','.');
+						}
+				}
+			}
 		return ($row);
 	}
 
@@ -1084,6 +1129,7 @@ if (!function_exists('form_edit')) {
 		<script>
 			$(document).ready(function(){
   				$('.date').mask('00/00/0000');
+  				$('.money').mask('000.000.000.000.000,00', {reverse: true});
 			});
 		</script>
 		";
@@ -1353,6 +1399,24 @@ if (!function_exists('form_edit')) {
 				';
 				break;
 				
+			/* form_number */
+			case 'N' :
+			/* TR da tabela */
+				$tela .= $tr;
+
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= $tdl . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
+				}
+
+				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => 15, 'size' => 15, 'placeholder' => $label, 'class' => 'form_string money');
+				if ($readonly == false) { $dados['readonly'] = 'readonly';
+				}
+				$tela .= $td . form_input($dados);
+				$tela .= $tdn . $trn;
+				break;			
 
 			/* String */
 			case 'S' :
