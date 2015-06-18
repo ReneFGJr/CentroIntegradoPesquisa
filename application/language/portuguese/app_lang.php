@@ -55,6 +55,7 @@ $lang['fm_tipo_edital'] = 'Tipo de edital';
 $lang['fm_fluxo_continuo'] = 'Fluxo continuo';
 $lang['fm_assinatura'] = 'Requer assinatura de documento';
 
+
 $lang['fm_texto_1'] = 'Objetivo(s)';
 $lang['fm_texto_2'] = 'Recursos';
 $lang['fm_texto_3'] = 'Elegibilidade';
