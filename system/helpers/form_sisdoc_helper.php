@@ -1221,8 +1221,9 @@ if (!function_exists('form_edit')) {
 			case '{' :
 				$tela .= $tr;
 				$tela .= '<td colspan=2>';
-				$tela .= '<fieldset><legend class="lt3 bold">'.$label.'</legend>';
+				$tela .= '<fieldset class="border1"><legend class="lt3 bold">'.$label.'</legend>';
 				$tela .= '<table width="100%" class="tabela00">';
+				$tela .= '<tr><th width="20%"></th><th wodth="80%"></tr>';
 				break;
 			case '}' :
 				$tela .= '</table>';
