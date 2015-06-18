@@ -1218,6 +1218,17 @@ if (!function_exists('form_edit')) {
 
 		//$dados = array('name'=>'dd'.$ddi, 'id'=>'dd'.$ddi,'value='.$dd[$ddi],'maxlenght'=>$max,'size'=>$size,$class=>'');
 		switch ($tt) {
+			case '{' :
+				$tela .= $tr;
+				$tela .= '<td colspan=2>';
+				$tela .= '<fieldset><legend class="lt3 bold">'.$label.'</legend>';
+				$tela .= '<table width="100%" class="tabela00">';
+				break;
+			case '}' :
+				$tela .= '</table>';
+				$tela .= '</fieldset>';
+				$tela .= '</table>';
+				break;
 			/* Select Box */
 			case '[' :
 				$ntype = trim(substr($type, 2, strlen($type)));
