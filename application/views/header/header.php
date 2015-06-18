@@ -9,6 +9,8 @@ header ('Content-type: text/html; charset=ISO-8859-1');
 <link rel="stylesheet" href="<?php echo base_url('css/style.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style_form.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style_font-awesome.css');?>">
+<link rel="stylesheet" href="<?php echo base_url('css/style_table.css');?>">
+
 
 <?php
 		/* ESTILOS CSS 

@@ -15,6 +15,29 @@ function msg($t)
 
 $lang['versao'] = 'v0.15.25';
 
+/* Ciencia sem fronteiras */
+$lang['csf_bt_cancelar'] = 'Cancelar processo';
+$lang['csf_bt_homologar_no'] = 'Não homologado';
+$lang['csf_bt_homologar'] = 'Homologado pela Instituição';
+$lang['csf_bt_homologar_capes_no'] = 'Não homologado pela CAPES/CNPq';
+$lang['csf_bt_homologar_capes'] = 'Homologação da CAPES/CNPq';
+$lang['csf_bt_homologar_parceiro'] = 'Aceito do Parceiro';
+$lang['csf_bt_desistente'] = 'Desistente';
+$lang['csf_bt_viagem'] = 'Saída do Brasil';
+$lang['csf_bt_fim_viagem'] = 'Retorno ao Brasil';
+$lang['csf_bt_troca_universidade'] = 'Troca de Univerisdade';
+$lang['csf_bt_troca_pais'] = 'Troca de país';
+$lang['scf_historico'] = 'Histórico';
+$lang[''] = '';
+$lang[''] = '';
+$lang[''] = '';
+$lang[''] = '';
+$lang[''] = '';
+$lang[''] = '';
+$lang[''] = '';
+$lang[''] = '';
+
+
 /*fomento*/
 $lang['fm_titulo'] = 'Titulo da chamada';
 $lang['fm_titulo_email'] = 'Titulo do e-mail(opcional)';

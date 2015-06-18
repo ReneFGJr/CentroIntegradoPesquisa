@@ -1,12 +1,47 @@
 <?php
 class csfs extends CI_model {
 	var $tabela = "csf";
-	function inserir_historico($protocolo,$status,$text='')
+	
+	function mostra_historico($protocolo)
 		{
-			$data = date("Y-m-d");
-			$hora = date("H:i:s");
-			$user = $this -> session -> userdata('cpf');
-			$sql = "insert into csf_historico 
+			$sql = "select * from csf_historico
+						left join csf_status on slog_status = id_cs
+						left join usuario on slog_usuario = us_cpf
+							where slog_protocolo = ".$protocolo.' order by slog_data, slog_hora';
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array($rlt);
+			$sx = '<table width="100%" class="tabela00">';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					
+					$sx .= '<tr>';
+					$sx .= '<td>';
+					$sx .= stodbr($line['slog_data']);
+					$sx .= ' '.$line['slog_hora'];
+					$sx .= '</td>';
+
+					$sx .= '<td>';
+					$sx .= ' '.$line['cs_descricao'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= ' '.$line['us_nome'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= '<img src="'.base_url('img/icon/icone_balloon.png').'" height="16" title="'.$line['slog_text'].'">';
+					$sx .= '</td>';											
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
+	
+	function inserir_historico($protocolo, $status, $text = '') {
+		$data = date("Y-m-d");
+		$hora = date("H:i:s");
+		$user = $this -> session -> userdata('cpf');
+		$sql = "insert into csf_historico 
 					(
 					slog_protocolo, slog_usuario, slog_status,
 					slog_data, slog_hora, slog_text
@@ -14,20 +49,92 @@ class csfs extends CI_model {
 					'$protocolo','$user','$status',
 					'$data','$hora','$text');
 			";
-			$this->db->query($sql);
-			return(True);
-		}
-	function cp_homologar()
-		{
-			$cp = array();
-			$cp = array();
-			$sql_pais = 'iso3:nome:select * from pais order by nome';
-			array_push($cp, array('$H8', 'id_csf', '', False, False));
-			array_push($cp, array('$Q '.$sql_pais, 'csf_pais', msg('csf_pais'), True, True));
-			array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
-			array_push($cp, array('$HV', 'csf_status', '2', True, True));
-			return($cp);			
-		}
+		$this -> db -> query($sql);
+		return (True);
+	}
+
+	function cp_homologar() {
+		$cp = array();
+		$cp = array();
+		$sql_pais = 'iso3:nome:select * from pais order by nome';
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$Q ' . $sql_pais, 'csf_pais', msg('csf_pais'), True, True));
+		array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
+		array_push($cp, array('$HV', 'csf_status', '2', True, True));
+		return ($cp);
+	}
+	
+	function cp_homologar_no() {
+		$cp = array();
+		$cp = array();
+		//$sql_pais = 'iso3:nome:select * from pais order by nome';
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
+		array_push($cp, array('$HV', 'csf_status', '2', True, True));
+		return ($cp);
+	}	
+
+	function cp_homologar_capes() {
+		$cp = array();
+		$sql_pais = 'iso3:nome:select * from pais order by nome';
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$Q ' . $sql_pais, 'csf_pais', msg('csf_pais'), True, True));
+		array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
+		array_push($cp, array('$HV', 'csf_status', '3', True, True));
+		return ($cp);
+	}
+	
+	function cp_homologar_capes_no() {
+		$cp = array();
+		//$sql_pais = 'iso3:nome:select * from pais order by nome';
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
+		array_push($cp, array('$HV', 'csf_status', '10', True, True));
+		return ($cp);
+	}	
+	
+	function cp_cancelar() {
+		$cp = array();
+		//$sql_pais = 'iso3:nome:select * from pais order by nome';
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
+		array_push($cp, array('$HV', 'csf_status', '11', True, True));
+		return ($cp);
+	}	
+	
+	function cp_viagem() {
+		$cp = array();
+		$sql_pais = 'iso3:nome:select * from pais order by nome';
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$Q ' . $sql_pais, 'csf_pais', msg('csf_pais'), True, True));
+		array_push($cp, array('$MES', 'csf_saida', msg('csf_saida'), True, True));
+		array_push($cp, array('$MES', 'csf_retorno_previsao', msg('csf_prev_retorno'), True, True));
+		array_push($cp, array('$HV', 'csf_status', '5', True, True));
+		return ($cp);
+	}	
+
+	function cp_desistente() {
+		$cp = array();
+		//$sql_pais = 'iso3:nome:select * from pais order by nome';
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
+		array_push($cp, array('$HV', 'csf_status', '8', True, True));
+		return ($cp);
+	}	
+
+
+	function cp_homologar_parceira() {
+		$cp = array();
+		$sql_pais = 'iso3:nome:select * from pais order by nome';
+		$sql_parceiro = 'id_cp:cp_descricao:select * from csf_parceiro where cp_ativo = 1 order by cp_descricao';
+		//array_push($cp, array('$Q id_cp:cp_descricao:select * from csf_parceiro order by cp_descricao where cp_ativo = 1', 'csf_parceiro', msg('csf_parceiro'), True, True));
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$Q ' . $sql_pais, 'csf_pais', msg('csf_pais'), True, True));
+		array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
+		array_push($cp, array('$Q ' . $sql_parceiro, 'csf_parceiro', msg('csf_parceiro'), True, True));
+		array_push($cp, array('$HV', 'csf_status', '4', True, True));
+		return ($cp);
+	}
 
 	function create_view() {
 		$cp = '*';
@@ -127,19 +234,19 @@ class csfs extends CI_model {
 			$sx .= stodbr($dt1);
 			$sx .= '<span color="blue">' . $prev . '</span>';
 			$sx .= '</td>';
-			
+
 			$sx .= '<td class="borderb1">';
-			$img = '<img src="'.base_url('img/icon/icone_editar.png').'" border=0 height="24" onclick="mostra(\'csf'.$r.'\','.$line['id_csf'].');" class="link">';
+			$img = '<img src="' . base_url('img/icon/icone_editar.png') . '" border=0 height="24" onclick="mostra(\'csf' . $r . '\',' . $line['id_csf'] . ');" class="link">';
 			$sx .= $img;
 			$sx .= '</td>';
-			
+
 			$sx .= '<tr><td colspan=10>';
-			$sx .= '<div id="csf'.$r.'" style="display:none; width: 100%;">aguarde ...</div>';
-			$sx .= '</td></tr>';			
+			$sx .= '<div id="csf' . $r . '" style="display:none; width: 100%;">aguarde ...</div>';
+			$sx .= '</td></tr>';
 		}
 		$sx .= '<tr><td colspan=10 class="lt0">* Previsão</td></tr>';
 		$sx .= '</table>';
-		
+
 		$sx .= '
 		<script>
 			function mostra($id,$reg)
@@ -147,7 +254,7 @@ class csfs extends CI_model {
 					
 					$idr = "#"+$id;
 					$($idr).fadeIn();
-					var $url = "'.base_url('index.php/csf/ajax/').'/"+$reg+"/"+$id;
+					var $url = "' . base_url('index.php/csf/ajax/') . '/"+$reg+"/"+$id;
 					$.ajax({
 					        url: $url,
 					        type: "post",
@@ -225,7 +332,7 @@ class csfs extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 
-		$sx = '<table width="300" align="left" class="border1 tabela00">';
+		$sx = '<table width="500" align="left" class="border1 tabela00">';
 		$sx .= '<tr>
 						<th>situação</th>
 						<th>estudantes</th>
