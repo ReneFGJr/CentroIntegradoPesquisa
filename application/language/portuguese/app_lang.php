@@ -45,11 +45,15 @@ $lang['fm_agencia'] = 'Agência';
 $lang['fm_idioma'] = 'Idioma';
 $lang['fm_chamada'] = 'Chamada';
 $lang['fm_status'] = 'Status';
-$lang['fm_autor'] = 'Autor';
+$lang['fm_autor'] = 'Responsável (LOGIN)';
 $lang['fm_corpo'] = 'Corpo';
 $lang['fm_url_externa'] = 'Link da chamada';
 $lang['fm_total_visualizacoes'] = 'Total de visualizações';
 $lang['fm_local'] = 'Local';
+$lang['fm_disseminador'] = 'Disseminador';
+$lang['fm_tipo_edital'] = 'Tipo de edital';
+$lang['fm_fluxo_continuo'] = 'Fluxo continuo';
+$lang['fm_assinatura'] = 'Requer assinatura de documento';
 
 $lang['fm_texto_1'] = 'Objetivo(s)';
 $lang['fm_texto_2'] = 'Recursos';
@@ -66,9 +70,9 @@ $lang['fm_texto_12'] = 'Contato na instituição';
 
 
 /*datas*/
-$lang['fm_data_01'] = 'Data de envio';
-$lang['fm_data_02'] = 'Deadline (eletrônico)';
-$lang['fm_data_03'] = 'Deadline (envio da documentação';
+$lang['fm_data_01'] = 'Deadline (eletrônico)';
+$lang['fm_data_02'] = 'Deadline (envio da documentação)';
+$lang['fm_data_03'] = 'Previsão de divulgação dos resultados';
 $lang['fm_data_04'] = '';
 
 
