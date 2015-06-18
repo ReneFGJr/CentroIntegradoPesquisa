@@ -54,6 +54,7 @@ $lang['fm_disseminador'] = 'Disseminador';
 $lang['fm_tipo_edital'] = 'Tipo de edital';
 $lang['fm_fluxo_continuo'] = 'Fluxo continuo';
 $lang['fm_assinatura'] = 'Requer assinatura de documento';
+$lang['fm_login'] = 'Responsável (LOGIN)';
 
 
 $lang['fm_texto_1'] = 'Objetivo(s)';
