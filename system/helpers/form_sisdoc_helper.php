@@ -996,7 +996,10 @@ if (!function_exists('form_edit')) {
 			return (1);
 		}
 	}
-
+	/*
+	 * 
+	 * Le dados do banco
+	 */
 	function le_dados($obj) {
 		$id = $obj -> id;
 		$tabela = $obj -> tabela;
