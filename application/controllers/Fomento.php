@@ -8,7 +8,7 @@ class Fomento extends CI_Controller {
 		$this -> load -> library("nuSoap_lib");
 
 		$this -> load -> library('form_validation');
-		//$this -> load -> database();
+		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
@@ -25,7 +25,7 @@ class Fomento extends CI_Controller {
 	
 	public function index(){
 	
-	$this ->load->model('action_edit_edital_fomento');
+	$this ->load->model('fomentos');
 		
 	}
 
@@ -50,20 +50,62 @@ class Fomento extends CI_Controller {
 	
 	public function editEditalFomento()
 		{
+		//cabecalho	
 		$this -> cab();
+		//abre
 		$this -> load -> view('header/content_open');
 		
 		//chama a View		
-		$this -> load -> view('fomento/edit_edital_fomento.php');
+		$this -> load -> view('fomento/fomento.php');
 		
+		//fecha
 		$this -> load -> view('header/content_close');
+		//rodape
 		$this -> load -> view('header/foot');			
 		}
 		
-	public function salvar(){
+
+	function view($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('fomentos');
+	
+		$this -> cab();
+		$this -> load -> view('header/content_open');
 		
+		$data = $this->fomentos->le($id);
+	
+		$this -> load -> view('fomento/fomento', $data);
+	
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+
+	function edit($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('fomentos');
+		$cp = $this->fomentos->cp();
+		$data = array();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
 		
+		$form = new form;
+		$form->id = $id;
 		
+		$tela = $form->editar($cp,$this->fomentos->tabela);
+		$data['title'] = msg('fm_titulo');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form',$data);
+		
+		/* Salva */
+		if ($form->saved > 0)
+			{
+				redirect(base_url('index.php/fomento'));
+			}
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 	
 
