@@ -5,7 +5,7 @@ class josso_login_pucpr extends CI_Model {
 	
 	var $homologacao = 'http://haiti.cwb.pucpr.br:8280/services/AutenticacaoSOA?wsdl';
 	
-	var $desenvolvimento = 'https://rhea.cwb.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
+	var $desenvolvimento = 'http://rhea.cwb.pucpr.br:8280/services/AutenticacaoSOA?wsdl';
 	
 	//var $desenvolvimento = 'https://sarch.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
 

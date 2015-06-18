@@ -492,6 +492,7 @@ class form {
 		/* Monta forumário */
 		$ed -> cp = $cp;
 		$result = form_edit($ed);
+		 
 		$t = $result['tela'];
 		$this -> saved = $result['saved'];
 		return ($t);
@@ -989,8 +990,7 @@ if (!function_exists('form_edit')) {
 		$tabela = $obj -> tabela;
 		$fld = $obj -> cp[0][1];
 
-		$sql = "select * from " . $tabela . "
-where $fld = $id";
+		$sql = "select * from " . $tabela . " where $fld = $id";
 
 		$CI = &get_instance();
 		$query = $CI -> db -> query($sql);
@@ -1079,9 +1079,14 @@ where $fld = $id";
 			}
 			$tela .= form_field($cp[$r], $vlr);
 		}
-		$tela .= '
-</table>
-';
+		$tela .= '</table>';
+		$tela .= "
+		<script>
+			$(document).ready(function(){
+  				$('.date').mask('00/00/0000');
+			});
+		</script>
+		";
 		$tela .= form_close();
 
 		$data = array('tela' => $tela, 'saved' => $saved);
@@ -1321,6 +1326,33 @@ where $fld = $id";
 				$tela .= $td . form_checkbox($dados, 'accept', $vlr); ;
 				$tela .= $tdn . $trn;
 				break;
+				
+			/* String */
+			case 'D' :
+			/* TR da tabela */
+				$tela .= $tr;
+
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= $tdl . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
+				}
+
+				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => 12, 'size' => 12, 'placeholder' => $label, 'class' => 'form_string date');
+				if ($readonly == false) { $dados['readonly'] = 'readonly';
+				}
+				$tela .= $td . form_input($dados).' (dd/mm/yyyy)';
+				$tela .= $tdn . $trn;
+				$tela .= '
+				  <script>
+				  $(function() {
+				    $( "#'.$dn.'" ).datepicker();
+				  });
+				  </script>
+				';
+				break;
+				
 
 			/* String */
 			case 'S' :
@@ -1348,23 +1380,22 @@ where $fld = $id";
 					$checked = False;
 					/* label */
 					$tela .= ' <td class="lt4" colspan=2>
-<table>
-	<tr>
-		<td>
-		<div class="onoffswitch">
-			';
-
-					/* cehcked */
-					if (trim($vlr) == '1') { $checked = True;
-					}
-
-					/* Monta lista */
-					$data = array('name' => $dn, 'checked' => $checked, 'class' => 'onoffswitch-checkbox', 'id' => $dn, 'value' => '1');
-					$tela .= form_checkbox($data);
-					$tela .= ' <label class="onoffswitch-label" for="' . $dn . '"> <span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label>
-		</div></td><td class="lt2"> ' . $label . ' </td>
-	</tr>
-</table></td></tr>';
+						<table>
+							<tr>
+								<td>
+								<div class="onoffswitch">
+									';
+									/* cehcked */
+									if (trim($vlr) == '1') { $checked = True;
+									}
+				
+									/* Monta lista */
+									$data = array('name' => $dn, 'checked' => $checked, 'class' => 'onoffswitch-checkbox', 'id' => $dn, 'value' => '1');
+									$tela .= form_checkbox($data);
+									$tela .= ' <label class="onoffswitch-label" for="' . $dn . '"> <span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span> </label>
+								</div></td><td class="lt2"> ' . $label . ' </td>
+							</tr>
+						</table></td></tr>';
 				}
 				break;
 			/* Update */
@@ -1407,6 +1438,20 @@ where $fld = $id";
 		$ddi++;
 		return ($tela);
 	}
+
+//Define a callback and pass the format of date 
+function valid_date($date, $format = 'Y-m-d')
+{
+   $d = DateTime::createFromFormat($format, $date);
+   //Check for valid date in given format
+   if($d && $d->format($format) == $date) {
+      return true;
+   } else {
+     $this->form_validation->set_message('valid_date', 
+               'The %s date is not valid it should match this ('.$format.') format');
+        return false;
+   }
+}
 
 }
 ?>

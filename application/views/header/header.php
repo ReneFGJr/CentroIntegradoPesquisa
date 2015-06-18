@@ -10,6 +10,7 @@ header ('Content-type: text/html; charset=ISO-8859-1');
 <link rel="stylesheet" href="<?php echo base_url('css/style_form.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style_font-awesome.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style_table.css');?>">
+<link rel="stylesheet" href="<?php echo base_url('css/jquery-ui.min.css');?>">
 
 
 <?php
@@ -24,6 +25,10 @@ header ('Content-type: text/html; charset=ISO-8859-1');
 			}
 ?>
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/jquery.js');?>"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/jquery.mask.js');?>"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/jquery-ui.min.js');?>"></script>
+
+
 <?php
 		/* BIBLIOTECAS JAVA SCRIPT
 		 */

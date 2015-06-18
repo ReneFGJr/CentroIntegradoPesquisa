@@ -387,6 +387,8 @@ class csf extends CI_Controller {
 		$data['content'] = $this->geds->form_upload($id);
 		$this -> load -> view('content', $data);
 		
+		$this -> load -> view('header/content_close');
+		
 		$this -> load -> view('header/foot', $data);
 	}
 
