@@ -3,7 +3,7 @@ class fomento_editais extends CI_model {
 	var $tabela = 'fomento_edital';
 	function row($obj) {
 		$obj -> fd = array('id_ed', 'ed_titulo', 'ed_chamada', 'ed_status');
-		$obj -> lb = array('ID', 'nome da chamada', 'chamadas', 'estatus');
+		$obj -> lb = array('ID', 'nome da chamada', 'edital', 'estatus');
 		$obj -> mk = array('', 'L', 'L', 'L');
 		return ($obj);
 	}
