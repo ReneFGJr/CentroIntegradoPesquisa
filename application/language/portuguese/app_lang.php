@@ -38,8 +38,8 @@ $lang[''] = '';
 $lang[''] = '';
 
 
-/*fomento*/
-$lang['fm_titulo'] = 'Titulo da chamada';
+/*Fomento*/
+$lang['fm_titulo'] = 'Nome da chamada';
 $lang['fm_titulo_email'] = 'Titulo do e-mail(opcional)';
 $lang['fm_agencia'] = 'Agência';
 $lang['fm_idioma'] = 'Idioma';
@@ -55,8 +55,6 @@ $lang['fm_tipo_edital'] = 'Tipo de edital';
 $lang['fm_fluxo_continuo'] = 'Fluxo continuo';
 $lang['fm_assinatura'] = 'Requer assinatura de documento';
 $lang['fm_login'] = 'Responsável (LOGIN)';
-
-
 $lang['fm_texto_1'] = 'Objetivo(s)';
 $lang['fm_texto_2'] = 'Recursos';
 $lang['fm_texto_3'] = 'Elegibilidade';
@@ -69,15 +67,10 @@ $lang['fm_texto_9'] = '';
 $lang['fm_texto_10'] = '';
 $lang['fm_texto_11'] = 'Submissão da proposta';
 $lang['fm_texto_12'] = 'Contato na instituição';
-
-
-/*datas*/
-$lang['fm_data_01'] = 'Deadline (eletrônico)';
+$lang['fm_data_01'] = 'Deadline para submissão da proposta';
 $lang['fm_data_02'] = 'Deadline (envio da documentação)';
 $lang['fm_data_03'] = 'Previsão de divulgação dos resultados';
 $lang['fm_data_04'] = '';
-
-
 
 
 /* Formulário de consulta */
@@ -96,7 +89,7 @@ $lang['mes_09'] = 'Setembro';
 $lang['mes_10'] = 'Outubro';
 $lang['mes_11'] = 'Novembro';
 $lang['mes_12'] = 'Dezembro';
-
+/* Nome do mes abreviados*/
 $lang['mes_01a'] = 'JAN.';
 $lang['mes_02a'] = 'FEV.';
 $lang['mes_03a'] = 'MAR.';
@@ -125,6 +118,7 @@ $lang['cab_expediente_10'] = 'Biotério';
 
 /* Botoes */
 $lang['bt_update'] = 'ATUALIZAR';
+$lang['bt_salvar_continuar'] = 'Salvar e continuar >>>';
 
 /*
  * Ciência sem fronteiras */

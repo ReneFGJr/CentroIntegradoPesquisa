@@ -74,7 +74,7 @@ class edital extends CI_Controller {
 
 		$form -> row_edit = base_url('index.php/edital/edit/');
 		$form -> row_view = base_url('index.php/edital/view/');
-		$form -> row = base_url('index.php/edital/row/');
+		$form -> row      = base_url('index.php/edital/row/');
 
 		$tela['tela'] = row($form, $id);
 		$url = base_url('author');
@@ -118,7 +118,6 @@ class edital extends CI_Controller {
 		$data = array();
 
 		$this -> cab();
-		$this -> load -> view('header/content_open');
 
 		$form = new form;
 		$form -> id = $id;

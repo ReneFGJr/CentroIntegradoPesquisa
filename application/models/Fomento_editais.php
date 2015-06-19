@@ -1,6 +1,6 @@
 <?php
 class fomento_editais extends CI_model {
-	var $tabela = 'fomento_editais';
+	var $tabela = 'fomento_edital';
 	function row($obj) {
 		$obj -> fd = array('id_ed', 'ed_titulo', 'ed_chamada', 'ed_status');
 		$obj -> lb = array('ID', 'nome da chamada', 'chamadas', 'estatus');
@@ -25,8 +25,8 @@ class fomento_editais extends CI_model {
 		 */
 
 		$sql = "SELECT * FROM fomento_edital_categoria
-						inner join fomento_categoria on catp_categoria = id_ct
-						where catp_produto = $id and ct_ativo = 1
+						inner join fomento_categoria on fe_id = id_ct
+						where fe_id = $id and ct_ativo = 1
 						";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -76,7 +76,7 @@ class fomento_editais extends CI_model {
 		 * Mostra sub areas
 		 */
 			$sql = "select * from fomento_categoria
-						left join fomento_edital_categoria on catp_categoria = id_ct and catp_produto = $id and ct_ativo = 1
+						left join fomento_edital_categoria on fe_id = id_ct and fe_id = $id and ct_ativo = 1
 						where id_ct = $idr order by ct_descricao";
 
 			$rlt2 = $this -> db -> query($sql);
@@ -84,7 +84,7 @@ class fomento_editais extends CI_model {
 			for ($y = 0; $y < count($rlt2); $y++) {
 				$line = $rlt2[$y];
 				$checked = '';
-				if (strlen($line['catp_categoria']) > 0) { $checked = ' checked ';
+				if (strlen($line['fe_id']) > 0) { $checked = ' checked ';
 				}
 				$sx .= '<input type="checkbox" name="dd8" value="' . $line['id_ct'] . '" ' . $checked . '>';
 				$sx .= $line['ct_descricao'];
