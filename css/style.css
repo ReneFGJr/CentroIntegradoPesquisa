@@ -98,6 +98,7 @@ a.lt1 {
 	height: 40px;
 	padding: 5px 20px;
 }
+
 /* Photos - Fotografia */
 #photo
 	{
@@ -121,6 +122,12 @@ a.lt1 {
 }
 .borderb1 {
 	border-bottom: 1px solid #000000;
+}
+.bordert1 {
+	border-top: 1px solid #000000;
+}
+.borderr1 {
+	border-right: 1px solid #000000;
 }
 .radius10 {
 	border-radius: 10px;
