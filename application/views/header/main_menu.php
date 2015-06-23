@@ -31,6 +31,18 @@
 				</a>
 			';
 				break;
+			case 'BTB' :
+				echo '
+				<a href="' . base_url('index.php' . $menu[$r][3]) . '\" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
+					<div id="icone-cip-2" class="icone-green icone-cip">
+						<h2 class="icone-green-cor">' . $menu[$r][0] . '</h2>
+						<p>
+							' . $menu[$r][1] . '
+						</p>						
+					</div>
+				</a>
+			';
+				break;				
 			case 'ITE' :
 				$tit = $menu[$r][0];
 				if ($tit != $xtit) {

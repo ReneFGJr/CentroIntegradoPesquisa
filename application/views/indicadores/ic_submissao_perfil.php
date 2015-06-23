@@ -1,22 +1,24 @@
 <?php
-$ano = date("Y");
+
 ?>
 <BR>
 <fieldset class="indicators">
 	<legend>
-		Edital <?php echo $ano;?>
+		Planos Submetidos - Edital <?php echo $submissoes_ano;?>
 	</legend>
 	<div id="submissoes_ano_perfil">
 		<table width="100%" class="tabela01 lt3">
 			<tr>
-				<td width="33%"><div id="subm_ano_perf_1"></div></td>
-				<td width="33%"><div id="subm_ano_perf_2"></div></td>
-				<td width="33%"><div id="subm_ano_perf_3"></div></td>
+				<td width="50%"><div id="perfil_01"></div></td>
+				<td width="50%"><div id="perfil_02"></div></td>
 			</tr>
 			<tr>
-				<td width="33%"><div id="subm_ano_perf_4"></div></td>
-				<td width="33%"><div id="subm_ano_perf_5"></div></td>
-				<td width="33%"><div id="subm_ano_perf_6"></div></td>
+				<td width="33%"><div id="perfil_03"></div></td>
+				<td width="33%"><div id="perfil_04"></div></td>
+			</tr>
+			<tr>
+				<td width="33%"><div id="perfil_05"></div></td>
+				<td width="33%"><div id="perfil_06"></div></td>
 			</tr>
 		</table>
 	</div>

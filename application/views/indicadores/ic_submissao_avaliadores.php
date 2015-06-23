@@ -1,7 +1,7 @@
 <BR>
 <fieldset class="indicators">
 	<legend>
-		Avaliadores do processo de submissão
+		Série Histórica de Planos Submetidos (IC/IT)
 	</legend>
 	<div id="submissoes_ano_avaliadores">
 				

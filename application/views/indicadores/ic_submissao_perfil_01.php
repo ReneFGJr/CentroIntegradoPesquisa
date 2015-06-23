@@ -1,7 +1,13 @@
+<?php
+$data = '';
+if (strlen($l1) > 0) { $data .= "['$l1 ($v1)', $v1]"; }
+if (strlen($l2) > 0) { $data .= ", ['$l2 ($v2)', $v2]"; }
+if (strlen($l3) > 0) { $data .= ", ['$l3 ($v3)', $v3]"; }
+?>
 <link rel="stylesheet" type="text/css" href="/css/result-light.css">
 <script type='text/javascript'>
 	$(function() {
-		$('#subm_ano_perf_1').highcharts({
+		$('#<?php echo $frame;?>').highcharts({
 			chart : {
 				plotBackgroundColor : null,
 				plotBorderWidth : 0,
@@ -9,7 +15,7 @@
 				backgroundColor : '#EEEEEE'
 			},
 			title : {
-				text : 'Planos<br>Titulação Docentes',
+				text : '<?php echo $title;?>',
 				align : 'center',
 				verticalAlign : 'middle',
 				y : 50
@@ -35,9 +41,9 @@
 			},
 			series : [{
 				type : 'pie',
-				name : 'Titulaão',
+				name : 'Percentual',
 				innerSize : '50%',
-				data : [['Doutores SS', 45.0], ['Doutores', 26.8], ['Mestres', 12.8], ['Doutorandos', 8.5], ['Pós-Doutorandos', 6.2]]
+				data : [<?php echo $data;?>],
 			}]
 		});
 	});

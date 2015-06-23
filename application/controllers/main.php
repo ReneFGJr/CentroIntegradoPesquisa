@@ -60,6 +60,8 @@ class main extends CI_Controller {
 		array_push($menu,array('Banco de Projetos','Pesquisa realizadas na PUCPR','BTN','/banco_projetos'));
 		array_push($menu,array('Inciação Científica','Programa de Iniciação Científica e Tecnológia da PUCPR','BTN','/pibic'));
 		
+		array_push($menu,array('Indicadores de Pesquisa','Indicadores Pesquisa','BTB','/indicadores'));
+		
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Principal';
 		$this -> load -> view('header/main_menu',$data);

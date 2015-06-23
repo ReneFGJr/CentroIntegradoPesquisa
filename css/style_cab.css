@@ -159,6 +159,13 @@
 	color: #b82955;
 	border-bottom: solid 10px #b82955;
 }
+.icone-green {
+	color: #29b855;
+	border-bottom: solid 10px #29b855;
+}
+.icone-green-cor {
+	color: #29b855;
+}
 /****/
 .icone-admin-cor {
 	color: #2955b8;
