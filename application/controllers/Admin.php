@@ -45,14 +45,28 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
 	}
-
+	
+	
 	function index() {
 		$this -> cab();
 		$data = array();
-
-		$this -> load -> view('header/content_close');
+	
+		/* Menu de botões*/
+		$menu = array();
+		array_push($menu,array('Parceiros','Parceiros da PucPR','BTA','/parceiro'));
+		
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu Administração';
+		$this -> load -> view('header/main_menu',$data);
+	
+	
+		/*Fecha pagína*/
+		$this -> load -> view('header/content_close'); 	
+		/*Gera rodapé*/
 		$this -> load -> view('header/foot', $data);
 	}
+	
 	
 	function centro_resultado($id = 0)
 		{
