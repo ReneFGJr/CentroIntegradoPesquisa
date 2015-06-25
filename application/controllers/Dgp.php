@@ -30,6 +30,7 @@ class dgp extends CI_Controller {
 		$css = array();
 		$js = array();
 		array_push($css, 'style_cab.css');
+		array_push($css, 'form_sisdoc.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
 
@@ -43,6 +44,81 @@ class dgp extends CI_Controller {
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
+	
+	function admin($id=0) {
+		/* Models */
+		$this->load->model('dgps');
+		$this -> cab();
+		$data = array();
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);
+		
+		$form = new form;
+		$form -> tabela = $this -> dgps -> tabela;
+		$form -> see = true;
+		$form = $this -> dgps -> row($form);
+
+		$form -> row_edit = base_url('index.php/dgp/edit');
+		$form -> row_view = base_url('index.php/dgp/view');
+		$form -> row = base_url('index.php/dgp/admin/');
+
+		$tela['tela'] = row($form, $id);
+
+		$tela['title'] = $this -> lang -> line('title_dgp');
+
+		$this -> load -> view('form/form', $tela);		
+		
+		$this -> load -> view('header/content_close', $data);
+		$this -> load -> view('header/foot', $data);
+	}	
+	
+	function view($id=0)
+		{
+		$this->load->model('dgps');
+		$this -> cab();
+		$data = array();
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);
+		
+		$data = $this->dgps->le($id);
+		$this->load->view('dgp/grupo',$data);
+		
+		$this -> load -> view('header/content_close', $data);
+		$this -> load -> view('header/foot', $data);			
+		}
+		
+	function edit($id=0) {
+		/* Models */
+		$this->load->model('dgps');
+		$this -> cab();
+		$data = array();
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);
+		
+		$cp = $this->dgps->cp();
+		$data = array();
+
+		$form = new form;
+		$form->id = $id;
+		
+		$tela = $form->editar($cp,$this->dgps->tabela);
+		$data['title'] = msg('dgps_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form',$data);
+		
+		/* Salva */
+		if ($form->saved > 0)
+			{
+				redirect(base_url('index.php/dgp/admin/'));
+			}	
+		
+		$this -> load -> view('header/content_close', $data);
+		$this -> load -> view('header/foot', $data);
+	}	
+	
 
 	function index() {
 		$this -> cab();

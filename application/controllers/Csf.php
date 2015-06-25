@@ -83,7 +83,7 @@ class csf extends CI_Controller {
 
 	function novo() {
 		/* Models */
-		$this -> load -> model('estudantes');
+		$this -> load -> model('usuarios');
 		$this -> load -> model('sga_pucpr');
 		$this -> load -> model('csfs');
 
@@ -97,12 +97,12 @@ class csf extends CI_Controller {
 		$dd1 = $this -> input -> post('dd1');
 		$aluno = '';
 		if (strlen($dd1) > 0) {
-			$aluno = $this -> estudantes -> findStudentByCracha($dd1);
+			$aluno = $this -> usuarios -> findStudentByCracha($dd1);
 		}
 
 		if (strlen($aluno) > 0) {
 			/* Parte II do formulario */
-			$alunoDados = $this -> estudantes -> readByCracha($aluno);
+			$alunoDados = $this -> usuarios -> readByCracha($aluno);
 			$this -> load -> view('usuario/view', $alunoDados);
 
 			/* Montar formulario */
@@ -356,7 +356,7 @@ class csf extends CI_Controller {
 
 	function ver($id = 0, $chk = '') {
 		/* Models */
-		$this -> load -> model('estudantes');
+		$this -> load -> model('usuarios');
 		$this -> load -> model('sga_pucpr');
 		$this -> load -> model('csfs');
 
@@ -369,7 +369,7 @@ class csf extends CI_Controller {
 		$aluno_id = $line['id_us'];
 
 		/* Parte II do formulario */
-		$alunoDados = $this -> estudantes -> readByCracha($aluno);
+		$alunoDados = $this -> usuarios -> readByCracha($aluno);
 		$this -> load -> view('usuario/view', $alunoDados);
 
 		$data['content'] = '<BR><BR>' . $this -> csfs -> mostra_todas_csf($aluno_id);
