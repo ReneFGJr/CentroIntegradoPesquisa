@@ -50,20 +50,18 @@ class admin extends CI_Controller {
 	function index() {
 		$this -> cab();
 		$data = array();
-	
+		
 		/* Menu de botões*/
 		$menu = array();
-		array_push($menu,array('Parceiros','Parceiros da PucPR','BTA','/parceiro'));
+		array_push($menu,array('Parceiros','Parceiros da PucPR','ITE','/parceiro'));
 		
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
 		$this -> load -> view('header/main_menu',$data);
-	
-	
-		/*Fecha pagína*/
+		
+		/*Fecha */ 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close'); 	
-		/*Gera rodapé*/
 		$this -> load -> view('header/foot', $data);
 	}
 	

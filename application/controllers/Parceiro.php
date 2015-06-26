@@ -1,5 +1,5 @@
 <?php
-class paceiro extends CI_Controller {
+class parceiro extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -26,6 +26,10 @@ class paceiro extends CI_Controller {
 		$this -> josso_login_pucpr -> security();
 	}
 	
+	function index($id = 0) {
+		$this ->cab();
+		$this ->load->model('parceiros');
+	}
 	
 	function cab() {
 		/* Carrega classes adicionais */
@@ -41,7 +45,6 @@ class paceiro extends CI_Controller {
 		$data['css'] = $css;
 		$data['js'] = $js;
 
-
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Parceiros PUCPR';
@@ -50,23 +53,8 @@ class paceiro extends CI_Controller {
 	}
 
 	
-	function index($id = 0) {
 
-		/* Load Models */
-		//$this -> load -> model('ics');
-
-		$this -> cab();
-		$data = array();
-		$this -> load -> view('header/content_open');
-
-		//$tela['title'] = $this -> lang -> line('title_ic');
-		//$tela['tela'] = '';
-
-		$this -> load -> view('parceiro/parceiro', $tela);
-
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
-	}
 	
 	
 }
+?>
