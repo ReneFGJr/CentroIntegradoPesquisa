@@ -5,14 +5,14 @@ class dgp extends CI_Controller {
 		parent::__construct();
 
 		$this -> load -> library("nuSoap_lib");
-
+		$this -> lang -> load("app", "portuguese");
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
-		$this -> lang -> load("app", "portuguese");
+
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
@@ -20,7 +20,7 @@ class dgp extends CI_Controller {
 
 	function security() {
 
-		/* Segurança */
+		/* Seguranca */
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> security();
 	}
@@ -44,19 +44,22 @@ class dgp extends CI_Controller {
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
-	
-	function admin($id=0) {
+
+	function admin($id = 0) {
 		/* Models */
-		$this->load->model('dgps');
+		$this -> load -> model('dgps');
 		$this -> cab();
 		$data = array();
 		$data['logo'] = base_url('img/logo/logo_dgp.png');
 		$this -> load -> view('header/content_open', $data);
 		$this -> load -> view('header/logo', $data);
-		
+
 		$form = new form;
 		$form -> tabela = $this -> dgps -> tabela;
 		$form -> see = true;
+		$form -> edit = true;
+		$form -> novo = true;
+		
 		$form = $this -> dgps -> row($form);
 
 		$form -> row_edit = base_url('index.php/dgp/edit');
@@ -64,61 +67,79 @@ class dgp extends CI_Controller {
 		$form -> row = base_url('index.php/dgp/admin/');
 
 		$tela['tela'] = row($form, $id);
+		
 
 		$tela['title'] = $this -> lang -> line('title_dgp');
 
-		$this -> load -> view('form/form', $tela);		
-		
+		$this -> load -> view('form/form', $tela);
+
 		$this -> load -> view('header/content_close', $data);
 		$this -> load -> view('header/foot', $data);
-	}	
-	
-	function view($id=0)
-		{
-		$this->load->model('dgps');
+	}
+
+	function inport($id = 0) {
+		$this -> load -> model('dgps');
+		$this -> load -> model('phplattess');
+
 		$this -> cab();
 		$data = array();
 		$data['logo'] = base_url('img/logo/logo_dgp.png');
 		$this -> load -> view('header/content_open', $data);
 		$this -> load -> view('header/logo', $data);
+
+		$data = $this -> dgps -> le($id);
+		$this -> load -> view('dgp/grupo', $data);
+
+		$link = trim($data['gp_egp_espelho']);
+		$text = $this -> phplattess -> dgp_import($link);
+		$this -> dgps -> grava_dados_importados($text, $id, $link);
+		redirect(base_url('index.php/dgp/admin'));
+	}
+
+	function view($id = 0) {
+		$this -> load -> model('dgps');
+		$this -> cab();
+		$data = array();
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);
+
+		$data = $this -> dgps -> le($id);
 		
-		$data = $this->dgps->le($id);
-		$this->load->view('dgp/grupo',$data);
-		
+		$this -> load -> view('dgp/grupo', $data);
 		$this -> load -> view('header/content_close', $data);
-		$this -> load -> view('header/foot', $data);			
-		}
-		
-	function edit($id=0) {
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function edit($id = 0) {
 		/* Models */
-		$this->load->model('dgps');
+		$this -> load -> model('dgps');
 		$this -> cab();
 		$data = array();
 		$data['logo'] = base_url('img/logo/logo_dgp.png');
 		$this -> load -> view('header/content_open', $data);
 		$this -> load -> view('header/logo', $data);
-		
-		$cp = $this->dgps->cp();
+
+		$cp = $this -> dgps -> cp();
 		$data = array();
 
 		$form = new form;
-		$form->id = $id;
-		
-		$tela = $form->editar($cp,$this->dgps->tabela);
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> dgps -> tabela);
 		$data['title'] = msg('dgps_title');
 		$data['tela'] = $tela;
-		$this -> load -> view('form/form',$data);
-		
+		$this -> load -> view('form/form', $data);
+
 		/* Salva */
-		if ($form->saved > 0)
-			{
-				redirect(base_url('index.php/dgp/admin/'));
-			}	
-		
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/dgp/admin/'));
+		}
+
 		$this -> load -> view('header/content_close', $data);
 		$this -> load -> view('header/foot', $data);
-	}	
-	
+	}
 
 	function index() {
 		$this -> cab();

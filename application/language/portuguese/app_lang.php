@@ -29,13 +29,13 @@ $lang['csf_bt_troca_universidade'] = 'Troca de Univerisdade';
 $lang['csf_bt_troca_pais'] = 'Troca de país';
 $lang['scf_historico'] = 'Histórico';
 $lang['csf_bt_retorno'] = 'Retorno antecipado';
-$lang[''] = '';
-$lang[''] = '';
-$lang[''] = '';
-$lang[''] = '';
-$lang[''] = '';
-$lang[''] = '';
-$lang[''] = '';
+$lang['last_harvesting'] = 'Última coleta';
+$lang['gp_situacao'] = 'Situação';
+$lang['espelho_cnpq'] = 'Espelho (DGP)';
+$lang['gp_ano_formacao'] = 'Ano de formação';
+$lang['gp_instituicao_grupo'] = 'Instituíção';
+$lang['gp_cidade'] = 'Cidade';
+$lang['gp_data'] = 'Dados do grupo';
 
 
 /*Fomento*/

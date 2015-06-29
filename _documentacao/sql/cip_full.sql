@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `ajax_areadoconhecimento` (
   `a_ativo` char(1) DEFAULT NULL,
   `a_submit` char(1) DEFAULT NULL,
   `a_journal` char(1) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `ajax_areadoconhecimento`
@@ -1460,7 +1460,7 @@ CREATE TABLE IF NOT EXISTS `centro_resultado` (
   `cr_ordenador_necessidade` char(8) NOT NULL,
   `cr_ordenador_gasto` char(8) NOT NULL,
   `cr_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `centro_resultado`
@@ -1790,7 +1790,7 @@ CREATE TABLE IF NOT EXISTS `csf` (
   `csf_curso` int(11) NOT NULL DEFAULT '0',
   `csf_chamada` int(11) NOT NULL DEFAULT '0',
   `csf_parceiro` int(11) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf`
@@ -1821,7 +1821,7 @@ CREATE TABLE IF NOT EXISTS `csf_ged` (
   `doc_size` float DEFAULT NULL,
   `doc_versao` char(4) DEFAULT NULL,
   `doc_ativo` int(11) DEFAULT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_ged`
@@ -1845,7 +1845,7 @@ CREATE TABLE IF NOT EXISTS `csf_ged_tipo` (
   `doct_autor` int(11) DEFAULT NULL,
   `doct_restrito` int(11) DEFAULT NULL,
   `doct_ativo` int(11) DEFAULT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_ged_tipo`
@@ -1868,7 +1868,7 @@ CREATE TABLE IF NOT EXISTS `csf_historico` (
   `slog_data` date NOT NULL DEFAULT '0000-00-00',
   `slog_hora` char(8) NOT NULL,
   `slog_text` text NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_historico`
@@ -1901,7 +1901,7 @@ CREATE TABLE IF NOT EXISTS `csf_parceiro` (
   `cp_phone_1` char(20) NOT NULL,
   `cp_phone_2` char(20) NOT NULL,
   `cp_site` char(250) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_parceiro`
@@ -1921,7 +1921,7 @@ CREATE TABLE IF NOT EXISTS `csf_status` (
   `cs_descricao` char(80) NOT NULL,
   `cs_ativo` tinyint(4) NOT NULL DEFAULT '1',
   `cs_contabiliza` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_status`
@@ -1954,7 +1954,7 @@ CREATE TABLE IF NOT EXISTS `dgp` (
   `dgp_instituicao` char(7) NOT NULL,
   `dgp_lastupdate` int(11) NOT NULL,
   `dgp_status` char(1) NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `dgp`
@@ -1976,7 +1976,7 @@ CREATE TABLE IF NOT EXISTS `dgp_cache` (
   `dgpc_data` date NOT NULL DEFAULT '0000-00-00',
   `dgpc_status` varchar(1) NOT NULL,
   `dgpc_xml` longtext NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -3244,7 +3244,7 @@ CREATE TABLE IF NOT EXISTS `logins` (
   `us_cracha` char(15) DEFAULT NULL,
   `us_perfil` text,
   `us_id` char(15) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `logins`
@@ -3266,7 +3266,7 @@ CREATE TABLE IF NOT EXISTS `logins_log` (
   `ul_ip` char(15) NOT NULL,
   `ul_proto` char(5) NOT NULL,
   `ul_cpf` char(15) NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `logins_log`
@@ -3290,7 +3290,7 @@ CREATE TABLE IF NOT EXISTS `logins_perfil` (
   `usp_codigo` char(4) DEFAULT NULL,
   `usp_descricao` char(50) DEFAULT NULL,
   `usp_ativo` int(11) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `logins_perfil`
@@ -3349,7 +3349,7 @@ CREATE TABLE IF NOT EXISTS `logins_perfil_ativo` (
   `up_data_end` date DEFAULT '0000-00-00',
   `up_ativo` tinyint(11) DEFAULT NULL,
   `up_user` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -3427,7 +3427,7 @@ CREATE TABLE IF NOT EXISTS `pais` (
   `iso3` char(3) NOT NULL,
   `numcode` char(3) NOT NULL,
   `nome` varchar(80) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pais`
@@ -3722,7 +3722,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento` (
   `pe_descricao_2` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pe_descricao_3` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pe_ativo` int(11) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pro_equipamento`
@@ -3743,7 +3743,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_contabil` (
   `id_pec` bigint(20) unsigned NOT NULL,
   `pec_descricao` varchar(80) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pec_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pro_equipamento_contabil`
@@ -3782,7 +3782,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_item` (
   `pei_valor` double NOT NULL,
   `pei_obs_2` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pei_ativo` tinyint(4) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -3800,7 +3800,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_laboratorio` (
   `pel_lat` double NOT NULL,
   `pel_log` double NOT NULL,
   `pel_ativo` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -3813,7 +3813,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_status` (
   `pes_descricao` char(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pes_color` char(7) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pes_ativo` tinyint(4) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pro_equipamento_status`
@@ -3843,7 +3843,7 @@ CREATE TABLE IF NOT EXISTS `pro_equipamento_tipo` (
   `pet_descricao` char(80) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `pet_contabil` int(11) NOT NULL,
   `pet_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pro_equipamento_tipo`
@@ -3865,7 +3865,7 @@ CREATE TABLE IF NOT EXISTS `unidade` (
   `u_sigla` char(10) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `u_decano` char(8) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `u_ativo` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `unidade`
@@ -4165,7 +4165,7 @@ CREATE TABLE IF NOT EXISTS `variaveis` (
   `v_descricao` text,
   `v_fonte` char(30) DEFAULT NULL,
   `v_total` int(11) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `variaveis`
@@ -4199,7 +4199,7 @@ CREATE TABLE IF NOT EXISTS `variaveis_dados` (
   `d_fld6` char(20) DEFAULT NULL,
   `d_lock` char(1) DEFAULT NULL,
   `d_update` date NOT NULL DEFAULT '0000-00-00'
-) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `variaveis_dados`
