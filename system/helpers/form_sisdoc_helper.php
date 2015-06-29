@@ -76,35 +76,33 @@ function strzero($ddx, $ttz) {
 
 function UpperCase($d) {
 	$d = strtoupper($d);
-	$d = troca($d, '√ß', '√á');
-	$d = troca($d, '√±', '√ë');
 
-	$d = troca($d, '√£', '√É');
-	$d = troca($d, '√§', '√Ñ');
-	$d = troca($d, '√†', '√Ä');
-	$d = troca($d, '√°', '√Å');
-	$d = troca($d, '√¢', '√Ç');
+	$d = troca($d, '·', '¡');
+	$d = troca($d, '‡', '¿');
+	$d = troca($d, '„', '√');
+	$d = troca($d, '‚', '¬');
+	$d = troca($d, '‰', 'ƒ');
 
-	$d = troca($d, '√´', '√ã');
-	$d = troca($d, '√®', '√à');
-	$d = troca($d, '√©', '√â');
-	$d = troca($d, '√™', '√ä');
+	$d = troca($d, 'È', '…');
+	$d = troca($d, 'Ë', '»');
+	$d = troca($d, 'Í', ' ');
+	$d = troca($d, 'Î', 'À');
 
-	$d = troca($d, '√Ø', '√è');
-	$d = troca($d, '√¨', '√å');
-	$d = troca($d, '√≠', '√ç');
-	$d = troca($d, '√Æ', '√é');
+	$d = troca($d, 'Ì', 'Õ');
+	$d = troca($d, 'Ï', 'Ã');
+	$d = troca($d, 'Ó', 'Œ');
+	$d = troca($d, 'Ô', 'œ');
 
-	$d = troca($d, '√µ', '√ï');
-	$d = troca($d, '√∂', '√ñ');
-	$d = troca($d, '√≤', '√í');
-	$d = troca($d, '√≥', '√ì');
-	$d = troca($d, '√¥', '√î');
+	$d = troca($d, 'ïÛ', '”');
+	$d = troca($d, 'ñÚ', '“');
+	$d = troca($d, 'íı', '’');
+	$d = troca($d, 'ìˆ', '÷');
+	$d = troca($d, 'îÙ', '‘');
 
-	$d = troca($d, '√º', '√ú');
-	$d = troca($d, '√π', '√ô');
-	$d = troca($d, '√∫', '√ö');
-	$d = troca($d, '√ª', '√õ');
+	$d = troca($d, '˙', '⁄');
+	$d = troca($d, '˘ô', 'Ÿ');
+	$d = troca($d, '˚', '€');
+	$d = troca($d, '¸', '‹');
 
 	return $d;
 }
