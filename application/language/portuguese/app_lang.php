@@ -1,16 +1,16 @@
 <?php
 if (!function_exists(('msg')))
 	{
-function msg($t)
-	{
-		$CI = &get_instance();
-		if (strlen($CI->lang->line($t)) > 0)
+		function msg($t)
 			{
-				return($CI->lang->line($t));
-			} else {
-				return($t);
+				$CI = &get_instance();
+				if (strlen($CI->lang->line($t)) > 0)
+					{
+						return($CI->lang->line($t));
+					} else {
+						return($t);
+					}
 			}
-	}
 	}
 
 $lang['versao'] = 'v0.15.25';
@@ -71,6 +71,18 @@ $lang['fm_data_01'] 		= 'Deadline para submissão da proposta';
 $lang['fm_data_02'] 		= 'Deadline (envio da documentação)';
 $lang['fm_data_03'] 		= 'Previsão de divulgação dos resultados';
 $lang['fm_data_04'] 		= '';
+
+
+/* Ciencia sem fronteiras Parceiros */
+$lang['Label_csf_descricao_parceiro'] = 'Cancelar processo';
+$lang['Label_csf_nome_pais_parceiro'] = 'Pais';
+$lang['Label_csf_ativo_parceiro'] 	  = 'Status';
+$lang['Label_csf_contato_parceiro']   = 'Contato';
+$lang['Label_csf_email1_parceiro']    = 'E-mail 1';
+$lang['Label_csf_email2_parceiro']    = 'E-mail 2';
+$lang['Label_csf_phone1_parceiro']    = 'Fone 1';
+$lang['Label_csf_phone2_parceiro']    = 'Fone 2';
+$lang['Label_csf_site_parceiro']      = 'Site';
 
 
 /* Formulário de consulta */

@@ -120,7 +120,8 @@ CD-ROM Software disc, 30mm collar, 30.5mm collar (collars not included with OCS 
 		<div id="picture"><img src="<?php echo $eq_img;?>" width="300">
 		</div></td>
 		<td colspan=4 class="lt6 borderb1"><?php echo $pe_nome;?></td>
-		<td width="10" rowspan=20><div style="width:10px;"></div><td width="150" rowspan=20 style="border-left: 1px solid #333333"><B><?php echo msg('eq_similares');?></B><?php echo $eq_similar;?></td>
+		<td width="10" rowspan=20><div style="width:10px;"></div>
+		<td width="150" rowspan=20 style="border-left: 1px solid #333333"><B><?php echo msg('eq_similares');?></B><?php echo $eq_similar;?></td>
 	</tr>
 	<tr>
 		<td colspan=4><div style="min-height: 20px;"></div></td>

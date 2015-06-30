@@ -8,11 +8,12 @@ class parceiro extends CI_Controller {
 
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
+		$this -> lang -> load("app", "portuguese");
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
-		$this -> lang -> load("app", "portuguese");
+		
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
@@ -26,10 +27,6 @@ class parceiro extends CI_Controller {
 		$this -> josso_login_pucpr -> security();
 	}
 	
-	function index($id = 0) {
-		$this ->cab();
-		$this ->load->model('parceiros');
-	}
 	
 	function cab() {
 		/* Carrega classes adicionais */
@@ -52,8 +49,80 @@ class parceiro extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
+	function index($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('parceiros');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$form -> tabela = $this -> parceiros -> tabela;
+		$form -> see = true;
+		$form -> novo = true;
+		$form -> edit = true;
+		$form = $this -> parceiros -> row($form);
+
+		$form -> row_edit = base_url('index.php/parceiro/edit');
+		$form -> row_view = base_url('index.php/parceiro/view');
+		$form -> row = base_url('index.php/parceiro');
+
+		$tela['tela'] = row($form, $id);
+
+		$tela['title'] = $this -> lang -> line('title_parceiro');
+
+		$this -> load -> view('form/form', $tela);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 	
 
+	function edit($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('parceiros');
+		$cp = $this->parceiros->cp();
+		$data = array();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		
+		$form = new form;
+		$form->id = $id;
+		
+		$tela = $form->editar($cp,$this->parceiros->tabela);
+		$data['title'] = msg('title_parceiro');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form',$data);
+		
+		/* Salva */
+		if ($form->saved > 0)
+			{
+				redirect(base_url('index.php/parceiro'));
+			}
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+
+	function view($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('parceiros');
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		
+		$data = $this->parceiros->le($id);
+
+		$this -> load -> view('parceiro/view', $data);
+		//$this -> load -> view('dgp/view_mygroups', $data);
+		//$this -> load -> view('dgp/view_indicadores', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 	
 	
 }
