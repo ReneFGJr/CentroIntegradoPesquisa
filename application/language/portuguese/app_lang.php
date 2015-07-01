@@ -107,6 +107,14 @@ $lang['Label_index_perfil'] 	= 'Lista de perfis';
 $lang['Label_editar_perfil'] 	= 'Editar perfil';
 
 
+/* Unidades */
+$lang['Label_unidade_descricao'] 	= 'Unidade';
+$lang['Label_unidade_sigla'] 		= 'Sigla';
+$lang['Label_unidade_decano'] 		= 'Decano';
+$lang['Label_unidade_status']		= 'Status';
+$lang['Label_index_unidade'] 		= 'Lista de unidades';
+$lang['Label_editar_unidade'] 		= 'Editar unidade';
+
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /**              ADMINISTRATIVOS                                      **/
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/

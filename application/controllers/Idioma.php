@@ -44,7 +44,7 @@ class idioma extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Idiomas do sistema CIP';
+		$data['title_page'] = 'Idiomas';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}

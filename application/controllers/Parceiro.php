@@ -44,7 +44,7 @@ class parceiro extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Parceiros PUCPR';
+		$data['title_page'] = 'Parceiros';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}

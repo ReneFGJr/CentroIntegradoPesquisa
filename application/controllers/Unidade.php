@@ -1,5 +1,5 @@
 <?php
-class perfil extends CI_Controller {
+class Unidade extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -44,7 +44,7 @@ class perfil extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Perfil de usuário';
+		$data['title_page'] = 'Unidades';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
@@ -53,26 +53,26 @@ class perfil extends CI_Controller {
 	function index($id = 0) {
 
 		/* Load Models */
-		$this -> load -> model('perfis');
+		$this -> load -> model('unidades');
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
 
 		$form = new form;
-		$form -> tabela = $this -> perfis -> tabela;
+		$form -> tabela = $this -> unidades -> tabela;
 		$form -> see = true;
 		$form -> novo = true;
 		$form -> edit = true;
-		$form = $this -> perfis -> row($form);
+		$form = $this -> unidades -> row($form);
 
-		$form -> row_edit = base_url('index.php/perfil/edit');
-		$form -> row_view = base_url('index.php/perfil/view');
-		$form -> row = base_url('index.php/perfil');
+		$form -> row_edit = base_url('index.php/unidade/edit');
+		$form -> row_view = base_url('index.php/unidade/view');
+		$form -> row = base_url('index.php/unidade');
 
 		$tela['tela'] = row($form, $id);
 
-		$tela['title'] = $this -> lang -> line('Label_index_perfil');
+		$tela['title'] = $this -> lang -> line('Label_index_unidade');
 
 		$this -> load -> view('form/form', $tela);
 
@@ -83,8 +83,8 @@ class perfil extends CI_Controller {
 
 	function edit($id = 0, $check = '') {
 		/* Load Models */
-		$this -> load -> model('perfis');
-		$cp = $this->perfis->cp();
+		$this -> load -> model('unidades');
+		$cp = $this->unidades->cp();
 		$data = array();
 
 		$this -> cab();
@@ -93,15 +93,15 @@ class perfil extends CI_Controller {
 		$form = new form;
 		$form->id = $id;
 		
-		$tela = $form->editar($cp,$this->perfis->tabela);
-		$data['title'] = msg('Label_editar_perfil');
+		$tela = $form->editar($cp,$this->unidades->tabela);
+		$data['title'] = msg('Label_editar_unidade');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form',$data);
 		
 		/* Salva */
 		if ($form->saved > 0)
 			{
-				redirect(base_url('index.php/perfil'));
+				redirect(base_url('index.php/unidade'));
 			}
 		
 		$this -> load -> view('header/content_close');
@@ -111,14 +111,14 @@ class perfil extends CI_Controller {
 
 	function view($id = 0, $check = '') {
 		/* Load Models */
-		$this -> load -> model('perfis');
+		$this -> load -> model('unidades');
 
 		$this -> cab();
 		$this -> load -> view('header/content_open');
 		
-		$data = $this->perfis->le($id);
+		$data = $this->unidades->le($id);
 
-		$this -> load -> view('perfil/view', $data);
+		$this -> load -> view('unidade/view', $data);
 		//$this -> load -> view('dgp/view_mygroups', $data);
 		//$this -> load -> view('dgp/view_indicadores', $data);
 		$this -> load -> view('header/content_close');
