@@ -51,9 +51,10 @@ class admin extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		
-		/* Menu de botões*/
+		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu,array('Parceiros','Parceiros da PucPR','ITE','/parceiro'));
+		array_push($menu,array('Idiomas','Idiomas do Sistema','ITE','/idioma'));
 		
 		/*View principal*/
 		$data['menu'] = $menu;

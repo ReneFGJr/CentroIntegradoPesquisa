@@ -1,5 +1,5 @@
 <?php
-class parceiro extends CI_Controller {
+class idioma extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -44,30 +44,30 @@ class parceiro extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Parceiros PUCPR';
+		$data['title_page'] = 'Idiomas do sistema CIP';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
-
+	
 	function index($id = 0) {
 
 		/* Load Models */
-		$this -> load -> model('parceiros');
+		$this -> load -> model('idiomas');
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
 
 		$form = new form;
-		$form -> tabela = $this -> parceiros -> tabela;
+		$form -> tabela = $this -> idiomas -> tabela;
 		$form -> see = true;
 		$form -> novo = true;
 		$form -> edit = true;
-		$form = $this -> parceiros -> row($form);
+		$form = $this -> idiomas -> row($form);
 
-		$form -> row_edit = base_url('index.php/parceiro/edit');
-		$form -> row_view = base_url('index.php/parceiro/view');
-		$form -> row = base_url('index.php/parceiro');
+		$form -> row_edit = base_url('index.php/idioma/edit');
+		$form -> row_view = base_url('index.php/idioma/view');
+		$form -> row = base_url('index.php/idioma');
 
 		$tela['tela'] = row($form, $id);
 
@@ -79,11 +79,10 @@ class parceiro extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 	
-
 	function edit($id = 0, $check = '') {
 		/* Load Models */
-		$this -> load -> model('parceiros');
-		$cp = $this->parceiros->cp();
+		$this -> load -> model('idiomas');
+		$cp = $this->idiomas->cp();
 		$data = array();
 
 		$this -> cab();
@@ -92,7 +91,7 @@ class parceiro extends CI_Controller {
 		$form = new form;
 		$form->id = $id;
 		
-		$tela = $form->editar($cp,$this->parceiros->tabela);
+		$tela = $form->editar($cp,$this->idiomas->tabela);
 		$data['title'] = msg('Label_csf_descricao_parceiro');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form',$data);
@@ -100,30 +99,29 @@ class parceiro extends CI_Controller {
 		/* Salva */
 		if ($form->saved > 0)
 			{
-				redirect(base_url('index.php/parceiro'));
+				redirect(base_url('index.php/idioma'));
 			}
 		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 	
-
 	function view($id = 0, $check = '') {
 		/* Load Models */
-		$this -> load -> model('parceiros');
+		$this -> load -> model('idiomas');
 
 		$this -> cab();
 		$this -> load -> view('header/content_open');
 		
-		$data = $this->parceiros->le($id);
+		$data = $this->idiomas->le($id);
 
-		$this -> load -> view('parceiro/view', $data);
+		$this -> load -> view('idioma/view', $data);
 		//$this -> load -> view('dgp/view_mygroups', $data);
 		//$this -> load -> view('dgp/view_indicadores', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	}	
+	}
 	
 	
 }
-?>
+?>	

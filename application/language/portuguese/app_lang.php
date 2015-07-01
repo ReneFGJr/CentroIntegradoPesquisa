@@ -74,7 +74,7 @@ $lang['fm_data_04'] 		= '';
 
 
 /* Ciencia sem fronteiras Parceiros */
-$lang['Label_csf_descricao_parceiro'] = 'Cancelar processo';
+$lang['Label_csf_descricao_parceiro'] = 'Parceiro';
 $lang['Label_csf_nome_pais_parceiro'] = 'Pais';
 $lang['Label_csf_ativo_parceiro'] 	  = 'Status';
 $lang['Label_csf_contato_parceiro']   = 'Contato';
