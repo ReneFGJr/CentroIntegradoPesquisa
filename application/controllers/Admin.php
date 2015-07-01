@@ -57,6 +57,7 @@ class admin extends CI_Controller {
 		array_push($menu,array('Idiomas','Idiomas do Sistema','ITE','/idioma'));
 		array_push($menu,array('Perfis','Perfil de usuário do Sistema','ITE','/perfil'));
 		array_push($menu,array('Unidades','Unidades da PucPR','ITE','/unidade'));
+		array_push($menu,array('Instituições','Instituições de ensino','ITE','/instituicao'));
 		
 		/*View principal*/
 		$data['menu'] = $menu;

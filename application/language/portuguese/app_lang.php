@@ -40,6 +40,20 @@ $lang['gp_data'] = 'Dados do grupo';
 $lang['csf_title_novo'] = 'Novo registro de aluno - CSF';
 
 
+/* Ciencia sem fronteiras Parceiros */
+$lang['Label_csf_descricao_parceiro'] = 'Parceiro';
+$lang['Label_csf_nome_pais_parceiro'] = 'Pais';
+$lang['Label_csf_ativo_parceiro'] 	  = 'Status';
+$lang['Label_csf_contato_parceiro']   = 'Contato';
+$lang['Label_csf_email1_parceiro']    = 'E-mail 1';
+$lang['Label_csf_email2_parceiro']    = 'E-mail 2';
+$lang['Label_csf_phone1_parceiro']    = 'Fone 1';
+$lang['Label_csf_phone2_parceiro']    = 'Fone 2';
+$lang['Label_csf_site_parceiro']      = 'Site';
+$lang['Label_index_parceiros'] 	  	  = 'Lista de parceiros';
+$lang['Label_editar_parceiros'] 	  = 'Editar parceiro';
+
+
 /*Fomento*/
 $lang['fm_titulo'] 			= 'Nome da chamada';
 $lang['fm_titulo_email'] 	= 'Titulo do e-mail(opcional)';
@@ -75,20 +89,6 @@ $lang['fm_data_03'] 		= 'Previsão de divulgação dos resultados';
 $lang['fm_data_04'] 		= '';
 $lang['fomento_editais'] = 'Editais de fomento';
 $lang['title_fomento_editais'] = 'Editais de fomento';
-
-
-/* Ciencia sem fronteiras Parceiros */
-$lang['Label_csf_descricao_parceiro'] = 'Parceiro';
-$lang['Label_csf_nome_pais_parceiro'] = 'Pais';
-$lang['Label_csf_ativo_parceiro'] 	  = 'Status';
-$lang['Label_csf_contato_parceiro']   = 'Contato';
-$lang['Label_csf_email1_parceiro']    = 'E-mail 1';
-$lang['Label_csf_email2_parceiro']    = 'E-mail 2';
-$lang['Label_csf_phone1_parceiro']    = 'Fone 1';
-$lang['Label_csf_phone2_parceiro']    = 'Fone 2';
-$lang['Label_csf_site_parceiro']      = 'Site';
-$lang['Label_index_parceiros'] 	  	  = 'Lista de parceiros';
-$lang['Label_editar_parceiros'] 	  = 'Editar parceiro';
 
 
 /* Idiomas */
