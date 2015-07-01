@@ -68,11 +68,12 @@
 	margin-left: 350px;
 	color: #FFFFFF;
 }
+
+
 #cab_nav {
-	margin-top: 0px;
+	//margin-top: 0px;
 	width: 100%;
 	background-color: #8A0419;
-	padding-top: 0px;
 	font-size: 12px;
 	z-index: 10;
 	height: 30px;
@@ -81,17 +82,20 @@
 	left: 0px;
 	box-shadow: 0px 3px 3px #888888;
 }
-#cab_nav ul li {
+.cab_nav_td {
 	list-style-type: none;
+	width: auto;
 	margin: 0;
 	display: inline;
+	font-size: 14px;
 	padding: 5px 10px 5px 10px;
 }
-#cab_nav ul li:hover {
+.cab_nav_td:hover {
 	background-color: #6A0000;
 }
 #cab_nav a {
 	margin-left: 0px;
+	margin-top: 0px;
 	color: #FFFFFF;
 	text-decoration: none;
 }
