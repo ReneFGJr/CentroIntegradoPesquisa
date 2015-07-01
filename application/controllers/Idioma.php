@@ -71,7 +71,7 @@ class idioma extends CI_Controller {
 
 		$tela['tela'] = row($form, $id);
 
-		$tela['title'] = $this -> lang -> line('Label_csf_descricao_parceiro');
+		$tela['title'] = $this -> lang -> line('Label_index_idioma');
 
 		$this -> load -> view('form/form', $tela);
 
@@ -92,7 +92,7 @@ class idioma extends CI_Controller {
 		$form->id = $id;
 		
 		$tela = $form->editar($cp,$this->idiomas->tabela);
-		$data['title'] = msg('Label_csf_descricao_parceiro');
+		$data['title'] = msg('Label_editar_idioma');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form',$data);
 		

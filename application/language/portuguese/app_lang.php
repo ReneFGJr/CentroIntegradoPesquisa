@@ -83,6 +83,15 @@ $lang['Label_csf_email2_parceiro']    = 'E-mail 2';
 $lang['Label_csf_phone1_parceiro']    = 'Fone 1';
 $lang['Label_csf_phone2_parceiro']    = 'Fone 2';
 $lang['Label_csf_site_parceiro']      = 'Site';
+$lang['Label_index_parceiros'] 	  	  = 'Lista de parceiros';
+$lang['Label_editar_parceiros'] 	  = 'Editar parceiros';
+
+/* Idiomas */
+$lang['Label_idioma_nome'] = 'Nome do idioma';
+$lang['Label_idioma_ativo'] = 'Status';
+$lang['Label_idioma_codificacao'] 	  = 'Codificação';
+$lang['Label_index_idioma'] 	  = 'Lista de idiomas';
+$lang['Label_editar_idioma'] 	  = 'Editar idiomas';
 
 
 /* Formulário de consulta */
