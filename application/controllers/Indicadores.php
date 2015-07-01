@@ -4,11 +4,12 @@ class indicadores extends CI_Controller {
 		parent::__construct();
 
 		$this -> load -> database();
+		$this -> lang -> load("app", "portuguese");
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
-		$this -> lang -> load("app", "portuguese");
+		
 		date_default_timezone_set('America/Sao_Paulo');
 
 	}
@@ -46,9 +47,11 @@ class indicadores extends CI_Controller {
 		$form = new form;
 		$form -> tabela = $this -> variaveis -> tabela;
 		$form -> see = true;
+		$form -> novo = true;
+		$form -> edit = true;
 		$form = $this -> variaveis -> row($form);
 
-		$form -> row_edit = base_url('index.php/variaveis/edit');
+		$form -> row_edit = base_url('index.php/indicadores/edit');
 		$form -> row_view = base_url('index.php/indicadores/variavel_view');
 		$form -> row = base_url('index.php/indicadores/');
 
@@ -61,6 +64,33 @@ class indicadores extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function edit($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('variaveis');
+		$cp = $this->variaveis->cp();
+		$data = array();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		
+		$form = new form;
+		$form->id = $id;
+		
+		$tela = $form->editar($cp,$this->variaveis->tabela);
+		$data['title'] = msg('variaveis_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form',$data);
+		
+		/* Salva */
+		if ($form->saved > 0)
+			{
+				redirect(base_url('index.php/indicadores'));
+			}
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	function variavel_view($id, $chk) {
 		/* Load Models */

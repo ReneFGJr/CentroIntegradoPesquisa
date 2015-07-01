@@ -4,7 +4,7 @@ class edital extends CI_Controller {
 		global $dd, $acao;
 		parent::__construct();
 
-		$this -> load -> library("nuSoap_lib");
+		$this -> lang -> load("app", "portuguese");
 
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
@@ -12,7 +12,6 @@ class edital extends CI_Controller {
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
-		$this -> lang -> load("app", "portuguese");
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
@@ -37,11 +36,20 @@ class edital extends CI_Controller {
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
+		
+		/* Menu */
+		$menus = array();
+		array_push($menus,array('Bolsas / Recursos Humanos','#'));
+		array_push($menus,array('Auxílio Pesquisa','#'));
+		array_push($menus,array('Cooperação Internacional','#'));
+		array_push($menus,array('Prêmios','#'));
+		array_push($menus,array('Eventos','#'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = msg('fomento_editais');
 		$data['menu'] = 1;
+		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
 		$data['logo'] = base_url('img/logo/logo_observatorio.jpg');
@@ -70,6 +78,8 @@ class edital extends CI_Controller {
 		$form = new form;
 		$form -> tabela = $this -> fomento_editais -> tabela;
 		$form -> see = true;
+		$form -> edit = true;
+		$form -> novo = true;
 		$form = $this -> fomento_editais -> row($form);
 
 		$form -> row_edit = base_url('index.php/edital/edit/');
