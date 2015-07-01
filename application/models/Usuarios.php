@@ -105,7 +105,7 @@ class usuarios extends CI_model {
 			$rst = $this -> ws_sga -> findStudentByCracha($cracha);
 
 			/* Busca dados do cadastro */
-			$sql = "select * from usuario where us_cracha = '" . $cracha . "' ";
+			$sql = "select * from us_usuario where us_cracha = '" . $cracha . "' ";
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array($rlt);
 			if (count($rlt) > 0) {
@@ -121,7 +121,7 @@ class usuarios extends CI_model {
 	function readByCracha($cracha) {
 		/* Busca dados do cadastro */
 		$sql = "select * from ".$this->tabela." as t1
-					left join us_titulacao as t2 on t1.us_titulacao_ust_id = t2.ust_id				 
+					left join us_titulacao as t2 on t1.usuario_titulacao_ust_id = t2.ust_id				 
 					where us_cracha = '" . $cracha . "' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);

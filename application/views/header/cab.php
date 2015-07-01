@@ -14,7 +14,11 @@
 </div>
 <?php
 if ($menu == 1) {
-	$this -> load -> view('header/cab_nav');
+	if (!isset($menus)) { $menus = array(); }
+	
+	$data = array();
+	$data['menus'] = $menus;
+	$this -> load -> view('header/cab_nav',$data);
 }
 ?>
 <div id="cab_print">

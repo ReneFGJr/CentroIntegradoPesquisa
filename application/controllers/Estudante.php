@@ -36,10 +36,15 @@ class estudante extends CI_Controller {
 		$data['css'] = $css;
 		$data['js'] = $js;
 
+		/* Menu */
+		$menus = array();
+		array_push($menus,array('Consulta SGA','/estudante/consulta_sga'));
+		
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Estudantes';
 		$data['menu'] = 1;
+		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
 	}
 

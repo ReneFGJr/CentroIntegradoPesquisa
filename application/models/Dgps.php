@@ -4,7 +4,7 @@ class dgps extends CI_model {
 
 	var $group_id = 0;
 	function row($obj) {
-		$obj -> fd = array('id_gp', 'gp_nome', 'gp_ano_formacao', 'gp_dt_situacao');
+		$obj -> fd = array('id_gp', 'gp_nome', 'gp_ano_formacao', 'gps_situacao');
 		$obj -> lb = array('ID', 'Nome do Grupo', 'ano formação', 'situação');
 		$obj -> mk = array('', 'L', 'C', 'C');
 		return ($obj);

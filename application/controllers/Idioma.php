@@ -44,7 +44,7 @@ class idioma extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Idiomas';
+		$data['title_page'] = 'Idiomas do sistema CIP';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
@@ -71,7 +71,7 @@ class idioma extends CI_Controller {
 
 		$tela['tela'] = row($form, $id);
 
-		$tela['title'] = $this -> lang -> line('Label_index_idioma');
+		$tela['title'] = $this -> lang -> line('Label_csf_descricao_parceiro');
 
 		$this -> load -> view('form/form', $tela);
 
@@ -92,7 +92,7 @@ class idioma extends CI_Controller {
 		$form->id = $id;
 		
 		$tela = $form->editar($cp,$this->idiomas->tabela);
-		$data['title'] = msg('Label_editar_idioma');
+		$data['title'] = msg('Label_csf_descricao_parceiro');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form',$data);
 		

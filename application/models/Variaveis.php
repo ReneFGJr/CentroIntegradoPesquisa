@@ -56,6 +56,28 @@ class variaveis extends CI_model {
 		}
 		return($rs);
 	}
+	
+	function cp()
+		{
+		$cp = array();
+		array_push($cp, array('$H8', 'id_v', '', False, True));
+		array_push($cp, array('$S80', 'v_nome', msg('nome_variavel'), True, True));
+		array_push($cp, array('$S100', 'v_nome_grafico', msg('nome_grafico'), True, True));
+		array_push($cp, array('$U', 'v_update', '', False, True));
+		array_push($cp, array('$S30', 'v_variavel', msg('ref_variavel'), False, True));
+		array_push($cp, array('$T80:4', 'v_metodologia', msg('metodologia'), False, True));
+		array_push($cp, array('$S30', 'v_col_01', msg('label_col_01'), True, True));
+		array_push($cp, array('$S30', 'v_col_02', msg('label_col_02'), False, True));
+		array_push($cp, array('$S30', 'v_col_03', msg('label_col_03'), False, True));
+		array_push($cp, array('$S30', 'v_col_04', msg('label_col_04'), True, True));
+		array_push($cp, array('$S30', 'v_col_05', msg('label_col_05'), False, True));
+		array_push($cp, array('$S30', 'v_col_06', msg('label_col_06'), False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'v_ativo', msg('ativo'), True, True));
+		array_push($cp, array('$T80:5', 'v_descricao', msg('descricao'), False, True));
+		array_push($cp, array('$S30', 'v_fonte', msg('fonte_dos_dados'), False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'v_total', msg('totaliza_resultados'), True, True));
+		return($cp);
+		}
 
 	function cp_dados($tp = 0) {
 		if ($tp == 0) {

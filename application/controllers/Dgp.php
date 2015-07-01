@@ -55,7 +55,10 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 
 		$form = new form;
-		$form -> tabela = $this -> dgps -> tabela;
+		$tabela = '(select * from '.$this -> dgps -> tabela.'
+					left join gp_situacao on id_gps = gps_id
+					) as tabela ';
+		$form -> tabela = $tabela;
 		$form -> see = true;
 		$form -> edit = true;
 		$form -> novo = true;

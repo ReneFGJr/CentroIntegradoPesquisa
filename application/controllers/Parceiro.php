@@ -44,7 +44,7 @@ class parceiro extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Parceiros';
+		$data['title_page'] = 'Parceiros PUCPR';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
 	}
@@ -71,7 +71,7 @@ class parceiro extends CI_Controller {
 
 		$tela['tela'] = row($form, $id);
 
-		$tela['title'] = $this -> lang -> line('Label_index_parceiros');
+		$tela['title'] = $this -> lang -> line('Label_csf_descricao_parceiro');
 
 		$this -> load -> view('form/form', $tela);
 
@@ -93,7 +93,7 @@ class parceiro extends CI_Controller {
 		$form->id = $id;
 		
 		$tela = $form->editar($cp,$this->parceiros->tabela);
-		$data['title'] = msg('Label_editar_parceiros');
+		$data['title'] = msg('Label_csf_descricao_parceiro');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form',$data);
 		
