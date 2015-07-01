@@ -15,6 +15,7 @@ if (!function_exists(('msg')))
 
 $lang['versao'] = 'v0.15.25';
 
+/**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /* Ciencia sem fronteiras */
 $lang['csf_bt_cancelar'] = 'Cancelar processo';
 $lang['csf_bt_homologar_no'] = 'Não homologado';
@@ -36,6 +37,7 @@ $lang['gp_ano_formacao'] = 'Ano de formação';
 $lang['gp_instituicao_grupo'] = 'Instituíção';
 $lang['gp_cidade'] = 'Cidade';
 $lang['gp_data'] = 'Dados do grupo';
+$lang['csf_title_novo'] = 'Novo registro de aluno - CSF';
 
 
 /*Fomento*/
@@ -71,6 +73,8 @@ $lang['fm_data_01'] 		= 'Deadline para submissão da proposta';
 $lang['fm_data_02'] 		= 'Deadline (envio da documentação)';
 $lang['fm_data_03'] 		= 'Previsão de divulgação dos resultados';
 $lang['fm_data_04'] 		= '';
+$lang['fomento_editais'] = 'Editais de fomento';
+$lang['title_fomento_editais'] = 'Editais de fomento';
 
 
 /* Ciencia sem fronteiras Parceiros */
@@ -84,19 +88,28 @@ $lang['Label_csf_phone1_parceiro']    = 'Fone 1';
 $lang['Label_csf_phone2_parceiro']    = 'Fone 2';
 $lang['Label_csf_site_parceiro']      = 'Site';
 $lang['Label_index_parceiros'] 	  	  = 'Lista de parceiros';
-$lang['Label_editar_parceiros'] 	  = 'Editar parceiros';
+$lang['Label_editar_parceiros'] 	  = 'Editar parceiro';
+
 
 /* Idiomas */
-$lang['Label_idioma_nome'] = 'Nome do idioma';
-$lang['Label_idioma_ativo'] = 'Status';
-$lang['Label_idioma_codificacao'] 	  = 'Codificação';
-$lang['Label_index_idioma'] 	  = 'Lista de idiomas';
-$lang['Label_editar_idioma'] 	  = 'Editar idiomas';
+$lang['Label_idioma_nome'] 			= 'Nome do idioma';
+$lang['Label_idioma_ativo'] 		= 'Status';
+$lang['Label_idioma_codificacao']	= 'Codificação';
+$lang['Label_index_idioma'] 	  	= 'Lista de idiomas';
+$lang['Label_editar_idioma'] 	  	= 'Editar idioma';
 
 
-/* Formulário de consulta */
-$lang['busca'] = 'BUSCA';
+/* Perfis */
+$lang['Label_perfil_codigo'] 	= 'Código';
+$lang['Label_perfil_descricao'] = 'Descrição';
+$lang['Label_perfil_status']	= 'Status';
+$lang['Label_index_perfil'] 	= 'Lista de perfis';
+$lang['Label_editar_perfil'] 	= 'Editar perfil';
 
+
+/**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
+/**              ADMINISTRATIVOS                                      **/
+/**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /* Nome do mes */
 $lang['mes_01'] = 'Janeiro';
 $lang['mes_02'] = 'Fevereiro';
@@ -137,23 +150,15 @@ $lang['cab_expediente_08'] = 'Comitê de Ética com Seres Humanos (CEP)';
 $lang['cab_expediente_09'] = 'Comitê de Ética no Uso de Animais (CEUA)';
 $lang['cab_expediente_10'] = 'Biotério';
 
-/* Botoes */
+/* Botoes de Formulário*/
 $lang['bt_update'] = 'ATUALIZAR';
 $lang['bt_salvar_continuar'] = 'Salvar e continuar >>>';
+$lang['busca'] = 'BUSCA';
 
-/*
- * Ciência sem fronteiras */
-$lang['csf_title_novo'] = 'Novo registro de aluno - CSF';
 
 /* Atores do sistema */
 $lang['titulacao'] = 'titulação';
 $lang['link_lattes'] = 'link para o Lattes';
-
-/* Fomentos */
-$lang['fomento_editais'] = 'Editais de fomento';
-$lang['title_fomento_editais'] = 'Editais de fomento';
-
-
 
 $lang['cab_admin'] = 'Administração';
 $lang['cab_logout'] = 'Sair';
@@ -176,4 +181,6 @@ $lang['login_erro_01'] = 'Login ou senha incorreta';
 /* Rodape */
 $lang['about_sistem'] = 'Sobre o CIP';
 $lang['contact_sistem'] = 'Contato';
+/**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
+/**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 ?>
