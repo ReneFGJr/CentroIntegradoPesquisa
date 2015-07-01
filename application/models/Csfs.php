@@ -6,7 +6,7 @@ class csfs extends CI_model {
 		{
 			$sql = "select * from csf_historico
 						left join csf_status on slog_status = id_cs
-						left join usuario on slog_usuario = us_cpf
+						left join us_usuario on slog_usuario = us_cpf
 							where slog_protocolo = ".$protocolo.' order by slog_data, slog_hora';
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array($rlt);
@@ -140,10 +140,10 @@ class csfs extends CI_model {
 		$cp = '*';
 		$sql = "
 					SELECT " . $cp . " FROM csf
-						left join usuario on id_us = csf_aluno
+						left join us_usuario on id_us = csf_aluno
 						left join csf_status on csf_status = id_cs
 					    left join pais on csf_pais = iso3
-					    left join fomento_editais on csf_chamada = id_ed
+					    left join fomento_edital on csf_chamada = id_ed
 					    left join csf_parceiro on csf_parceiro = id_cp
 					    /*
 					    
@@ -415,7 +415,7 @@ class csfs extends CI_model {
 	function insere_candidato($aluno, $edital, $saida, $pais) {
 		$pais = substr($pais, 0, 3);
 
-		$sql = "select * from usuario where us_cracha = '" . $aluno . "'";
+		$sql = "select * from us_usuario where us_cracha = '" . $aluno . "'";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$aluno_id = $rlt[0]['id_us'];
@@ -455,7 +455,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$H8', '', '', False, False));
 		array_push($cp, array('$S8', '', msg('cracha'), True, True));
 
-		$sql = "id_ed:ed_titulo:select * from fomento_editais where ed_local = 'CSF' order by ed_titulo";
+		$sql = "id_ed:ed_titulo:select * from fomento_edital where ed_local = 'CSF' order by ed_titulo";
 		array_push($cp, array('$Q ' . $sql, '', 'Edital', True, True));
 
 		array_push($cp, array('$MES', '', 'Previsão de saída', True, True));

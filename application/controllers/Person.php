@@ -23,6 +23,20 @@ class person extends CI_Controller {
 		//$this -> lang -> load("app", "english");
 	}
 
+	function ajax_acao($id=0,$chk='',$acao='')
+		{
+			$this->load->model('usuarios');
+			switch ($acao)
+				{
+				case 'email':
+						$tela = $this->usuarios->lista_email($id);
+						break;
+				}
+			$data = array();
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+		}
+
 	public function index($id = 0) {
 		//$this -> cab();
 	}

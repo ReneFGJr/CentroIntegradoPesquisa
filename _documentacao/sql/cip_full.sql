@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 10.100.4.24
--- Generation Time: Jun 26, 2015 at 02:48 PM
+-- Generation Time: Jun 30, 2015 at 12:41 PM
 -- Server version: 5.6.19
 -- PHP Version: 5.4.16
 
@@ -1893,7 +1893,7 @@ INSERT INTO `csf_historico` (`id_slog`, `slog_protocolo`, `slog_usuario`, `slog_
 CREATE TABLE IF NOT EXISTS `csf_parceiro` (
   `id_cp` bigint(20) unsigned NOT NULL,
   `cp_descricao` char(80) NOT NULL,
-  `cp_pais` int(11) NOT NULL DEFAULT '0',
+  `cp_pais` varchar(3) NOT NULL DEFAULT '0',
   `cp_ativo` tinyint(4) NOT NULL DEFAULT '1',
   `cp_contato` text NOT NULL,
   `cp_email_1` char(80) NOT NULL,
@@ -1908,7 +1908,7 @@ CREATE TABLE IF NOT EXISTS `csf_parceiro` (
 --
 
 INSERT INTO `csf_parceiro` (`id_cp`, `cp_descricao`, `cp_pais`, `cp_ativo`, `cp_contato`, `cp_email_1`, `cp_email_2`, `cp_phone_1`, `cp_phone_2`, `cp_site`) VALUES
-(1, 'Alemanha/DAAD', 5, 1, '', '', '', '', '', '');
+(1, 'Alemanha/DAAD', '5', 1, '', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -3856,6 +3856,24 @@ INSERT INTO `pro_equipamento_tipo` (`id_pet`, `pet_descricao`, `pet_contabil`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `switch`
+--
+
+CREATE TABLE IF NOT EXISTS `switch` (
+  `switch` bigint(20) unsigned NOT NULL,
+  `sw_01` char(1) NOT NULL,
+  `sw_02` char(1) NOT NULL,
+  `sw_03` char(1) NOT NULL,
+  `sw_04` char(1) NOT NULL,
+  `sw_05` char(1) NOT NULL,
+  `sw_06` char(1) NOT NULL,
+  `sw_07` char(1) NOT NULL,
+  `sw_08` char(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `unidade`
 --
 
@@ -4470,6 +4488,12 @@ ALTER TABLE `programa_pos`
   ADD PRIMARY KEY (`id_pp`);
 
 --
+-- Indexes for table `switch`
+--
+ALTER TABLE `switch`
+  ADD UNIQUE KEY `switch` (`switch`);
+
+--
 -- Indexes for table `us_bolsa`
 --
 ALTER TABLE `us_bolsa`
@@ -4706,6 +4730,11 @@ ALTER TABLE `lp_setor_aplicacao`
 --
 ALTER TABLE `programa_pos`
   MODIFY `id_pp` int(11) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `switch`
+--
+ALTER TABLE `switch`
+  MODIFY `switch` bigint(20) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `us_bolsa`
 --
