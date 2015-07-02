@@ -4,7 +4,7 @@ class Instituicoes extends CI_model {
 
 	function row($obj) {
 		$obj -> fd = array('id_gpip', 'gpip_nome', 'gpip_sigla', 'gpip_uf');
-		$obj -> lb = array('id', msg('Label_instituicao_'), msg('Label_instituicao_'), msg('Label_instituicao_'));
+		$obj -> lb = array('id', msg('Label_instituicao_nome'), msg('Label_instituicao_sigla'), msg('Label_instituicao_uf'));
 		$obj -> mk = array('', 'L','L','L');
 		return ($obj);
 	}
@@ -24,12 +24,10 @@ class Instituicoes extends CI_model {
 			array_push($cp,array('$S15','gpip_faixa_po', msg('Label_instituicao_faixapo'),false,True));
 			array_push($cp,array('$S60','gpip_cidade', msg('Label_instituicao_cidade'),false,True));
 			array_push($cp,array('$T50:4','gpip_setores_atividade_economica', msg('Label_instituicao_ativeconomic'),false,True));
-			array_push($cp,array('$I11','gpip_use', msg('Label_instituicao_'),false,True));
-			//array_push($cp,array('$S20','gpip_latitude', msg('Label_instituicao_latitude'),false,True));
-			//array_push($cp,array('$S20','gpip_longitude', msg('Label_instituicao_longitude'),false,True));
+			//array_push($cp,array('$I11','gpip_use', msg('Label_instituicao_'),false,True));
+			array_push($cp,array('$S20','gpip_latitude', msg('Label_instituicao_latitude'),false,True));
+			array_push($cp,array('$S20','gpip_longitude', msg('Label_instituicao_longitude'),false,True));
 			//array_push($cp,array('$I2','gpip_ordem', msg('Label_instituicao_ordem'),false,True));
-			
-			//array_push($cp,array('$O 1:SIM&0:NÃO','u_ativo',msg('Label_instituicao_'),false,True));
 			
 			array_push($cp,array('$B','',msg('enviar'),false,True));
 			

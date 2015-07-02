@@ -53,7 +53,7 @@ class Instituicao extends CI_Controller {
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Instituições Parceiras';
-		$data['menu'] = 1;
+		$data['menu'] = 0;
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
 		//$data['logo'] = base_url('img/logo/logo_observatorio.jpg');
