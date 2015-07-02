@@ -33,17 +33,28 @@ class main extends CI_Controller {
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
+		//* Menu */
+		$menus = array();
+		array_push($menus,array('Bolsas / Recursos Humanos','#'));
+		array_push($menus,array('Auxílio Pesquisa','#'));
+		array_push($menus,array('Cooperação Internacional','#'));
+		array_push($menus,array('Prêmios','#'));
+		array_push($menus,array('Eventos','#'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Menu Principal';
 		$data['menu'] = 0;
+		$data['menus'] = $menus;
 		$this -> load -> view('header/content_open.php');
 		
 		$this -> load -> view('header/cab', $data);
 
 		/* Chamadas editais */
 		$this -> load -> view('fomento/chamadas_resumo',$data);
+		
+		
+		
 
 		/* Menu */
 		$menu = array();
@@ -62,7 +73,10 @@ class main extends CI_Controller {
 		
 		array_push($menu,array('Indicadores de Pesquisa','Indicadores Pesquisa','BTB','/indicadores'));
 		
+
 		$data['menu'] = $menu;
+		
+		
 		$data['title_menu'] = 'Menu Principal';
 		$this -> load -> view('header/main_menu',$data);
 		

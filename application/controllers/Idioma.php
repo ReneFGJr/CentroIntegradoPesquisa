@@ -42,10 +42,19 @@ class idioma extends CI_Controller {
 		$data['css'] = $css;
 		$data['js'] = $js;
 
+		/* Menu */
+		$menus = array();
+		array_push($menus,array('Bolsas / Recursos Humanos','#'));
+		array_push($menus,array('Auxílio Pesquisa','#'));
+		array_push($menus,array('Cooperação Internacional','#'));
+		array_push($menus,array('Prêmios','#'));
+		array_push($menus,array('Eventos','#'));
+
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Idiomas do sistema CIP';
-		$data['menu'] = 1;
+		$data['title_page'] = 'Idiomas do sistema';
+		$data['menu'] = 0;
+		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
 	}
 	
