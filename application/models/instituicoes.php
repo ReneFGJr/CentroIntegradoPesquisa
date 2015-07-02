@@ -9,7 +9,7 @@ class Instituicoes extends CI_model {
 		return ($obj);
 	}
 	
-	
+
 	function cp()
 		{ 
 			$sql_estado = 'select * from estado order by es_uf';
@@ -26,7 +26,7 @@ class Instituicoes extends CI_model {
 			array_push($cp,array('$S60','gpip_cidade', msg('Label_instituicao_cidade'),false,True));
 			array_push($cp,array('$T50:4','gpip_setores_atividade_economica', msg('Label_instituicao_ativeconomic'),false,True));
 			//array_push($cp,array('$I11','gpip_use', msg('Label_instituicao_use'),false,True));
-			array_push($cp,array('$S20','gpip_latitude', msg('Label_instituicao_latitude'),false,True));
+			array_push($cp,array('$S20','gpip_latitude',  msg('Label_instituicao_latitude'),false,True));
 			array_push($cp,array('$S20','gpip_longitude', msg('Label_instituicao_longitude'),false,True));
 			//array_push($cp,array('$I2','gpip_ordem', msg('Label_instituicao_ordem'),false,True));
 			

@@ -20,7 +20,7 @@
 			<td width="33%"><b><?php echo msg('cab_expediente_01');?></b>
 			<BR>
 			<a HREF="<?php echo base_url('/index.php/main/expediente#1');?>" class="link_foot"><?php echo msg('cab_expediente_01');?></A>
-			<BR>
+			<BR>																			   	
 			<a HREF="<?php echo base_url('/index.php/main/expediente#2');?>" class="link_foot"><?php echo msg('cab_expediente_02');?></A>
 			<BR>
 			<a HREF="<?php echo base_url('/index.php/main/expediente#3');?>" class="link_foot"><?php echo msg('cab_expediente_03');?></A>

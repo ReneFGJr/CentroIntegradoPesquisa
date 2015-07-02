@@ -17,27 +17,27 @@ $lang['versao'] = 'v0.15.25';
 
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /* Ciencia sem fronteiras */
-$lang['csf_bt_cancelar'] = 'Cancelar processo';
-$lang['csf_bt_homologar_no'] = 'Não homologado';
-$lang['csf_bt_homologar'] = 'Homologado pela Instituição';
-$lang['csf_bt_homologar_capes_no'] = 'Não homologado pela CAPES/CNPq';
-$lang['csf_bt_homologar_capes'] = 'Homologação da CAPES/CNPq';
-$lang['csf_bt_homologar_parceiro'] = 'Aceite do Parceiro';
-$lang['csf_bt_desistente'] = 'Desistente';
-$lang['csf_bt_viagem'] = 'Saída do Brasil';
-$lang['csf_bt_fim_viagem'] = 'Retorno ao Brasil';
-$lang['csf_bt_troca_universidade'] = 'Troca de Univerisdade';
-$lang['csf_bt_troca_pais'] = 'Troca de país';
-$lang['scf_historico'] = 'Histórico';
-$lang['csf_bt_retorno'] = 'Retorno antecipado';
-$lang['last_harvesting'] = 'Última coleta';
-$lang['gp_situacao'] = 'Situação';
-$lang['espelho_cnpq'] = 'Espelho (DGP)';
-$lang['gp_ano_formacao'] = 'Ano de formação';
-$lang['gp_instituicao_grupo'] = 'Instituíção';
-$lang['gp_cidade'] = 'Cidade';
-$lang['gp_data'] = 'Dados do grupo';
-$lang['csf_title_novo'] = 'Novo registro de aluno - CSF';
+$lang['csf_bt_cancelar'] 			= 'Cancelar processo';
+$lang['csf_bt_homologar_no'] 		= 'Não homologado';
+$lang['csf_bt_homologar'] 			= 'Homologado pela Instituição';
+$lang['csf_bt_homologar_capes_no'] 	= 'Não homologado pela CAPES/CNPq';
+$lang['csf_bt_homologar_capes'] 	= 'Homologação da CAPES/CNPq';
+$lang['csf_bt_homologar_parceiro'] 	= 'Aceite do Parceiro';
+$lang['csf_bt_desistente'] 			= 'Desistente';
+$lang['csf_bt_viagem'] 				= 'Saída do Brasil';
+$lang['csf_bt_fim_viagem'] 			= 'Retorno ao Brasil';
+$lang['csf_bt_troca_universidade'] 	= 'Troca de Univerisdade';
+$lang['csf_bt_troca_pais'] 			= 'Troca de país';
+$lang['scf_historico'] 				= 'Histórico';
+$lang['csf_bt_retorno'] 			= 'Retorno antecipado';
+$lang['last_harvesting'] 			= 'Última coleta';
+$lang['gp_situacao'] 				= 'Situação';
+$lang['espelho_cnpq'] 				= 'Espelho (DGP)';
+$lang['gp_ano_formacao'] 			= 'Ano de formação';
+$lang['gp_instituicao_grupo'] 		= 'Instituíção';
+$lang['gp_cidade'] 					= 'Cidade';
+$lang['gp_data'] 					= 'Dados do grupo';
+$lang['csf_title_novo'] 			= 'Novo registro de aluno - CSF';
 
 
 /* Ciencia sem fronteiras Parceiros */
@@ -87,7 +87,7 @@ $lang['fm_data_01'] 		= 'Deadline para submissão da proposta';
 $lang['fm_data_02'] 		= 'Deadline (envio da documentação)';
 $lang['fm_data_03'] 		= 'Previsão de divulgação dos resultados';
 $lang['fm_data_04'] 		= '';
-$lang['fomento_editais'] = 'Editais de fomento';
+$lang['fomento_editais'] 	= 'Editais de fomento';
 $lang['title_fomento_editais'] = 'Editais de fomento';
 
 

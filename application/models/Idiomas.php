@@ -24,7 +24,17 @@ function cp()
 			return($cp);
 		}	
 	
-	
+	function le($id = 0)
+		{
+			$sql = "select * from ".$this->tabela." 
+					where id_i = ".$id;
+			
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array($rlt);
+			$data = $rlt[0];
+			
+			return($data);
+		}	
 	
 }
 ?>		
