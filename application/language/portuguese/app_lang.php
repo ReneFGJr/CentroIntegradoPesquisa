@@ -115,6 +115,24 @@ $lang['Label_unidade_status']		= 'Status';
 $lang['Label_index_unidade'] 		= 'Lista de unidades';
 $lang['Label_editar_unidade'] 		= 'Editar unidade';
 
+
+/* Instituições */
+$lang['Label_instituicao_nome'] 		= 'Nome';
+$lang['Label_instituicao_sigla'] 		= 'Sigla';
+$lang['Label_instituicao_uf'] 			= 'UF';
+$lang['Label_instituicao_rzsocial']		= 'Razão Social';
+$lang['Label_instituicao_cnpj'] 		= 'CNPJ';
+$lang['Label_instituicao_natjuridica']	= 'Natureza Juridica';
+$lang['Label_instituicao_faixapo'] 		= 'Faixa po';
+$lang['Label_instituicao_cidade'] 		= 'Cidade';
+$lang['Label_instituicao_ativeconomic'] = 'Atividade Econômica';
+$lang['Label_instituicao_latitude'] 	= 'Latitude';
+$lang['Label_instituicao_longitude'] 	= 'Longitude';
+$lang['Label_instituicao_use'] 			= 'Use';
+$lang['Label_instituicao_ordem'] 		= 'Ordem';
+$lang['Label_index_instituicao'] 		= 'Lista de instituições';
+$lang['Label_editar_instituicao'] 		= 'Editar instituicao';
+
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /**              ADMINISTRATIVOS                                      **/
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/

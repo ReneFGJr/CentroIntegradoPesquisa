@@ -23,7 +23,6 @@
 			<td align="left" width="80"><?php echo msg('Label_instituicao_rzsocial'); ?></td>
 			<td align="left" class="lt2 border1" width="40%"><?php echo $gpip_razao_social; ?></td>
 		</tr>
-		
 		<tr>		
 			<td align="left" width="80"><?php echo msg('Label_instituicao_cnpj'); ?></td>
 			<td align="left" class="lt2 border1" width="40%"><?php echo $gpip_cnpj; ?></td>
@@ -51,6 +50,14 @@
 		<tr>		
 			<td align="left" width="80"><?php echo msg('Label_instituicao_longitude'); ?></td>
 			<td align="left" class="lt2 border1" width="40%"><?php echo $gpip_longitude; ?></td>
-		</tr>					
+		</tr>
+		<tr>		
+			<td align="left" width="80"><?php echo msg('Label_instituicao_use'); ?></td>
+			<td align="left" class="lt2 border1" width="40%"><?php echo $gpip_use; ?></td>
+		</tr>
+		<tr>		
+			<td align="left" width="80"><?php echo msg('Label_instituicao_ordem'); ?></td>
+			<td align="left" class="lt2 border1" width="40%"><?php echo $gpip_ordem; ?></td>
+		</tr>		
 	</div>
 </table>
