@@ -10,7 +10,7 @@ class ic extends CI_Controller {
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
-		
+
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
@@ -37,11 +37,55 @@ class ic extends CI_Controller {
 		$data['css'] = $css;
 		$data['js'] = $js;
 
+		/* Menu */
+		$menus = array();
+		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
+		$data['menu'] = 1;
+		$data['menus'] = $menus;
+
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Iniciação Científica';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
+	}
+
+	function comunicacao($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('comunicacoes');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$data['title'] = msg('title_ic_comunicacao');
+		$data['content'] = '';
+		switch ($id) {
+			case '0' :
+				$data['content'] = $this -> comunicacoes -> form_comunicacao_0();
+				break;
+			case '1' :
+				$data['content'] = $this -> comunicacoes -> form_comunicacao_1($gr, $tp);
+				break;
+		}
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = $this -> comunicacoes -> tabela_view();
+		$form -> see = true;
+		$form -> edit = true;
+		$form -> novo = false;
+		$form = $this -> comunicacoes -> row($form);
+
+		$form -> row_edit = base_url('index.php/ic/comunicacao/edit');
+		$form -> row_view = base_url('index.php/ic/comunicacao/view');
+		$form -> row = base_url('index.php/ic/comunicacao/');
+
+		$data['content'] .= row($form, $id);
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 
 	function index($id = 0) {
@@ -62,34 +106,33 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function acompanhamento()
-		{
+	function acompanhamento() {
 		/* Load Models */
 		$this -> load -> model('ics');
-		$cp = $this->ics->cp_switch();
+		$cp = $this -> ics -> cp_switch();
 		$data = array();
 
 		$this -> cab();
 		$this -> load -> view('header/content_open');
-		
+
 		$form = new form;
-		$form->id = 1; /* IC */
-		
-		$tela = $form->editar($cp,$this->ics->tabela_acompanhamento);
-		
+		$form -> id = 1;
+		/* IC */
+
+		$tela = $form -> editar($cp, $this -> ics -> tabela_acompanhamento);
+
 		$data['title'] = msg('ic_acomanhamento_title');
 		$data['tela'] = $tela;
-		$this -> load -> view('form/form',$data);
-		
+		$this -> load -> view('form/form', $data);
+
 		/* Salva */
-		if ($form->saved > 0)
-			{
-				redirect(base_url('index.php/ic/'));
-			}
-		
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/ic/'));
+		}
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}
+	}
 
 	function view($id = 0, $check = '') {
 		/* Load Models */
@@ -97,14 +140,13 @@ class ic extends CI_Controller {
 
 		$this -> cab();
 		$this -> load -> view('header/content_open');
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
+
 	function edit($id = 0, $check = '') {
 		/* Load Models */
-	}	
+	}
 
 }
-

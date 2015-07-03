@@ -1,7 +1,7 @@
 <?php
 class ws_sga extends CI_model {
 	var $producao = 'https://sarch.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
-	var $homologacao = 'http://haiti.cwb.pucpr.br:8280/services/ServicoConsultaPibic?wsdl';
+	var $homologacao = 'https://haiti.cwb.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
 	var $desenvolvimento = 'https://sarch.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
 
 	function findStudentByCracha($cracha) {

@@ -12,9 +12,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class ws_cs extends CI_model
 	{
-		var $producao = 'http://sarch.cwb.pucpr.br:8280/services/cs_student_service?wsdl';
-		var $homologacao = 'http://haiti.cwb.pucpr.br:8280/services/cs_student_service?wsdl';
-		var $desenvolvimento = 'http://rhea.cwb.pucpr.br:8280/services/cs_student_service?wsdl';
+		var $producao = 'https://sarch.cwb.pucpr.br:8100/services/cs_student_service?wsdl';
+		var $homologacao = 'https://haiti.cwb.pucpr.br:8100/services/cs_student_service?wsdl';
+		var $desenvolvimento = 'https://rhea.cwb.pucpr.br:8100/services/cs_student_service?wsdl';
 		
 		function findStudentByCracha($cracha)
 			{

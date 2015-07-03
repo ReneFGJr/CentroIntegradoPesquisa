@@ -1,13 +1,8 @@
 <?php
 class josso_login_pucpr extends CI_Model {
 	var $producao = 'https://sarch.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
-	//var $producao = 'http://midori.cwb.pucpr.br:8280/services/AutenticacaoSOA?wsdl';
-	
-	var $homologacao = 'http://haiti.cwb.pucpr.br:8280/services/AutenticacaoSOA?wsdl';
-	
-	var $desenvolvimento = 'http://rhea.cwb.pucpr.br:8280/services/AutenticacaoSOA?wsdl';
-	
-	//var $desenvolvimento = 'https://sarch.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
+	var $homologacao = 'https://haiti.cwb.pucpr.br:8100/services/AutenticacaoSOA?wsdl';	
+	var $desenvolvimento = 'https://rhea.cwb.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
 
 	var $id = 0;
 	var $cpf = '';

@@ -49,7 +49,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10, // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,   // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -82,7 +82,7 @@ function brtos($data) {
 
 function brtod($data) {
 	$data = sonumero($data);
-	$data = substr($data, 4, 4) . '-'.substr($data, 2, 2) . '-'.substr($data, 0, 2);
+	$data = substr($data, 4, 4) . '-' . substr($data, 2, 2) . '-' . substr($data, 0, 2);
 	return ($data);
 }
 
@@ -676,10 +676,9 @@ function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 
 	$sx .= form_submit('acao', 'busca');
 	$sx .= form_submit('acao', 'limpa filtro');
-	if ($obj->novo == true)
-		{
+	if ($obj -> novo == true) {
 		$sx .= form_submit('acao', 'novo');
-		}
+	}
 	$sx .= form_close();
 	$sx .= '
 	</li>
@@ -732,17 +731,15 @@ if (!function_exists('form_edit')) {
 		/* POST */
 		$post = $CI -> input -> post();
 		$dd = $post;
-		$acao = $CI->input->post("acao");
-		
-		if ($acao == 'novo')
-			{
-				redirect($obj->row_edit.'/0/0');
-				exit;
-			}
-		if ($acao == 'limpa filtro')
-			{
+		$acao = $CI -> input -> post("acao");
+
+		if ($acao == 'novo') {
+			redirect($obj -> row_edit . '/0/0');
+			exit ;
+		}
+		if ($acao == 'limpa filtro') {
 			$CI -> session -> userdata['row_termo'] = '';
-			}
+		}
 		$acao = '';
 		$term = '';
 		if (isset($post)) {
@@ -752,7 +749,7 @@ if (!function_exists('form_edit')) {
 			}
 			$term = troca($term, "'", "´");
 		}
-		
+
 		$fd = $obj -> fd;
 		$mk = $obj -> mk;
 		$lb = $obj -> lb;
@@ -845,13 +842,15 @@ if (!function_exists('form_edit')) {
 			$id = $row[$flds];
 
 			/* mostra resultado da query */
-			$data .= '
-<tr>
-	';
+			$data .= '<tr>';
 			for ($r = 1; $r < count($fd); $r++) {
 				/* mascara */
 				$flds = trim($fd[$r]);
-				$msk = trim($mk[$r]);
+				if (isset($mk[$r])) {
+					$msk = trim($mk[$r]);
+				} else {
+					$msk = 'L';
+				}
 				$mskm = '';
 				switch($msk) {
 					case 'C' :
@@ -1218,7 +1217,7 @@ if (!function_exists('form_edit')) {
 		if (substr($type, 0, 3) == '$HV') { $tt = 'HV';
 		}
 		if (substr($type, 0, 5) == '$LINK') { $tt = 'LINK';
-		}		
+		}
 
 		/* form */
 		$max = 100;
@@ -1297,7 +1296,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $tdn . $trn;
 				break;
 			case 'C' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
@@ -1430,7 +1429,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'R' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1448,7 +1447,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'D' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1471,10 +1470,10 @@ if (!function_exists('form_edit')) {
 				  </script>
 				';
 				break;
-				
+
 			/* String */
 			case 'LINK' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1489,10 +1488,10 @@ if (!function_exists('form_edit')) {
 				}
 				$tela .= $td . form_input($dados);
 				$tela .= $tdn . $trn;
-				break;				
+				break;
 
 			case 'M' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1502,7 +1501,7 @@ if (!function_exists('form_edit')) {
 
 			/* form_number */
 			case 'N' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1521,7 +1520,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'S' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
