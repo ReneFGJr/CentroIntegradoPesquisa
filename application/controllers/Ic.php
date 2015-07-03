@@ -68,6 +68,8 @@ class ic extends CI_Controller {
 				$data['content'] = $this -> comunicacoes -> form_comunicacao_1($gr, $tp);
 				break;
 		}
+		$this -> load -> view('content', $data);
+		
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
 		$form -> tabela = $this -> comunicacoes -> tabela_view();
@@ -76,11 +78,12 @@ class ic extends CI_Controller {
 		$form -> novo = false;
 		$form = $this -> comunicacoes -> row($form);
 
-		$form -> row_edit = base_url('index.php/ic/comunicacao/edit');
-		$form -> row_view = base_url('index.php/ic/comunicacao/view');
+		$form -> row_edit = base_url('index.php/ic/comunicacao_edit');
+		$form -> row_view = base_url('index.php/ic/comunicacao_view');
 		$form -> row = base_url('index.php/ic/comunicacao/');
 
-		$data['content'] .= row($form, $id);
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('messagem_cadastradas');
 
 		$this -> load -> view('content', $data);
 

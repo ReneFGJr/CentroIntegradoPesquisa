@@ -1050,26 +1050,37 @@ if (!function_exists('form_edit')) {
 		$id = $obj -> id;
 		$tabela = $obj -> tabela;
 		$fld = $obj -> cp[0][1];
+		
+		if ($id==0) { return(array()); }
 
 		$sql = "select * from " . $tabela . " where $fld = $id";
-
 		$CI = &get_instance();
 		$query = $CI -> db -> query($sql);
 		$row = $query -> row();
 
 		$cp = $obj -> cp;
+		
 		for ($r = 0; $r < count($cp); $r++) {
 			$tp = $cp[$r][0];
 			$fld = $cp[$r][1];
 
 			if (substr($tp, 0, 2) == '$D') {
-				$vlr = $row -> $fld;
-				$vlr = sonumero($vlr);
+				if (!isset($row -> $fld))
+					{
+						$vlr = '';
+					} else {
+						$vlr = $row -> $fld;		
+					}
+				
+				$vlr = trim(sonumero($vlr));
 				$vlr = substr($vlr, 6, 2) . '/' . substr($vlr, 4, 2) . '/' . substr($vlr, 0, 4);
 				if ($vlr == '00/00/0000') { $vlr = '';
 				}
+				if ($vlr == '//') { $vlr = '';
+				}				
+				if ($vlr == '') { $vlr = date("d/m/Y");
+				}
 				$row -> $fld = $vlr;
-
 			}
 			if (substr($tp, 0, 2) == '$N') {
 				$fld = $cp[$r][1];

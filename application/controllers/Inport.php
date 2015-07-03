@@ -58,6 +58,9 @@ class inport extends CI_Controller {
 			case 'ic':
 				$data['content'] = $this->ro8s->inport_ic_noticia();
 				break;
+			case 'instituicao':
+				$data['content'] = $this->ro8s->inport_insituicao();
+				break;
 			}
 		$this -> load -> view('content', $data);
 		// http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=ic_noticia&limit=100
@@ -81,6 +84,7 @@ class inport extends CI_Controller {
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('RO8-PostGress', 'Mensagens do Sistema', 'ITE', '/inport/ro8/ic'));
+		array_push($menu, array('RO8-PostGress', 'Instituições', 'ITE', '/inport/ro8/instituicao'));
 
 		/*View principal*/
 		$data['menu'] = $menu;

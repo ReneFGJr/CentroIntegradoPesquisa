@@ -455,7 +455,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$H8', '', '', False, False));
 		array_push($cp, array('$S8', '', msg('cracha'), True, True));
 
-		$sql = "id_ed:ed_titulo:select * from fomento_edital where ed_local = 'CSF' order by ed_titulo";
+		$sql = "id_ed:ed_titulo:select * from fomento_edital where ed_local = '3' order by ed_titulo";
 		array_push($cp, array('$Q ' . $sql, '', 'Edital', True, True));
 
 		array_push($cp, array('$MES', '', 'Previsão de saída', True, True));
