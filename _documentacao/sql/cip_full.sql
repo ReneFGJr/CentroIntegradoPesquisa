@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 10.100.3.55
--- Generation Time: Jul 03, 2015 at 08:04 PM
+-- Generation Time: Jul 03, 2015 at 08:19 PM
 -- Server version: 10.0.19-MariaDB-wsrep
 -- PHP Version: 5.4.16
 
@@ -1791,7 +1791,7 @@ CREATE TABLE IF NOT EXISTS `csf` (
   `csf_chamada` int(11) NOT NULL DEFAULT '0',
   `csf_parceiro` int(11) NOT NULL DEFAULT '1',
   `csf_bolsista` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf`
@@ -1867,7 +1867,7 @@ CREATE TABLE IF NOT EXISTS `csf_historico` (
   `slog_data` date NOT NULL DEFAULT '0000-00-00',
   `slog_hora` char(8) NOT NULL,
   `slog_text` text NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_historico`
@@ -1904,7 +1904,7 @@ CREATE TABLE IF NOT EXISTS `csf_parceiro` (
   `cp_phone_1` char(20) NOT NULL,
   `cp_phone_2` char(20) NOT NULL,
   `cp_site` char(250) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `csf_parceiro`
@@ -1995,7 +1995,7 @@ CREATE TABLE IF NOT EXISTS `dgp_cache` (
   `dgpc_data` date NOT NULL DEFAULT '0000-00-00',
   `dgpc_status` varchar(1) NOT NULL,
   `dgpc_xml` longtext NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `dgp_cache`
@@ -2015,6 +2015,52 @@ CREATE TABLE IF NOT EXISTS `escola` (
   `es_escola` varchar(60) DEFAULT NULL,
   `es_ativo` tinyint(1) unsigned DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `estado`
+--
+
+CREATE TABLE IF NOT EXISTS `estado` (
+  `id_es` int(11) unsigned NOT NULL,
+  `es_uf` char(2) NOT NULL,
+  `es_nome` varchar(40) NOT NULL,
+  `es_regiao` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `estado`
+--
+
+INSERT INTO `estado` (`id_es`, `es_uf`, `es_nome`, `es_regiao`) VALUES
+(1, 'AC', 'Acre', 'Norte'),
+(2, 'AL', 'Alagoas', 'Nordeste'),
+(3, 'AM', 'Amazonas', 'Norte'),
+(4, 'AP', 'Amapá', 'Norte'),
+(5, 'BA', 'Bahia', 'Nordeste'),
+(6, 'CE', 'Ceará', 'Nordeste'),
+(7, 'DF', 'Distrito Federal', 'Centro-Oeste'),
+(8, 'ES', 'Espírito Santo', 'Sudeste'),
+(9, 'GO', 'Goiás', 'Centro-Oeste'),
+(10, 'MA', 'Maranhão', 'Nordeste'),
+(11, 'MG', 'Minas Gerais', 'Sudeste'),
+(12, 'MS', 'Mato Grosso do Sul', 'Centro-Oeste'),
+(13, 'MT', 'Mato Grosso', 'Centro-Oeste'),
+(14, 'PA', 'Pará', 'Norte'),
+(15, 'PB', 'Paraíba', 'Nordeste'),
+(16, 'PE', 'Pernambuco', 'Nordeste'),
+(17, 'PI', 'Piauí', 'Nordeste'),
+(18, 'PR', 'Paraná', 'Sul'),
+(19, 'RJ', 'Rio de Janeiro', 'Sudeste'),
+(20, 'RN', 'Rio Grande do Norte', 'Nordeste'),
+(21, 'RR', 'Roraima', 'Norte'),
+(22, 'RO', 'Rondônia', 'Norte'),
+(23, 'RS', 'Rio Grande do Sul', 'Sul'),
+(24, 'SC', 'Santa Catarina', 'Sul'),
+(25, 'SE', 'Sergipe', 'Nordeste'),
+(26, 'SP', 'São Paulo', 'Sudeste'),
+(27, 'TO', 'Tocantins', 'Norte');
 
 -- --------------------------------------------------------
 
@@ -2293,7 +2339,7 @@ CREATE TABLE IF NOT EXISTS `fomento_edital` (
   `i_id` int(11) unsigned DEFAULT NULL COMMENT 'vinculo com tabela idioma',
   `ftp_id` int(11) unsigned DEFAULT NULL COMMENT 'vinculo com tabela fomento_tipo',
   `fs_id` int(11) unsigned DEFAULT NULL COMMENT 'vinculo com a tabela fomento_status'
-) ENGINE=InnoDB AUTO_INCREMENT=268 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=269 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `fomento_edital`
@@ -3149,7 +3195,7 @@ CREATE TABLE IF NOT EXISTS `gp_grupo_pesquisa` (
   `gp_website` varchar(80) DEFAULT NULL,
   `gp_repercussao` text NOT NULL,
   `gp_equip_proprio` char(1) DEFAULT NULL COMMENT 'equimapentos mais de 100 mil\n''S'' - Sim\n''N'' - Não'
-) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `gp_grupo_pesquisa`
@@ -3988,7 +4034,7 @@ INSERT INTO `gp_instituicao_parceira` (`id_gpip`, `gpip_nome`, `gpip_sigla`, `gp
 (680, 'Waterford Institute of Technology', '', '', 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, '52.24630560000000000', '-7.1398001000000020', 1),
 (681, 'Faculdade de Letras da Universidade do Porto', 'FLUP', '', 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', '', 1),
 (682, 'Instituto de Bioética, Direitos Humanos e Gênero', 'ANIS', '', 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', '', 1),
-(683, 'xx - Pontifícia Universidade Católica do Paraná (cancelar)', 'PUC-PR', '', 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', '', 3),
+(683, 'xx - Pontifícia Universidade Católica do Paraná (cancelar)', 'PUC-PR', 'PR', 0, '', '', '', '', '', '', 0, '', '', 3),
 (684, 'Centro Universitário Newton Paiva', 'Newton', '', 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', '', 1),
 (685, 'Universidade de Rio Verde', 'FESURV', '', 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', '', 1),
 (686, 'El Colegio de México', '', '', 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, '', '', 1),
@@ -4340,7 +4386,7 @@ CREATE TABLE IF NOT EXISTS `gp_situacao` (
   `id_gps` int(10) unsigned NOT NULL,
   `gps_situacao` varchar(50) DEFAULT NULL COMMENT 'Certificado',
   `gpd_ativo` tinyint(1) unsigned DEFAULT '1'
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `gp_situacao`
@@ -4456,7 +4502,7 @@ CREATE TABLE IF NOT EXISTS `logins_log` (
   `ul_ip` char(15) NOT NULL,
   `ul_proto` char(5) NOT NULL,
   `ul_cpf` char(15) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `logins_log`
@@ -5374,7 +5420,7 @@ CREATE TABLE IF NOT EXISTS `us_usuario` (
   `us_dt_nascimento` date NOT NULL DEFAULT '0000-00-00',
   `us_prof_drh` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'flag pra verificar dado do drh',
   `us_avaliador` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'flag para avaliador'
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `us_usuario`
@@ -5412,7 +5458,7 @@ CREATE TABLE IF NOT EXISTS `variaveis` (
   `v_descricao` text,
   `v_fonte` char(30) DEFAULT NULL,
   `v_total` int(11) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `variaveis`
@@ -5452,7 +5498,7 @@ CREATE TABLE IF NOT EXISTS `variaveis_dados` (
   `d_fld6` char(20) DEFAULT NULL,
   `d_lock` char(1) DEFAULT NULL,
   `d_update` date NOT NULL DEFAULT '0000-00-00'
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `variaveis_dados`
@@ -5606,6 +5652,12 @@ ALTER TABLE `dgp_cache`
 -- Indexes for table `escola`
 --
 ALTER TABLE `escola`
+  ADD PRIMARY KEY (`id_es`);
+
+--
+-- Indexes for table `estado`
+--
+ALTER TABLE `estado`
   ADD PRIMARY KEY (`id_es`);
 
 --
@@ -5880,7 +5932,7 @@ ALTER TABLE `campus`
 -- AUTO_INCREMENT for table `csf`
 --
 ALTER TABLE `csf`
-  MODIFY `id_csf` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+  MODIFY `id_csf` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `csf_ged`
 --
@@ -5895,12 +5947,12 @@ ALTER TABLE `csf_ged_tipo`
 -- AUTO_INCREMENT for table `csf_historico`
 --
 ALTER TABLE `csf_historico`
-  MODIFY `id_slog` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
+  MODIFY `id_slog` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT for table `csf_parceiro`
 --
 ALTER TABLE `csf_parceiro`
-  MODIFY `id_cp` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=40;
+  MODIFY `id_cp` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=41;
 --
 -- AUTO_INCREMENT for table `dgp`
 --
@@ -5910,7 +5962,7 @@ ALTER TABLE `dgp`
 -- AUTO_INCREMENT for table `dgp_cache`
 --
 ALTER TABLE `dgp_cache`
-  MODIFY `id_dgpc` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+  MODIFY `id_dgpc` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
 --
 -- AUTO_INCREMENT for table `escola`
 --
@@ -5935,7 +5987,7 @@ ALTER TABLE `fomento_disseminador`
 -- AUTO_INCREMENT for table `fomento_edital`
 --
 ALTER TABLE `fomento_edital`
-  MODIFY `id_ed` bigint(20) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=268;
+  MODIFY `id_ed` bigint(20) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=269;
 --
 -- AUTO_INCREMENT for table `fomento_edital_categoria`
 --
@@ -5975,7 +6027,7 @@ ALTER TABLE `gp_forma_remuneracao`
 -- AUTO_INCREMENT for table `gp_grupo_pesquisa`
 --
 ALTER TABLE `gp_grupo_pesquisa`
-  MODIFY `id_gp` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=142;
+  MODIFY `id_gp` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=143;
 --
 -- AUTO_INCREMENT for table `gp_instituicao_parceira`
 --
@@ -5995,7 +6047,7 @@ ALTER TABLE `gp_rede_pesquisa`
 -- AUTO_INCREMENT for table `gp_situacao`
 --
 ALTER TABLE `gp_situacao`
-  MODIFY `id_gps` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id_gps` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `gp_software`
 --
@@ -6015,7 +6067,7 @@ ALTER TABLE `idioma`
 -- AUTO_INCREMENT for table `logins_log`
 --
 ALTER TABLE `logins_log`
-  MODIFY `id_ul` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=20;
+  MODIFY `id_ul` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=21;
 --
 -- AUTO_INCREMENT for table `lp_area_conhecimento`
 --
@@ -6090,17 +6142,17 @@ ALTER TABLE `us_titulacao`
 -- AUTO_INCREMENT for table `us_usuario`
 --
 ALTER TABLE `us_usuario`
-  MODIFY `id_us` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id_us` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `variaveis`
 --
 ALTER TABLE `variaveis`
-  MODIFY `id_v` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+  MODIFY `id_v` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `variaveis_dados`
 --
 ALTER TABLE `variaveis_dados`
-  MODIFY `id_d` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=92;
+  MODIFY `id_d` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=93;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
