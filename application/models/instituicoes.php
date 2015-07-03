@@ -18,6 +18,7 @@ class Instituicoes extends CI_model {
 			array_push($cp,array('$H11','id_gpip','',False,True));
 			array_push($cp,array('$S80' ,'gpip_nome', msg('Label_instituicao_nome'),True,True));
 			array_push($cp,array('$S10','gpip_sigla', msg('Label_instituicao_sigla'),false,True));
+			//array_push($cp,array('$S10','gpip_sigla', msg('Label_instituicao_sigla'),false,True));
 			array_push($cp,array('$Q es_uf:es_uf:'.$sql_estado,'gpip_uf', msg('Label_instituicao_uf'),false,True));
 			array_push($cp,array('$S90','gpip_razao_social', msg('Label_instituicao_rzsocial'),false,True));
 			array_push($cp,array('$S20','gpip_cnpj', msg('Label_instituicao_cnpj'),false,True));
@@ -28,7 +29,7 @@ class Instituicoes extends CI_model {
 			//array_push($cp,array('$I11','gpip_use', msg('Label_instituicao_use'),false,True));
 			array_push($cp,array('$S20','gpip_latitude',  msg('Label_instituicao_latitude'),false,True));
 			array_push($cp,array('$S20','gpip_longitude', msg('Label_instituicao_longitude'),false,True));
-			//array_push($cp,array('$I2','gpip_ordem', msg('Label_instituicao_ordem'),false,True));
+			array_push($cp,array('$[1-8]','gpip_ordem', msg('Label_instituicao_ordem'),false,True));
 			
 			array_push($cp,array('$B','',msg('enviar'),false,True));
 			
