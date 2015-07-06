@@ -207,6 +207,25 @@ class csf extends CI_Controller {
 				}
 				echo $tela;
 				break;
+			case 'troca_universidade' :	
+				$cp = $this -> csfs -> cp_troca_universidade();
+				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$rst = $form -> ajax_submit($cp, $url, $ack);
+
+				if ($rst == '1') {/* saved */
+					$dh1 = $this -> input -> post('dd1');
+					$dh2 = $this -> input -> post('dd2');
+					$dh5 = $this -> input -> post('dd5');
+					$comment = 'Pais:[' . $dh1 . '],Previsao:[' . $dh2 . '],Parceira:[' . $dh5 . ']';
+					$this -> csfs -> inserir_historico($id, 13, $comment);
+					$tela = '<font color="green">' . msg('save successful') . '</font>';
+					reload();
+				} else {
+					$tela .= '' . $rst;
+				}
+				echo $tela;
+				break;	
 			case 'homologar_parceiro' :
 				$cp = $this -> csfs -> cp_homologar_parceira();
 				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);

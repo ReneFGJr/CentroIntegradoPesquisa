@@ -120,8 +120,16 @@ class csfs extends CI_model {
 		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '8', True, True));
 		return ($cp);
-	}	
-
+	}
+	
+	function cp_troca_universidade() {
+		$cp = array();
+		//array_push($cp, array('$Q id_cp:cp_descricao:select * from csf_parceiro order by cp_descricao where cp_ativo = 1', 'csf_parceiro', msg('csf_parceiro'), True, True));
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		$sql_instituicao = 'id_gpip:gpip_nome:select * from gp_instituicao_parceira order by gpip_ordem, gpip_nome';
+		array_push($cp, array('$Q ' . $sql_instituicao, 'csf_universidade', msg('csf_instituicao'), True, True));
+		return ($cp);
+	}
 
 	function cp_homologar_parceira() {
 		$cp = array();
@@ -133,6 +141,8 @@ class csfs extends CI_model {
 		array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
 		array_push($cp, array('$Q ' . $sql_parceiro, 'csf_parceiro', msg('csf_parceiro'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '4', True, True));
+		$sql_instituicao = 'id_gpip:gpip_nome:select * from gp_instituicao_parceira order by gpip_ordem, gpip_nome';
+		array_push($cp, array('$Q ' . $sql_instituicao, 'csf_universidade', msg('csf_instituicao'), True, True));
 		return ($cp);
 	}
 
@@ -145,9 +155,8 @@ class csfs extends CI_model {
 					    left join pais on csf_pais = iso3
 					    left join fomento_edital on csf_chamada = id_ed
 					    left join csf_parceiro on csf_parceiro = id_cp
+					    left join gp_instituicao_parceira on csf_universidade = id_gpip
 					    /*
-					    
-					    left join instituicao on csf_universidade = id_ies
 					    left join curso on csf_curso = id_curso
 					    */			
 			";
@@ -158,7 +167,9 @@ class csfs extends CI_model {
 	}
 
 	function le($id = 0) {
-		$sql = "select * from csf_view where id_csf = " . $id;
+		//$this->create_view();
+		$sql = "select * from csf_view 
+					where id_csf = " . $id;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$line = $rlt[0];
@@ -204,7 +215,7 @@ class csfs extends CI_model {
 			$sx .= '</td>';
 
 			$sx .= '<td class="borderb1">';
-			//$sx .= $line['inst_nome'];
+			$sx .= $line['gpip_nome'];
 			$sx .= '</td>';
 
 			$sx .= '<td class="borderb1">';
@@ -455,7 +466,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$H8', '', '', False, False));
 		array_push($cp, array('$S8', '', msg('cracha'), True, True));
 
-		$sql = "id_ed:ed_titulo:select * from fomento_edital where ed_local = '3' order by ed_titulo";
+		$sql = "id_ed:ed_titulo:select * from fomento_edital where ed_local = '3' and ed_status = '1' order by ed_titulo";
 		array_push($cp, array('$Q ' . $sql, '', 'Edital', True, True));
 
 		array_push($cp, array('$MES', '', 'Previsão de saída', True, True));

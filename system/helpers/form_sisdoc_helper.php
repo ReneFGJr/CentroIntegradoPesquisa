@@ -1229,6 +1229,8 @@ if (!function_exists('form_edit')) {
 		}
 		if (substr($type, 0, 5) == '$LINK') { $tt = 'LINK';
 		}
+		if (substr($type, 0, 3) == '$AA') { $tt = 'AA';
+		}
 
 		/* form */
 		$max = 100;
@@ -1299,6 +1301,57 @@ if (!function_exists('form_edit')) {
 				$tela .= '<TD>';
 				$tela .= form_dropdown($dados, $options, $vlr);
 				break;
+				
+			/* Select Box - Autocomplete*/
+			case 'AA' :
+				$ntype = trim(substr($type, 2, strlen($type)));
+				$ntype = troca($ntype, ':', ';') . ';';
+				$param = splitx(';', $ntype);
+
+			/* TR da tabela */
+				$tela .= $tr;
+
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= $tdl . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
+				}
+				/* **/
+				$dados = array('name' => $dn.'a', 'id' => $dn.'a', 'value' => $vlr, 'maxlenght' => $max, 'size' => $size, 'placeholder' => $label, 'class' => 'form_string','autocomplete' => 'on');
+				$tela .= $td . form_input($dados);				
+
+				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => $max, 'size' => 10, 'placeholder' => $label, 'class' => 'form_string','autocomplete' => 'on');
+				if ($readonly == false) { $dados['readonly'] = 'readonly';
+				}
+				$tela .= form_input($dados);
+
+				$tela .= $tdn . $trn;
+				
+				$tela .= '
+				<script>
+					$(function(){
+						var $sfield = $("#'.$dn.'a").autocomplete({
+							source: function(request, response){
+								var url = "'.base_url("index.php/instituicao/autocomplete?term=").'" + $("#'.$dn.'a").val();
+								$.get(url, {}, 
+									function(data)
+									{
+									response($.map(data, function(rlt) 
+										{
+											return { label: rlt.nome, value: rlt.id };
+										}));
+									}, "json");
+								}, 
+                        select: function( event, ui ) {
+                            $( "#'.$dn.'a" ).val( ui.item.label );
+                            $( "#'.$dn.'" ).val( ui.item.value );
+                            return false;
+							} ,	minLength: 4, autofocus: true });
+						});
+				</script>
+				';
+				break;				
 			/* Button */
 			case 'B' :
 				$tela .= $tr . $tdl . $td;
@@ -1438,6 +1491,8 @@ if (!function_exists('form_edit')) {
 				$tela .= form_dropdown($dados, $options, $vlr);
 				break;
 
+
+				
 			/* String */
 			case 'R' :
 			/* TR da tabela */

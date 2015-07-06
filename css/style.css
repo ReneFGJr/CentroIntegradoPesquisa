@@ -1,3 +1,12 @@
+/* UI */
+.ui-autocomplete-loading {
+  background: #fff url('../img/ajax/ajax_loader.gif') right center no-repeat !important;
+}
+
+.ui-state-focus { color: blue; }
+.ui-menu-item { color: blue; }
+.ui-menu-item:hover { color: green; }
+
 /* Botoes */
 a.botao-excluir {
 	border: 1px solid #FF0000;

@@ -5,14 +5,14 @@ class main extends CI_Controller {
 		parent::__construct();
 
 		$this -> load -> library("nuSoap_lib");
-
+		$this -> lang -> load("app", "portuguese");
 		$this -> load -> library('form_validation');
 		//$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
-		$this -> lang -> load("app", "portuguese");
+
 		date_default_timezone_set('America/Sao_Paulo');
 		
 		/* Security */
@@ -63,7 +63,7 @@ class main extends CI_Controller {
 		array_push($menu,array('Fomento','Observatório de Pesquisa','BTA','/edital'));
 		array_push($menu,array('Pró-Equipamentos','Laboratórios e equipamentos','BTA','/equipamento'));
 		
-		array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTN','/csf'));
+		array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTA','/csf'));
 		
 		array_push($menu,array('Fomento','Observatório de Pesquisa','BTN','/edital'));
 		array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip'));

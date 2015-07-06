@@ -61,6 +61,15 @@ class inport extends CI_Controller {
 			case 'instituicao':
 				$data['content'] = $this->ro8s->inport_insituicao();
 				break;
+			case 'csf':
+				$data['content'] = $this->ro8s->inport_csf();
+				break;
+			case 'pibic':
+				$data['content'] = $this->ro8s->inport_pibic();
+				break;				
+			case 'estudante':
+				$data['content'] = $this->ro8s->inport_estudante();
+				break;								
 			}
 		$this -> load -> view('content', $data);
 		// http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=ic_noticia&limit=100
@@ -85,6 +94,8 @@ class inport extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('RO8-PostGress', 'Mensagens do Sistema', 'ITE', '/inport/ro8/ic'));
 		array_push($menu, array('RO8-PostGress', 'Instituições', 'ITE', '/inport/ro8/instituicao'));
+		array_push($menu, array('RO8-PostGress', 'Estudantes', 'ITE', '/inport/ro8/estudante'));
+		array_push($menu, array('RO8-PostGress', 'CsF', 'ITE', '/inport/ro8/csf'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
