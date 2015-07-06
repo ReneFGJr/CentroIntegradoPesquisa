@@ -1465,7 +1465,7 @@ if (!function_exists('form_edit')) {
 				$options = array('' => '::select an option::');
 
 				/* recupera dados */
-				$sql = "select * from (" . $param[2] . ") as tabela ";
+				$sql = "select * from (" . $param[2] . ") as tabela order by ".$param[1];
 				$CI = &get_instance();
 				$query = $CI -> db -> query($sql);
 				foreach ($query->result_array() as $row) {

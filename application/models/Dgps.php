@@ -77,8 +77,8 @@ class dgps extends CI_model {
 	}
 
 	function busca_membro($nome) {
-		$sql = "select * from gp_recursos_humanos 
-						where gprh_recurso_humano = '$nome'";
+		$sql = "select * from gpus_cnpq 
+						where gpus_cnpq_nome = '$nome'";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -86,28 +86,32 @@ class dgps extends CI_model {
 			$line = $rlt[0];
 			return ($line['id_gprh']);
 		} else {
-			$sql = "insert into gp_recursos_humanos
-					(gprh_recurso_humano, gprh_ativo)
+			$data = date("Y-m-d");
+			$sql = "insert into gpus_cnpq
+					(gpus_cnpq_nome, gpus_titulacao_max, gpus_dt_inclusao,
+					gpus_egresso_dt_per_ini, gpus_egresso_dt_per_fim, us_id)
 					values
-					('$nome',1)
+					('$nome',1,'$data',
+					'0000-00-00','0000-00-00',0)
 					";
 			$rlt = $this -> db -> query($sql);
 
-			$sql = "select * from gp_recursos_humanos 
-						where gprh_recurso_humano = '$nome'";
+			$sql = "select * from gpus_cnpq 
+						where gpus_cnpq_nome = '$nome'";
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
 			$line = $rlt[0];
-			return ($line['id_gprh']);
+			return ($line['id_gpus_cnpq']);
 		}
 
 	}
 
 	function busca_situacao($situacao) {
-		$sql = "select * from gp_situacao where gps_situacao = '$situacao' ";
+		$situacao = trim($situacao);
+		$sql = "select * from gp_situacao 
+					where gps_situacao = '$situacao' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-
 		if (count($rlt) == 1) {
 			$line = $rlt[0];
 			return ($line['id_gps']);
@@ -259,8 +263,9 @@ class dgps extends CI_model {
 		
 	function lista_lideres($grupo)
 		{
-			$sql = "select * from gp_usuario 
-						inner join gp_recursos_humanos on id_gprh = us_id and usgp_dt_saida = '0000-00-00'
+			$sql = "select * from gpus_cnpq 
+						inner join gp_recursos_humanos						
+						on id_gprh = us_id and usgp_dt_saida = '0000-00-00'
 					where gp_id = $grupo";
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array($rlt);

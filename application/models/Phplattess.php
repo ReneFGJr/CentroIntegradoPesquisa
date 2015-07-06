@@ -398,7 +398,7 @@ class phpLattess extends CI_Model {
 			$sta = $line['dgpc_status'];
 			return ($line['dgpc_content']);
 		}
-
+		echo '<BR>Coletar!';
 		$content = '';
 
 		if ($new == 0) {
@@ -416,6 +416,7 @@ class phpLattess extends CI_Model {
 		}
 
 		/* Busca conteudo do link */
+		echo '<HR>Load page<HR>';
 		$fl = load_page($link);
 
 		$fl = utf8_decode($fl['content']);

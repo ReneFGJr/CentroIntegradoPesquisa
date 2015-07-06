@@ -126,7 +126,7 @@ class csfs extends CI_model {
 		$cp = array();
 		//array_push($cp, array('$Q id_cp:cp_descricao:select * from csf_parceiro order by cp_descricao where cp_ativo = 1', 'csf_parceiro', msg('csf_parceiro'), True, True));
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
-		$sql_instituicao = 'id_gpip:gpip_nome:select * from gp_instituicao_parceira order by gpip_ordem, gpip_nome';
+		$sql_instituicao = 'id_gpip:gpip_nome:select * from gp_instituicao_parceira order by gpip_nome';
 		array_push($cp, array('$Q ' . $sql_instituicao, 'csf_universidade', msg('csf_instituicao'), True, True));
 		return ($cp);
 	}
@@ -141,7 +141,8 @@ class csfs extends CI_model {
 		array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
 		array_push($cp, array('$Q ' . $sql_parceiro, 'csf_parceiro', msg('csf_parceiro'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '4', True, True));
-		$sql_instituicao = 'id_gpip:gpip_nome:select * from gp_instituicao_parceira order by gpip_ordem, gpip_nome';
+		
+		$sql_instituicao = 'id_gpip:gpip_nome:select * from gp_instituicao_parceira order by gpip_nome';
 		array_push($cp, array('$Q ' . $sql_instituicao, 'csf_universidade', msg('csf_instituicao'), True, True));
 		return ($cp);
 	}
