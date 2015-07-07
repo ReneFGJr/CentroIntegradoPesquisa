@@ -55,14 +55,14 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 
 		$form = new form;
-		$tabela = '(select * from '.$this -> dgps -> tabela.'
+		$tabela = '(select * from ' . $this -> dgps -> tabela . '
 					left join gp_situacao on id_gps = gps_id
 					) as tabela ';
 		$form -> tabela = $tabela;
 		$form -> see = true;
 		$form -> edit = true;
 		$form -> novo = true;
-		
+
 		$form = $this -> dgps -> row($form);
 
 		$form -> row_edit = base_url('index.php/dgp/edit');
@@ -70,7 +70,6 @@ class dgp extends CI_Controller {
 		$form -> row = base_url('index.php/dgp/admin/');
 
 		$tela['tela'] = row($form, $id);
-		
 
 		$tela['title'] = $this -> lang -> line('title_dgp');
 
@@ -108,7 +107,7 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 
 		$data = $this -> dgps -> le($id);
-		
+
 		$this -> load -> view('dgp/grupo', $data);
 		$this -> load -> view('header/content_close', $data);
 		$this -> load -> view('header/foot', $data);
@@ -145,11 +144,42 @@ class dgp extends CI_Controller {
 	}
 
 	function index() {
+		$this -> load -> model('dgps');
 		$this -> cab();
 		$data = array();
+		$data['acoes'] = $this -> dgps -> acoes();
 		$this -> load -> view('dgp/index', $data);
 		$this -> load -> view('dgp/view_mygroups', $data);
 		$this -> load -> view('dgp/view_indicadores', $data);
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function comunicar_alteracao() {
+		$this -> load -> model('dgps');
+		$this -> cab();
+		$data = array();
+		$data['acoes'] = $this -> dgps -> acoes();
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);
+		
+		$this -> load -> view('dgp/grupo_alteracao', $data);
+
+		$this -> load -> view('header/content_close', $data);
+		$this -> load -> view('header/foot', $data);
+	}
+	function novo_grupo() {
+		$this -> load -> model('dgps');
+		$this -> cab();
+		$data = array();
+		$data['acoes'] = $this -> dgps -> acoes();
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);
+		
+		$this -> load -> view('dgp/grupo_novo', $data);
+
+		$this -> load -> view('header/content_close', $data);
 		$this -> load -> view('header/foot', $data);
 	}
 

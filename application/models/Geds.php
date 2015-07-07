@@ -136,19 +136,30 @@ class Geds extends CI_Model {
 				$path .= date("m") . '/';
 				$this -> dir($path);
 			}
+			$dd2 = $this->input->post('dd2');
+			
+			if (strlen($dd2) == 0) { $erro = 10; $erro_tipo = '<font color="red">Erro de tipo de arquivo</font>'; }
+			
 			if (strlen($erro) == 0) {
 				$compl = $proto . '-' . substr(md5($nome . date("His")), 0, 5) . '-';
 				//$compl = troca($compl, '/', '-');
+				
 				if (!move_uploaded_file($temp, $path . $compl . $nome)) { $erro = msg('erro_save');
 				} else {
+					$ext = $nome;
+					while (strpos($ext,'.'))
+						{
+							$ext = substr($ext,strpos($ext,'.')+1,strlen($ext));
+						}
+					
 					$this -> file_saved = $path . $compl . $nome;
 					$this -> file_name = $nome;
 					$this -> file_size = $size;
 					$this -> file_path = $path;
 					$this -> file_data = date("Ymd");
 					$this -> file_time = date("H:i:s");
-					$this -> file_type = $id;
-					$this -> protocol = $proto;
+					$this -> file_type = $dd2;
+					$this -> protocol = $id;
 					$this -> user = '';
 					$this -> save();
 					$saved = 1;
@@ -163,6 +174,7 @@ class Geds extends CI_Model {
 		$sx = '<form id="upload" action="' . $page . '" method="post" enctype="multipart/form-data">
 					<fieldset><legend>' . msg('file_tipo') . '</legend>
     				<select name="dd2" size=1>' . $options . '</select>
+    				'.$erro_tipo.'
     				</fieldset>
     				<BR>
 	    			<nobr><fieldset class="fieldset01"><legend class="legend01">' . msg('upload_submit') . '</legend> 

@@ -147,6 +147,13 @@ class csfs extends CI_model {
 		return ($cp);
 	}
 
+	function cp_trocar_parceira() {
+		$cp = array();
+		$sql_parceiro = 'id_cp:cp_descricao:select * from csf_parceiro where cp_ativo = 1 order by cp_descricao';
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$Q ' . $sql_parceiro, 'csf_parceiro', msg('csf_parceiro'), True, True));
+		return ($cp);
+	}
 	function create_view() {
 		$cp = '*';
 		$sql = "

@@ -26,7 +26,8 @@ if (!isset($retorno)) { $retorno = 0;
 }
 if (!isset($desistente)) { $desistente = 0;
 }
-
+if (!isset($trocar_parceiro)) { $trocar_parceiro = 0;
+}
 
 
 if ($cancelar == 1) {
@@ -57,6 +58,9 @@ if ($homologar_capes == 1) {
 	echo '<input type="button" value="' . msg('csf_bt_homologar_capes') . '" class="botao-grande" onclick="bt_enviar(\'homologar_capes\');" >';
 }
 
+if ($trocar_parceiro == 1) {
+	echo '<input type="button" value="' . msg('csf_bt_trocar_parceiro') . '" class="botao-grande" onclick="bt_enviar(\'trocar_parceiro\');" >';
+}
 
 if ($homologar_parceiro == 1) {
 	echo '<input type="button" value="' . msg('csf_bt_homologar_parceiro') . '" class="botao-grande" onclick="bt_enviar(\'homologar_parceiro\');" >';

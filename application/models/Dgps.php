@@ -260,6 +260,23 @@ class dgps extends CI_model {
 			}
 		return ($data);
 	}
+
+	function acoes()
+		{
+			$sx = '<table class="lt2">';
+			$sx .= '<tr><td><h3>Ações para os grupos</h3></td></tr>';
+			$sx .= '<tr>';
+			$sx .= '<td>';
+			$sx .= '<ul>';
+			$sx .= '<li><A HREF="'.base_url('index.php/dgp/novo_grupo').'" class="link">Abertura de novo Grupo</A></li>';
+			$sx .= '<li><A HREF="'.base_url('index.php/dgp/alterar_lider').'" class="link">Alteração de(os) lider(es) do Grupo</A></li>';
+			$sx .= '<li><A HREF="'.base_url('index.php/dgp/comunicar_alteracao').'" class="link">Comunicar alterações no Grupo</A></li>';
+			$sx .= '<li><A HREF="'.base_url('index.php/dgp/solicitar_cancelamento').'" class="link">Solicitar cancelamento do Grupo</A></li>';
+			$sx .= '</td>';
+			
+			$sx .= '</table>';
+			return($sx);
+		}	
 		
 	function lista_lideres($grupo)
 		{
