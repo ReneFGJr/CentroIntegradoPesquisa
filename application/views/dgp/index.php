@@ -18,7 +18,13 @@
 				<BR>
 				<BR>
 				<input type="submit" value="Filtrar" name="acao" >
-			</form><!---- resumo ---->
+			</form>
+			<!---- acoes ---->
+			<?php
+			//$this->load->model('dgps');
+			echo $acoes;
+			?>
+			<!---- resumo ---->
 			<BR>
 			<BR>
 			<?php
