@@ -420,6 +420,94 @@ class csf extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+
+	function ver_situacao($id = 0, $chk = '') {
+		/* Models */
+		$this -> load -> model('usuarios');
+		$this -> load -> model('sga_pucpr');
+		$this -> load -> model('csfs');
+
+		$this -> cab();
+
+		$line = $this -> csfs -> le($id);
+		$data = $line;
+
+
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
+		$data = array();
+		$this -> load -> view('form/form_busca.php');
+		$data['content'] = $this -> csfs -> csf_resumo();
+
+		$this -> load -> view('csf/menu');
+		$this -> load -> view('content', $data);
+		
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function ver_edital($id = 0, $chk = '') {
+		/* Models */
+		$this -> load -> model('usuarios');
+		$this -> load -> model('sga_pucpr');
+		$this -> load -> model('csfs');
+
+		$this -> cab();
+
+		$line = $this -> csfs -> le($id);
+		$data = $line;
+
+
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
+		$this -> load -> view('fomento/resumo', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+
+	function ver_pais($id = 0, $chk = '') {
+			/* Models */
+			$this -> load -> model('usuarios');
+			$this -> load -> model('sga_pucpr');
+			$this -> load -> model('csfs');
+	
+			$this -> cab();
+	
+			$line = $this -> csfs -> le($id);
+			$data = $line;
+	
+	
+			$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
+	
+			
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
+
+		function ver_parceiro($id = 0, $chk = '') {
+				/* Models */
+				$this -> load -> model('usuarios');
+				$this -> load -> model('sga_pucpr');
+				$this -> load -> model('csfs');
+		
+				$this -> cab();
+		
+				$line = $this -> csfs -> le($id);
+				$data = $line;
+		
+		
+				$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
+				
+				$form -> row_view = base_url('index.php/parceiro/view');
+				
+				$this -> load -> view('header/content_close');
+				$this -> load -> view('header/foot', $data);
+			}
+
+
+
+
 	function view($id = 0, $chk = '') {
 		$this -> cab();
 		$data = array();
@@ -470,6 +558,18 @@ class csf extends CI_Controller {
 		$this -> geds -> file_path = '_document/';
 		$this -> geds -> file_lock($id);
 	}	
+
+
+    function ged_lock($id = 0, $chk = '') {
+        $this -> load -> database();
+
+        $this -> load -> model('geds');
+        $this -> geds -> tabela = 'csf_ged';
+        $this -> geds -> file_path = '_document/';
+        $this -> geds -> file_lock($id);
+    }    
+
+
 
 	function ged_excluir($id = 0, $chk = '') {
 		$this -> load -> database();

@@ -312,26 +312,33 @@ class csfs extends CI_model {
 
 			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt4 link">';
-
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="borderb1">';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
 
+			$link = base_url('index.php/csf/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
 			$sx .= '<td class="borderb1">';
-			$sx .= $line['cs_descricao'];
+			$sx .= $link . $line['cs_descricao']. '</A>';
 			$sx .= '</td>';
 
+			$link = base_url('index.php/csf/ver_edital/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
 			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $line['ed_titulo'];
+			$sx .= $link . $line['ed_titulo']. '</A>';
+			$sx .= '</td>';
+			
+			$link = base_url('index.php/csf/ver_pais/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$sx .= '<td class="lt1 borderb1">';
+			$sx .= $link . $line['nome']. '</A>';
 			$sx .= '</td>';
 
-			$sx .= '<td class="borderb1">';
-			$sx .= $line['nome'];
-			$sx .= '</td>';
-
-			$sx .= '<td class="borderb1">';
-			$sx .= $line['cp_descricao'];
+						$link = base_url('index.php/csf/ver_parceiro/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$sx .= '<td class="lt1 borderb1">';
+			$sx .= $link . $line['cp_descricao']. '</A>';
 			$sx .= '</td>';
 
 		}
