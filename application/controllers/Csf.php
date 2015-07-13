@@ -486,20 +486,15 @@ class csf extends CI_Controller {
 		}
 
 		function ver_parceiro($id = 0, $chk = '') {
-				/* Models */
-				$this -> load -> model('usuarios');
-				$this -> load -> model('sga_pucpr');
-				$this -> load -> model('csfs');
-		
+				//* Load Models */
+				$this -> load -> model('parceiros');
 				$this -> cab();
-		
-				$line = $this -> csfs -> le($id);
-				$data = $line;
-		
-		
-				$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
+
 				
-				$form -> row_view = base_url('index.php/parceiro/view');
+				$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
+				$data = $this->parceiros->le($id);
+				$this -> load -> view('parceiro/view', $data);
+				
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
@@ -548,15 +543,6 @@ class csf extends CI_Controller {
 		$this -> geds -> tabela = 'csf_ged';
 		$this -> geds -> file_path = '_document/';
 		$this -> geds -> download($id);
-	}
-	
-	function ged_lock($id = 0, $chk = '') {
-		$this -> load -> database();
-
-		$this -> load -> model('geds');
-		$this -> geds -> tabela = 'csf_ged';
-		$this -> geds -> file_path = '_document/';
-		$this -> geds -> file_lock($id);
 	}	
 
 

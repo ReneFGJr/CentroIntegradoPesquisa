@@ -183,6 +183,8 @@ class csfs extends CI_model {
 		$line = $rlt[0];
 		return ($line);
 	}
+	
+		
 
 	function mostra_todas_csf($aluno_id) {
 		$sql = "select * from csf_view where id_us = " . round($aluno_id);
@@ -335,7 +337,7 @@ class csfs extends CI_model {
 			$sx .= $link . $line['nome']. '</A>';
 			$sx .= '</td>';
 
-						$link = base_url('index.php/csf/ver_parceiro/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+						$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
 			$link = '<A HREF="' . $link . '" class="lt4 link">';
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $link . $line['cp_descricao']. '</A>';

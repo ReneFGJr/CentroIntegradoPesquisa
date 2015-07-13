@@ -36,7 +36,6 @@ class Parceiros extends CI_model {
 			$sql = "select * from ".$this->tabela." 
 					left join pais on iso3 = cp_pais
 					where id_cp = ".$id;
-					
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array($rlt);
 			$data = $rlt[0];
