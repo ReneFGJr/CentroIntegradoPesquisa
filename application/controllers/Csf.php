@@ -461,6 +461,15 @@ class csf extends CI_Controller {
 		$this -> geds -> file_path = '_document/';
 		$this -> geds -> download($id);
 	}
+	
+	function ged_lock($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'csf_ged';
+		$this -> geds -> file_path = '_document/';
+		$this -> geds -> file_lock($id);
+	}	
 
 	function ged_excluir($id = 0, $chk = '') {
 		$this -> load -> database();

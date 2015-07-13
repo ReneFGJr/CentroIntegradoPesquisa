@@ -7,14 +7,13 @@ class Geds extends CI_Model {
 	var $versao = 0;
 	var $nw_log = '';
 	var $total_files = 0;
-	
-	function form_upload($id=0)
-		{
-			$sx = '
-				<input type="button" value="'.msg('ged_upload').'" id="ged_upload">
+
+	function form_upload($id = 0) {
+		$sx = '
+				<input type="button" value="' . msg('ged_upload') . '" id="ged_upload">
 				<script>
 					$("#ged_upload").click(function() {
-						var $tela = newwindows("'.base_url('index.php/csf/ged/').'/'.$id.'",600,400);
+						var $tela = newwindows("' . base_url('index.php/csf/ged/') . '/' . $id . '",600,400);
 					});
 					
 				function newwindows(url, xx, yy) {
@@ -24,12 +23,13 @@ class Geds extends CI_Model {
 				}					
 				</script>
 			';
-			return($sx);			
-		}
+		return ($sx);
+	}
+
 	/*
 	 * 				//
 	 */
-	function list_files( $protocolo = '',$edit = False ) {
+	function list_files($protocolo = '', $edit = False) {
 		$sql = "select * from " . $this -> tabela . " 
 						where doc_dd0 = '$protocolo' 
 								and doc_ativo = 1 
@@ -44,7 +44,7 @@ class Geds extends CI_Model {
 			$sx = '<table border=0 class="lt1">';
 			for ($r = 0; $r < count($rlt); $r++) {
 				$line = $rlt[$r];
-				$link = '<span onclick="ged_download(\''.$line['id_doc'].'\');" class="link" style="cursor: pointer;">';
+				$link = '<span onclick="ged_download(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
 				$sx .= '<tr>';
 				$sx .= '<td>';
 				$sx .= $link . $line['doc_filename'];
@@ -57,19 +57,65 @@ class Geds extends CI_Model {
 				$sx .= ' | ';
 				$sx .= number_format(($line['doc_size'] / 1024), 1, ',', '.') . 'k Byte';
 				$sx .= '</span>';
-				if ($line['doc_status'] == '@')
-					{
-					$linkd = '<span onclick="ged_excluir(\''.$line['id_doc'].'\');" class="link" style="cursor: pointer;">';
+				if ($line['doc_status'] == '@') {
+					$linkd = '<span onclick="ged_excluir(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
 					$sx .= ' | ';
-					$sx .= $linkd.'<font color="red">excluir</font>'.'<span>';
-					} 
+					$sx .= $linkd . '<font color="red">excluir</font>' . '</span>';
+					$linkd = '<span onclick="ged_lock(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
+					$sx .= ' | ';
+					$sx .= $linkd . '<font color="blue">travar</font>' . '</span>';
+				}
 				$sx .= '</td>';
 				$sx .= '</tr>';
 			}
 			$sx .= '</table>';
+
+			$sx .= '
+				<script>
+					function ged_excluir($id) {
+						var $tela = newwindows("' . base_url('index.php/csf/ged_excluir/') . '/" + $id,600,400);
+					};
+					function ged_download($id) {
+						var $tela = newwindows("' . base_url('index.php/csf/ged_download/') . '/" + $id,600,400);
+					};
+					function ged_lock($id) {
+						var $tela = newwindows("' . base_url('index.php/csf/ged_lock/') . '/" + $id,600,400);
+					};					
+					
+				function newwindows(url, xx, yy) {
+					NewWindow = window.open(url, \'newwin2\', \'scrollbars=yes,resizable=no,width=\' + xx + \',height=\' + yy + \',top=10,left=10\');
+					NewWindow.focus();
+					void (0);
+				}					
+				</script>
+			';
 		}
 		return ($sx);
-	}	
+	}
+
+	function download($id = '') {
+		$arq = $this -> file_path;
+		if (strlen($id) > 0) { $this -> id_file = $id;
+		}
+		if ($this -> le($this -> id_file)) {
+			$arq = $this -> file_path;
+			if (!(file_exists($arq))) {
+				$arq = substr($arq, strpos($arq, '/') + 1, strlen($arq));
+				if (!(file_exists($arq))) {
+					echo '<HR>' . $arq;
+					echo '<BR> Arquivo nao localizado ';
+					echo '<BR> Reportando erro ao administrador';
+					exit ;
+				} else {
+					$this -> download_send($arq);
+				}
+			} else {
+				/** Download do arquivo **/
+				$this -> download_send();
+			}
+		} else { echo '<BR><font color="red">ID not found';
+		}
+	}
 
 	function lista_arquivo_tipo($tipo = '', $protocolo = '') {
 		$sql = "select * from " . $this -> tabela . " 
@@ -87,7 +133,7 @@ class Geds extends CI_Model {
 			$sx = '<table border=0 class="lt1">';
 			for ($r = 0; $r < count($rlt); $r++) {
 				$line = $rlt[$r];
-				$link = '<span onclick="ged_download(\''.$line['id_doc'].'\');" class="link" style="cursor: pointer;">';
+				$link = '<span onclick="ged_download(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
 				$sx .= '<tr>';
 				$sx .= '<td>';
 				$sx .= $link . $line['doc_filename'];
@@ -100,12 +146,11 @@ class Geds extends CI_Model {
 				$sx .= ' | ';
 				$sx .= number_format(($line['doc_size'] / 1024), 1, ',', '.') . 'k Byte';
 				$sx .= '</span>';
-				if ($line['doc_status'] == '@')
-					{
-					$linkd = '<span onclick="ged_excluir(\''.$line['id_doc'].'\');" class="link" style="cursor: pointer;">';
+				if ($line['doc_status'] == '@') {
+					$linkd = '<span onclick="ged_excluir(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
 					$sx .= ' | ';
-					$sx .= $linkd.'<font color="red">excluir</font>'.'<span>';
-					} 
+					$sx .= $linkd . '<font color="red">excluir</font>' . '<span>';
+				}
 				$sx .= '</td>';
 				$sx .= '</tr>';
 			}
@@ -115,6 +160,7 @@ class Geds extends CI_Model {
 	}
 
 	function form($id = '', $tipo = '') {
+		$erro_tipo = '';
 		$options = '<option value="">' . msg('not_defined') . '</option>';
 		$options .= $this -> documents_type_form($id);
 		$path = '_document/';
@@ -136,22 +182,23 @@ class Geds extends CI_Model {
 				$path .= date("m") . '/';
 				$this -> dir($path);
 			}
-			$dd2 = $this->input->post('dd2');
-			
-			if (strlen($dd2) == 0) { $erro = 10; $erro_tipo = '<font color="red">Erro de tipo de arquivo</font>'; }
-			
+			$dd2 = $this -> input -> post('dd2');
+
+			if (strlen($dd2) == 0) { $erro = 10;
+				$erro_tipo = '<font color="red">Erro de tipo de arquivo</font>';
+			}
+
 			if (strlen($erro) == 0) {
 				$compl = $proto . '-' . substr(md5($nome . date("His")), 0, 5) . '-';
 				//$compl = troca($compl, '/', '-');
-				
+
 				if (!move_uploaded_file($temp, $path . $compl . $nome)) { $erro = msg('erro_save');
 				} else {
 					$ext = $nome;
-					while (strpos($ext,'.'))
-						{
-							$ext = substr($ext,strpos($ext,'.')+1,strlen($ext));
-						}
-					
+					while (strpos($ext, '.')) {
+						$ext = substr($ext, strpos($ext, '.') + 1, strlen($ext));
+					}
+
 					$this -> file_saved = $path . $compl . $nome;
 					$this -> file_name = $nome;
 					$this -> file_size = $size;
@@ -174,7 +221,7 @@ class Geds extends CI_Model {
 		$sx = '<form id="upload" action="' . $page . '" method="post" enctype="multipart/form-data">
 					<fieldset><legend>' . msg('file_tipo') . '</legend>
     				<select name="dd2" size=1>' . $options . '</select>
-    				'.$erro_tipo.'
+    				' . $erro_tipo . '
     				</fieldset>
     				<BR>
 	    			<nobr><fieldset class="fieldset01"><legend class="legend01">' . msg('upload_submit') . '</legend> 
@@ -345,30 +392,6 @@ class Geds extends CI_Model {
 		readfile($this -> file_path);
 	}
 
-	function download($id = '') {
-		$arq = $this -> file_path;
-		if (strlen($id) > 0) { $this -> id_file = $id;
-		}
-		if ($this -> le($this -> id_file)) {
-			$arq = $this -> file_path;
-			if (!(file_exists($arq))) {
-				$arq = substr($arq, strpos($arq, '/') + 1, strlen($arq));
-				if (!(file_exists($arq))) {
-					echo '<HR>' . $arq;
-					echo '<BR> Arquivo nao localizado ';
-					echo '<BR> Reportando erro ao administrador';
-					exit ;
-				} else {
-					$this -> download_send($arq);
-				}
-			} else {
-				/** Download do arquivo **/
-				$this -> download_send();
-			}
-		} else { echo '<BR><font color="red">ID not found';
-		}
-	}
-
 	function le($id) {
 		if (strlen($id) > 0) { $this -> id_file = $id;
 		}
@@ -465,9 +488,17 @@ class Geds extends CI_Model {
 	}
 
 	function file_delete($id) {
-			$this -> id_doc = $id;
-			$this -> file_delete_confirm();
-			echo $this -> windows_close();
+		$this -> id_doc = $id;
+		$this -> file_delete_confirm();
+		echo $this -> windows_close();
+	}
+	
+	function file_lock($id) {
+		$sql = "update " . $this -> tabela;
+		$sql .= " set doc_status = 'A' ";
+		$sql .= " where id_doc = " . $id;
+		$rlt = $this -> db -> query($sql);
+		return (1);
 	}
 
 	function file_delete_confirm() {
