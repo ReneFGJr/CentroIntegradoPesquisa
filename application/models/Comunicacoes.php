@@ -5,6 +5,25 @@ class comunicacoes extends CI_Model
 	var $tabela_status = 'mensagem_status';
 	var $tabela = 'mensagem_comunicacao';
 	
+	function cp()
+		{
+			$cp = array();
+			$sql_grupo = 'id_mg:mg_nome:select * from mensagem_grupo where mg_ativo = 1 and mg_grupo <> 0';
+			array_push($cp,array('$H8','id_mc','',False,True));
+			array_push($cp,array('$Q '.$sql_grupo,'mc_tipo',msg('grupo'),True,True));
+			array_push($cp,array('$S40','mc_titulo',msg('titulo'),False,True));
+			array_push($cp,array('$T80:13','mc_texto',msg('texto'),False,True));
+			array_push($cp,array('$H8','mc_enviado','',False,True));
+			array_push($cp,array('$O HTML:HTML&TEXT:TEXT','mc_formato',msg('formato'),False,True));
+			array_push($cp,array('$U8','mc_dt','',False,True));
+			array_push($cp,array('$HV','mc_own',0,False,True));
+			array_push($cp,array('$H8','mc_dt_envio','',False,True));
+			array_push($cp,array('$HV','mc_status_mgs_id',1,False,True));
+			array_push($cp,array('$B','',msg('enviar'),false,True));
+			
+			return($cp);
+		}	
+	
 	function tabela_view()
 		{
 			$tabela = "(
@@ -14,7 +33,14 @@ class comunicacoes extends CI_Model
 			";
 			return($tabela);
 		}
-	
+	function le($id=0)
+		{
+			$sql = "select * from ".$this->tabela." where id_mc = ".$id;
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$line = $rlt[0];
+			return($line);
+		}
 	function row($obj) {
 		$obj -> fd = array('id_mc', 'mc_titulo','mc_dt','mgs_nome');
 		$obj -> lb = array('ID', 'Nome','Data','status');

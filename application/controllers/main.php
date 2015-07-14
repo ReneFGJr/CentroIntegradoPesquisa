@@ -64,6 +64,7 @@ class main extends CI_Controller {
 		array_push($menu,array('Pró-Equipamentos','Laboratórios e equipamentos','BTA','/equipamento'));
 		
 		array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTA','/csf'));
+		array_push($menu,array('SEMIC','Seminário de Iniciação Científica - PUCPR','BTA','/semic'));
 		
 		array_push($menu,array('Fomento','Observatório de Pesquisa','BTN','/edital'));
 		array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip'));

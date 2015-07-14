@@ -1,5 +1,6 @@
 <?php
 class ic extends CI_Controller {
+
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -50,6 +51,85 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
+	function comunicacao_edit($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('comunicacoes');
+		$cp = $this -> comunicacoes -> cp();
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> comunicacoes -> tabela);
+		$data['title'] = msg('eq_equipamento_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/ic'));
+		}
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function comunicacao_view($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('comunicacoes');
+		$this -> load -> model('email_local');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$data = $this -> comunicacoes -> le($id);
+
+		$form = new form;
+		$cp = array();
+		array_push($cp, array('$h', '', '', False, False));
+		array_push($cp, array('$T40:50', '', 'emails', True, False));
+		array_push($cp, array('$B8', '', 'Enviar >>>', False, False));
+		$tela = $form -> editar($cp, '');
+		$data['title'] = msg('visualizar_mensagem');
+		$data['tela'] = $tela;
+
+		if ($form -> saved > 0) {
+			$em = $this->input->post('dd1');
+			$em = troca($em,chr(13),';');
+			$em = troca($em,chr(10),'');
+			$em = troca($em,chr(8),'');
+			$em = troca($em,chr(15),'');
+			$ems = splitx(';',$em.';');
+			
+			for ($r=0;$r < count($ems);$r++)
+				{
+				$email = $ems[$r];
+				$this -> email_local -> enviaremail($email, $data['mc_titulo'], $data['mc_texto']);
+				echo '<BR>--->' . $email;
+				}
+		}
+
+		$data['content'] = '<table width="100%">
+							<tr valign="top">
+								<td>' . $data['mc_texto'] . '</td>
+								<td>' . $tela . '</td>
+							</tr>
+							</table>';
+
+		$data['title'] = msg('visualizar_mensagem');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function comunicacao($id = 0, $gr = 0, $tp = 0) {
 		/* Load Models */
 		$this -> load -> model('comunicacoes');
@@ -58,24 +138,12 @@ class ic extends CI_Controller {
 		$data = array();
 		$this -> load -> view('header/content_open');
 
-		$data['title'] = msg('title_ic_comunicacao');
-		$data['content'] = '';
-		switch ($id) {
-			case '0' :
-				$data['content'] = $this -> comunicacoes -> form_comunicacao_0();
-				break;
-			case '1' :
-				$data['content'] = $this -> comunicacoes -> form_comunicacao_1($gr, $tp);
-				break;
-		}
-		$this -> load -> view('content', $data);
-		
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
 		$form -> tabela = $this -> comunicacoes -> tabela_view();
 		$form -> see = true;
 		$form -> edit = true;
-		$form -> novo = false;
+		$form -> novo = true;
 		$form = $this -> comunicacoes -> row($form);
 
 		$form -> row_edit = base_url('index.php/ic/comunicacao_edit');

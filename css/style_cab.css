@@ -28,6 +28,10 @@
 	#content {
 		margin: 0px 20px 10px 20px;
 	}
+	.nopr
+		{
+		display: none;	
+		}
 }
 #foot {
 	background-color: #E0E0E0;

@@ -69,6 +69,8 @@ class admin extends CI_Controller {
 		array_push($menu,array('Unidades','Unidades da PUCPR','ITE','/unidade'));
 		array_push($menu,array('Instituições','Instituições de ensino','ITE','/instituicao'));
 		
+		array_push($menu,array('SEMIC','Salas de Apresentação','ITE','/semic/salas'));
+		
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
