@@ -133,6 +133,12 @@ $lang['Label_instituicao_ordem'] 		= 'Ordem';
 $lang['Label_index_instituicao'] 		= 'Lista de instituições';
 $lang['Label_editar_instituicao'] 		= 'Editar instituicao';
 
+
+/* Paises */
+$lang['Label_csf_pais'] 	= 'Nome do país';
+$lang['Label_csf_iso'] 		= 'Codigo Iso3';
+$lang['Label_csf_cod_iso'] 	= 'Código Numerico';
+
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /**              ADMINISTRATIVOS                                      **/
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
