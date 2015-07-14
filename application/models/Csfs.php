@@ -2,6 +2,7 @@
 class csfs extends CI_model {
 	var $tabela = "csf";
 	
+	
 	function mostra_historico($protocolo)
 		{
 			$sql = "select * from csf_historico
@@ -291,7 +292,7 @@ class csfs extends CI_model {
 		';
 		return ($sx);
 	}
-
+	/*    **********************************************************************  */
 	function lista_status($id = 0) {
 		$this -> create_view();
 		$sql = "select * from csf_view where csf_status = " . round($id) . ' order by us_nome ';
@@ -321,23 +322,23 @@ class csfs extends CI_model {
 
 			$link = base_url('index.php/csf/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt4 link">';
-			$sx .= '<td class="borderb1">';
+			$sx .= '<td class="borderb1">';  
 			$sx .= $link . $line['cs_descricao']. '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_edital/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 			$link = '<A HREF="' . $link . '" class="lt4 link">';
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $link . $line['ed_titulo']. '</A>';
 			$sx .= '</td>';
 			
-			$link = base_url('index.php/csf/ver_pais/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
 			$link = '<A HREF="' . $link . '" class="lt4 link">';
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $link . $line['nome']. '</A>';
 			$sx .= '</td>';
 
-						$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
+			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
 			$link = '<A HREF="' . $link . '" class="lt4 link">';
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $link . $line['cp_descricao']. '</A>';
@@ -492,6 +493,77 @@ class csfs extends CI_model {
 		array_push($cp, array('$Q ' . $sql, '', 'País', False, True));
 
 		return ($cp);
+	}
+	
+	
+	function ler_view_csf($id = 0, $fd='id_csf'){
+		$sql = "select * from csf_view where $fd = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$line = $rlt[0];
+		return ($line);
+	}
+
+	
+	function mostra_lista_edital_pais($id) {
+		$this -> create_view();
+		$sql = "select * from csf_view where csf_status = " . round($id) . ' order by us_nome ';
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+
+		$sx = '<table width="100%" align="left" class="border1 tabela01">';
+		$sx .= '<tr>						
+						<th width="30%">estudantes</th>
+						<th width="10%">situação</th>
+						<th width="30%">edital</th>
+						<th width="10%">país</th>
+						<th width="10%">universidade</th>
+						<th width="10%">parceiro</th>
+					</tr>
+					';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+
+			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$sx .= '<tr valign="top">';
+			$sx .= '<td class="borderb1">';
+			$sx .= $link . $line['us_nome'] . '</A>';
+			$sx .= '</td>';
+
+			$link = base_url('index.php/csf/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$sx .= '<td class="borderb1">';  
+			$sx .= $link . $line['cs_descricao']. '</A>';
+			$sx .= '</td>';
+
+			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$sx .= '<td class="lt1 borderb1">';
+			$sx .= $link . $line['ed_titulo']. '</A>';
+			$sx .= '</td>';
+			
+			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$sx .= '<td class="lt1 borderb1">';
+			$sx .= $link . $line['nome']. '</A>';
+			$sx .= '</td>';
+
+			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
+			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$sx .= '<td class="lt1 borderb1">';
+			$sx .= $link . $line['cp_descricao']. '</A>';
+			$sx .= '</td>';
+
+		}
+		$sx .= '<tr class="lt0">
+					<td class="bold">Total ' . $tot . ' estudantes.</td>
+					</tr>';
+		$sx .= '</table>';
+		return ($sx);
+		echo $sql;	
 	}
 
 }

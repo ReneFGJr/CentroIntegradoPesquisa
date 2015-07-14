@@ -207,7 +207,7 @@ class csf extends CI_Controller {
 				}
 				echo $tela;
 				break;
-			case 'troca_universidade' :	
+			case 'troca_universidade' :
 				$cp = $this -> csfs -> cp_troca_universidade();
 				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
 				$tela = $form -> editar($cp, $this -> csfs -> tabela);
@@ -225,7 +225,7 @@ class csf extends CI_Controller {
 					$tela .= '' . $rst;
 				}
 				echo $tela;
-				break;	
+				break;
 			case 'trocar_parceiro' :
 				$cp = $this -> csfs -> cp_trocar_parceira();
 				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
@@ -244,7 +244,7 @@ class csf extends CI_Controller {
 					$tela .= '' . $rst;
 				}
 				echo $tela;
-				break;				
+				break;
 			case 'homologar_parceiro' :
 				$cp = $this -> csfs -> cp_homologar_parceira();
 				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
@@ -334,31 +334,31 @@ class csf extends CI_Controller {
 
 		switch ($sta) {
 			case 1 :
-			/* Em homologacao */
+				/* Em homologacao */
 				$bts = array('cancelar' => 1, 'homologar' => 1, 'homologar_no' => 1);
 				$data = array_merge($bts, $data);
 				$this -> load -> view('csf/ajax_botao_acao.php', $data);
 				break;
 			case 2 :
-			/* Em homologacao cnpq/capes */
+				/* Em homologacao cnpq/capes */
 				$bts = array('cancelar' => 1, 'homologar_capes' => 1, 'homologar_capes_no' => 1);
 				$data = array_merge($bts, $data);
 				$this -> load -> view('csf/ajax_botao_acao.php', $data);
 				break;
 			case 3 :
-			/* Em homologacao parceiro */
+				/* Em homologacao parceiro */
 				$bts = array('cancelar' => 1, 'homologar_parceiro' => 1);
 				$data = array_merge($bts, $data);
 				$this -> load -> view('csf/ajax_botao_acao.php', $data);
 				break;
 			case 4 :
-			/* Em viagem */
+				/* Em viagem */
 				$bts = array('cancelar' => 1, 'viagem' => 1, 'desistente' => 1);
 				$data = array_merge($bts, $data);
 				$this -> load -> view('csf/ajax_botao_acao.php', $data);
 				break;
 			case 5 :
-			/* Em viagem */
+				/* Em viagem */
 				$bts = array('fim_viagem' => 1, 'retorno' => 1, 'troca_pais' => 1, 'troca_universidade' => 1, 'trocar_parceiro' => 1);
 				$data = array_merge($bts, $data);
 				$this -> load -> view('csf/ajax_botao_acao.php', $data);
@@ -420,7 +420,6 @@ class csf extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-
 	function ver_situacao($id = 0, $chk = '') {
 		/* Models */
 		$this -> load -> model('usuarios');
@@ -432,16 +431,14 @@ class csf extends CI_Controller {
 		$line = $this -> csfs -> le($id);
 		$data = $line;
 
-
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
 		$data = array();
 		$this -> load -> view('form/form_busca.php');
 		$data['content'] = $this -> csfs -> csf_resumo();
 
 		$this -> load -> view('csf/menu');
 		$this -> load -> view('content', $data);
-		
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
@@ -449,59 +446,59 @@ class csf extends CI_Controller {
 	function ver_edital($id = 0, $chk = '') {
 		/* Models */
 		$this -> load -> model('usuarios');
+		$this -> load -> model('csfs');
+
+		$this -> cab();
+
+		$line = $this -> csfs -> ler_view_csf($id, 'id_ed');
+		$data = $line;
+
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
+		$this -> load -> view('csf/ver_edital', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function ver_pais($id = 0, $chk = '') {
+		/* Models */
+		$this -> load -> model('usuarios');
 		$this -> load -> model('sga_pucpr');
 		$this -> load -> model('csfs');
 
 		$this -> cab();
 
-		$line = $this -> csfs -> le($id);
+		$line = $this -> csfs -> ler_view_csf($id, 'id');
 		$data = $line;
 
-
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
-		$this -> load -> view('fomento/resumo', $data);
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
+		$this -> load -> view('csf/ver_pais', $data);
 		
+		
+		
+		
+		//$data['content'] = '<BR><BR>' . $this -> csfs -> mostra_lista_edital_pais($id);
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Estudantes') . '</legend>' . $this -> csfs -> mostra_lista_edital_pais($id) . '</fieldset>';
+		$this -> load -> view('content', $data);
+	
+	
+	
+	
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function ver_parceiro($id = 0, $chk = '') {
+		//* Load Models */
+		$this -> load -> model('parceiros');
+		$this -> cab();
 
-	function ver_pais($id = 0, $chk = '') {
-			/* Models */
-			$this -> load -> model('usuarios');
-			$this -> load -> model('sga_pucpr');
-			$this -> load -> model('csfs');
-	
-			$this -> cab();
-	
-			$line = $this -> csfs -> le($id);
-			$data = $line;
-	
-	
-			$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
-	
-			
-			$this -> load -> view('header/content_close');
-			$this -> load -> view('header/foot', $data);
-		}
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
+		$data = $this -> parceiros -> le($id);
+		$this -> load -> view('parceiro/view', $data);
 
-		function ver_parceiro($id = 0, $chk = '') {
-				//* Load Models */
-				$this -> load -> model('parceiros');
-				$this -> cab();
-
-				
-				$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' .'testando'. '</fieldset>';
-				$data = $this->parceiros->le($id);
-				$this -> load -> view('parceiro/view', $data);
-				
-				
-				$this -> load -> view('header/content_close');
-				$this -> load -> view('header/foot', $data);
-			}
-
-
-
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function view($id = 0, $chk = '') {
 		$this -> cab();
@@ -543,19 +540,16 @@ class csf extends CI_Controller {
 		$this -> geds -> tabela = 'csf_ged';
 		$this -> geds -> file_path = '_document/';
 		$this -> geds -> download($id);
-	}	
+	}
 
+	function ged_lock($id = 0, $chk = '') {
+		$this -> load -> database();
 
-    function ged_lock($id = 0, $chk = '') {
-        $this -> load -> database();
-
-        $this -> load -> model('geds');
-        $this -> geds -> tabela = 'csf_ged';
-        $this -> geds -> file_path = '_document/';
-        $this -> geds -> file_lock($id);
-    }    
-
-
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'csf_ged';
+		$this -> geds -> file_path = '_document/';
+		$this -> geds -> file_lock($id);
+	}
 
 	function ged_excluir($id = 0, $chk = '') {
 		$this -> load -> database();
