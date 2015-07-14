@@ -70,7 +70,7 @@ class dgps extends CI_model {
 					";
 			$rlt = $this -> db -> query($sql);
 		} else {
-			$sql = "update gp_usuario set usgp_dt_saida = '0000-00-00' where us_id = $id and gp_id = $grupo and usgp_lider = 2 ";
+			$sql = "update gp_usuario set usgp_dt_saida = '0000-00-00' where us_id = $id and id_gpus_cnpq = $grupo and usgp_lider = 2 ";
 			$rlt = $this -> db -> query($sql);
 		}
 		return(1);
@@ -280,10 +280,11 @@ class dgps extends CI_model {
 		
 	function lista_lideres($grupo)
 		{
+			return('');
 			$sql = "select * from gpus_cnpq 
 						inner join gp_recursos_humanos						
 						on id_gprh = us_id and usgp_dt_saida = '0000-00-00'
-					where gp_id = $grupo";
+					where id_gpus_cnpq = $grupo";
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array($rlt);
 			$sx = '';
