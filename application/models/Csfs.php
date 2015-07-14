@@ -507,10 +507,10 @@ class csfs extends CI_model {
 	
 	function mostra_lista_edital_pais($id) {
 		$this -> create_view();
-		$sql = "select * from csf_view where csf_status = " . round($id) . ' order by us_nome ';
+		$sql = "select * from csf_view where id = ".$id.' order by csf_pais ';
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
-
+		echo "$sql";
 		$sx = '<table width="100%" align="left" class="border1 tabela01">';
 		$sx .= '<tr>						
 						<th width="30%">estudantes</th>
