@@ -5,13 +5,13 @@ $link = '<a href="' . base_url('index.php/dgp/inport/' . $id_gp . '/' . checkpos
 <br>
 <a href="<?php echo $gp_egp_espelho;?>" target="_new"> <img src="<?php echo base_url('img/icon/icone_dgp.png');?>" border=0 height="20"></A>
 <font class="lt6"><?php echo $gp_nome;?></font>
-<table width="500" class="tabela01">
+<table width="100%" class="tabela01" border=0>
 	<tr valign="top">
-		<td align="right" width="30%"><?php echo msg('lider(es)');?></td>
-		<td><?php echo $lideres;?></td>
+		<td align="right" width="100"><?php echo msg('lider(es)');?></td>
+		<td width="400"><?php echo $lideres;?></td>
 	</tr>
-	<tr>
-		<td colspan=2>
+	<tr valign="top">
+		<td colspan=2 width="500">
 		<fieldset class="border1">
 			<legend class="lt1">
 				<?php echo msg('gp_data');?>
@@ -55,11 +55,34 @@ $link = '<a href="' . base_url('index.php/dgp/inport/' . $id_gp . '/' . checkpos
 				<tr valign="top">
 					<td align="right" width="30%">
 					<nobr>
+						<?php echo msg('last_update');?>
+					</nobr></td>
+					<td><?php echo stodbr($gp_dt_ultimo_envio);?></td>
+				</tr>
+				<tr valign="top">
+					<td align="right" width="30%">
+					<nobr>
 						<?php echo msg('last_harvesting');?>
 					</nobr></td>
-					<td><?php echo stodbr($gp_dt_ultimo_envio);?> <?php echo $link;?></td>
+					<td><?php echo stodbr($gp_dt_coleta);?> <?php echo $link;?></td>
 				</tr>
 			</table>
 		</fieldset></td>
+		<td rowspan=10 width="80%">
+		<fieldset>
+			<legend class="lt1">
+				<?php echo msg('dgp_linhas');?>
+			</legend>
+			<?php echo $linhas_pesquisa;?>
+		</fieldset>
+		
+		<fieldset>
+			<legend class="lt1">
+				<?php echo msg('dgp_membros');?>
+			</legend>
+			<?php echo $grupo_membros;?>
+		</fieldset>		
+		
+		</td>
 	</tr>
 </table>

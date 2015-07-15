@@ -149,8 +149,7 @@ class phpLattess extends CI_Model {
 		$data['estrangeiros'] = $this -> recupera_method_4($text, '<span>Colaboradores estrangeiros', '</table>');
 
 		/* Egresso */
-		$sc = '<h4>Egressos</h4>
-';
+		$sc = '<h4>Egressos</h4>';
 		$text = substr($text, strpos($text, $sc) + strlen($sc) + 1, strlen($text));
 
 		$data['egresso_pesquisadores'] = $this -> recupera_method_4($text, '<span>Pesquisadores', '</table>');

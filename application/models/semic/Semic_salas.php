@@ -49,9 +49,9 @@ class semic_salas extends CI_Model {
 		array_push($cp, array('$S100', 'sb_nome', msg('titulo'), True, True));
 		array_push($cp, array('$Q ' . $sql_sala, 'sb_sala', msg('sala'), True, True));
 		array_push($cp, array('$D8', 'sb_data', msg('data'), False, True));
-		array_push($cp, array('$O ' . $h, 'sb_hora', msg('hora_inicio'), False, True));
-		array_push($cp, array('$O ' . $h, 'sb_hora_fim', msg('hora_fim'), False, True));
-		array_push($cp, array('$Q ' . $sql_tipo, 'sb_tipo', msg('tipo'), False, True));
+		array_push($cp, array('$O ' . $h, 'sb_hora', msg('hora_inicio'), True, True));
+		array_push($cp, array('$O ' . $h, 'sb_hora_fim', msg('hora_fim'), True, True));
+		array_push($cp, array('$Q ' . $sql_tipo, 'sb_tipo', msg('tipo'), True, True));
 		array_push($cp, array('$Q ' . $sql_situ, 'sb_situacao', msg('situacao'), False, True));
 		array_push($cp, array('$[2015-' . date("Y") . ']D', 'sb_ano', msg('ano'), False, True));
 		return ($cp);
