@@ -1,7 +1,7 @@
 <table width="100%">
 	<div>
 		<tr>
-			<td colspan=4 class="lt6 borderb1"style="border-left: 1px solid #333333"><B><?php echo $nome; ?></B></td>
+			<td colspan=4 class="lt6 borderb1"style="border-left: 1px solid #333333"><B>Pais destino: <?php echo $nome; ?></B></td>
 			<td width="10" rowspan=20><div style="width:20px;"></div>
 		</tr>	
 	</div>

@@ -36,11 +36,17 @@ class csf extends CI_Controller {
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
+		
+		/* Menu */
+		$menus = array();
+		array_push($menus,array('Ciência sem Fronteiras','index.php/csf'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Ciência sem Fronteiras';
 		$data['menu'] = 1;
+		$data['menus'] = $menus;
+		
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
 		$data['logo'] = base_url('img/logo/logo_csf.png');
@@ -478,7 +484,6 @@ class csf extends CI_Controller {
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
 		$this -> load -> view('csf/ver_pais', $data);
 		
-		
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_pais($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
 	
@@ -490,11 +495,17 @@ class csf extends CI_Controller {
 	function ver_parceiro($id = 0, $chk = '') {
 		//* Load Models */
 		$this -> load -> model('parceiros');
+		$this -> load -> model('csfs');
 		$this -> cab();
 
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
 		$data = $this -> parceiros -> le($id);
-		$this -> load -> view('parceiro/view', $data);
+		$this -> load -> view('parceiro/view_compac', $data);
+		
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_parceiro($id) . '</fieldset>';
+		$this -> load -> view('content', $data);
+		
+		
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -503,12 +514,16 @@ class csf extends CI_Controller {
 	
 	function ver_universidade($id = 0, $chk = '') {
 			//* Load Models */
-			$this -> load -> model('parceiros');
+			$this -> load -> model('instituicoes');
+			$this -> load -> model('csfs');
 			$this -> cab();
 	
 			$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
-			$data = $this -> parceiros -> le($id);
-			$this -> load -> view('instituicao/view', $data);
+			$data = $this -> instituicoes -> le($id);
+			$this -> load -> view('instituicao/view_compac', $data);
+			
+			$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_universidades($id) . '</fieldset>';
+			$this -> load -> view('content', $data);
 	
 			$this -> load -> view('header/content_close');
 			$this -> load -> view('header/foot', $data);
