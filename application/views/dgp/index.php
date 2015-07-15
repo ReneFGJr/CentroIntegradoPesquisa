@@ -28,10 +28,6 @@
 			<BR>
 			<BR>
 			<?php
-			$total_grupos = 10;
-			$total_linhas = 20;
-			$total_pesquisadores = 10;
-			$total_envolvidos = 10;
 			echo '				
 			<table width="98%" class="lt1 border1 radius10">
 				<tr>
@@ -44,17 +40,29 @@
 				</tr>
 				<tr>
 					<td align="right">Total de pesquisadores</td>
-					<td class="lt6">'.$total_pesquisadores.'</td>
+					<td class="lt6">'.$total_1.'</td>
 				</tr>
 				<tr>
 					<td align="right">Total de estudantes envolvidos em pesquisa</td>
-					<td class="lt6">'.$total_envolvidos.'</td>
+					<td class="lt6">'.$total_2.'</td>
 				</tr>
+				<tr>
+					<td align="right">Total de técnicos</td>
+					<td class="lt6">'.$total_6.'</td>
+				</tr>
+				<tr>
+					<td align="right">Total de estrangeiros</td>
+					<td class="lt6">'.$total_8.'</td>
+				</tr>
+				<tr>
+					<td align="right">Total de egressos</td>
+					<td class="lt6">'.($total_9 + $total_11).'</td>
+				</tr>												
 			</table></td>
 			<td style="width:10px; border-left:1px solid #333333;"></td>
 			<td width="78%">Últimos grupos atualizados';
 
-			$sql = "select * from gp_grupo_pesquisa order by gp_dt_ultimo_envio desc limit 5 ";
+			$sql = "select * from gp_grupo_pesquisa order by gp_dt_ultimo_envio desc limit 8 ";
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
 

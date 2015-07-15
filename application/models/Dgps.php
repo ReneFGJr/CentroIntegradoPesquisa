@@ -10,6 +10,37 @@ class dgps extends CI_model {
 		$obj -> mk = array('', 'L', 'C', 'C');
 		return ($obj);
 	}
+	
+	function resumo($data)
+		{
+			$sql = "select count(*) as total from ".$this->tabela." where 1=1 ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$data['total_grupos'] = $rlt[0]['total'];
+			
+			$sql = "select count(*) as total from gp_linha where lp_ativo=1 ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+						
+			$data['total_linhas'] = $rlt[0]['total'];
+			
+			$sql = "SELECT count(*) as total, gprh_gp_id, gprh_recurso_humano
+						FROM gp_usuario 
+						inner join gp_recursos_humanos on gprh_gp_id = id_gprh
+						inner join gpus_cnpq on id_gpus_cnpq = gp_usuario.us_id
+						WHERE gpus_test = 0
+						group by gprh_gp_id
+					";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$data['total_'.$line['gprh_gp_id']] = $line['total'];		
+				}	
+			return($data);			
+		}
 
 	function grava_dados_importados($dt, $id, $link) {
 

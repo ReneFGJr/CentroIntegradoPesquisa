@@ -148,6 +148,7 @@ class dgp extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['acoes'] = $this -> dgps -> acoes();
+		$data = $this->dgps->resumo($data);
 		$this -> load -> view('dgp/index', $data);
 		$this -> load -> view('dgp/view_mygroups', $data);
 		$this -> load -> view('dgp/view_indicadores', $data);
