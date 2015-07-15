@@ -55,7 +55,7 @@
 					<td class="lt6">'.$total_8.'</td>
 				</tr>
 				<tr>
-					<td align="right">Total de egressos</td>
+					<td align="right">Total de egressos em grupos de pesquisa</td>
 					<td class="lt6">'.($total_9 + $total_11).'</td>
 				</tr>												
 			</table></td>

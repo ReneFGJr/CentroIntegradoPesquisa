@@ -415,10 +415,10 @@ class csf extends CI_Controller {
 		$this -> load -> model('geds');
 		$this -> geds -> tabela = 'csf_ged';
 		$this -> geds -> protodolo = $id;
-		$data['content'] = $this -> geds -> list_files($id, False);
+		$data['content'] = $this -> geds -> list_files($id, 'csf');
 		$this -> load -> view('content', $data);
 
-		$data['content'] = $this -> geds -> form_upload($id);
+		$data['content'] = $this -> geds -> form_upload($id, 'csf');
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');

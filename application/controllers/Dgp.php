@@ -97,9 +97,54 @@ class dgp extends CI_Controller {
 		$this -> dgps -> grava_dados_importados($text, $id, $link);
 		redirect(base_url('index.php/dgp/admin'));
 	}
+	
+	/**** GEDS */
+	function ged($id = 0, $proto = '', $tipo = '', $check = '') {
+		$this -> load -> database();
+
+		$this -> load -> library('session');
+		$this -> load -> helper('url');
+		$this -> lang -> load("app", "portuguese");
+
+		$this -> load -> model('geds');
+
+		$this -> geds -> tabela = 'gp_files';
+		$this -> geds -> page = base_url('index.php/dgp/ged/' . $id);
+
+		$data['content'] = $this -> geds -> form($id, $proto, $tipo);
+		$this -> load -> view('content', $data);
+	}
+
+	function ged_download($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'gp_files';
+		$this -> geds -> file_path = '_document/';
+		$this -> geds -> download($id);
+	}
+
+	function ged_lock($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'gp_files';
+		$this -> geds -> file_path = '_document/';
+		$this -> geds -> file_lock($id);
+	}
+
+	function ged_excluir($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'gp_files';
+		$this -> geds -> file_path = '_document/';
+		$this -> geds -> file_delete($id);
+	}	
 
 	function view($id = 0) {
 		$this -> load -> model('dgps');
+		$this -> load -> model('geds');
 		$this -> cab();
 		$data = array();
 		$data['logo'] = base_url('img/logo/logo_dgp.png');
@@ -107,7 +152,10 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 
 		$data = $this -> dgps -> le($id);
-
+		
+		$this->geds->tabela = 'gp_files';
+		$data['ged_arquivos'] = $this->geds->list_files($id,'dgp');
+		$data['ged_arquivos'] .= $this->geds->form_upload($id,'dgp');
 		$this -> load -> view('dgp/grupo', $data);
 		$this -> load -> view('header/content_close', $data);
 		$this -> load -> view('header/foot', $data);

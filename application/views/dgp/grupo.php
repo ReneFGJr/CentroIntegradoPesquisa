@@ -67,7 +67,14 @@ $link = '<a href="' . base_url('index.php/dgp/inport/' . $id_gp . '/' . checkpos
 					<td><?php echo stodbr($gp_dt_coleta);?> <?php echo $link;?></td>
 				</tr>
 			</table>
-		</fieldset></td>
+		</fieldset>
+		<fieldset>
+			<legend class="lt1">
+				<?php echo msg('dgp_arquivos');?>
+			</legend>
+			<?php echo $ged_arquivos;?>
+		</fieldset>
+		</td>
 		<td rowspan=10 width="80%">
 		<fieldset>
 			<legend class="lt1">

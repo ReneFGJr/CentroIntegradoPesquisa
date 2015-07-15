@@ -8,12 +8,12 @@ class Geds extends CI_Model {
 	var $nw_log = '';
 	var $total_files = 0;
 
-	function form_upload($id = 0) {
+	function form_upload($id = 0,$frame) {
 		$sx = '
 				<input type="button" value="' . msg('ged_upload') . '" id="ged_upload">
 				<script>
 					$("#ged_upload").click(function() {
-						var $tela = newwindows("' . base_url('index.php/csf/ged/') . '/' . $id . '",600,400);
+						var $tela = newwindows("' . base_url('index.php/'.$frame.'/ged/') . '/' . $id . '",600,400);
 					});
 					
 				function newwindows(url, xx, yy) {
@@ -29,7 +29,7 @@ class Geds extends CI_Model {
 	/*
 	 * 				//
 	 */
-	function list_files($protocolo = '', $edit = False) {
+	function list_files($protocolo = '', $frame) {
 		$sql = "select * from " . $this -> tabela . " 
 						where doc_dd0 = '$protocolo' 
 								and doc_ativo = 1 
@@ -73,13 +73,13 @@ class Geds extends CI_Model {
 			$sx .= '
 				<script>
 					function ged_excluir($id) {
-						var $tela = newwindows("' . base_url('index.php/csf/ged_excluir/') . '/" + $id,600,400);
+						var $tela = newwindows("' . base_url('index.php/'.$frame.'/ged_excluir/') . '/" + $id,600,400);
 					};
 					function ged_download($id) {
-						var $tela = newwindows("' . base_url('index.php/csf/ged_download/') . '/" + $id,600,400);
+						var $tela = newwindows("' . base_url('index.php/'.$frame.'/ged_download/') . '/" + $id,600,400);
 					};
 					function ged_lock($id) {
-						var $tela = newwindows("' . base_url('index.php/csf/ged_lock/') . '/" + $id,600,400);
+						var $tela = newwindows("' . base_url('index.php/'.$frame.'/ged_lock/') . '/" + $id,600,400);
 					};					
 					
 				function newwindows(url, xx, yy) {
@@ -311,7 +311,7 @@ class Geds extends CI_Model {
   						doc_size float,
   						doc_versao char(4),
   						doc_ativo integer
-						) ";
+						) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ";
 		$rlt = $this -> db -> query($sql);
 
 		$sql = "CREATE TABLE  " . $table . "_tipo (
@@ -323,7 +323,7 @@ class Geds extends CI_Model {
   						doct_autor integer,
   						doct_restrito integer,
   						doct_ativo integer
-						) ";
+						) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ";
 		$rlt = $this -> db -> query($sql);
 	}
 
