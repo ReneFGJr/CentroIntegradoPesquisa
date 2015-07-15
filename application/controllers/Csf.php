@@ -461,9 +461,9 @@ class csf extends CI_Controller {
 		$line = $this -> csfs -> ler_view_csf($id, 'id_ed');
 		$data = $line;
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
-		$this -> load -> view('csf/ver_edital', $data);
+		$this -> load -> view('csf/view_compac', $data);
 		
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_universidades($id) . '</fieldset>';
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
 		
 		//rodapé
