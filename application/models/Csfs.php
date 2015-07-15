@@ -1,43 +1,40 @@
 <?php
 class csfs extends CI_model {
 	var $tabela = "csf";
-	
-	
-	function mostra_historico($protocolo)
-		{
-			$sql = "select * from csf_historico
+
+	function mostra_historico($protocolo) {
+		$sql = "select * from csf_historico
 						left join csf_status on slog_status = id_cs
 						left join us_usuario on slog_usuario = us_cpf
-							where slog_protocolo = ".$protocolo.' order by slog_data, slog_hora';
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array($rlt);
-			$sx = '<table width="100%" class="tabela00">';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					
-					$sx .= '<tr>';
-					$sx .= '<td>';
-					$sx .= stodbr($line['slog_data']);
-					$sx .= ' '.$line['slog_hora'];
-					$sx .= '</td>';
+							where slog_protocolo = " . $protocolo . ' order by slog_data, slog_hora';
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$sx = '<table width="100%" class="tabela00">';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
 
-					$sx .= '<td>';
-					$sx .= ' '.$line['cs_descricao'];
-					$sx .= '</td>';
-					
-					$sx .= '<td>';
-					$sx .= ' '.$line['us_nome'];
-					$sx .= '</td>';
-					
-					$sx .= '<td>';
-					$sx .= '<img src="'.base_url('img/icon/icone_balloon.png').'" height="16" title="'.$line['slog_text'].'">';
-					$sx .= '</td>';											
-				}
-			$sx .= '</table>';
-			return($sx);
+			$sx .= '<tr>';
+			$sx .= '<td>';
+			$sx .= stodbr($line['slog_data']);
+			$sx .= ' ' . $line['slog_hora'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= ' ' . $line['cs_descricao'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= ' ' . $line['us_nome'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= '<img src="' . base_url('img/icon/icone_balloon.png') . '" height="16" title="' . $line['slog_text'] . '">';
+			$sx .= '</td>';
 		}
-	
+		$sx .= '</table>';
+		return ($sx);
+	}
+
 	function inserir_historico($protocolo, $status, $text = '') {
 		$data = date("Y-m-d");
 		$hora = date("H:i:s");
@@ -64,7 +61,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$HV', 'csf_status', '2', True, True));
 		return ($cp);
 	}
-	
+
 	function cp_homologar_no() {
 		$cp = array();
 		$cp = array();
@@ -73,7 +70,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '2', True, True));
 		return ($cp);
-	}	
+	}
 
 	function cp_homologar_capes() {
 		$cp = array();
@@ -84,7 +81,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$HV', 'csf_status', '3', True, True));
 		return ($cp);
 	}
-	
+
 	function cp_homologar_capes_no() {
 		$cp = array();
 		//$sql_pais = 'iso3:nome:select * from pais order by nome';
@@ -92,8 +89,8 @@ class csfs extends CI_model {
 		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '10', True, True));
 		return ($cp);
-	}	
-	
+	}
+
 	function cp_cancelar() {
 		$cp = array();
 		//$sql_pais = 'iso3:nome:select * from pais order by nome';
@@ -101,8 +98,8 @@ class csfs extends CI_model {
 		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '11', True, True));
 		return ($cp);
-	}	
-	
+	}
+
 	function cp_viagem() {
 		$cp = array();
 		$sql_pais = 'iso3:nome:select * from pais order by nome';
@@ -112,7 +109,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$MES', 'csf_retorno_previsao', msg('csf_prev_retorno'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '5', True, True));
 		return ($cp);
-	}	
+	}
 
 	function cp_desistente() {
 		$cp = array();
@@ -122,7 +119,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$HV', 'csf_status', '8', True, True));
 		return ($cp);
 	}
-	
+
 	function cp_troca_universidade() {
 		$cp = array();
 		//array_push($cp, array('$Q id_cp:cp_descricao:select * from csf_parceiro order by cp_descricao where cp_ativo = 1', 'csf_parceiro', msg('csf_parceiro'), True, True));
@@ -142,7 +139,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
 		array_push($cp, array('$Q ' . $sql_parceiro, 'csf_parceiro', msg('csf_parceiro'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '4', True, True));
-		
+
 		$sql_instituicao = 'id_gpip:gpip_nome:select * from gp_instituicao_parceira order by gpip_nome';
 		array_push($cp, array('$Q ' . $sql_instituicao, 'csf_universidade', msg('csf_instituicao'), True, True));
 		return ($cp);
@@ -155,6 +152,7 @@ class csfs extends CI_model {
 		array_push($cp, array('$Q ' . $sql_parceiro, 'csf_parceiro', msg('csf_parceiro'), True, True));
 		return ($cp);
 	}
+
 	function create_view() {
 		$cp = '*';
 		$sql = "
@@ -184,8 +182,6 @@ class csfs extends CI_model {
 		$line = $rlt[0];
 		return ($line);
 	}
-	
-		
 
 	function mostra_todas_csf($aluno_id) {
 		$sql = "select * from csf_view where id_us = " . round($aluno_id);
@@ -292,6 +288,7 @@ class csfs extends CI_model {
 		';
 		return ($sx);
 	}
+
 	/*    **********************************************************************  */
 	function lista_status($id = 0) {
 		$this -> create_view();
@@ -314,34 +311,34 @@ class csfs extends CI_model {
 			$line = $rlt[$r];
 
 			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="borderb1">';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
-			$sx .= '<td class="borderb1">';  
-			$sx .= $link . $line['cs_descricao']. '</A>';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
+			$sx .= '<td class="borderb1">';
+			$sx .= $link . $line['cs_descricao'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $link . $line['ed_titulo']. '</A>';
+			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
-			
+
 			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $link . $line['nome']. '</A>';
+			$sx .= $link . $line['nome'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $link . $line['cp_descricao']. '</A>';
+			$sx .= $link . $line['cp_descricao'] . '</A>';
 			$sx .= '</td>';
 
 		}
@@ -494,9 +491,8 @@ class csfs extends CI_model {
 
 		return ($cp);
 	}
-	
-	
-	function ler_view_csf($id = 0, $fd='id_csf'){
+
+	function ler_view_csf($id = 0, $fd = 'id_csf') {
 		$sql = "select * from csf_view where $fd = " . $id;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -504,13 +500,11 @@ class csfs extends CI_model {
 		return ($line);
 	}
 
-	
 	function mostra_lista_edital_pais($id) {
 		$this -> create_view();
-		$sql = "select * from csf_view where id = ".$id.' order by csf_pais ';
+		$sql = "select * from csf_view where id = " . $id . ' order by csf_pais ';
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
-		echo "$sql";
 		$sx = '<table width="100%" align="left" class="border1 tabela01">';
 		$sx .= '<tr>						
 						<th width="30%">estudantes</th>
@@ -527,43 +521,82 @@ class csfs extends CI_model {
 			$line = $rlt[$r];
 
 			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="borderb1">';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
-			$sx .= '<td class="borderb1">';  
-			$sx .= $link . $line['cs_descricao']. '</A>';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
+			$sx .= '<td class="borderb1" align=center>';
+			$sx .= $link . $line['cs_descricao'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
-			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $link . $line['ed_titulo']. '</A>';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
+			$sx .= '<td class="lt1 borderb1" align=center>';
+			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
-			
+
 			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
+			$sx .= '<td class="lt1 borderb1" align=center>';
+			$sx .= $link . $line['nome'] . '</A>';
+			$sx .= '</td>';
+
+			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $link . $line['nome']. '</A>';
+			$sx .= $link . $line['gpip_nome'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
-			$link = '<A HREF="' . $link . '" class="lt4 link">';
-			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $link . $line['cp_descricao']. '</A>';
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
+			$sx .= '<td class="lt1 borderb1" align=center>';
+			$sx .= $link . $line['cp_descricao'] . '</A>';
 			$sx .= '</td>';
-
 		}
-		$sx .= '<tr class="lt0">
+		$sx .= '<tr class="lt1">
 					<td class="bold">Total ' . $tot . ' estudantes.</td>
 					</tr>';
 		$sx .= '</table>';
 		return ($sx);
-		echo $sql;	
+		echo $sql;
+	}
+
+//****************************************************************************************/
+	function mostra_lista_edital_universidades($id) {
+		$this -> create_view();
+		$sql = "select * from csf_view where id_gpip = " . $id . ' order by csf_pais ';
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$sx = '<table width="100%" align="left" class="border1 tabela01">';
+		$sx .= '<tr>						
+						<th width="30%">estudantes</th>
+
+					</tr>
+					';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+
+			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
+			$sx .= '<tr valign="top">';
+			$sx .= '<td class="borderb1">';
+			$sx .= $link . $line['us_nome'] . '</A>';
+			$sx .= '</td>';
+
+
+		}
+		$sx .= '<tr class="lt1">
+					<td class="bold">Total ' . $tot . ' estudantes.</td>
+					</tr>';
+		$sx .= '</table>';
+		return ($sx);
+		echo $sql;
 	}
 
 }

@@ -447,14 +447,20 @@ class csf extends CI_Controller {
 		/* Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('csfs');
-
+		
+		//cabeçalho
 		$this -> cab();
-
+		
+		//conteúdo da pagína
 		$line = $this -> csfs -> ler_view_csf($id, 'id_ed');
 		$data = $line;
-
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
 		$this -> load -> view('csf/ver_edital', $data);
+		
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_universidades($id) . '</fieldset>';
+		$this -> load -> view('content', $data);
+		
+		//rodapé
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
@@ -462,7 +468,6 @@ class csf extends CI_Controller {
 	function ver_pais($id = 0, $chk = '') {
 		/* Models */
 		$this -> load -> model('usuarios');
-		$this -> load -> model('sga_pucpr');
 		$this -> load -> model('csfs');
 
 		$this -> cab();
@@ -474,13 +479,8 @@ class csf extends CI_Controller {
 		$this -> load -> view('csf/ver_pais', $data);
 		
 		
-		
-		
-		//$data['content'] = '<BR><BR>' . $this -> csfs -> mostra_lista_edital_pais($id);
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Estudantes') . '</legend>' . $this -> csfs -> mostra_lista_edital_pais($id) . '</fieldset>';
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_pais($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
-	
-	
 	
 	
 		$this -> load -> view('header/content_close');
@@ -499,6 +499,20 @@ class csf extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	
+	function ver_universidade($id = 0, $chk = '') {
+			//* Load Models */
+			$this -> load -> model('parceiros');
+			$this -> cab();
+	
+			$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
+			$data = $this -> parceiros -> le($id);
+			$this -> load -> view('instituicao/view', $data);
+	
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}	
 
 	function view($id = 0, $chk = '') {
 		$this -> cab();
