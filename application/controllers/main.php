@@ -63,12 +63,19 @@ class main extends CI_Controller {
 			{ array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTA','/csf')); }
 		if (perfil('#SEC#SEM#ADM')==1)
 			{ array_push($menu,array('SEMIC','Seminário de Iniciação Científica - PUCPR','BTA','/semic')); }
+		if (perfil('#CPS#COO#ADM#OBS')==1)
+			{ array_push($menu,array('Fomento','Observatório de Pesquisa','BTN','/edital')); }
 		
-		array_push($menu,array('Fomento','Observatório de Pesquisa','BTN','/edital'));
-		array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip'));
-		array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp'));
+		if (perfil('#CPS#COO#ADM#OBS')==1)
+			{ array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip')); }
+		
+		if (perfil('#DGP#ADM')==1)
+			{ array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp')); }
+			
 		array_push($menu,array('Banco de Projetos','Pesquisa realizadas na PUCPR','BTN','/banco_projetos'));
-		array_push($menu,array('Inciação Científica','Programa de Iniciação Científica e Tecnológia da PUCPR','BTN','/pibic'));
+		
+		if (perfil('#DOC#EST#ADM')==1)
+			{ array_push($menu,array('Inciação Científica','Programa de Iniciação Científica e Tecnológia da PUCPR','BTN','/pibic')); }
 		
 		array_push($menu,array('Indicadores de Pesquisa','Indicadores Pesquisa','BTB','/indicadores'));
 		

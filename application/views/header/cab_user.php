@@ -11,15 +11,20 @@ $link = 'index.php/';
 <div id="cabecalho_user_menu" style="border: 0px solid #FFFFFF;">
 	<br>
 	<ul>
-		<a href="<?php echo base_url($link.'login/logout');?>">
+		<a href="<?php echo base_url($link . 'login/logout');?>">
 		<li>
-			<i class="icon-remove"></i> <?php echo $this -> lang -> line('cab_logout');?>
-		</li></a><a href="<?php echo base_url($link.'login/myaccount');?>">
+			<i class="icon-remove"></i><?php echo $this -> lang -> line('cab_logout');?>
+		</li></a><a href="<?php echo base_url($link . 'login/myaccount');?>">
 		<li>
 			<i class="icon-refresh"></i>
-			<?php echo $this->lang->line('cab_update');?>
-		</li></a><a href="<?php echo base_url($link.'admin');?>">
-		<li>
-			<i class="icon-wrench"></i> <?php echo $this -> lang -> line('cab_admin');?>
+			<?php echo $this -> lang -> line('cab_update');?>
 		</li></a>
+		<?php
+		if (perfil('#ADM')) {
+			echo '<a href="' . base_url($link . 'admin') . '">';
+			echo '
+				<li><i class="icon-wrench"></i>'.$this -> lang -> line('cab_admin').'</li></a>'.cr();
+		}
+		?>
+
 </div>

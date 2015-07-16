@@ -1,12 +1,12 @@
 <?php
 function perfil($p,$trava = 0) {
-	$ac = False;
-	$p = '->'.$p;
+	$ac = 0;
+	
 	$perf = $_SESSION['perfil'];
 	for ($r = 0; $r < strlen($p); $r = $r + 4) {
 		$pc = substr($p, $r, 4);
-		//echo '<BR>'.$pc.'='.$perf;
-		if (strpos($perf, $pc) > 0) { $ac = 1;
+		//echo '<BR>'.$pc.'='.$perf.'=='.$ac;
+		if (strpos(' '.$perf, $pc) > 0) { $ac = 1;
 		}
 	}
 	return ($ac);
