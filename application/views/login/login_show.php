@@ -11,6 +11,7 @@
 		<td class="lt1" align="right"><?php echo msg("us_login");?></td>
 		<td><?php echo $us_login;?></td>
 		
+		<!---- Associar Perfirs ----->
 		<td rowspan=20>
 				<?php echo $us_perfil_list;?>
 				<?php echo $us_perfil_associar;?>
@@ -29,7 +30,7 @@
 
 	<tr>
 		<td class="lt1" align="right"><?php echo msg("us_ultimo_acesso");?></td>
-		<td><?php echo stodbr($us_lastupdate);?></td>
+		<td><?php echo stodbr($us_lastupdate);?> <?php echo $us_lastupdate_hora; ?></td>
 	</tr>
 	
 	<tr>

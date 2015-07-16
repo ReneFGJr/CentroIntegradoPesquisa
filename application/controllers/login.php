@@ -51,6 +51,8 @@ class login extends CI_Controller {
 				$this -> josso_login_pucpr -> cpf = $line['us_cpf'];
 				//$this -> josso_login_pucpr -> josso = $line['jossoSession'];
 				$this -> josso_login_pucpr -> nome = $line['us_nome'];
+				$this -> josso_login_pucpr -> perfil = $line['us_perfil'];
+				$this -> josso_login_pucpr -> id = $line['id_us'];
 				$this -> josso_login_pucpr -> cracha = '';
 				$this -> josso_login_pucpr -> nomeEmpresa = '';
 				$this -> josso_login_pucpr -> nomeFilial = '';

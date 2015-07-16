@@ -5,14 +5,14 @@ class admin extends CI_Controller {
 		parent::__construct();
 
 		$this -> load -> library("nuSoap_lib");
-
+		$this -> lang -> load("app", "portuguese");
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
-		$this -> lang -> load("app", "portuguese");
+		
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
@@ -41,19 +41,30 @@ class admin extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus,array('Bolsas / Recursos Humanos','#'));
-		array_push($menus,array('Auxílio Pesquisa','#'));
-		array_push($menus,array('Cooperação Internacional','#'));
-		array_push($menus,array('Prêmios','#'));
-		array_push($menus,array('Eventos','#'));
+		array_push($menus, array('Perfis', 'index.php/admin/logins/'));
+		$data['menu'] = 1;
+		$data['menus'] = $menus;
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Administração';
-		$data['menu'] = 1;
-		$data['menus'] = $menus;
+		
+		if (perfil('#ADM'))
+			{
+			$data['menu'] = 1;
+			$data['menus'] = $menus;
+			} else {
+			$data['menu'] = 0;
+			$data['menus'] = $menus;				
+			}
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
+		
+		if (perfil('#ADM',1)==false)
+			{
+				redirect(base_url('index.php'));			
+				return(0);
+			}
 	}
 	
 	
@@ -107,8 +118,16 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 		}	
 	
-	function logins_view($id = 0,$check = '')
+	function logins_view($id = 0,$check = '',$act='',$id_act=0)
 		{
+		/* Load Models */
+		$this->load->model('logins');
+		
+		/* Se acao EXCLUIR */
+		if ($act == 'del')
+			{
+				$data = $this->logins->perfil_desassociar($id_act);
+			}
 		
 		$this -> cab();
 		$data = array();	
@@ -118,7 +137,7 @@ class admin extends CI_Controller {
 				redirect("index.php/main");
 			}
 		
-		$this->load->model('logins');
+		
 		$data = $this->logins->le($id);
 		$this -> load -> view('login/login_show', $data);
 

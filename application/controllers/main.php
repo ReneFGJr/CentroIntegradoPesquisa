@@ -35,11 +35,6 @@ class main extends CI_Controller {
 		$data['js'] = $js;
 		//* Menu */
 		$menus = array();
-		array_push($menus,array('Bolsas / Recursos Humanos','#'));
-		array_push($menus,array('Auxílio Pesquisa','#'));
-		array_push($menus,array('Cooperação Internacional','#'));
-		array_push($menus,array('Prêmios','#'));
-		array_push($menus,array('Eventos','#'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -52,19 +47,22 @@ class main extends CI_Controller {
 
 		/* Chamadas editais */
 		$this -> load -> view('fomento/chamadas_resumo',$data);
-		
-		
-		
 
 		/* Menu */
 		$menu = array();
-		array_push($menu,array('Inciação Científica','Administração do Programa de Iniciação Científica e Tecnológia da PUCPR','BTA','/ic'));
-		array_push($menu,array('CIP','Administração do Centro Integrado de Pesquisa, Administração','BTA','/cip'));
-		array_push($menu,array('Fomento','Observatório de Pesquisa','BTA','/edital'));
-		array_push($menu,array('Pró-Equipamentos','Laboratórios e equipamentos','BTA','/equipamento'));
-		
-		array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTA','/csf'));
-		array_push($menu,array('SEMIC','Seminário de Iniciação Científica - PUCPR','BTA','/semic'));
+		/* Libera Menus */
+		if (perfil('#CPP#SPI#ADM')==1)
+			{ array_push($menu,array('Inciação Científica','Administração do Programa de Iniciação Científica e Tecnológia da PUCPR','BTA','/ic')); }
+		if (perfil('#CPS#COO#ADM')==1)
+			{ array_push($menu,array('CIP','Administração do Centro Integrado de Pesquisa, Administração','BTA','/cip')); }
+		if (perfil('#CPS#COO#ADM#OBS')==1)
+			{ array_push($menu,array('Fomento','Observatório de Pesquisa','BTA','/edital')); }
+		if (perfil('#CPS#COO#ADM#OBS')==1)
+			{ array_push($menu,array('Pró-Equipamentos','Laboratórios e equipamentos','BTA','/equipamento')); }
+		if (perfil('#CPP#SPI#ADM#CSF')==1)
+			{ array_push($menu,array('Programa CsF','Ciência sem Fronteiras','BTA','/csf')); }
+		if (perfil('#SEC#SEM#ADM')==1)
+			{ array_push($menu,array('SEMIC','Seminário de Iniciação Científica - PUCPR','BTA','/semic')); }
 		
 		array_push($menu,array('Fomento','Observatório de Pesquisa','BTN','/edital'));
 		array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip'));
