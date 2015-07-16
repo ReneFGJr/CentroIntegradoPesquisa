@@ -7,8 +7,8 @@
 	</div>
 	<div>
 		<tr>
-			<td align="left" width="80"><?php echo msg('Label_csf_chamada'); ?></td>
-			<td align="left" class="lt2 border1" width="40%"><?php echo $ed_chamada; ?></td>
+			<td align="left" width="80"><?php echo msg('Label_csf_edital'); ?></td>
+			<td align="left" class="lt2 border1" width="40%"><?php echo $ed_titulo; ?></td>
 		</tr>
 		
 		<tr>
@@ -22,5 +22,6 @@
 		</tr>
 		
 	</div>
+
 </table> 	
 

@@ -65,7 +65,7 @@ $lang['Label_csf_phone2_parceiro']    = 'Fone 2';
 $lang['Label_csf_site_parceiro']      = 'Site';
 $lang['Label_index_parceiros'] 	  	  = 'Lista de parceiros';
 $lang['Label_editar_parceiros'] 	  = 'Editar parceiro';
-$lang['Label_csf_chamada'] 	  		  = 'Chamada';
+$lang['Label_csf_edital'] 	  		  = 'Edital';
 
 
 /*Fomento*/

@@ -79,7 +79,20 @@ class Instituicoes extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$data = $rlt[0];
+		$lat = $data['gpip_latitude'];
+		$long = $data['gpip_longitude'];
+		
+		$config['center'] = $lat.',' .$long;
+		$config['zoom'] = '9';
+		$this -> googlemaps -> initialize($config);
+		
 
+		$marker = array();
+		
+		$marker['position'] = $lat.',' .$long;
+		$this -> googlemaps -> add_marker($marker);
+		$data['gpip_link_maps'] = $this -> googlemaps -> create_map();
+		//print_r($data);
 		return ($data);
 	}
 
