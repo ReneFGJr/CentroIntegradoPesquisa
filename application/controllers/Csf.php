@@ -33,6 +33,7 @@ class csf extends CI_Controller {
 		array_push($css, 'style_cab.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
+		array_push($js, 'high/highcharts.js');
 
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
@@ -380,10 +381,44 @@ class csf extends CI_Controller {
 	}
 
 	function indicadores() {
+		/* Models */
+		$this -> load -> model('csfs');
 		$this -> cab();
-		$data = array();
 
-		$this -> load -> view('csf/indicador_genero');
+		//$this -> load -> view('csf/view_genero');
+
+		//carrega grafico da situacao dos estudantes intercambistas
+		$data = array();
+		$line = $this -> csfs -> mostra_dados_std_status();
+		$data['dado'] = $line;
+		$this -> load -> view('csf/view_std_status', $data);
+
+		//carrega grafico estudantes por genero
+		$data_gen = array();
+		$line = $this -> csfs -> mostra_dados_std_genero();
+		$data_gen['dado_gen'] = $line;
+		$this -> load -> view('csf/view_std_gen', $data_gen);
+
+		//carrega grafico estudantes por universidade
+		$data_university = array();
+		$line = $this -> csfs -> mostra_dados_std_university();
+		$data_university['dado_university'] = $line;
+		$this -> load -> view('csf/view_std_university', $data_university);
+
+		//carrega grafico estudantes por paises
+		$data_country = array();
+		$line = $this -> csfs -> mostra_dados_std_country();
+		$data_country['dado_country'] = $line;
+		$this -> load -> view('csf/view_std_country', $data_country);
+
+		//carrega grafico de parceiros
+		$data_partners = array();
+		$line = $this -> csfs -> mostra_dados_std_partners();
+		$data_partners['dado_partners'] = $line;
+		$this -> load -> view('csf/view_std_partners', $data_partners);
+		
+		//View de agrupamento das divs
+		$this -> load -> view('csf/indicadores');
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

@@ -71,9 +71,9 @@ class main extends CI_Controller {
 		
 		if (perfil('#DGP#ADM')==1)
 			{ array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp')); }
-			
+		if (perfil('#DGP#ADM')==1){	
 		array_push($menu,array('Banco de Projetos','Pesquisa realizadas na PUCPR','BTN','/banco_projetos'));
-		
+		}
 		if (perfil('#DOC#EST#ADM')==1)
 			{ array_push($menu,array('Inciação Científica','Programa de Iniciação Científica e Tecnológia da PUCPR','BTN','/pibic')); }
 		

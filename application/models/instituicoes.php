@@ -79,6 +79,7 @@ class Instituicoes extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$data = $rlt[0];
+		//Grava as coordenadas nas variaveis para renderizar o mapa
 		$lat = $data['gpip_latitude'];
 		$long = $data['gpip_longitude'];
 		

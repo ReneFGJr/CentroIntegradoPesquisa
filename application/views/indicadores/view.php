@@ -19,7 +19,6 @@
 	
 	<tr>
 		<td><?php echo $dados_indicador;?></td>
-		<td><?php echo $graficos_indicador;?></td>
 	</tr>
 </table>
 <?php echo $novo_registro;?>
