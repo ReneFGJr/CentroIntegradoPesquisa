@@ -25,6 +25,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 $dd = array();
 
+/* checa e cria diretorio */
+if (!function_exists('dir')) {
+	function dir($dir) {
+		$ok = 0;
+		if (is_dir($dir)) { $ok = 1;
+		} else {
+			mkdir($dir);
+			$rlt = fopen($dir . '/index.php', 'w');
+			fwrite($rlt, 'acesso restrito');
+			fclose($rlt);
+		}
+		return ($ok);
+	}
+}
+
 function mst($txt) {
 	$txt = troca($txt, chr(13), '<br/>');
 	return ($txt);
@@ -49,7 +64,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,   // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,     // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -283,7 +298,7 @@ function nbr_autor($xa, $tp) {
 	/////////////////////////////
 	$xp1 = "";
 	$xp2 = "";
-	$er1 = array("JUNIOR", "JÃšNIOR", "JÃºNIOR", "NETTO", "NETO", "SOBRINHO", "FILHO", "JR.");
+	$er1 = array("JUNIOR", "JÚšNIOR", "JÚNIOR", "NETTO", "NETO", "SOBRINHO", "FILHO", "JR.");
 	///////////////////////////// SEPARA NOMES
 	{
 		$xop = 0;
@@ -298,7 +313,7 @@ function nbr_autor($xa, $tp) {
 			if ($xop == -1) {
 				$xop = 1;
 				for ($kr = 0; $kr < count($er1); $kr++) {
-					if (trim(UpperCaseSQL($xp[$qk])) == trim($er1[$kr])) {
+					if (trim(UpperCase($xp[$qk])) == trim($er1[$kr])) {
 						$xop = 0;
 					}
 				}
@@ -307,22 +322,22 @@ function nbr_autor($xa, $tp) {
 	}
 
 	////////// 1 e 2
-	$xp2a = strtolower($xp2);
+	$xp2a = LowerCase($xp2);
 	$xa = trim(trim($xp2) . ' ' . trim($xp1));
 	if (($tp == 1) or ($tp == 2)) {
 		if ($tp == 1) { $xp1 = UpperCase($xp1);
 		}
 		$xa = trim(trim($xp1) . ', ' . trim($xp2));
-		if ($tp == 2) { $xa = UpperCaseSQL(trim(trim($xp1) . ', ' . trim($xp2)));
+		if ($tp == 2) { $xa = UpperCase(trim(trim($xp1) . ', ' . trim($xp2)));
 		}
 	}
 	if (($tp == 3) or ($tp == 4)) {
-		if ($tp == 4) { $xa = UpperCaseSQL($xa);
+		if ($tp == 4) { $xa = UpperCase($xa);
 		}
 	}
 
 	if (($tp >= 5) or ($tp <= 6)) {
-		$xp2a = str_word_count(lowerCaseSQL($xp2), 1);
+		$xp2a = str_word_count(LowerCase($xp2), 1);
 		$xp2 = '';
 		for ($k = 0; $k < count($xp2a); $k++) {
 			if ($xp2a[$k] == 'do') { $xp2a[$k] = '';
@@ -335,16 +350,16 @@ function nbr_autor($xa, $tp) {
 			}
 		}
 		$xp2 = trim($xp2);
-		if ($tp == 6) { $xa = UpperCaseSQL(trim(trim($xp2) . ' ' . trim($xp1)));
+		if ($tp == 6) { $xa = UpperCase(trim(trim($xp2) . ' ' . trim($xp1)));
 		}
-		if ($tp == 5) { $xa = UpperCaseSQL(trim(trim($xp1) . ', ' . trim($xp2)));
+		if ($tp == 5) { $xa = UpperCase(trim(trim($xp1) . ', ' . trim($xp2)));
 		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	if (($tp == 7) or ($tp == 8)) {
 		$mai = 1;
-		$xa = strtolower($xa);
+		$xa = LowerCase($xa);
 		for ($r = 0; $r < strlen($xa); $r++) {
 			if ($mai == 1) { $xa = substr($xa, 0, $r) . UpperCase(substr($xa, $r, 1)) . substr($xa, $r + 1, strlen($xa));
 				$mai = 0;
@@ -356,6 +371,7 @@ function nbr_autor($xa, $tp) {
 		$xa = troca($xa, 'De ', 'de ');
 		$xa = troca($xa, 'Da ', 'da ');
 		$xa = troca($xa, 'Do ', 'do ');
+		$xa = troca($xa, ' E ', ' e ');
 	}
 	return $xa;
 }
@@ -476,6 +492,42 @@ function UpperCaseSQL($d) {
 	$d = troca($d, 'ü', 'U');
 
 	return $d;
+}
+
+function LowerCase($term) {
+	$d = Strtolower($term);
+
+	$d = troca($d, 'Ç', 'ç');
+	$d = troca($d, 'Ñ', 'ñ');
+
+	$d = troca($d, 'Á', 'á');
+	$d = troca($d, 'À', 'à');
+	$d = troca($d, 'Â', 'â');
+	$d = troca($d, 'Ä', 'ä');
+	$d = troca($d, 'Â', 'â');
+
+	$d = troca($d, 'É', 'é');
+	$d = troca($d, 'È', 'è');
+	$d = troca($d, 'Ê', 'ê');
+	$d = troca($d, 'Ë', 'ë');
+
+	$d = troca($d, 'Í', 'í');
+	$d = troca($d, 'Ì', 'ì');
+	$d = troca($d, 'Î‰', 'î');
+	$d = troca($d, 'Ï', 'ï');
+
+	$d = troca($d, 'Ó', 'ó');
+	$d = troca($d, 'Ò', 'ò');
+	$d = troca($d, 'Õ', 'õ');
+	$d = troca($d, 'Ö', 'ö');
+	$d = troca($d, 'Ô', 'ô');
+
+	$d = troca($d, 'Ú', 'ú');
+	$d = troca($d, 'Ù', 'ù');
+	$d = troca($d, 'Û', 'û');
+	$d = troca($d, 'Ü', 'ü');
+
+	return ($d);
 }
 
 function LowerCaseSQL($term) {
@@ -1050,8 +1102,10 @@ if (!function_exists('form_edit')) {
 		$id = $obj -> id;
 		$tabela = $obj -> tabela;
 		$fld = $obj -> cp[0][1];
-		
-		if ($id==0) { return(array()); }
+
+		if ($id == 0) {
+			return ( array());
+		}
 
 		$sql = "select * from " . $tabela . " where $fld = $id";
 		$CI = &get_instance();
@@ -1059,25 +1113,24 @@ if (!function_exists('form_edit')) {
 		$row = $query -> row();
 
 		$cp = $obj -> cp;
-		
+
 		for ($r = 0; $r < count($cp); $r++) {
 			$tp = $cp[$r][0];
 			$fld = $cp[$r][1];
 
 			if (substr($tp, 0, 2) == '$D') {
-				if (!isset($row -> $fld))
-					{
-						$vlr = '';
-					} else {
-						$vlr = $row -> $fld;		
-					}
-				
+				if (!isset($row -> $fld)) {
+					$vlr = '';
+				} else {
+					$vlr = $row -> $fld;
+				}
+
 				$vlr = trim(sonumero($vlr));
 				$vlr = substr($vlr, 6, 2) . '/' . substr($vlr, 4, 2) . '/' . substr($vlr, 0, 4);
 				if ($vlr == '00/00/0000') { $vlr = '';
 				}
 				if ($vlr == '//') { $vlr = '';
-				}				
+				}
 				if ($vlr == '') { $vlr = date("d/m/Y");
 				}
 				$row -> $fld = $vlr;
@@ -1301,14 +1354,14 @@ if (!function_exists('form_edit')) {
 				$tela .= '<TD>';
 				$tela .= form_dropdown($dados, $options, $vlr);
 				break;
-				
+
 			/* Select Box - Autocomplete*/
 			case 'AA' :
 				$ntype = trim(substr($type, 2, strlen($type)));
 				$ntype = troca($ntype, ':', ';') . ';';
 				$param = splitx(';', $ntype);
 
-			/* TR da tabela */
+				/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1318,22 +1371,22 @@ if (!function_exists('form_edit')) {
 				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
 				/* **/
-				$dados = array('name' => $dn.'a', 'id' => $dn.'a', 'value' => $vlr, 'maxlenght' => $max, 'size' => $size, 'placeholder' => $label, 'class' => 'form_string','autocomplete' => 'on');
-				$tela .= $td . form_input($dados);				
+				$dados = array('name' => $dn . 'a', 'id' => $dn . 'a', 'value' => $vlr, 'maxlenght' => $max, 'size' => $size, 'placeholder' => $label, 'class' => 'form_string', 'autocomplete' => 'on');
+				$tela .= $td . form_input($dados);
 
-				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => $max, 'size' => 10, 'placeholder' => $label, 'class' => 'form_string','autocomplete' => 'on');
+				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => $max, 'size' => 10, 'placeholder' => $label, 'class' => 'form_string', 'autocomplete' => 'on');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
 				$tela .= form_input($dados);
 
 				$tela .= $tdn . $trn;
-				
+
 				$tela .= '
 				<script>
 					$(function(){
-						var $sfield = $("#'.$dn.'a").autocomplete({
+						var $sfield = $("#' . $dn . 'a").autocomplete({
 							source: function(request, response){
-								var url = "'.base_url("index.php/instituicao/autocomplete?term=").'" + $("#'.$dn.'a").val();
+								var url = "' . base_url("index.php/instituicao/autocomplete?term=") . '" + $("#' . $dn . 'a").val();
 								$.get(url, {}, 
 									function(data)
 									{
@@ -1344,14 +1397,14 @@ if (!function_exists('form_edit')) {
 									}, "json");
 								}, 
                         select: function( event, ui ) {
-                            $( "#'.$dn.'a" ).val( ui.item.label );
-                            $( "#'.$dn.'" ).val( ui.item.value );
+                            $( "#' . $dn . 'a" ).val( ui.item.label );
+                            $( "#' . $dn . '" ).val( ui.item.value );
                             return false;
 							} ,	minLength: 4, autofocus: true });
 						});
 				</script>
 				';
-				break;				
+				break;
 			/* Button */
 			case 'B' :
 				$tela .= $tr . $tdl . $td;
@@ -1465,7 +1518,7 @@ if (!function_exists('form_edit')) {
 				$options = array('' => '::select an option::');
 
 				/* recupera dados */
-				$sql = "select * from (" . $param[2] . ") as tabela order by ".$param[1];
+				$sql = "select * from (" . $param[2] . ") as tabela order by " . $param[1];
 				$CI = &get_instance();
 				$query = $CI -> db -> query($sql);
 				foreach ($query->result_array() as $row) {
@@ -1491,8 +1544,6 @@ if (!function_exists('form_edit')) {
 				$tela .= form_dropdown($dados, $options, $vlr);
 				break;
 
-
-				
 			/* String */
 			case 'R' :
 			/* TR da tabela */

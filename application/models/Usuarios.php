@@ -14,6 +14,21 @@ class usuarios extends CI_model {
 		return ($obj);
 	}	
 	
+	function le($id)
+		{
+			$sql = "select * from ".$this->tabela."
+						left join us_tipo on ust_id = usuario_tipo_ust_id  
+						where id_us = ".$id;
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$line = $rlt[0];
+			$line['us_contatos'] = '(41) xxxx.xxxx';
+			$line['us_curso'] = 'não identificado';
+			$line['us_perfil'] = $line['ust_nome'];
+			$line['us_titulacao'] = '';
+			return($line);
+		}
+	
 	function lista_email($id=0)
 		{
 			$sql = "select * from us_email where usuario_id_us = ".$id;
@@ -126,16 +141,13 @@ class usuarios extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		
-		$line = $rlt[0];
-		$line['us_titulacao'] = $line['ust_sigla'];
-		$line['us_perfil'] = '';
-		$line['us_curso'] = '';
-		$line['us_contatos'] = '';
-		
-		$tipo = $line['usuario_tipo_ust_id'];
-		if ($tipo=='2')
+		if (count($rlt) > 0)
 			{
-				$line['us_perfil'] = 'Estudante';
+				$line = $rlt[0];
+				$id = $line['id_us'];
+				$line = $this->le($id);
+			} else {
+				$line = array();
 			}
 		return($line);
 	}	

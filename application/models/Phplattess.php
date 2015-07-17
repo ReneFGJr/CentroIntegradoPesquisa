@@ -1,12 +1,146 @@
 <?php
 class phpLattess extends CI_Model {
+	
+	function inport_lattes_professar()
+		{
+			$sx = '<h1>Processando Arquivos Lattes</h1>';
+			$file = $this->next_file_process();
+			if (strlen($file) > 0)
+				{
+					/* Processar arquivo */
+					$sx .= $file;
+					$txt = fopen($file,'r');
+					$s = '';
+					while (!feof($txt))
+						{
+							$s .= fread($txt,1024);
+						}
+					fclose($txt);
+					
+					$ln = troca($s,chr(13),'¢');
+					$ln = splitx('¢',$ln);
+					
+					for ($r=1;$r < count($ln);$r++)
+						{
+							$l = splitx(';',$ln[$r].';');
+							print_r($l);
+							echo '<HR>';
+						}
+				}
+			return($sx);
+		}
+		
+	function next_file_process()
+		{
+			$ft = 0;
+			for ($r=0;$r < 1000;$r++)
+				{
+					$fl = "ARTIG_".strzero($r,4);
+					if (file_exists('_document/'.$fl)) { return('_document/'.$fl); }
+				}
+			return('');
+		}		
+
+	function arquivos_salva_quebrado($ln, $tipo) {
+		$lnh = $ln[0];
+		$arq = 0;
+		$pos = 0;
+		$open = 0;
+		$cr = chr(13);
+		dir('_document/');
+		$sx = '';
+		for ($r = 1; $r < count($ln); $r++) {
+			if (($pos == 0) or ($pos > 49)) {
+				if ($open == 1) { fclose($farq);
+				}
+				$farq = fopen('_document/' . $tipo . '_' . strzero($arq++, 4), 'w');
+				$sx .= '<BR>Salvando... ' . $tipo . '_' . strzero($arq, 4);
+				fwrite($farq, $lnh . $cr);
+				$open = 1;
+				$pos = 0;
+			}
+			$pos++;
+			fwrite($farq, $ln[$r] . $cr);
+		}
+		if ($open == 1) { fclose($farq);
+		}
+		return ($sx);
+	}
+
+	function tipo_obra($ln) {
+		$tp = '';
+		if (strpos($ln, '"Título do Livro";"ISBN";"Ano Publicação";') > 0) { $tp = 'LIVRO';
+		}
+		if (strpos($ln, '"Título da Obra Publicada";"ISBN";"Ano Publicação";"') > 0) { $tp = 'LVORG';
+		}
+		if (strpos($ln, '"Título do Trabalho";"Evento";"ISBN"') > 0) { $tp = 'EVENT';
+		}
+		if (strpos($ln, '"Título";"ISBN";"Ano Publicação";"DSC_IDIOMA";') > 0) { $tp = 'CAPIT';
+		}
+
+		if (strpos($ln, '"Título do Projeto";') > 0) { $tp = 'PROJE';
+		}
+
+		if (strpos($ln, '"Tipo da Produção";"Idioma";"Ano";"Título do Artigo";') > 0) { $tp = 'ARTIG';
+		}
+		return ($tp);
+	}
+
+	function inport_lattes_acpp($id = 0) {
+		$dd1 = $_POST['dd1'];
+		if (strlen($dd1) > 0) {
+			$temp = $_FILES['arquivo']['tmp_name'];
+			$size = $_FILES['arquivo']['size'];
+		} else {
+			$temp = '';
+		}
+
+		if (strlen($temp) == 0) {
+			$sx = '
+					<center>
+							<form id="upload" action="' . base_url('index.php/inport/lattes/artigos/') . '" method="post" enctype="multipart/form-data">
+							<input type="file" name="arquivo" id="arquivo" />
+							<input type="submit" name="dd1" value="enviar >>>">
+						</form>
+					</center>					
+					';
+			return ($sx);
+		} else {
+			$sx = 'Arquivo enviado com sucesso!';
+			$rHandle = fopen($temp, "r");
+			$sData = '';
+			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Abrindo Arquivo ';
+			while (!feof($rHandle)) {
+				$sData .= fread($rHandle, filesize($temp));
+			}
+			fclose($rHandle);
+			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Tamanho do arquivo lido ' . strlen($sData);
+
+			$ln = splitx(chr(13), $sData);
+			$sx .= '<BR>Total de linhas: ' . count($ln);
+			$sx .= '<BR>Indentificação do tipo de obra: ';
+			/* Identicação do tipo de obra */
+			$tpo = $this -> tipo_obra($ln[0]);
+			if (strlen($tpo) > 0) {
+				$sx .= '<B>' . $tpo . '</B>';
+				$sx .= $this -> arquivos_salva_quebrado($ln, $tpo);
+				$sx .= '<BR>SALVO!';
+			} else {
+				$sx .= '<font color="red">Tipo de obra não identificada</font>';
+				for ($r = 0; $r < 100; $r++) {
+					print_r($ln[$r]);
+					echo '<HR>';
+				}
+			}
+			return ($sx);
+		}
+	}
 
 	function dgp_import($link) {
-		if (substr($link,0,4) != 'http')
-			{
-				$link = 'http://'.$link;
-			}
-		
+		if (substr($link, 0, 4) != 'http') {
+			$link = 'http://' . $link;
+		}
+
 		$data = $this -> inport_data($link);
 		$data = $this -> removeSCRIPT($data);
 		$data = $this -> removeCLASS($data);
@@ -15,7 +149,7 @@ class phpLattess extends CI_Model {
 
 		/* Dados da instituicao */
 		$datar = array();
-		$datar['espelho'] = $this->phplattess -> recupera_espelho($data);
+		$datar['espelho'] = $this -> phplattess -> recupera_espelho($data);
 		$datar['grupo'] = $this -> phplattess -> recupera_nomegrupo($data);
 		$datar['instituicao'] = $this -> phplattess -> recupera_identificacao($data);
 		$datar['endereco'] = $this -> phplattess -> recupera_endereco($data);
@@ -24,7 +158,7 @@ class phpLattess extends CI_Model {
 		$datar['equipe'] = $this -> phplattess -> recupera_recursosHumanos($data);
 		$datar['parceiras'] = $this -> phplattess -> recupera_instituicoesparceiras($data);
 		$datar['equipamentos'] = $this -> phplattess -> recupera_equipamentos_softwares($data);
-		return($datar);
+		return ($datar);
 	}
 
 	function recupera_nomegrupo($text) {
@@ -38,6 +172,7 @@ class phpLattess extends CI_Model {
 		$data['nome_grupo'] = $this -> recupera_method_5($text, '<h1 >', '<div >');
 		return ($data);
 	}
+
 	function recupera_espelho($text) {
 		/* */
 		$text = troca($text, '<span >ui-button</span>', '');
@@ -46,9 +181,9 @@ class phpLattess extends CI_Model {
 		$text = troca($text, chr(13) . chr(10) . chr(13) . chr(10), chr(13) . chr(10));
 		$text = troca($text, chr(13) . chr(10) . ' ', '');
 		$data = array();
-		$data['espelho'] = 'http://'.$this -> recupera_method_3($text, 'acessar este espelho:','</div>');
+		$data['espelho'] = 'http://' . $this -> recupera_method_3($text, 'acessar este espelho:', '</div>');
 		return ($data);
-	}	
+	}
 
 	function recupera_identificacao($text) {
 		$sc = 'id="identificacao"';
@@ -293,7 +428,7 @@ class phpLattess extends CI_Model {
 		$s1 = trim($s1);
 		return ($s1);
 	}
-	
+
 	function recupera_method_6($text, $tag) {
 		$tag = $tag . '</label>';
 		$pos = strpos($text, $tag) + strlen($tag);
@@ -303,7 +438,7 @@ class phpLattess extends CI_Model {
 		$s1 = troca($s1, chr(13) . chr(10), ';') . ';';
 		$sa = splitx(';', $s1);
 		return ($sa);
-	}	
+	}
 
 	/*
 	 *
@@ -419,7 +554,7 @@ class phpLattess extends CI_Model {
 		$fl = load_page($link);
 
 		$fl = utf8_decode($fl['content']);
-		
+
 		$fl = troca($fl, "'", "´");
 
 		/* Atualiza o conteudo */
@@ -429,7 +564,7 @@ class phpLattess extends CI_Model {
 					dgpc_data = '$data'
 				where dgpc_link = '$link'";
 		$this -> db -> query($sql);
-		
+
 		/* Retorna */
 		return ($fl);
 	}

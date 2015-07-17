@@ -154,6 +154,15 @@ class csfs extends CI_model {
 	}
 
 	function create_view() {
+		/* Verifica se ja na existe a view */
+		$rlt = $this -> db -> query("SHOW TABLES LIKE 'csf_view'");
+		$rlt = $rlt->result_array();
+		if (count($rlt) > 0)
+		 {
+			return ('');
+		}		
+		/* Criar View */
+		
 		$cp = '*';
 		$sql = "
 					SELECT " . $cp . " FROM csf
