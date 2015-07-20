@@ -416,12 +416,22 @@ class csf extends CI_Controller {
 		$line = $this -> csfs -> mostra_dados_std_partners();
 		$data_partners['dado_partners'] = $line;
 		$this -> load -> view('csf/view_std_partners', $data_partners);
-		
+
+		//carrega grafico dos cursos que mais enviam alunos
+		$data_partners = array();
+		$line = $this -> csfs -> mostra_dados_std_course();
+		$data_partners['dado_course'] = $line;
+		$this -> load -> view('csf/view_std_course', $data_partners);
+
+
+
 		//View de agrupamento das divs
 		$this -> load -> view('csf/indicadores');
-
+		
+		//rodapé
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+
 	}
 
 	function ver($id = 0, $chk = '') {

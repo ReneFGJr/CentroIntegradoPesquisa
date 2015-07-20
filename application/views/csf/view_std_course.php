@@ -1,26 +1,26 @@
 <?php
 $dados = '';
-foreach ($dado_partners as $key => $value) {
+foreach ($dado_course as $key => $value) {
 	$dados .= "['$key',   $value],";
 }
 ?>
 <!-- Grafico HighChart--->
 <script type="text/javascript">
 	$(function() {
-		$('#gr6').highcharts({//alterar nome da div para cada grafico
+		$('#gr7').highcharts({//alterar nome da div para cada grafico
 			chart : {
-				type : 'line'
+				type : 'bar'
 			},
 			title : {
-				text : 'Parceiros de maior participação no intercambio:'
+				text : 'Cursos que mais enviam estudantes...:'
 			},
 			subtitle : {
-				text : 'Top 7'
+				text : 'Top 10'
 			},
 			xAxis : {
 				type : 'category',
 				labels : {
-					rotation : 0,
+					rotation : -45,
 					style : {
 						fontSize : '10px',
 						fontFamily : 'Verdana, sans-serif'
@@ -44,9 +44,9 @@ foreach ($dado_partners as $key => $value) {
 				data : [<?php echo "$dados" ?>],
 				dataLabels : {
 					enabled : true,
-					rotation : 0,
+					rotation : -45,
 					color : '#FFFFFF',
-					align : 'center',
+					align : 'right',
 					format : '{point.y:.0f}', // no decimal in number, format for inbteger
 					y : 3, // 3 pixels down from the top
 					style : {

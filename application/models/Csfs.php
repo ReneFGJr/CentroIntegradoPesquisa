@@ -156,13 +156,12 @@ class csfs extends CI_model {
 	function create_view() {
 		/* Verifica se ja na existe a view */
 		$rlt = $this -> db -> query("SHOW TABLES LIKE 'csf_view'");
-		$rlt = $rlt->result_array();
-		if (count($rlt) > 0)
-		 {
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
 			return ('');
-		}		
+		}
 		/* Criar View */
-		
+
 		$cp = '*';
 		$sql = "
 					SELECT " . $cp . " FROM csf
@@ -847,6 +846,29 @@ class csfs extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$dados[$line['cp_descricao']] = $line['qtd'];
+		}
+
+		return ($dados);
+	}
+
+	/** Alunos por parceiros */
+	function mostra_dados_std_course() {
+		$sql = "select csf_curso, count(csf_curso) as qtd
+				from csf_view 
+				group by csf_curso 
+				order by qtd desc 
+				limit 7
+				";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$line = $rlt[0];
+
+		//return values
+		$tot = 0;
+		$dados = array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$dados[$line['csf_curso']] = $line['qtd'];
 		}
 
 		return ($dados);
