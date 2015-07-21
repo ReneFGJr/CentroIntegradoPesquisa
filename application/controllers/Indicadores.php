@@ -1,8 +1,9 @@
 <?php
 class indicadores extends CI_Controller {
 	function __construct() {
+		global $dd, $acao;
 		parent::__construct();
-
+		$this -> load -> library('form_validation');
 		$this -> load -> database();
 		$this -> lang -> load("app", "portuguese");
 		$this -> load -> helper('form');
@@ -11,7 +12,15 @@ class indicadores extends CI_Controller {
 		$this -> load -> library('session');
 
 		date_default_timezone_set('America/Sao_Paulo');
+		/* Security */
+		$this -> security();
+	}
 
+	function security() {
+
+		/* Seguranca */
+		$this -> load -> model('login/josso_login_pucpr');
+		$this -> josso_login_pucpr -> security();
 	}
 
 	public function cab() {

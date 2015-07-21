@@ -33,6 +33,7 @@ class ic extends CI_Controller {
 		array_push($css, 'form_sisdoc.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
+		array_push($js, 'high/highcharts.js');
 
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
@@ -41,6 +42,7 @@ class ic extends CI_Controller {
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
+		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -176,6 +178,53 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function indicadores($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		//carrega grafico da situacao dos estudantes intercambistas
+		$line = $this -> ics -> mostra_projetos_por_escolas();
+		$data['dado'] = $line;
+		$data['gr_frame'] = 'ic_escola';
+		$data['gr_title'] = 'Projetos por Escolas';
+		$data['gr_title_sub'] = 'Implementadas 2014-2015';
+		$data['gr_x'] = 'Projetos';
+		$data['gr_y'] = 'Escola';
+		$data['show'] = false;
+		$this -> load -> view('gadget/highchar_column.php', $data);
+		
+		$data = array();
+		$line = $this -> ics -> mostra_projetos_por_escolas_professor();
+		$data['dado'] = $line;
+		$data['gr_frame'] = 'ic_professor_curso';
+		$data['gr_title'] = 'Projetos da Escola Politécnica';
+		$data['gr_title_sub'] = 'Implementadas 2014-2015';
+		$data['gr_x'] = 'Projetos';
+		$data['gr_y'] = 'Cursos';
+		$data['show'] = false;
+		$this -> load -> view('gadget/highchar_column.php', $data);
+		
+		$tela = '<table width="100%" border=1>';
+		$tela .= '<tr>';
+		$tela .= '<td width="50%">';
+		$tela .= '<div id="ic_professor_curso"></div>';
+		
+		$tela .= '<td width="50%">';
+		$tela .= '<div id="ic_escola"></div>';		
+		$tela .= '</table>';
+		$data['content'] = $tela;
+		
+		$this -> load -> view('content',$data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	function acompanhamento() {
 		/* Load Models */
