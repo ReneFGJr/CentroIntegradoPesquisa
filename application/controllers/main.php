@@ -57,6 +57,8 @@ class main extends CI_Controller {
 			{ array_push($menu,array('CIP','Administração do Centro Integrado de Pesquisa, Administração','BTA','/cip')); }
 		if (perfil('#CPS#COO#ADM#OBS')==1)
 			{ array_push($menu,array('Fomento','Observatório de Pesquisa','BTA','/edital')); }
+		if (perfil('#DGP#ADM')==1)
+			{ array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp')); }			
 		if (perfil('#CPS#COO#ADM#OBS')==1)
 			{ array_push($menu,array('Pró-Equipamentos','Laboratórios e equipamentos','BTA','/equipamento')); }
 		if (perfil('#CPP#SPI#ADM#CSF')==1)
@@ -69,8 +71,6 @@ class main extends CI_Controller {
 		if (perfil('#CPS#COO#ADM#OBS')==1)
 			{ array_push($menu,array('CIP','Centro Integrado de Pesquisa, Administração','BTN','/cip')); }
 		
-		if (perfil('#DGP#ADM')==1)
-			{ array_push($menu,array('Grupo de Pesquisa','Pesquisas da PUCPR','BTN','/dgp')); }
 		if (perfil('#DGP#ADM')==1){	
 		array_push($menu,array('Banco de Projetos','Pesquisa realizadas na PUCPR','BTN','/banco_projetos'));
 		}

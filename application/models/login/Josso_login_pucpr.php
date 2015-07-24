@@ -129,9 +129,9 @@ class josso_login_pucpr extends CI_Model {
 			$this -> nomeEmpresa = $line['nomeEmpresa'];
 			$this -> nomeFilial = $line['nomeFilial'];
 			$this -> loged = 1;
-			$this -> security();
 			$this -> ativa_usuario($login, $pass);
 			$this -> historico_insere($this -> cpf, 'LOGIN');
+			$this -> security();
 			return (1);
 		} else {
 			return (-1);

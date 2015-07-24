@@ -10,7 +10,19 @@ class dgps extends CI_model {
 		$obj -> mk = array('', 'L', 'C', 'C');
 		return ($obj);
 	}
-	
+	function next_harvesting()
+		{
+			$sql = "select * from gp_grupo_pesquisa order by gp_dt_coleta limit 1";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$line = $rlt[0];
+			if ($line['gp_dt_coleta'] == date("Y-m-d"))
+				{
+					return(0);
+				} else {
+					return($line['id_gp']);
+				}
+		}
 	function resumo($data)
 		{
 			$sql = "select count(*) as total from ".$this->tabela." where 1=1 ";

@@ -1,45 +1,114 @@
 <?php
 class phpLattess extends CI_Model {
-	
-	function inport_lattes_professar()
-		{
-			$sx = '<h1>Processando Arquivos Lattes</h1>';
-			$file = $this->next_file_process();
-			if (strlen($file) > 0)
-				{
-					/* Processar arquivo */
-					$sx .= $file;
-					$txt = fopen($file,'r');
-					$s = '';
-					while (!feof($txt))
-						{
-							$s .= fread($txt,1024);
-						}
-					fclose($txt);
-					
-					$ln = troca($s,chr(13),'¢');
-					$ln = splitx('¢',$ln);
-					
-					for ($r=1;$r < count($ln);$r++)
-						{
-							$l = splitx(';',$ln[$r].';');
-							print_r($l);
-							echo '<HR>';
-						}
+
+	function inport_lattes_professar() {
+		$sx = '<h1>Processando Arquivos Lattes</h1>';
+		$file = $this -> next_file_process();
+		if (strlen($file) > 0) {
+			/* Processar arquivo */
+			$sx .= $file;
+			$txt = fopen($file, 'r');
+			$s = '';
+			while (!feof($txt)) {
+				$s .= fread($txt, 1024);
+			}
+			fclose($txt);
+
+			$ln = troca($s, chr(13), '¢');
+			$ln = splitx('¢', $ln);
+
+			for ($r = 1; $r < count($ln); $r++) {
+				$lll = $ln[$r];
+				$lll = troca($lll, "'", '´');
+				$l = splitx(';', $lll . ';');
+
+				$acpp_autor = troca(trim($l[0]),'"','');
+				$acpp_tipo = $l[1];
+				$acpp_idioma = $l[2];
+
+				$acpp_ano = troca(trim($l[3]),'"','');
+				$acpp_titulo = troca(trim($l[4]),'"','');
+				$acpp_ordem = $l[5];
+
+				$acpp_relevante = $l[6];
+				$acpp_periodico = $l[7];
+				$acpp_issn = $l[8];
+
+				$acpp_volume = $l[9];
+				$acpp_fasciculo = $l[10];
+				$acpp_pg_ini = troca(trim($l[11]),'"','');
+
+				$acpp_pg_fim = troca($l[12],'"','');
+				$acpp_editora = $l[13];
+				$acpp_doi = $l[14];
+
+				$acpp_jcr = $l[15];
+				$acpp_qualis = $l[16];
+				$acpp_circulacao = $l[17];
+
+				$acpp_qt_autores = $l[18];
+
+				$acpp_autores = '';
+
+				$sql = "select * from cnpq_acpp 
+										where acpp_autor = '$acpp_autor'
+										and acpp_titulo = '$acpp_titulo'
+										and acpp_ano = '$acpp_ano'
+										and acpp_pg_ini = '$acpp_pg_ini'
+										and acpp_pg_fim = '$acpp_pg_fim'
+									";
+				$rrr = $this -> db -> query($sql);
+				$rrr = $rrr -> result_array();
+
+				if (count($rrr) == 0) {
+
+					for ($rq = 19; $rq < count($l); $rq++) { $acpp_autores .= trim($l[$rq]) . '; ';
+					}
+
+					$sql = "insert into cnpq_acpp (
+							acpp_autor, acpp_tipo, acpp_idioma,
+							acpp_ano, acpp_titulo, acpp_ordem,
+							acpp_relevante, acpp_periodico, acpp_issn,
+							
+							acpp_volume, acpp_fasciculo, acpp_pg_ini,
+							acpp_pg_fim, acpp_editora, acpp_doi,
+							acpp_jcr, acpp_qualis, acpp_circulacao,
+							
+							acpp_qt_autores, acpp_autores
+							) values (
+							'$acpp_autor', '$acpp_tipo', '$acpp_idioma',
+							'$acpp_ano', '$acpp_titulo', '$acpp_ordem',
+							'$acpp_relevante', '$acpp_periodico', '$acpp_issn',
+							
+							'$acpp_volume', '$acpp_fasciculo', '$acpp_pg_ini',
+							'$acpp_pg_fim', '$acpp_editora', '$acpp_doi',
+							'$acpp_jcr', '$acpp_qualis', '$acpp_circulacao',
+							
+							'$acpp_qt_autores', '$acpp_autores'
+							)";
+					$sql = troca($sql, '"', '');
+					$this -> db -> query($sql);
+					$sx .= '<br>Inserido '.$acpp_autor.' '.$acpp_periodico.' '.$acpp_ano;
+				} else {
+					$sx .= '<br><font color="red">Já cadastrado</font>: '.$acpp_autor.' '.$acpp_periodico.' (<B>'.$acpp_titulo.'</B>) '.$acpp_ano.'-'.$acpp_pg_ini;
 				}
-			return($sx);
+			}
+			unlink ($file);
+			$sx .= '<meta http-equiv="refresh" content="10">';
 		}
-		
-	function next_file_process()
-		{
-			$ft = 0;
-			for ($r=0;$r < 1000;$r++)
-				{
-					$fl = "ARTIG_".strzero($r,4);
-					if (file_exists('_document/'.$fl)) { return('_document/'.$fl); }
-				}
-			return('');
-		}		
+		return ($sx);
+	}
+
+	function next_file_process() {
+		$ft = 0;
+		for ($r = 0; $r < 1000; $r++) {
+			$fl = "ARTIG_" . strzero($r, 4);
+			if (file_exists('_document/' . $fl)) {
+				return ('_document/' . $fl);
+			}
+		}
+		return ('');
+	}
 
 	function arquivos_salva_quebrado($ln, $tipo) {
 		$lnh = $ln[0];
@@ -87,7 +156,10 @@ class phpLattess extends CI_Model {
 	}
 
 	function inport_lattes_acpp($id = 0) {
-		$dd1 = $_POST['dd1'];
+		if (isset($_POST['dd1'])) { $dd1 = $_POST['dd1'];
+		} else { $dd1 = '';
+		}
+
 		if (strlen($dd1) > 0) {
 			$temp = $_FILES['arquivo']['tmp_name'];
 			$size = $_FILES['arquivo']['size'];

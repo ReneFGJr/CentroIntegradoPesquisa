@@ -97,7 +97,34 @@ class dgp extends CI_Controller {
 		$this -> dgps -> grava_dados_importados($text, $id, $link);
 		redirect(base_url('index.php/dgp/admin'));
 	}
-	
+
+	function inport_all() {
+		$this -> load -> model('dgps');
+		$this -> load -> model('phplattess');
+
+		$id = $this->dgps -> next_harvesting();
+
+		$this -> cab();
+		$data = array();
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);
+
+		if ($id > 0) {
+
+			$data = $this -> dgps -> le($id);
+			$this -> load -> view('dgp/grupo', $data);
+
+			$link = trim($data['gp_egp_espelho']);
+			$text = $this -> phplattess -> dgp_import($link);
+			$this -> dgps -> grava_dados_importados($text, $id, $link);
+			$data['tempo'] = 5;
+			$this->load->view('header/refresh',$data);
+		} else {
+			/* fim da importacao */
+		}
+	}
+
 	/**** GEDS */
 	function ged($id = 0, $proto = '', $tipo = '', $check = '') {
 		$this -> load -> database();
@@ -140,7 +167,7 @@ class dgp extends CI_Controller {
 		$this -> geds -> tabela = 'gp_files';
 		$this -> geds -> file_path = '_document/';
 		$this -> geds -> file_delete($id);
-	}	
+	}
 
 	function view($id = 0) {
 		$this -> load -> model('dgps');
@@ -152,10 +179,10 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 
 		$data = $this -> dgps -> le($id);
-		
-		$this->geds->tabela = 'gp_files';
-		$data['ged_arquivos'] = $this->geds->list_files($id,'dgp');
-		$data['ged_arquivos'] .= $this->geds->form_upload($id,'dgp');
+
+		$this -> geds -> tabela = 'gp_files';
+		$data['ged_arquivos'] = $this -> geds -> list_files($id, 'dgp');
+		$data['ged_arquivos'] .= $this -> geds -> form_upload($id, 'dgp');
 		$this -> load -> view('dgp/grupo', $data);
 		$this -> load -> view('header/content_close', $data);
 		$this -> load -> view('header/foot', $data);
@@ -196,7 +223,7 @@ class dgp extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['acoes'] = $this -> dgps -> acoes();
-		$data = $this->dgps->resumo($data);
+		$data = $this -> dgps -> resumo($data);
 		$this -> load -> view('dgp/index', $data);
 		$this -> load -> view('dgp/view_mygroups', $data);
 		$this -> load -> view('dgp/view_indicadores', $data);
@@ -211,12 +238,13 @@ class dgp extends CI_Controller {
 		$data['logo'] = base_url('img/logo/logo_dgp.png');
 		$this -> load -> view('header/content_open', $data);
 		$this -> load -> view('header/logo', $data);
-		
+
 		$this -> load -> view('dgp/grupo_alteracao', $data);
 
 		$this -> load -> view('header/content_close', $data);
 		$this -> load -> view('header/foot', $data);
 	}
+
 	function novo_grupo() {
 		$this -> load -> model('dgps');
 		$this -> cab();
@@ -225,7 +253,7 @@ class dgp extends CI_Controller {
 		$data['logo'] = base_url('img/logo/logo_dgp.png');
 		$this -> load -> view('header/content_open', $data);
 		$this -> load -> view('header/logo', $data);
-		
+
 		$this -> load -> view('dgp/grupo_novo', $data);
 
 		$this -> load -> view('header/content_close', $data);
