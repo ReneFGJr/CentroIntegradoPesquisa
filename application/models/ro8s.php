@@ -1,6 +1,141 @@
 <?php
 class ro8s extends CI_Model {
 
+	function inport_csf($id = 0) {
+		$offset = $id;
+		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_bolsa_contempladas&limit=100&offset='.$offset;
+
+		$this -> load -> model('instituicoes');
+		$this -> load -> model('paises');
+
+		$xmlRaw = simplexml_load_file($site);
+		$RowT = count($xmlRaw -> record);
+		$to = 0;
+		$in = 0;
+		$up = 0;
+		$sx = '<table width="100%" align="center" class="tabela00 lt0">';
+		for ($r = 0; $r < $RowT; $r++) {
+			$xml = $xmlRaw -> record[$r];
+
+			$pb_protocolo = utf8_decode($xml -> pb_protocolo);
+			$pb_aluno = utf8_decode($xml -> pb_aluno);
+			$pb_tipo = utf8_decode($xml -> pb_tipo);
+			$pb_status = utf8_decode($xml -> pb_status);
+			$pb_titulo_plano = utf8_decode($xml -> pb_titulo_plano);
+			$pb_area_conhecimento = utf8_decode($xml -> pb_area_conhecimento);
+			$pb_ano = utf8_decode($xml -> pb_ano);
+			$pb_professor = utf8_decode($xml -> pb_professor);
+
+			$cracha = utf8_decode($xml -> pb_data);
+			$cracha = utf8_decode($xml -> pb_hora);
+			$cracha = utf8_decode($xml -> pb_ativo);
+			$cracha = utf8_decode($xml -> pb_ativacao);
+			$cracha = utf8_decode($xml -> pb_desativacao);
+			$cracha = utf8_decode($xml -> pb_contrato);
+			$cracha = utf8_decode($xml -> pb_titulo_projeto);
+			$cracha = utf8_decode($xml -> pb_titulo_plano);
+			$cracha = utf8_decode($xml -> pb_fomento);
+			//$cracha = utf8_decode($xml -> pb_status);
+			//$cracha = utf8_decode($xml -> pb_area_conhecimento);
+			$cracha = utf8_decode($xml -> pb_codigo);
+			$cracha = utf8_decode($xml -> pb_data_ativacao);
+			$cracha = utf8_decode($xml -> pb_data_encerramento);
+			$cracha = utf8_decode($xml -> pb_relatorio_parcial_nota);
+			$cracha = utf8_decode($xml -> pb_relatorio_final);
+			$cracha = utf8_decode($xml -> pb_relatorio_final_nota);
+			$cracha = utf8_decode($xml -> pb_resumo);
+			$cracha = utf8_decode($xml -> pb_resumo_nota);
+			$cracha = utf8_decode($xml -> pibic_resumo_text);
+			$cracha = utf8_decode($xml -> pibic_resumo_colaborador);
+			//$cracha = utf8_decode($xml -> pibic_resumo_keywork);
+			$cracha = utf8_decode($xml -> pb_ano);
+			$cracha = utf8_decode($xml -> pb_semic);
+			$cracha = utf8_decode($xml -> pb_relatorio_parcial);
+			$cracha = utf8_decode($xml -> pb_semic_area);
+			$cracha = utf8_decode($xml -> pb_semic_idioma);
+			$cracha = utf8_decode($xml -> pb_relatorio_parcial_correcao);
+			$cracha = utf8_decode($xml -> pb_relatorio_parcial_correcao_nota);
+			$cracha = utf8_decode($xml -> pb_aluno_nome);
+			$cracha = utf8_decode($xml -> pb_colegio);
+			$cracha = utf8_decode($xml -> pb_colegio_orientador);
+			$cracha = utf8_decode($xml -> pb_area_estrategica);
+
+			$data_saida = $xml -> pb_data . '01';
+			$data_saida = substr($data_saida, 0, 4) . '-' . substr($data_saida, 4, 2) . '-' . substr($data_saida, 6, 2);
+
+			if ($pb_tipo == 'S') {
+				//print_r($xml);
+
+				$universidade = $this -> instituicoes -> busca_instituicao(utf8_decode($xml -> pb_colegio));
+				$pais = $this -> paises -> busca_pais(utf8_decode($xml -> pb_colegio_orientador));
+
+				echo '<HR>';
+				$data = date("Y-m-d");
+
+				$ativo = 1;
+				//				$ativo = 1;
+				$to++;
+				$sx .= '<tr class="lt0">';
+				$sx .= '<td>' . $to . '.</td>';
+				$sx .= '<td>' . $pb_protocolo . '</td>';
+				$sx .= '<td>' . $pb_aluno . '</td>';
+
+				$sql = "select * from csf where csf_aluno = '$pb_aluno' ";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+
+				if (count($rlt) == 0) {
+					$data = date("Y-m-d");
+					$sx .= '<td>novo registro</td>';
+					/* Novo registro */
+					$sql = "insert into csf 
+									(
+										csf_aluno, csf_orientador, csf_modalidade,
+										csf_saida, csf_saida_previsao, csf_retorno,
+										csf_retorno_previsao, csf_pa_intercambio, csf_pais, 
+
+										csf_universidade, csf_status, csf_obs,
+										csf_area, csf_curso, csf_chamada,
+										csf_parceiro, csf_bolsista
+									) values (
+										'$pb_aluno','$pb_professor','1',
+										'$data_saida','$data_saida','00000-00-00',
+										'00000-00-00',0,'$pais',
+										
+										$universidade,5,0,
+										0,0,0,
+										0,0
+									)
+							";
+					echo $sql;
+					//$this -> db -> query($sql);
+					$in++;
+				} else {
+					/* Atualiza registro */
+					$sx .= '<td>atualizado registro</td>';
+					$sql = "update gp_instituicao_parceira set 
+											gpip_nome = '$nome',
+											gpip_sigla = '$nome'
+										where gpip_nome = '$nome'
+								";
+					//$this -> db -> query($sql);
+					$up++;
+				}
+			}
+		}
+		if ($RowT > 0) {
+			$site = base_url('index.php/inport/ro8/csf/' . ($offset + 100));
+			echo '
+					<meta http-equiv="refresh" content="5;' . $site . '">
+					';
+		} else {
+			$sx .= '<h1>FIM</h1>';
+		}
+		$sx .= '</table>';
+
+		return ($sx);
+	}
+
 	function inport_pibic($id = 0) {
 		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_bolsa_contempladas&limit=10000&offset=0';
 
@@ -204,15 +339,15 @@ class ro8s extends CI_Model {
 			echo '
 					<meta http-equiv="refresh" content="5;' . $site . '">
 					';
-							} else {
-								$sx .= '<h1>FIM</h1>';
-							}
+		} else {
+			$sx .= '<h1>FIM</h1>';
+		}
 		$sx .= '</table>';
 		return ($sx);
 	}
 
 	function inport_estudante($id = 0) {
-		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_aluno&limit=100&offset='.$id;
+		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_aluno&limit=100&offset=' . $id;
 		$xmlRaw = simplexml_load_file($site);
 		$RowT = count($xmlRaw -> record);
 		$to = 0;
@@ -290,10 +425,10 @@ class ro8s extends CI_Model {
 			echo '
 					<meta http-equiv="refresh" content="5;' . $site . '">
 					';
-							} else {
-								$sx .= '<h1>FIM</h1>';
-							}
-		$sx .= '</table>';		
+		} else {
+			$sx .= '<h1>FIM</h1>';
+		}
+		$sx .= '</table>';
 		return ($sx);
 	}
 

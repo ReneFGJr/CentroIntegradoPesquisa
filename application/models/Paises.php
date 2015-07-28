@@ -2,7 +2,7 @@
 class paises extends CI_Model {
 	var $tabela = 'pais';
 	function busca_pais($pais) {
-		$sql = "select * from " . $this -> tabela . " where nome like '$pais%' ";
+		$sql = "select * from " . $this -> tabela . " where nome_pt like '$pais%' ";
 		echo $sql;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
