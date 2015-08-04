@@ -156,6 +156,20 @@ function db_query($sql) {
 	return ($query -> result());
 }
 
+
+/* Tipo de servidor */
+function debug()
+{
+if (file_exists('_server_type.php'))
+	{
+		require("_server_type.php");
+		if ($server_type != '3')
+			{
+				$CI = &get_instance();
+				$CI -> output -> enable_profiler('true');
+			}
+	}
+}
 /*
  * http://www.kathirvel.com/php-convert-or-cast-array-to-object-object-to-array/
  */

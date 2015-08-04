@@ -85,6 +85,9 @@ class ic extends CI_Controller {
 		/* Load Models */
 		$this -> load -> model('comunicacoes');
 		$this -> load -> model('email_local');
+		
+		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
+		$this -> load -> library('email', $config);		
 
 		$this -> cab();
 		$data = array();
@@ -102,19 +105,40 @@ class ic extends CI_Controller {
 		$data['tela'] = $tela;
 
 		if ($form -> saved > 0) {
-			$em = $this->input->post('dd1');
-			$em = troca($em,chr(13),';');
-			$em = troca($em,chr(10),'');
-			$em = troca($em,chr(8),'');
-			$em = troca($em,chr(15),'');
-			$ems = splitx(';',$em.';');
-			
-			for ($r=0;$r < count($ems);$r++)
-				{
-				$email = $ems[$r];
-				$this -> email_local -> enviaremail($email, $data['mc_titulo'], $data['mc_texto']);
-				echo '<BR>--->' . $email;
-				}
+			$em = $this -> input -> post('dd1');
+			$em = troca($em, chr(13), ';');
+			$em = troca($em, chr(10), '');
+			$em = troca($em, chr(8), '');
+			$em = troca($em, chr(15), '');
+			$ems = splitx(';', $em . ';');
+
+			for ($r = 0; $r < count($ems); $r++) {
+				$this -> email_local -> e_mail = $data['m_email'];
+				$this -> email_local -> e_nome = $data['m_descricao'];
+				$head = trim($data['m_header']);
+				$para = $ems[$r];
+
+				$this -> email -> from('dilmeire.vosgerau@pucpr.br', $this -> email_local -> e_nome);
+				$this -> email -> reply_to($this -> email_local -> e_mail, $this -> email_local -> e_nome);
+				$this -> email -> to($para);
+				
+				$texto_o = $data['mc_texto'];
+				$texto = '<table width="700"><tr><td>';
+				if (strlen($head) > 0)
+					{
+						$texto .= '<img src="'.$head.'" width="700">';
+					}
+				$texto .= '<tr><td>';
+				$texto .= $texto_o;
+				$texto .= '</table>';
+		
+				$this -> email -> subject($data['mc_titulo']);
+				$this -> email -> message($texto);
+		
+				$this -> email -> send();
+				//$this -> email_local -> enviaremail($emailx, $data['mc_titulo'], $data['mc_texto']);
+				echo '<BR>--->' . $para;
+			}
 		}
 
 		$data['content'] = '<table width="100%">
@@ -178,7 +202,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
+
 	function indicadores($id = 0) {
 
 		/* Load Models */
@@ -198,7 +222,7 @@ class ic extends CI_Controller {
 		$data['gr_y'] = 'Escola';
 		$data['show'] = false;
 		$this -> load -> view('gadget/highchar_column.php', $data);
-		
+
 		$data = array();
 		$line = $this -> ics -> mostra_projetos_por_escolas_professor();
 		$data['dado'] = $line;
@@ -209,22 +233,22 @@ class ic extends CI_Controller {
 		$data['gr_y'] = 'Cursos';
 		$data['show'] = false;
 		$this -> load -> view('gadget/highchar_column.php', $data);
-		
+
 		$tela = '<table width="100%" border=1>';
 		$tela .= '<tr>';
 		$tela .= '<td width="50%">';
 		$tela .= '<div id="ic_professor_curso"></div>';
-		
+
 		$tela .= '<td width="50%">';
-		$tela .= '<div id="ic_escola"></div>';		
+		$tela .= '<div id="ic_escola"></div>';
 		$tela .= '</table>';
 		$data['content'] = $tela;
-		
-		$this -> load -> view('content',$data);
+
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	}	
+	}
 
 	function acompanhamento() {
 		/* Load Models */

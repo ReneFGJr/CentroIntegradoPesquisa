@@ -9,6 +9,7 @@ class comunicacoes extends CI_Model
 		{
 			$cp = array();
 			$sql_grupo = 'id_mg:mg_nome:select * from mensagem_grupo where mg_ativo = 1 and mg_grupo <> 0';
+			$sql_own = 'id_m:m_descricao:select * from mensagem_own where m_ativo = 1 ';
 			array_push($cp,array('$H8','id_mc','',False,True));
 			array_push($cp,array('$Q '.$sql_grupo,'mc_tipo',msg('grupo'),True,True));
 			array_push($cp,array('$S40','mc_titulo',msg('titulo'),False,True));
@@ -16,7 +17,7 @@ class comunicacoes extends CI_Model
 			array_push($cp,array('$H8','mc_enviado','',False,True));
 			array_push($cp,array('$O HTML:HTML&TEXT:TEXT','mc_formato',msg('formato'),False,True));
 			array_push($cp,array('$U8','mc_dt','',False,True));
-			array_push($cp,array('$HV','mc_own',0,False,True));
+			array_push($cp,array('$Q '.$sql_own,'mc_own','Enviador',False,True));
 			array_push($cp,array('$H8','mc_dt_envio','',False,True));
 			array_push($cp,array('$HV','mc_status_mgs_id',1,False,True));
 			array_push($cp,array('$B','',msg('enviar'),false,True));
@@ -35,7 +36,9 @@ class comunicacoes extends CI_Model
 		}
 	function le($id=0)
 		{
-			$sql = "select * from ".$this->tabela." where id_mc = ".$id;
+			$sql = "select * from ".$this->tabela."
+						left join mensagem_own on mc_own = id_m
+						where id_mc = ".$id;
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			$line = $rlt[0];

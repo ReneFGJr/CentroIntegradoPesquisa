@@ -1,3 +1,3 @@
 <?php
-$server_type=3;
+$server_type=2;
 ?>
