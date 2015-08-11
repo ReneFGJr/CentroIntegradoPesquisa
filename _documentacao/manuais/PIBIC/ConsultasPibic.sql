@@ -24,7 +24,8 @@ FROM
 	us_usuario AS us_alu, 
 	us_usuario AS us_prof,
 	us_usuario AS us_alu_ori
-WHERE ppa.id_professor = us_prof.id_us
+WHERE ppa.ppa_finalizou = 0 
+AND ppa.id_professor = us_prof.id_us
 AND ppa.id_aluno_pibic = us_alu.id_us
 AND	ppa.id_aluno_orientador = us_alu_ori.id_us
 AND	pmb.id_pmb = ppa.pmb_id
@@ -61,7 +62,8 @@ FROM
 	us_usuario AS us_alu, 
 	us_usuario AS us_prof,
 	us_usuario AS us_alu_ori
-WHERE ppa.id_professor = us_prof.id_us
+WHERE ppa.ppa_finalizou = 0 
+AND ppa.id_professor = us_prof.id_us
 AND ppa.id_aluno_pibic = us_alu.id_us
 AND	ppa.id_aluno_orientador = 0
 AND	pmb.id_pmb = ppa.pmb_id
