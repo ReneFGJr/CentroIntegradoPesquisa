@@ -260,4 +260,7 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+
+
+
 }
