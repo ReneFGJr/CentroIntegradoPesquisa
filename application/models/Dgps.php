@@ -514,6 +514,9 @@ class dgps extends CI_model {
 		$sx .= '<tr>';
 		$sx .= '<td>';
 		$sx .= '<ul>';
+		
+		$sx .= '<li><A HREF="' . base_url('index.php/dgp/lista_grupos') . '" class="link">Ver Grupos</A></li>';
+		
 		$sx .= '<li><A HREF="' . base_url('index.php/dgp/novo_grupo') . '" class="link">Abertura de novo Grupo</A></li>';
 		$sx .= '<li><A HREF="' . base_url('index.php/dgp/alterar_lider') . '" class="link">Alteração de(os) lider(es) do Grupo</A></li>';
 		$sx .= '<li><A HREF="' . base_url('index.php/dgp/comunicar_alteracao') . '" class="link">Comunicar alterações no Grupo</A></li>';
@@ -642,6 +645,13 @@ class dgps extends CI_model {
 		array_push($cp, array('$S200', 'gp_nome', msg('dgp_nome'), True, True));
 		array_push($cp, array('$LINK', 'gp_egp_espelho', msg('dgp_espelho'), True, True));
 		array_push($cp, array('$HV', 'gp_dt_ultimo_envio', '0000-00-00', False, True));
+		
+		
+		
+		
+		
+		
+		
 
 		array_push($cp, array('$B', '', msg('gravar'), false, True));
 

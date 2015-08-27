@@ -228,7 +228,13 @@ class dgp extends CI_Controller {
 		$this -> load -> view('dgp/view_mygroups', $data);
 		$this -> load -> view('dgp/view_indicadores', $data);
 		$this -> load -> view('header/foot', $data);
-	}
+	
+
+
+
+
+
+}
 
 	function comunicar_alteracao() {
 		$this -> load -> model('dgps');
@@ -260,7 +266,37 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	
+	function lista_grupos(){
+		/* Load Models */
+		$this -> load -> model('dgps');
 
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$form -> tabela = $this -> dgps -> tabela;
+		$form -> see = true;
+		$form -> novo = true;
+		$form -> edit = true;
+		$form = $this -> dgps -> row($form);
+
+		$form -> row_edit = base_url('index.php/dgp/edit');
+		$form -> row_view = base_url('index.php/dgp/view');
+		$form -> row = base_url('index.php/dgp');
+
+		$tela['tela'] = row($form, $id);
+
+		$tela['title'] = $this -> lang -> line('Label_gp_descricao');
+
+		$this -> load -> view('form/form', $tela);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		
+		
+	}
 
 
 }

@@ -73,8 +73,7 @@ $link = '<a href="' . base_url('index.php/dgp/inport/' . $id_gp . '/' . checkpos
 				<?php echo msg('dgp_arquivos');?>
 			</legend>
 			<?php echo $ged_arquivos;?>
-		</fieldset>
-		</td>
+		</fieldset></td>
 		<td rowspan=10 width="80%">
 		<fieldset>
 			<legend class="lt1">
@@ -82,14 +81,11 @@ $link = '<a href="' . base_url('index.php/dgp/inport/' . $id_gp . '/' . checkpos
 			</legend>
 			<?php echo $linhas_pesquisa;?>
 		</fieldset>
-		
 		<fieldset>
 			<legend class="lt1">
 				<?php echo msg('dgp_membros');?>
 			</legend>
 			<?php echo $grupo_membros;?>
-		</fieldset>		
-		
-		</td>
+		</fieldset></td>
 	</tr>
 </table>
