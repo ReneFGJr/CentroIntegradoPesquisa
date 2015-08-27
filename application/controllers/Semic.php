@@ -31,7 +31,8 @@ class semic extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('SEMIC', 'index.php/semic'));
+		array_push($menus, array('Programacao', 'index.php/semic'));
+		array_push($menus, array('Trabalhos', 'index.php/semic/trabalhos'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -149,5 +150,20 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	function trabalhos($id = 0) {
+		
+		/* Load Models */
+		$this->load->model('semic/semic_trabalhos');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		$data['content'] = '<h1>Trabalhos SEMIC';
+		
+		$this -> load -> view('content',$data);		
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 }

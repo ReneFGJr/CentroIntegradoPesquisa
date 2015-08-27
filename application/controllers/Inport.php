@@ -80,7 +80,7 @@ class inport extends CI_Controller {
 
 	}	
 
-	function ro8($id = '',$off='') {
+	function ro8($id = '',$off='',$ano='') {
 		/* Load Models */
 		$this -> load -> model('ro8s');
 
@@ -90,6 +90,9 @@ class inport extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 		switch ($id) {
+			case 'semic_ic' :
+				$data['content'] = $this -> ro8s -> inport_ic_semic($off);
+				break;			
 			case 'ic' :
 				$data['content'] = $this -> ro8s -> inport_ic_noticia($off);
 				break;
@@ -111,6 +114,10 @@ class inport extends CI_Controller {
 			case 'cip-artigos' :
 				$data['content'] = $this -> ro8s -> inport_cip_artigos($off);
 				break;
+			case 'ic_parecer' :
+				$data['content'] = $this -> ro8s -> inport_ic_parecer($off,$ano);
+				break;	
+						
 		}
 		$this -> load -> view('content', $data);
 		// http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=ic_noticia&limit=100
@@ -133,6 +140,9 @@ class inport extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
+		array_push($menu, array('RO8-PostGress', 'SEMIC IC', 'ITE', '/inport/ro8/semic_ic'));
+		array_push($menu, array('RO8-PostGress', 'PIBIC Avaliações', 'ITE', '/inport/ro8/pibic_avaliacoes'));
+		array_push($menu, array('RO8-PostGress', 'PIBIC Bolsas', 'ITE', '/inport/ro8/pibic'));
 		array_push($menu, array('RO8-PostGress', 'Mensagens do Sistema', 'ITE', '/inport/ro8/ic'));
 		array_push($menu, array('RO8-PostGress', 'Instituições', 'ITE', '/inport/ro8/instituicao'));
 		array_push($menu, array('RO8-PostGress', 'Estudantes', 'ITE', '/inport/ro8/estudante'));

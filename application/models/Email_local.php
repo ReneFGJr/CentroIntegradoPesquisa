@@ -6,9 +6,6 @@ class email_local extends CI_Model {
 	
 	function enviaremail($para, $titulo, $texto) {
 
-		echo '=======>'.$this->email;
-		print_r($this->email);
-
 		$this -> email -> from($this->e_mail, $this->e_nome);
 		$this -> email -> to($para);
 		//$this -> email -> cc('rene.gabriel@pucpr.br');
