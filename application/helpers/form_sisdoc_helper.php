@@ -9,7 +9,7 @@
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	http://codeigniter.com
  * @since	Version 2.1.0
- * @version 0.15.25a
+ * @version 0.15.35
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -1626,7 +1626,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $tr;
 
 				/* label */
-				$tela .= '<td colspan=1>' . '<span class="lt1">' . $label . '</span>';
+				$tela .= '<td colspan=2>' . '<span class="lt1">' . $label . '</span>';
 				$tela .= $tdn . $trn;
 				break;
 
@@ -1660,6 +1660,8 @@ if (!function_exists('form_edit')) {
 				}
 				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
+				
+				$size = sonumero($type);
 
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => $max, 'size' => $size, 'placeholder' => $label, 'class' => 'form_string');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
