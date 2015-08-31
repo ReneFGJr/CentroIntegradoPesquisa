@@ -29,12 +29,12 @@ class semic_salas extends CI_Model {
 		$hi = 8;
 		$him = 0;
 		$hora = '';
-		for ($r = 0; $r < 40; $r++) {
+		for ($r = 0; $r < 55; $r++) {
 			if (strlen($hora) > 0) {
 				$h .= '&';
 			}
 			$hora = strzero($hi, 2) . 'h' . strzero($him, 2);
-			$him = $him + 20;
+			$him = $him + 15;
 			if ($him >= 60) { $him = 0;
 				$hi++;
 			}
@@ -95,9 +95,9 @@ class semic_salas extends CI_Model {
 		$hrr = array();
 		$hi = 8;
 		$him = 0;
-		for ($r = 0; $r < 40; $r++) {
+		for ($r = 0; $r < 55; $r++) {
 			$hora = strzero($hi, 2) . 'h' . strzero($him, 2);
-			$him = $him + 20;
+			$him = $him + 15;
 			if ($him >= 60) { $him = 0;
 				$hi++;
 			}

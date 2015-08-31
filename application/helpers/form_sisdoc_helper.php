@@ -253,6 +253,19 @@ function stodbr($data = 0) {
 	}
 }
 
+function stod($data = 0) {
+	$data = sonumero($data);
+	if ($data < 19100101) {
+		return (0);
+	} else {
+		$dt1 = substr($data, 6, 2);
+		$dt2 = substr($data, 4, 2);
+		$dt3 = substr($data, 0, 4);
+		$dt = mktime(0,0,0,$dt2,$dt1,$dt3);
+		return ($dt);
+	}
+}
+
 function form_sisdoc_getpost() {
 	global $dd, $acao;
 
@@ -1327,12 +1340,13 @@ if (!function_exists('form_edit')) {
 				$tela .= '<td colspan=2>';
 				$tela .= '<fieldset class="border1"><legend class="lt3 bold">' . $label . '</legend>';
 				$tela .= '<table width="100%" class="tabela00">';
-				$tela .= '<tr><th width="20%"></th><th wodth="80%"></tr>';
 				break;
 			case '}' :
 				$tela .= '</table>';
 				$tela .= '</fieldset>';
-				$tela .= '</table>';
+				$tela .= '</td></tr>';
+				$tela .= '<table width="100%" id="row">';
+				$tela .= '</td></tr>';
 				break;
 			/* Select Box */
 			case '[' :
