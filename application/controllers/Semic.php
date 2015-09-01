@@ -150,6 +150,23 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	function bloco_view($ida = 0,$check='', $p1='',$p2='',$acao='') {
+		
+		/* Load Models */
+		$this->load->model('semic/semic_salas');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+		
+		$data['content'] = $this->semic_salas->mostra_bloco($ida,$p1,$p2,$acao);
+		$this -> load -> view('content',$data);		
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
 	function trabalhos($id = 0) {
 		
 		/* Load Models */

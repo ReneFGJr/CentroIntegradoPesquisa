@@ -1,6 +1,132 @@
 <?php
 class ro8s extends CI_Model {
 	
+	function inport_semic_notas($id=0)
+		{
+		$tabela = "semic_nota_trabalhos";
+		$offset = $id;
+		
+		echo '<hr>IMPORT<hr>';
+		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=semic_nota_trabalhos&limit=100&offset=' . $offset;
+		$xmlRaw = simplexml_load_file($site);
+		$RowT = count($xmlRaw -> record);
+		$to = 0;
+		$in = 0;
+		$up = 0;
+		$sx = '<table width="100%" align="center" class="tabela00 lt0">';
+		for ($r = 0; $r < $RowT; $r++) {
+			$xml = $xmlRaw -> record[$r];
+
+			$id_st= utf8_decode($xml-> id_st);
+			$st_codigo= utf8_decode($xml-> st_codigo);
+			$st_cod_trabalho= utf8_decode($xml-> st_cod_trabalho);
+			$st_edital= utf8_decode($xml-> st_edital);
+			$st_modalidade= utf8_decode($xml-> st_modalidade);
+			$st_id= utf8_decode($xml-> st_id);
+			$st_area= utf8_decode($xml-> st_area);
+			$st_nota_submint= utf8_decode($xml-> st_nota_submint);
+			$st_nota_rel_parcial= utf8_decode($xml-> st_nota_rel_parcial);
+			$st_nota_rel_final= utf8_decode($xml-> st_nota_rel_final);
+			$st_nota_media= utf8_decode($xml-> st_nota_media);
+			$st_nota_semic_oral= utf8_decode($xml-> st_nota_semic_oral);
+			$st_nota_semic_poster= utf8_decode($xml-> st_nota_semic_poster);
+			$st_status= utf8_decode($xml-> st_status);
+			$st_cnpq= utf8_decode($xml-> st_cnpq);
+			$st_area_geral= utf8_decode($xml-> st_area_geral);
+			$st_section= utf8_decode($xml-> st_section);
+			$st_eng= utf8_decode($xml-> st_eng);
+			$st_professor= utf8_decode($xml-> st_professor);
+			$st_aluno= utf8_decode($xml-> st_aluno);
+			$st_nr= utf8_decode($xml-> st_nr);
+			$st_oral= utf8_decode($xml-> st_oral);
+			$st_poster= utf8_decode($xml-> st_poster);
+			$st_ano= utf8_decode($xml-> st_ano);
+
+			$to++;
+			$sx .= '<tr class="lt0">';
+			$sx .= '<td>' . $id_st . '.</td>';
+			$sx .= '<td>' . $st_codigo . '</td>';
+			$sx .= '<td>' . $st_cod_trabalho . '-' . $st_nr . '</td>';
+			$sx .= '<td>' . $st_edital . '</td>';
+
+			$sql = "select * from semic_nota_trabalhos where id_st = '$id_st' ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+
+			if (count($rlt) == 0) {
+
+				$data = date("Y-m-d");
+				$sx .= '<td>novo registro</td>';
+				/* Novo registro */
+				$sql = "INSERT INTO semic_nota_trabalhos
+						(
+							id_st, st_codigo, st_cod_trabalho, st_edital, 
+							st_modalidade, st_id, st_area, 
+							st_nota_submint, st_nota_rel_parcial, 
+							st_nota_rel_final, st_nota_media, st_nota_semic_oral, 
+							st_nota_semic_poster, st_status, st_cnpq, 
+							st_area_geral, st_section, st_eng, 
+							st_professor, st_aluno, st_nr, 
+							st_oral, st_poster, st_ano
+						) VALUES (
+							'$id_st', '$st_codigo', '$st_cod_trabalho', '$st_edital',
+							'$st_modalidade', '$st_id', '$st_area',
+							'$st_nota_submint', '$st_nota_rel_parcial',
+							'$st_nota_rel_final', '$st_nota_media', '$st_nota_semic_oral',
+							'$st_nota_semic_poster', '$st_status', '$st_cnpq',
+							'$st_area_geral', '$st_section', '$st_eng',
+							'$st_professor', '$st_aluno', '$st_nr',
+							'$st_oral', '$st_poster', '$st_ano'	
+						)";
+						$this -> db -> query($sql);
+				$in++;
+			} else {
+				/* Atualiza registro */
+				$sx .= '<td>atualizado registro</td>';
+				$sql = "UPDATE semic_nota_trabalhos SET 
+							st_codigo = '$st_codigo', 
+							st_cod_trabalho = '$st_cod_trabalho', 
+							st_edital = '$st_edital',  
+							st_modalidade = '$st_modalidade', 
+							st_id = '$st_id', 
+							st_area = '$st_area', 
+							st_nota_submint = '$st_nota_submint', 
+							st_nota_rel_parcial = '$st_nota_rel_parcial', 
+							st_nota_rel_final = '$st_nota_rel_final',
+							st_nota_media = '$st_nota_media', 
+							st_nota_semic_oral = '$st_nota_semic_oral', 
+							st_nota_semic_poster = '$st_nota_semic_poster', 
+							st_status = '$st_status', 
+							st_cnpq = '$st_cnpq', 
+							st_area_geral = '$st_area_geral', 
+							st_section = '$st_section', 
+							st_eng = '$st_eng', 
+							st_professor = '$st_professor', 
+							st_aluno = '$st_aluno', 
+							st_nr = '$st_nr', 
+							st_oral = '$st_oral', 
+							st_poster = '$st_poster', 
+							st_ano = '$st_ano'
+							WHERE id_st = $id_st
+							";
+				$this -> db -> query($sql);
+				$up++;
+			}
+		}
+
+		if ($RowT > 0) {
+			$site = base_url('index.php/inport/ro8/semic-notas/' . ($offset + 100));
+			echo '
+					<meta http-equiv="refresh" content="5;' . $site . '">
+					';
+		} else {
+			$sx .= '<h1>FIM</h1>';
+		}
+		$sx .= '</table>';
+
+		return ($sx);
+		}
+	
 	function inport_ic_parecer($id = 0,$ano) {
 		$tabela = "pibic_parecer_".$ano;
 		$offset = $id;

@@ -117,6 +117,9 @@ class inport extends CI_Controller {
 			case 'ic_parecer' :
 				$data['content'] = $this -> ro8s -> inport_ic_parecer($off,$ano);
 				break;	
+			case 'semic-notas' :
+				$data['content'] = $this -> ro8s -> inport_semic_notas($off);
+				break;					
 						
 		}
 		$this -> load -> view('content', $data);
@@ -149,6 +152,7 @@ class inport extends CI_Controller {
 		array_push($menu, array('RO8-PostGress', 'Professor', 'ITE', '/inport/ro8/professor'));
 		array_push($menu, array('RO8-PostGress', 'CsF', 'ITE', '/inport/ro8/csf'));
 		array_push($menu, array('RO8-PostGress', 'CIP - Artigos', 'ITE', '/inport/ro8/cip-artigos'));
+		array_push($menu, array('RO8-PostGress', 'SEMIC - Notas', 'ITE', '/inport/ro8/semic-notas'));
 		
 		array_push($menu, array('CNPq', 'Importar Artigos', 'ITE', '/inport/lattes/artigos'));
 		
