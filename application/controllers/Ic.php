@@ -1,5 +1,13 @@
 <?php
 class ic extends CI_Controller {
+	
+	function avaliadores_set()
+		{
+			/* Load Models */
+			$this -> load -> model('avaliadores');			
+			$this->avaliadores->regra_avaliadores();
+			redirect(base_url('index.php/ic'));
+		}
 
 	function __construct() {
 		global $dd, $acao;
@@ -43,6 +51,9 @@ class ic extends CI_Controller {
 		$menus = array();
 		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
 		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
+		array_push($menus, array('Docentes', 'index.php/ic/docentes'));
+		array_push($menus, array('Discentes', 'index.php/ic/discentes'));
+		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -187,17 +198,120 @@ class ic extends CI_Controller {
 
 	function index($id = 0) {
 
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function docentes($id = 0) {
+
 		/* Load Models */
-		//$this -> load -> model('ics');
+		$this -> load -> model('docentes');
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
 
-		$tela['title'] = $this -> lang -> line('title_ic');
-		$tela['tela'] = '';
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = $this -> docentes -> tabela_view();
+		$form -> see = true;
+		$form -> edit = false;
+		$form -> novo = false;
+		$form = $this -> docentes -> row($form);
 
-		$this -> load -> view('ic/menu', $tela);
+		$form -> row_edit = base_url('index.php/ic/docente_edit');
+		$form -> row_view = base_url('index.php/docente/view');
+		$form -> row = base_url('index.php/ic/docentes/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('page_docentes');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+	function avaliadores($id = 0)
+		{
+		/* Load Models */
+		$this -> load -> model('avaliadores');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+		$data['content'] = $this->avaliadores->avaliadores_area();
+		$data['title'] = msg('Avaliadores').' '
+						. msg('e').' '
+						. msg('Areas');
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);		
+		}	
+
+	function avaliadores_row($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('avaliadores');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = $this -> avaliadores -> tabela_view();
+		$form -> see = true;
+		$form -> edit = false;
+		$form -> novo = false;
+		$form = $this -> avaliadores -> row($form);
+
+		$form -> row_edit = base_url('index.php/ic/avaliadores');
+		$form -> row_view = base_url('index.php/avaliadores/view');
+		$form -> row = base_url('index.php/ic/avaliadores/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('page_avaliadores');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function discentes($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('estudantes');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = $this -> estudantes -> tabela_view();
+		$form -> see = true;
+		$form -> edit = false;
+		$form -> novo = false;
+		$form = $this -> estudantes -> row($form);
+
+		$form -> row_edit = base_url('index.php/ic/discente_edit');
+		$form -> row_view = base_url('index.php/discente/view');
+		$form -> row = base_url('index.php/ic/discentes/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('page_discentes');
+
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -280,10 +394,19 @@ class ic extends CI_Controller {
 
 	function view($id = 0, $check = '') {
 		/* Load Models */
-		$this -> load -> model('equipamentos');
+		$this -> load -> model('ics');
+		
+		$data = $this->ics->le($id);
 
 		$this -> cab();
 		$this -> load -> view('header/content_open');
+
+		$this -> load -> view('ic/plano',$data);
+		
+		$this -> load -> view('ic/plano_arquivo',$data);
+		$this -> load -> view('ic/plano_historico',$data);		
+		$this -> load -> view('ic/plano_avaliacao',$data);
+		
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
