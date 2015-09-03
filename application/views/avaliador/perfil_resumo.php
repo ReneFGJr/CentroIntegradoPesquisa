@@ -1,4 +1,4 @@
-<table width="300" align="right" class="lt1 border1 m10r m10b radius10 shadown"  m10r m10b>
+<table width="38%" cellspacing="5"  class="lt1 border1 shadown" align="right">
 	<tr>
 		<td colspan=5 class="lt2"><B>Resumo das avaliações</B></td>
 	</tr>

@@ -2,12 +2,85 @@
 .ui-autocomplete-loading {
   background: #fff url('../img/ajax/ajax_loader.gif') right center no-repeat !important;
 }
+/* Docente */
+#cabecalho-user-perfil {
+	width: 80%;
+	/*background-color: #f00038;*/
+	height: 200px;
+}
+
+.info-pessoais li{
+	list-style: none;
+	margin-left: 30px;
+	color: #484848;
+	padding-bottom: 2px;
+	
+}
+
+#foto-perfil{
+	background-color: #cbfbf4;
+	height: 200px;
+	width: 150px;
+	float: left;
+}
+
+.titulo-info-pesquisador {
+	color: #8B1217;
+}
+
+.espaco-informacoes-perfil {
+	height: 500px;
+	width: 500px;
+}
+
+.info-pesquisador li{
+	list-style: none;
+	color: #484848;
+	padding-bottom: 5px;
+}
+#info-pesquisador {
+	float: right;
+	height: 90%;
+	background-color: #e4e4e4;
+	padding: 10px 10px 20px 10px;
+	width: 300px;
+}
+
+/* */
 
 .ui-state-focus { color: blue; }
 .ui-menu-item { color: blue; }
 .ui-menu-item:hover { color: green; }
 
 /* Botoes */
+.bt_acao
+	{
+	background-color: #308030;
+	color: #FFFFFF;
+	cursor: pointer;
+	width: 100%;
+	height: 20px;
+	padding-top: 5px;
+	}
+.bt_acao:hover
+	{
+	background-color: #106010;
+	color: #FFFFFF;
+	}
+.bt_desativado
+	{
+	background-color: #d0d0d0;
+	color: #FFFFFF;
+	cursor: pointer;
+	width: 100%;
+	height: 20px;
+	padding-top: 5px;
+	}
+.bt_desativado:hover
+	{
+	background-color: #805050;
+	color: #FFFFFF;
+	}		
 a.botao-excluir {
 	border: 1px solid #FF0000;
 	font-size: 12px;
@@ -125,6 +198,11 @@ a.lt1 {
 .m10b {
 	margin-bottom: 10px;
 }
+/* Padding */
+.pad5 td
+	{
+		padding: 3px;
+	}
 /* Borders */
 .border1 {
 	border: 1px solid #000000;

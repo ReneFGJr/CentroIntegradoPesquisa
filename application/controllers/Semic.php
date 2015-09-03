@@ -33,6 +33,7 @@ class semic extends CI_Controller {
 		$menus = array();
 		array_push($menus, array('Programacao', 'index.php/semic'));
 		array_push($menus, array('Trabalhos', 'index.php/semic/trabalhos'));
+		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);

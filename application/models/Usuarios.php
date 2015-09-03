@@ -1,95 +1,123 @@
 <?php
 class usuarios extends CI_model {
 	var $tabela = 'us_usuario';
-	function label($nome='',$id)
-		{
-			$nome = '<A HREF="'.base_url('index.php/person/view/'.$id.'/'.checkpost_link($id)).'" target="_new" class="link">'.nbr_autor($nome,7).'</A>';
-			return($nome);
-		}
+
+	function cp_perfil() {
+		$cp = array();
+		$sql_tipo = 'select * from pro_equipamento_tipo where pet_ativo = 1';
+		array_push($cp, array('$H8', 'id_us', '', False, True));
+//		array_push($cp, array('$S20', 'us_cpf', msg('cpf'), False, True));
+//		array_push($cp, array('$S20', 'us_emplid', msg('employID'), False, True));
+
+		array_push($cp, array('$S100', 'us_link_lattes', msg('link_lattes'), False, True));
 		
+		//$sql = "select * from us_tipo order by ust_id ";
+		//array_push($cp, array('$Q ust_id:ust_nome:' . $sql, 'usuario_tipo_ust_id', msg('us_tipo'), False, True));
+
+		//$sql = "select * from us_funcao where usf_ativo = 1 order by usf_id ";
+		//array_push($cp, array('$Q usf_id:usf_nome:' . $sql, 'usuario_funcao_usf_id', msg('us_funcao'), False, True));
+
+		$sql = "select * from us_titulacao where ust_ativo = 1 order by ust_id ";
+		array_push($cp, array('$Q ust_id:ust_titulacao_sigla:' . $sql, 'usuario_titulacao_ust_id', msg('us_titulacao'), False, True));
+
+		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('Feminino'), 'us_genero', msg('us_genero'), True, True));
+
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('eq_ativo_2'), True, True));
+		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), True, True));
+
+		array_push($cp, array('$Q id_as:as_situacao:select * from us_avaliador_situacao where as_ativo = 1', 'us_avaliador', msg('avaliador'), True, True));
+
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+	}
+
+	function label($nome = '', $id) {
+		$nome = '<A HREF="' . base_url('index.php/person/view/' . $id . '/' . checkpost_link($id)) . '" target="_new" class="link">' . nbr_autor($nome, 7) . '</A>';
+		return ($nome);
+	}
+
 	function row($obj) {
 		$obj -> fd = array('id_us', 'us_nome', 'us_cracha', 'us_cpf', 'us_emplid');
-		$obj -> lb = array('ID', 'Nome', 'Cracha', 'CPF','EmployEd');
-		$obj -> mk = array('', 'L', 'C', 'C' ,'C');
+		$obj -> lb = array('ID', 'Nome', 'Cracha', 'CPF', 'EmployEd');
+		$obj -> mk = array('', 'L', 'C', 'C', 'C');
 		return ($obj);
-	}	
-	
-	function le($id)
-		{
-			$sql = "select * from ".$this->tabela."
-						left join us_tipo on ust_id = usuario_tipo_ust_id  
-						where id_us = ".$id;
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$line = $rlt[0];
-			$line['us_contatos'] = '(41) xxxx.xxxx';
-			$line['us_curso'] = 'não identificado';
-			$line['us_perfil'] = $line['ust_nome'];
-			$line['us_titulacao'] = '';
-			return($line);
-		}
-	
-	function lista_email($id=0)
-		{
-			$sql = "select * from us_email where usuario_id_us = ".$id;
-			$sx = msg('nenhum e-mail localizado');
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<font class="lt2">';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$sx .= '<br>';
-					//$sx .= '<A HREF="#">';
-					$sx .= $line['usm_email'];
-					//$sx .= '</A>';
-					$sx .= '(*)';
-				}
-			return($sx);
-		}
-		
-	function cp_email()
-		{
-			$cp = array();
-			array_push($cp,array('$H8','id_usm','',False,True));
-			array_push($cp,array('$H8','usuario_id_us','',False,True));
-			
-			array_push($cp,array('$O PERN:'.msg('pessoal').'&COOP:'.msg('corporativo'),'usm_tipo','',False,True));
-			array_push($cp,array('$EMAIL','usm_email','',False,True));
-			array_push($cp,array('$O 1:SIM&0:NÃO','usm_ativo','',False,True));
-			array_push($cp,array('$O 1:SIM&0:NÃO','usm_email_preferencial','',False,True));
-			return($cp);			
-		}	
-		
-	function cp()
-		{
-			$cp = array();
-			$sql_tipo = 'select * from pro_equipamento_tipo where pet_ativo = 1';
-			array_push($cp,array('$H8','id_us','',False,True));
-			array_push($cp,array('$S200','us_nome',msg('us_nome'),True,False));
-			array_push($cp,array('$S12','us_cracha',msg('cracha'),False,True));
-			array_push($cp,array('$S20','us_cpf',msg('cpf'),False,True));
-			array_push($cp,array('$S20','us_emplid',msg('employID'),False,True));
-			
-			array_push($cp,array('$S100','us_link_lattes',msg('link_lattes'),False,True));
-			$sql = "select * from us_tipo order by ust_id ";
-			array_push($cp,array('$Q ust_id:ust_nome:'.$sql,'usuario_tipo_ust_id',msg('us_tipo'),False,True));
+	}
 
-			$sql = "select * from us_funcao where usf_ativo = 1 order by usf_id ";
-			array_push($cp,array('$Q usf_id:usf_nome:'.$sql,'usuario_funcao_usf_id',msg('us_funcao'),False,True));
-			
-			$sql = "select * from us_titulacao where ust_ativo = 1 order by ust_id ";
-			array_push($cp,array('$Q ust_id:ust_nome:'.$sql,'usuario_titulacao_ust_id',msg('us_titulacao'),False,True));
-					
-			array_push($cp,array('$O M:'.msg('masculino').'&F:'.msg('Feminino'),'us_genero',msg('us_genero'),True,True));
-			
-			array_push($cp,array('$O 1:SIM&0:NÃO','us_ativo',msg('eq_ativo_2'),True,True));
-			array_push($cp,array('$O 0:NÃO&1:SIM','us_teste',msg('user_teste'),True,True));
-			
-			array_push($cp,array('$B','',msg('enviar'),false,True));
-			
-			return($cp);
+	function le($id) {
+		$sql = "select *
+				from
+	                us_usuario
+	                left join us_hora as h on h.usuario_id_us = us_usuario.id_us
+	                left join us_email as e on e.usuario_id_us = us_usuario.id_us
+	                left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
+				where id_us = " . $id;
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$line = $rlt[0];
+		$line['us_ss'] = '';
+		$line['us_lattes'] = '';
+		return ($line);
+	}
+
+	function lista_email($id = 0) {
+		$sql = "select * from us_email where usuario_id_us = " . $id;
+		$sx = msg('nenhum e-mail localizado');
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<font class="lt2">';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<br>';
+			//$sx .= '<A HREF="#">';
+			$sx .= $line['usm_email'];
+			//$sx .= '</A>';
+			$sx .= '(*)';
 		}
+		return ($sx);
+	}
+
+	function cp_email() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_usm', '', False, True));
+		array_push($cp, array('$H8', 'usuario_id_us', '', False, True));
+
+		array_push($cp, array('$O PERN:' . msg('pessoal') . '&COOP:' . msg('corporativo'), 'usm_tipo', '', False, True));
+		array_push($cp, array('$EMAIL', 'usm_email', '', False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'usm_ativo', '', False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'usm_email_preferencial', '', False, True));
+		return ($cp);
+	}
+
+	function cp() {
+		$cp = array();
+		$sql_tipo = 'select * from pro_equipamento_tipo where pet_ativo = 1';
+		array_push($cp, array('$H8', 'id_us', '', False, True));
+		array_push($cp, array('$S200', 'us_nome', msg('us_nome'), True, False));
+		array_push($cp, array('$S12', 'us_cracha', msg('cracha'), False, True));
+		array_push($cp, array('$S20', 'us_cpf', msg('cpf'), False, True));
+		array_push($cp, array('$S20', 'us_emplid', msg('employID'), False, True));
+
+		array_push($cp, array('$S100', 'us_link_lattes', msg('link_lattes'), False, True));
+//		$sql = "select * from us_tipo order by ust_id ";
+//		array_push($cp, array('$Q ust_id:ust_titulacao_sigla:' . $sql, 'usuario_tipo_ust_id', msg('us_tipo'), False, True));
+
+		$sql = "select * from us_funcao where usf_ativo = 1 order by usf_id ";
+		array_push($cp, array('$Q usf_id:usf_nome:' . $sql, 'usuario_funcao_usf_id', msg('us_funcao'), False, True));
+
+		$sql = "select * from us_titulacao where ust_ativo = 1 order by ust_id ";
+		array_push($cp, array('$Q ust_id:ust_nome:' . $sql, 'usuario_titulacao_ust_id', msg('us_titulacao'), False, True));
+
+		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('Feminino'), 'us_genero', msg('us_genero'), True, True));
+
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('eq_ativo_2'), True, True));
+		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), True, True));
+
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+	}
 
 	function findStudentByCracha($cracha) {
 		$cracha = sonumero($cracha);
@@ -108,7 +136,7 @@ class usuarios extends CI_model {
 		}
 
 		/* Busca dados do cadastro */
-		$sql = "select * from ".$this->tabela." where us_cracha = '" . $cracha . "' ";
+		$sql = "select * from " . $this -> tabela . " where us_cracha = '" . $cracha . "' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		if (count($rlt) > 0) {
@@ -116,7 +144,7 @@ class usuarios extends CI_model {
 			return ($cracha);
 		} else {
 			/* Consulta Web Service */
-			$this->load->model('webservice/ws_sga');
+			$this -> load -> model('webservice/ws_sga');
 			$rst = $this -> ws_sga -> findStudentByCracha($cracha);
 
 			/* Busca dados do cadastro */
@@ -131,49 +159,47 @@ class usuarios extends CI_model {
 			}
 		}
 
-	}	
+	}
 
 	function readByCracha($cracha) {
 		/* Busca dados do cadastro */
-		$sql = "select * from ".$this->tabela." as t1
+		$sql = "select * from " . $this -> tabela . " as t1
 					left join us_titulacao as t2 on t1.usuario_titulacao_ust_id = t2.ust_id				 
 					where us_cracha = '" . $cracha . "' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
-		
-		if (count($rlt) > 0)
-			{
-				$line = $rlt[0];
-				$id = $line['id_us'];
-				$line = $this->le($id);
-			} else {
-				$line = array();
-			}
-		return($line);
-	}	
-	
-	function readById($id)
-		{
+
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$id = $line['id_us'];
+			$line = $this -> le($id);
+		} else {
+			$line = array();
+		}
+		return ($line);
+	}
+
+	function readById($id) {
 		/* Busca dados do cadastro */
 		$sql = "select *, us_titulacao.ust_nome as titulacao, 
-					us_tipo.ust_nome as perfil
-					 from ".$this->tabela."	
+					us_tipo.ust_titulacao_sigla as perfil
+					 from " . $this -> tabela . "	
 					left join us_titulacao on usuario_titulacao_ust_id= us_titulacao.ust_id		
 					left join us_tipo on usuario_tipo_ust_id = us_tipo.ust_id		 
 					where id_us = '" . $id . "' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
-		
+
 		$line = $rlt[0];
 		$line['us_titulacao'] = $line['titulacao'];
-		$line['us_titulacao_sigla'] = $line['ust_sigla'];
+		$line['us_titulacao_sigla'] = $line['ust_titulacao_sigla'];
 		$line['us_perfil'] = $line['perfil'];
 		$line['us_curso'] = '';
 		$line['us_contatos'] = '';
-				
-		return($line);		
-		}
-	
+
+		return ($line);
+	}
+
 	function insere_usuario($DadosUsuario) {
 		$nome = nbr_autor($DadosUsuario['nome'], 7);
 		$cpf = $DadosUsuario['cpf'];
@@ -184,7 +210,7 @@ class usuarios extends CI_model {
 		$emplid = '';
 		$tipo = $DadosUsuario['tipo'];
 
-		$sql = "select * from ".$this->tabela." where us_cpf = '$cpf' ";
+		$sql = "select * from " . $this -> tabela . " where us_cpf = '$cpf' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 
@@ -193,7 +219,7 @@ class usuarios extends CI_model {
 			$sql = "";
 		} else {
 			/* Novo registro */
-			$sql = "insert into ".$this->tabela." 
+			$sql = "insert into " . $this -> tabela . " 
 							(
 							us_nome, us_cpf, us_cracha,
 							us_emplid, usuario_tipo_ust_id, us_dt_nascimento
@@ -205,5 +231,6 @@ class usuarios extends CI_model {
 			$this -> db -> query($sql);
 		}
 	}
+
 }
 ?>

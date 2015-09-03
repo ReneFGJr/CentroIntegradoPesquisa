@@ -15,6 +15,19 @@ if (!function_exists(('msg')))
 
 $lang['versao'] = 'v0.15.25';
 
+/*****************************************************************/
+$lang['page_docentes'] = 'Docentes';
+$lang['page_avaliadores'] = 'Avaliadores';
+$lang['page_discente'] = 'Discentes';
+$lang['Vigencia'] = 'Vigência';
+$lang['Orientador'] = 'Orientador';
+
+$lang['pt_BR'] = 'Português';
+$lang['en'] = 'Inglês';
+$lang['Orientador'] = 'Orientador';
+$lang['Areas'] = 'Áreas';
+$lang['area_nao_definida'] = 'Área não definida';
+
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /* Ciencia sem fronteiras */
 $lang['csf_bt_cancelar'] 			= 'Cancelar processo';
