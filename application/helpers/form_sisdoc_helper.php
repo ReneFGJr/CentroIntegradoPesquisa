@@ -1,17 +1,4 @@
 <?php
-/**
- * CodeIgniter
- * sisDOC Labs
- *
- * @package	CodeIgniter
- * @author	Rene F. Gabriel Junior <renefgj@gmail.com>
- * @copyright Copyright (c) 2006 - 2015, sisDOC
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	http://codeigniter.com
- * @since	Version 2.1.0
- * @version 0.15.35
- * @filesource
- */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
@@ -24,6 +11,60 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link		http://www.sisdoc.com.br/CodIgniter
  */
 $dd = array();
+
+/**
+ * Classe container para metodos estaticos de utilidades variadas
+ * @author goncin (goncin ARROBA gmail PONTO com)
+ */
+ 
+  const NN_PONTO = '\.';
+  const NN_PONTO_ESPACO = '. ';
+  const NN_ESPACO = ' ';
+  const NN_REGEX_MULTIPLOS_ESPACOS = '\s+';
+  const NN_REGEX_NUMERO_ROMANO =
+    '^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$';
+ 
+   /**
+   * @param string $nome O nome a ser normalizado
+   * @return string O nome devidamente normalizado
+   */
+  function normalizarNome($nome) {
+    $nome = mb_ereg_replace(self::NN_PONTO, self::NN_PONTO_ESPACO, $nome);
+    $nome = mb_ereg_replace(self::NN_REGEX_MULTIPLOS_ESPACOS, self::NN_ESPACO,
+      $nome);
+    $nome = ucwords(strtolower($nome)); // alterando essa linha pela anterior funciona para acentos
+    $partesNome = mb_split(self::NN_ESPACO, $nome);
+    $excecoes = array(
+      'de', 'do', 'di', 'da', 'dos', 'das', 'dello', 'della',
+      'dalla', 'dal', 'del', 'e', 'em', 'na', 'no', 'nas', 'nos', 'van', 'von',
+      'y', 'der'
+    );
+ 
+    for($i = 0; $i < count($partesNome); ++$i) {
+      
+    if(mb_ereg_match(self::NN_REGEX_NUMERO_ROMANO, mb_strtoupper($partesNome[$i])))
+            $partesNome[$i] = mb_strtoupper($partesNome[$i]);
+      foreach($excecoes as $excecao)
+    if(mb_strtolower($partesNome[$i]) == mb_strtolower($excecao))
+          $partesNome[$i] = $excecao;
+       }
+   $nomeCompleto = implode(self::NN_ESPACO, $partesNome);
+     return addslashes($nomeCompleto); 
+}
+  
+/**
+ * CodeIgniter
+ * sisDOC Labs
+ *
+ * @package	CodeIgniter
+ * @author	Rene F. Gabriel Junior <renefgj@gmail.com>
+ * @copyright Copyright (c) 2006 - 2015, sisDOC
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 2.1.0
+ * @version 0.15.35
+ * @filesource
+ */  
 
 /* checa e cria diretorio */
 if (!function_exists('dir')) {
