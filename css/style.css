@@ -24,6 +24,10 @@
 	float: left;
 }
 
+.bloco_avaliador
+	{
+    	bottom: 0;
+	}
 .titulo-info-pesquisador {
 	color: #8B1217;
 }

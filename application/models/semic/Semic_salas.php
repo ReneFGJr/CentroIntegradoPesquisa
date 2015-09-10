@@ -4,23 +4,20 @@ class semic_salas extends CI_Model {
 	var $tabela_bloco = 'semic_bloco';
 	var $tabela_status = 'semic_bloco_situacao';
 	var $tabela_tipo_apresentacao = 'semic_tipo_apresentacao';
-	
-	function referencia($line)
-		{
-			$sc = '';
-			if (trim($line['st_eng'])=='S')
-				{
-					$sc .= 'i';
-				}
-			
-			$sc .= $line['st_section'];
-			$sc .= $line['st_nr'];
-			if (trim($line['st_edital'])=='PIBITI')
-				{
-					$sc .= 'T';
-				}
-			return($sc);
+
+	function referencia($line) {
+		$sc = '';
+		if (trim($line['st_eng']) == 'S') {
+			$sc .= 'i';
 		}
+
+		$sc .= $line['st_section'];
+		$sc .= $line['st_nr'];
+		if (trim($line['st_edital']) == 'PIBITI') {
+			$sc .= 'T';
+		}
+		return ($sc);
+	}
 
 	function row($obj) {
 		$obj -> fd = array('id_sl', 'sl_nome', 'sl_bloco');
@@ -74,21 +71,17 @@ class semic_salas extends CI_Model {
 		return ($cp);
 	}
 
-	function mostra_bloco($id = 0, $area = '', $nr = '',$acao) {
+	function situacao_avaliador($sa = 0) {
+		$st = array();
+		$st[0] = '<font color="blue">não indicado</font>';
+		$st[1] = '<font color="orange">convidado</font>';
+		$st[2] = '<font color="green">aceito</font>';
+		$st[3] = '<font color="red">recusado</font>';
 
-		if (strlen($nr) > 0) {
-			if ($acao == 'ADD')
-				{
-				$sql = "update semic_nota_trabalhos set st_bloco = $id where id_st = $nr ";
-				$this -> db -> query($sql);
-				} 
-			if ($acao == 'DEL')
-				{
-				$sql = "update semic_nota_trabalhos set st_bloco = 0 where id_st = $nr ";
-				$this -> db -> query($sql);
-				} 
-		}
-		$ano = (date("Y") - 1);
+		return ($st[$sa]);
+	}
+
+	function mostra_dados_sala($id = 0) {
 		$sql = "select * from semic_bloco 
 						where id_sb = " . $id;
 		$rlt = db_query($sql);
@@ -99,30 +92,75 @@ class semic_salas extends CI_Model {
 		$sl .= $line['sb_hora'];
 		$sl .= ' ';
 		$sl .= $line['sb_nome'];
+		return ($sl);
+	}
 
-		$sql = "select count(*) as total, st_section from semic_nota_trabalhos 
+	function mostra_bloco($id = 0, $area = '', $nr = '', $acao) {
+
+		if (strlen($nr) > 0) {
+			if ($acao == 'ADD') {
+				$sql = "update semic_nota_trabalhos set st_bloco = $id where id_st = $nr ";
+				$this -> db -> query($sql);
+			}
+			if ($acao == 'DEL') {
+				$sql = "update semic_nota_trabalhos set st_bloco = 0 where id_st = $nr ";
+				$this -> db -> query($sql);
+			}
+		}
+		$ano = (date("Y") - 1);
+		$sql = "select * from semic_bloco 
+						where id_sb = " . $id;
+		$rlt = db_query($sql);
+		$line = db_read($rlt);
+		$sl = '';
+		/* Tipo do bloco 1-Oral, 2-Pôster */
+		$tipo_bloco = $line['sb_tipo'];
+
+		$sl .= '<h1>' . $this -> mostra_dados_sala($id) . '</h1>';
+		$sa = '';
+		
+		/* Redirecionamentos */
+		if ($tipo_bloco != '1') {
+			redirect(base_url('index.php/semic'));
+		}
+		
+		if ($tipo_bloco == '1') {
+			$avaliador_1 = link_avaliador('', $line['sb_avaliador_1']);
+			$avaliador_2 = link_avaliador('', $line['sb_avaliador_2']);
+			$avaliador_3 = link_avaliador('', $line['sb_avaliador_3']);
+
+			$situacao_1 = $this -> situacao_avaliador($line['sb_avaliador_situacao_1']);
+			$situacao_2 = $this -> situacao_avaliador($line['sb_avaliador_situacao_2']);
+			$situacao_3 = $this -> situacao_avaliador($line['sb_avaliador_situacao_3']);
+
+			$editar_1 = '<a href="#" onclick="newwin(\'' . base_url('index.php/semic/bloco_avaliador/' . $id . '/1/' . checkpost_link($id . '1')) . '\');">editar</a>';
+			$editar_2 = '<a href="#" onclick="newwin(\'' . base_url('index.php/semic/bloco_avaliador/' . $id . '/2/' . checkpost_link($id . '2')) . '\');">editar</a>';
+			$editar_3 = '<a href="#" onclick="newwin(\'' . base_url('index.php/semic/bloco_avaliador/' . $id . '/3/' . checkpost_link($id . '3')) . '\');">editar</a>';
+
+			$sql = "select count(*) as total, st_section from semic_nota_trabalhos 
 					where (st_ano = '$ano')
 					and st_oral = 'S' and (st_bloco = 0 or st_bloco is null)
 					group by st_section
 					";
-		$rlt = db_query($sql);
+			$rlt = db_query($sql);
 
-		$sa = '<table class="tabela00">';
-		$tot = 0;
-		while ($line = db_read($rlt)) {
-			$tot++;
-			$href = '<a href="' . base_url('index.php/semic/bloco_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '">';
-			$sa .= '<tr>';
-			$sa .= '<td>';
-			$sa .= $href . $line['st_section'] . '</A>';
-			$sa .= '</td>';
-			$sa .= '<td>';
-			$sa .= $href . $line['total'] . '</A>';
-			$sa .= '</td>';
-			$sa .= '</tr>';
+			$sa = '<table class="tabela00">';
+			$tot = 0;
+			while ($line = db_read($rlt)) {
+				$tot++;
+				$href = '<a href="' . base_url('index.php/semic/bloco_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '">';
+				$sa .= '<tr>';
+				$sa .= '<td>';
+				$sa .= $href . $line['st_section'] . '</A>';
+				$sa .= '</td>';
+				$sa .= '<td>';
+				$sa .= $href . $line['total'] . '</A>';
+				$sa .= '</td>';
+				$sa .= '</tr>';
+			}
+			$sa .= '<tr><td colspan=2>Total ' . $tot . '</td></tr>';
+			$sa .= '</table>';
 		}
-		$sa .= '<tr><td colspan=2>Total ' . $tot . '</td></tr>';
-		$sa .= '</table>';
 
 		/******************* SEM BLOCO *******************/
 		$sb = '<table class="tabela00">';
@@ -140,7 +178,7 @@ class semic_salas extends CI_Model {
 				$href = '<a href="' . base_url('index.php/semic/bloco_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '/' . $line['id_st'] . '/ADD">';
 				$sb .= '<tr>';
 				$sb .= '<td>';
-				$sb .= $href . $this->referencia($line). '</A>';
+				$sb .= $href . $this -> referencia($line) . '</A>';
 				$sb .= '</td>';
 				$sb .= '</tr>';
 
@@ -148,6 +186,29 @@ class semic_salas extends CI_Model {
 		}
 		$sb .= '<tr><td colspan=2>Total ' . $tot . '</td></tr>';
 		$sb .= '</table>';
+
+		/* Avalaidores deste bloco */
+
+		$se = '<table width="100%" class="lt1">';
+		$se .= '<tr>
+				<td align="right"  width="100">Avaliador 1:</td>
+				<td>' . $avaliador_1 . '</td>
+				<td width="100">' . $situacao_1 . '</td>
+				<td width="10">' . $editar_1 . '</td>
+				</tr>';
+		$se .= '<tr>
+				<td align="right">Avaliador 2:</td>
+				<td>' . $avaliador_2 . '</td>
+				<td width="100">' . $situacao_2 . '</td>
+				<td width="10">' . $editar_2 . '</td>
+				</tr>';
+		$se .= '<tr>
+				<td align="right">Suplente:</td>
+				<td>' . $avaliador_3 . '</td>
+				<td width="100">' . $situacao_3 . '</td>
+				<td width="10">' . $editar_3 . '</td>
+				</tr>';
+		$se .= '</table>';
 
 		/******************* NO BLOCO *******************/
 		$total = 0;
@@ -167,11 +228,11 @@ class semic_salas extends CI_Model {
 				$href = '<a href="' . base_url('index.php/semic/bloco_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '/' . $line['id_st'] . '/DEL">';
 				$sc .= '<tr>';
 				$sc .= '<td>';
-				$sc .= $href . $this->referencia($line). '</A>';
+				$sc .= $href . $this -> referencia($line) . '</A>';
 				$sc .= '</td>';
-				
+
 				$sc .= '<td>';
-				$sc .= $href . $line['us_nome']. '</A>';
+				$sc .= $href . $line['us_nome'] . '</A>';
 				$sc .= '</td>';
 
 				$sc .= '</tr>';
@@ -190,7 +251,7 @@ class semic_salas extends CI_Model {
 					left join semic_bloco on id_sb = st_bloco
 					left join semic_salas on id_sl = sb_sala
 					where (st_ano = '$ano')
-					and st_oral = 'S' and (st_bloco <> $id and st_bloco <> 0) and (st_section = '".$area."')
+					and st_oral = 'S' and (st_bloco <> $id and st_bloco <> 0) and (st_section = '" . $area . "')
 					order by sb_sala, sb_data, sb_hora, lpad(st_nr,4,'0')
 					";
 			$rlt = db_query($sql);
@@ -199,32 +260,29 @@ class semic_salas extends CI_Model {
 			while ($line = db_read($rlt)) {
 				$sl = $line['sl_nome'];
 				$totax++;
-				
-				if ($sl != $xsl)
-					{
-						$xsl = $sl;
-						$sd .= '<tr>
+
+				if ($sl != $xsl) {
+					$xsl = $sl;
+					$sd .= '<tr>
 								<td colspan=5 class="lt3">
-								'.$sl.'
+								' . $sl . '
 								</td>
 								</tr>';
-					}
-				
+				}
+
 				$href = '<a href="' . base_url('index.php/semic/bloco_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '/' . $line['id_st'] . '/DEL">';
 				$sd .= '<tr>';
 				$sd .= '<td>';
-				$sd .= $href . $this->referencia($line). '</A>';
+				$sd .= $href . $this -> referencia($line) . '</A>';
 				$sd .= '</td>';
-				
-				$hrefa = '<a href="' . base_url('index.php/semic/bloco_view/' . $line['id_sb'] . '/' . 
-								checkpost_link($line['id_sb'])).'">';
-												
-				
-				$sd .= '<td>'.$hrefa.$line['sb_data'].'</a></td>';
-				$sd .= '<td>'.$hrefa.$line['sb_hora'].'</a></td>';
-				
+
+				$hrefa = '<a href="' . base_url('index.php/semic/bloco_view/' . $line['id_sb'] . '/' . checkpost_link($line['id_sb'])) . '">';
+
+				$sd .= '<td>' . $hrefa . $line['sb_data'] . '</a></td>';
+				$sd .= '<td>' . $hrefa . $line['sb_hora'] . '</a></td>';
+
 				$sd .= '<td>';
-				$sd .= $href . $line['us_nome']. '</A>';
+				$sd .= $href . $line['us_nome'] . '</A>';
 				$sd .= '</td>';
 
 				$sd .= '</tr>';
@@ -235,16 +293,194 @@ class semic_salas extends CI_Model {
 
 		$sr = '<table width="100%" border=1 align="center">';
 		$sr .= '<tr valign="top">';
-		$sr .= '<td width="25%"><h2>Áreas abertas</h2>' . $sa . '</td>';
-		$sr .= '<td width="25%"><h2>Não indicados</h2>' . $sb . '</td>';
-		$sr .= '<td width="50%"><h2>Indicados</h2>' . $sc . $sd .'</td>';
+		$sr .= '<td width="20%"><h2>Áreas abertas</h2>' . $sa . '</td>';
+		$sr .= '<td width="20%"><h2>Não indicados</h2>' . $sb . '</td>';
+		$sr .= '<td width="20%"><h2>Indicados</h2>' . $sc . $sd . '</td>';
+		$sr .= '<td width="40%"><h2>Avaliadores</h2>' . $se . '</td>';
 		$sr .= '</table>';
-		
+
 		$sql = "update " . $this -> tabela_bloco . " set sb_trabalhos = '$total' where id_sb = $id ";
 		$this -> db -> query($sql);
-		return ($sl.$sr);
+		return ($sl . $sr);
 	}
+	function mostra_poster_bloco($id = 0, $area = '', $nr = '', $acao) {
 
+		if (strlen($nr) > 0) {
+			if ($acao == 'ADD') {
+				$sql = "update semic_nota_trabalhos set st_bloco = $id where id_st = $nr ";
+				$this -> db -> query($sql);
+			}
+			if ($acao == 'DEL') {
+				$sql = "update semic_nota_trabalhos set st_bloco = 0 where id_st = $nr ";
+				$this -> db -> query($sql);
+			}
+		}
+		$ano = (date("Y") - 1);
+		$sql = "select * from semic_bloco 
+						where id_sb = " . $id;
+		$rlt = db_query($sql);
+		$line = db_read($rlt);
+		$sl = '';
+		/* Tipo do bloco 1-Oral, 2-Pôster */
+		$tipo_bloco = $line['sb_tipo'];
+
+		$sl .= '<h1>' . $this -> mostra_dados_sala($id) . '</h1>';
+		$sa = '';
+		
+		/* Redirecionamentos */
+		if ($tipo_bloco != '2') {
+			redirect(base_url('index.php/semic'));
+		}
+		
+		if ($tipo_bloco == '2') {
+
+			$sql = "select count(*) as total, st_section from semic_nota_trabalhos 
+					where (st_ano = '$ano')
+					and st_poster = 'S' and (st_bloco_poster = 0 or st_bloco_poster is null)
+					group by st_section
+					";
+			$rlt = db_query($sql);
+
+			$sa = '<table class="tabela00">';
+			$tot = 0;
+			while ($line = db_read($rlt)) {
+				$tot++;
+				$href = '<a href="' . base_url('index.php/semic/bloco_poster_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '">';
+				$sa .= '<tr>';
+				$sa .= '<td>';
+				$sa .= $href . $line['st_section'] . '</A>';
+				$sa .= '</td>';
+				$sa .= '<td>';
+				$sa .= $href . $line['total'] . '</A>';
+				$sa .= '</td>';
+				$sa .= '</tr>';
+			}
+			$sa .= '<tr><td colspan=2>Total ' . $tot . '</td></tr>';
+			$sa .= '</table>';
+		}
+
+		/******************* SEM BLOCO *******************/
+		$sb = '<table class="tabela00">';
+		if (strlen($area) > 0) {
+			$sql = "select * from semic_nota_trabalhos 
+					where (st_ano = '$ano')
+					and st_poster = 'S' and (st_bloco_poster = 0 or st_bloco_poster is null)
+					and st_section = '$area'
+					order by lpad(st_nr,4,'0')
+					";
+			$rlt = db_query($sql);
+			$tot = 0;
+			while ($line = db_read($rlt)) {
+				$tot++;
+				$href = '<a href="' . base_url('index.php/semic/bloco_poster_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '/' . $line['id_st'] . '/ADD">';
+				$sb .= '<tr>';
+				$sb .= '<td>';
+				$sb .= $href . $this -> referencia($line) . '</A>';
+				$sb .= '</td>';
+				$sb .= '</tr>';
+
+			}
+		}
+		$sb .= '<tr><td colspan=2>Total ' . $tot . '</td></tr>';
+		$sb .= '</table>';
+
+		/* Avalaidores deste bloco */
+
+
+		/******************* NO BLOCO *******************/
+		$total = 0;
+		$sc = '';
+		if (strlen($id) > 0) {
+			$sc = '<table class="tabela00">';
+			$sql = "select * from semic_nota_trabalhos 
+					left join us_usuario on us_cracha = st_professor 
+					where (st_ano = '$ano')
+					and st_poster = 'S' and (st_bloco_poster = $id)
+					order by lpad(st_nr,4,'0')
+					";
+			$rlt = db_query($sql);
+			$tot = 0;
+			while ($line = db_read($rlt)) {
+				$total++;
+				$href = '<a href="' . base_url('index.php/semic/bloco_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '/' . $line['id_st'] . '/DEL">';
+				$sc .= '<tr>';
+				$sc .= '<td>';
+				$sc .= $href . $this -> referencia($line) . '</A>';
+				$sc .= '</td>';
+
+				$sc .= '<td>';
+				$sc .= $href . $line['us_nome'] . '</A>';
+				$sc .= '</td>';
+
+				$sc .= '</tr>';
+			}
+			$sc .= '<tr><td colspan=2>Total ' . $total . '</td></tr>';
+			$sc .= '</table>';
+		}
+
+		/******************* EM OUTROS BLOCS *******************/
+		$totax = 0;
+		$sd = '';
+		if (strlen($id) > 0) {
+			$sd = '<table class="tabela00">';
+			$sql = "select * from semic_nota_trabalhos 
+					left join us_usuario on us_cracha = st_professor 
+					left join semic_bloco on id_sb = st_bloco
+					left join semic_salas on id_sl = sb_sala
+					where (st_ano = '$ano')
+					and st_poster = 'S' and (st_bloco_poster <> $id and st_bloco_poster <> 0) and (st_section = '" . $area . "')
+					order by sb_sala, sb_data, sb_hora, lpad(st_nr,4,'0')
+					";
+echo $sql;					
+			$rlt = db_query($sql);
+			$tot = 0;
+			$xsl = '';
+			while ($line = db_read($rlt)) {
+				$sl = $line['sl_nome'];
+				$totax++;
+
+				if ($sl != $xsl) {
+					$xsl = $sl;
+					$sd .= '<tr>
+								<td colspan=5 class="lt3">
+								' . $sl . '
+								</td>
+								</tr>';
+				}
+
+				$href = '<a href="' . base_url('index.php/semic/bloco_view/' . $id . '/' . checkpost_link($id) . '/' . $line['st_section']) . '/' . $line['id_st'] . '/DEL">';
+				$sd .= '<tr>';
+				$sd .= '<td>';
+				$sd .= $href . $this -> referencia($line) . '</A>';
+				$sd .= '</td>';
+
+				$hrefa = '<a href="' . base_url('index.php/semic/bloco_view/' . $line['id_sb'] . '/' . checkpost_link($line['id_sb'])) . '">';
+
+				$sd .= '<td>' . $hrefa . $line['sb_data'] . '</a></td>';
+				$sd .= '<td>' . $hrefa . $line['sb_hora'] . '</a></td>';
+
+				$sd .= '<td>';
+				$sd .= $href . $line['us_nome'] . '</A>';
+				$sd .= '</td>';
+
+				$sd .= '</tr>';
+			}
+			$sd .= '<tr><td colspan=2>Total ' . $totax . '</td></tr>';
+			$sd .= '</table>';
+		}
+
+		$sr = '<table width="100%" border=1 align="center">';
+		$sr .= '<tr valign="top">';
+		$sr .= '<td width="20%"><h2>Áreas abertas</h2>' . $sa . '</td>';
+		$sr .= '<td width="20%"><h2>Não indicados</h2>' . $sb . '</td>';
+		$sr .= '<td width="20%"><h2>Indicados</h2>' . $sc . $sd . '</td>';
+		//$sr .= '<td width="40%"><h2>Avaliadores</h2>' . $se . '</td>';
+		$sr .= '</table>';
+
+		$sql = "update " . $this -> tabela_bloco . " set sb_trabalhos = '$total' where id_sb = $id ";
+		$this -> db -> query($sql);
+		return ($sl . $sr);
+	}
 	function mostra_blocos($ano = '') {
 		if (strlen($ano) == 0) { $ano = date("Y");
 		}
@@ -261,6 +497,7 @@ class semic_salas extends CI_Model {
 	}
 
 	function mostra_blocos_data($data = '') {
+		$this -> load -> model('semic/semic_trabalhos');
 		$salas = 10;
 		$horai = '08h00';
 		$horaf = '20h00';
@@ -306,6 +543,7 @@ class semic_salas extends CI_Model {
 			$line = $rlt[$r];
 
 			/* Dados */
+			$bloco_tipo = $line['sb_tipo'];
 			$hi = $line['sb_hora'];
 			$hf = $line['sb_hora_fim'];
 			$id_hi = $hr[$hi];
@@ -339,7 +577,19 @@ class semic_salas extends CI_Model {
 			$sa = '';
 			//$sa = $line['sb_hora'] . '-' . $line['sb_hora_fim'];
 			//$sa .= '<BR>';
-			$sa .= '<A HREF="' . base_url('index.php/semic/bloco_view/' . $line['id_sb'] . '/' . checkpost_link($line['id_sb'])) . '" class="link">';
+			
+			/* Mostra se for oral */
+			switch ($bloco_tipo)
+				{
+				/************* ORAL */
+				case '1':
+					$sa .= '<A HREF="' . base_url('index.php/semic/bloco_view/' . $line['id_sb'] . '/' . checkpost_link($line['id_sb'])) . '" class="link">';
+					break;
+				case '2':
+					$sa .= '<A HREF="' . base_url('index.php/semic/bloco_poster_view/' . $line['id_sb'] . '/' . checkpost_link($line['id_sb'])) . '" class="link">';
+					break;
+				}		
+			
 			$sa .= '<font class="lt3">';
 			$sa .= '<b>' . $line['sb_nome'] . '</b>';
 			$sa .= '</font>';
@@ -350,12 +600,22 @@ class semic_salas extends CI_Model {
 			$sa .= msg('editar');
 			$sa .= '</A>';
 			$sa .= '</font>';
-			
+
 			$tot = $line['sb_trabalhos'];
-			if ($tot > 0)
-				{
-					$sa .= '<br><center><font class="lt5">'.$tot.'</font></center>';
+			if ($tot > 0) {
+				$sa .= '<br><center><font class="lt5">' . $tot . '</font></center>';
+			}
+			$sa .= '<br>';
+
+			for ($rx = 1; $rx <= 3; $rx++) {
+				if ($line['sb_avaliador_' . $rx] > 0) {
+					$rav = $this -> semic_trabalhos -> situacao_avaliador($line['sb_avaliador_situacao_' . $rx]);
+					$op = 'opacity:' . $rav['opacity'] . ';';
+					$op .= 'border-left: 4px solid ' . $rav['cor'] . '; height: 20px; width: 20px;';
+					$op .= 'float: left; ';
+					$sa .= '<div style="' . $op . '"><img src="' . base_url('img/logo/logo_avaliador.jpg') . '" height="20" title="' . $rav['status'] . '"></div>';
 				}
+			}
 			$blocos[$idb] = $sa;
 		}
 		$sx .= '</table>';
