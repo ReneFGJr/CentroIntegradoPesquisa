@@ -1,13 +1,12 @@
 <?php
 class ic extends CI_Controller {
-	
-	function avaliadores_set()
-		{
-			/* Load Models */
-			$this -> load -> model('avaliadores');			
-			$this->avaliadores->regra_avaliadores();
-			redirect(base_url('index.php/ic'));
-		}
+
+	function avaliadores_set() {
+		/* Load Models */
+		$this -> load -> model('avaliadores');
+		$this -> avaliadores -> regra_avaliadores();
+		redirect(base_url('index.php/ic'));
+	}
 
 	function __construct() {
 		global $dd, $acao;
@@ -17,6 +16,7 @@ class ic extends CI_Controller {
 		$this -> lang -> load("app", "portuguese");
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 
@@ -62,6 +62,10 @@ class ic extends CI_Controller {
 		$data['title_page'] = 'Iniciação Científica';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
+
+		$this -> load -> view('header/content_open');
+		$data['logo'] = base_url('img/logo/logo_ic.png');
+		$this -> load -> view('header/logo', $data);
 	}
 
 	function comunicacao_edit($id = 0, $gr = 0, $tp = 0) {
@@ -71,7 +75,6 @@ class ic extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
 
 		$form = new form;
 		$form -> id = $id;
@@ -96,9 +99,9 @@ class ic extends CI_Controller {
 		/* Load Models */
 		$this -> load -> model('comunicacoes');
 		$this -> load -> model('email_local');
-		
+
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
-		$this -> load -> library('email', $config);		
+		$this -> load -> library('email', $config);
 
 		$this -> cab();
 		$data = array();
@@ -132,20 +135,19 @@ class ic extends CI_Controller {
 				$this -> email -> from('dilmeire.vosgerau@pucpr.br', $this -> email_local -> e_nome);
 				$this -> email -> reply_to($this -> email_local -> e_mail, $this -> email_local -> e_nome);
 				$this -> email -> to($para);
-				
+
 				$texto_o = $data['mc_texto'];
 				$texto = '<table width="700"><tr><td>';
-				if (strlen($head) > 0)
-					{
-						$texto .= '<img src="'.$head.'" width="700">';
-					}
+				if (strlen($head) > 0) {
+					$texto .= '<img src="' . $head . '" width="700">';
+				}
 				$texto .= '<tr><td>';
 				$texto .= $texto_o;
 				$texto .= '</table>';
-		
+
 				$this -> email -> subject($data['mc_titulo']);
 				$this -> email -> message($texto);
-		
+
 				$this -> email -> send();
 				//$this -> email_local -> enviaremail($emailx, $data['mc_titulo'], $data['mc_texto']);
 				echo '<BR>--->' . $para;
@@ -197,12 +199,27 @@ class ic extends CI_Controller {
 	}
 
 	function index($id = 0) {
+		/* Load Models */
+		$this -> load -> model('protocolos_ic');
+		$this -> load -> model('ics');
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
-		
 
+		/* Formulario */
+		$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
+		$data['resumo'] = $this -> ics -> resumo();
+
+		/* Search */
+		$search_term = $this -> input -> post("dd89");
+		$search_acao = $this -> input -> post("acao");
+		if ((strlen($search_acao) > 0) and (strlen($search_term) > 0)) {
+			$search_term = troca($search_term, "'", '´');
+			$data['search'] .= $this -> ics -> search($search_term);
+		}
+
+		/* Mostra tela principal */
+		$this -> load -> view('ic/home', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -237,25 +254,22 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
-	function avaliadores($id = 0)
-		{
+
+	function avaliadores($id = 0) {
 		/* Load Models */
 		$this -> load -> model('avaliadores');
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		
-		$data['content'] = $this->avaliadores->avaliadores_area();
-		$data['title'] = msg('Avaliadores').' '
-						. msg('e').' '
-						. msg('Areas');
+
+		$data['content'] = $this -> avaliadores -> avaliadores_area();
+		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);		
-		}	
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function avaliadores_row($id = 0) {
 
@@ -395,18 +409,21 @@ class ic extends CI_Controller {
 	function view($id = 0, $check = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
-		
-		$data = $this->ics->le($id);
+		$this -> load -> model('geds');
+
+		$data = $this -> ics -> le($id);
 
 		$this -> cab();
-		$this -> load -> view('header/content_open');
+		$this -> load -> view('ic/plano', $data);
 
-		$this -> load -> view('ic/plano',$data);
-		
-		$this -> load -> view('ic/plano_arquivo',$data);
-		$this -> load -> view('ic/plano_historico',$data);		
-		$this -> load -> view('ic/plano_avaliacao',$data);
-		
+		/* arquivos */
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$data['ged'] = $this -> geds -> list_files_table($data['codigo_pa'],'ic');
+		$data['ged_arquivos'] = $this -> geds -> form_upload($data['codigo_pa'], 'ic');
+		$this -> load -> view('ged/list_files', $data);
+
+		$this -> load -> view('ic/plano_historico', $data);
+		$this -> load -> view('ic/plano_avaliacao', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -414,6 +431,50 @@ class ic extends CI_Controller {
 
 	function edit($id = 0, $check = '') {
 		/* Load Models */
+	}
+
+	/**** GEDS */
+	function ged($id = 0, $proto = '', $tipo = '', $check = '') {
+		$this -> load -> database();
+
+		$this -> load -> library('session');
+		$this -> load -> helper('url');
+		$this -> lang -> load("app", "portuguese");
+
+		$this -> load -> model('geds');
+
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> geds -> page = base_url('index.php/ic/ged/' . $id);
+
+		$data['content'] = $this -> geds -> form($id, $proto, $tipo);
+		$this -> load -> view('content', $data);
+	}
+
+	function ged_download($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> geds -> file_path = '_document/ic/';
+		$this -> geds -> download($id);
+	}
+
+	function ged_lock($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> geds -> file_path = '_document/ic/';
+		$this -> geds -> file_lock($id);
+	}
+
+	function ged_excluir($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> geds -> file_path = '_document/ic/';
+		$this -> geds -> file_delete($id);
 	}
 
 }

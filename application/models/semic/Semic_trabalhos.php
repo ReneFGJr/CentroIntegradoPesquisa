@@ -2,6 +2,73 @@
 class semic_trabalhos extends CI_Model {
 	var $tabela = 'semic_ic_trabalho';
 
+	function mostra_agenda($id = 0, $ano = 0) {
+		$sql = "select * from ( 
+							SELECT id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 = $id 
+								union 
+							SELECT id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 = $id 
+								union 
+							SELECT id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 = $id
+							) as total 
+						inner join us_usuario on id_us = avaliador
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						left join semic_bloco on id_bl = id_sb
+						left join semic_salas on id_sl = sb_sala
+						order by us_nome, sb_data, sb_hora				
+				";
+		$rlt = db_query($sql);
+		$rs = array();
+		while ($line = db_read($rlt)) {
+			array_push($rs, $line);
+		}
+
+		/* Total de convites */
+		$tot = count($rs);
+		if ($tot > 0) {
+			$size = round(100 / $tot) . '%';
+			$sx = '<table width="640" border=0';
+
+			$img = base_url('img/semic/semic_' . $ano . '.png');
+			$sx .= '<tr><td colspan="' . $tot . '"><img src="' . $img . '" width="100%"></td></tr>';
+			$sx .= '<tr><td>&nbsp;</td></tr>';
+			$sx .= '<tr><td>'.ic('semic_ag-av_email',1,'HTML').'</td></tr>';
+
+			for ($r = 0; $r < count($rs); $r++) {/* imagem */
+				$sx .= '<tr>';
+
+				$sx .= '<td width="' . $size . '">';
+				$sx .= '<table>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Data e hora:</td>';
+				$sx .= '<td style="font-size: 26px;"><b>' . stodbr($rs[$r]['sb_data']) . ' ' . $rs[$r]['sb_hora'] . '-' . $rs[$r]['sb_hora_fim'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Modalidade:</td>';
+				$sx .= '<td style="font-size: 18px;"><b>' . $rs[$r]['sb_nome'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Local:</td>';
+				$sx .= '<td style="font-size: 15px;"><b>' . $rs[$r]['sl_bloco'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Local:</td>';
+				$sx .= '<td style="font-size: 15px;"><b>' . $rs[$r]['sl_nome'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '</table>';
+				$sx .= '<tr><td>&nbsp;</td></tr>';
+			}
+			$sx .= '</table>';
+		} else {
+			$sx = '';
+		}
+		return ($sx);
+	}
+
 	function avaliadores_seminario() {
 		$ano = date("Y");
 		$sql = "select * from ( 
@@ -41,21 +108,21 @@ class semic_trabalhos extends CI_Model {
 			$sx .= '<td ' . $op . ' align="center" width="120">';
 			$sx .= $rav['status'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center" width="80">';
 			$sx .= stodbr($line['sb_data']);
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center" width="80">';
 			$sx .= ($line['sb_hora']);
 			$sx .= ' - ';
 			$sx .= ($line['sb_hora_fim']);
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $line['sl_nome'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $line['sb_nome'];
 			$sx .= '</td>';

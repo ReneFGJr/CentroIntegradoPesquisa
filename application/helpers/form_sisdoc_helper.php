@@ -65,7 +65,28 @@ $dd = array();
  * @version 0.15.35
  * @filesource
  */  
-
+ 
+function ic($id='',$tp=0,$fmt='HTML')
+	{
+		$sql = "select * from mensagem where nw_ref = '$id' ";
+		$rlt = db_query($sql);
+		if ($line = db_read($rlt))
+			{
+				switch($tp)
+					{
+					case '1':
+						if ($fmt = 'HTML') 
+						{
+							return(mst($line['nw_texto']));
+						} else {
+							return($line['nw_texto']);	
+						}
+						
+					default:
+						return($line);
+					}
+			}
+	}
 /* checa e cria diretorio */
 if (!function_exists('dir')) {
 	function dir($dir) {

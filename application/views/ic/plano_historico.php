@@ -2,19 +2,39 @@
 	<legend class="legend01">
 		Histórico
 	</legend>
-	<table width="100%" class="tabela00" align="center">
+	<table width="100%" class="tabela00" align="center" border=0>
 		<tr>
 			<thead>
-				<th>Data</th><th>Hora</th><th>Historico</th><th>Protocolo</th>
+				<th width="4%">Data</th>
+				<th width="3%">Hora</th>
+				<th width="60%">Historico</th>
+				<th width="30%">Login</th>
+				<th width="4%">cod.</th>
 			</thead>
 		</tr>
-		<tr valign="top" class="lt1">
-			<td class="tabela01" align="center">04/08/2015<td class="tabela01" align="center">07:31<td class="tabela01">Implantação de bolsa para o protocolor 0010469<td class="tabela01" align="center">0010469
-			<tr valign="top">
-				<td><td class="tabela01" colspan=3>
-				<tr valign="top" class="lt1">
-					<td class="tabela01" align="center">04/08/2015<td class="tabela01" align="center">07:42<td class="tabela01">Validação do contrato por michele.razoto (89142247  )<td class="tabela01" align="center">0010469
-					<tr valign="top">
-						<td><td class="tabela01" colspan=3>
+		<?php
+		$sql = "select * from ic_historico
+				left join us_usuario on id_us = bh_log 
+					where bh_protocolo = '$codigo_pa' order by bh_data desc, bh_hora desc";
+		$rlt = db_query($sql);
+		$sx = '';
+		while ($line = db_read($rlt)) {
+			$sx .= '
+				<tr valign="top" class="lt2">
+					<td  align="center">' . stodbr($line['bh_data']) . '</td>
+					<td  align="center">' . $line['bh_hora'] . '</td>
+					<td >' . $line['bh_historico'] . '</td>
+					<td >' . $line['us_nome'] . '</td>
+					<td  align="center">' . $line['bh_motivo'] . '</td>
+				</tr>';
+			$obs = ($line['bh_obs']);
+			if (strlen($obs) > 0) {
+				$sx .= '<tr><td></td>
+							<td>' . $obs . '</td>
+						</tr>';
+			}
+		}
+		echo $sx;
+		?>
 	</table>
 </fieldset>

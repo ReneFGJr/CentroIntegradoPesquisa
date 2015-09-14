@@ -21,6 +21,12 @@ function usuario_tipo($tp)
 			}
 		return($sx);
 	}
+	
+function link_ic($id=0)
+	{
+		$href = '<a href="'.base_url('index.php/ic/view/'.$id.'/'.checkpost_link($id)).'" class="link lt4">';
+		return($href);
+	}
 function link_avaliador($nome='',$id)
 	{
 		$id = round($id);

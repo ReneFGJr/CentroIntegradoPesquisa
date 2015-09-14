@@ -8,12 +8,12 @@ class Geds extends CI_Model {
 	var $nw_log = '';
 	var $total_files = 0;
 
-	function form_upload($id = 0,$frame) {
+	function form_upload($id = 0, $frame) {
 		$sx = '
 				<input type="button" value="' . msg('ged_upload') . '" id="ged_upload">
 				<script>
 					$("#ged_upload").click(function() {
-						var $tela = newwindows("' . base_url('index.php/'.$frame.'/ged/') . '/' . $id . '",600,400);
+						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged/') . '/' . $id . '",600,400);
 					});
 					
 				function newwindows(url, xx, yy) {
@@ -29,7 +29,82 @@ class Geds extends CI_Model {
 	/*
 	 * 				//
 	 */
-	function list_files($protocolo = '', $frame) {
+
+	function list_files_table($protocolo = '', $frame = '') {
+		$sql = "select * from " . $this -> tabela . " 
+						where doc_dd0 = '$protocolo' 
+								and doc_ativo = 1 
+						";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$this -> total_files = count($rlt);
+
+		$sx = '';
+		if (count($rlt) > 0) {
+
+			$sx = '<table border=0 class="tabela00 lt1" width="100%">';
+			$sx .= '<tr>
+						<th width="20%">Tipo de documento</th>
+						<th width="50%">Nome do arquivo</th>
+						<th width="10%">Data e Hora</th>
+						<th width="10%">Tamanho</th>
+						<th width="10%">Ação</th>
+					</tr>
+					';
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				$link = '<span onclick="ged_download(\'' . $line['id_doc'] . '\');" class="link lt2" style="cursor: pointer;">';
+				$sx .= '<tr">';
+				$sx .= '<td>';
+				$sx .= $link.$line['doc_tipo'].'</span>';
+				$sx .= '</td>';
+				$sx .= '<td>';
+				$sx .= $link . $line['doc_filename'];
+				$sx .= '</td>';
+				$sx .= '<td align="center">';
+				$sx .= stodbr($line['doc_data']);
+				$sx .= ' ';
+				$sx .= $line['doc_hora'];
+				$sx .= '</td>';
+				$sx .= '<td align="center">';
+				$sx .= number_format(($line['doc_size'] / 1024), 1, ',', '.') . 'k Byte';
+				$sx .= '<td align="center">';
+				if ($line['doc_status'] == '@') {
+					$linkd = '<span onclick="ged_excluir(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
+					$sx .= $linkd . '<font color="red">excluir</font>' . '</span>';
+					$linkd = '<span onclick="ged_lock(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
+					$sx .= ' | ';
+					$sx .= $linkd . '<font color="blue">travar</font>' . '</span>';
+				}
+				$sx .= '</td>';
+				$sx .= '</tr>';
+			}
+			$sx .= '</table>';
+
+			$sx .= '
+				<script>
+					function ged_excluir($id) {
+						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged_excluir/') . '/" + $id,600,400);
+					};
+					function ged_download($id) {
+						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged_download/') . '/" + $id,600,400);
+					};
+					function ged_lock($id) {
+						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged_lock/') . '/" + $id,600,400);
+					};					
+					
+				function newwindows(url, xx, yy) {
+					NewWindow = window.open(url, \'newwin2\', \'scrollbars=yes,resizable=no,width=\' + xx + \',height=\' + yy + \',top=10,left=10\');
+					NewWindow.focus();
+					void (0);
+				}					
+				</script>
+			';
+		}
+		return ($sx);
+	}
+
+	function list_files($protocolo = '', $frame = '') {
 		$sql = "select * from " . $this -> tabela . " 
 						where doc_dd0 = '$protocolo' 
 								and doc_ativo = 1 
@@ -73,13 +148,13 @@ class Geds extends CI_Model {
 			$sx .= '
 				<script>
 					function ged_excluir($id) {
-						var $tela = newwindows("' . base_url('index.php/'.$frame.'/ged_excluir/') . '/" + $id,600,400);
+						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged_excluir/') . '/" + $id,600,400);
 					};
 					function ged_download($id) {
-						var $tela = newwindows("' . base_url('index.php/'.$frame.'/ged_download/') . '/" + $id,600,400);
+						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged_download/') . '/" + $id,600,400);
 					};
 					function ged_lock($id) {
-						var $tela = newwindows("' . base_url('index.php/'.$frame.'/ged_lock/') . '/" + $id,600,400);
+						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged_lock/') . '/" + $id,600,400);
 					};					
 					
 				function newwindows(url, xx, yy) {
@@ -492,12 +567,17 @@ class Geds extends CI_Model {
 		$this -> file_delete_confirm();
 		echo $this -> windows_close();
 	}
-	
+
 	function file_lock($id) {
 		$sql = "update " . $this -> tabela;
 		$sql .= " set doc_status = 'A' ";
 		$sql .= " where id_doc = " . $id;
 		$rlt = $this -> db -> query($sql);
+		echo 'xxx
+				<script>
+						window.opener.location.reload();
+						close(); 
+				</script>';	
 		return (1);
 	}
 

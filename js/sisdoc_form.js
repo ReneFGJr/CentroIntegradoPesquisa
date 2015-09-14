@@ -5,7 +5,7 @@
  function newwin(url) {  NewWindow=window.open(url,'newwin','scrollbars=no,resizable=yes,width=690,height=450,top=10,left=10');  NewWindow.focus(); void(0);}
  function newwin2(url) {  NewWindow=window.open(url,'newwin','scrollbars=yes,resizable=yes,width=690,height=450,top=10,left=10');  NewWindow.focus(); void(0);}
  function winclose() {  close(); }
- function close()
+ function wclose()
  	{
 	window.opener.location.reload();
 	close(); 		
