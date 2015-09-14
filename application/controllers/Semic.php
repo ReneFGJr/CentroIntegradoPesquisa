@@ -11,6 +11,7 @@ class semic extends CI_Controller {
 		$this -> load -> helper('url');
 		$this -> load -> helper('links_users');
 		$this -> load -> library('session');
+		$this -> load -> helper('email');
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
@@ -44,30 +45,29 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
-	function avaliador_agenda($id=0)
-		{
+	function agenda($id = 0) {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('avaliadores');
 		$this -> load -> model('semic/semic_trabalhos');
 		$this -> load -> model('semic/semic_salas');
-		
-		$this -> cab();
-		
-		$this -> load -> view('header/content_open');
-		
-		/* Perfil do usuário */
-		$data = $this->usuarios->le($id);		
-		$data['perfil'] = $this -> load -> view('perfil/avaliador_mini',$data,True);
-		
-		/* Perfil do usuário */
-		$data['agenda'] = $this->semic_trabalhos->mostra_agenda($id,date("Y"));
 
-		$this -> load -> view('semic/semic_agenda',$data);
-		
+		$this -> cab();
+
+		$this -> load -> view('header/content_open');
+
+		/* Perfil do usuário */
+		$data = $this -> usuarios -> le($id);
+		$data['perfil'] = $this -> load -> view('perfil/avaliador_mini', $data, True);
+
+		/* Perfil do usuário */
+		$data['agenda'] = $this -> semic_trabalhos -> mostra_agenda($id, date("Y"));
+
+		$this -> load -> view('semic/semic_agenda', $data);
+
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);		
-		}
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function security() {
 
@@ -94,6 +94,43 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function bloco_poster_avaliador($ida = 0, $id2 = 0, $id3 = '', $id4 = '', $id5 = '') {
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> security();
+		$data = array();
+		$this -> load -> view('header/header', $data);
+
+		/* ACAO */
+		$aval_id = $id4;
+		$nr = $id2;
+		/* Avalidor (1,2,3) */
+		$bloco = $ida;
+		switch ($id5) {
+			case 'SET' :
+				$this -> semic_trabalhos -> avaliador_poster_set($bloco, $aval_id, $nr);
+				$this -> load -> view('header/close_windows');
+				echo "FIM";
+				return ('');
+				break;
+		}
+		/* Mostra dados do bloco */
+		$data['content'] = '<h3>' . $this -> semic_salas -> mostra_dados_sala($ida) . '</h3>';
+		$this -> load -> view('content', $data);
+
+		/* Recupera professores e avaliadores do bloco */
+		$aval = $this -> semic_trabalhos -> orientador_avaliadores_trabalho($ida);
+
+		$area = $this -> semic_trabalhos -> area_trabalho($ida);
+
+		$aval_areas = $this -> semic_trabalhos -> avaliadores_area($area, $aval);
+
+		$data = array();
+		$data['content'] = $this -> semic_trabalhos -> avaliadores_indicar($aval_areas, $ida, $id2, 'bloco_poster_avaliador');
+		$this -> load -> view('content', $data);
+	}
+
 	function bloco_avaliador($ida = 0, $id2 = 0, $id3 = '', $id4 = '', $id5 = '') {
 		$this -> load -> model('semic/semic_trabalhos');
 		$this -> load -> model('semic/semic_salas');
@@ -110,6 +147,7 @@ class semic extends CI_Controller {
 		switch ($id5) {
 			case 'SET' :
 				$this -> semic_trabalhos -> avaliador_set($bloco, $aval_id, $nr);
+				$this -> load -> view('header/close_windows');
 				break;
 		}
 
@@ -227,6 +265,61 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function trabalhos_edit($id = 0) {
+		global $dd;
+		$this -> load -> model('semic/semic_trabalhos');
+
+		$this -> cab();
+		$data = array();
+
+		/* Form */
+		$form = new form;
+		$form -> tabela = 'semic_nota_trabalhos';
+		$form -> id = $id;
+		$cp = $this -> semic_trabalhos -> cp();
+		$data['tela'] = $form -> editar($cp, 'semic_nota_trabalhos');
+
+		/* salved */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/usuario/row'));
+		}
+
+		$data['title'] = 'Formulário';
+		$this -> load -> view('form/form', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function trabalhos_row($id = 0) {
+		/* Load Models */
+		$this -> load -> model('semic/semic_trabalhos');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$form -> tabela = 'semic_nota_trabalhos';
+		$form -> see = true;
+		$form -> edit = true;
+		$form = $this -> semic_trabalhos -> row($form);
+
+		$form -> row_edit = base_url('index.php/semic/trabalhos_edit');
+		$form -> row_view = base_url('index.php/semic/trabalhos_view');
+		$form -> row = base_url('index.php/semic/trabalhos_row');
+
+		$tela['tela'] = row($form, $id);
+
+		$tela['title'] = msg('title_semic_trabalho');
+
+		$this -> load -> view('form/form', $tela);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function bloco_poster_view($ida = 0, $check = '', $p1 = '', $p2 = '', $acao = '') {
 		/* Load Models */
 		$this -> load -> model('semic/semic_salas');
@@ -241,7 +334,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
+
 	function bloco_view($ida = 0, $check = '', $p1 = '', $p2 = '', $acao = '') {
 
 		/* Load Models */

@@ -1,4 +1,9 @@
 <?php
+function base_url_site($link)
+	{
+		$http = 'http://cip.pucpr.br/'.$link;
+		return($http);
+	}
 function usuario_tipo($tp)
 	{
 		switch($tp)

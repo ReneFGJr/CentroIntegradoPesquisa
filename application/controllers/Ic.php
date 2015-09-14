@@ -54,6 +54,7 @@ class ic extends CI_Controller {
 		array_push($menus, array('Docentes', 'index.php/ic/docentes'));
 		array_push($menus, array('Discentes', 'index.php/ic/discentes'));
 		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
+		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -220,6 +221,36 @@ class ic extends CI_Controller {
 
 		/* Mostra tela principal */
 		$this -> load -> view('ic/home', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function pagamentos($date = '', $action = '') {
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		
+		if (strlen($date) == 0)
+			{ $date = date("Ym01"); }
+
+		$this -> cab();
+		$data = array();
+
+		/* Mostra tela principal */
+		$data['title'] = 'Razão de Pagamentos';
+		$sx = '<table width="100%" ><tr valign="top">';
+		$sx .= '<td width="500" rowspan=2 style="border-right: 1px solid #00000;">' . $this -> pagamentos -> resumo_pagamentos() . '</td>';
+		$sx .= '<td width="20" rowspan=2 class="borderr1">&nbsp;</td>';
+		$sx .= '<td width="80%" style="border-right: 1px solid #00000;">' . $this -> pagamentos -> pagamentos_lotes($date) . '</td>';
+		$sx .= '<tr>';
+		$sx .= '<td width="80%" style="border-right: 1px solid #00000;">' . $this -> pagamentos -> detalhe_pagamentos($date) . '</td>';
+
+		$sx .= '</tr>';
+		$sx .= '</table>';
+
+		$data['content'] = $sx;
+
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -418,7 +449,7 @@ class ic extends CI_Controller {
 
 		/* arquivos */
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$data['ged'] = $this -> geds -> list_files_table($data['codigo_pa'],'ic');
+		$data['ged'] = $this -> geds -> list_files_table($data['codigo_pa'], 'ic');
 		$data['ged_arquivos'] = $this -> geds -> form_upload($data['codigo_pa'], 'ic');
 		$this -> load -> view('ged/list_files', $data);
 
