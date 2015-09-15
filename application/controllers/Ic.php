@@ -286,6 +286,34 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function avaliador_ativar($id=0,$ac='')
+		{
+		/* Load Models */
+		$this -> load -> model('usuarios');
+
+		$this -> cab();
+		$data = array();
+
+		$form = new form;
+		$form -> tabela = $this -> usuarios -> tabela;
+		$form -> see = true;
+		$form -> edit = true;
+		$form = $this -> usuarios -> row($form);
+
+		$form -> row_edit = base_url('index.php/ic/avaliador_ativar');
+		$form -> row_view = base_url('index.php/avaliador/view');
+		$form -> row = base_url('index.php/ic/avaliador_ativar');
+
+		$tela['tela'] = row($form, $id);
+
+		$tela['title'] = $this -> lang -> line('title_estudante');
+
+		$this -> load -> view('form/form', $tela);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}
+
 	function avaliadores($id = 0) {
 		/* Load Models */
 		$this -> load -> model('avaliadores');
@@ -293,6 +321,11 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
+		
+		$menu = array();
+		array_push($menu,array('novo_avaliador','ic/avaliador_ativar'));
+		$data['menu'] = $menu;
+		$this->load->view('header/menu_mini',$data);
 
 		$data['content'] = $this -> avaliadores -> avaliadores_area();
 		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');

@@ -15,6 +15,15 @@ if (!function_exists(('msg')))
 
 $lang['versao'] = 'v0.15.25';
 
+/****************************** AVALIADORES */
+$lang['desactive'] = 'desativar';
+$lang['active'] = 'ativar';
+$lang['avaliador'] = 'avaliador';
+$lang['desativar_como_avaliador'] = 'desativar avaliador';
+$lang['ativar_como_avaliador'] = 'ativar como avaliador';
+$lang['active_area'] = 'Ativar área';
+$lang['add_area'] = 'Incorporado área';
+
 /*****************************************************************/
 $lang['page_docentes'] = 'Docentes';
 $lang['page_avaliadores'] = 'Avaliadores';

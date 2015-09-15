@@ -195,7 +195,6 @@ class ics extends CI_model {
 
 		$tabela = "
 						select * from ic
-						left join ic_professor_aluno as pa on pa.id_ic = ic.id_ic
 						left join ic_plano_aluno on codigo_pa = pa_codigo 
 						left join ic_situacao on id_s = s_id
 						left join (select id_us as id_al, us_nome as al_nome, us_cracha as al_cracha from us_usuario) AS us_est on pa.id_aluno_ic = us_est.id_al

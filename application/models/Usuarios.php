@@ -51,6 +51,7 @@ class usuarios extends CI_model {
 	                left join us_hora as h on h.usuario_id_us = us_usuario.id_us
 	                left join us_email as e on e.usuario_id_us = us_usuario.id_us
 	                left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
+	                left join us_avaliador_situacao on us_avaliador = id_as
 				where id_us = " . $id;
 
 		$rlt = $this -> db -> query($sql);
@@ -58,6 +59,7 @@ class usuarios extends CI_model {
 		$line = $rlt[0];
 		$line['us_ss'] = '';
 		$line['us_lattes'] = '';
+		$line['avaliador'] = $line['as_situacao'];
 		return ($line);
 	}
 

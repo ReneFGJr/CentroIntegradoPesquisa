@@ -25,6 +25,7 @@ class semic_trabalhos extends CI_Model {
 		$line = db_read($rlt);
 
 		$area = $line['st_area_geral'];
+		echo '==>'.$area;
 		$aval = array();
 		$aval[$area] = '1';
 
@@ -363,7 +364,13 @@ class semic_trabalhos extends CI_Model {
 		$sx .= '<td>-</td>';
 		$sx .= '<td align="center" width="30">-</td>';
 		$sx .= '</tr>';
-
+	
+		$sx .= '<tr><th>acao</th>
+					<th>avaliadores</th>
+					<th>perfil</th>
+					<th>Oral</th>
+					<th>Pôster</th>
+				</tr>';
 		for ($r = 0; $r < count($aval); $r++) {
 			$line = $aval[$r];
 
@@ -385,6 +392,7 @@ class semic_trabalhos extends CI_Model {
 		$wh = '';
 		$wh_prof = '';
 		$ano = date("Y");
+		$ano2 = ( $ano - 1 );
 		/* AREAS */
 		foreach ($areas as $key => $value) {
 			if (strlen($wh) > 0) { $wh .= ' or ';
@@ -415,6 +423,13 @@ class semic_trabalhos extends CI_Model {
 									SELECT sb_avaliador_3 as avaliador FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
 									) as total group by avaliador
 								) as indicacoes on avaliador = id_us
+						left join (
+							select avaliador_poster, count(*) as poster from (
+									SELECT id_st, st_avaliador_1 as avaliador_poster FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0
+									union 
+									SELECT id_st, st_avaliador_2 as avaliador_poster FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0
+									) as total group by avaliador_poster
+								) as indicacoes_2 on avaliador_poster = id_us								
 						where us_avaliador > 0
 						order by us_nome
 				";
@@ -423,7 +438,6 @@ class semic_trabalhos extends CI_Model {
 		$aval = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$line['poster'] = 0;
 			array_push($aval, $line);
 		}
 		return ($aval);
