@@ -15,7 +15,7 @@
 		<?php
 		$sql = "select * from ic_historico
 				left join us_usuario on id_us = bh_log 
-					where bh_protocolo = '$codigo_pa' order by bh_data desc, bh_hora desc";
+					where bh_protocolo = '$ic_plano_aluno_codigo' order by bh_data desc, bh_hora desc";
 		$rlt = db_query($sql);
 		$sx = '';
 		while ($line = db_read($rlt)) {
@@ -29,8 +29,8 @@
 				</tr>';
 			$obs = ($line['bh_obs']);
 			if (strlen($obs) > 0) {
-				$sx .= '<tr><td></td>
-							<td>' . $obs . '</td>
+				$sx .= '<tr><td></td><td></td>
+							<td colspan=5>' . $obs . '</td>
 						</tr>';
 			}
 		}

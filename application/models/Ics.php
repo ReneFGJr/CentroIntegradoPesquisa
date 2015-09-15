@@ -11,21 +11,25 @@ class ics extends CI_model {
 		$wh1 = '';
 		$wh2 = '';
 		$wh3 = '';
+		$wh4 = '';
 		for ($r = 0; $r < count($term); $r++) {
 			if ($r > 0) {
 				$wh1 .= ' and ';
 				$wh2 .= ' and ';
 				$wh3 .= ' and ';
+				$wh4 .= ' and ';
 			}
 			$wh1 .= " (pf_nome like '%" . $term[$r] . "%') ";
 			$wh2 .= " (al_nome like '%" . $term[$r] . "%') ";
-			$wh3 .= " (pa_plano like '%" . $term[$r] . "%') ";
+			$wh3 .= " (ic_projeto_professor_codigo like '%" . $term[$r] . "%') ";
+			$wh4 .= " (ic_projeto_professor_titulo like '%" . $term[$r] . "%') ";
 		}
 
-		$wh = '(' . $wh1 . ' or ' . $wh2 . ' or ' . $wh3 . ')';
+		$wh = '(' . $wh1 . ' or ' . $wh2 . ' or ' . $wh3 . ' or ' . $wh4 . ')';
 		$wh .= " or (pf_cracha = '" . $term[0] . "') ";
 		$wh .= " or (al_cracha = '" . $term[0] . "') ";
-		$sql = $this -> table_view($wh);
+
+		$sql = $this -> table_view($wh,0,50);
 		$rlt = db_query($sql);
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
@@ -38,47 +42,76 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-	function resumo() {
-		$total1 = 1010;
-		$total2 = 145;
-		$total3 = 105;
-		$tot1[0] = 145;
-		$tot1[1] = 150;
-		$tot1[2] = 215;
-		$tot1[3] = 424;
+	function resumo($ano='') {
+		if (strlen($ano) == 0)
+			{
+				$ano = date("Y");
+				if (date("m") < 7) { $ano = (date("Y")-1); }
+			}
+		
+		
+		$sql = "select count(*) as total, mb_tipo, mb_fomento from ic
+            			inner join ic_aluno as pa on ic_id = id_ic
+						left join ic_situacao on id_s = s_id
+						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
+						where ic_ano = '$ano' and (s_id_char = 'A' or s_id_char = 'F') 
+            	group by mb_fomento, mb_tipo";
 
-		$tot2[0] = 45;
-		$tot2[1] = 50;
-		$tot2[2] = 50;
-		$tot2[3] = 14;
-
-		$tot3[0] = 25;
-		$tot3[1] = 25;
-		$tot3[2] = 45;
+		$rlt = db_query($sql);
+		$t = array();
+		$ed = array();
+		while ($line = db_read($rlt))
+		{
+			$edital = $line['mb_tipo'];
+			$fomento = $line['mb_fomento'];
+			$total = $line['total'];
+			
+			if (isset($ed[$edital]))
+				{
+					$ed[$edital] = $ed[$edital] + $total;
+				} else {
+					$ed[$edital] = $total;
+				}
+			if (isset($t[$edital][$fomento]))
+				{
+					$t[$edital][$fomento] = $t[$edital][$fomento] + $total;
+				} else {
+					$t[$edital][$fomento] = $total;
+				}
+			
+			$t[$edital][$fomento] = $total;
+		}				
 
 		$sx = '<table width="100%" class="lt1 border1 radius10">
 					<tr><td colspan=2 align="left" class="lt6 borderb1"><b>' . msg('resumo') . '</b><br><font class="lt0">orintações ativas</td></tr>
-					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="40"></td><td class="lt6">' . $total1 . '</td></tr>
-					<tr><td align="right">Bolsas CNPq</td><td class="lt3">' . $tot1[0] . '</td></tr>
-					<tr><td align="right">Bolsas Fundação Araucária</td><td class="lt3">' . $tot1[1] . '</td></tr>
-					<tr><td align="right">Bolsas PUCPR</td><td class="lt3">' . $tot1[2] . '</td></tr>
-					<tr><td align="right">Voluntários</td><td class="lt3">' . $tot1[3] . '</td></tr>
+					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="40"></td><td class="lt6">' . $ed['PIBIC'] . '</td></tr>';
+		$v = $t['PIBIC'];
+		foreach ($v as $key => $value) 
+			{
+				$sx .= '<tr><td align="right">'.$key.'</td><td class="lt3">' . $value . '</td></tr>'.cr();
+			}
 
-					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibiti.png') . '" height="40"></td><td class="lt6">' . $total2 . '</td></tr>
-					<tr><td align="right">Bolsas CNPq</td><td class="lt3">' . $tot2[0] . '</td></tr>
-					<tr><td align="right">Bolsas Fundação Araucária</td><td class="lt3">' . $tot2[1] . '</td></tr>
-					<tr><td align="right">Bolsas PUCPR</td><td class="lt3">' . $tot2[2] . '</td></tr>
-					<tr><td align="right" class="borderb1">Voluntários</td><td class="lt3 borderb1">' . $tot2[3] . '</td></tr>
+		$sx .= '<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibiti.png') . '" height="40"></td><td class="lt6">' . $ed['PIBITI'] . '</td></tr>';
+		$v = $t['PIBITI'];
+		foreach ($v as $key => $value) 
+			{
+				$sx .= '<tr><td align="right">'.$key.'</td><td class="lt3">' . $value . '</td></tr>'.cr();
+			}
+
 					
-					<tr><td align="right" class="borderb1">Total de estudantes de graduação</td><td class="lt5 borderb1">' . ($total1 + $total2) . '</td></tr>
+		$sx .= '<tr><td align="right" class="borderb1">Total de estudantes de graduação</td><td class="lt5 borderb1">' . ($ed['PIBIC'] + $ed['PIBITI']) . '</td></tr>';
 					
-					<tr><td>&nbsp;</td></tr>
+		$sx .= '<tr><td>&nbsp;</td></tr>';
 										
-					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibicem.png') . '" height="40"></td><td class="lt6">' . $total3 . '</td></tr>
-					<tr><td align="right">Bolsas CNPq</td><td class="lt3">' . $tot3[0] . '</td></tr>
-					<tr><td align="right">Bolsas PUCPR</td><td class="lt3">' . $tot3[2] . '</td></tr>
-					</table>
-			';
+		$sx .= '<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibicem.png') . '" height="40"></td><td class="lt6">' . $ed['PIBICEM'] . '</td></tr>';
+
+		$v = $t['PIBICEM'];
+		foreach ($v as $key => $value) 
+			{
+				$sx .= '<tr><td align="right">'.$key.'</td><td class="lt3">' . $value . '</td></tr>'.cr();
+			}
+
+		$sx .= '</table>';
 		return ($sx);
 	}
 
@@ -94,7 +127,7 @@ class ics extends CI_model {
 	}
 
 	function lista_ic_professor($id) {
-		$wh = "id_professor = " . round($id);
+		$wh = "prof_id = " . round($id);
 		$sql = $this -> table_view($wh);
 		$rlt = db_query($sql);
 
@@ -117,6 +150,9 @@ class ics extends CI_model {
 			case 'PIBITI' :
 				$img = base_url('img/logo/logo_ic_pibiti.png');
 				break;
+			case 'PIBICEM' :
+				$img = base_url('img/logo/logo_ic_pibic_em.png');
+				break;				
 			default :
 				$img = base_url('img/logo/logo_ic_semimagem.png');
 				break;
@@ -141,12 +177,12 @@ class ics extends CI_model {
 		$sx .= '</td>';
 		$sx .= '<td class="lt2" colspan=2  style="border-top:1px solid #333;">';
 		$sx .= $link;
-		$sx .= $line['pa_plano'];
+		$sx .= $line['ic_projeto_professor_titulo'];
 		$sx .= '</a>';
 		$sx .= '</td>';
 
 		$sx .= '<td width="100" rowspan=5  style="border-top:1px solid #333;" align="center">';
-		$sx .= $link . $line['codigo_pa'] . '</A>';
+		$sx .= $link . $line['ic_plano_aluno_codigo'] . '</A>';
 		$sx .= '<BR><BR>';
 		$sx .= '<font color="' . trim($line['s_cor']) . '"><B>';
 		$sx .= $line['s_situacao'];
@@ -155,7 +191,7 @@ class ics extends CI_model {
 
 		$sx .= '<tr>';
 		$sx .= '<td class="lt0" width="70" align="right">' . msg('Orientador') . ':</td>';
-		$sx .= '<td class="lt1"><B>' . $line['us_nome'] . '</B>';
+		$sx .= '<td class="lt1"><B>' . $line['pf_nome'] . '</B>';
 		$sx .= '</td>';
 
 		$sx .= '<tr>';
@@ -168,9 +204,9 @@ class ics extends CI_model {
 		$sx .= '</td>';
 		$sx .= '<td class="lt1">';
 		$sx .= '<B>';
-		$sx .= stodbr($line['pa_dt_inicio_bolsa_aluno']);
+		$sx .= stodbr($line['aic_dt_entrada']);
 		$sx .= ' até ';
-		$sx .= stodbr($line['pa_dt_termino_bolsa_aluno']);
+		$sx .= stodbr($line['aic_dt_saida']);
 		$sx .= '</B>';
 		$sx .= '</td>';
 
@@ -195,14 +231,15 @@ class ics extends CI_model {
 
 		$tabela = "
 						select * from ic
-						left join ic_plano_aluno on codigo_pa = pa_codigo 
-						left join ic_situacao on id_s = s_id
-						left join (select id_us as id_al, us_nome as al_nome, us_cracha as al_cracha from us_usuario) AS us_est on pa.id_aluno_ic = us_est.id_al
-						left join (select id_us as id_pf, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on pa.id_professor = us_prof.id_pf
+            			inner join ic_aluno as pa on ic_id = id_ic
+						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha from us_usuario) AS us_est on ic.ic_cracha_aluno = us_est.id_al
+						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
+						left join ic_situacao on id_s = icas_id
 						$wh
+						order by ic_ano desc, pf_nome, al_nome
+						limit $limit offset $offset 
 						";
-
 		return ($tabela);
 	}
 

@@ -148,8 +148,7 @@ class avaliador extends CI_Controller {
 				$this -> load -> view('avaliador/perfil_areas', $data);
 			}
 
-		//$data['content'] = $this -> ics -> lista_ic_professor($id);
-		$data['content'] = '</table>';
+		$data['content'] = $this -> ics -> lista_ic_professor($id);
 		$this -> load -> view('content', $data);
 
 		/* Dados de apresentacao */

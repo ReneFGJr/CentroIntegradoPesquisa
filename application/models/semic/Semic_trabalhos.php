@@ -25,7 +25,6 @@ class semic_trabalhos extends CI_Model {
 		$line = db_read($rlt);
 
 		$area = $line['st_area_geral'];
-		echo '==>'.$area;
 		$aval = array();
 		$aval[$area] = '1';
 
@@ -92,16 +91,16 @@ class semic_trabalhos extends CI_Model {
 		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, 
 					sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome,
 					sl_bloco ";
-		$sql = "select $cp, count(*) as total from ( 
-							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
+		$sql = "select $cp, sum(tot) as total from ( 
+							SELECT sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
 								union 
-							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
+							SELECT sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
 								union 
-							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
+							SELECT sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
 								union 
-							SELECT id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
+							SELECT 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
 								union 
-							SELECT id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
+							SELECT 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
 							) as total 
 						inner join us_usuario on id_us = avaliador
 						left join us_titulacao on ust_id = usuario_titulacao_ust_id
@@ -122,12 +121,7 @@ class semic_trabalhos extends CI_Model {
 		$tot = count($rs);
 		if ($tot > 0) {
 			$size = round(100 / $tot) . '%';
-			$sx = '<table width="640" border=0 >';
-
-			$img = base_url_site('img/semic/semic_' . $ano . '.png');
-			$sx .= '<tr><td colspan="' . $tot . '"><img src="' . $img . '" width="100%"></td></tr>';
-			$sx .= '<tr><td>&nbsp;</td></tr>';
-			$sx .= '<tr><td>' . ic('semic_ag-av_email', 1, 'HTML') . '</td></tr>';
+			$sx = '<table width="640" style="border: 1px solid #000000;" >';
 
 			for ($r = 0; $r < count($rs); $r++) {/* imagem */
 				$sx .= '<tr>';
@@ -137,49 +131,73 @@ class semic_trabalhos extends CI_Model {
 
 				$sx .= '<tr>';
 				$sx .= '<td width="25%" align="right" style="font-size: 10px;">Data e hora:</td>';
-				$sx .= '<td width="75%" style="font-size: 26px;"><b>' . stodbr($rs[$r]['sb_data']) . ' ' . $rs[$r]['sb_hora'] . '-' . $rs[$r]['sb_hora_fim'] . '</b></td>';
+				$sx .= '<td width="75%" style="font-size: 22px;"><b>' . stodbr($rs[$r]['sb_data']) . ' ' . $rs[$r]['sb_hora'] . '-' . $rs[$r]['sb_hora_fim'] . '</b></td>';
 				$sx .= '</tr>';
 
 				$sx .= '<tr>';
 				$sx .= '<td align="right" style="font-size: 10px;">Modalidade:</td>';
-				$sx .= '<td style="font-size: 18px;"><b>' . $rs[$r]['sb_nome'] . '</b></td>';
+				$sx .= '<td style="font-size: 14px;"><b>' . $rs[$r]['sb_nome'] . '</b></td>';
 				$sx .= '</tr>';
 
 				$sx .= '<tr>';
 				$sx .= '<td align="right" style="font-size: 10px;">Bloco:</td>';
-				$sx .= '<td style="font-size: 15px;"><b>' . $rs[$r]['sl_bloco'] . '</b></td>';
+				$sx .= '<td style="font-size: 12px;"><b>' . $rs[$r]['sl_bloco'] . '</b></td>';
 				$sx .= '</tr>';
 
 				$sx .= '<tr>';
 				$sx .= '<td align="right" style="font-size: 10px;">Local:</td>';
-				$sx .= '<td style="font-size: 15px;"><b>' . $rs[$r]['sl_nome'] . '</b></td>';
+				$sx .= '<td style="font-size: 12px;"><b>' . $rs[$r]['sl_nome'] . '</b></td>';
 				$sx .= '</tr>';
 
 				$sx .= '<tr>';
 				$sx .= '<td align="right" style="font-size: 10px;"></td>';
-				$sx .= '<td style="font-size: 15px;">Total de <b>' . $rs[$r]['total'] . '</b> trabalho(s) para ser(em) avaliado(s).</td>';
+				$sx .= '<td style="font-size: 12px;">Total de <b>' . $rs[$r]['total'] . '</b> trabalho(s) para ser(em) avaliado(s).</td>';
 				$sx .= '</tr>';
 
 				$sit = $rs[$r]['situacao'];
 				$sx .= '<tr>';
 				$sx .= '<td align="right" style="font-size: 10px;">Situacao:</td>';
-				$rav = $this -> situacao_avaliador($sit);
-				$op = 'style="background-color: ' . $rav['cor'] . '; "';
-				$sx .= '<td ' . $op . ' align="center" width="120">';
-				$sx .= $rav['status'];
+				$rav = $this -> link_situacao_avaliador($sit);
+				$sx .= '<td>';
+				$sx .= $rav;
 				$sx .= '</td>'; ;
 
 				$sx .= '</table>';
-				$sx .= '<tr><td>&nbsp;</td></tr>';
 			}
 			$sx .= '</table>';
 		} else {
 			$sx = '';
 		}
 
+		/* Cabecalho */
+		$cab = '<table width="640" border=0 >';
+		$img = base_url_site('img/semic/semic_' . $ano . '.png');
+		$cab .= '<tr><td colspan="' . $tot . '"><img src="' . $img . '" width="100%"></td></tr>';
+		$cab .= '<tr><td>&nbsp;</td></tr>';
+		$cab .= '<tr><td>';
+		
+		/* email link */
+		$check = checkpost_link($id.'avaliador_semic');
+		$link = '<a href="'.base_url_site('index.php/referee/ag/'.$id.'/'.$check).'" target="_new_av">LINK</A>';				
+
+		/* EMAIL */
+		$texto = ic('semic_av_agenda',1,'HTML');
+		
+
 		$this -> load -> model('email_local');
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
 		$this -> load -> library('email', $config);
+		
+		/* Substituicao */
+		$texto = troca($texto,'$AGENDA',$sx);
+		$texto = troca($texto,'$CAB',$cab);
+		$texto = troca($texto,'$LINK',$link);
+		$texto .= '</table>';
+		
+		//echo '<HR>'.$texto.'<hr>';
+		
+		
+		
 		$this -> email -> subject('TESTE - CONVITE');
 		$this -> email -> message($sx);
 
@@ -192,9 +210,9 @@ class semic_trabalhos extends CI_Model {
 		$this -> email -> send();
 
 		$this -> load -> model('email_local');
-		$this -> email_local -> enviaremail('cleybe.vieira@pucpr.br', 'Proposta de Agenda SEMIC', $sx);
-		$this -> email_local -> enviaremail('renefgj@gmail.com', 'Proposta de Agenda SEMIC', $sx);
-		return ($sx);
+		//$this -> email_local -> enviaremail('cleybe.vieira@pucpr.br', 'Proposta de Agenda SEMIC', $sx);
+		//$this -> email_local -> enviaremail('renefgj@gmail.com', 'Proposta de Agenda SEMIC', $sx);
+		return ($texto);
 	}
 
 	function avaliadores_seminario() {
@@ -274,11 +292,18 @@ class semic_trabalhos extends CI_Model {
 		return ($sx);
 	}
 
+	function link_situacao_avaliador($op)
+		{
+			$dt = $this->situacao_avaliador($op);
+			$sx = '<font color="'.$dt['cor'].'">'.$dt['status'].'</font>';
+			return($sx);
+		}
+
 	function situacao_avaliador($op) {
 		$sx = array();
 		switch ($op) {
 			case '1' :
-				$sx['status'] = 'Convidado';
+				$sx['status'] = 'Aguardando aceite';
 				$sx['cor'] = '#8080ff';
 				$sx['opacity'] = '0.4';
 				break;

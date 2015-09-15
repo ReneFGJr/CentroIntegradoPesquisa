@@ -482,8 +482,8 @@ class ic extends CI_Controller {
 
 		/* arquivos */
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$data['ged'] = $this -> geds -> list_files_table($data['codigo_pa'], 'ic');
-		$data['ged_arquivos'] = $this -> geds -> form_upload($data['codigo_pa'], 'ic');
+		$data['ged'] = $this -> geds -> list_files_table($data['ic_plano_aluno_codigo'], 'ic');
+		$data['ged_arquivos'] = $this -> geds -> form_upload($data['ic_plano_aluno_codigo'], 'ic');
 		$this -> load -> view('ged/list_files', $data);
 
 		$this -> load -> view('ic/plano_historico', $data);
