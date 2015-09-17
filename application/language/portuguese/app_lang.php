@@ -24,6 +24,12 @@ $lang['ativar_como_avaliador'] = 'ativar como avaliador';
 $lang['active_area'] = 'Ativar área';
 $lang['add_area'] = 'Incorporado área';
 
+$lang['add_area'] = 'Incorporado área';
+$lang['aceitar_avaliacao'] = 'ACEITAR';
+$lang['recusar_avaliacao'] = 'RECUSAR';
+$lang['recusar_avaliacao_confirma'] = 'GRAVAR RECUSA >>';
+
+
 /*****************************************************************/
 $lang['page_docentes'] = 'Docentes';
 $lang['page_avaliadores'] = 'Avaliadores';

@@ -1,11 +1,226 @@
 <?php
 class ro8s extends CI_Model {
 	
-	function inport_semic_notas($id=0)
-		{
+	function inport_semic_trabalho_autor($id = 0) {
 		$tabela = "semic_nota_trabalhos";
 		$offset = $id;
-		
+
+		echo '<hr>IMPORT<hr>';
+		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=semic_ic_trabalho_autor&limit=50&offset=' . $offset;
+		$xmlRaw = simplexml_load_file($site);
+		$RowT = count($xmlRaw -> record);
+		$to = 0;
+		$in = 0;
+		$up = 0;
+		$sx = '<table width="100%" align="center" class="tabela00 lt0">';
+
+		for ($r = 0; $r < $RowT; $r++) {
+			$xml = $xmlRaw -> record[$r];
+
+			$id_sma = utf8_decode($xml -> id_sma);
+			$sma_titulacao = utf8_decode($xml -> sma_titulacao);
+			$sma_nome = utf8_decode($xml -> sma_nome);
+			$sma_funcao = utf8_decode($xml -> sma_funcao);
+			$sma_instituicao = utf8_decode($xml -> sma_instituicao);
+			$sma_ativo = utf8_decode($xml -> sma_ativo);
+			$sma_protocolo = utf8_decode($xml -> sma_protocolo);
+
+			
+			$to++;
+			$sx .= '<tr class="lt0">';
+			$sx .= '<td>' . $id_sma . '.</td>';
+			$sx .= '<td>' . $sma_nome . '</td>';
+			$sx .= '<td>' . $sma_titulacao . '</td>';			
+			$sx .= '<td>' . $sma_funcao . '</td>';
+	
+
+			$sql = "select * from semic_trabalho_autor where id_sma = '$id_sma' ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+
+			if (count($rlt) == 0) {
+				$sql = "INSERT INTO semic_trabalho_autor
+						(
+							id_sma, sma_titulacao, sma_nome,
+							sma_funcao, sma_instituicao, sma_ativo,
+							sma_protocolo
+						) VALUES (
+							'$id_sma', '$sma_titulacao', '$sma_nome', 
+							'$sma_funcao', '$sma_instituicao', '$sma_ativo',
+							'$sma_protocolo'
+						)";
+				$this -> db -> query($sql);
+				$in++;
+				$sx .= '<td>novo registro</td>';
+			} else {
+				/* Atualiza registro */
+				$sql = "UPDATE semic_trabalho_autor SET 
+						sma_titulacao='$sma_titulacao',
+						sma_nome='$sma_nome',
+						sma_funcao='$sma_funcao',
+						sma_instituicao='$sma_instituicao',
+						sma_ativo='$sma_ativo'
+						WHERE id_sma = $id_sma";
+						$this -> db -> query($sql);
+				$sx .= '<td>atualizado registro</td>';
+
+			}
+		}
+		$sx .= '</table>';
+		echo $sx;
+		if ($RowT > 0) {
+			$site = base_url('index.php/inport/ro8/semic-trabalho-autor/' . ($offset + 50) );
+			echo '
+					<meta http-equiv="refresh" content="5;' . $site . '">
+					';
+		} else {		
+			$sx .= '<h1>FIM</h1>';
+		}
+		$sx .= '</table>';
+	}	
+
+	function inport_semic_trabalho($id = 0) {
+		$tabela = "semic_nota_trabalhos";
+		$offset = $id;
+
+		echo '<hr>IMPORT<hr>';
+		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=semic_ic_trabalho&limit=50&offset=' . $offset;
+		$xmlRaw = simplexml_load_file($site);
+		$RowT = count($xmlRaw -> record);
+		$to = 0;
+		$in = 0;
+		$up = 0;
+		$sx = '<table width="100%" align="center" class="tabela00 lt0">';
+
+		for ($r = 0; $r < $RowT; $r++) {
+			$xml = $xmlRaw -> record[$r];
+
+			$id_sm = utf8_decode($xml -> id_sm);
+			$sm_codigo = utf8_decode($xml -> sm_codigo);
+			$sm_titulo = utf8_decode($xml -> sm_titulo);
+			$sm_titulo_en = utf8_decode($xml -> sm_titulo_en);
+			$sm_programa = utf8_decode($xml -> sm_programa);
+			$sm_status = utf8_decode($xml -> sm_status);
+			$sm_curso = utf8_decode($xml -> sm_curso);
+			$sm_docente = utf8_decode($xml -> sm_docente);
+			$sm_discente = utf8_decode($xml -> sm_discente);
+			$sm_colaboradores = utf8_decode($xml -> sm_colaboradores);
+			$sm_autores = utf8_decode($xml -> sm_autores);
+			$sm_edital = utf8_decode($xml -> sm_edital);
+			$sm_ano = utf8_decode($xml -> sm_ano);
+			$sm_lastupdate = utf8_decode($xml -> sm_lastupdate);
+			$sm_resumo_01 = utf8_decode($xml -> sm_resumo_01);
+			$sm_resumo_02 = utf8_decode($xml -> sm_resumo_02);
+			$sm_rem_01 = utf8_decode($xml -> sm_rem_01);
+			$sm_rem_02 = utf8_decode($xml -> sm_rem_02);
+			$sm_rem_03 = utf8_decode($xml -> sm_rem_03);
+			$sm_rem_04 = utf8_decode($xml -> sm_rem_04);
+			$sm_rem_05 = utf8_decode($xml -> sm_rem_05);
+			$sm_rem_06 = utf8_decode($xml -> sm_rem_06);
+			$sm_rem_11 = utf8_decode($xml -> sm_rem_11);
+			$sm_rem_12 = utf8_decode($xml -> sm_rem_12);
+			$sm_rem_13 = utf8_decode($xml -> sm_rem_13);
+			$sm_rem_14 = utf8_decode($xml -> sm_rem_14);
+			$sm_rem_15 = utf8_decode($xml -> sm_rem_15);
+			$sm_rem_16 = utf8_decode($xml -> sm_rem_16);
+			
+			$to++;
+			$sx .= '<tr class="lt0">';
+			$sx .= '<td>' . $id_sm . '.</td>';
+			$sx .= '<td>' . $sm_codigo . '</td>';
+			$sx .= '<td>' . $sm_ano . '</td>';			
+			$sx .= '<td>' . $sm_titulo . '</td>';
+	
+
+			$sql = "select * from semic_trabalho where id_sm = '$id_sm' ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+
+			if (count($rlt) == 0) {
+				$sql = "INSERT INTO semic_trabalho
+						(
+							id_sm, sm_codigo, sm_titulo, 
+							sm_titulo_en, sm_programa, sm_status, 
+							sm_curso, sm_docente, sm_discente, 
+							sm_colaboradores, sm_autores, sm_edital, 
+							sm_ano, sm_lastupdate, sm_resumo_01, 
+							sm_resumo_02, sm_rem_01, sm_rem_02, 
+							sm_rem_03, sm_rem_04, sm_rem_05, 
+							sm_rem_06, sm_rem_11, sm_rem_12, 
+							sm_rem_13, sm_rem_14, sm_rem_15, 
+							sm_rem_16
+						) VALUES (
+							'$id_sm', '$sm_codigo', '$sm_titulo', 
+							'$sm_titulo_en', '$sm_programa', '$sm_status', 
+							'$sm_curso', '$sm_docente', '$sm_discente', 
+							'$sm_colaboradores', '$sm_autores', '$sm_edital', 
+							'$sm_ano', '$sm_lastupdate', '$sm_resumo_01', 
+							'$sm_resumo_02', '$sm_rem_01', '$sm_rem_02', 
+							'$sm_rem_03', '$sm_rem_04', '$sm_rem_05', 
+							'$sm_rem_06', '$sm_rem_11', '$sm_rem_12', 
+							'$sm_rem_13', '$sm_rem_14', '$sm_rem_15', 
+							'$sm_rem_16'
+						)";
+				$this -> db -> query($sql);
+				$in++;
+				$sx .= '<td>novo registro</td>';
+			} else {
+				/* Atualiza registro */
+				$sql = "UPDATE semic_trabalho SET 
+						sm_codigo='$sm_codigo',
+						sm_titulo='$sm_titulo',
+						sm_titulo_en='$sm_titulo_en',
+						sm_programa='$sm_programa',
+						sm_status='$sm_status',
+						sm_curso='$sm_curso',
+						sm_docente='$sm_docente',
+						sm_discente='$sm_discente',
+						sm_colaboradores='$sm_colaboradores',
+						sm_autores='$sm_autores',
+						sm_edital='$sm_edital',
+						sm_ano='$sm_ano',
+						sm_lastupdate='$sm_lastupdate',
+						sm_resumo_01='$sm_resumo_01',
+						sm_resumo_02='$sm_resumo_02',
+						sm_rem_01='$sm_rem_01',
+						sm_rem_02='$sm_rem_02',
+						sm_rem_03='$sm_rem_03',
+						sm_rem_04='$sm_rem_04',
+						sm_rem_05='$sm_rem_05',
+						sm_rem_06='$sm_rem_06',
+						sm_rem_11='$sm_rem_11',
+						sm_rem_12='$sm_rem_12',
+						sm_rem_13='$sm_rem_13',
+						sm_rem_14='$sm_rem_14',
+						sm_rem_15='$sm_rem_15',
+						sm_rem_16='$sm_rem_16' 
+						WHERE id_sm = $id_sm";
+						$this -> db -> query($sql);
+				$sx .= '<td>atualizado registro</td>';
+
+			}
+		}
+		$sx .= '</table>';
+		echo $sx;
+		if ($RowT > 0) {
+			$site = base_url('index.php/inport/ro8/semic-trabalho/' . ($offset + 50) );
+			echo '
+					<meta http-equiv="refresh" content="5;' . $site . '">
+					';
+		} else {
+			$site = base_url('index.php/inport/ro8/semic-trabalho-autor/');
+			echo '
+					<meta http-equiv="refresh" content="5;' . $site . '">
+					';			
+			$sx .= '<h1>FIM</h1>';
+		}
+		$sx .= '</table>';
+	}
+
+	function inport_semic_notas($id = 0) {
+		$tabela = "semic_nota_trabalhos";
+		$offset = $id;
+
 		echo '<hr>IMPORT<hr>';
 		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=semic_nota_trabalhos&limit=100&offset=' . $offset;
 		$xmlRaw = simplexml_load_file($site);
@@ -17,30 +232,30 @@ class ro8s extends CI_Model {
 		for ($r = 0; $r < $RowT; $r++) {
 			$xml = $xmlRaw -> record[$r];
 
-			$id_st= utf8_decode($xml-> id_st);
-			$st_codigo= utf8_decode($xml-> st_codigo);
-			$st_cod_trabalho= utf8_decode($xml-> st_cod_trabalho);
-			$st_edital= utf8_decode($xml-> st_edital);
-			$st_modalidade= utf8_decode($xml-> st_modalidade);
-			$st_id= utf8_decode($xml-> st_id);
-			$st_area= utf8_decode($xml-> st_area);
-			$st_nota_submint= utf8_decode($xml-> st_nota_submint);
-			$st_nota_rel_parcial= utf8_decode($xml-> st_nota_rel_parcial);
-			$st_nota_rel_final= utf8_decode($xml-> st_nota_rel_final);
-			$st_nota_media= utf8_decode($xml-> st_nota_media);
-			$st_nota_semic_oral= utf8_decode($xml-> st_nota_semic_oral);
-			$st_nota_semic_poster= utf8_decode($xml-> st_nota_semic_poster);
-			$st_status= utf8_decode($xml-> st_status);
-			$st_cnpq= utf8_decode($xml-> st_cnpq);
-			$st_area_geral= utf8_decode($xml-> st_area_geral);
-			$st_section= utf8_decode($xml-> st_section);
-			$st_eng= utf8_decode($xml-> st_eng);
-			$st_professor= utf8_decode($xml-> st_professor);
-			$st_aluno= utf8_decode($xml-> st_aluno);
-			$st_nr= utf8_decode($xml-> st_nr);
-			$st_oral= utf8_decode($xml-> st_oral);
-			$st_poster= utf8_decode($xml-> st_poster);
-			$st_ano= utf8_decode($xml-> st_ano);
+			$id_st = utf8_decode($xml -> id_st);
+			$st_codigo = utf8_decode($xml -> st_codigo);
+			$st_cod_trabalho = utf8_decode($xml -> st_cod_trabalho);
+			$st_edital = utf8_decode($xml -> st_edital);
+			$st_modalidade = utf8_decode($xml -> st_modalidade);
+			$st_id = utf8_decode($xml -> st_id);
+			$st_area = utf8_decode($xml -> st_area);
+			$st_nota_submint = utf8_decode($xml -> st_nota_submint);
+			$st_nota_rel_parcial = utf8_decode($xml -> st_nota_rel_parcial);
+			$st_nota_rel_final = utf8_decode($xml -> st_nota_rel_final);
+			$st_nota_media = utf8_decode($xml -> st_nota_media);
+			$st_nota_semic_oral = utf8_decode($xml -> st_nota_semic_oral);
+			$st_nota_semic_poster = utf8_decode($xml -> st_nota_semic_poster);
+			$st_status = utf8_decode($xml -> st_status);
+			$st_cnpq = utf8_decode($xml -> st_cnpq);
+			$st_area_geral = utf8_decode($xml -> st_area_geral);
+			$st_section = utf8_decode($xml -> st_section);
+			$st_eng = utf8_decode($xml -> st_eng);
+			$st_professor = utf8_decode($xml -> st_professor);
+			$st_aluno = utf8_decode($xml -> st_aluno);
+			$st_nr = utf8_decode($xml -> st_nr);
+			$st_oral = utf8_decode($xml -> st_oral);
+			$st_poster = utf8_decode($xml -> st_poster);
+			$st_ano = utf8_decode($xml -> st_ano);
 
 			$to++;
 			$sx .= '<tr class="lt0">';
@@ -78,7 +293,7 @@ class ro8s extends CI_Model {
 							'$st_professor', '$st_aluno', '$st_nr',
 							'$st_oral', '$st_poster', '$st_ano'	
 						)";
-						$this -> db -> query($sql);
+				$this -> db -> query($sql);
 				$in++;
 			} else {
 				/* Atualiza registro */
@@ -125,14 +340,14 @@ class ro8s extends CI_Model {
 		$sx .= '</table>';
 
 		return ($sx);
-		}
-	
-	function inport_ic_parecer($id = 0,$ano) {
-		$tabela = "pibic_parecer_".$ano;
+	}
+
+	function inport_ic_parecer($id = 0, $ano) {
+		$tabela = "pibic_parecer_" . $ano;
 		$offset = $id;
-		
+
 		echo '<hr>IMPORT<hr>';
-		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_parecer_'.$ano.'&limit=100&offset=' . $offset;
+		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_parecer_' . $ano . '&limit=100&offset=' . $offset;
 
 		$this -> load -> model('ic_pareceres');
 
@@ -145,59 +360,59 @@ class ro8s extends CI_Model {
 		for ($r = 0; $r < $RowT; $r++) {
 			$xml = $xmlRaw -> record[$r];
 
-			$id_pp= utf8_decode($xml-> id_pp);
-			$pp_nrparecer= utf8_decode($xml-> pp_nrparecer);
-			$pp_tipo= utf8_decode($xml-> pp_tipo);
-			$pp_protocolo= utf8_decode($xml-> pp_protocolo);
-			$pp_protocolo_mae= utf8_decode($xml-> pp_protocolo_mae);
-			$pp_avaliador= utf8_decode($xml-> pp_avaliador);
-			$pp_revisor= utf8_decode($xml-> pp_revisor);
-			$pp_status= utf8_decode($xml-> pp_status);
-			$pp_pontos= utf8_decode($xml-> pp_pontos);
-			$pp_pontos_pp= utf8_decode($xml-> pp_pontos_pp);
-			$pp_data= utf8_decode($xml-> pp_data);
-			$pp_data_leitura= utf8_decode($xml-> pp_data_leitura);
-			$pp_hora= utf8_decode($xml-> pp_hora);
-			$pp_parecer_data= utf8_decode($xml-> pp_parecer_data);
-			$pp_parecer_hora= utf8_decode($xml-> pp_parecer_hora);
-			$pp_p01= utf8_decode($xml-> pp_p01);
-			$pp_p02= utf8_decode($xml-> pp_p02);
-			$pp_p03= utf8_decode($xml-> pp_p03);
-			$pp_p04= utf8_decode($xml-> pp_p04);
-			$pp_p05= utf8_decode($xml-> pp_p05);
-			$pp_p06= utf8_decode($xml-> pp_p06);
-			$pp_p07= utf8_decode($xml-> pp_p07);
-			$pp_p08= utf8_decode($xml-> pp_p08);
-			$pp_p09= utf8_decode($xml-> pp_p09);
-			$pp_p10= utf8_decode($xml-> pp_p10);
-			$pp_p11= utf8_decode($xml-> pp_p11);
-			$pp_p12= utf8_decode($xml-> pp_p12);
-			$pp_p13= utf8_decode($xml-> pp_p13);
-			$pp_p14= utf8_decode($xml-> pp_p14);
-			$pp_p15= utf8_decode($xml-> pp_p15);
-			$pp_p16= utf8_decode($xml-> pp_p16);
-			$pp_p17= utf8_decode($xml-> pp_p17);
-			$pp_p18= utf8_decode($xml-> pp_p18);
-			$pp_p19= utf8_decode($xml-> pp_p19);
-			$pp_abe_01= utf8_decode($xml-> pp_abe_01);
-			$pp_abe_02= utf8_decode($xml-> pp_abe_02);
-			$pp_abe_03= utf8_decode($xml-> pp_abe_03);
-			$pp_abe_04= utf8_decode($xml-> pp_abe_04);
-			$pp_abe_05= utf8_decode($xml-> pp_abe_05);
-			$pp_abe_06= utf8_decode($xml-> pp_abe_06);
-			$pp_abe_07= utf8_decode($xml-> pp_abe_07);
-			$pp_abe_08= utf8_decode($xml-> pp_abe_08);
-			$pp_abe_09= utf8_decode($xml-> pp_abe_09);
-			$pp_abe_10= utf8_decode($xml-> pp_abe_10);
-			$pp_abe_11= utf8_decode($xml-> pp_abe_11);
-			$pp_abe_12= utf8_decode($xml-> pp_abe_12);
-			$pp_abe_13= utf8_decode($xml-> pp_abe_13);
-			$pp_abe_14= utf8_decode($xml-> pp_abe_14);
-			$pp_abe_15= utf8_decode($xml-> pp_abe_15);
-			$pp_abe_16= utf8_decode($xml-> pp_abe_16);
-			$pp_abe_17= utf8_decode($xml-> pp_abe_17);
-			$pp_abe_18= utf8_decode($xml-> pp_abe_18);
-			$pp_abe_19= utf8_decode($xml-> pp_abe_19);			
+			$id_pp = utf8_decode($xml -> id_pp);
+			$pp_nrparecer = utf8_decode($xml -> pp_nrparecer);
+			$pp_tipo = utf8_decode($xml -> pp_tipo);
+			$pp_protocolo = utf8_decode($xml -> pp_protocolo);
+			$pp_protocolo_mae = utf8_decode($xml -> pp_protocolo_mae);
+			$pp_avaliador = utf8_decode($xml -> pp_avaliador);
+			$pp_revisor = utf8_decode($xml -> pp_revisor);
+			$pp_status = utf8_decode($xml -> pp_status);
+			$pp_pontos = utf8_decode($xml -> pp_pontos);
+			$pp_pontos_pp = utf8_decode($xml -> pp_pontos_pp);
+			$pp_data = utf8_decode($xml -> pp_data);
+			$pp_data_leitura = utf8_decode($xml -> pp_data_leitura);
+			$pp_hora = utf8_decode($xml -> pp_hora);
+			$pp_parecer_data = utf8_decode($xml -> pp_parecer_data);
+			$pp_parecer_hora = utf8_decode($xml -> pp_parecer_hora);
+			$pp_p01 = utf8_decode($xml -> pp_p01);
+			$pp_p02 = utf8_decode($xml -> pp_p02);
+			$pp_p03 = utf8_decode($xml -> pp_p03);
+			$pp_p04 = utf8_decode($xml -> pp_p04);
+			$pp_p05 = utf8_decode($xml -> pp_p05);
+			$pp_p06 = utf8_decode($xml -> pp_p06);
+			$pp_p07 = utf8_decode($xml -> pp_p07);
+			$pp_p08 = utf8_decode($xml -> pp_p08);
+			$pp_p09 = utf8_decode($xml -> pp_p09);
+			$pp_p10 = utf8_decode($xml -> pp_p10);
+			$pp_p11 = utf8_decode($xml -> pp_p11);
+			$pp_p12 = utf8_decode($xml -> pp_p12);
+			$pp_p13 = utf8_decode($xml -> pp_p13);
+			$pp_p14 = utf8_decode($xml -> pp_p14);
+			$pp_p15 = utf8_decode($xml -> pp_p15);
+			$pp_p16 = utf8_decode($xml -> pp_p16);
+			$pp_p17 = utf8_decode($xml -> pp_p17);
+			$pp_p18 = utf8_decode($xml -> pp_p18);
+			$pp_p19 = utf8_decode($xml -> pp_p19);
+			$pp_abe_01 = utf8_decode($xml -> pp_abe_01);
+			$pp_abe_02 = utf8_decode($xml -> pp_abe_02);
+			$pp_abe_03 = utf8_decode($xml -> pp_abe_03);
+			$pp_abe_04 = utf8_decode($xml -> pp_abe_04);
+			$pp_abe_05 = utf8_decode($xml -> pp_abe_05);
+			$pp_abe_06 = utf8_decode($xml -> pp_abe_06);
+			$pp_abe_07 = utf8_decode($xml -> pp_abe_07);
+			$pp_abe_08 = utf8_decode($xml -> pp_abe_08);
+			$pp_abe_09 = utf8_decode($xml -> pp_abe_09);
+			$pp_abe_10 = utf8_decode($xml -> pp_abe_10);
+			$pp_abe_11 = utf8_decode($xml -> pp_abe_11);
+			$pp_abe_12 = utf8_decode($xml -> pp_abe_12);
+			$pp_abe_13 = utf8_decode($xml -> pp_abe_13);
+			$pp_abe_14 = utf8_decode($xml -> pp_abe_14);
+			$pp_abe_15 = utf8_decode($xml -> pp_abe_15);
+			$pp_abe_16 = utf8_decode($xml -> pp_abe_16);
+			$pp_abe_17 = utf8_decode($xml -> pp_abe_17);
+			$pp_abe_18 = utf8_decode($xml -> pp_abe_18);
+			$pp_abe_19 = utf8_decode($xml -> pp_abe_19);
 
 			$to++;
 			$sx .= '<tr class="lt0">';
@@ -264,12 +479,12 @@ class ro8s extends CI_Model {
 						'$pp_abe_15','$pp_abe_16','$pp_abe_17',
 						'$pp_abe_18','$pp_abe_19'			
 						)";
-						$this -> db -> query($sql);
+				$this -> db -> query($sql);
 				$in++;
 			} else {
 				/* Atualiza registro */
 				$sx .= '<td>atualizado registro</td>';
-				$sql = "UPDATE pibic_parecer_".$ano." SET 
+				$sql = "UPDATE pibic_parecer_" . $ano . " SET 
 							pp_nrparecer='$pp_nrparecer',
 							pp_tipo='$pp_tipo',
 							pp_protocolo='$pp_protocolo',
@@ -330,7 +545,7 @@ class ro8s extends CI_Model {
 		}
 
 		if ($RowT > 0) {
-			$site = base_url('index.php/inport/ro8/ic_parecer/' . ($offset + 100).'/'.$ano);
+			$site = base_url('index.php/inport/ro8/ic_parecer/' . ($offset + 100) . '/' . $ano);
 			echo '
 					<meta http-equiv="refresh" content="5;' . $site . '">
 					';
@@ -595,7 +810,7 @@ class ro8s extends CI_Model {
 	function inport_pibic($id = 0) {
 		$offset = $id;
 		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_bolsa_contempladas&limit=100&offset=' . $offset;
-		
+
 		$this -> load -> model('instituicoes');
 		$this -> load -> model('paises');
 		$this -> load -> model('paises');

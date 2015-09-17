@@ -459,6 +459,10 @@ class semic_salas extends CI_Model {
 
 				/* Avaliador 1 */
 				$ava1 = trim($line['av_nome_1']);
+				$avs1 = trim($line['st_avaliador_situacao_1']);
+				$cor1 = '<font color="#333;">';
+				if ($avs1 == 9) { $cor1 = '<font color="red">'; }
+				if ($avs1 == 10) { $cor1 = '<font color="blue">'; }
 
 				/* Calculo do TAG */
 				if ($idx < 10) {
@@ -466,6 +470,7 @@ class semic_salas extends CI_Model {
 				} else {
 					$idx2 = $idx - 10;
 				}
+				
 				if (strlen($ava1) == 0) {
 					$ava1 = '- não indicado -';
 					$href1 = '<a href="#' . $idx2 . '" onclick="newwin(\'' . base_url('index.php/semic/bloco_poster_avaliador/' . $idt . '/1/' . checkpost_link($idt)) . '\');" class="link">';
@@ -474,11 +479,16 @@ class semic_salas extends CI_Model {
 				}
 
 				$sc .= '<td>';
-				$sc .= $href1 . $ava1 . '</A>';
+				$sc .= $href1 . $cor1. $ava1 . '</font></A>';
 				$sc .= '</td>';
 
 				/* Avaliador 2 */
 				$ava2 = trim($line['av_nome_2']);
+				$avs2 = trim($line['st_avaliador_situacao_2']);
+				$cor2 = '<font color="#333;">';
+				if ($avs2 == 9) { $cor2 = '<font color="red">'; }
+				if ($avs2 == 10) { $cor2 = '<font color="blue">'; }
+				
 				if (strlen($ava2) == 0) {
 					$idt = $line['id_st'];
 					$ava2 = '- não indicado -';
@@ -489,7 +499,7 @@ class semic_salas extends CI_Model {
 				}
 
 				$sc .= '<td>';
-				$sc .= $href2 . $ava2 . '</A>';
+				$sc .= $href2 . $cor2.$ava2 . '</font></A>';
 				$sc .= '</td>';
 
 				$sc .= '</tr>';

@@ -3,11 +3,18 @@ class credenciamentos extends CI_Model {
 	var $key = '99me0r9vm0e09347987cecem';
 	var $sala = 5;
 	var $bloco = 123;
+	
+	function set_evento($id)
+		{
+			$data = array('evento_id'=>$id);
+			$this->session->set_userdata($data);
+			return(0);
+		}
 
 	function presentes($data, $bloco) {
 		$sql = "select count(*) as total from evento_registro 
 							where r_bloco = $bloco 
-							and r_data = '" . $data . "' ";
+							and r_data = '" . $data . "' and r_status ='A' ";
 		$rlt = db_query($sql);
 		if ($line = db_read($rlt)) {
 			return ($line['total']);

@@ -16,8 +16,15 @@ class credenciamento extends CI_Controller {
 
 		date_default_timezone_set('America/Sao_Paulo');
 	}
-	
-	function cab() {
+
+	function cab($bypass=0) {
+		global $evento;
+		
+		$evento = $this->session->userdata('evento_id');
+		if ((strlen($evento) == 0) and ($bypass == 0))
+			{
+				redirect(base_url('index.php/credenciamento/eventos'));
+			}
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
@@ -29,43 +36,58 @@ class credenciamento extends CI_Controller {
 		$data['css'] = $css;
 		$data['js'] = $js;
 
-
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-	}	
+	}
+
+	function index() {
+		/* Model */
+		$this -> load -> model('credenciamento/credenciamentos');
+
+		$this -> cab();
+		$data = array();
+		$data['tela'] = $this -> credenciamentos -> eventos_ativos_lista();
+
+		$this -> load -> view("credenciamento/content", $data);
+	}
+	function eventos() {
+		/* Model */
+		$this -> load -> model('credenciamento/credenciamentos');
+
+		$this -> cab(1);
+		$data = array();
+		$data['tela'] = $this -> credenciamentos -> eventos_ativos_lista();
+
+		$this -> load -> view("credenciamento/content", $data);
+	}
 	
-	function index()
+	function evento_sel($id=0,$chk='')
 		{
-			/* Model */
-			$this->load->model('credenciamento/credenciamentos');
-			
-			$this->cab();
-			$data = array();
-			$data['tela'] = $this->credenciamentos->eventos_ativos_lista();
-			
-			$this->load->view("credenciamento/content",$data);		
+			$this -> load -> model('credenciamento/credenciamentos');
+			$this->credenciamentos->set_evento($id);
+			redirect(base_url('index.php/credenciamento/registro'));
 		}
-	function registro()
-		{
-			/* Model */
-			$this->load->model('credenciamento/credenciamentos');
-			
-			$this->cab();
-			
-			$this->load->view('credenciamento/relogio');
-			$data = array();
-			$data['tela'] = $this->credenciamentos->registro_form();
-			
-			/* Dados da Sala */
-			$sala = $this->credenciamentos->sala();
-			$this->load->view("credenciamento/sala",$sala);
-			$this->load->view("credenciamento/sala_presentes",$sala);
-			$this->load->view("credenciamento/sala_logo_evento.php",$sala);
-			
-			$data = array_merge($data,$sala);
-			
-			$this->load->view("credenciamento/content",$data);					
-		}
+
+	function registro() {
+		/* Model */
+		$this -> load -> model('credenciamento/credenciamentos');
+
+		$this -> cab();
+
+		$this -> load -> view('credenciamento/relogio');
+		$data = array();
+		$data['tela'] = $this -> credenciamentos -> registro_form();
+
+		/* Dados da Sala */
+		$sala = $this -> credenciamentos -> sala();
+		$this -> load -> view("credenciamento/sala", $sala);
+		$this -> load -> view("credenciamento/sala_presentes", $sala);
+		$this -> load -> view("credenciamento/sala_logo_evento.php", $sala);
+
+		$data = array_merge($data, $sala);
+
+		$this -> load -> view("credenciamento/content", $data);
+	}
 
 }
 ?>

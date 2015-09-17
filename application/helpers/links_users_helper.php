@@ -1,4 +1,31 @@
 <?php
+
+function enviaremail_usuario($para, $assunto, $texto, $de)
+	{
+		$CI = &get_instance();
+		$sql = "select usm_email from us_email where usuario_id_us = ".$para." and usm_ativo = 1 order by usm_email_preferencial desc ";
+		$rlt = $CI->db->query($sql);
+		$rlt = $rlt->result_array();
+		$ok = 0;
+		$email = array();
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				$e = $line['usm_email'];
+				if ((strlen($e) > 0) and (strpos($e,'@') > 0))
+					{
+						array_push($email,$e);
+					}
+			}
+		
+		if (count($email) > 0)
+			{
+				$ok = enviaremail($email, $assunto, $texto, $de);
+			}
+		return($ok);
+	}
+
+
 function base_url_site($link)
 	{
 		$http = 'http://cip.pucpr.br/'.$link;

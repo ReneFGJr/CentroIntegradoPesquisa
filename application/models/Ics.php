@@ -17,12 +17,12 @@ class ics extends CI_model {
 				$wh1 .= ' and ';
 				$wh2 .= ' and ';
 				$wh3 .= ' and ';
-				$wh4 .= ' and ';
+				//$wh4 .= ' and ';
 			}
 			$wh1 .= " (pf_nome like '%" . $term[$r] . "%') ";
 			$wh2 .= " (al_nome like '%" . $term[$r] . "%') ";
 			$wh3 .= " (ic_projeto_professor_codigo like '%" . $term[$r] . "%') ";
-			$wh4 .= " (ic_projeto_professor_titulo like '%" . $term[$r] . "%') ";
+			//$wh4 .= " (ic_projeto_professor_titulo like '%" . $term[$r] . "%') ";
 		}
 
 		$wh = '(' . $wh1 . ' or ' . $wh2 . ' or ' . $wh3 . ' or ' . $wh4 . ')';

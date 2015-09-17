@@ -16,42 +16,37 @@ $dd = array();
  * Classe container para metodos estaticos de utilidades variadas
  * @author goncin (goncin ARROBA gmail PONTO com)
  */
- 
-  const NN_PONTO = '\.';
-  const NN_PONTO_ESPACO = '. ';
-  const NN_ESPACO = ' ';
-  const NN_REGEX_MULTIPLOS_ESPACOS = '\s+';
-  const NN_REGEX_NUMERO_ROMANO =
-    '^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$';
- 
-   /**
-   * @param string $nome O nome a ser normalizado
-   * @return string O nome devidamente normalizado
-   */
-  function normalizarNome($nome) {
-    $nome = mb_ereg_replace(self::NN_PONTO, self::NN_PONTO_ESPACO, $nome);
-    $nome = mb_ereg_replace(self::NN_REGEX_MULTIPLOS_ESPACOS, self::NN_ESPACO,
-      $nome);
-    $nome = ucwords(strtolower($nome)); // alterando essa linha pela anterior funciona para acentos
-    $partesNome = mb_split(self::NN_ESPACO, $nome);
-    $excecoes = array(
-      'de', 'do', 'di', 'da', 'dos', 'das', 'dello', 'della',
-      'dalla', 'dal', 'del', 'e', 'em', 'na', 'no', 'nas', 'nos', 'van', 'von',
-      'y', 'der'
-    );
- 
-    for($i = 0; $i < count($partesNome); ++$i) {
-      
-    if(mb_ereg_match(self::NN_REGEX_NUMERO_ROMANO, mb_strtoupper($partesNome[$i])))
-            $partesNome[$i] = mb_strtoupper($partesNome[$i]);
-      foreach($excecoes as $excecao)
-    if(mb_strtolower($partesNome[$i]) == mb_strtolower($excecao))
-          $partesNome[$i] = $excecao;
-       }
-   $nomeCompleto = implode(self::NN_ESPACO, $partesNome);
-     return addslashes($nomeCompleto); 
+
+const NN_PONTO = '\.';
+const NN_PONTO_ESPACO = '. ';
+const NN_ESPACO = ' ';
+const NN_REGEX_MULTIPLOS_ESPACOS = '\s+';
+const NN_REGEX_NUMERO_ROMANO = '^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$';
+
+/**
+ * @param string $nome O nome a ser normalizado
+ * @return string O nome devidamente normalizado
+ */
+function normalizarNome($nome) {
+	$nome = mb_ereg_replace(self::NN_PONTO, self::NN_PONTO_ESPACO, $nome);
+	$nome = mb_ereg_replace(self::NN_REGEX_MULTIPLOS_ESPACOS, self::NN_ESPACO, $nome);
+	$nome = ucwords(strtolower($nome));
+	// alterando essa linha pela anterior funciona para acentos
+	$partesNome = mb_split(self::NN_ESPACO, $nome);
+	$excecoes = array('de', 'do', 'di', 'da', 'dos', 'das', 'dello', 'della', 'dalla', 'dal', 'del', 'e', 'em', 'na', 'no', 'nas', 'nos', 'van', 'von', 'y', 'der');
+
+	for ($i = 0; $i < count($partesNome); ++$i) {
+
+		if (mb_ereg_match(self::NN_REGEX_NUMERO_ROMANO, mb_strtoupper($partesNome[$i])))
+			$partesNome[$i] = mb_strtoupper($partesNome[$i]);
+		foreach ($excecoes as $excecao)
+			if (mb_strtolower($partesNome[$i]) == mb_strtolower($excecao))
+				$partesNome[$i] = $excecao;
+	}
+	$nomeCompleto = implode(self::NN_ESPACO, $partesNome);
+	return addslashes($nomeCompleto);
 }
-  
+
 /**
  * CodeIgniter
  * sisDOC Labs
@@ -64,29 +59,87 @@ $dd = array();
  * @since	Version 2.1.0
  * @version 0.15.35
  * @filesource
- */  
- 
-function ic($id='',$tp=0,$fmt='HTML')
-	{
-		$sql = "select * from mensagem where nw_ref = '$id' ";
-		$rlt = db_query($sql);
-		if ($line = db_read($rlt))
+ */
+
+function enviaremail($para, $assunto, $texto, $de) {
+	$CI = &get_instance();
+
+	$CI -> email -> subject($assunto);
+	$CI -> email -> message($texto);
+
+	/* de */
+	$sql = "select * from mensagem_own where id_m = " . round($de);
+	$rlt = $CI -> db -> query($sql);
+	$rlt = $rlt -> result_array();
+	if (count($rlt) == 1) {
+		$line = $rlt[0];
+		$e_mail = trim($line['m_email']);
+		$e_nome = trim($line['m_descricao']);
+		
+		$CI -> email -> from($e_mail, $e_nome);
+		$CI -> email -> to($para[0]);
+		$CI -> email -> subject($assunto);
+		$CI -> email -> message($texto);
+				
+		if (is_array($para))
 			{
-				switch($tp)
-					{
-					case '1':
-						if ($fmt = 'HTML') 
-						{
-							return(mst($line['nw_texto']));
-						} else {
-							return($line['nw_texto']);	
-						}
-						
-					default:
-						return($line);
-					}
+				array_push($para,trim($line['m_email']));
+			} else {
+				$para = array($para,trim($line['m_email']));
 			}
+		/* e-mail com copias */
+		$bcc = array();
+		for ($r=1;$r < count($para);$r++)
+			{
+				array_push($bcc,$para[$r]);
+			}
+
+		if (count($bcc) > 0)
+			{
+				$CI -> email -> bcc($bcc);
+			}
+		
+		$sx = '<div id="email_enviado">';
+		$sx .= '<h3>'.msg('email_enviado').'</h3>';
+		for ($r=0;$r < count($para);$r++)
+			{
+				$sx .= $para[$r];
+				$sx .= '<br>';
+			}
+		$sx .= '<br>';
+		$sx .= '</div>';
+		$sx .= '<script>
+				setTimeout(function() {	$(\'#email_enviado\').fadeOut(\'fast\');}, 3000);
+				</script>
+				';
+		echo $sx;
+
+		$CI -> email -> send();		
+		
+		return ('ok');
+	} else {
+		return ('Proprietário do e-mail não configurado (veja mensagem_own)');
 	}
+}
+
+function ic($id = '', $tp = 0, $fmt = 'HTML') {
+	$sql = "select * from mensagem where nw_ref = '$id' ";
+	$rlt = db_query($sql);
+	if ($line = db_read($rlt)) {
+		switch($tp) {
+			case '1' :
+				if ($fmt = 'HTML') {
+					return (mst($line['nw_texto']));
+				} else {
+					return ($line['nw_texto']);
+				}
+
+			default :
+				return ($line);
+		}
+	}
+}
+
 /* checa e cria diretorio */
 if (!function_exists('dir')) {
 	function dir($dir) {
@@ -100,6 +153,7 @@ if (!function_exists('dir')) {
 		}
 		return ($ok);
 	}
+
 }
 
 function mst($txt) {
@@ -126,7 +180,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,     // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,      // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -218,20 +272,17 @@ function db_query($sql) {
 	return ($query -> result());
 }
 
-
 /* Tipo de servidor */
-function debug()
-{
-if (file_exists('_server_type.php'))
-	{
-		require("_server_type.php");
-		if ($server_type != '3')
-			{
-				$CI = &get_instance();
-				$CI -> output -> enable_profiler('true');
-			}
+function debug() {
+	if (file_exists('_server_type.php')) {
+		require ("_server_type.php");
+		if ($server_type != '3') {
+			$CI = &get_instance();
+			$CI -> output -> enable_profiler('true');
+		}
 	}
 }
+
 /*
  * http://www.kathirvel.com/php-convert-or-cast-array-to-object-object-to-array/
  */
@@ -323,7 +374,7 @@ function stod($data = 0) {
 		$dt1 = substr($data, 6, 2);
 		$dt2 = substr($data, 4, 2);
 		$dt3 = substr($data, 0, 4);
-		$dt = mktime(0,0,0,$dt2,$dt1,$dt3);
+		$dt = mktime(0, 0, 0, $dt2, $dt1, $dt3);
 		return ($dt);
 	}
 }
@@ -1509,7 +1560,8 @@ if (!function_exists('form_edit')) {
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr); ;
+				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr);
+				;
 
 				/* label */
 				if (strlen($label) > 0) {
@@ -1648,7 +1700,8 @@ if (!function_exists('form_edit')) {
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= $td . form_checkbox($dados, 'accept', $vlr); ;
+				$tela .= $td . form_checkbox($dados, 'accept', $vlr);
+				;
 				$tela .= $tdn . $trn;
 				break;
 
@@ -1736,7 +1789,7 @@ if (!function_exists('form_edit')) {
 				}
 				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
-				
+
 				$size = sonumero($type);
 
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => $max, 'size' => $size, 'placeholder' => $label, 'class' => 'form_string');

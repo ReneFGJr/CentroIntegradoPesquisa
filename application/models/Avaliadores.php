@@ -60,8 +60,10 @@ class avaliadores extends CI_Model {
 				if ($id > 0) {
 					$sql = "update us_usuario set us_avaliador = '1' where id_us = " . round($id);
 					$this -> db -> query($sql);
+					
+					$this -> avaliador_historico('ACT', msg('avaliador') . ': ' . msg('active'), $id);	
 				}
-				$this -> avaliador_historico('ACT', msg('avaliador') . ': ' . msg('active'), $id);
+				
 			}
 		}
 		return ('');

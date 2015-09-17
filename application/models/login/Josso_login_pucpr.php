@@ -39,8 +39,7 @@ class josso_login_pucpr extends CI_Model {
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
 			if (count($rlt) == 0) {
-				echo 'ERRO DE CPF';
-				exit ;
+				return(0);
 			} else {
 				$line = $rlt[0];
 				$this -> perfil = trim($line['us_perfil']);

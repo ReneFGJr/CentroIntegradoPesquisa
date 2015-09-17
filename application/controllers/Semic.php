@@ -1,7 +1,7 @@
 <?php
 class semic extends CI_Controller {
 	function __construct() {
-		global $dd, $acao;
+		global $dd, $acao, $email_own;
 		parent::__construct();
 		$this -> lang -> load("app", "portuguese");
 		$this -> load -> library('form_validation');
@@ -12,11 +12,38 @@ class semic extends CI_Controller {
 		$this -> load -> helper('links_users');
 		$this -> load -> library('session');
 		$this -> load -> helper('email');
+		
+		$email_own=2;
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
 	}
+	
+	function cab_avaliador() {
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'style_cab.css');
+		array_push($css, 'form_sisdoc.css');
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Menu */
+		$menus = array();
+
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+		$data['title_page'] = 'SEMIC - ' . date("Y");
+		$data['menu'] = 1;
+		$data['menus'] = $menus;
+		$this -> load -> view('header/cab', $data);
+	}
+	
 
 	function cab() {
 		/* Carrega classes adicionais */
@@ -36,6 +63,7 @@ class semic extends CI_Controller {
 		array_push($menus, array('Programacao', 'index.php/semic'));
 		array_push($menus, array('Trabalhos', 'index.php/semic/trabalhos'));
 		array_push($menus, array('Avaliadores', 'index.php/semic/avaliadores'));
+		array_push($menus, array('Anais do evento', 'index.php/semic/anais'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -45,7 +73,73 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
-	function agenda($id = 0) {
+	function aceite()
+		{
+		/* Load Models */
+		$this -> load -> model('avaliadores');
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> cab_avaliador();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+		$data = array();
+		$data['content'] = '';
+		
+		/* Aceite de Indicações SEMIC */
+		$id = $_SESSION['id_us'];
+		$data['content'] .= $this -> semic_trabalhos -> mostra_agenda_aceite($id, date("Y"));
+		
+		$this -> load -> view('avaliador/home',$data);
+		}
+		
+	function anais($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('semic/semic_trabalhos');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$menu = array();
+		array_push($menu, array('Publicação dos Anais do Evento', 'Exportar trabalhos para o Site do evento', 'ITL', '/semic/anais_exportar/'));
+		/*View principal*/
+		$data['menu'] = $menu;
+
+		$data['title_menu'] = 'Trabalhos SEMIC';
+		$this -> load -> view('header/main_menu', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}		
+	/* Exportar dados */
+	function anais_exportar() {
+		/* Load Models */
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('semic/semic_anais');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+		$data['content'] = '<h1>Exportar dados IC para SEMIC</h1>';
+		$this->load->view('content',$data);
+		
+		/* Phase I - Gerar paginas de cada trabalho */
+		$data['content'] = $this->semic_anais->gerar_paginas_trabalho();
+		$this->load->view('content',$data);
+		
+		/* Phase II - Gerar Sumario por Areas */
+		
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);	
+
+	}
+	function agenda($id = 0,$email=0) {
+		global $email_own;
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('avaliadores');
@@ -62,6 +156,12 @@ class semic extends CI_Controller {
 
 		/* Perfil do usuário */
 		$data['agenda'] = $this -> semic_trabalhos -> mostra_agenda($id, date("Y"));
+		
+		if ($email==1)
+			{
+				//enviaremail_usuario($id,'Agenda',$data['agenda'],$email_own);		
+				enviaremail_usuario($id,'SEMIC - Agenda do avaliador',$data['agenda'],$email_own);
+			}
 
 		$this -> load -> view('semic/semic_agenda', $data);
 

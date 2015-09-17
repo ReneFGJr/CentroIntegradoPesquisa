@@ -1,3 +1,79 @@
+/* Botao lateral */
+#email_enviado
+	{
+		position: absolute;
+		top: 20px;
+		right: 80px;
+		border: 1px solid #000000;
+		width: 250px;
+		
+		z-index: 20;
+		background-color: #eee;
+		opacity: 0.8;
+		padding: 10px;
+		border-radius: 10px;
+	}
+.left_mark {
+	background-color:#cfcfcf;
+	text-indent:-65.5px;
+	color:#111;
+	font-family:Arial;
+	font-size:12px;
+	font-weight:bold;
+	font-style:normal;
+	height:23px;
+	line-height:23px;
+	width:137px;
+	text-decoration:none;
+	text-align:right;
+	cursor: pointer;
+	padding-right: 10px;
+}
+.left_mark:hover {
+	background-color:#4d4d4c;
+	color: #eee;
+}.left_mark:active {
+	position:relative;
+	top:1px;
+}
+
+/* Botao 3d */
+		.botao3d {
+			font-family: Helvetica, Arial, sans-serif;
+			text-transform: uppercase;
+			font-weight: 700;
+			border: none;
+			padding: 10px;
+			cursor: pointer;
+			display: inline-block;
+			text-decoration: none;
+		}
+		.botao3d a, a:hover {
+			text-decoration: none;
+			transition: 0;
+		}
+		.back_green {
+			background: green;
+			color: #fff;
+		}
+		.back_red {
+			background: red;
+			color: #fff;
+		}		
+		.back_green_shadown {
+			box-shadow: 0px 5px 0px #006000;
+		}
+		.back_red_shadown {
+			box-shadow: 0px 5px 0px #600000;
+		}		
+		.botao3d:active {
+			position: relative;
+			top: 5px;
+			box-shadow: none;
+			transition: 0;
+		}
+
+
 /* UI */
 .ui-autocomplete-loading {
   background: #fff url('../img/ajax/ajax_loader.gif') right center no-repeat !important;

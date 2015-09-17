@@ -1,21 +1,20 @@
 <?php
 class semic_trabalhos extends CI_Model {
 	var $tabela = 'semic_ic_trabalho';
-	
-	function cp()
-		{
-			$cp = array();
-			array_push($cp,array('$H8','id_st','',False,True));
-			array_push($cp,array('$O A:ATIVO&C:CANCELADO&F:FINALIZADO&S:SUSPENSO','st_status','Status',True,True));
-			array_push($cp,array('$O N:NÃO&S:SIM','st_oral','Apesentação Oral',False,True));
-			array_push($cp,array('$O N:NÃO&S:SIM','st_poster','Apesentação Poster',False,True));
-			return($cp);
-		}
+
+	function cp() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_st', '', False, True));
+		array_push($cp, array('$O A:ATIVO&C:CANCELADO&F:FINALIZADO&S:SUSPENSO', 'st_status', 'Status', True, True));
+		array_push($cp, array('$O N:NÃO&S:SIM', 'st_oral', 'Apesentação Oral', False, True));
+		array_push($cp, array('$O N:NÃO&S:SIM', 'st_poster', 'Apesentação Poster', False, True));
+		return ($cp);
+	}
 
 	function row($obj) {
-		$obj -> fd = array('id_st', 'st_codigo', 'st_status', 'st_area', 'st_area_geral', 'st_cnpq', 'st_eng','st_professor','st_aluno','st_section','st_nr','st_oral','st_poster','st_ano');
+		$obj -> fd = array('id_st', 'st_codigo', 'st_status', 'st_area', 'st_area_geral', 'st_cnpq', 'st_eng', 'st_professor', 'st_aluno', 'st_section', 'st_nr', 'st_oral', 'st_poster', 'st_ano');
 		$obj -> lb = array('ID', msg('protocol'), msg('status'), msg('area'), msg('area_geral'), msg('cnpq'), msg('english'), msg('orientador'), msg('estudante'), msg('section'), msg('nr'), msg('oral'), msg('poster'), msg('ano'));
-		$obj -> mk = array('', 'C', 'C', 'C', 'C','C','C','C','C','C','C','C','C','C','C');
+		$obj -> mk = array('', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C');
 		return ($obj);
 	}
 
@@ -175,44 +174,265 @@ class semic_trabalhos extends CI_Model {
 		$cab .= '<tr><td colspan="' . $tot . '"><img src="' . $img . '" width="100%"></td></tr>';
 		$cab .= '<tr><td>&nbsp;</td></tr>';
 		$cab .= '<tr><td>';
-		
+
 		/* email link */
-		$check = checkpost_link($id.'avaliador_semic');
-		$link = '<a href="'.base_url_site('index.php/referee/ag/'.$id.'/'.$check).'" target="_new_av">LINK</A>';				
+		$check = checkpost_link($id . 'avaliador_semic');
+		$link = '<a href="' . base_url_site('index.php/login/r/' . $id . '/' . $check) . '" target="_new_av">[CLICK AQUI PARA ACEITAR OU DECLINAR]</A>';
 
 		/* EMAIL */
-		$texto = ic('semic_av_agenda',1,'HTML');
-		
+		$texto = ic('semic_av_agenda', 1, 'HTML');
 
 		$this -> load -> model('email_local');
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
 		$this -> load -> library('email', $config);
-		
+
 		/* Substituicao */
-		$texto = troca($texto,'$AGENDA',$sx);
-		$texto = troca($texto,'$CAB',$cab);
-		$texto = troca($texto,'$LINK',$link);
+		$texto = troca($texto, '$AGENDA', $sx);
+		$texto = troca($texto, '$CAB', $cab);
+		$texto = troca($texto, '$LINK', $link);
 		$texto .= '</table>';
-		
-		//echo '<HR>'.$texto.'<hr>';
-		
-		
-		
-		$this -> email -> subject('TESTE - CONVITE');
-		$this -> email -> message($sx);
 
-		$this -> email_local -> e_mail = 'pibicpr@pucpr.br';
-		$this -> email_local -> e_nome = 'Inciacao Científica';
+		return ($texto);
+	}
 
-		$para = 'renefgj@gmail.com';
-		$this -> email -> to($para);
+	function avaliador_historico($acao, $historico, $avaliador) {
+		$data = date("Y-m-d");
+		$hora = date("H:i:s");
+		$user = $_SESSION['id_us'];
+		$sql = "insert into us_avaliador_historico
+				(
+					h_acao, h_historico, h_user,
+					h_data, h_hora, h_login
+				) values (
+					'$acao','$historico','$avaliador',
+					'$data','$hora','$user'
+				)";
+		$this -> db -> query($sql);
 
-		$this -> email -> send();
+	}
 
-		$this -> load -> model('email_local');
+	function avaliador_convite_oral($id, $avaliador, $sit, $obs = '') {
+		if ($id > 0) {
+			$sql = "select * from semic_bloco where id_sb = " . $id;
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			if (count($rlt) > 0) {
+				$line = $rlt[0];
+				$stx = $this -> situacao_avaliador($sit);
+				$historico = 'SEMIC-' . msg('convite') . ': ' . trim($stx['status']) . ' Oral:' . $id;
+				if (strlen($obs) > 0) {
+					$historico .= '<br><i>' . $obs . '</i>';
+				}
+				$av = 0;
+				$fld = array('', 'sb_avaliador_situacao_1', 'sb_avaliador_situacao_2', 'sb_avaliador_situacao_3');
+				if ($line = db_read($rlt)) {
+					if ($line['sb_avaliador_1'] == $avaliador) { $av = 1;
+					}
+					if ($line['sb_avaliador_2'] == $avaliador) { $av = 2;
+					}
+					if ($line['sb_avaliador_3'] == $avaliador) { $av = 3;
+					}
+				}
+
+				$sql = "update semic_bloco set
+					 	" . $fld[$av] . " = '$sit' 
+					where id_sb = " . $id;
+				$this -> db -> query($sql);
+			}
+			$this -> avaliador_historico('SCA', $historico, $avaliador);
+		}
+	}
+
+	function avaliador_convite_poster($id, $avaliador, $sit, $obs = '') {
+		if ($id > 0) {
+			$sql = "select * from semic_nota_trabalhos 
+						where st_bloco_poster = " . $id . " 
+						and (st_avaliador_1 = $avaliador or st_avaliador_2 = $avaliador)
+						";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$stx = $this -> situacao_avaliador($sit);
+			$historico = 'SEMIC-' . msg('convite') . ': ' . trim($stx['status']) . ' Poster:' . $id;
+			if (strlen($obs) > 0) {
+				$historico .= '<br><i>' . $obs . '</i>';
+			}
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[0];
+				$av = 0;
+				$fld = array('', 'st_avaliador_situacao_1', 'st_avaliador_situacao_2');
+				if ($line = db_read($rlt)) {
+					if ($line['st_avaliador_1'] == $avaliador) { $av = 1;
+					}
+					if ($line['st_avaliador_2'] == $avaliador) { $av = 2;
+					}
+				}
+				$ids = $line['id_st'];
+				$sql = "update semic_nota_trabalhos set
+					 	" . $fld[$av] . " = '$sit' 
+					where id_st = " . $ids;
+				$this -> db -> query($sql);
+			}
+			$this -> avaliador_historico('SCN', $historico, $avaliador);
+		}
+	}
+
+	function mostra_agenda_aceite($id = 0, $ano = 0) {
+		/* Acao */
+		$acao = $this -> input -> post('acao');
+		$bt_aceitar = msg('aceitar_avaliacao');
+		$bt_recusar = msg('recusar_avaliacao');
+		$bt_recusar_confirma = msg('recusar_avaliacao_confirma');
+		if (strlen($acao) > 0) {
+			$dd10 = $this -> input -> post('dd10');
+			$dd11 = $this -> input -> post('dd11');
+			$dd12 = $this -> input -> post('dd12');
+			if ($acao == $bt_aceitar) {
+				if ($dd11 == 'B') {
+					$this -> avaliador_convite_oral($dd12, $id, 10);
+				} else {
+					$this -> avaliador_convite_poster($dd12, $id, 10);
+				}
+				/* Enviar e-mail */
+				$this -> avaliadores -> avaliador_ativar($id);
+			}
+			/* Recusar convite */
+			if ($acao == $bt_recusar_confirma) {
+				if ($dd11 == 'B') {
+					$this -> avaliador_convite_oral($dd12, $id, 9, $dd10);
+				} else {
+					$this -> avaliador_convite_poster($dd12, $id, 9, $dd10);
+				}
+				/* Enviar e-mail */
+			}
+			redirect(base_url('index.php/semic/aceite/'));
+			exit ;
+		}
+
+		$ano2 = ($ano - 1);
+		$sql = "select * from ( 
+							SELECT id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 = $id 
+								union 
+							SELECT id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 = $id 
+								union 
+							SELECT id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 = $id
+							) as total 
+						inner join us_usuario on id_us = avaliador
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						left join semic_bloco on id_bl = id_sb
+						left join semic_salas on id_sl = sb_sala
+						order by us_nome, sb_data, sb_hora				
+				";
+		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, 
+					sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome,
+					sl_bloco, bl, tipo ";
+		$sql = "select $cp, sum(tot) as total from ( 
+							SELECT id_sb as bl, 'B' as tipo, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
+								union 
+							SELECT id_sb as bl, 'B' as tipo, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
+								union 
+							SELECT id_sb as bl, 'B' as tipo, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
+								union 
+							SELECT st_bloco_poster as bl, 'P' as tipo, 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
+								union 
+							SELECT st_bloco_poster as bl, 'P' as tipo, 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
+							) as total 
+						inner join us_usuario on id_us = avaliador
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						left join semic_bloco on id_bl = id_sb
+						left join semic_salas on id_sl = sb_sala
+						where id_us = $id
+						group by $cp
+						order by us_nome, sb_data, sb_hora				
+				";
+
+		$rlt = db_query($sql);
+		$rs = array();
+		while ($line = db_read($rlt)) {
+			array_push($rs, $line);
+		}
+
+		/* Total de convites */
+		$tot = count($rs);
+		if ($tot > 0) {
+			$size = round(100 / $tot) . '%';
+			$sx = '<table width="640" style="border: 1px solid #000000;" >';
+
+			for ($r = 0; $r < count($rs); $r++) {
+				/* imagem */
+				$sx .= '<tr>';
+
+				$sx .= '<td width="' . $size . '">';
+				$sx .= '<table width="100%" border=0 >';
+
+				$sx .= '<tr>';
+				$sx .= '<td width="25%" align="right" style="font-size: 10px;">Data e hora:</td>';
+				$sx .= '<td width="75%" style="font-size: 22px;"><b>' . stodbr($rs[$r]['sb_data']) . ' ' . $rs[$r]['sb_hora'] . '-' . $rs[$r]['sb_hora_fim'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Modalidade:</td>';
+				$sx .= '<td style="font-size: 14px;"><b>' . $rs[$r]['sb_nome'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Bloco:</td>';
+				$sx .= '<td style="font-size: 12px;"><b>' . $rs[$r]['sl_bloco'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Local:</td>';
+				$sx .= '<td style="font-size: 12px;"><b>' . $rs[$r]['sl_nome'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;"></td>';
+				$sx .= '<td style="font-size: 12px;">Total de <b>' . $rs[$r]['total'] . '</b> trabalho(s) para ser(em) avaliado(s).</td>';
+				$sx .= '</tr>';
+
+				$sit = $rs[$r]['situacao'];
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Situacao:</td>';
+				$rav = $this -> link_situacao_avaliador($sit);
+
+				$sx .= '<td>';
+				$sx .= $rav;
+				$sx .= '<sup class="lt0">(' . $sit . ')</sup>';
+				$sx .= '</td>';
+
+				if ($sit == '1') {
+					$sx .= '<tr><td align="right" style="font-size: 10px;">';
+					$sx .= msg('Convite') . ':';
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= '<form action="' . base_url('index.php/semic/aceite/' . date("YmdHis")) . '" method="post">';
+					$sx .= '<input type="hidden" name="dd11" value="' . $rs[$r]['tipo'] . '">';
+					$sx .= '<input type="hidden" name="dd12" value="' . $rs[$r]['bl'] . '">';
+					$sx .= '<input type="submit" name="acao" class="botao3d back_green back_green_shadown" value="' . $bt_aceitar . '">';
+					$sx .= '&nbsp;';
+					$sx .= '<input type="button" class="botao3d back_red back_red_shadown" value="' . $bt_recusar . '" onclick="$(\'#div_' . $r . '\').toggle();">';
+					$sx .= '</td></tr>';
+
+					$sx .= '<tr id="div_' . $r . '" style="display: none;" valign="top">
+							<td align="right" style="font-size: 10px;">Justificativa da recusa:</td>
+							<td><textarea cols=40 rows=5 name="dd10"></textarea>
+							
+							<br>
+							<input type="submit" name="acao" value="' . $bt_recusar_confirma . '">
+							</td>
+						</tr>
+						';
+					$sx .= '<tr><td></form></td></tr>';
+				}
+				$sx .= '</table>';
+			}
+			$sx .= '</table>';
+		} else {
+			$sx = '';
+		}
+
 		//$this -> email_local -> enviaremail('cleybe.vieira@pucpr.br', 'Proposta de Agenda SEMIC', $sx);
 		//$this -> email_local -> enviaremail('renefgj@gmail.com', 'Proposta de Agenda SEMIC', $sx);
-		return ($texto);
+		return ($sx);
 	}
 
 	function avaliadores_seminario() {
@@ -292,12 +512,11 @@ class semic_trabalhos extends CI_Model {
 		return ($sx);
 	}
 
-	function link_situacao_avaliador($op)
-		{
-			$dt = $this->situacao_avaliador($op);
-			$sx = '<font color="'.$dt['cor'].'">'.$dt['status'].'</font>';
-			return($sx);
-		}
+	function link_situacao_avaliador($op) {
+		$dt = $this -> situacao_avaliador($op);
+		$sx = '<font color="' . $dt['cor'] . '">' . $dt['status'] . '</font>';
+		return ($sx);
+	}
 
 	function situacao_avaliador($op) {
 		$sx = array();
@@ -319,7 +538,7 @@ class semic_trabalhos extends CI_Model {
 				break;
 			case '10' :
 				$sx['status'] = 'Convite aceito';
-				$sx['cor'] = '#80FF80';
+				$sx['cor'] = '#008000';
 				$sx['opacity'] = '1';
 				break;
 			default :
@@ -389,7 +608,7 @@ class semic_trabalhos extends CI_Model {
 		$sx .= '<td>-</td>';
 		$sx .= '<td align="center" width="30">-</td>';
 		$sx .= '</tr>';
-	
+
 		$sx .= '<tr><th>acao</th>
 					<th>avaliadores</th>
 					<th>perfil</th>
@@ -417,7 +636,7 @@ class semic_trabalhos extends CI_Model {
 		$wh = '';
 		$wh_prof = '';
 		$ano = date("Y");
-		$ano2 = ( $ano - 1 );
+		$ano2 = ($ano - 1);
 		/* AREAS */
 		foreach ($areas as $key => $value) {
 			if (strlen($wh) > 0) { $wh .= ' or ';
