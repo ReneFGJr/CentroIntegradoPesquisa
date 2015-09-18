@@ -12,14 +12,14 @@ class semic extends CI_Controller {
 		$this -> load -> helper('links_users');
 		$this -> load -> library('session');
 		$this -> load -> helper('email');
-		
-		$email_own=2;
+
+		$email_own = 2;
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
 	}
-	
+
 	function cab_avaliador() {
 		/* Carrega classes adicionais */
 		$css = array();
@@ -43,7 +43,6 @@ class semic extends CI_Controller {
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
 	}
-	
 
 	function cab() {
 		/* Carrega classes adicionais */
@@ -51,6 +50,7 @@ class semic extends CI_Controller {
 		$js = array();
 		array_push($css, 'style_cab.css');
 		array_push($css, 'form_sisdoc.css');
+		array_push($css, 'style_semic_2015.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
 
@@ -73,8 +73,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
-	function aceite()
-		{
+	function aceite() {
 		/* Load Models */
 		$this -> load -> model('avaliadores');
 		$this -> load -> model('semic/semic_trabalhos');
@@ -83,17 +82,17 @@ class semic extends CI_Controller {
 		$this -> cab_avaliador();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		
+
 		$data = array();
 		$data['content'] = '';
-		
+
 		/* Aceite de Indicações SEMIC */
 		$id = $_SESSION['id_us'];
 		$data['content'] .= $this -> semic_trabalhos -> mostra_agenda_aceite($id, date("Y"));
-		
-		$this -> load -> view('avaliador/home',$data);
-		}
-		
+
+		$this -> load -> view('avaliador/home', $data);
+	}
+
 	function anais($id = 0) {
 
 		/* Load Models */
@@ -113,9 +112,12 @@ class semic extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	}		
+	}
+
 	/* Exportar dados */
 	function anais_exportar() {
+		$ano = '2014';
+
 		/* Load Models */
 		$this -> load -> model('semic/semic_trabalhos');
 		$this -> load -> model('semic/semic_anais');
@@ -123,22 +125,28 @@ class semic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		
+
+		$data['content'] = '<h1>Exportar núvem de Tags</h1>';
+		$this -> load -> view('content', $data);
+
+		/* Sumario */
+		$data['content'] = $this -> semic_anais -> gerar_sumario_areas($ano);
+
 		$data['content'] = '<h1>Exportar dados IC para SEMIC</h1>';
-		$this->load->view('content',$data);
-		
+		$this -> load -> view('content', $data);
+
 		/* Phase I - Gerar paginas de cada trabalho */
-		$data['content'] = $this->semic_anais->gerar_paginas_trabalho();
-		$this->load->view('content',$data);
-		
+		$data['content'] = $this -> semic_anais -> gerar_paginas_trabalho();
+		//$this->load->view('content',$data);
+
 		/* Phase II - Gerar Sumario por Areas */
-		
-		
+		echo '<img src="http://s.mmgo.io/t/KLW" alt="motionmailapp.com" />';
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);	
+		$this -> load -> view('header/foot', $data);
 
 	}
-	function agenda($id = 0,$email=0) {
+
+	function agenda($id = 0, $email = 0) {
 		global $email_own;
 		/* Load Models */
 		$this -> load -> model('usuarios');
@@ -156,12 +164,11 @@ class semic extends CI_Controller {
 
 		/* Perfil do usuário */
 		$data['agenda'] = $this -> semic_trabalhos -> mostra_agenda($id, date("Y"));
-		
-		if ($email==1)
-			{
-				//enviaremail_usuario($id,'Agenda',$data['agenda'],$email_own);		
-				enviaremail_usuario($id,'SEMIC - Agenda do avaliador',$data['agenda'],$email_own);
-			}
+
+		if ($email == 1) {
+			//enviaremail_usuario($id,'Agenda',$data['agenda'],$email_own);
+			enviaremail_usuario($id, 'SEMIC - Agenda do avaliador', $data['agenda'], $email_own);
+		}
 
 		$this -> load -> view('semic/semic_agenda', $data);
 

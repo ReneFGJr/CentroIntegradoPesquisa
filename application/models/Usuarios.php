@@ -2,15 +2,20 @@
 class usuarios extends CI_model {
 	var $tabela = 'us_usuario';
 
+	function mostra_prefil($data) {
+		$sx = $this -> load -> view('perfil/docente', $data);
+		return ($sx);
+	}
+
 	function cp_perfil() {
 		$cp = array();
 		$sql_tipo = 'select * from pro_equipamento_tipo where pet_ativo = 1';
 		array_push($cp, array('$H8', 'id_us', '', False, True));
-//		array_push($cp, array('$S20', 'us_cpf', msg('cpf'), False, True));
-//		array_push($cp, array('$S20', 'us_emplid', msg('employID'), False, True));
+		//		array_push($cp, array('$S20', 'us_cpf', msg('cpf'), False, True));
+		//		array_push($cp, array('$S20', 'us_emplid', msg('employID'), False, True));
 
 		array_push($cp, array('$S100', 'us_link_lattes', msg('link_lattes'), False, True));
-		
+
 		//$sql = "select * from us_tipo order by ust_id ";
 		//array_push($cp, array('$Q ust_id:ust_nome:' . $sql, 'usuario_tipo_ust_id', msg('us_tipo'), False, True));
 
@@ -60,22 +65,111 @@ class usuarios extends CI_model {
 		$line['us_ss'] = '';
 		$line['us_lattes'] = '';
 		$line['avaliador'] = $line['as_situacao'];
+
+		$line['email'] = $this -> lista_email($id);
 		return ($line);
 	}
 
-	function lista_email($id = 0) {
-		$sql = "select * from us_email where usuario_id_us = " . $id;
+	function email_add($id, $email) {
+		$email = lowercase($email);
+		if (validaemail($email)) {
+			$sx = 'OK';
+			/* valida se já não existe */
+			$sql = "select * from us_email 
+								where usm_email = '$email' and usuario_id_us = $id ";
+			$rlt = db_query($sql);
+			if ($line = db_read($rlt)) {
+				if ($line['usm_ativo'] == '0') {
+					$sql = "update us_email set usm_ativo = '1' 
+											where usm_email = '$email' and usuario_id_us = $id ";
+					$rlt = $this -> db -> query($sql);
+					$sx .= 'e-mail atualizado';
+					$sx .= '<script> wclose(); </script>';
+				} else {
+					$sx = '<span class="error">E-mail já cadastrado</span>';
+				}
+
+			} else {
+				$data = date("Y-m-d");
+
+				$sql = "insert into us_email 
+									(
+									usuario_id_us, usm_tipo, usm_email,
+									usm_ativo, usm_email_preferencial, usm_drh,
+									usm_dt_atualizacao, usm_dt_insercao
+									) values (
+									'$id','corp','$email',
+									'1','1','1',
+									'$data','$data'
+									)";
+				$rlt = $this -> db -> query($sql);
+				$sx .= '<script> wclose(); </script>';
+			}
+
+		} else {
+			$sx = '<span class="error">E-mail inválido</span>';
+		}
+		return ($sx);
+	}
+
+	function recupera_email($id) {
+		$sql = "select * from us_email where id_usm = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$line = $rlt[0];
+		return ($line['usm_email']);
+	}
+
+	function email_excluir($id) {
+		$sql = "update us_email set usm_ativo = 0 where id_usm = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$sx = '<script> wclose(); </script>';
+		return ($sx);
+	}
+
+	function email_modify($id, $email) {
+		$email = lowercase($email);
+		/* $$$$ Inserir regra se já existe e-mail em outro registro */
+		
+		if (validaemail($email)) {
+			$sql = "update us_email set usm_ativo = 1, usm_email = '$email' where id_usm = " . $id;
+			$rlt = $this -> db -> query($sql);
+			$sx = '<script> wclose(); </script>';
+		} else {
+			$sx = '<span class="error">E-mail inválido</span>';
+		}
+		return ($sx);
+		return ($sx);
+	}
+
+	function lista_email($id = 0, $edit = 1) {
+		$sql = "select * from us_email where usm_ativo = 1 and usuario_id_us = " . $id;
 		$sx = msg('nenhum e-mail localizado');
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<font class="lt2">';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$sx .= '<br>';
-			//$sx .= '<A HREF="#">';
+			$idx = $line['id_usm'];
+			if ($r > 0) {
+				$sx .= '; ';
+			}
+			if ($edit == 1) {
+				$onclick = 'onclick="newxy(\'' . base_url('index.php/usuario/email_mod/' . $idx . '/' . checkpost_link($idx)) . '\',600,200);" ';
+				$sx .= '<A HREF="#" class="link lt2" ' . $onclick . '>';
+			}
 			$sx .= $line['usm_email'];
-			//$sx .= '</A>';
-			$sx .= '(*)';
+			if ($edit == 1) {
+				$sx .= '</A>';
+			}
+
+			//$sx .= '(*)';
+		}
+
+		if ($edit == 1) {
+			$onclick = 'onclick="newxy(\'' . base_url('index.php/usuario/email_add/' . $id . '/' . checkpost_link($id)) . '\',600,200);" ';
+			$sx .= ' | ';
+			$sx .= '<a href="#" class="link lt0" ' . $onclick . '>' . msg('add_email') . '</A>';
 		}
 		return ($sx);
 	}
@@ -102,8 +196,8 @@ class usuarios extends CI_model {
 		array_push($cp, array('$S20', 'us_emplid', msg('employID'), False, True));
 
 		array_push($cp, array('$S100', 'us_link_lattes', msg('link_lattes'), False, True));
-//		$sql = "select * from us_tipo order by ust_id ";
-//		array_push($cp, array('$Q ust_id:ust_titulacao_sigla:' . $sql, 'usuario_tipo_ust_id', msg('us_tipo'), False, True));
+		//		$sql = "select * from us_tipo order by ust_id ";
+		//		array_push($cp, array('$Q ust_id:ust_titulacao_sigla:' . $sql, 'usuario_tipo_ust_id', msg('us_tipo'), False, True));
 
 		$sql = "select * from us_funcao where usf_ativo = 1 order by usf_id ";
 		array_push($cp, array('$Q usf_id:usf_nome:' . $sql, 'usuario_funcao_usf_id', msg('us_funcao'), False, True));

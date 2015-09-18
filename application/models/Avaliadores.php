@@ -169,6 +169,7 @@ class avaliadores extends CI_Model {
 						left join us_avaliador_situacao on us_avaliador = id_as
 						left join us_titulacao on ust_id = usuario_titulacao_ust_id
 						left join area_conhecimento on ac_cnpq = pa_area
+						left join (select count(*) as emails, usuario_id_us from us_email where usm_ativo = 1 group by usuario_id_us ) as email on id_us = usuario_id_us
 						left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
 					where us_avaliador > 0
 					order by us_nome, ac_cnpq					
@@ -179,15 +180,32 @@ class avaliadores extends CI_Model {
 		$xcracha = '';
 		$to1 = 0;
 		while ($line = db_read($rlt)) {
+			$e = $line['emails'];
 			$link = base_url('index.php/avaliador/view/' . $line['id_us'] . '/' . checkpost_link($line['id_us']));
 			$link = '<a href="' . $link . '" target="_new" class="link lt1">';
 			$cracha = trim($line['id_us']);
 			if ($xcracha != $cracha) {
 				$to1++;
-				$sx .= '<tr>';
+				$msg_email = '<font class="error">'.msg('email_sem').'</a>';
+				if ($e > 0)
+					{
+						$msg_email = '<font color="green">'.msg('email_ok').'</font>';
+						$bg = '';
+					} else {
+						$bg = ' bgcolor="#FFE0E0" ';
+					}
+				
+				$sx .= '<tr '.$bg.'>';
 				$sx .= '<td style="padding: 3px;"  class="border1" align="center" width="70">' . $link . $line['us_cracha'] . '</a>' . '</td>';
-				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['ust_titulacao_sigla'] . ' ' . $line['us_nome'] . '</td>';
+				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['ust_titulacao_sigla'] . ' ' . $link. $line['us_nome'] . '</a>' .'</td>';
 				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['us_campus_vinculo'] . '</td>';
+				
+				$msg_email = '<font class="error">'.msg('email_sem').'</a>';
+				if ($e > 0)
+					{
+						$msg_email = '<font color="green">'.msg('email_ok').'</font>';
+					}
+				$sx .= '<td style="padding: 3px;"  class="border1" align="center">' . $msg_email . '</td>';
 				$sx .= '<td style="padding: 3px;"  class="border1" align="center" width="150" bgcolor="' . $line['as_cor'] . '">' . $line['as_situacao'] . '</td>';
 				$sx .= '</tr>';
 				$xcracha = $cracha;

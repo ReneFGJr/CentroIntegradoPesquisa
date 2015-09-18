@@ -61,6 +61,19 @@ function normalizarNome($nome) {
  * @filesource
  */
 
+function validaemail($email) {
+	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		list($alias, $domain) = explode("@", $email);
+		if (checkdnsrr($domain, "MX")) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+}
+
 function enviaremail($para, $assunto, $texto, $de) {
 	$CI = &get_instance();
 
@@ -75,37 +88,33 @@ function enviaremail($para, $assunto, $texto, $de) {
 		$line = $rlt[0];
 		$e_mail = trim($line['m_email']);
 		$e_nome = trim($line['m_descricao']);
-		
+
 		$CI -> email -> from($e_mail, $e_nome);
 		$CI -> email -> to($para[0]);
 		$CI -> email -> subject($assunto);
 		$CI -> email -> message($texto);
-				
-		if (is_array($para))
-			{
-				array_push($para,trim($line['m_email']));
-			} else {
-				$para = array($para,trim($line['m_email']));
-			}
+
+		if (is_array($para)) {
+			array_push($para, trim($line['m_email']));
+		} else {
+			$para = array($para, trim($line['m_email']));
+		}
 		/* e-mail com copias */
 		$bcc = array();
-		for ($r=1;$r < count($para);$r++)
-			{
-				array_push($bcc,$para[$r]);
-			}
+		for ($r = 1; $r < count($para); $r++) {
+			array_push($bcc, $para[$r]);
+		}
 
-		if (count($bcc) > 0)
-			{
-				$CI -> email -> bcc($bcc);
-			}
-		
+		if (count($bcc) > 0) {
+			$CI -> email -> bcc($bcc);
+		}
+
 		$sx = '<div id="email_enviado">';
-		$sx .= '<h3>'.msg('email_enviado').'</h3>';
-		for ($r=0;$r < count($para);$r++)
-			{
-				$sx .= $para[$r];
-				$sx .= '<br>';
-			}
+		$sx .= '<h3>' . msg('email_enviado') . '</h3>';
+		for ($r = 0; $r < count($para); $r++) {
+			$sx .= $para[$r];
+			$sx .= '<br>';
+		}
 		$sx .= '<br>';
 		$sx .= '</div>';
 		$sx .= '<script>
@@ -114,8 +123,8 @@ function enviaremail($para, $assunto, $texto, $de) {
 				';
 		echo $sx;
 
-		$CI -> email -> send();		
-		
+		$CI -> email -> send();
+
 		return ('ok');
 	} else {
 		return ('Proprietário do e-mail não configurado (veja mensagem_own)');
@@ -180,7 +189,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,      // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,       // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -1221,7 +1230,7 @@ if (!function_exists('form_edit')) {
 	}
 
 	function checkpost_link($id) {
-		$chk = md5($id . date("Ymd"));
+		$chk = md5($id . date("Y") . '0917');
 		return ($chk);
 	}
 
@@ -1560,8 +1569,7 @@ if (!function_exists('form_edit')) {
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr);
-				;
+				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr); ;
 
 				/* label */
 				if (strlen($label) > 0) {
@@ -1700,8 +1708,7 @@ if (!function_exists('form_edit')) {
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= $td . form_checkbox($dados, 'accept', $vlr);
-				;
+				$tela .= $td . form_checkbox($dados, 'accept', $vlr); ;
 				$tela .= $tdn . $trn;
 				break;
 

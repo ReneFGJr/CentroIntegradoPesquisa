@@ -134,8 +134,7 @@ class avaliador extends CI_Controller {
 		$data = array();
 
 		$data = $this -> usuarios -> le($id);
-
-		$this -> load -> view('perfil/docente', $data);
+		$this -> usuarios -> mostra_prefil($data);
 
 		$data['areas'] = $this -> avaliadores -> avaliador_area($id);
 		$data['areas_inclusao'] = $this -> load -> view('avaliador/form_area_associar', $data, True);

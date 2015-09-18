@@ -43,6 +43,12 @@ $lang['Orientador'] = 'Orientador';
 $lang['Areas'] = 'Áreas';
 $lang['area_nao_definida'] = 'Área não definida';
 
+$lang['email_modificar'] = 'Atualizar e-mail';
+$lang['email_excluir'] = 'Excluir e-mail';
+$lang['email_adicionar'] = 'Adicionar e-mail';
+$lang['email_sem'] = 'Sem e-mail';
+$lang['email_ok'] = 'E-mail ok';
+
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /* Ciencia sem fronteiras */
 $lang['csf_bt_cancelar'] 			= 'Cancelar processo';

@@ -51,6 +51,90 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 	}
+	
+	function email_mod($id,$chk)
+		{
+		/* Model */
+		$this->load->model('usuarios');
+		
+		/* Carrega classes adicionais */
+		$css = array();
+		array_push($css, 'form_sisdoc.css');
+		$js = array();
+		
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Monta telas */
+		$email = $this->input->post("dd1");
+		$acao = $this->input->post("acao");
+		
+		/* Se não existe acao, recupera e-mail */
+		if (strlen($acao) == 0)
+			{
+			$email = $this->usuarios->recupera_email($id);
+			}
+		
+		$this -> load -> view('header/header', $data);
+		$data['email'] = $email;
+		$data['bt_acao'] = msg('email_modificar');
+		$data['bt_excluir'] = msg('email_excluir');
+		$this->load->view('usuario/add_email.php',$data);
+		
+		if ($acao == $data['bt_excluir'])
+			{
+				$data['content'] = $this->usuarios->email_excluir($id);
+				$this->load->view('content',$data);
+				return(0);
+			}
+		
+		if ((strlen($email) > 0) and ($acao == $data['bt_acao']))
+			{
+				$data['content'] = $this->usuarios->email_modify($id,$email);
+			} else {
+				$data['content'] = '';
+			}
+		$this->load->view('content',$data);	
+		}
+
+	function email_add($id, $chk) {
+		/* Model */
+		$this->load->model('usuarios');
+		
+		/* Carrega classes adicionais */
+		$css = array();
+		array_push($css, 'form_sisdoc.css');
+		$js = array();
+		
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Monta telas */
+		$email = $this->input->post("dd1");
+		$acao = $this->input->post("acao");
+		$this -> load -> view('header/header', $data);
+		$data['email'] = $email;
+		$data['bt_acao'] = msg('email_adicionar');
+		$data['bt_excluir'] = '';
+		$this->load->view('usuario/add_email.php',$data);
+		
+		if (strlen($email) > 0)
+			{
+				$data['content'] = $this->usuarios->email_add($id,$email);
+			} else {
+				$data['content'] = '';
+			}
+			
+		$this->load->view('content',$data);		
+	}
 
 	function index() {
 		$this -> cab();
