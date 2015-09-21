@@ -136,6 +136,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 		/* Phase I - Gerar paginas de cada trabalho */
+		
 		$data['content'] = $this -> semic_anais -> gerar_paginas_trabalho();
 		//$this->load->view('content',$data);
 
