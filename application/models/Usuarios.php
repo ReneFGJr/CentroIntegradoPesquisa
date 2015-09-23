@@ -49,6 +49,29 @@ class usuarios extends CI_model {
 		return ($obj);
 	}
 
+	function le_cracha($cracha) {
+		$rs = $this -> readByCracha($cracha);
+		return ($rs);
+	}
+
+	function consulta_cracha($cracha = '') {
+		if (strlen($cracha) == 0) {
+			return ('');
+		}
+
+		$this -> load -> model('usuarios');
+		$this -> load -> model('webservice/ws_sga');
+		$rs = $this -> ws_sga -> findStudentByCracha($cracha);
+
+		if (isset($rs['pessoa'])) {
+			$cracha = $rs['pessoa'];
+			$data = $this -> usuarios -> le_cracha($cracha);
+			return ($cracha);
+		} else {
+			return ('');
+		}
+	}
+
 	function le($id) {
 		$sql = "select *
 				from
@@ -130,7 +153,7 @@ class usuarios extends CI_model {
 	function email_modify($id, $email) {
 		$email = lowercase($email);
 		/* $$$$ Inserir regra se já existe e-mail em outro registro */
-		
+
 		if (validaemail($email)) {
 			$sql = "update us_email set usm_ativo = 1, usm_email = '$email' where id_usm = " . $id;
 			$rlt = $this -> db -> query($sql);
@@ -215,48 +238,6 @@ class usuarios extends CI_model {
 		return ($cp);
 	}
 
-	function findStudentByCracha($cracha) {
-		$cracha = sonumero($cracha);
-
-		if (strlen($cracha) == 12) { $cracha = substr($cracha, 3, 8);
-		}
-		if (strlen($cracha) == 11) { $cracha = substr($cracha, 3, 8);
-		}
-		if (strlen($cracha) == 9) { $cracha = substr($cracha, 0, 9);
-		}
-		if (strlen($cracha) > 8) {
-			return ('');
-		}
-		if (strlen($cracha) < 8) {
-			return ('');
-		}
-
-		/* Busca dados do cadastro */
-		$sql = "select * from " . $this -> tabela . " where us_cracha = '" . $cracha . "' ";
-		$rlt = $this -> db -> query($sql);
-		$rlt = $rlt -> result_array($rlt);
-		if (count($rlt) > 0) {
-			$line = $rlt[0];
-			return ($cracha);
-		} else {
-			/* Consulta Web Service */
-			$this -> load -> model('webservice/ws_sga');
-			$rst = $this -> ws_sga -> findStudentByCracha($cracha);
-
-			/* Busca dados do cadastro */
-			$sql = "select * from us_usuario where us_cracha = '" . $cracha . "' ";
-			$rlt = $this -> db -> query($sql);
-			$rlt = $rlt -> result_array($rlt);
-			if (count($rlt) > 0) {
-				$line = $rlt[0];
-				return ($cracha);
-			} else {
-				return ('');
-			}
-		}
-
-	}
-
 	function readByCracha($cracha) {
 		/* Busca dados do cadastro */
 		$sql = "select * from " . $this -> tabela . " as t1
@@ -274,6 +255,33 @@ class usuarios extends CI_model {
 		}
 		return ($line);
 	}
+	function geraCracha()
+		{
+			$sql = "select count(*) as total from us_usuario ";
+			$rlt = db_query($sql);
+			$line = db_read($rlt);
+			$cracha = 'F'.strzero($line['total'],7);
+			return($cracha);
+		}
+	
+	function readByCPF($cpf) {
+		$cpf = sonumero($cpf);
+		/* Busca dados do cadastro */
+		$sql = "select * from " . $this -> tabela . " as t1
+					left join us_titulacao as t2 on t1.usuario_titulacao_ust_id = t2.ust_id				 
+					where us_cpf = '" . $cpf . "' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$id = $line['id_us'];
+			$line = $this -> le($id);
+		} else {
+			$line = array();
+		}
+		return ($line);
+	}	
 
 	function readById($id) {
 		/* Busca dados do cadastro */
@@ -294,6 +302,22 @@ class usuarios extends CI_model {
 		$line['us_contatos'] = '';
 
 		return ($line);
+	}
+
+	function limpa_cracha($cracha) {
+		if (strlen($cracha) == 12) { $cracha = substr($cracha, 3, 8);
+		}
+		if (strlen($cracha) == 11) { $cracha = substr($cracha, 3, 8);
+		}
+		if (strlen($cracha) == 9) { $cracha = substr($cracha, 0, 9);
+		}
+		if (strlen($cracha) > 8) {
+			return ('');
+		}
+		if (strlen($cracha) < 8) {
+			return ('');
+		}
+		return($cracha);
 	}
 
 	function insere_usuario($DadosUsuario) {

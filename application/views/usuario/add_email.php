@@ -2,7 +2,7 @@
 	body {
 		margin-left: 20px;
 		margin-top: 20px;
-	}
+	}
 </style>
 <form method="post">
 	e-mail:

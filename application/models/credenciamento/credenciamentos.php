@@ -3,13 +3,15 @@ class credenciamentos extends CI_Model {
 	var $key = '99me0r9vm0e09347987cecem';
 	var $sala = 5;
 	var $bloco = 123;
-	
-	function set_evento($id)
-		{
-			$data = array('evento_id'=>$id);
-			$this->session->set_userdata($data);
-			return(0);
-		}
+
+	var $nome = '';
+	var $cracha = '';
+
+	function set_evento($id) {
+		$data = array('evento_id' => $id);
+		$this -> session -> set_userdata($data);
+		return (0);
+	}
 
 	function presentes($data, $bloco) {
 		$sql = "select count(*) as total from evento_registro 
@@ -62,7 +64,7 @@ class credenciamentos extends CI_Model {
 									r_hora_saida = '$hora',
 									r_permanencia = $tempo
 							where id_r = " . $line['id_r'];
-			$rlt = $this->db->query($sql);
+			$rlt = $this -> db -> query($sql);
 		} else {
 			$sql = "insert into evento_registro
 							(
@@ -77,7 +79,7 @@ class credenciamentos extends CI_Model {
 							'',0
 							)					
 					";
-			$rlt = $this->db->query($sql);
+			$rlt = $this -> db -> query($sql);
 			return (0);
 		}
 	}
@@ -97,6 +99,155 @@ class credenciamentos extends CI_Model {
 		$tela = $form -> editar($cp, '');
 		$tela .= '
 			<script>
+				$("#dd1").focus();
+			</script>
+			';
+		return ($tela);
+	}
+
+	function entrega_kit($cracha) {
+		$this -> load -> model("usuarios");
+		$cracha = $this -> usuarios -> limpa_cracha($cracha);
+
+		if (strlen($cracha) == 8) {
+			/* Ve se nao entregou */
+			$line = $this -> usuarios -> le_cracha($cracha);
+			$id = 0;
+			if (isset($line['id_us'])) {
+				$id = $line['id_us'];
+				$this->nome = $line['us_nome'];
+				$this->cracha = $line['us_cracha'];
+			}
+
+			if ($id > 0) {
+				$sql = "select * from evento_kits 
+								where kits_user_id = $id
+							";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				if (count($rlt) > 0) {
+					/* Já retirou */
+					return ('2');
+				} else {
+					$data = date("Y-m-d");
+					$hora = date("H:i:s");
+					$ip = $_SERVER['REMOTE_ADDR'];
+					
+					$evento = round($_SESSION['evento_id']);
+					
+					$sql = "insert into evento_kits 
+							(
+							kits_user_id, kits_data, kits_hora,
+							kits_ip, kits_evento
+							) values (
+							$id,'$data','$hora',
+							'$ip',$evento)
+					";
+					$this->db->query($sql);
+				}
+			}
+
+			$edital = $this -> is_ic($cracha);
+			if (count($edital) > 0) {
+				$mod = trim($edital['st_edital']);
+				if ($edital['st_professor'] == $cracha) {
+					return ('20');
+				}
+
+				if ($mod == 'PIBIC') {
+					return ('10');
+				}
+				/* PIBITI */
+				if ($mod == 'PIBITI') {
+					return ('11');
+				}
+				if ($mod == 'SENAI') {
+					return ('11');
+				}
+				if ($mod == 'JI') {
+					return ('12');
+				}
+				if ($mod == 'PIBICEM') {
+					return ('13');
+				}
+				return ('2');
+			} else {
+				return ('9');
+			}
+		}
+		return ('0');
+	}
+
+	function is_ic($cracha) {
+		$ano = (date("Y") - 1);
+		/* Verificar se é IC */
+		$sql = "select * from semic_nota_trabalhos 
+					where (st_professor = '$cracha' or st_aluno = '$cracha')
+							and (st_ano = '$ano') and (st_status <> 'C')							
+					 ";
+		//$sql .= " and (st_poster = 'S' or st_oral = 'S') ";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			return ($line);
+		} else {
+			return ( array());
+		}
+	}
+
+	function kits_form() {
+		$id = sonumero($this -> input -> post("dd1"));
+		$msg = '';
+		$zera = '';
+		if (strlen($id) > 0) {
+			$zera = '$("#dd1").val(); ' . cr();
+			$rs = $this -> entrega_kit($id);
+			switch ($rs) {
+				case '2' :
+					$msg = '<font color="Green" class="lt6">Já Retirou o Kit!</font>';
+					break;				
+				case '9' :
+					$msg = '<font color="red" class="lt6">Não tem trabalho para apresentar</font>';
+					break;
+				case '10' :
+					$msg = '<font color="grey" style="font-size: 40px;">PIBIC</font><BR>';
+					$msg .= '<img src="' . base_url('img/evento/camiseta-mod10.png') . '">';
+					break;
+				case '11' :
+					$msg = '<font color="grey" style="font-size: 40px;">PIBITI</font><BR>';
+					$msg .= '<img src="' . base_url('img/evento/camiseta-mod11.png') . '">';
+					break;
+				case '12' :
+					$msg = '<font color="grey" style="font-size: 40px;">JOVENS IDEIAS</font><BR>';
+					$msg .= '<img src="' . base_url('img/evento/camiseta-mod12.png') . '">';
+					break;
+				case '13' :
+					$msg = '<font color="grey" style="font-size: 40px;">PIBIC JR</font><BR>';
+					$msg .= '<img src="' . base_url('img/evento/camiseta-mod13.png') . '">';
+					break;
+				case '20' :
+					$msg = '<font color="grey" style="font-size: 40px;">ORIENTADOR</font><BR>';
+					$msg .= '<img src="' . base_url('img/evento/camiseta-mod20.png') . '">';
+					break;
+				default :
+					$msg = '<font color="red" class="lt6">Problema no Cracha!</font>';
+					$zera = '';
+					break;
+			}
+		}
+		$msg = '<center><font class="lt4">'.$this->nome.'</font><br>'.$msg;
+		$form = new form;
+		$cp = array();
+		$cp[0] = array('$H8', '', '', False, False);
+		$cp[1] = array('$S15', '', 'ID', True, True);
+		$cp[2] = array('$B8', '', 'Registrar', False, False);
+		$cp[3] = array('$M', '', $msg, False, False);
+		$tela = $form -> editar($cp, '');
+		$tela .= '
+			<script>
+				' . $zera . '
 				$("#dd1").focus();
 			</script>
 			';

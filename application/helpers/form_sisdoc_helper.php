@@ -189,7 +189,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,       // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,        // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -264,6 +264,77 @@ function UpperCase($d) {
 	$d = troca($d, 'ü', 'Ü');
 
 	return $d;
+}
+
+/* Gerador de CPF */
+function mod($dividendo,$divisor)
+{
+   return round($dividendo - (floor($dividendo/$divisor)*$divisor));
+}
+
+function GerarCPF()
+{
+   $n1 = '1';
+   $n2 = '1';
+   $n3 = '1';
+   $n4 = '1';
+   $n5 = rand(0,9);
+   $n6 = rand(0,9);
+   $n7 = rand(0,9);
+   $n8 = rand(0,9);
+   $n9 = rand(0,9);
+   $d1 = $n9*2+$n8*3+$n7*4+$n6*5+$n5*6+$n4*7+$n3*8+$n2*9+$n1*10;
+   $d1 = 11 - ( mod($d1,11) );
+
+   if ( $d1 >= 10 )
+   { 
+      $d1 = 0 ;
+   }
+
+   $d2 = $d1*2+$n9*3+$n8*4+$n7*5+$n6*6+$n5*7+$n4*8+$n3*9+$n2*10+$n1*11;
+   $d2 = 11 - ( mod($d2,11) );
+
+   if ($d2>=10) { $d2 = 0 ;}
+
+   return($n1.$n2.$n3.$n4.$n5.$n6.$n7.$n8.$n9.$d1.$d2);
+}
+
+function validaCPF($cpf = null) {
+	/* @author http://www.geradorcpf.com/script-validar-cpf-php.htm */
+	// Verifica se um número foi informado
+	if (empty($cpf)) {
+		return false;
+	}
+
+	// Elimina possivel mascara
+	$cpf = sonumero($cpf);
+	$cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+
+	// Verifica se o numero de digitos informados é igual a 11
+	if (strlen($cpf) != 11) {
+		return false;
+	}
+	// Verifica se nenhuma das sequências invalidas abaixo
+	// foi digitada. Caso afirmativo, retorna falso
+	else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
+		return false;
+		// Calcula os digitos verificadores para verificar se o
+		// CPF é válido
+	} else {
+
+		for ($t = 9; $t < 11; $t++) {
+
+			for ($d = 0, $c = 0; $c < $t; $c++) {
+				$d += $cpf{$c} * (($t + 1) - $c);
+			}
+			$d = ((10 * $d) % 11) % 10;
+			if ($cpf{$c} != $d) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
 
 function mask_cpf($cpf) {
@@ -1345,7 +1416,7 @@ if (!function_exists('form_edit')) {
 
 		$tela = '';
 		$tela .= '
-<table class="tabela00" width="100%" border=0 >
+<table class="form_tabela" width="100%" border=0 >
 	';
 		$tela .= '
 	<tr>
@@ -1569,7 +1640,8 @@ if (!function_exists('form_edit')) {
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr); ;
+				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr);
+				;
 
 				/* label */
 				if (strlen($label) > 0) {
@@ -1708,7 +1780,8 @@ if (!function_exists('form_edit')) {
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= $td . form_checkbox($dados, 'accept', $vlr); ;
+				$tela .= $td . form_checkbox($dados, 'accept', $vlr);
+				;
 				$tela .= $tdn . $trn;
 				break;
 

@@ -1,6 +1,7 @@
 <?php
 class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
+	var $tabela = 'ic';
 
 	function search($terms = '') {
 		$cps = array('us_nome');
@@ -25,7 +26,7 @@ class ics extends CI_model {
 			//$wh4 .= " (ic_projeto_professor_titulo like '%" . $term[$r] . "%') ";
 		}
 
-		$wh = '(' . $wh1 . ' or ' . $wh2 . ' or ' . $wh3 . ' or ' . $wh4 . ')';
+		$wh = '(' . $wh1 . ' or ' . $wh2 . ' or ' . $wh3 . ')';
 		$wh .= " or (pf_cracha = '" . $term[0] . "') ";
 		$wh .= " or (al_cracha = '" . $term[0] . "') ";
 
@@ -41,6 +42,14 @@ class ics extends CI_model {
 		$sx .= '</table>';
 		return ($sx);
 	}
+
+	function row($obj) {
+		$obj -> fd = array('id_ic', 'ic_plano_aluno_codigo','ic_projeto_professor_codigo', 'ic_cracha_prof', 'ic_cracha_aluno', 'ic_ano',  'ic_projeto_professor_titulo','s_id');
+		$obj -> lb = array('ID', msg('protocol'),msg('protocol'), msg('prof'), msg('estudante'), msg('ano'), msg('title'), msg('status'));
+		$obj -> mk = array('', 'L', 'L', 'L', 'C');
+		return ($obj);
+	}
+
 
 	function resumo($ano='') {
 		if (strlen($ano) == 0)
@@ -224,13 +233,18 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
+	function table_row()
+		{
+			$tabela = "ic";
+			return($tabela);
+		}
+
 	function table_view($wh = '', $offset = 0, $limit = 9999999) {
 		if (strlen($wh) > 0) {
 			$wh = 'where (' . $wh . ') ';
 		}
 
-		$tabela = "
-						select * from ic
+		$tabela = "		select * from ic
             			inner join ic_aluno as pa on ic_id = id_ic
 						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha from us_usuario) AS us_est on ic.ic_cracha_aluno = us_est.id_al
 						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
@@ -238,10 +252,26 @@ class ics extends CI_model {
 						left join ic_situacao on id_s = icas_id
 						$wh
 						order by ic_ano desc, pf_nome, al_nome
-						limit $limit offset $offset 
+						limit $limit offset $offset
 						";
 		return ($tabela);
 	}
+	
+	function cp()
+		{
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ic', '', False, True));
+		array_push($cp, array('$S8', 'ic_projeto_professor_codigo', msg('protocolo_professor'), False, True));
+		array_push($cp, array('$S8', 'ic_plano_aluno_codigo', msg('protocolo'), True, True));
+		array_push($cp, array('$S8', 'ic_cracha_prof', msg('cracha_prof'), True, True));
+		array_push($cp, array('$S8', 'ic_cracha_aluno', msg('cracha_aluno'), True, True));
+		array_push($cp, array('$S4', 'ic_ano', msg('ano'), True, True));
+		array_push($cp, array('$D8', 'ic_dt_ativacao', msg('Ativação'), True, True));
+		//array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_ativo=1 order by mb_tipo, mb_descricao', 'ic_dt_ativacao', msg('Ativação'), True, True));
+		
+		
+		return ($cp);	
+		}
 
 	function cp_switch() {
 		$cp = array();

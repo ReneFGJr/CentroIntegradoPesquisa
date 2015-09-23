@@ -63,7 +63,14 @@ class semic extends CI_Controller {
 		array_push($menus, array('Programacao', 'index.php/semic'));
 		array_push($menus, array('Trabalhos', 'index.php/semic/trabalhos'));
 		array_push($menus, array('Avaliadores', 'index.php/semic/avaliadores'));
+		array_push($menus, array('Credenciamento', 'index.php/credenciamento'));
+		
+		if (perfil('#TST') == 1) {
 		array_push($menus, array('Anais do evento', 'index.php/semic/anais'));
+		array_push($menus, array('Acompanhamento', 'index.php/semic/acompanhamento'));
+		array_push($menus, array('Exportar', 'index.php/semic/anais_exportar'));
+		array_push($menus, array('Exportar', 'index.php/semic/anais_exportar_trabalhos'));
+		}
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -130,18 +137,41 @@ class semic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 		/* Sumario */
+		$this -> semic_anais -> gerar_sumario_trabalhos($ano);
 		$data['content'] = $this -> semic_anais -> gerar_sumario_areas($ano);
 
 		$data['content'] = '<h1>Exportar dados IC para SEMIC</h1>';
 		$this -> load -> view('content', $data);
 
 		/* Phase I - Gerar paginas de cada trabalho */
-		
-		$data['content'] = $this -> semic_anais -> gerar_paginas_trabalho();
+
+		//$data['content'] = $this -> semic_anais -> gerar_paginas_trabalho();
 		//$this->load->view('content',$data);
 
 		/* Phase II - Gerar Sumario por Areas */
-		echo '<img src="http://s.mmgo.io/t/KLW" alt="motionmailapp.com" />';
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+	/* Exportar dados */
+	function anais_exportar_trabalhos() {
+		$ano = '2014';
+
+		/* Load Models */
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('semic/semic_anais');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$data['content'] = '<h1>Exportar núvem de Tags</h1>';
+		$this -> load -> view('content', $data);
+
+		/* Sumario */
+		$this -> semic_anais -> gerar_paginas_trabalho($ano);
+
+		/* Phase II - Gerar Sumario por Areas */
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 
@@ -201,6 +231,27 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function acompanhamento() {
+		/* Load Models */
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+		$menu = array();
+		array_push($menu,array('SEMIC','Resumos','ITE','/semic/acompanhamento_resumos'));
+		
+		
+		$data = array();
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Acompanhamento - SEMIC (Pré)';
+		$this -> load -> view('header/main_menu', $data);
+		
+
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	function bloco_poster_avaliador($ida = 0, $id2 = 0, $id3 = '', $id4 = '', $id5 = '') {
 		$this -> load -> model('semic/semic_trabalhos');

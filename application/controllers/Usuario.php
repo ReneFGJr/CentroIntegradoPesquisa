@@ -11,11 +11,36 @@ class usuario extends CI_Controller {
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
+		$this -> load -> library("nuSoap_lib");
 		$this -> load -> library('session');
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
 	}
+	
+	function consulta_usuario($cracha='')
+		{
+			if (strlen($cracha) == 0)
+				{
+					$cracha = $this->input->post("dd10");
+				}
+				
+			$this->cab();
+			if (strlen($cracha) == 0)
+				{
+					$this->load->view('usuario/form_cracha');
+				} else {
+					$this->load->model('usuarios');
+					$this->load->model('webservice/ws_sga');
+					$rs = $this->ws_sga->findStudentByCracha($cracha);
+					
+					$cracha = $rs['pessoa'];
+					$data = $this->usuarios->le_cracha($cracha);
+					$this->load->view('usuario/view',$data);
+					
+				}
+		}
+		
 
 	function security() {
 

@@ -55,6 +55,7 @@ class ic extends CI_Controller {
 		array_push($menus, array('Discentes', 'index.php/ic/discentes'));
 		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
 		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
+		array_push($menus, array('Relatórios', 'index.php/ic/report'));
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -169,6 +170,17 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function report($id=0,$gr='')
+		{
+		$this -> cab();
+		$data = array();
+		
+				
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);	
+		}
 
 	function comunicacao($id = 0, $gr = 0, $tp = 0) {
 		/* Load Models */
@@ -388,6 +400,8 @@ class ic extends CI_Controller {
 
 		$data['content'] = row($form, $id);
 		$data['title'] = msg('page_discentes');
+		
+		$data['content'] = '<A href="'.base_url('index.php/usuario/consulta_usuario/').'" class="lt0 link">consultar SGA</a>'.$data['content'];
 
 		$this -> load -> view('content', $data);
 

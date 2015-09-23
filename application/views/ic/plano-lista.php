@@ -16,12 +16,12 @@
 <tr class="lt0">
 		<td>Nome do orientador (professor)
 			<br>
-			<font class="lt1"> <B><?php echo $pf_nome . ' (' . $pf_cracha . ')'; ?></td>
+			<font class="lt1"> <B><?php echo $pf_nome . ' (' . $ic_cracha_prof . ')'; ?></td>
 </tr>
 <tr class="lt0">
 		<td>Nome do estudante
 		<br>
-		<font class="lt1"> <B><?php echo $al_nome . ' (' . $al_cracha . ')'; ?></td>
+		<font class="lt1"> <B><?php echo $al_nome . ' (' . $ic_cracha_aluno . ')'; ?></td>
 </tr>
 <tr class="lt0">
 		<td>Bolsa: <font class="lt1"> <b><?php echo $mb_descricao; ?> / <?php echo $ic_ano;?></b></td>

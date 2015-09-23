@@ -16,6 +16,12 @@ class ws_cs extends CI_model
 		var $homologacao = 'https://haiti.cwb.pucpr.br:8100/services/cs_student_service?wsdl';
 		var $desenvolvimento = 'https://rhea.cwb.pucpr.br:8100/services/cs_student_service?wsdl';
 		
+		function findStudentByCPF($cpf)
+			{
+				$client = new soapclient($wsdl, true);
+				$response = $client -> call('opPesquisarPorCodigo', $param);
+			}
+		
 		function findStudentByCracha($cracha)
 			{
 				$cracha = sonumero($cracha);
