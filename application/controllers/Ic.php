@@ -171,16 +171,13 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function report($id=0,$gr='')
-		{
+	function report($id = 0, $gr = '') {
 		$this -> cab();
 		$data = array();
-		
-				
-		
+
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);	
-		}
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function comunicacao($id = 0, $gr = 0, $tp = 0) {
 		/* Load Models */
@@ -241,9 +238,9 @@ class ic extends CI_Controller {
 	function pagamentos($date = '', $action = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
-		
-		if (strlen($date) == 0)
-			{ $date = date("Ym01"); }
+
+		if (strlen($date) == 0) { $date = date("Ym01");
+		}
 
 		$this -> cab();
 		$data = array();
@@ -298,8 +295,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function avaliador_ativar($id=0,$ac='')
-		{
+	function avaliador_ativar($id = 0, $ac = '') {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 
@@ -324,7 +320,7 @@ class ic extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}
+	}
 
 	function avaliadores($id = 0) {
 		/* Load Models */
@@ -333,11 +329,11 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		
+
 		$menu = array();
-		array_push($menu,array('novo_avaliador','ic/avaliador_ativar'));
+		array_push($menu, array('novo_avaliador', 'ic/avaliador_ativar'));
 		$data['menu'] = $menu;
-		$this->load->view('header/menu_mini',$data);
+		$this -> load -> view('header/menu_mini', $data);
 
 		$data['content'] = $this -> avaliadores -> avaliadores_area();
 		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');
@@ -400,8 +396,8 @@ class ic extends CI_Controller {
 
 		$data['content'] = row($form, $id);
 		$data['title'] = msg('page_discentes');
-		
-		$data['content'] = '<A href="'.base_url('index.php/usuario/consulta_usuario/').'" class="lt0 link">consultar SGA</a>'.$data['content'];
+
+		$data['content'] = '<A href="' . base_url('index.php/usuario/consulta_usuario/') . '" class="lt0 link">consultar SGA</a>' . $data['content'];
 
 		$this -> load -> view('content', $data);
 
@@ -502,6 +498,156 @@ class ic extends CI_Controller {
 
 		$this -> load -> view('ic/plano_historico', $data);
 		$this -> load -> view('ic/plano_avaliacao', $data);
+
+		$this -> load -> view('ic/plano_resumo', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function ativar_plano($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');
+
+		$data = $this -> ics -> le($id);
+
+		$this -> cab();
+		$this -> load -> view('ic/plano', $data);
+
+		/* Form */
+		$form = new form;
+		$cp = $this -> ics -> cp_ativar();
+
+		$data['form'] = $form -> editar($cp, '');
+		if ($form -> saved > 0) {
+			$ic = $this -> ics -> le($id);
+			$estudante = $ic['ic_cracha_aluno'];
+
+			/* Recupera ID do aluno */
+			$estud = $this -> usuarios -> le_cracha($estudante);
+			$ide = $estud['id_us'];
+
+			$vg_d1 = $this -> input -> post("dd2");
+			$vg_d2 = $this -> input -> post("dd3");
+			$dt1 = $this -> input -> post("dd4");
+			$dt2 = $this -> input -> post("dd5");
+			$tipo = $this -> input -> post("dd6");
+			$situacao = $this -> input -> post("dd7");
+
+			$this -> ics -> ativar_bolsa($id, $ide, $estudante, $vg_d1, $vg_d2, $dt1, $dt2, $tipo, $situacao);
+
+			redirect(base_url('index.php/ic/view/' . $id . '/' . checkpost_link($id)));
+			exit ;
+		}
+
+		$this -> load -> view('ic/plano_ativar_form', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function resumo_autores($id = '', $check = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		
+		/* Form */
+		$save = $this->input->post("acao");
+		$dd10 = $this->input->post("dd10");
+		$dd11 = $this->input->post("dd11");
+		$dd12 = $this->input->post("dd12");
+		echo '==>'.$save.'<BR>'.$dd10.'<BR>'.$dd11.'<BR>'.$dd12;
+		
+		$data = array();
+		$data['content'] = $this -> ics -> resumo_autores_mostra($id);
+		$this->load->view('content',$data);
+		$data['id'] = $id;
+		$data['check'] = $check;
+		
+		$this -> load-> view('ic/postar_resumo_autores',$data);
+	}
+
+	function postar_resumo($id = '', $check = '', $page = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');
+
+		/* Valida de existe resumo postado */
+		$rs = $this -> ics -> resumo_postado($id);
+
+		/* Trata variavies */
+		if (strlen($page) > 0) {
+
+		} else {
+			$page = $this -> input -> post("page");
+		}
+		$page = round($page);
+
+		$data = $this -> ics -> le($id);
+
+		$this -> cab();
+		$this -> load -> view('ic/plano', $data);
+
+		$bp = array();
+
+		$bp['1'] = 'Informa o titulo do trabalho';
+		$bp['2'] = 'autores do trabalho';
+		$bp['3'] = 'resumo em português';
+		$bp['4'] = 'resumo em inglês';
+		$bp['5'] = 'confirmar';
+
+		/* Dados */
+		$data['acao'] = $this -> input -> post("acao");
+		$data['dd1'] = $this -> input -> post("dd1");
+		$data['dd2'] = $this -> input -> post("dd2");
+		$data['dd3'] = $this -> input -> post("dd3");
+		$data['dd4'] = $this -> input -> post("dd4");
+		$data['dd5'] = $this -> input -> post("dd5");
+		$data['dd6'] = $this -> input -> post("dd6");
+
+		if ($page > count($bp)) { $page = 1;
+		}
+		if ($page < 1) { $page = 1;
+		}
+
+		$data['bp_atual'] = $page;
+		$data['bp'] = $bp;
+		$data['bp_link'] = base_url('index.php/ic/postar_resumo/' . $id . '/' . $check . '/');
+
+		$data['bar'] = $this -> load -> view('gadget/progressbar_vertical_bar.php', $data, true);
+
+		/* Recupera informacoes */
+		if (strlen($data['acao']) == 0) {
+			$protocolo = $data['ic_plano_aluno_codigo'];
+			$rs = $this -> ics -> le_resumo($protocolo);
+
+			/* Página 1 */
+			if ($page == '1') {
+				$data['dd1'] = $rs['sm_titulo'];
+				$data['dd2'] = $rs['sm_titulo_en'];
+			}
+		} else {
+			$rs = array();
+			$redirect = $this -> ics -> salvar_resumo($page, $data);
+
+			if ($redirect == 1) {
+				$url = base_url('index.php/ic/postar_resumo/' . $id . '/' . $check . '/' . ($page + 1));
+				redirect($url);
+				exit ;
+			}
+		}
+
+		switch ($page) {
+			case '1' :
+				$this -> load -> view('ic/postar_resumo_1', $data);
+				break;
+			case '2' :
+				$this -> load -> view('ic/postar_resumo_2', $data);
+				break;
+			default :
+				echo 'ops' . $page;
+				break;
+		}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

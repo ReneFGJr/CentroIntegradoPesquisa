@@ -85,8 +85,11 @@ class credenciamentos extends CI_Model {
 	}
 
 	function registro_form() {
+		$this->load->model("usuarios");
+		
 		$id = sonumero($this -> input -> post("dd1"));
 		if (strlen($id) > 0) {
+			$id = $this->usuarios->limpa_cracha($id);
 			$this -> registra($id);
 			redirect(base_url('index.php/credenciamento/registro'));
 		}
@@ -200,9 +203,7 @@ class credenciamentos extends CI_Model {
 	function kits_form() {
 		$id = sonumero($this -> input -> post("dd1"));
 		$msg = '';
-		$zera = '';
 		if (strlen($id) > 0) {
-			$zera = '$("#dd1").val(); ' . cr();
 			$rs = $this -> entrega_kit($id);
 			switch ($rs) {
 				case '2' :
@@ -233,7 +234,6 @@ class credenciamentos extends CI_Model {
 					break;
 				default :
 					$msg = '<font color="red" class="lt6">Problema no Cracha!</font>';
-					$zera = '';
 					break;
 			}
 		}
@@ -247,7 +247,7 @@ class credenciamentos extends CI_Model {
 		$tela = $form -> editar($cp, '');
 		$tela .= '
 			<script>
-				' . $zera . '
+				$("#dd1").val( "" );
 				$("#dd1").focus();
 			</script>
 			';

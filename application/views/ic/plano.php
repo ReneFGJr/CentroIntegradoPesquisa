@@ -88,7 +88,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 			<tr class="lt0">
 				<td colspan=5><?php echo mst('Vigencia'); ?>
 				<br><font class="lt1">
-				<B><?php echo stodbr($aic_dt_entrada); ?> - <?php echo stodbr($aic_dt_saida); ?></td>
+				<B><?php echo stodbr($aic_dt_entrada); ?> - <?php echo stodbr($aic_dt_saida); ?> <?php echo $ic_ativar; ?></td>
 			</tr>			
 	</table>
 </fieldset>

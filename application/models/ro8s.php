@@ -61,7 +61,7 @@ class ro8s extends CI_Model {
 						sma_instituicao='$sma_instituicao',
 						sma_ativo='$sma_ativo'
 						WHERE id_sma = $id_sma";
-						$this -> db -> query($sql);
+						//$this -> db -> query($sql);
 				$sx .= '<td>atualizado registro</td>';
 
 			}

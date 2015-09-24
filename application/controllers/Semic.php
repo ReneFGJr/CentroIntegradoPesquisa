@@ -223,6 +223,10 @@ class semic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
+		
+		$data['content'] = $this -> semic_trabalhos -> avaliadores_resumo_indicacao();
+		$data['title'] = '';
+		$this -> load -> view('content', $data);		
 
 		$data['content'] = $this -> semic_trabalhos -> avaliadores_seminario();
 		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');

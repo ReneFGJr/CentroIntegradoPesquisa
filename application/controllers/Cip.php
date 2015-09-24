@@ -113,6 +113,10 @@ class CIP extends CI_Controller {
 		
 		/* dados do autor */
 		$data['data'] = $user_id;
+		
+		$bp = array();
+		$bp['titulo'] = '1';
+		$data['bp'] = $bp;
 
 		$this -> load -> view('cip/artigos', $data);
 

@@ -255,15 +255,15 @@ class usuarios extends CI_model {
 		}
 		return ($line);
 	}
-	function geraCracha()
-		{
-			$sql = "select count(*) as total from us_usuario ";
-			$rlt = db_query($sql);
-			$line = db_read($rlt);
-			$cracha = 'F'.strzero($line['total'],7);
-			return($cracha);
-		}
-	
+
+	function geraCracha() {
+		$sql = "select count(*) as total from us_usuario ";
+		$rlt = db_query($sql);
+		$line = db_read($rlt);
+		$cracha = 'F' . strzero($line['total'], 7);
+		return ($cracha);
+	}
+
 	function readByCPF($cpf) {
 		$cpf = sonumero($cpf);
 		/* Busca dados do cadastro */
@@ -281,7 +281,7 @@ class usuarios extends CI_model {
 			$line = array();
 		}
 		return ($line);
-	}	
+	}
 
 	function readById($id) {
 		/* Busca dados do cadastro */
@@ -305,6 +305,8 @@ class usuarios extends CI_model {
 	}
 
 	function limpa_cracha($cracha) {
+		if (strlen($cracha) == 13) { $cracha = substr($cracha, 3, 8);
+		}
 		if (strlen($cracha) == 12) { $cracha = substr($cracha, 3, 8);
 		}
 		if (strlen($cracha) == 11) { $cracha = substr($cracha, 3, 8);
@@ -317,7 +319,7 @@ class usuarios extends CI_model {
 		if (strlen($cracha) < 8) {
 			return ('');
 		}
-		return($cracha);
+		return ($cracha);
 	}
 
 	function insere_usuario($DadosUsuario) {

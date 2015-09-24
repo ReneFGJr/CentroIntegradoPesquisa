@@ -2,6 +2,76 @@
 class semic_trabalhos extends CI_Model {
 	var $tabela = 'semic_ic_trabalho';
 
+	function avaliadores_resumo_indicacao() {
+		$ano = date("Y");
+		$ano2 = (date("Y") - 1);
+		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome ";
+		$sql = "select $cp, count(*) as total from ( 
+							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
+								union 
+							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
+								union 
+							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
+								union 
+							SELECT id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
+								union 
+							SELECT id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
+							) as total 
+						inner join us_usuario on id_us = avaliador
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						left join semic_bloco on id_bl = id_sb
+						left join semic_salas on id_sl = sb_sala
+						group by $cp
+						order by us_nome, sb_data, sb_hora				
+				";
+		$rs = array();
+		$rlt = db_query($sql);
+
+		$xava = '';
+		$tava = 0;
+		$toto = 0;
+		while ($line = db_read($rlt)) {
+			$ava = $line['avaliador'];
+			/* Avaliador */
+			if ($xava != $ava) {
+				$tava++;
+				$xava = $ava;
+			}
+			$sit = $line['situacao'];
+			if (isset($rs[$sit])) {
+				$rs[$sit] = $rs[$sit] + 1;
+			} else {
+				$rs[$sit] = 1;
+			}
+			$toto++;
+		}
+		$sx = '<table class="tabela00 lt1" width="100%">';
+		$sa = '<tr>';
+		$sb = '<tr class="lt6">';
+		foreach ($rs as $key => $value) {
+			$tx = $this -> situacao_avaliador($key);
+			$perc = number_format($value / $toto * 100,1).'%';
+			$sa .= '<td>' . $tx['status'] . '</td>';
+			$sb .= '<td align="center">' . $value . ' <font class="lt2">('.$perc.')</font></td>';
+		}
+		$sa .= '<td>Total de avaliadores</td>';
+		$sb .= '<td align="center">'.$tava.'</td>';
+		
+		$sa .= '<td>Total de indicações</td>';
+		$sb .= '<td align="center">'.$toto.'</td>';
+				
+		if ($tava > 0)
+			{
+			$sa .= '<td>Média Avaliadores / Bloco</td>';
+			$sb .= '<td align="center">'.number_format($toto/$tava,1).'</td>';
+			}
+				
+		$sx .= $sa.'</tr>';
+		$sx .= $sb.'</tr>';
+		$sx .= '</table>';
+		return ($sx);
+	}
+
 	function cp() {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_st', '', False, True));
@@ -159,7 +229,8 @@ class semic_trabalhos extends CI_Model {
 				$rav = $this -> link_situacao_avaliador($sit);
 				$sx .= '<td>';
 				$sx .= $rav;
-				$sx .= '</td>'; ;
+				$sx .= '</td>';
+				;
 
 				$sx .= '</table>';
 			}

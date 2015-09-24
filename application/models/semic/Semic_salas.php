@@ -82,6 +82,8 @@ class semic_salas extends CI_Model {
 		$st[1] = '<font color="orange">convidado</font>';
 		$st[2] = '<font color="green">aceito</font>';
 		$st[3] = '<font color="red">recusado</font>';
+		$st[9] = '<font color="red">recusado</font>';
+		$st[10] = '<font color="green">aceito</font>';;
 
 		return ($st[$sa]);
 	}
