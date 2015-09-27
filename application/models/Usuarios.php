@@ -6,6 +6,19 @@ class usuarios extends CI_model {
 		$sx = $this -> load -> view('perfil/docente', $data);
 		return ($sx);
 	}
+	
+	function tabela_view()
+		{
+		$sql = "(select *
+				from
+	                us_usuario
+	                left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
+	                left join us_avaliador_situacao on us_avaliador = id_as
+	                left join ies_instituicao on id_ies = ies_instituicao_ies_id
+	                left join us_tipo on id_ustp = usuario_tipo_ust_id
+				) as usuario";
+		return($sql);
+		}
 
 	function cp_perfil() {
 		$cp = array();
@@ -43,8 +56,8 @@ class usuarios extends CI_model {
 	}
 
 	function row($obj) {
-		$obj -> fd = array('id_us', 'us_nome', 'us_cracha', 'us_cpf', 'us_emplid');
-		$obj -> lb = array('ID', 'Nome', 'Cracha', 'CPF', 'EmployEd');
+		$obj -> fd = array('id_us', 'us_nome', 'us_cracha', 'us_cpf', 'us_emplid','ies_sigla','ustp_nome');
+		$obj -> lb = array('ID', 'Nome', 'Cracha', 'CPF', 'EmployEd','Instituição','Perfil');
 		$obj -> mk = array('', 'L', 'C', 'C', 'C');
 		return ($obj);
 	}
@@ -80,6 +93,7 @@ class usuarios extends CI_model {
 	                left join us_email as e on e.usuario_id_us = us_usuario.id_us
 	                left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
 	                left join us_avaliador_situacao on us_avaliador = id_as
+	                left join ies_instituicao on id_ies = ies_instituicao_ies_id
 				where id_us = " . $id;
 
 		$rlt = $this -> db -> query($sql);

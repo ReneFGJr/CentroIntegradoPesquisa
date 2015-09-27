@@ -1416,13 +1416,11 @@ if (!function_exists('form_edit')) {
 
 		$tela = '';
 		$tela .= '
-<table class="form_tabela" width="100%" border=0 >
-	';
-		$tela .= '
-	<tr>
-		<td>' . form_open() . '</td>
-	</tr>
-	';
+			<table class="form_tabela" width="100%" border=0 >
+			<tr>
+				<td>' . form_open() . '</td>
+			</tr>
+			';
 
 		if ($recupera == 1) {
 			/* recupera dados do banco */

@@ -1,4 +1,4 @@
-<table>
+<table width="100%">
 	<tr valign="top">
 		<td width="180"><?php echo $bar;?></td>
 		<td><h3>Postagem do Resumo para o SEMIC</h3>
@@ -18,7 +18,7 @@
 				</tr>
 				<tr>
 					<td>
-					<input type="submit" name="acao" value="Avançar >>>">
+					<input type="submit" name="acao" value="Avançar próxima página >>>">
 					</td>
 				</tr>
 			</table>

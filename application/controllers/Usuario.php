@@ -40,7 +40,35 @@ class usuario extends CI_Controller {
 					
 				}
 		}
-		
+	function row($id=0)
+		{
+		/* Load Models */
+		$this -> load -> model('usuarios');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = $this -> usuarios -> tabela_view();
+		$form -> see = true;
+		$form -> edit = false;
+		$form -> novo = false;
+		$form = $this -> usuarios -> row($form);
+
+		$form -> row_edit = base_url('index.php/usuario/usuarios_edit');
+		$form -> row_view = base_url('index.php/usuario/view');
+		$form -> row = base_url('index.php/usuario/row/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('page_usuarios');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);			
+		}		
 
 	function security() {
 
@@ -64,7 +92,7 @@ class usuario extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Usuarios', 'index.php/usuarios/row/'));
+		array_push($menus, array('Usuarios', 'index.php/usuario/row'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -170,33 +198,6 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function row($id = 0) {
-		/* Load Models */
-		$this -> load -> model('usuarios');
-
-		$this -> cab();
-		$data = array();
-
-		$form = new form;
-		$form -> tabela = $this -> usuarios -> tabela;
-		$form -> see = true;
-		$form -> edit = true;
-		$form = $this -> usuarios -> row($form);
-
-		$form -> row_edit = base_url('index.php/usuario/edit');
-		$form -> row_view = base_url('index.php/usuario/view');
-		$form -> row = base_url('index.php/estudante/');
-
-		$tela['tela'] = row($form, $id);
-
-		$tela['title'] = $this -> lang -> line('title_estudante');
-
-		$this -> load -> view('form/form', $tela);
-
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
-	}
-
 	function view($id = 0) {
 		$this -> load -> model('usuarios');
 
@@ -206,12 +207,25 @@ class usuario extends CI_Controller {
 		$data = $this -> usuarios -> le($id);
 
 		$tipo = $data['usuario_tipo_ust_id'];
-
+		
 		switch ($tipo) {
+			/* Docente */
 			case '2' :
 				$data['logo'] = base_url('img/logo/logo_docentes.jpg');
 				$this -> load -> view('header/logo', $data);
 				$this -> load -> view('perfil/docente', $data);
+				break;
+			/* Colaborador */
+			case '4' :
+				$data['logo'] = base_url('img/logo/logo_colaborador.jpg');
+				$this -> load -> view('header/logo', $data);
+				$this -> load -> view('perfil/colaborador', $data);
+				break;
+			/* Colaborador */
+			case '3' :
+				$data['logo'] = base_url('img/logo/logo_discente.jpg');
+				$this -> load -> view('header/logo', $data);
+				$this -> load -> view('perfil/discente', $data);
 				break;
 			default :
 				$data['logo'] = base_url('img/logo/logo_discente.jpg');

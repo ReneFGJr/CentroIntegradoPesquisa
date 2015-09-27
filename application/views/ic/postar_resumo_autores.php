@@ -7,7 +7,7 @@
 	</tr>
 	<tr>
 		<td><input type="text" id="nome" name="nome" class="form_string" style="width: 100%;" value=""></td>
-		<td><select id="dd11" class="form_string" style="width: 100%;" size=1>
+		<td><select id="tipo" class="form_string" style="width: 100%;" size=1>
 			<option value=""></option>
 			<option value="2">Co-orientador</option>
 			<option value="3">Colaborador</option>
@@ -16,29 +16,34 @@
 			<option value="4">Pibic Junior</option>
 			<option value="5">Supervisor Pibic Junior</option>
 			<option value="6">Escola (para Pibic Júnior)</option>
-			<option value="9">Orientador</option>
 			</select>
 		</td>
 		<td><input type="text" id="instituicao" class="form_string" style="width: 100%;"></td>
-		<td><input type="button" id="acao" class="form_button" style="width: 100%;" value="Incluir"></td>
+		<td><input type="button" id="acao" class="form_button" style="width: 100%;" value="Incluir" onclick="send(this);"></td>
+	</tr>
+	
+	<tr>
+		<td class="error" colspan=3><?php echo $msg; ?></td>
 	</tr>
 </table>
 <script>
-$("#acao").click(function() {
-	$("#autores").html('Loading...');
-		var $url = '<?php echo base_url('index.php/ic/resumo_autores/' . $id . '/' . $check);?>';
-		var nome = $('nome').val();
-		var tipo = $("#dd11 option:selected").val();
-		var inst = $("instituicao").val();
-		alert(nome);
-		alert(tipo);
-		alert(inst);
-		$.ajax({
-				url : $url,
-				type : "post",
-				data : { acao: "save", dd10: nome, dd11: tipo, dd12: inst }, 
-				success : function(data) {
-				$("#autores").html(data);
-			} } );
-	});
+function send($this)
+	{
+		var nome = document.getElementById("nome").value;
+		var tipo = document.getElementById("tipo").value;
+		var inst = document.getElementById("instituicao").value;
+		
+		$.post( "<?php echo base_url('index.php/ic/resumo_autores/'.$id.'/'.$check);?>", { dd10: nome, dd11: tipo, dd12: inst, acao: 'ADD' })
+  			.done(function( data ) {
+   			 $("#autores").html(data);
+  		});
+	}
+function remove(id)
+	{
+		$.post( "<?php echo base_url('index.php/ic/resumo_autores/'.$id.'/'.$check);?>", { dd10: id, acao: 'DEL' })
+  			.done(function( data ) {
+   			 $("#autores").html(data);
+  		});	
+	}
+	
 </script>

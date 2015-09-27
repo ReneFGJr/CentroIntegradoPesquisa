@@ -1,23 +1,35 @@
-<table width="1024">
+<form method="post">
+<table width="100%">
 	<tr valign="top">
-		<td width="180"><?php echo $bar;?></td>
+		<td width="180"><?php echo $bar; ?></td>
 		<td><h3>Postagem do Resumo para o SEMIC</h3>
-		<form method="post">
 			<table width="100%" class="lt0">
-				<tr>
+				<tr class="lt2">
 					<td>Autores, Orientadores e Colaboradores</td>
 				</tr>
 				<tr>
 					<td>
 					<div id="autores">
 						loading...
-					</div></td>
+					</div>
+					</td>
 				</tr>
+				<tr>
+					<td>
+					<input type="submit" name="acao" value="Avançar próxima página >>>">
+					</td>
+				</tr>	
 			</table>
-			<input type="hidden" name="page" value="2">
-		</form></td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input type="hidden" name="page" value="2">		
+		</td>
 	</tr>
 </table>
+</form>
+
 <style>
 	.autores {
 		font-size: 12px;

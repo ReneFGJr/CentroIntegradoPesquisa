@@ -245,10 +245,34 @@ a.lt1 {
 	font-size: 26px;
 }
 .menu_item {
-	border: 1px solid #000000;
+	line-height: 190%;
+	border: 0px solid #000000;
 	padding: 5px;
 	margin-bottom: 20px;
+	width: 400px;
+	text-transform: uppercase;
 }
+.menu_item_li
+	{
+		margin-left: 30px;
+		line-height: 190%;
+		color: #33333;
+		font-size: 14px;
+		text-transform: capitalize;
+	}
+.menu_item_li_3
+	{
+		margin-left: 60px;
+		line-height: 170%;
+		color: #33333;
+		font-size: 12px;
+		text-transform: capitalize;
+	}	
+
+.menu_item_li:hover, .menu_item_li_3:hover 
+	{
+		text-decoration: underline;
+	}
 /* Formulario */
 #form_search {
 	padding: 40px 0px 0px 0px;

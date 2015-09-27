@@ -49,13 +49,16 @@ class ic extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
-		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
-		array_push($menus, array('Docentes', 'index.php/ic/docentes'));
-		array_push($menus, array('Discentes', 'index.php/ic/discentes'));
+		array_push($menus, array('Home', 'index.php/ic/'));
+		
+		array_push($menus, array('Pessoas', 'index.php/ic/usuarios'));
 		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
+		
+		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
+		
 		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
 		array_push($menus, array('Relatórios', 'index.php/ic/report'));
+		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -265,10 +268,10 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function docentes($id = 0) {
+	function usuarios($id = 0) {
 
 		/* Load Models */
-		$this -> load -> model('docentes');
+		$this -> load -> model('usuarios');
 
 		$this -> cab();
 		$data = array();
@@ -276,15 +279,15 @@ class ic extends CI_Controller {
 
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
-		$form -> tabela = $this -> docentes -> tabela_view();
+		$form -> tabela = $this -> usuarios -> tabela_view();
 		$form -> see = true;
 		$form -> edit = false;
 		$form -> novo = false;
-		$form = $this -> docentes -> row($form);
+		$form = $this -> usuarios -> row($form);
 
-		$form -> row_edit = base_url('index.php/ic/docente_edit');
-		$form -> row_view = base_url('index.php/docente/view');
-		$form -> row = base_url('index.php/ic/docentes/');
+		$form -> row_edit = base_url('index.php/ic/usuarios_edit');
+		$form -> row_view = base_url('index.php/usuario/view');
+		$form -> row = base_url('index.php/ic/usuarios/');
 
 		$data['content'] = row($form, $id);
 		$data['title'] = msg('page_docentes');
@@ -499,6 +502,16 @@ class ic extends CI_Controller {
 		$this -> load -> view('ic/plano_historico', $data);
 		$this -> load -> view('ic/plano_avaliacao', $data);
 
+		/* */
+		$protocolo = $data['ic_plano_aluno_codigo'];
+		$rs = $this -> ics -> le_resumo($protocolo);
+		
+		if (count($rs) > 0)
+			{
+				$data['line'] = $rs;
+				$data['resumo'] = '1';
+			}
+
 		$this -> load -> view('ic/plano_resumo', $data);
 
 		$this -> load -> view('header/content_close');
@@ -550,24 +563,35 @@ class ic extends CI_Controller {
 	function resumo_autores($id = '', $check = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
-		
+
 		/* Form */
-		$save = $this->input->post("acao");
-		$dd10 = $this->input->post("dd10");
-		$dd11 = $this->input->post("dd11");
-		$dd12 = $this->input->post("dd12");
-		echo '==>'.$save.'<BR>'.$dd10.'<BR>'.$dd11.'<BR>'.$dd12;
-		
+		$save = $this -> input -> post("acao");
+		$nome = $this -> input -> post("dd10");
+		$tipo = $this -> input -> post("dd11");
+		$instituicao = $this -> input -> post("dd12");
+		$msg = '';
+
+		if ($save == 'ADD') {
+			$msg = $this -> ics -> resumo_inserir_autor($id, $nome, $tipo, $instituicao);
+		}
+		if ($save == 'DEL') {
+			$msg = $this -> ics -> resumo_remove_autor($nome);
+			$msg = 'REMOVIDO';
+			;
+		}
+
 		$data = array();
 		$data['content'] = $this -> ics -> resumo_autores_mostra($id);
-		$this->load->view('content',$data);
+		$this -> load -> view('content', $data);
 		$data['id'] = $id;
 		$data['check'] = $check;
-		
-		$this -> load-> view('ic/postar_resumo_autores',$data);
+		$data['msg'] = $msg;
+
+		$this -> load -> view('ic/postar_resumo_autores', $data);
 	}
 
 	function postar_resumo($id = '', $check = '', $page = '') {
+		global $dd;
 		/* Load Models */
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
@@ -605,7 +629,11 @@ class ic extends CI_Controller {
 		$data['dd5'] = $this -> input -> post("dd5");
 		$data['dd6'] = $this -> input -> post("dd6");
 
-		if ($page > count($bp)) { $page = 1;
+		/* Finalizado */
+		if ($page > count($bp)) {
+				$url = base_url('index.php/ic/view/' . $id . '/' . $check);
+				redirect($url);
+				exit ;	
 		}
 		if ($page < 1) { $page = 1;
 		}
@@ -643,6 +671,24 @@ class ic extends CI_Controller {
 				break;
 			case '2' :
 				$this -> load -> view('ic/postar_resumo_2', $data);
+				break;
+			case '3' :
+				$form = new form;
+				$cp = $form->cp = $this->ics->cp_resumo_1();
+				$data['tela'] = $form->editar($cp,'');
+				$data['line'] =  $rs;
+				$this -> load -> view('ic/postar_resumo_3', $data);
+				break;
+			case '4' :
+				$form = new form;
+				$cp = $form->cp = $this->ics->cp_resumo_2();
+				$data['tela'] = $form->editar($cp,'');
+				$data['line'] =  $rs;
+				$this -> load -> view('ic/postar_resumo_4', $data);
+				break;
+			case '5' :
+				$data['line'] =  $rs;
+				$this -> load -> view('ic/postar_resumo_5', $data);
 				break;
 			default :
 				echo 'ops' . $page;

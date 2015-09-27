@@ -14,6 +14,11 @@ class ics extends CI_model {
 		$wh2 = '';
 		$wh3 = '';
 		$wh4 = '';
+		
+		if (strlen(sonumero($terms))==0)
+			{
+				$type = '2';
+			}
 		if ($type == 2) {
 			for ($r = 0; $r < count($term); $r++) {
 				if ($r > 0) {
@@ -28,11 +33,14 @@ class ics extends CI_model {
 				//$wh4 .= " (ic_projeto_professor_titulo like '%" . $term[$r] . "%') ";
 			}
 
-			$wh = '(' . $wh1 . ' or ' . $wh2 . ' or ' . $wh3 . ') or ';
+			$wh = '(' . $wh1 . ' or ' . $wh2 . ' or ' . $wh3 . ') 	';
 		}
-		$wh .= " (ic_cracha_prof = '" . $term[0] . "') ";
-		$wh .= " or (ic_cracha_aluno = '" . $term[0] . "') ";
-		$wh .= " or (ic_plano_aluno_codigo like '" . $term[0] . "%') ";
+		if ($type == '1')
+			{
+			$wh .= " (ic_cracha_prof = '" . $term[0] . "') ";
+			$wh .= " or (ic_cracha_aluno = '" . $term[0] . "') ";
+			$wh .= " or (ic_plano_aluno_codigo like '" . $term[0] . "%') ";
+			}
 		
 		$sql = $this -> table_view($wh, 0, 50);
 		$rlt = db_query($sql);
@@ -59,18 +67,18 @@ class ics extends CI_model {
 			$funcao = array();
 			$funcao['0'] = 'Discente';
 			$funcao['1'] = '???';
-			$funcao['2'] = '???';
-			$funcao['3'] = '???';
-			$funcao['4'] = '???';
-			$funcao['5'] = '???';
-			$funcao['6'] = '???';
-			$funcao['7'] = '???';
-			$funcao['8'] = '???';
+			$funcao['2'] = 'Co-orientador';
+			$funcao['3'] = 'Colaborador';
+			$funcao['4'] = 'Pibic Junior';
+			$funcao['5'] = 'Supervisor Pibic Junior';
+			$funcao['6'] = 'Escola (para Pibic Júnior)';
+			$funcao['7'] = 'Mestrando de Pós-Graduação';
+			$funcao['8'] = 'Doutorando de Pós-Graduação';
 			$funcao['9'] = 'Orientador';
 			
 			$sql = "select * from semic_trabalho_autor 
 					where sma_protocolo = '$id'
-						and sma_ativo = 1 
+						and sma_ativo > 0 
 					order by sma_funcao
 			";
 			$rlt = db_query($sql);
@@ -84,10 +92,13 @@ class ics extends CI_model {
 			$tot = 0;
 			while ($line = db_read($rlt))
 				{
+					$link = '<a href="#" onclick="remove('.$line['id_sma'].');" class="link">remover</a>';
+					if ($line['sma_ativo'] > 1) { $link = ''; }
 					$sx .= '<tr>';
 					$sx .= '<td class="tabela01">'.$line['sma_nome'].'</td>';
-					$sx .= '<td class="tabela01" align="center">'.$funcao[$line['sma_funcao']].'<td>';
+					$sx .= '<td class="tabela01" align="center">'.$funcao[$line['sma_funcao']].'</td>';
 					$sx .= '<td class="tabela01" align="center">'.$line['sma_instituicao'].'</td>';
+					$sx .= '<td class="tabela01" align="center">'.$link.'</td>';
 					$tot++;
 				}
 			if ($tot == 0)
@@ -124,6 +135,57 @@ class ics extends CI_model {
 					$rlt = $this->db->query($sql);
 					return(1);
 				}
+			/* Page 2 */
+			if ($page=='2')
+				{
+					echo "PAGE2";
+					return(1);
+				}
+				
+			/* Page 3 */
+			if ($page=='3')
+				{
+					/* Titulo e Titulo em Inglês */
+					$sql = "update semic_trabalho set
+								sm_rem_01 = '$dd1',
+								sm_rem_02 = '$dd2',
+								sm_rem_03 = '$dd3',
+								sm_rem_04 = '$dd4',
+								sm_rem_05 = '$dd5',								 
+								sm_rem_06 = '$dd6'
+								where sm_codigo = '$protocolo' ";
+					$rlt = $this->db->query($sql);
+					return(1);
+				}
+				
+			/* Page 4 */
+			if ($page=='4')
+				{
+					/* Titulo e Titulo em Inglês */
+					$sql = "update semic_trabalho set
+								sm_rem_11 = '$dd1',
+								sm_rem_12 = '$dd2',
+								sm_rem_13 = '$dd3',
+								sm_rem_14 = '$dd4',
+								sm_rem_15 = '$dd5',								 
+								sm_rem_16 = '$dd6'
+								where sm_codigo = '$protocolo' ";
+					$rlt = $this->db->query($sql);
+					return(1);
+				}
+				
+			/* page 5 */
+			if ($page=='5')
+			{
+					/* Titulo e Titulo em Inglês */
+					$sql = "update semic_trabalho set
+								sm_trava = '1',
+								sm_status = 'A'
+								where sm_codigo = '$protocolo' ";
+					$rlt = $this->db->query($sql);
+					return(1);
+				exit;
+			}								
 		}
 
 	function le_resumo($protocolo='')
@@ -141,10 +203,64 @@ class ics extends CI_model {
 					return($line);
 				}	
 		}
+		
+	function resumo_remove_autor($id)
+		{
+			$sql = "update semic_trabalho_autor set sma_ativo = 0 where id_sma = ".round($id);
+			$this->db->query($sql);
+			return('');
+		}
+	function resumo_inserir_autor($protocolo,$nome,$tipo,$instituicao,$lock=1)
+		{
+			$sql = "select * from semic_trabalho_autor 
+						where sma_protocolo = '$protocolo' 
+							and sma_nome = '$nome' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) == 0)
+				{
+				$sql = "insert into semic_trabalho_autor
+					(
+					sma_protocolo, sma_nome, sma_funcao, 
+					sma_instituicao, sma_ativo, sma_titulacao
+					) values (
+					'$protocolo','$nome','$tipo',
+					'$instituicao','$lock','') ";
+				$rlt = $this->db->query($sql);
+				} else {
+					return('Nome já foi inserido!');
+				}
+		}
+		
+	function resumo_postado_inserir_autores($rs)
+		{
+			$line = $rs;
+					$professor = $line['ic_cracha_prof'];
+					$estudante = $line['ic_cracha_aluno'];
+					$protocolo = $rs['ic_plano_aluno_codigo'];
+					
+					/* Bloquear edicao */
+					$lock = 2;
+										
+					/* Estudante */
+					$estu = $this->usuarios->le_cracha($estudante);
+					$instituicao = trim($estu['ies_sigla']);
+					$nome = trim($estu['us_nome']);	
+					$this->resumo_inserir_autor($protocolo,$nome,'0',$instituicao,$lock);
+					
+					/* Professor */
+					$prof = $this->usuarios->le_cracha($professor);
+					$instituicao = trim($prof['ies_sigla']);
+					$nome = trim($prof['us_nome']);	
+									
+					$this->resumo_inserir_autor($protocolo,$nome,'9',$instituicao,$lock);
+			return('');
+		}
 
 	function resumo_postado($id)
 		{
 			$this->load->model("ics");
+			
 			$rs = $this->ics->le($id);
 			
 			$protocolo = $rs['ic_plano_aluno_codigo'];
@@ -164,7 +280,6 @@ class ics extends CI_model {
 					$edital = $line['mb_tipo'];
 					$ano = $line['ic_ano'];
 					/* Insere reumo */
-					echo 'INSERIR RESUMO';
 					$sql = "insert into semic_trabalho
 							(
 							sm_codigo, sm_titulo, sm_titulo_en,
@@ -187,6 +302,8 @@ class ics extends CI_model {
 							)
 					 ";
 					 $this->db->query($sql);
+					 /* Cadastro automático do estudante e orientador */
+					 $this->resumo_postado_inserir_autores($rs);
 				}
 			return(0);
 		}
@@ -434,10 +551,40 @@ class ics extends CI_model {
 		array_push($cp, array('$D8', '', msg('Previsao_encerramento'), True, True));
 		array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_ativo = 1','',msg('modalidade'), True,True));
 		array_push($cp, array('$Q id_icas:icas_situacao:select * from ic_aluno_situacao where icas_ativo = 1', '', msg('protocolo_professor'), False, True));
-		
-		
+
 		return($cp);			
 		}
+	
+	function cp_resumo_1()
+		{
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$T80:6', '', 'Introdução', True, True));
+		array_push($cp, array('$T80:6', '', 'Objetivo(s)', True, True));
+		array_push($cp, array('$T80:6', '', 'Metodologia', True, True));
+		array_push($cp, array('$T80:6', '', 'Resultado(s)', True, True));
+		array_push($cp, array('$T80:6', '', 'Conclusão(ões)', True, True));
+		array_push($cp, array('$T80:2', '', 'Palavras-chave', True, True));
+		array_push($cp, array('$B8', '', 'Avançar próxima página >>>', False, True));
+		
+
+		return($cp);			
+		}
+		
+	function cp_resumo_2()
+		{
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$T80:6', '', 'Introduction', True, True));
+		array_push($cp, array('$T80:6', '', 'Objectives', True, True));
+		array_push($cp, array('$T80:6', '', 'Methods', True, True));
+		array_push($cp, array('$T80:6', '', 'Results', True, True));
+		array_push($cp, array('$T80:6', '', 'Conclusion', True, True));
+		array_push($cp, array('$T80:2', '', 'Keywords', True, True));
+		array_push($cp, array('$B8', '', 'Avançar próxima página >>>', False, True));
+
+		return($cp);			
+		}		
 
 	function cp() {
 		$cp = array();
