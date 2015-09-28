@@ -62,6 +62,7 @@ class semic extends CI_Controller {
 		$menus = array();
 		array_push($menus, array('Programacao', 'index.php/semic'));
 		array_push($menus, array('Trabalhos', 'index.php/semic/trabalhos'));
+		array_push($menus, array('Localização Pôster', 'index.php/semic/poster'));
 		array_push($menus, array('Avaliadores', 'index.php/semic/avaliadores'));
 		array_push($menus, array('Credenciamento', 'index.php/credenciamento'));
 		
@@ -176,6 +177,24 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 
 	}
+
+	function poster($id=0,$ala='',$nr='')
+		{
+		/* Load Models */
+		$this -> load -> model('usuarios');
+		$this -> load -> model('avaliadores');
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		$data = array();
+		
+		$this->semic_trabalhos->indicacao_local_poster($id,$ala,$nr);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);			
+		}
 
 	function agenda($id = 0, $email = 0) {
 		global $email_own;

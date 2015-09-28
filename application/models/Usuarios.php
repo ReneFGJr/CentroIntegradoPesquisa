@@ -43,7 +43,7 @@ class usuarios extends CI_model {
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('eq_ativo_2'), True, True));
 		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), True, True));
 
-		array_push($cp, array('$Q id_as:as_situacao:select * from us_avaliador_situacao where as_ativo = 1', 'us_avaliador', msg('avaliador'), True, True));
+		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
 
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 
@@ -102,6 +102,7 @@ class usuarios extends CI_model {
 		$line['us_ss'] = '';
 		$line['us_lattes'] = '';
 		$line['avaliador'] = $line['as_situacao'];
+		$line['editar'] = '<a href="'.base_url('index.php/usuario/edit/'.$line['id_us'].'/'.checkpost_link($line['id_us'])).'" class="lt0 link">editar</a>';
 
 		$line['email'] = $this -> lista_email($id);
 		return ($line);

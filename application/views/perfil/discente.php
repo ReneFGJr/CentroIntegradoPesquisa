@@ -26,6 +26,8 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<li><strong>Curso:</strong> <?php echo $us_nada;?> </li>
 				<li><strong>Centro:</strong> <?php echo $us_nada;?> </li>
 				<li><strong>Escola:</strong> <?php echo $us_nada;?> </li>
-				<li><strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_updat_drh);?></li>				
+				<li><strong>Instituição:</strong> <?php echo $ies_sigla;?> </li>
+				<li><strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_updat_drh);?></li>
+				<li><strong><?php echo $editar;?></li>				
 			</div>	
 			</table>

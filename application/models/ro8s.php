@@ -1,6 +1,6 @@
 <?php
 class ro8s extends CI_Model {
-	
+
 	function inport_semic_trabalho_autor($id = 0) {
 		$tabela = "semic_nota_trabalhos";
 		$offset = $id;
@@ -25,14 +25,12 @@ class ro8s extends CI_Model {
 			$sma_ativo = utf8_decode($xml -> sma_ativo);
 			$sma_protocolo = utf8_decode($xml -> sma_protocolo);
 
-			
 			$to++;
 			$sx .= '<tr class="lt0">';
 			$sx .= '<td>' . $id_sma . '.</td>';
 			$sx .= '<td>' . $sma_nome . '</td>';
-			$sx .= '<td>' . $sma_titulacao . '</td>';			
+			$sx .= '<td>' . $sma_titulacao . '</td>';
 			$sx .= '<td>' . $sma_funcao . '</td>';
-	
 
 			$sql = "select * from semic_trabalho_autor where id_sma = '$id_sma' ";
 			$rlt = $this -> db -> query($sql);
@@ -61,7 +59,7 @@ class ro8s extends CI_Model {
 						sma_instituicao='$sma_instituicao',
 						sma_ativo='$sma_ativo'
 						WHERE id_sma = $id_sma";
-						//$this -> db -> query($sql);
+				//$this -> db -> query($sql);
 				$sx .= '<td>atualizado registro</td>';
 
 			}
@@ -69,15 +67,15 @@ class ro8s extends CI_Model {
 		$sx .= '</table>';
 		echo $sx;
 		if ($RowT > 0) {
-			$site = base_url('index.php/inport/ro8/semic-trabalho-autor/' . ($offset + 50) );
+			$site = base_url('index.php/inport/ro8/semic-trabalho-autor/' . ($offset + 50));
 			echo '
 					<meta http-equiv="refresh" content="5;' . $site . '">
 					';
-		} else {		
+		} else {
 			$sx .= '<h1>FIM</h1>';
 		}
 		$sx .= '</table>';
-	}	
+	}
 
 	function inport_semic_trabalho($id = 0) {
 		$tabela = "semic_nota_trabalhos";
@@ -123,14 +121,13 @@ class ro8s extends CI_Model {
 			$sm_rem_14 = utf8_decode($xml -> sm_rem_14);
 			$sm_rem_15 = utf8_decode($xml -> sm_rem_15);
 			$sm_rem_16 = utf8_decode($xml -> sm_rem_16);
-			
+
 			$to++;
 			$sx .= '<tr class="lt0">';
 			$sx .= '<td>' . $id_sm . '.</td>';
 			$sx .= '<td>' . $sm_codigo . '</td>';
-			$sx .= '<td>' . $sm_ano . '</td>';			
+			$sx .= '<td>' . $sm_ano . '</td>';
 			$sx .= '<td>' . $sm_titulo . '</td>';
-	
 
 			$sql = "select * from semic_trabalho where id_sm = '$id_sm' ";
 			$rlt = $this -> db -> query($sql);
@@ -165,8 +162,11 @@ class ro8s extends CI_Model {
 				$in++;
 				$sx .= '<td>novo registro</td>';
 			} else {
+				$line = $rlt[0];
 				/* Atualiza registro */
-				$sql = "UPDATE semic_trabalho SET 
+				$trava = $line['sm_trava'];
+				if ($trava == '0') {
+					$sql = "UPDATE semic_trabalho SET 
 						sm_codigo='$sm_codigo',
 						sm_titulo='$sm_titulo',
 						sm_titulo_en='$sm_titulo_en',
@@ -195,15 +195,18 @@ class ro8s extends CI_Model {
 						sm_rem_15='$sm_rem_15',
 						sm_rem_16='$sm_rem_16' 
 						WHERE id_sm = $id_sm";
-						$this -> db -> query($sql);
-				$sx .= '<td>atualizado registro</td>';
+					$this -> db -> query($sql);
+					$sx .= '<td>atualizado registro</td>';
+				} else {
+					$sx .= '<td>ignorado</td>';
+				}
 
 			}
 		}
 		$sx .= '</table>';
 		echo $sx;
 		if ($RowT > 0) {
-			$site = base_url('index.php/inport/ro8/semic-trabalho/' . ($offset + 50) );
+			$site = base_url('index.php/inport/ro8/semic-trabalho/' . ($offset + 50));
 			echo '
 					<meta http-equiv="refresh" content="5;' . $site . '">
 					';
@@ -211,7 +214,7 @@ class ro8s extends CI_Model {
 			$site = base_url('index.php/inport/ro8/semic-trabalho-autor/');
 			echo '
 					<meta http-equiv="refresh" content="5;' . $site . '">
-					';			
+					';
 			$sx .= '<h1>FIM</h1>';
 		}
 		$sx .= '</table>';

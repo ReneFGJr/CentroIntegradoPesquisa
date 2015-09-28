@@ -2,6 +2,155 @@
 class semic_trabalhos extends CI_Model {
 	var $tabela = 'semic_ic_trabalho';
 
+	function indicacao_local_poster_inserir($id, $ala) {
+		$sql = "select * from semic_nota_trabalhos where id_st = $id ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$bloco = $line['st_bloco_poster'];
+			if ($bloco > 0) {
+				$sql = "select count(*) as total from 
+				semic_nota_trabalhos 
+				where st_bloco_poster_ala = '$ala' and st_bloco_poster = $bloco 
+				group by st_bloco_poster_ala";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				if (count($rlt) == 0) {
+					$total = 0;
+				} else {
+					$line = $rlt[0];
+					$total = round($line['total']);
+				}
+				$total = $total + 1;
+				$sql = "update semic_nota_trabalhos set 
+						st_bloco_poster_ala = '$ala',
+						st_bloco_poster_nr = '$total'
+					where id_st = $id and st_bloco_poster_ala = '' ";
+				$rlt = $this -> db -> query($sql);
+			}
+		}
+
+	}
+
+	function indicacao_local_poster_remover($id, $ala) {
+		$sql = "update semic_nota_trabalhos set 
+						st_bloco_poster_ala = '',
+						st_bloco_poster_nr = '0'
+					where id_st = $id ";
+		$rlt = $this -> db -> query($sql);
+	}
+
+	function indicacao_local_poster($id, $ala, $nr) {
+		if ($nr == 'ADD') {
+			$this -> indicacao_local_poster_inserir($id, $ala);
+		}
+		if ($nr == 'DEL') {
+			$this -> indicacao_local_poster_remover($id, $ala);
+		}
+		$ano = (date("Y") - 1);
+		$sql = "select * from semic_nota_trabalhos 
+						left join semic_bloco on id_sb = st_bloco_poster
+						where st_ano = '$ano' and st_bloco_poster_ala = ''
+						and st_poster = 'S' and st_bloco_poster > 0
+						and st_status <> 'C'
+					order by sb_data, sb_hora, st_section, lpad(st_nr,3,'0')	
+					";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		$tot = 0;
+		$xsec = "";
+		$xbl = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			/* Bloco */
+			$bl = $line['id_sb'];
+			if ($xbl != $bl) {
+				$sx .= '<h3>Bloco: ';
+				$sx .= stodbr($line['sb_data']);
+				$sx .= ' ';
+				$sx .= $line['sb_hora'];
+				$sx .= '</h3>';
+				$xbl = $bl;
+			}
+
+			$sec = $line['st_section'];
+			if ($sec != $xsec) {
+				$sx .= '<hr>';
+				$xsec = $sec;
+			}
+			$tot++;
+			if (strlen($ala) > 0) {
+				$link = '<a href="' . base_url('index.php/semic/poster/' . $line['id_st'] . '/' . ($ala)) . '/ADD/">';
+				$link_off = '</a>';
+			} else {
+				$link = '';
+				$link_off = '';
+			}
+			$sx .= $link . $this -> semic_salas -> referencia($line) . $link_off;
+			$sx .= ' | ';
+		}
+		/* SALAS */
+		$sb = '';
+		for ($r = 0; $r < 26; $r++) {
+			$sb .= '<a href="' . base_url('index.php/semic/poster/0/' . (chr(65 + $r))) . '/0/">';
+			$sb .= chr(65 + $r);
+			$sb .= '</A>';
+			$sb .= ' | ';
+		}
+		/* ALOCAÇÔES */
+		$sc = '';
+		if (strlen($ala) > 0) {
+			$sc .= '<h3>Ala ' . $ala . '</h3>';
+
+			$sql = "select * from semic_nota_trabalhos 
+							left join semic_bloco on id_sb = st_bloco_poster
+									where st_bloco_poster_ala = '$ala' and st_ano = '$ano'
+									order by sb_data, sb_hora, st_bloco_poster_nr
+							 ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$tot = 0;
+			for ($r = 0; $r < count($rlt); $r++) {
+				$tot++;
+				$line = $rlt[$r];
+
+				/* Bloco */
+				$bl = $line['id_sb'];
+				if ($xbl != $bl) {
+					$sc .= '<h3>Bloco: ';
+					$sc .= stodbr($line['sb_data']);
+					$sc .= ' ';
+					$sc .= $line['sb_hora'];
+					$sc .= '</h3>';
+					$xbl = $bl;
+				}
+
+				$link = '<a href="' . base_url('index.php/semic/poster/' . $line['id_st'] . '/' . ($ala)) . '/DEL/">';
+				$link_off = '</a>';
+
+				$sc .= $line['st_bloco_poster_nr'] . '.';
+				$sc .= $link . $this -> semic_salas -> referencia($line) . $link_off;
+				$sc .= '<br>';
+			}
+			$sc .= '<br><b>Total ' . $tot . '</b>';
+		}
+
+		$sa = '<table><tr><td>total</td></tr><tr><td>' . $tot . '</td></tr></table>';
+		$sx = '<table class="lt1" cellpadding="10">
+						<tr valign="top">
+							<td width="60%"><h2>Trabalhos</h2>' . $sx . '</td>
+							<td width="20%"><h2>Salas</h2>' . $sb . '</td>
+							<td width="20%"><h2>Locação</h2>' . $sc . '</td> 
+						</tr>';
+		$sx .= '</table>';
+		echo $sa . $sx;
+		return ($sa . $sx);
+	}
+
 	function avaliadores_resumo_indicacao() {
 		$ano = date("Y");
 		$ano2 = (date("Y") - 1);
@@ -50,24 +199,23 @@ class semic_trabalhos extends CI_Model {
 		$sb = '<tr class="lt6">';
 		foreach ($rs as $key => $value) {
 			$tx = $this -> situacao_avaliador($key);
-			$perc = number_format($value / $toto * 100,1).'%';
+			$perc = number_format($value / $toto * 100, 1) . '%';
 			$sa .= '<td>' . $tx['status'] . '</td>';
-			$sb .= '<td align="center">' . $value . ' <font class="lt2">('.$perc.')</font></td>';
+			$sb .= '<td align="center">' . $value . ' <font class="lt2">(' . $perc . ')</font></td>';
 		}
 		$sa .= '<td>Total de avaliadores</td>';
-		$sb .= '<td align="center">'.$tava.'</td>';
-		
+		$sb .= '<td align="center">' . $tava . '</td>';
+
 		$sa .= '<td>Total de indicações</td>';
-		$sb .= '<td align="center">'.$toto.'</td>';
-				
-		if ($tava > 0)
-			{
+		$sb .= '<td align="center">' . $toto . '</td>';
+
+		if ($tava > 0) {
 			$sa .= '<td>Média Avaliadores / Bloco</td>';
-			$sb .= '<td align="center">'.number_format($toto/$tava,1).'</td>';
-			}
-				
-		$sx .= $sa.'</tr>';
-		$sx .= $sb.'</tr>';
+			$sb .= '<td align="center">' . number_format($toto / $tava, 1) . '</td>';
+		}
+
+		$sx .= $sa . '</tr>';
+		$sx .= $sb . '</tr>';
 		$sx .= '</table>';
 		return ($sx);
 	}
@@ -229,8 +377,7 @@ class semic_trabalhos extends CI_Model {
 				$rav = $this -> link_situacao_avaliador($sit);
 				$sx .= '<td>';
 				$sx .= $rav;
-				$sx .= '</td>';
-				;
+				$sx .= '</td>'; ;
 
 				$sx .= '</table>';
 			}
