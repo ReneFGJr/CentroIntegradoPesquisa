@@ -64,6 +64,7 @@ class semic extends CI_Controller {
 		array_push($menus, array('Trabalhos', 'index.php/semic/trabalhos'));
 		array_push($menus, array('Localização Pôster', 'index.php/semic/poster'));
 		array_push($menus, array('Avaliadores', 'index.php/semic/avaliadores'));
+		array_push($menus, array('Suplentes', 'index.php/semic/suplentes'));
 		array_push($menus, array('Credenciamento', 'index.php/credenciamento'));
 		
 		if (perfil('#TST') == 1) {
@@ -232,6 +233,27 @@ class semic extends CI_Controller {
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> security();
 	}
+	function suplentes() {
+		/* Load Models */
+		$this -> load -> model('avaliadores');
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+		$data['content'] = $this -> semic_trabalhos -> avaliadores_resumo_indicacao(2);
+		$data['title'] = '';
+		$this -> load -> view('content', $data);		
+
+		$data['content'] = $this -> semic_trabalhos -> avaliadores_seminario(2);
+		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	function avaliadores() {
 		/* Load Models */
@@ -243,11 +265,11 @@ class semic extends CI_Controller {
 		$data = array();
 		$this -> load -> view('header/content_open');
 		
-		$data['content'] = $this -> semic_trabalhos -> avaliadores_resumo_indicacao();
+		$data['content'] = $this -> semic_trabalhos -> avaliadores_resumo_indicacao(1);
 		$data['title'] = '';
 		$this -> load -> view('content', $data);		
 
-		$data['content'] = $this -> semic_trabalhos -> avaliadores_seminario();
+		$data['content'] = $this -> semic_trabalhos -> avaliadores_seminario(1);
 		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');
 		$this -> load -> view('content', $data);
 
@@ -532,6 +554,37 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function etiquetas() {
+		/* Load Models */
+		$ano = (date("Y")-1);
+		$this -> load -> model('semic/semic_trabalhos');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open.php');
+		
+		$data['content'] = $this->semic_trabalhos->mostra_etiquetas_por_alas($ano);
+		$data['title'] = 'Etiquetas SEMIC - Pôster - '.$ano;
+		
+		$this -> load -> view('content.php',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+	function etiquetas_pr($id=0,$ala='')
+		{
+		$ano = (date("Y")-1);
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('semic/semic_salas');
+		$this -> load -> view('header/header.php');
+		
+		$data['content'] = $this->semic_trabalhos->imprime_etiquetas_por_alas($ano,$id,$ala);
+		$data['title'] = '';
+		
+		$this -> load -> view('content.php',$data);		
+		}
 
 	function trabalhos($id = 0) {
 
@@ -540,10 +593,23 @@ class semic extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
-		$data['content'] = '<h1>Trabalhos SEMIC';
+		$this -> load -> view('header/content_open.php');
 
-		$this -> load -> view('content', $data);
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+		$data['title_page'] = 'Trabalhos SEMIC';
+		$data['menu'] = 0;
+
+		/* Menu */
+		$menu = array();
+		/* Libera Menus */
+		array_push($menu, array('Apresentação Pôster', 'Impressão de Etiquetas', 'ITE', '/semic/etiquetas/'));
+
+
+		$data['menu'] = $menu;
+
+		$data['title_menu'] = 'Menu Principal';
+		$this -> load -> view('header/main_menu', $data);		
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

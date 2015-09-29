@@ -57,6 +57,7 @@ class credenciamento extends CI_Controller {
 		array_push($menus, array('Eventos', 'index.php/credenciamento/'));
 		array_push($menus, array('Credenciamento', 'index.php/credenciamento/usuario'));
 		array_push($menus, array('Entrega de Kits', 'index.php/credenciamento/kits'));
+		array_push($menus, array('Imprime Credencial', 'index.php/credenciamento/credencial'));
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -86,11 +87,35 @@ class credenciamento extends CI_Controller {
 
 		$this -> load -> view("credenciamento/content", $data);
 	}
+	
+	function credencial()
+		{
+		$this -> load -> model('usuarios');
+		$this -> cab();
+		
+		$data = array();		
+		$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
+		$data['resumo'] = 'Busca por Credencial';
+
+		/* Search */
+		$search_term = $this -> input -> post("dd89");
+		$search_acao = $this -> input -> post("acao");
+		$page = 'index.php/credenciamento/voucher/';
+		
+		if ((strlen($search_acao) > 0) and (strlen($search_term) > 0)) {
+			$search_term = troca($search_term, "'", '´');
+			$data['search'] .= $this -> usuarios -> search($search_term,$page,'1');
+		}
+
+		/* Mostra tela principal */
+		$this -> load -> view('ic/home', $data);
+		
+		
+		}
 
 	function usuario() {
 		$ok = 0;
 		$this -> load -> model('usuarios');
-
 		$this -> cab();
 
 		$nome = $this -> input -> post('dd1');
@@ -145,8 +170,9 @@ class credenciamento extends CI_Controller {
 					$this -> usuarios -> insere_usuario($DadosUsuario);
 					$msg = '<font color="green" class="lt6">' . msg('sucesso') . '</font>';
 					$ok = 1;
+					$msg = msg('cadastro ok');
 				} else {
-					$msg = msg('já cadastrado');
+					$msg = msg('cracha '.$cracha.' já cadastrado');
 					$ok = 1;
 				}
 			} else {

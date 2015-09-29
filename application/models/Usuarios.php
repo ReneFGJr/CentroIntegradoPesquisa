@@ -7,6 +7,51 @@ class usuarios extends CI_model {
 		return ($sx);
 	}
 	
+	function search($termos,$page,$popup=0)
+		{
+			$termos = troca($termos,' ',';');
+			$termos = splitx(';',$termos);
+			
+			$wh1 = '';
+			$wh2 = '';
+			$wh3 = '';
+			for ($r=0;$r < count($termos);$r++)
+				{
+					if ($r > 0) { $wh1 .= ' and '; $wh2 .= ' and '; $wh3 .= ' and ';}
+					$t = $termos[$r];
+					$wh1 .= "( us_nome like '%".$t."%')";
+					$wh2 .= "( us_cracha = '".$t."')";
+					$wh3 .= "( us_cpf = '".$t."')";
+				}
+			$sql = "select * from us_usuario where ($wh1) or ($wh2) or ($wh3) order by us_nome limit 20";
+			$sx = '<table width="100%" class="tabela00 lt2">';
+			$sx .= '<tr><th>cracha</th><th>nome</th><th>CPF</th></tr>';
+			$rlt = db_query($sql);
+			
+			while ($line = db_read($rlt))
+				{
+					$id = $line['id_us'];
+					$link = '<a href="'.base_url($page).'/'.$line['id_us'].'" class="link">';
+					if ($popup == 1)
+						{
+							$link = '<a href="#" onclick="newxy3(\'' . base_url('index.php/credenciamento/voucher/' . $id . '/' . checkpost_link($id)) . '\',800,500);"  class="link">';
+						}
+					$sx .= '<tr class="lt3" valign="top">';
+					$sx .= '<td align="center" width="80">';
+					$sx .= $link.$line['us_cracha'].'</a>';
+					$sx .= '</td>';					
+					$sx .= '<td>';
+					$sx .= $link.$line['us_nome'].'</a>';
+					$sx .= '</td>';
+					$sx .= '<td align="center">';
+					$sx .= $link.mask_cpf($line['us_cpf']).'</a>';
+					$sx .= '</td>';					
+					$sx .= '</tr>';
+				}
+			$sx .= '</table>';
+			return($sx);
+		}	
+	
 	function tabela_view()
 		{
 		$sql = "(select *
@@ -275,7 +320,7 @@ class usuarios extends CI_model {
 		$sql = "select count(*) as total from us_usuario ";
 		$rlt = db_query($sql);
 		$line = db_read($rlt);
-		$cracha = 'F' . strzero($line['total'], 7);
+		$cracha = 'F' . strzero(($line['total']+1), 7);
 		return ($cracha);
 	}
 

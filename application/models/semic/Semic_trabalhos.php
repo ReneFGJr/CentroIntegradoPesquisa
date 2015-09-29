@@ -2,6 +2,66 @@
 class semic_trabalhos extends CI_Model {
 	var $tabela = 'semic_ic_trabalho';
 
+	function imprime_etiquetas_por_alas($ano, $bloco, $ala) {
+		$sql = "select * from semic_nota_trabalhos
+					left join semic_bloco on id_sb = st_bloco_poster 
+					left join us_usuario on st_aluno = us_cracha
+						where st_ano = '$ano' and st_bloco_poster_ala = '$ala'
+						and st_bloco_poster = $bloco
+				
+				order by sb_data, sb_hora, st_bloco_poster, st_bloco_poster_ala, st_bloco_poster_nr
+				";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$xbloco = '';
+		$sx = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$data = $line;
+			$data['line'] = $line;
+			$data['ref'] = $this -> semic_salas -> referencia($line);
+
+			$sx .= $this -> load -> view('semic/etiqueta_poster', $data, true);
+		}
+		return ($sx);
+	}
+
+	function mostra_etiquetas_por_alas($ano) {
+		$sql = "select st_bloco_poster, st_bloco_poster_ala, sb_data, sb_hora, sb_nome from (
+					select st_bloco_poster, st_bloco_poster_ala from semic_nota_trabalhos 
+						where st_ano = '$ano' and st_bloco_poster_ala <> ''
+				) as tabela
+				left join semic_bloco on id_sb = st_bloco_poster
+				group by st_bloco_poster, st_bloco_poster_ala, sb_data, sb_hora, sb_nome
+				order by sb_data, sb_hora, st_bloco_poster, st_bloco_poster_ala
+				";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$xbloco = '';
+		$sx = '<table>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$bloco = $line['st_bloco_poster'];
+			if ($bloco != $xbloco) {
+				$xbloco = $bloco;
+				$sx .= '<tr><td class="lt4">' . $line['sb_nome'] . ' - ' . stodbr($line['sb_data']) . ' - ' . $line['sb_hora'] . '</td>';
+			}
+			$link = '<a href="#" onclick="newxy3(\'' . base_url('index.php/semic/etiquetas_pr/' . $line['st_bloco_poster'] . '/' . $line['st_bloco_poster_ala']) . '\',800,500);"  class="link">';
+			$sx .= '<td>';
+			$sx .= '<div class="border1" style="width: 20px; padding: 10px; text-align: center; ">';
+			$sx .= $link;
+			$sx .= $line['st_bloco_poster_ala'];
+			$sx .= '</a>';
+			$sx .= '</div>';
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
 	function indicacao_local_poster_inserir($id, $ala) {
 		$sql = "select * from semic_nota_trabalhos where id_st = $id ";
 		$rlt = $this -> db -> query($sql);
@@ -151,18 +211,32 @@ class semic_trabalhos extends CI_Model {
 		return ($sa . $sx);
 	}
 
-	function avaliadores_resumo_indicacao() {
+	function avaliadores_resumo_indicacao($tipo = 1) {
 		$ano = date("Y");
 		$ano2 = (date("Y") - 1);
 		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome ";
-		$sql = "select $cp, count(*) as total from ( 
+
+		/* AVALIADORES */
+		if ($tipo == 1) {
+			$sql = "select $cp, count(*) as total from ( 
 							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
 								union 
 							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
 								union 
-							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
-								union 
 							SELECT id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
+							) as total 
+						inner join us_usuario on id_us = avaliador
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						left join semic_bloco on id_bl = id_sb
+						left join semic_salas on id_sl = sb_sala
+						group by $cp
+						order by us_nome, sb_data, sb_hora				
+				";
+		}
+		/* SUPLENTES */
+		if ($tipo == 2) {
+			$sql = "select $cp, count(*) as total from ( 
+							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
 								union 
 							SELECT id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
 							) as total 
@@ -173,6 +247,7 @@ class semic_trabalhos extends CI_Model {
 						group by $cp
 						order by us_nome, sb_data, sb_hora				
 				";
+		}
 		$rs = array();
 		$rlt = db_query($sql);
 
@@ -307,17 +382,17 @@ class semic_trabalhos extends CI_Model {
 				";
 		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, 
 					sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome,
-					sl_bloco ";
+					sl_bloco, suplente ";
 		$sql = "select $cp, sum(tot) as total from ( 
-							SELECT sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
+							SELECT 0 as suplente, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
 								union 
-							SELECT sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
+							SELECT 0 as suplente, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
 								union 
-							SELECT sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
+							SELECT 1 as suplente, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
 								union 
-							SELECT 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
+							SELECT 0 as suplente, 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
 								union 
-							SELECT 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
+							SELECT 1 as suplente, 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
 							) as total 
 						inner join us_usuario on id_us = avaliador
 						left join us_titulacao on ust_id = usuario_titulacao_ust_id
@@ -340,7 +415,9 @@ class semic_trabalhos extends CI_Model {
 			$size = round(100 / $tot) . '%';
 			$sx = '<table width="640" style="border: 1px solid #000000;" >';
 
-			for ($r = 0; $r < count($rs); $r++) {/* imagem */
+			for ($r = 0; $r < count($rs); $r++) {
+				/* imagem */
+				$suplente = $rs[$r]['suplente'];
 				$sx .= '<tr>';
 
 				$sx .= '<td width="' . $size . '">';
@@ -352,9 +429,17 @@ class semic_trabalhos extends CI_Model {
 				$sx .= '</tr>';
 
 				$sx .= '<tr>';
-				$sx .= '<td align="right" style="font-size: 10px;">Modalidade:</td>';
+				$sx .= '<td align="right" style="font-size: 10px; ">Modalidade:</td>';
 				$sx .= '<td style="font-size: 14px;"><b>' . $rs[$r]['sb_nome'] . '</b></td>';
 				$sx .= '</tr>';
+				
+				if ($suplente == '1')
+					{
+					$sx .= '<tr>';
+					$sx .= '<td align="right" style="font-size: 10px;">Situação:</td>';
+					$sx .= '<td style="font-size: 12px;"><font color="red"><b>**SUPLENTE**</b></font></td>';
+					$sx .= '</tr>';
+					}				
 
 				$sx .= '<tr>';
 				$sx .= '<td align="right" style="font-size: 10px;">Bloco:</td>';
@@ -653,18 +738,34 @@ class semic_trabalhos extends CI_Model {
 		return ($sx);
 	}
 
-	function avaliadores_seminario() {
+	function avaliadores_seminario($tipo = 1) {
 		$ano = date("Y");
 		$ano2 = (date("Y") - 1);
-		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome ";
-		$sql = "select $cp, count(*) as total from ( 
+
+		/* Avaliadores */
+		if ($tipo == '1') {
+			$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome ";
+			$sql = "select $cp, count(*) as total from ( 
 							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
 								union 
 							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
 								union 
-							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
-								union 
 							SELECT id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
+							) as total 
+						inner join us_usuario on id_us = avaliador
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						left join semic_bloco on id_bl = id_sb
+						left join semic_salas on id_sl = sb_sala
+						group by $cp
+						order by us_nome, sb_data, sb_hora				
+				";
+		}
+
+		/* Suplente */
+		if ($tipo == '2') {
+			$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome ";
+			$sql = "select $cp, count(*) as total from ( 
+							SELECT id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
 								union 
 							SELECT id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
 							) as total 
@@ -675,6 +776,7 @@ class semic_trabalhos extends CI_Model {
 						group by $cp
 						order by us_nome, sb_data, sb_hora				
 				";
+		}
 
 		$rlt = db_query($sql);
 		$sx = '<table class="tabela00 lt1" width="100%">';

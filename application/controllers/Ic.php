@@ -566,9 +566,9 @@ class ic extends CI_Controller {
 
 		/* Form */
 		$save = $this -> input -> post("acao");
-		$nome = $this -> input -> post("dd10");
+		$nome = utf8_decode($this -> input -> post("dd10"));
 		$tipo = $this -> input -> post("dd11");
-		$instituicao = $this -> input -> post("dd12");
+		$instituicao = utf8_decode($this -> input -> post("dd12"));
 		$msg = '';
 
 		if ($save == 'ADD') {

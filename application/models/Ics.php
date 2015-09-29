@@ -145,6 +145,13 @@ class ics extends CI_model {
 			/* Page 3 */
 			if ($page=='3')
 				{
+					$dd1 = troca($dd1,"'","´");
+					$dd2 = troca($dd2,"'","´");
+					$dd3 = troca($dd3,"'","´");
+					$dd4 = troca($dd4,"'","´");
+					$dd5 = troca($dd5,"'","´");
+					$dd6 = troca($dd6,"'","´");
+					
 					/* Titulo e Titulo em Inglês */
 					$sql = "update semic_trabalho set
 								sm_rem_01 = '$dd1',
@@ -161,6 +168,13 @@ class ics extends CI_model {
 			/* Page 4 */
 			if ($page=='4')
 				{
+					$dd1 = troca($dd1,"'","´");
+					$dd2 = troca($dd2,"'","´");
+					$dd3 = troca($dd3,"'","´");
+					$dd4 = troca($dd4,"'","´");
+					$dd5 = troca($dd5,"'","´");
+					$dd6 = troca($dd6,"'","´");
+
 					/* Titulo e Titulo em Inglês */
 					$sql = "update semic_trabalho set
 								sm_rem_11 = '$dd1',

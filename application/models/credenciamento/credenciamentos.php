@@ -131,7 +131,8 @@ class credenciamentos extends CI_Model {
 		$cracha = $this -> usuarios -> limpa_cracha($cracha);
 
 		if (strlen($cracha) == 8) {
-			/* Ve se nao entregou */
+
+			/* Recupera dados do participante */
 			$line = $this -> usuarios -> le_cracha($cracha);
 			$id = 0;
 			if (isset($line['id_us'])) {
@@ -140,52 +141,57 @@ class credenciamentos extends CI_Model {
 				$this -> cracha = $line['us_cracha'];
 			}
 
+			/* Valida se tem IC */
 			$edital = $this -> is_ic($cracha);
-			$mod = trim($edital['st_edital']);
+			if (count($edital) > 0) {
+				$mod = trim($edital['st_edital']);
+			} else {
+				$mod = '';
+			}
 
-			if ($id > 0) {
+			/* Pode retirar o Kit */
+			if (strlen($mod) > 0) {
+				/* Verifica se já não retirou */
 				$sql = "select * from evento_kits 
-								where kits_user_id = $id
-							";
+							where kits_user_id = $id
+						";
 				$rlt = $this -> db -> query($sql);
 				$rlt = $rlt -> result_array();
 				if (count($rlt) > 0) {
 					/* Já retirou */
 					return ('2');
+				}
+
+				if (count($edital) > 0) {
+					if ($edital['st_professor'] == $cracha) {
+						$this -> entrega_kit_pessoa($id);
+						return ('20');
+					}
+					if ($mod == 'PIBIC') {
+						$this -> entrega_kit_pessoa($id);
+						return ('10');
+					}
+					/* PIBITI */
+					if ($mod == 'PIBITI') {
+						$this -> entrega_kit_pessoa($id);
+						return ('11');
+					}
+					if ($mod == 'SENAI') {
+						$this -> entrega_kit_pessoa($id);
+						return ('11');
+					}
+					if ($mod == 'JI') {
+						$this -> entrega_kit_pessoa($id);
+						return ('12');
+					}
+					if ($mod == 'PIBICEM') {
+						$this -> entrega_kit_pessoa($id);
+						return ('13');
+					}
+					return ('8');
 				} else {
-
+					return ('9');
 				}
-			}
-
-			if (count($edital) > 0) {
-				if ($edital['st_professor'] == $cracha) {
-					$this->entrega_kit_pessoa($id);
-					return ('20');
-				}
-				if ($mod == 'PIBIC') {
-					$this->entrega_kit_pessoa($id);
-					return ('10');
-				}
-				/* PIBITI */
-				if ($mod == 'PIBITI') {
-					$this->entrega_kit_pessoa($id);
-					return ('11');
-				}
-				if ($mod == 'SENAI') {
-					$this->entrega_kit_pessoa($id);
-					return ('11');
-				}
-				if ($mod == 'JI') {
-					$this->entrega_kit_pessoa($id);
-					return ('12');
-				}
-				if ($mod == 'PIBICEM') {
-					$this->entrega_kit_pessoa($id);
-					return ('13');
-				}
-				return ('2');
-			} else {
-				return ('9');
 			}
 		}
 		return ('0');
@@ -220,6 +226,9 @@ class credenciamentos extends CI_Model {
 			switch ($rs) {
 				case '2' :
 					$msg = '<font color="Green" class="lt6">Já Retirou o Kit!</font>';
+					break;
+				case '8' :
+					$msg = '<font color="red" class="lt6">Não foi localizado a modalidade de apresentação</font>';
 					break;
 				case '9' :
 					$msg = '<font color="red" class="lt6">Não tem trabalho para apresentar</font>';
