@@ -306,7 +306,7 @@ class ic extends CI_Controller {
 		$data = array();
 
 		$form = new form;
-		$form -> tabela = $this -> usuarios -> tabela;
+		$form -> tabela = $this -> usuarios -> tabela_view();
 		$form -> see = true;
 		$form -> edit = true;
 		$form = $this -> usuarios -> row($form);
