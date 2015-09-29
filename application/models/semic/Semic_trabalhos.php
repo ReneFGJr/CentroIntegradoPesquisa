@@ -365,7 +365,7 @@ class semic_trabalhos extends CI_Model {
 		return ($aval);
 	}
 
-	function mostra_agenda($id = 0, $ano = 0) {
+	function mostra_agenda($id = 0, $ano = 0, $completa = 0) {
 		$ano2 = ($ano - 1);
 		$sql = "select * from ( 
 							SELECT id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 = $id 
@@ -432,14 +432,13 @@ class semic_trabalhos extends CI_Model {
 				$sx .= '<td align="right" style="font-size: 10px; ">Modalidade:</td>';
 				$sx .= '<td style="font-size: 14px;"><b>' . $rs[$r]['sb_nome'] . '</b></td>';
 				$sx .= '</tr>';
-				
-				if ($suplente == '1')
-					{
+
+				if ($suplente == '1') {
 					$sx .= '<tr>';
 					$sx .= '<td align="right" style="font-size: 10px;">Situação:</td>';
 					$sx .= '<td style="font-size: 12px;"><font color="red"><b>**SUPLENTE**</b></font></td>';
 					$sx .= '</tr>';
-					}				
+				}
 
 				$sx .= '<tr>';
 				$sx .= '<td align="right" style="font-size: 10px;">Bloco:</td>';
@@ -462,7 +461,19 @@ class semic_trabalhos extends CI_Model {
 				$rav = $this -> link_situacao_avaliador($sit);
 				$sx .= '<td>';
 				$sx .= $rav;
-				$sx .= '</td>'; ;
+				$sx .= '</td>';
+				$sx .= '</tr>';
+
+				if ($completa == 1) {
+					$sx .= '<tr>';
+					$sx .= '<td align="right" style="font-size: 10px;">';
+					$sx .= 'trabalhos';
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= $this->trabalahos_bloco_avaliador($id,$bloco);
+					$sx .= '</td>';
+					$sx .= '</tr>';
+				}
 
 				$sx .= '</table>';
 			}

@@ -227,6 +227,36 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function agenda2($id = 0, $email = 0) {
+		global $email_own;
+		/* Load Models */
+		$this -> load -> model('usuarios');
+		$this -> load -> model('avaliadores');
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> cab();
+
+		$this -> load -> view('header/content_open');
+
+		/* Perfil do usuário */
+		$data = $this -> usuarios -> le($id);
+		$data['perfil'] = $this -> load -> view('perfil/avaliador_mini', $data, True);
+
+		/* Perfil do usuário */
+		$data['agenda'] = $this -> semic_trabalhos -> mostra_agenda($id, date("Y"),1);
+
+		if ($email == 1) {
+			//enviaremail_usuario($id,'Agenda',$data['agenda'],$email_own);
+			enviaremail_usuario($id, 'SEMIC - Agenda do avaliador', $data['agenda'], $email_own);
+		}
+
+		$this -> load -> view('semic/semic_agenda', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function security() {
 
 		/* Seguranca */
