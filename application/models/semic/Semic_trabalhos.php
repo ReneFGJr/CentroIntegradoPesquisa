@@ -382,7 +382,7 @@ class semic_trabalhos extends CI_Model {
 				";
 		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, 
 					sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome,
-					sl_bloco, suplente ";
+					sl_bloco, suplente, id_bl";
 		$sql = "select $cp, sum(tot) as total from ( 
 							SELECT 0 as suplente, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
 								union 
@@ -465,12 +465,16 @@ class semic_trabalhos extends CI_Model {
 				$sx .= '</tr>';
 
 				if ($completa == 1) {
+					print_r($rs[$r]);
+					$id_bl = $rs[$r]['id_bl'];
+					$id_us = $rs[$r]['id_us'];
+					
 					$sx .= '<tr>';
 					$sx .= '<td align="right" style="font-size: 10px;">';
 					$sx .= 'trabalhos';
 					$sx .= '</td>';
 					$sx .= '<td>';
-					$sx .= $this->trabalahos_bloco_avaliador($id,$bloco);
+					$sx .= $this->trabalhos_bloco_avaliador($id_bl,$id_us);
 					$sx .= '</td>';
 					$sx .= '</tr>';
 				}
@@ -508,6 +512,44 @@ class semic_trabalhos extends CI_Model {
 
 		return ($texto);
 	}
+
+	function trabalhos_bloco_avaliador($bloco,$id=0)
+		{
+			$sql = "select * from semic_nota_trabalhos 
+						where st_bloco_poster = $bloco 
+						and (st_avaliador_1 = $id or st_avaliador_2 = $id )";
+			$xrlt = $this->db->query($sql);
+			$xrlt = $xrlt -> result_array();
+			$sx = '';
+			for ($r=0;$r < count($xrlt);$r++)
+				{
+					$line = $xrlt[$r];
+					$sx .= '<A href="http://cip.pucpr.br/semic/index.php/semic/view/'.$line['st_codigo'].'" target="_new'.$line['st_codigo'].'">';
+					$sx .= $this->semic_salas->referencia($line);
+					$sx .= '</A>';				
+					$sx .= '<br>';
+
+				}
+		/* ORAL */
+			$sql = "select * from semic_bloco 
+						inner join semic_nota_trabalhos on id_sb = st_bloco
+						where id_sb = $bloco 
+						and (sb_avaliador_1 = $id or sb_avaliador_2 = $id or sb_avaliador_3 = $id)
+						order by st_section, lpad(st_nr,4,0)
+						";
+			$xrlt = $this->db->query($sql);
+			$xrlt = $xrlt -> result_array();
+			$sx = '';
+			for ($r=0;$r < count($xrlt);$r++)
+				{
+					$line = $xrlt[$r];
+					$sx .= '<A href="http://cip.pucpr.br/semic/index.php/semic/view/'.$line['st_codigo'].'" target="_new'.$line['st_codigo'].'">';
+					$sx .= $this->semic_salas->referencia($line);
+					$sx .= '</A>';				
+					$sx .= '<br>';
+				}			 
+			return($sx);
+		}
 
 	function avaliador_historico($acao, $historico, $avaliador) {
 		$data = date("Y-m-d");
