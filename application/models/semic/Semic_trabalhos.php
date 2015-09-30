@@ -465,7 +465,6 @@ class semic_trabalhos extends CI_Model {
 				$sx .= '</tr>';
 
 				if ($completa == 1) {
-					print_r($rs[$r]);
 					$id_bl = $rs[$r]['id_bl'];
 					$id_us = $rs[$r]['id_us'];
 					
@@ -498,7 +497,13 @@ class semic_trabalhos extends CI_Model {
 		$link = '<a href="' . base_url_site('index.php/login/r/' . $id . '/' . $check) . '" target="_new_av">[CLICK AQUI PARA ACEITAR OU DECLINAR]</A>';
 
 		/* EMAIL */
-		$texto = ic('semic_av_agenda', 1, 'HTML');
+		if ($completa == 1)
+			{
+				$texto = ic('semic_av_agenda_comp', 1, 'HTML');
+			} else {
+				$texto = ic('semic_av_agenda', 1, 'HTML');		
+			}
+		
 
 		$this -> load -> model('email_local');
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
@@ -528,8 +533,8 @@ class semic_trabalhos extends CI_Model {
 					$sx .= $this->semic_salas->referencia($line);
 					$sx .= '</A>';				
 					$sx .= '<br>';
-
 				}
+				
 		/* ORAL */
 			$sql = "select * from semic_bloco 
 						inner join semic_nota_trabalhos on id_sb = st_bloco
@@ -539,7 +544,7 @@ class semic_trabalhos extends CI_Model {
 						";
 			$xrlt = $this->db->query($sql);
 			$xrlt = $xrlt -> result_array();
-			$sx = '';
+			
 			for ($r=0;$r < count($xrlt);$r++)
 				{
 					$line = $xrlt[$r];
