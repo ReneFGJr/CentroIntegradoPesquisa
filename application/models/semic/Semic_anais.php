@@ -63,6 +63,7 @@ class semic_anais extends CI_Model {
 		$rlt = $this -> db -> query($sql);
 		$rltx = $rlt -> result_array();
 		$pgs = array();
+		
 		$xarea = '';
 		$sx = '<br><br><br><h1><?php echo msg(\'semic_apres_area\'); ?></h1>';
 		$sx .= '<table width="100%" border=0 cellpading=0 cellspacing=0>';
@@ -100,7 +101,7 @@ class semic_anais extends CI_Model {
 			$rltd = $this -> db -> query($sql);
 			$rltd = $rltd -> result_array();
 			$line2 = $rltd[0];
-			
+
 			$area = $line2['ac_nome_area'];
 			if ($xarea != $area)
 				{
@@ -120,9 +121,10 @@ class semic_anais extends CI_Model {
 			/* Recupera autores */
 			$sql = "select * from semic_trabalho_autor 
 						where sma_protocolo = '$proto'
-						and sma_ativo = 1
+						and sma_ativo >= 1 
 						order by sma_funcao 
 						";
+						
 			$rlta = $this -> db -> query($sql);
 			$rlta = $rlta -> result_array();
 			$line2['autores'] = $rlta;
@@ -177,7 +179,7 @@ class semic_anais extends CI_Model {
 			/* Recupera autores */
 			$sql = "select * from semic_trabalho_autor 
 						where sma_protocolo = '$proto'
-						and sma_ativo = 1
+						and sma_ativo >= 1
 						order by sma_funcao 
 						";
 			$rlta = $this -> db -> query($sql);

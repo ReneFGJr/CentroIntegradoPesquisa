@@ -13,8 +13,29 @@ for ($r = 0; $r < count($autores); $r++) {
 	$nome_trab .= nbr_autor($nome, 1) . '<sup>' . ($r + 1) . '</sup>';
 	$nome_cita .= nbr_autor($nome, 5);
 	switch($t) {
+		case '2' :
+			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Co-orientador. ' . $autores[$r]['sma_instituicao']. '<br>';
+			break;
+		case '3' :
+			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Colaborador. ' . $autores[$r]['sma_instituicao']. '<br>';
+			break;
+		case '7' :
+			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Mestrando de Pós-Graduação. ' . $autores[$r]['sma_instituicao']. '<br>';
+			break;
+		case '8' :
+			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Doutorando de Pós-Graduação. ' . $autores[$r]['sma_instituicao']. '<br>';
+			break;
+		case '4' :
+			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Pibic Junior. ' . $autores[$r]['sma_instituicao']. '<br>';
+			break;	
+		case '5' :
+			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Supervisor Pibic Junior. ' . $autores[$r]['sma_instituicao']. '<br>';
+			break;																				
+		case '6' :
+			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Escola (para Pibic Júnior). ' . $autores[$r]['sma_instituicao']. '<br>';
+			break;																				
 		case '9' :
-			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Orientador. ' . $autores[$r]['sma_instituicao'];
+			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Orientador. ' . $autores[$r]['sma_instituicao']. '<br>';
 			break;
 		case '0' :
 			$nome_quali .= '<sup>' . ($r + 1) . '</sup> Estudante. ' . $autores[$r]['sma_instituicao'] . '<br>';

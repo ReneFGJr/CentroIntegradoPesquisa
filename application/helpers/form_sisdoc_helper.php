@@ -562,7 +562,11 @@ function nbr_autor($xa, $tp) {
 		for ($k = 0; $k < count($xp2a); $k++) {
 			if ($xp2a[$k] == 'do') { $xp2a[$k] = '';
 			}
+			if ($xp2a[$k] == 'dos') { $xp2a[$k] = '';
+			}
 			if ($xp2a[$k] == 'da') { $xp2a[$k] = '';
+			}
+			if ($xp2a[$k] == 'das') { $xp2a[$k] = '';
 			}
 			if ($xp2a[$k] == 'de') { $xp2a[$k] = '';
 			}

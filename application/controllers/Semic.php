@@ -197,7 +197,8 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);			
 		}
 
-	function agenda($id = 0, $email = 0) {
+	/******************** NAO VINCULANDA ******************************/
+	function agenda_convite($id = 0, $email = 0) {
 		global $email_own;
 		/* Load Models */
 		$this -> load -> model('usuarios');
@@ -227,7 +228,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function agenda2($id = 0, $email = 0) {
+	function agenda($id = 0, $email = 0) {
 		global $email_own;
 		/* Load Models */
 		$this -> load -> model('usuarios');

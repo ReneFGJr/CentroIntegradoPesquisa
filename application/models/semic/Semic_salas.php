@@ -650,7 +650,7 @@ class semic_salas extends CI_Model {
 			$id_hf = $hr[$hf];
 			$idb = $line['id_sb'];
 			$id_sl = (round($line['sl_ordem']) - 1);
-
+			
 			//echo '<BR>' . $hi . '-[' . $id_hi . '] == ' . $hf . '-' . $id_hf . '-[' . $id_sl . ']';
 
 			$matrix_cor[$id_hi][$id_sl] = $line['sbs_cor'];
@@ -705,7 +705,7 @@ class semic_salas extends CI_Model {
 				$sa .= '<br><center><font class="lt5">' . $tot . '</font></center>';
 			}
 			$sa .= '<br>';
-
+			
 			for ($rx = 1; $rx <= 3; $rx++) {
 				if ($line['sb_avaliador_' . $rx] > 0) {
 					$rav = $this -> semic_trabalhos -> situacao_avaliador($line['sb_avaliador_situacao_' . $rx]);
@@ -731,7 +731,7 @@ class semic_salas extends CI_Model {
 			$sx .= '</td>';
 
 			$size = round(96 / ($salas));
-			for ($r = 0; $r < $salas; $r++) {
+			for ($r = 0; $r <= $salas; $r++) {
 				if (isset($matrix[$y][$r])) {
 					$bcor = $matrix_cor[$y][$r];
 					$bgcor = $matrix_bgcor[$y][$r];

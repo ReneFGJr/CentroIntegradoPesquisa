@@ -30,7 +30,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 			</li>
 		</div><TD width="300">
 		<div id="info-pesquisador" class="info-pesquisador lt1">
-			<span class="lt2 titulo-info-pesquisador">Informaçães do Pesquisador</span>
+			<span class="lt2 titulo-info-pesquisador">Informaçães do Avaliador</span>
 			<br />
 			<br />
 			<li>
@@ -42,21 +42,6 @@ $us_nada = '<font color="blue">[em construção]</font>';
 			</li>
 			<li>
 				<strong>Maior titulação:</strong> <?php echo $ust_titulacao_sigla;?>
-			</li>
-			<li>
-				<strong>Regime:</strong> <?php echo $us_regime;?>
-			</li>
-			<li>
-				<strong>Curso:</strong> <?php echo $us_curso_vinculo;?>
-			</li>
-			<li>
-				<strong>Centro:</strong> <?php echo $us_campus_vinculo;?>
-			</li>
-			<li>
-				<strong>Escola:</strong> <?php echo $us_escola_vinculo;?>
-			</li>
-			<li>
-				<strong>Stricto Sensu:</strong> <?php echo $us_ss;?>
 			</li>
 			<li>
 				<strong>Bolsa produtividade:</strong> <?php echo $us_nada;?>

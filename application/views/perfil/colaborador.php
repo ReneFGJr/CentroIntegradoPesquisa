@@ -24,6 +24,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<li><strong>Crachá / EmployerID:</strong> <?php echo $us_cracha;?> / <?php echo $us_emplid;?></li>
 				<li><strong>Genero:</strong> <?php echo $us_genero;?></li>
 				<li><strong>Maior titulação:</strong> <?php echo $ust_titulacao_sigla;?> </li>
-				<li><strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_updat_drh);?></li>				
+				<li><strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_updat_drh);?></li>	
+				<li><strong><?php echo $editar;?></li>			
 			</div>	
 			</table>

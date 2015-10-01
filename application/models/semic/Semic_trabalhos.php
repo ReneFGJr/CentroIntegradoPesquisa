@@ -364,6 +364,125 @@ class semic_trabalhos extends CI_Model {
 		}
 		return ($aval);
 	}
+	
+	function mostra_agenda_pessoal($id = 0, $ano = 0, $completa = 0) {
+		$ano = 2015;
+		$ano2 = ($ano - 1);
+
+		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, 
+					sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome,
+					sl_bloco, suplente, id_bl";
+		$sql = "select $cp, sum(tot) as total from ( 
+							SELECT 0 as suplente, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_1 as avaliador, sb_avaliador_situacao_1 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_1 > 0 
+								union 
+							SELECT 0 as suplente, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_2 as avaliador, sb_avaliador_situacao_2 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_2 > 0 
+								union 
+							SELECT 1 as suplente, sb_trabalhos as tot,id_sb as id, id_sb as id_bl, sb_avaliador_3 as avaliador, sb_avaliador_situacao_3 as situacao FROM semic_bloco WHERE sb_ano = '$ano' and sb_avaliador_3 > 0
+								union 
+							SELECT 0 as suplente, 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0						
+								union 
+							SELECT 1 as suplente, 1 as tot, id_st as id, st_bloco_poster as id_bl, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0						
+							) as total 
+						inner join us_usuario on id_us = avaliador
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						left join semic_bloco on id_bl = id_sb
+						left join semic_salas on id_sl = sb_sala
+						where id_us = $id
+						group by $cp
+						order by us_nome, sb_data, sb_hora				
+				";
+		$rlt = db_query($sql);
+		$rs = array();
+		while ($line = db_read($rlt)) {
+			array_push($rs, $line);
+		}
+
+		/* Total de convites */
+		$tot = count($rs);
+		
+		if ($tot > 0) {
+			$size = round(100 / $tot) . '%';
+			$sx = '<table width="1024" style="border: 0px solid #000000;" align="center" border=0>';
+			$sx .= '<tr><td colspan=2 class="lt6">'.msg("Agenda de avaliação").'</td></tr>';
+			
+			$sx .= '<tr valign="top">';
+			$sx .= '<td rowspan=40 width="50">';
+			$sx .= '<img src="'.base_url('img/icon/icone_agenda_hora.png').'" height="80">';
+			$sx .= '</td>';
+			$sx .= '<td colspan=1 width="95%" class="lt1">Clique na data e hora para visualizar os trabalhos</td></tr>';
+
+			for ($r = 0; $r < count($rs); $r++) {
+				$link = '<A href="#" class="link">';
+				$link_off = '</a>';
+				
+				/* imagem */
+				$suplente = $rs[$r]['suplente'];
+				$sx .= '<tr valign="top">';
+				
+
+				
+				$sx .= '<td width="' . $size . '">';
+				$sx .= '<table width="100%" border=0 >';
+
+				$sx .= '<tr>';
+				$sx .= '<td width="150" align="right" style="font-size: 10px;">Data e hora:</td>';
+				$sx .= '<td width="90%" style="font-size: 22px;"><b>' . $link. stodbr($rs[$r]['sb_data']) . ' ' . $rs[$r]['sb_hora'] . '-' . $rs[$r]['sb_hora_fim'] . $link_off.'</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px; ">Modalidade:</td>';
+				$sx .= '<td style="font-size: 14px;"><b>' . $rs[$r]['sb_nome'] . '</b></td>';
+				$sx .= '</tr>';
+
+				if ($suplente == '1') {
+					$sx .= '<tr>';
+					$sx .= '<td align="right" style="font-size: 10px;">Situação:</td>';
+					$sx .= '<td style="font-size: 12px;"><font color="red"><b>**SUPLENTE**</b></font></td>';
+					$sx .= '</tr>';
+				}
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Bloco:</td>';
+				$sx .= '<td style="font-size: 12px;"><b>' . $rs[$r]['sl_bloco'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;">Local:</td>';
+				$sx .= '<td style="font-size: 12px;"><b>' . $rs[$r]['sl_nome'] . '</b></td>';
+				$sx .= '</tr>';
+
+				$sx .= '<tr>';
+				$sx .= '<td align="right" style="font-size: 10px;"></td>';
+				$sx .= '<td style="font-size: 12px;">Total de <b>' . $rs[$r]['total'] . '</b> trabalho(s) para ser(em) avaliado(s).</td>';
+				$sx .= '</tr>';
+
+				if ($completa == 1) {
+					$id_bl = $rs[$r]['id_bl'];
+					$id_us = $rs[$r]['id_us'];
+					
+					$sx .= '<tr>';
+					$sx .= '<td align="right" style="font-size: 10px;">';
+					$sx .= 'trabalhos';
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= $this->trabalhos_bloco_avaliador($id_bl,$id_us);
+					$sx .= '</td>';
+					$sx .= '</tr>';
+				}
+
+				$sx .= '</table>';
+			}
+			$sx .= '</table>';
+		} else {
+			$sx = '';
+		}
+		/* Cabecalho */
+		
+		$texto = $sx; 		
+
+
+		return ($texto);
+	}	
 
 	function mostra_agenda($id = 0, $ano = 0, $completa = 0) {
 		$ano2 = ($ano - 1);
@@ -402,7 +521,6 @@ class semic_trabalhos extends CI_Model {
 						group by $cp
 						order by us_nome, sb_data, sb_hora				
 				";
-
 		$rlt = db_query($sql);
 		$rs = array();
 		while ($line = db_read($rlt)) {
@@ -411,6 +529,7 @@ class semic_trabalhos extends CI_Model {
 
 		/* Total de convites */
 		$tot = count($rs);
+		
 		if ($tot > 0) {
 			$size = round(100 / $tot) . '%';
 			$sx = '<table width="640" style="border: 1px solid #000000;" >';
@@ -463,7 +582,7 @@ class semic_trabalhos extends CI_Model {
 				$sx .= $rav;
 				$sx .= '</td>';
 				$sx .= '</tr>';
-
+				
 				if ($completa == 1) {
 					$id_bl = $rs[$r]['id_bl'];
 					$id_us = $rs[$r]['id_us'];

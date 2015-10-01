@@ -35,11 +35,22 @@ if ($oral == 'S') {
 for ($r = 0; $r < count($autores); $r++) {
 	$nome = nbr_autor($autores[$r]['sma_nome'], 7);
 	$t = $autores[$r]['sma_funcao'];
+	$f = $autores[$r]['sma_funcao'];
+	
 	if ($r > 0) { $nome_trab .= '; ';
 	}
 	if ($r > 0) { $nome_cita .= '; ';
 	}
-	$nome_trab .= nbr_autor($nome, 1);
+	if ($f == '6')
+		{
+			$nome_cita .= nbr_autor($nome, 5);
+			$nome_trab .= nbr_autor($nome, 3);
+		} else {
+			$nome_cita .= nbr_autor($nome, 5);
+			$nome_trab .= nbr_autor($nome, 1);
+		}
+				
+	
 	$nome_cita .= nbr_autor($nome, 5);
 }
 $imm = '<?php echo base_url(\'' . $imagem . '\');?>';

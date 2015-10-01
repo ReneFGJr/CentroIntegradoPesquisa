@@ -9,7 +9,7 @@
 		<td><input type="text" id="nome" name="nome" class="form_string" style="width: 100%;" value=""></td>
 		<td><select id="tipo" class="form_string" style="width: 100%;" size=1>
 			<option value=""></option>
-			<option value="2">Co-orientador</option>
+			<option value="2">Coorientador</option>
 			<option value="3">Colaborador</option>
 			<option value="7">Mestrando de Pós-Graduação</option>
 			<option value="8">Doutorando de Pós-Graduação</option>

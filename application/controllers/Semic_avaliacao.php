@@ -8,10 +8,57 @@ class semic_avaliacao extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 
 		date_default_timezone_set('America/Sao_Paulo');
+	}
+
+	function avaliador($id, $check) {
+		/* Load Models */
+		$ano = (date("Y") - 1);
+		$this -> load -> model('usuarios');
+		$this -> load -> model('semic/semic_avaliacoes');
+		$this -> load -> model('semic/semic_trabalhos');
+
+		$this -> cab();
+		$data = array();
+		$data['title'] = 'Perfil do Avaliador';
+		$data['erro'] = '';
+		$this -> load -> view('semic/avaliacao/cab_works', $data);
+
+		$data['title'] = '';
+		$data['content'] = '<table width="1024" align="center"><tr><td>';
+		$this -> load -> view('content', $data);
+
+		$data = $this -> usuarios -> le($id);
+		$this -> load -> view('perfil/avaliador_mini', $data);
+		
+		$data['content'] = '</table>';
+		$this -> load -> view('content', $data);
+		
+		$data['content'] = $this->semic_trabalhos->mostra_agenda_pessoal($id,$ano);
+		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('semic/avaliacao/user_guide');
+	}
+
+	function avaliadores_row() {
+		/* Load Models */
+		$ano = (date("Y") - 1);
+		$this -> load -> model('usuarios');
+		$this -> load -> model('semic/semic_avaliacoes');
+
+		$this -> cab();
+		$data = array();
+		$data['title'] = 'Lista de Avaliadores';
+		$data['erro'] = '';
+		$this -> load -> view('semic/avaliacao/cab_works', $data);
+
+		$data['title'] = '';
+		$data['content'] = $this -> semic_avaliacoes -> avaliadores_row($ano);
+		$this -> load -> view('content', $data);
 	}
 
 	function cab() {
@@ -34,20 +81,41 @@ class semic_avaliacao extends CI_Controller {
 		$this -> load -> view('header/header', $data);
 	}
 
-	function works($id=0)
-		{
+	function works($id = 0) {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('semic/semic_avaliacoes');
+		$this->semic_avaliacoes->security();
+
+		$id = $_SESSION['id_us'];
+		/* Load Models */
+		$ano = (date("Y") - 1);
+		$this -> load -> model('usuarios');
+		$this -> load -> model('semic/semic_avaliacoes');
+		$this -> load -> model('semic/semic_trabalhos');
 
 		$this -> cab();
 		$data = array();
-		$data['title'] = 'Identificação dos Trabalhos';
+		$data['title'] = 'Perfil do Avaliador';
 		$data['erro'] = '';
 		$this -> load -> view('semic/avaliacao/cab_works', $data);
+
+		$data['title'] = '';
+		$data['content'] = '<table width="1024" align="center"><tr><td>';
+		$this -> load -> view('content', $data);
+
+		$data = $this -> usuarios -> le($id);
+		$this -> load -> view('perfil/avaliador_mini', $data);
 		
-			
-		}
+		$data['content'] = '</table>';
+		$this -> load -> view('content', $data);
+		
+		$data['content'] = $this->semic_trabalhos->mostra_agenda_pessoal($id,$ano);
+		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('semic/avaliacao/user_guide');		
+
+	}
 
 	function index($id = 0) {
 
@@ -73,9 +141,9 @@ class semic_avaliacao extends CI_Controller {
 					$avaliador = $ln['us_avaliador'];
 					$id = $ln['id_us'];
 					$nome = $ln['us_nome'];
-					
+
 					if ($avaliador > 0) {
-						$this->semic_avaliacoes->set_avaliador($id,$nome);
+						$this -> semic_avaliacoes -> set_avaliador($id, $nome);
 						redirect(base_url('index.php/semic_avaliacao/works'));
 					} else {
 						$data['erro'] = 'ID do Avaliador não habilitado!';
