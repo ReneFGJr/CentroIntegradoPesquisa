@@ -1,6 +1,33 @@
 <?php
 class semic_trabalhos extends CI_Model {
 	var $tabela = 'semic_ic_trabalho';
+	
+	function recupera_ala($id)
+		{
+			$sql = "select * from semic_nota_trabalhos where id_st = ".round($id);
+			$rlt = db_query($sql);
+			$sx = '';
+			$bl = '';
+			if ($line = db_read($rlt))
+				{
+					$bl = $line['st_bloco_poster_ala'];
+				}
+			return($bl);
+		}
+	
+	function lista_trabalhos_poster()
+		{
+			$ano = (date("Y")-1);
+			$sql = "select * from semic_nota_trabalhos where st_poster = 'S' and st_ano = '$ano' and st_status <> 'C' order by st_section, lpad(st_nr,4,0) ";
+			$rlt = db_query($sql);
+			$sx = '<option value="'.base_url('index.php/semic/poster_localizacao').'">Código do Trabalho</option>';
+			while ($line = db_read($rlt))
+				{
+					$ref = $this->semic_salas->referencia($line);
+					$sx .= '<option value="'.base_url('index.php/semic/poster_localizacao').'/'.$line['id_st'].'/'.$ref.'">' .$ref. '</option>'.cr();
+				}
+			return($sx);
+		}
 
 	function imprime_etiquetas_por_alas($ano, $bloco, $ala) {
 		$sql = "select * from semic_nota_trabalhos

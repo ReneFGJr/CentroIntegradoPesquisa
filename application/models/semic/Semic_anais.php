@@ -225,7 +225,21 @@ class semic_anais extends CI_Model {
 		$line['imagem'] = $img;
 		$line['imagem_texto'] = $img_text;
 
-		$tela = $this -> load -> view('semic/semic_2015_template', $line, True);
+		$tp = (substr($line['st_section'],0,2));
+		switch ($tp)
+			{
+			case 'JI':
+				$tela = $this -> load -> view('semic/semic_2015_ji_template', $line, True);
+				break;
+			case 'PE':
+				$tela = $this -> load -> view('semic/semic_2015_pe_template', $line, True);
+				break;
+			default:
+				$tela = $this -> load -> view('semic/semic_2015_template', $line, True);
+				break;								
+			}
+			
+		
 		return ($tela);
 	}
 

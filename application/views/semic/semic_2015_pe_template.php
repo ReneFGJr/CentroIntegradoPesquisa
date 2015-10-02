@@ -48,11 +48,8 @@ $imm = '<?php echo base_url(\''.$imagem.'\');?>';
 <div id="trabalho">
 	<table width="100%" border=0>
 		<tr valign="top">
-			<td colspan=2><?php echo $nome_cita;?> <?php echo $sm_titulo;?>. In: SEMIC, Seminário de Iniciação Científica, 23, 2015, Curitiba-PR. Anais do 23º Seminário de Iniciação Científica. Curitiba: PUCPR, 2015. p. <?php echo $ref;?>. ISSN 2176-1930.</td>
 			<td width="100" align="right" rowspan=2>
-				<?php echo $imagem_texto;?>
-				<br>
-				<img src="<?php echo $imm;?>" title="<?php echo $imagem_texto;?>">
+				<img src="<?php echo base_url('img/semic/icone-pesquisar-evoluir.png');?>" title="<?php echo msg('Pesquisar é Evoluir');?>">
 			</td>
 		</tr>
 		<tr>
@@ -60,7 +57,7 @@ $imm = '<?php echo base_url(\''.$imagem.'\');?>';
 				<br><b><?php echo $ac_nome_area;?></b></td>
 		</tr>
 		<tr>
-			<td align="center"><font class="lt5"><b><?php echo $sm_titulo;?></b></font>
+			<td align="center" colspan=2><font class="lt6"><b><?php echo $sm_titulo;?></b></font>
 			<BR>
 			<font class="lt4"><i><?php echo $sm_titulo_en;?></i></font>
 			<BR>
@@ -82,31 +79,16 @@ $imm = '<?php echo base_url(\''.$imagem.'\');?>';
 			<td width="44%"> Resumo
 			<div style="text-align:justify;">
 				<P>
-					<B>Introdução</B>: <?php echo $sm_rem_01;?>
-					<B>Objetivo</B>: <?php echo $sm_rem_02;?>
-					<B>Metodologia</B>: <?php echo $sm_rem_03;?>
-					<B>Resultados</B>: <?php echo $sm_rem_04;?>
-					<B>Conclusões</B>: <?php echo $sm_rem_05;?>
+					<?php echo $sm_rem_01;?><br>
+					<?php echo $sm_rem_02;?><br>
+					<?php echo $sm_rem_03;?><br>
+					<?php echo $sm_rem_04;?><br>
+					<?php echo $sm_rem_05;?><br>
 				</P>
-			</div><B>Palavras-chave</B>: <?php echo $sm_rem_06;?>
+			</div>
 			<BR>
 			<BR>
-			</td><td width="2%">&nbsp;</td>
-			
-			<?php if (strlen($sm_rem_11.$sm_rem_12.$sm_rem_13) > 0)
-			{
-			?>
-			<td width="44%"> Abstract
-			<div style="text-align:justify;">
-				<P>
-					<B>Introduction</B>: <?php echo $sm_rem_11;?>
-					<B>Objectives</B>: <?php echo $sm_rem_12;?>
-					<B>Methods</B>: <?php echo $sm_rem_13;?>
-					<B>Results</B>: <?php echo $sm_rem_14;?>
-					<B>Conclusion</B>: <?php echo $sm_rem_15;?>
-				</P>
-			</div><B>Keywords</B>: <?php echo $sm_rem_16;?></td>
-		<?php } ?>
+			</td>
 		</tr>
 	</table>
 	<BR>
