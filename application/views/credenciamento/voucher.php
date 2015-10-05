@@ -19,11 +19,11 @@
 	-->
 	
 	<tr>
-		<td style="font-size: 12px; height: 120px;" colspan=2><?php echo $us_nome;?></td></td>
+		<td style="font-size: 20px; font-family: Arial, Helvetica, sans-serif;" colspan=2><?php echo $us_nome;?></td></td>
 	</tr>
 
 	<tr valign="top">
-		<td align="right"><img src="<?php echo base_url('index.php/credenciamento/barcode/' . $us_cracha . '/' . checkpost_link($us_cracha));?>" width="80%"></td>
+		<td align="right"><img src="<?php echo base_url('index.php/credenciamento/barcode/' . $us_cracha . '/' . checkpost_link($us_cracha));?>" width="80%" ></td>
 	</tr>
 </table>
 
