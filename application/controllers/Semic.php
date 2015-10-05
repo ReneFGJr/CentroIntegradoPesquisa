@@ -17,7 +17,12 @@ class semic extends CI_Controller {
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
-		$this -> security();
+		$ph = $_SERVER['PATH_INFO'];
+		if (strpos($ph, 'poster_localizacao')) {
+
+		} else {
+			$this -> security();
+		}
 	}
 
 	function cab_avaliador() {
@@ -44,11 +49,11 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
-	function poster_localizacao($id=0,$ref='') {
+	function poster_localizacao($id = 0, $ref = '') {
 		/* Carrega classes adicionais */
 		$this -> load -> model('semic/semic_trabalhos');
 		$this -> load -> model('semic/semic_salas');
-		
+
 		$css = array();
 		$js = array();
 		array_push($css, 'style_cab.css');
@@ -65,19 +70,21 @@ class semic extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		
-		if ($id > 0)
-			{
-				$ala = $this->semic_trabalhos->recupera_ala($id);
-			} else {
-				$ala = '';
-			}
-		
-		$data['trabalhos'] = $this->semic_trabalhos->lista_trabalhos_poster();
+
+		if ($id > 0) {
+			$ala = $this -> semic_trabalhos -> recupera_ala($id);
+			$dia = $this -> semic_trabalhos -> recupera_dia($id);
+		} else {
+			$ala = '';
+			$dia = '';
+		}
+
+		$data['trabalhos'] = $this -> semic_trabalhos -> lista_trabalhos_poster();
 		$data['ala'] = $ala;
+		$data['dia'] = $dia;
 		$data['ref'] = $ref;
-		
-		$this->load->view('semic/semic_localizacao_poster',$data);
+
+		$this -> load -> view('semic/semic_localizacao_poster', $data);
 	}
 
 	function cab() {
@@ -643,6 +650,24 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function etiquetas_avaliadores() {
+		/* Load Models */
+		$ano = (date("Y") - 1);
+		$this -> load -> model('semic/semic_avaliacoes');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open.php');
+
+		$data['content'] = $this -> semic_avaliacoes -> mostra_etiquetas_avaliadores($ano);
+		$data['title'] = 'Etiquetas Avaliadores SEMIC - ' . $ano;
+
+		$this -> load -> view('content.php', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function etiquetas_pr($id = 0, $ala = '') {
 		$ano = (date("Y") - 1);
 		$this -> load -> model('semic/semic_trabalhos');
@@ -650,6 +675,28 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/header.php');
 
 		$data['content'] = $this -> semic_trabalhos -> imprime_etiquetas_por_alas($ano, $id, $ala);
+		$data['title'] = '';
+
+		$this -> load -> view('content.php', $data);
+	}
+
+	function etiquetas_av($id = 0, $check = '') {
+		$ano = (date("Y") - 1);
+		$this -> load -> model('semic/semic_avaliacoes');
+		$this -> load -> view('header/header.php');
+		$data = array();
+		$data['content'] = $this -> semic_avaliacoes -> imprime_etiquetas_avaliador($id);
+		$data['title'] = '';
+
+		$this -> load -> view('content.php', $data);
+	}
+
+	function etiquetas_av_all($id = 0, $check = '') {
+		$ano = (date("Y") - 1);
+		$this -> load -> model('semic/semic_avaliacoes');
+		$this -> load -> view('header/header.php');
+
+		$data['content'] = $this -> semic_avaliacoes -> mostra_etiquetas_avaliadores_todas($id);
 		$data['title'] = '';
 
 		$this -> load -> view('content.php', $data);
@@ -673,6 +720,8 @@ class semic extends CI_Controller {
 		$menu = array();
 		/* Libera Menus */
 		array_push($menu, array('Apresentação Pôster', 'Impressão de Etiquetas', 'ITE', '/semic/etiquetas/'));
+
+		array_push($menu, array('Avaliadores', 'Impressão de Etiquetas', 'ITE', '/semic/etiquetas_avaliadores/'));
 
 		$data['menu'] = $menu;
 

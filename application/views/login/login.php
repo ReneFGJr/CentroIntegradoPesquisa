@@ -13,9 +13,13 @@
 			pibicpr@pucpr.br<BR> 
 			Telefones:<BR>
 			(041) 3271-1165, 3271-2112, 3271-1602
+			<!--
 			<h3>Contato Diretoria de Pesquisa</h3>
 			cip@pucpr.br<BR>	
-			Telefone: (041) 3271-2582</h2>
+			Telefone: (041) 3271-2582
+			--></BR>
+			</h2>
+			
 		</div>
 		<div id="login_versao"><?php echo $login_versao;?> <?php echo $versao;?></div>
 	</div>
