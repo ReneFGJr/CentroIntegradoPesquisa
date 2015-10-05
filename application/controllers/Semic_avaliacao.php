@@ -14,6 +14,43 @@ class semic_avaliacao extends CI_Controller {
 
 		date_default_timezone_set('America/Sao_Paulo');
 	}
+	
+	function oral($id,$chk)
+		{
+		$avaliador = $_SESSION['id'];
+			
+		$this -> cab();
+		if (!checkpost($id, $chk)) {
+			/* Load Models */
+			$this -> load -> model('usuarios');
+			$this -> load -> model('semic/semic_avaliacoes');
+			$this -> load -> model('semic/semic_trabalhos');
+			$this -> load -> model('semic/semic_salas');
+			$this -> semic_avaliacoes -> security();
+			
+			$data = $this -> semic_trabalhos -> le($id);
+			//print_r($data);
+			$data['ref'] = $this->semic_salas->referencia($data);
+
+			$data['title'] = 'Avaliação Oral - '.$data['ref'];
+			$data['erro'] = '';
+			$this -> load -> view('semic/avaliacao/cab_works', $data);
+			
+			$codigo = $data['st_codigo'];
+			
+			/* Recupera ID da avaliacao */
+			$idpp = $this->semic_avaliacoes->recupera_avaliacao($codigo,$avaliador,'SEMIC');			
+
+			$data['title'] = '';
+			$data['idpp'] = $idpp;
+			$data['avaliador'] = $avaliador;
+			$data['content'] = $this->load->view('semic/avaliacao/ficha_oral',$data, True);
+			$this -> load -> view('content', $data);
+
+		} else {
+			$this -> load -> view("header/999");
+		}	
+		}
 
 	function avaliador($id, $check) {
 		/* Load Models */
@@ -34,13 +71,13 @@ class semic_avaliacao extends CI_Controller {
 
 		$data = $this -> usuarios -> le($id);
 		$this -> load -> view('perfil/avaliador_mini', $data);
-		
+
 		$data['content'] = '</table>';
 		$this -> load -> view('content', $data);
-		
-		$data['content'] = $this->semic_trabalhos->mostra_agenda_pessoal($id,$ano);
+
+		$data['content'] = $this -> semic_trabalhos -> mostra_agenda_pessoal($id, $ano);
 		$this -> load -> view('content', $data);
-		
+
 		$this -> load -> view('semic/avaliacao/user_guide');
 	}
 
@@ -66,6 +103,7 @@ class semic_avaliacao extends CI_Controller {
 		$css = array();
 		$js = array();
 		array_push($css, 'style_cab_semic_2015.css');
+		array_push($css, 'style_semic_2015.css');
 		array_push($css, 'form_sisdoc.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
@@ -81,18 +119,49 @@ class semic_avaliacao extends CI_Controller {
 		$this -> load -> view('header/header', $data);
 	}
 
+	function bloco($id, $chk) {
+		$this -> cab();
+		$avaliador = $_SESSION['id'];
+		if (!checkpost($id, $chk)) {
+			/* Load Models */
+			$this -> load -> model('usuarios');
+			$this -> load -> model('semic/semic_avaliacoes');
+			$this -> load -> model('semic/semic_trabalhos');
+			$this -> load -> model('semic/semic_salas');
+			$this -> semic_avaliacoes -> security();
+			
+			$data['title'] = 'Avaliação';
+			$data['erro'] = '';
+			$this -> load -> view('semic/avaliacao/cab_works', $data);
+
+			$data = $this -> semic_trabalhos -> le_bloco($id,$avaliador);			
+			$bloco = $id;
+
+			/* TB - Tipo de bloco */
+			$tb = $data['sb_tipo'];
+
+			switch($tb) {
+				case '1' :
+					$data['content'] = $this -> semic_avaliacoes -> lista_trabalhos_avaliador_oral($avaliador, $bloco);
+					break;
+			}
+			$data['title'] = '';
+			$this -> load -> view('content', $data);
+
+		} else {
+			$this -> load -> view("header/999");
+		}
+	}
+
 	function works($id = 0) {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('semic/semic_avaliacoes');
-		$this->semic_avaliacoes->security();
+		$this -> load -> model('semic/semic_trabalhos');
+		$this -> semic_avaliacoes -> security();
 
 		$id = $_SESSION['id_us'];
-		/* Load Models */
 		$ano = (date("Y") - 1);
-		$this -> load -> model('usuarios');
-		$this -> load -> model('semic/semic_avaliacoes');
-		$this -> load -> model('semic/semic_trabalhos');
 
 		$this -> cab();
 		$data = array();
@@ -106,14 +175,14 @@ class semic_avaliacao extends CI_Controller {
 
 		$data = $this -> usuarios -> le($id);
 		$this -> load -> view('perfil/avaliador_mini', $data);
-		
+
 		$data['content'] = '</table>';
 		$this -> load -> view('content', $data);
-		
-		$data['content'] = $this->semic_trabalhos->mostra_agenda_pessoal($id,$ano);
+
+		$data['content'] = $this -> semic_trabalhos -> mostra_agenda_pessoal($id, $ano);
 		$this -> load -> view('content', $data);
-		
-		$this -> load -> view('semic/avaliacao/user_guide');		
+
+		$this -> load -> view('semic/avaliacao/user_guide');
 
 	}
 

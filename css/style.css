@@ -41,7 +41,25 @@
 	position:relative;
 	top:1px;
 }
-
+.semic_salas
+	{
+		width: 300px;
+		height: 70px;
+		border: 1px solid #333;
+		margin: 10px;
+		float: left;
+		font-size: 18px;
+		padding: 10px;
+		box-shadow: 3px 3px 5px #888888;
+		background-color: #efefef;
+		cursor: pointer;
+		color: #111;
+	}
+.semic_salas:hover
+	{
+		background-color: #808080;
+		color:#ffffff;
+	}
 /* Botao 3d */
 		.botao3d {
 			font-family: Helvetica, Arial, sans-serif;

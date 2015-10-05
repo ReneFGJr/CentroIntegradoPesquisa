@@ -1,33 +1,73 @@
 <?php
 class semic_trabalhos extends CI_Model {
 	var $tabela = 'semic_ic_trabalho';
-	
-	function recupera_ala($id)
-		{
-			$sql = "select * from semic_nota_trabalhos where id_st = ".round($id);
-			$rlt = db_query($sql);
-			$sx = '';
-			$bl = '';
-			if ($line = db_read($rlt))
-				{
-					$bl = $line['st_bloco_poster_ala'];
-				}
-			return($bl);
+
+	function le_bloco($id = 0, $avaliador = 0) {
+		$sql = "select * from semic_bloco where id_sb = " . round($id);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (isset($rlt[0])) {
+			$line = $rlt[0];
+		} else {
+			return ( array());
 		}
-	
-	function lista_trabalhos_poster()
-		{
-			$ano = (date("Y")-1);
-			$sql = "select * from semic_nota_trabalhos where st_poster = 'S' and st_ano = '$ano' and st_status <> 'C' order by st_section, lpad(st_nr,4,0) ";
-			$rlt = db_query($sql);
-			$sx = '<option value="'.base_url('index.php/semic/poster_localizacao').'">Código do Trabalho</option>';
-			while ($line = db_read($rlt))
-				{
-					$ref = $this->semic_salas->referencia($line);
-					$sx .= '<option value="'.base_url('index.php/semic/poster_localizacao').'/'.$line['id_st'].'/'.$ref.'">' .$ref. '</option>'.cr();
-				}
-			return($sx);
+		
+		$tipo = $line['sb_tipo'];
+		/* Oral */
+		if ($tipo == '1') {
+			$sql = "select * from semic_bloco 
+			left join semic_nota_trabalhos on st_bloco = id_sb
+			left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo
+					where id_sb = " . round($id);
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			if (isset($rlt[0])) {
+				$line = $rlt[0];
+			} else {
+				$line = array();
+			}
+			return ($line);
 		}
+	}
+
+	function le($id = 0) {
+		$sql = "select * from semic_nota_trabalhos
+						left join semic_bloco on id_sb = st_bloco_poster 
+						left join us_usuario on st_aluno = us_cracha
+							where id_st = $id
+				";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (isset($rlt[0])) {
+			$line = $rlt[0];
+		} else {
+			$line = array();
+		}
+		return ($line);
+	}
+
+	function recupera_ala($id) {
+		$sql = "select * from semic_nota_trabalhos where id_st = " . round($id);
+		$rlt = db_query($sql);
+		$sx = '';
+		$bl = '';
+		if ($line = db_read($rlt)) {
+			$bl = $line['st_bloco_poster_ala'];
+		}
+		return ($bl);
+	}
+
+	function lista_trabalhos_poster() {
+		$ano = (date("Y") - 1);
+		$sql = "select * from semic_nota_trabalhos where st_poster = 'S' and st_ano = '$ano' and st_status <> 'C' order by st_section, lpad(st_nr,4,0) ";
+		$rlt = db_query($sql);
+		$sx = '<option value="' . base_url('index.php/semic/poster_localizacao') . '">Código do Trabalho</option>';
+		while ($line = db_read($rlt)) {
+			$ref = $this -> semic_salas -> referencia($line);
+			$sx .= '<option value="' . base_url('index.php/semic/poster_localizacao') . '/' . $line['id_st'] . '/' . $ref . '">' . $ref . '</option>' . cr();
+		}
+		return ($sx);
+	}
 
 	function imprime_etiquetas_por_alas($ano, $bloco, $ala) {
 		$sql = "select * from semic_nota_trabalhos
@@ -391,7 +431,7 @@ class semic_trabalhos extends CI_Model {
 		}
 		return ($aval);
 	}
-	
+
 	function mostra_agenda_pessoal($id = 0, $ano = 0, $completa = 0) {
 		$ano = 2015;
 		$ano2 = ($ano - 1);
@@ -426,34 +466,33 @@ class semic_trabalhos extends CI_Model {
 
 		/* Total de convites */
 		$tot = count($rs);
-		
+
 		if ($tot > 0) {
 			$size = round(100 / $tot) . '%';
 			$sx = '<table width="1024" style="border: 0px solid #000000;" align="center" border=0>';
-			$sx .= '<tr><td colspan=2 class="lt6">'.msg("Agenda de avaliação").'</td></tr>';
-			
+			$sx .= '<tr><td colspan=2 class="lt6">' . msg("Agenda de avaliação") . '</td></tr>';
+
 			$sx .= '<tr valign="top">';
 			$sx .= '<td rowspan=40 width="50">';
-			$sx .= '<img src="'.base_url('img/icon/icone_agenda_hora.png').'" height="80">';
+			$sx .= '<img src="' . base_url('img/icon/icone_agenda_hora.png') . '" height="80">';
 			$sx .= '</td>';
 			$sx .= '<td colspan=1 width="95%" class="lt1">Clique na data e hora para visualizar os trabalhos</td></tr>';
 
 			for ($r = 0; $r < count($rs); $r++) {
-				$link = '<A href="#" class="link">';
+				$id_sl = $rs[0]['id_bl'];
+				$link = '<A href="' . base_url('index.php/semic_avaliacao/bloco') . '/' . $id_sl . '/' . checkpost_link($id_sl) . '" class="link">';
 				$link_off = '</a>';
-				
+
 				/* imagem */
 				$suplente = $rs[$r]['suplente'];
 				$sx .= '<tr valign="top">';
-				
 
-				
 				$sx .= '<td width="' . $size . '">';
 				$sx .= '<table width="100%" border=0 >';
 
 				$sx .= '<tr>';
 				$sx .= '<td width="150" align="right" style="font-size: 10px;">Data e hora:</td>';
-				$sx .= '<td width="90%" style="font-size: 22px;"><b>' . $link. stodbr($rs[$r]['sb_data']) . ' ' . $rs[$r]['sb_hora'] . '-' . $rs[$r]['sb_hora_fim'] . $link_off.'</b></td>';
+				$sx .= '<td width="90%" style="font-size: 22px;"><b>' . $link . stodbr($rs[$r]['sb_data']) . ' ' . $rs[$r]['sb_hora'] . '-' . $rs[$r]['sb_hora_fim'] . $link_off . '</b></td>';
 				$sx .= '</tr>';
 
 				$sx .= '<tr>';
@@ -486,13 +525,13 @@ class semic_trabalhos extends CI_Model {
 				if ($completa == 1) {
 					$id_bl = $rs[$r]['id_bl'];
 					$id_us = $rs[$r]['id_us'];
-					
+
 					$sx .= '<tr>';
 					$sx .= '<td align="right" style="font-size: 10px;">';
 					$sx .= 'trabalhos';
 					$sx .= '</td>';
 					$sx .= '<td>';
-					$sx .= $this->trabalhos_bloco_avaliador($id_bl,$id_us);
+					$sx .= $this -> trabalhos_bloco_avaliador($id_bl, $id_us);
 					$sx .= '</td>';
 					$sx .= '</tr>';
 				}
@@ -504,12 +543,11 @@ class semic_trabalhos extends CI_Model {
 			$sx = '';
 		}
 		/* Cabecalho */
-		
-		$texto = $sx; 		
 
+		$texto = $sx;
 
 		return ($texto);
-	}	
+	}
 
 	function mostra_agenda($id = 0, $ano = 0, $completa = 0) {
 		$ano2 = ($ano - 1);
@@ -556,7 +594,7 @@ class semic_trabalhos extends CI_Model {
 
 		/* Total de convites */
 		$tot = count($rs);
-		
+
 		if ($tot > 0) {
 			$size = round(100 / $tot) . '%';
 			$sx = '<table width="640" style="border: 1px solid #000000;" >';
@@ -609,17 +647,17 @@ class semic_trabalhos extends CI_Model {
 				$sx .= $rav;
 				$sx .= '</td>';
 				$sx .= '</tr>';
-				
+
 				if ($completa == 1) {
 					$id_bl = $rs[$r]['id_bl'];
 					$id_us = $rs[$r]['id_us'];
-					
+
 					$sx .= '<tr>';
 					$sx .= '<td align="right" style="font-size: 10px;">';
 					$sx .= 'trabalhos';
 					$sx .= '</td>';
 					$sx .= '<td>';
-					$sx .= $this->trabalhos_bloco_avaliador($id_bl,$id_us);
+					$sx .= $this -> trabalhos_bloco_avaliador($id_bl, $id_us);
 					$sx .= '</td>';
 					$sx .= '</tr>';
 				}
@@ -643,13 +681,11 @@ class semic_trabalhos extends CI_Model {
 		$link = '<a href="' . base_url_site('index.php/login/r/' . $id . '/' . $check) . '" target="_new_av">[CLICK AQUI PARA ACEITAR OU DECLINAR]</A>';
 
 		/* EMAIL */
-		if ($completa == 1)
-			{
-				$texto = ic('semic_av_agenda_comp', 1, 'HTML');
-			} else {
-				$texto = ic('semic_av_agenda', 1, 'HTML');		
-			}
-		
+		if ($completa == 1) {
+			$texto = ic('semic_av_agenda_comp', 1, 'HTML');
+		} else {
+			$texto = ic('semic_av_agenda', 1, 'HTML');
+		}
 
 		$this -> load -> model('email_local');
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
@@ -664,43 +700,40 @@ class semic_trabalhos extends CI_Model {
 		return ($texto);
 	}
 
-	function trabalhos_bloco_avaliador($bloco,$id=0)
-		{
-			$sql = "select * from semic_nota_trabalhos 
+	function trabalhos_bloco_avaliador($bloco, $id = 0) {
+		$sql = "select * from semic_nota_trabalhos 
 						where st_bloco_poster = $bloco 
 						and (st_avaliador_1 = $id or st_avaliador_2 = $id )";
-			$xrlt = $this->db->query($sql);
-			$xrlt = $xrlt -> result_array();
-			$sx = '';
-			for ($r=0;$r < count($xrlt);$r++)
-				{
-					$line = $xrlt[$r];
-					$sx .= '<A href="http://cip.pucpr.br/semic/index.php/semic/view/'.$line['st_codigo'].'" target="_new'.$line['st_codigo'].'">';
-					$sx .= $this->semic_salas->referencia($line);
-					$sx .= '</A>';				
-					$sx .= '<br>';
-				}
-				
+		$xrlt = $this -> db -> query($sql);
+		$xrlt = $xrlt -> result_array();
+		$sx = '';
+		for ($r = 0; $r < count($xrlt); $r++) {
+			$line = $xrlt[$r];
+			$sx .= '<A href="http://cip.pucpr.br/semic/index.php/semic/view/' . $line['st_codigo'] . '" target="_new' . $line['st_codigo'] . '">';
+			$sx .= $this -> semic_salas -> referencia($line);
+			$sx .= '</A>';
+			$sx .= '<br>';
+		}
+
 		/* ORAL */
-			$sql = "select * from semic_bloco 
+		$sql = "select * from semic_bloco 
 						inner join semic_nota_trabalhos on id_sb = st_bloco
 						where id_sb = $bloco 
 						and (sb_avaliador_1 = $id or sb_avaliador_2 = $id or sb_avaliador_3 = $id)
 						order by st_section, lpad(st_nr,4,0)
 						";
-			$xrlt = $this->db->query($sql);
-			$xrlt = $xrlt -> result_array();
-			
-			for ($r=0;$r < count($xrlt);$r++)
-				{
-					$line = $xrlt[$r];
-					$sx .= '<A href="http://cip.pucpr.br/semic/index.php/semic/view/'.$line['st_codigo'].'" target="_new'.$line['st_codigo'].'">';
-					$sx .= $this->semic_salas->referencia($line);
-					$sx .= '</A>';				
-					$sx .= '<br>';
-				}			 
-			return($sx);
+		$xrlt = $this -> db -> query($sql);
+		$xrlt = $xrlt -> result_array();
+
+		for ($r = 0; $r < count($xrlt); $r++) {
+			$line = $xrlt[$r];
+			$sx .= '<A href="http://cip.pucpr.br/semic/index.php/semic/view/' . $line['st_codigo'] . '" target="_new' . $line['st_codigo'] . '">';
+			$sx .= $this -> semic_salas -> referencia($line);
+			$sx .= '</A>';
+			$sx .= '<br>';
 		}
+		return ($sx);
+	}
 
 	function avaliador_historico($acao, $historico, $avaliador) {
 		$data = date("Y-m-d");

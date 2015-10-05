@@ -1770,7 +1770,28 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'R' :
-			/* TR da tabela */
+				$ntype = trim(substr($type, 2, strlen($type)));
+				$ntype = troca($ntype, '&', ';') . ';';
+				$param = splitx(';', $ntype);
+				$form = '<table width="100%" border=0>';
+							
+				for ($r = 0; $r < count($param); $r++) {
+					if (count(trim($param[$r])) > 0) {
+						$nterm = splitx(':', $param[$r] . ':');
+						$key = $nterm[0];
+						$valor = $nterm[1];
+						$options[$key] = $valor;
+						$checked = false;
+						if ($key == $vlr) { $checked = true; }
+						$dados = array('name' => $dn, 'id' => $dn, 'value'=>$key, 'class' => 'form_select', 'checked' => $checked);
+						$form .= '<tr valign="top"><td>'.form_radio($dados).'</td>';
+						$form .= '<td class="form_radio">'.$valor.'</td>';
+						$form .= '</tr>';
+					}
+				}
+				$form .= '</table>';
+				
+				/* recupera dados */
 				$tela .= $tr;
 
 				/* label */
@@ -1779,12 +1800,9 @@ if (!function_exists('form_edit')) {
 				}
 				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
-				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
-				if ($readonly == false) { $dados['readonly'] = 'readonly';
-				}
-				$tela .= $td . form_checkbox($dados, 'accept', $vlr);
-				;
-				$tela .= $tdn . $trn;
+				$tela .= '<TD>';
+				//$tela .= form_radio($dados, $options, $vlr);
+				$tela .= $form;
 				break;
 
 			/* String */

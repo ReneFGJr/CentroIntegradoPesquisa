@@ -1,13 +1,16 @@
 <?php
-function perfil($p,$trava = 0) {
+function perfil($p, $trava = 0) {
 	$ac = 0;
-	
-	$perf = $_SESSION['perfil'];
-	for ($r = 0; $r < strlen($p); $r = $r + 4) {
-		$pc = substr($p, $r, 4);
-		//echo '<BR>'.$pc.'='.$perf.'=='.$ac;
-		if (strpos(' '.$perf, $pc) > 0) { $ac = 1;
+	if (isset($_SESSION['perfil'])) {
+		$perf = $_SESSION['perfil'];
+		for ($r = 0; $r < strlen($p); $r = $r + 4) {
+			$pc = substr($p, $r, 4);
+			//echo '<BR>'.$pc.'='.$perf.'=='.$ac;
+			if (strpos(' ' . $perf, $pc) > 0) { $ac = 1;
+			}
 		}
+	} else {
+		$ac = 0;
 	}
 	return ($ac);
 }
@@ -39,17 +42,17 @@ class josso_login_pucpr extends CI_Model {
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
 			if (count($rlt) == 0) {
-				return(0);
+				return (0);
 			} else {
 				$line = $rlt[0];
 				$this -> perfil = trim($line['us_perfil']);
 				$this -> id = trim($line['id_us']);
-				
+
 				$sql = "update logins set 
-							us_lastupdate = '".$data."',
-							us_lastupdate_hora = '".$hora."' 
+							us_lastupdate = '" . $data . "',
+							us_lastupdate_hora = '" . $hora . "' 
 						where us_cpf = '" . $this -> cpf . "'";
-				$rlt = $this -> db -> query($sql);				
+				$rlt = $this -> db -> query($sql);
 			}
 			/* Grava dados na Session */
 			$dados = array('perfil' => $this -> perfil, 'id_us' => $this -> id, 'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);

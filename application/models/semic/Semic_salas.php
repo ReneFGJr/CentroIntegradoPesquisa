@@ -76,6 +76,83 @@ class semic_salas extends CI_Model {
 		return ($cp);
 	}
 
+	function salas_por_dia($evento, $data, $sala = '', $horario = '') {
+		$ano = date("Y");
+		if (strlen($sala) == 0) {
+			$sql = "select id_sl, sl_bloco, sl_nome from semic_salas 
+					inner join semic_bloco on sb_sala = id_sl
+					where sb_data >= '$data' and sb_ano = '$ano' and 
+					(sb_tipo <> '7' and sb_tipo <> '8' and sb_tipo <> '2')
+					group by id_sl, sl_bloco, sl_nome
+					order by sl_bloco, sl_nome
+			";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$sx = '<h3>Apresentação Oral</h3>';
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				$link = '<A HREF="' . base_url('index.php/credenciamento/salas_sel/' . $line['id_sl']) . '">';
+				$sx .= $link;
+				$sx .= '<div class="semic_salas">';
+				$sx .= $line['sl_nome'];
+				$sx .= '<br><font class="lt1">';
+				$sx .= $line['sl_bloco'];
+				$sx .= '</font></div>';
+				$sx .= '</a>';
+			}
+		} else {
+			/* Mostra Blocos */
+			$sql = "select * from semic_salas 
+						inner join semic_bloco on sb_sala = id_sl
+					where id_sl = $sala and
+					(sb_tipo <> '7' and sb_tipo <> '8') 
+					order by sb_data, sb_hora ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$sx = '<h3>Apresentação Oral</h3>';
+			$sx = '<table width="100%" border=0 cellpadding=5>';
+			$sx .= '<tr>
+					<th width="100">Data</th>
+					<th width="90%">Descrição</th>
+					<th>tipo</th>
+					</tr>';
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				$link = '<A HREF="' . base_url('index.php/credenciamento/salas_sel/' . $line['id_sl'] . '/'.$line['id_sb']).'" class="link lt3">';
+				if ($r==0)
+					{
+						$sx .= '<tr class="lt6">';
+						$sx .= '<td colspan="3">';
+						$sx .= $line['sl_nome'];
+						$sx .= '<hr>';
+						$sx .= '</td>';
+						$sx .= '</tr>';
+					}
+				
+				$sx .= '<tr>';
+				$sx .= '<td align="center"><nobr>';				
+				$sx .= $link.stodbr($line['sb_data']);
+				$sx .=' ';
+				$sx .= $line['sb_hora'].'</a>'; 
+				$sx .= '</nobr>';
+				$sx .= '</td>';
+				
+				$sx .= '<td>';
+				$sx .= $link.$line['sb_nome'].'</a>';
+				$sx .= '</td>';
+				
+				$sx .= '<td>';
+				$sx .= $link.$line['sb_tipo'].'</a>';
+				$sx .= '</td>';
+				
+				$sx .= '</tr>';
+			}
+			$sx .= '</table>';
+			
+		}
+		return ($sx);
+	}
+
 	function situacao_avaliador($sa = 0) {
 		$st = array();
 		$st[0] = '<font color="blue">não indicado</font>';
@@ -83,7 +160,8 @@ class semic_salas extends CI_Model {
 		$st[2] = '<font color="green">aceito</font>';
 		$st[3] = '<font color="red">recusado</font>';
 		$st[9] = '<font color="red">recusado</font>';
-		$st[10] = '<font color="green">aceito</font>';;
+		$st[10] = '<font color="green">aceito</font>';
+		;
 
 		return ($st[$sa]);
 	}
@@ -463,8 +541,10 @@ class semic_salas extends CI_Model {
 				$ava1 = trim($line['av_nome_1']);
 				$avs1 = trim($line['st_avaliador_situacao_1']);
 				$cor1 = '<font color="#333;">';
-				if ($avs1 == 9) { $cor1 = '<font color="red">'; }
-				if ($avs1 == 10) { $cor1 = '<font color="blue">'; }
+				if ($avs1 == 9) { $cor1 = '<font color="red">';
+				}
+				if ($avs1 == 10) { $cor1 = '<font color="blue">';
+				}
 
 				/* Calculo do TAG */
 				if ($idx < 10) {
@@ -472,7 +552,7 @@ class semic_salas extends CI_Model {
 				} else {
 					$idx2 = $idx - 10;
 				}
-				
+
 				if (strlen($ava1) == 0) {
 					$ava1 = '- não indicado -';
 					$href1 = '<a href="#' . $idx2 . '" onclick="newwin(\'' . base_url('index.php/semic/bloco_poster_avaliador/' . $idt . '/1/' . checkpost_link($idt)) . '\');" class="link">';
@@ -481,16 +561,18 @@ class semic_salas extends CI_Model {
 				}
 
 				$sc .= '<td>';
-				$sc .= $href1 . $cor1. $ava1 . '</font></A>';
+				$sc .= $href1 . $cor1 . $ava1 . '</font></A>';
 				$sc .= '</td>';
 
 				/* Avaliador 2 */
 				$ava2 = trim($line['av_nome_2']);
 				$avs2 = trim($line['st_avaliador_situacao_2']);
 				$cor2 = '<font color="#333;">';
-				if ($avs2 == 9) { $cor2 = '<font color="red">'; }
-				if ($avs2 == 10) { $cor2 = '<font color="blue">'; }
-				
+				if ($avs2 == 9) { $cor2 = '<font color="red">';
+				}
+				if ($avs2 == 10) { $cor2 = '<font color="blue">';
+				}
+
 				if (strlen($ava2) == 0) {
 					$idt = $line['id_st'];
 					$ava2 = '- não indicado -';
@@ -501,7 +583,7 @@ class semic_salas extends CI_Model {
 				}
 
 				$sc .= '<td>';
-				$sc .= $href2 . $cor2.$ava2 . '</font></A>';
+				$sc .= $href2 . $cor2 . $ava2 . '</font></A>';
 				$sc .= '</td>';
 
 				$sc .= '</tr>';
@@ -650,7 +732,7 @@ class semic_salas extends CI_Model {
 			$id_hf = $hr[$hf];
 			$idb = $line['id_sb'];
 			$id_sl = (round($line['sl_ordem']) - 1);
-			
+
 			//echo '<BR>' . $hi . '-[' . $id_hi . '] == ' . $hf . '-' . $id_hf . '-[' . $id_sl . ']';
 
 			$matrix_cor[$id_hi][$id_sl] = $line['sbs_cor'];
@@ -705,7 +787,7 @@ class semic_salas extends CI_Model {
 				$sa .= '<br><center><font class="lt5">' . $tot . '</font></center>';
 			}
 			$sa .= '<br>';
-			
+
 			for ($rx = 1; $rx <= 3; $rx++) {
 				if ($line['sb_avaliador_' . $rx] > 0) {
 					$rav = $this -> semic_trabalhos -> situacao_avaliador($line['sb_avaliador_situacao_' . $rx]);

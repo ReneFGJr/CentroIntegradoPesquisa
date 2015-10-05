@@ -14,7 +14,7 @@
 		<td>
 		<table width="100%" cellpadding="0" cellspacing="0" style="border: 0px #000000 solid;">
 			<tr>
-				<td valign="right" class="cab_id pad20" width="80%">ID do AVALIADOR
+				<td valign="right" class="cab_id pad20" width="70%">ID do AVALIADOR
 				<input type="text" name="dd1" class="cad_form_id">
 				</td>
 				<td class="cab_id" width="10%">
@@ -26,7 +26,7 @@
 				<td>
 					<input type="submit" value="ENTRAR" name="acao" class="id_submit">
 				</td>
-				<td width="2%">
+				<td width="10%">
 					<div style="height: 3px; background-color: #D9BD85;"></div>
 				</td>
 			</tr>
@@ -40,3 +40,7 @@
 		</td>
 	</tr>
 </table>
+<center>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<a href="semic_avaliacao/avaliadores_row" style="color: #CCC;">tt</a>

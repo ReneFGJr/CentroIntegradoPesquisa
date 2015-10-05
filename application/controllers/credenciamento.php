@@ -43,7 +43,7 @@ class credenciamento extends CI_Controller {
 		array_push($css, 'style_credenciamento.css');
 		array_push($css, 'style_cab_evento.css');
 		//array_push($js, 'unslider.min.js');
-		//array_push($js, 'high/highcharts.js');
+		array_push($js, 'high/highcharts.js');
 
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
@@ -51,22 +51,75 @@ class credenciamento extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		
+
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Eventos', 'index.php/credenciamento/'));
 		array_push($menus, array('Credenciamento', 'index.php/credenciamento/usuario'));
 		array_push($menus, array('Entrega de Kits', 'index.php/credenciamento/kits'));
 		array_push($menus, array('Imprime Credencial', 'index.php/credenciamento/credencial'));
+		array_push($menus, array('Cockpit', 'index.php/credenciamento/cockpit'));
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
 		/* Monta telas */
-		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Iniciação Científica';
 		$data['menu'] = 1;
-		$this -> load -> view('header/cab_nav',$data);
-	
+		$this -> load -> view('header/cab_nav', $data);
+	}
+
+	function cockpit()
+		{
+		$this -> cab();
+		
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('KITS', 'Distribuição dos Kits', 'ITE', '/credenciamento/cockpit_kits'));
+		array_push($menu, array('Presença', 'Participação nas apresentações', 'ITE', '/credenciamento/cockpit_presenca'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Cockpit - Credenciamento';
+		$this -> load -> view('header/main_menu', $data);			
+		}
+	function cockpit_presenca()
+		{
+		/* Model */
+		$this -> load -> model('credenciamento/credenciamentos');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open', $data);
+		
+		$data['tela'] = '<h1>Presença</h1>';
+		$data['tela'] .= $this->credenciamentos->presentes_por_sala();
+		$this -> load -> view("credenciamento/content", $data);
+			
+		$this -> load -> view('header/content_close', $data);
+		$this -> load -> view('header/foot', $data);				
+		}
+	function cockpit_kits() {
+		/* Model */
+		$this -> load -> model('credenciamento/credenciamentos');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open', $data);
+		
+		$data['tela'] = '<h1>Distribuição dos Kits</h1>';
+		$data['tela'] .= $this->credenciamentos->kits_entregues();
+		$this -> load -> view("credenciamento/content", $data);
+		
+		$data['tela'] = '<h3>Distribuição dos Kits / 10 mins</h3>';
+		$data['tela'] .= $this->credenciamentos->kits_entregues_grafico(4);
+		$this -> load -> view("credenciamento/content", $data);
+
+		$data['tela'] = '<h3>Distribuição dos Kits por hora</h3>';
+		$data['tela'] .= $this->credenciamentos->kits_entregues_grafico(2);
+		$this -> load -> view("credenciamento/content", $data);
+		
+		$this -> load -> view('header/content_close', $data);
+		$this -> load -> view('header/foot', $data);		
 	}
 
 	function kits() {
@@ -79,7 +132,7 @@ class credenciamento extends CI_Controller {
 		$data['tela'] = $this -> credenciamentos -> kits_form();
 
 		/* Dados da Sala */
-		$sala = $this -> credenciamentos -> sala();
+		$sala = $this -> credenciamentos -> sala(1);
 		$this -> load -> view("credenciamento/kits", $sala);
 		$this -> load -> view("credenciamento/sala_logo_evento.php", $sala);
 
@@ -87,13 +140,12 @@ class credenciamento extends CI_Controller {
 
 		$this -> load -> view("credenciamento/content", $data);
 	}
-	
-	function credencial()
-		{
+
+	function credencial() {
 		$this -> load -> model('usuarios');
 		$this -> cab();
-		
-		$data = array();		
+
+		$data = array();
 		$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
 		$data['resumo'] = 'Busca por Credencial';
 
@@ -101,17 +153,16 @@ class credenciamento extends CI_Controller {
 		$search_term = $this -> input -> post("dd89");
 		$search_acao = $this -> input -> post("acao");
 		$page = 'index.php/credenciamento/voucher/';
-		
+
 		if ((strlen($search_acao) > 0) and (strlen($search_term) > 0)) {
 			$search_term = troca($search_term, "'", '´');
-			$data['search'] .= $this -> usuarios -> search($search_term,$page,'1');
+			$data['search'] .= $this -> usuarios -> search($search_term, $page, '1');
 		}
 
 		/* Mostra tela principal */
 		$this -> load -> view('ic/home', $data);
-		
-		
-		}
+
+	}
 
 	function usuario() {
 		$ok = 0;
@@ -172,7 +223,7 @@ class credenciamento extends CI_Controller {
 					$ok = 1;
 					$msg = msg('cadastro ok');
 				} else {
-					$msg = msg('cracha '.$cracha.' já cadastrado');
+					$msg = msg('cracha ' . $cracha . ' já cadastrado');
 					$ok = 1;
 				}
 			} else {
@@ -206,7 +257,7 @@ class credenciamento extends CI_Controller {
 	}
 
 	function voucher($id, $check) {
-		$this -> load -> model('usuarios');		
+		$this -> load -> model('usuarios');
 		$data = $this -> usuarios -> le($id);
 		$this -> load -> view('credenciamento/voucher', $data);
 	}
@@ -235,11 +286,46 @@ class credenciamento extends CI_Controller {
 	function evento_sel($id = 0, $chk = '') {
 		$this -> load -> model('credenciamento/credenciamentos');
 		$this -> credenciamentos -> set_evento($id);
-		redirect(base_url('index.php/credenciamento/registro'));
+		redirect(base_url('index.php/credenciamento/salas_sel'));
 	}
+	
+	function salas_sel($sala='',$horario='')
+		{
+		$evento = 1;
+		$date = date("Y-m-d");
+
+		/* Model */
+		$this -> load -> model('credenciamento/credenciamentos');
+		$this -> load -> model('semic/semic_salas');
+		
+		if ((strlen($sala) > 0) and (strlen($horario) > 0))
+			{
+				$se = array();
+				$se['sala'] = $sala;
+				$se['bloco'] = $horario;
+				$this->session->set_userdata($se);
+				redirect(base_url('index.php/credenciamento/registro'));
+				exit;
+			}
+
+		$this -> cab(1);
+		
+		/* Seleção das sala */
+		$data = array();
+		
+		$this -> load -> view('header/content_open', $data);
+		
+		$data['tela'] = '<h1>Distribuição dos Kits</h1>';
+		$data['tela'] = $this->semic_salas->salas_por_dia($evento,$date,$sala,$horario);
+		$this -> load -> view("credenciamento/content", $data);
+							
+		}
 
 	function registro() {
 		/* Model */
+		$s1 = $this->session->userdata('sala');
+		$b1 = $this->session->userdata('bloco');
+		
 		$this -> load -> model('credenciamento/credenciamentos');
 
 		$this -> cab();
@@ -249,7 +335,7 @@ class credenciamento extends CI_Controller {
 		$data['tela'] = $this -> credenciamentos -> registro_form();
 
 		/* Dados da Sala */
-		$sala = $this -> credenciamentos -> sala();
+		$sala = $this -> credenciamentos -> sala($b1);
 		$this -> load -> view("credenciamento/sala", $sala);
 		$this -> load -> view("credenciamento/sala_presentes", $sala);
 		$this -> load -> view("credenciamento/sala_logo_evento.php", $sala);

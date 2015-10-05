@@ -2,7 +2,6 @@
 <table width="1024" style="border: 0px solid #000000;" align="center" border=0>
 	<tr>
 		<td colspan=2 class="lt6">Guia do Avaliador IC
-			<br><br>
 		</td>
 	</tr>
 	
@@ -18,12 +17,6 @@
 		
 		</td>
 	</tr>
-	
-
-
- 
-
-		
 	
 	<tr valign="top">
 		<td rowspan=1 width="50"><img src="<?php echo base_url("img/icon/icone_user_guide.png");?>" height="80"></td>
@@ -127,3 +120,4 @@
 		<br>- Mantenha seu horário disponível até o término da sessão a que foi designado. </td>
 	</tr>
 </table>
+<br><br>

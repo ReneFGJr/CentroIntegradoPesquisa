@@ -16,23 +16,47 @@ class main extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 
 		/* Security */
-		$this -> load -> model('login/josso_login_pucpr');
-		$this -> josso_login_pucpr -> security();
+		$this -> security();
 
 		//$this -> lang -> load("app", "english");
+	}
+
+	function security() {
+
+		/* Seguranca */
+		$this -> load -> model('login/josso_login_pucpr');
+		$this -> josso_login_pucpr -> security();
+	}
+
+	function cab() {
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'style_cab.css');
+		array_push($css, 'switch_onoff.css');
+		array_push($css, 'form_sisdoc.css');
+		
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+		
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+		$data['title_page'] = 'Parceiros PUCPR';
+		$data['menu'] = 0;
+		//$data['menus'] = $menus;
+		$this -> load -> view('header/cab', $data);		
 	}
 
 	function index() {
 
 		/* Carrega classes adicionais */
-		$css = array();
-		$js = array();
-		array_push($css, 'style_cab.css');
-		array_push($js, 'js_cab.js');
+		$this -> cab();
+		$data = array();
 
-		/* transfere para variavel do codeigniter */
-		$data['css'] = $css;
-		$data['js'] = $js;
 		//* Menu */
 		$menus = array();
 
@@ -79,7 +103,6 @@ class main extends CI_Controller {
 			array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
 		}
 		array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));
-
 
 		$data['menu'] = $menu;
 
