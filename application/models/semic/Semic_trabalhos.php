@@ -3,7 +3,8 @@ class semic_trabalhos extends CI_Model {
 	var $tabela = 'semic_ic_trabalho';
 
 	function le_bloco($id = 0, $avaliador = 0) {
-		$sql = "select * from semic_bloco where id_sb = " . round($id);
+		$sql = "select * from semic_bloco 
+					where id_sb = " . round($id);
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (isset($rlt[0])) {
@@ -16,8 +17,9 @@ class semic_trabalhos extends CI_Model {
 		/* Oral */
 		if ($tipo == '1') {
 			$sql = "select * from semic_bloco 
-			left join semic_nota_trabalhos on st_bloco = id_sb
-			left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo
+					left join semic_salas on id_sl = sb_sala			
+					left join semic_nota_trabalhos on st_bloco = id_sb
+					left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo
 					where id_sb = " . round($id);
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
@@ -28,6 +30,24 @@ class semic_trabalhos extends CI_Model {
 			}
 			return ($line);
 		}
+
+		/* Poster */
+		if ($tipo == '2') {
+			$sql = "select * from semic_bloco 
+					left join semic_salas on id_sl = sb_sala			
+					left join semic_nota_trabalhos on st_bloco_poster = id_sb
+					left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo
+					where id_sb = " . round($id);
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			if (isset($rlt[0])) {
+				$line = $rlt[0];
+			} else {
+				$line = array();
+			}
+			return ($line);
+		}
+
 	}
 
 	function le($id = 0) {

@@ -2,13 +2,75 @@
 class semic_anais extends CI_Model {
 	var $dir = '_TEMP_DIR__';
 	var $save = 1;
-	
+
 	function __construct() {
 		$path = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
-		$this->dir = $path.'/semic/system/application/views/semic2015/anais/';
+		$this -> dir = $path . '/semic/system/application/views/semic2015/anais/';
 	}
-	
-	
+
+	function resumo_title($cod,$mapa=0) {
+		/* Recupera ID */
+		$sql = "select * from semic_nota_trabalhos
+					left join area_conhecimento on ac_cnpq = st_area_geral
+					left join ic on ic_plano_aluno_codigo = st_codigo
+					left join ic_aluno on ic_id = id_ic
+					left join ic_modalidade_bolsa on mb_id = id_mb
+					left join semic_trabalho on sm_codigo = st_codigo	
+					where st_codigo = '" . $cod . "'";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$line = $rlt[0];
+
+		$line['imagem'] = '';
+		$line['autores'] = '';
+		$line['imagem_texto'] = '';
+
+		/* Recupera autores */
+		$sql = "select * from semic_trabalho_autor 
+						where sma_protocolo = '$cod'
+						and sma_ativo >= 1
+						order by sma_funcao 
+						";
+		$rlta = $this -> db -> query($sql);
+		$rlta = $rlta -> result_array();
+		$line2['autores'] = $rlta;
+
+		$line = array_merge($line, $line2);
+		$line['mapa'] = $mapa;
+
+		$tela = $this -> load -> view('semic/semic_2015_title', $line, True);
+		return ($tela);
+	}
+
+	function resumo_body($cod) {
+		/* Recupera ID */
+		$sql = "select * from semic_nota_trabalhos
+					left join area_conhecimento on ac_cnpq = st_area_geral
+					left join ic on ic_plano_aluno_codigo = st_codigo
+					left join ic_aluno on ic_id = id_ic
+					left join ic_modalidade_bolsa on mb_id = id_mb
+					left join semic_trabalho on sm_codigo = st_codigo	
+					where st_codigo = '" . $cod . "'";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$line = $rlt[0];
+
+		$tp = (substr($line['st_section'], 0, 2));
+		switch ($tp) {
+			case 'JI' :
+				$tela = $this -> load -> view('semic/semic_2015_ji_template_av', $line, True);
+				break;
+			case 'PE' :
+				$tela = $this -> load -> view('semic/semic_2015_pe_template_av', $line, True);
+				break;
+			default :
+				$tela = $this -> load -> view('semic/semic_2015_template_av', $line, True);
+				break;
+		}
+		return ($tela);
+
+	}
+
 	function gerar_sumario_trabalhos($ano) {
 		$sql = "select * from (
     				select count(*) as total, st_area_geral as area from semic_nota_trabalhos 
@@ -63,7 +125,7 @@ class semic_anais extends CI_Model {
 		$rlt = $this -> db -> query($sql);
 		$rltx = $rlt -> result_array();
 		$pgs = array();
-		
+
 		$xarea = '';
 		$sx = '<br><br><br><h1><?php echo msg(\'semic_apres_area\'); ?></h1>';
 		$sx .= '<table width="100%" border=0 cellpading=0 cellspacing=0>';
@@ -71,8 +133,7 @@ class semic_anais extends CI_Model {
 			$line = $rltx[$rq];
 			$id_st = $line['id_st'];
 			$proto = $line['st_codigo'];
-			
-			
+
 			$fld_id = 'st_bloco_poster';
 
 			/* Recupera ID */
@@ -103,28 +164,26 @@ class semic_anais extends CI_Model {
 			$line2 = $rltd[0];
 
 			$area = $line2['ac_nome_area'];
-			if ($xarea != $area)
-				{
+			if ($xarea != $area) {
 
-					$sx .= '<tr ><td><br></td></tr>';
-					$sx .= '<tr><td calign="left" class="lt5 trabalho_background_tr" 
+				$sx .= '<tr ><td><br></td></tr>';
+				$sx .= '<tr><td calign="left" class="lt5 trabalho_background_tr" 
 									style="
 									border-top: 1px solid #333;
 									border-bottom: 1px solid #333;									
 									" 
-									colspan=3><a name="'.$line2['ac_cnpq'].'"></a>'.$area.'</td></tr>';
-					$xarea = $area;
-					
-				}
-						
-			
+									colspan=3><a name="' . $line2['ac_cnpq'] . '"></a>' . $area . '</td></tr>';
+				$xarea = $area;
+
+			}
+
 			/* Recupera autores */
 			$sql = "select * from semic_trabalho_autor 
 						where sma_protocolo = '$proto'
 						and sma_ativo >= 1 
 						order by sma_funcao 
 						";
-						
+
 			$rlta = $this -> db -> query($sql);
 			$rlta = $rlta -> result_array();
 			$line2['autores'] = $rlta;
@@ -225,21 +284,19 @@ class semic_anais extends CI_Model {
 		$line['imagem'] = $img;
 		$line['imagem_texto'] = $img_text;
 
-		$tp = (substr($line['st_section'],0,2));
-		switch ($tp)
-			{
-			case 'JI':
+		$tp = (substr($line['st_section'], 0, 2));
+		switch ($tp) {
+			case 'JI' :
 				$tela = $this -> load -> view('semic/semic_2015_ji_template', $line, True);
 				break;
-			case 'PE':
+			case 'PE' :
 				$tela = $this -> load -> view('semic/semic_2015_pe_template', $line, True);
 				break;
-			default:
+			default :
 				$tela = $this -> load -> view('semic/semic_2015_template', $line, True);
-				break;								
-			}
-			
-		
+				break;
+		}
+
 		return ($tela);
 	}
 

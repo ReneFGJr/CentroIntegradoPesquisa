@@ -391,6 +391,10 @@ class credenciamentos extends CI_Model {
 						$this -> entrega_kit_pessoa($id, 5);
 						return ('13');
 					}
+					if ($mod == 'PIBIC_EM') {
+						$this -> entrega_kit_pessoa($id, 5);
+						return ('13');
+					}
 					return ('8');
 				} else {
 					return ('9');

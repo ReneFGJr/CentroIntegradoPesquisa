@@ -1,20 +1,22 @@
-<br>
-<table width="98%" align="center">
+<br><br>
+<table width="300" align="center" border=0>
 <tr valign="top">
-	<td align="center"><font style="font-size: 20px;"><b>AVALIADOR</b></font></td>
+	<td align="center"><font style="font-size: 18px;"><b>AVALIADOR</b></font></td>
 <tr valign="top">
 	<td align="center">
-		<font style="font-size: 60px;">
+		<font style="font-size: 30px;">
 		<B><?php echo $us_nome;?></B>
 		</font>
 		<br>
-		<font style="font-size: 25px;">
+		<font style="font-size: 20px;">
 		<B>ID: <?php echo $ref;?></B>
 		</font>
 		
 	</td>
 </tr>	
 </table>
+<BR>
+
 <div class="footer"></div>
 
 <style>

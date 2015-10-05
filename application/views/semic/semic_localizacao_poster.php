@@ -6,14 +6,20 @@ if (strlen($ala) > 0) {
 	$img = '<img src="' . $img . '">';
 }
 ?>
+<A name="mapa"></A>
 <center>
 	<font style="font-size: 40px;"><b><?php echo $ref;?></b></font>
 	<br>
 	<font style="font-size: 20px;"><b><?php echo $dia;?></b></font>
 	<br>
-	<font class="lt4"> Identifique o código de seu trabalho:
-		<select name="dd1" class="form_string" ONCHANGE="location = this.options[this.selectedIndex].value;">
-			<?php echo $trabalhos;?>
-		</select> </font>
-	<hr>
-	<?php echo $img;?>
+	<?php
+	if (isset($trabalhos) > 0) {
+		echo '
+			<font class="lt4"> Identifique o código de seu trabalho:
+			<select name="dd1" class="form_string" ONCHANGE="location = this.options[this.selectedIndex].value;">
+			'.$trabalhos.'
+			</select> </font>
+			<hr>';
+	}
+	echo $img;
+	?>

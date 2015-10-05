@@ -1631,7 +1631,7 @@ if (!function_exists('form_edit')) {
 			/* Button */
 			case 'B' :
 				$tela .= $tr . $tdl . $td;
-				$dados = array('name' => 'acao', 'id' => 'acao', 'value' => $label);
+				$dados = array('name' => 'acao', 'id' => 'acao', 'value' => $label, 'class' => 'form_submit');
 				$tela .= form_submit($dados);
 				$tela .= $tdn . $trn;
 				break;

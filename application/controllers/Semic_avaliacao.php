@@ -14,43 +14,109 @@ class semic_avaliacao extends CI_Controller {
 
 		date_default_timezone_set('America/Sao_Paulo');
 	}
-	
-	function oral($id,$chk)
-		{
+
+	function poster($id, $chk) {
 		$avaliador = $_SESSION['id'];
-			
+
 		$this -> cab();
 		if (!checkpost($id, $chk)) {
 			/* Load Models */
 			$this -> load -> model('usuarios');
 			$this -> load -> model('semic/semic_avaliacoes');
 			$this -> load -> model('semic/semic_trabalhos');
+			$this -> load -> model('semic/semic_anais');
 			$this -> load -> model('semic/semic_salas');
 			$this -> semic_avaliacoes -> security();
-			
+
 			$data = $this -> semic_trabalhos -> le($id);
 			//print_r($data);
-			$data['ref'] = $this->semic_salas->referencia($data);
+			$data['ref'] = $this -> semic_salas -> referencia($data);
 
-			$data['title'] = 'Avaliação Oral - '.$data['ref'];
+			$data['title'] = 'Avaliação Pôster - ' . $data['ref'];
 			$data['erro'] = '';
-			$this -> load -> view('semic/avaliacao/cab_works', $data);
 			
+			$data['back'] = base_url('index.php/semic_avaliacao/bloco/'.$data['st_bloco_poster'].'/'.checkpost_link($data['st_bloco_poster']));
+			$this -> load -> view('semic/avaliacao/cab_works', $data);
+
 			$codigo = $data['st_codigo'];
 			
+			$data['title'] = '';
+			$mapa = 1;
+			$data['content'] = $this->semic_anais ->resumo_title($data['st_codigo'],$mapa);
+			$this -> load -> view('content', $data);
+			
+
 			/* Recupera ID da avaliacao */
-			$idpp = $this->semic_avaliacoes->recupera_avaliacao($codigo,$avaliador,'SEMIC');			
+			$idpp = $this -> semic_avaliacoes -> recupera_avaliacao($codigo, $avaliador, 'SEMIC');
 
 			$data['title'] = '';
 			$data['idpp'] = $idpp;
 			$data['avaliador'] = $avaliador;
-			$data['content'] = $this->load->view('semic/avaliacao/ficha_oral',$data, True);
+			$data['content'] = $this -> load -> view('semic/avaliacao/ficha_poster', $data, True);
+			$this -> load -> view('content', $data);
+			
+			$data['title'] = '';
+			$data['ala'] = $data['st_bloco_poster_ala'];
+			$data['dia'] = $data['sb_data'].' '.$data['sb_hora'].'-'.$data['sb_hora_fim'];
+			$this -> load -> view('semic/semic_localizacao_poster.php', $data);			
+			
+			$data['title'] = '';
+			$data['content'] = $this->semic_anais ->resumo_body($data['st_codigo']);
 			$this -> load -> view('content', $data);
 
 		} else {
 			$this -> load -> view("header/999");
-		}	
 		}
+	}
+
+
+	function oral($id, $chk) {
+		$avaliador = $_SESSION['id'];
+
+		$this -> cab();
+		if (!checkpost($id, $chk)) {
+			/* Load Models */
+			$this -> load -> model('usuarios');
+			$this -> load -> model('semic/semic_avaliacoes');
+			$this -> load -> model('semic/semic_trabalhos');
+			$this -> load -> model('semic/semic_anais');
+			$this -> load -> model('semic/semic_salas');
+			$this -> semic_avaliacoes -> security();
+
+			$data = $this -> semic_trabalhos -> le($id);
+			//print_r($data);
+			$data['ref'] = $this -> semic_salas -> referencia($data);
+
+			$data['title'] = 'Avaliação Oral - ' . $data['ref'];
+			$data['erro'] = '';
+			
+			$data['back'] = base_url('index.php/semic_avaliacao/bloco/'.$data['st_bloco'].'/'.checkpost_link($data['st_bloco']));
+			$this -> load -> view('semic/avaliacao/cab_works', $data);
+
+			$codigo = $data['st_codigo'];
+			
+			$data['title'] = '';
+			$data['content'] = $this->semic_anais ->resumo_title($data['st_codigo']);
+			$this -> load -> view('content', $data);
+			
+
+			/* Recupera ID da avaliacao */
+			$idpp = $this -> semic_avaliacoes -> recupera_avaliacao($codigo, $avaliador, 'SEMIC');
+
+			$data['title'] = '';
+			$data['idpp'] = $idpp;
+			$data['avaliador'] = $avaliador;
+			$data['content'] = $this -> load -> view('semic/avaliacao/ficha_oral', $data, True);
+			$this -> load -> view('content', $data);
+			
+			$data['title'] = '';
+			$data['content'] = $this->semic_anais ->resumo_body($data['st_codigo']);
+			$this -> load -> view('content', $data);
+
+		} else {
+			$this -> load -> view("header/999");
+		}
+	}
 
 	function avaliador($id, $check) {
 		/* Load Models */
@@ -129,21 +195,26 @@ class semic_avaliacao extends CI_Controller {
 			$this -> load -> model('semic/semic_trabalhos');
 			$this -> load -> model('semic/semic_salas');
 			$this -> semic_avaliacoes -> security();
-			
+
 			$data['title'] = 'Avaliação';
 			$data['erro'] = '';
+			$data['back'] = base_url('index.php/semic_avaliacao/works');
 			$this -> load -> view('semic/avaliacao/cab_works', $data);
 
-			$data = $this -> semic_trabalhos -> le_bloco($id,$avaliador);			
-			$bloco = $id;
+			$data = $this -> semic_trabalhos -> le_bloco($id, $avaliador);
+			$bloco = $id;			
 
 			/* TB - Tipo de bloco */
 			$tb = $data['sb_tipo'];
-
 			switch($tb) {
 				case '1' :
+					$this->load->view('semic/avaliacao/dados_do_bloco',$data);
 					$data['content'] = $this -> semic_avaliacoes -> lista_trabalhos_avaliador_oral($avaliador, $bloco);
 					break;
+				case '2' :
+					$this->load->view('semic/avaliacao/dados_do_bloco',$data);
+					$data['content'] = $this -> semic_avaliacoes -> lista_trabalhos_avaliador_poster($avaliador, $bloco);
+					break;					
 			}
 			$data['title'] = '';
 			$this -> load -> view('content', $data);
@@ -154,13 +225,14 @@ class semic_avaliacao extends CI_Controller {
 	}
 
 	function works($id = 0) {
+		$id = $_SESSION['id'];
+
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('semic/semic_avaliacoes');
 		$this -> load -> model('semic/semic_trabalhos');
 		$this -> semic_avaliacoes -> security();
 
-		$id = $_SESSION['id_us'];
 		$ano = (date("Y") - 1);
 
 		$this -> cab();
@@ -170,7 +242,7 @@ class semic_avaliacao extends CI_Controller {
 		$this -> load -> view('semic/avaliacao/cab_works', $data);
 
 		$data['title'] = '';
-		$data['content'] = '<table width="1024" align="center"><tr><td>';
+		$data['content'] = '<table width="980" align="center"><tr><td>';
 		$this -> load -> view('content', $data);
 
 		$data = $this -> usuarios -> le($id);
@@ -205,20 +277,29 @@ class semic_avaliacao extends CI_Controller {
 				$data['erro'] = 'O ID é obrigatório';
 			} else {
 				/* Valida Nr Avalaidor */
-				$ln = $this -> usuarios -> le($dd1);
-				if (count($ln) > 0) {
-					$avaliador = $ln['us_avaliador'];
-					$id = $ln['id_us'];
-					$nome = $ln['us_nome'];
+				$idu = round(substr($dd1, 0, strlen($dd1) - 1)) / 3;
+				$dva = substr($dd1, strlen($dd1) - 1, 1);
 
-					if ($avaliador > 0) {
-						$this -> semic_avaliacoes -> set_avaliador($id, $nome);
-						redirect(base_url('index.php/semic_avaliacao/works'));
-					} else {
-						$data['erro'] = 'ID do Avaliador não habilitado!';
-					}
+				$idc = $this -> semic_avaliacoes -> avaliador_id($idu);
+				$dvb = substr($idc, strlen($idc) - 1, 1);
+				if ($dvb != $dva) {
+					$data['erro'] = 'ID do Avaliador inválido!';
 				} else {
-					$data['erro'] = 'ID do Avaliador Inválido!';
+					$ln = $this -> usuarios -> le($idu);
+					if (count($ln) > 0) {
+						$avaliador = $ln['us_avaliador'];
+						$id = $ln['id_us'];
+						$nome = $ln['us_nome'];
+
+						if ($avaliador > 0) {
+							$this -> semic_avaliacoes -> set_avaliador($id, $nome);
+							redirect(base_url('index.php/semic_avaliacao/works'));
+						} else {
+							$data['erro'] = 'ID do Avaliador não habilitado!';
+						}
+					} else {
+						$data['erro'] = 'ID do Avaliador Inválido!';
+					}
 				}
 			}
 		}
