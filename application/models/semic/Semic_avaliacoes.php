@@ -70,7 +70,7 @@ class semic_avaliacoes extends CI_Model {
 	function posicao_avaliacao_poster($bloco)
 		{
 			$sql = "select * from semic_nota_trabalhos
-					left join pibic_parecer_2015 on st_codigo = pp_protocolo
+					left join pibic_parecer_2015 on st_codigo = pp_protocolo  and pp_p19 = 'POSTE'
 					left join us_usuario on id_us = st_avaliador_1 and st_avaliador_1 <> 0
 					where st_bloco_poster = $bloco
 					order by us_nome, pp_status, st_section, lpad(st_nr,3,0)
@@ -121,7 +121,7 @@ class semic_avaliacoes extends CI_Model {
 						inner join us_usuario on id_us = avaliador
 						left join (
 						SELECT pp_avaliador_id FROM `semic_nota_trabalhos` 
-							left join pibic_parecer_2015 on st_codigo = pp_protocolo
+							left join pibic_parecer_2015 on st_codigo = pp_protocolo and pp_p19 = 'POSTE'
 							WHERE st_bloco_poster = $bloco
 							group by pp_avaliador_id
 						) as tabela2 on pp_avaliador_id = id_us
@@ -239,9 +239,12 @@ class semic_avaliacoes extends CI_Model {
 		return ($sx);
 	}
 
-	function recupera_avaliacao($id, $av, $tipo) {
+	function recupera_avaliacao($id, $av, $tipo, $modalidade) {
 		$ano = date("Y");
-		$sqlq = "select * from pibic_parecer_$ano where pp_avaliador_id = '$av' and pp_protocolo = '$id' and pp_tipo = '$tipo' ";
+		$sqlq = "select * from pibic_parecer_$ano where 
+					pp_avaliador_id = '$av' and pp_protocolo = '$id' 
+					and pp_tipo = '$tipo' 
+					and pp_p19 = '$modalidade' ";
 		$rlt = $this -> db -> query($sqlq);
 		$rlt = $rlt -> result_array();
 		$data = date("Y-m-d");
@@ -251,13 +254,13 @@ class semic_avaliacoes extends CI_Model {
 					(
 					pp_tipo, pp_protocolo, pp_protocolo_mae, 
 					pp_avaliador, pp_avaliador_id, pp_status,
-					pp_pontos, pp_pontos_pp, pp_data  
+					pp_pontos, pp_pontos_pp, pp_data, pp_p19 
 					)
 					values
 					(
 					'$tipo','$id','',
 					'',$av,'@',
-					0,0,'$data'
+					0,0,'$data', '$modalidade'
 					)					
 					";
 			$rlt = $this -> db -> query($sql);
@@ -277,7 +280,7 @@ class semic_avaliacoes extends CI_Model {
 		$sql = "select * from semic_nota_trabalhos 
 						left join semic_bloco on id_sb = st_bloco
 						left join semic_trabalho on st_codigo = sm_codigo
-						left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo and pp_avaliador_id = $av
+						left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo and pp_avaliador_id = $av and pp_p19 = 'POSTE'
 						where st_poster = 'S' and st_bloco_poster = $bl
 						and st_status <> 'C'
 						and (st_avaliador_1 = $av or st_avaliador_2 = $av)
@@ -358,7 +361,7 @@ class semic_avaliacoes extends CI_Model {
 		$sql = "select * from semic_nota_trabalhos 
 						left join semic_bloco on id_sb = st_bloco
 						left join semic_trabalho on st_codigo = sm_codigo
-						left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo and pp_avaliador_id = $av
+						left join pibic_parecer_" . date("Y") . " on (pp_protocolo = st_codigo) and (pp_avaliador_id = $av) and (pp_p19 = 'ORAL')
 						where st_oral = 'S' and st_bloco = $bl
 						and st_status <> 'C'
 						and (sb_avaliador_1 = $av or sb_avaliador_2 = $av or sb_avaliador_3 = $av)
@@ -402,7 +405,14 @@ class semic_avaliacoes extends CI_Model {
 			$sx .= '<td class="lt6 semic_lista_oral ' . $sit . '">';
 			$ids = $line['id_st'];
 			/* Botao avaliar */
-			$sx .= '<a href="' . base_url('index.php/semic_avaliacao/oral') . '/' . $ids . '/' . checkpost_link($ids) . '">';
+			$tp = substr($line['st_section'],0,2);
+			if ($tp == 'JI' or $tp == 'PE')
+				{
+					$sx .= '<a href="' . base_url('index.php/semic_avaliacao/je') . '/' . $ids . '/' . checkpost_link($ids) . '">';					
+				} else {
+					$sx .= '<a href="' . base_url('index.php/semic_avaliacao/oral') . '/' . $ids . '/' . checkpost_link($ids) . '">';		
+				}
+			
 			$sx .= '<div class="div_semic_avaliar">' . $pre . 'AVALIAR</div>';
 			$sx .= '</a>';
 

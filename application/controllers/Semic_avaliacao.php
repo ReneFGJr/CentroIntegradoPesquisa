@@ -47,7 +47,7 @@ class semic_avaliacao extends CI_Controller {
 			
 
 			/* Recupera ID da avaliacao */
-			$idpp = $this -> semic_avaliacoes -> recupera_avaliacao($codigo, $avaliador, 'SEMIC');
+			$idpp = $this -> semic_avaliacoes -> recupera_avaliacao($codigo, $avaliador, 'SEMIC', 'POSTE');
 
 			$data['title'] = '';
 			$data['idpp'] = $idpp;
@@ -59,6 +59,54 @@ class semic_avaliacao extends CI_Controller {
 			$data['ala'] = $data['st_bloco_poster_ala'];
 			$data['dia'] = $data['sb_data'].' '.$data['sb_hora'].'-'.$data['sb_hora_fim'];
 			$this -> load -> view('semic/semic_localizacao_poster.php', $data);			
+			
+			$data['title'] = '';
+			$data['content'] = $this->semic_anais ->resumo_body($data['st_codigo']);
+			$this -> load -> view('content', $data);
+
+		} else {
+			$this -> load -> view("header/999");
+		}
+	}
+
+	function je($id, $chk) {
+		$avaliador = $_SESSION['id'];
+
+		$this -> cab();
+		if (!checkpost($id, $chk)) {
+			/* Load Models */
+			$this -> load -> model('usuarios');
+			$this -> load -> model('semic/semic_avaliacoes');
+			$this -> load -> model('semic/semic_trabalhos');
+			$this -> load -> model('semic/semic_anais');
+			$this -> load -> model('semic/semic_salas');
+			$this -> semic_avaliacoes -> security();
+
+			$data = $this -> semic_trabalhos -> le($id);
+			//print_r($data);
+			$data['ref'] = $this -> semic_salas -> referencia($data);
+
+			$data['title'] = 'Avaliação Jovens Ideias & Pesquisa é Evoluir - ' . $data['ref'];
+			$data['erro'] = '';
+			
+			$data['back'] = base_url('index.php/semic_avaliacao/bloco/'.$data['st_bloco'].'/'.checkpost_link($data['st_bloco']));
+			$this -> load -> view('semic/avaliacao/cab_works', $data);
+
+			$codigo = $data['st_codigo'];
+			
+			$data['title'] = '';
+			$data['content'] = $this->semic_anais ->resumo_title($data['st_codigo']);
+			$this -> load -> view('content', $data);
+			
+
+			/* Recupera ID da avaliacao */
+			$idpp = $this -> semic_avaliacoes -> recupera_avaliacao($codigo, $avaliador, 'SEMIC','JE');
+
+			$data['title'] = '';
+			$data['idpp'] = $idpp;
+			$data['avaliador'] = $avaliador;
+			$data['content'] = $this -> load -> view('semic/avaliacao/ficha_pe', $data, True);
+			$this -> load -> view('content', $data);
 			
 			$data['title'] = '';
 			$data['content'] = $this->semic_anais ->resumo_body($data['st_codigo']);
@@ -101,7 +149,7 @@ class semic_avaliacao extends CI_Controller {
 			
 
 			/* Recupera ID da avaliacao */
-			$idpp = $this -> semic_avaliacoes -> recupera_avaliacao($codigo, $avaliador, 'SEMIC');
+			$idpp = $this -> semic_avaliacoes -> recupera_avaliacao($codigo, $avaliador, 'SEMIC','ORAL');
 
 			$data['title'] = '';
 			$data['idpp'] = $idpp;

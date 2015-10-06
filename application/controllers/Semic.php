@@ -649,8 +649,6 @@ class semic extends CI_Controller {
 						sm_rem_16 = '".$rm[16]."'   
 						where id_sm = ".$line['id_sm'];
 					$rlta = $this->db->query($sql);
-					echo $sql;
-					echo '<HR>';
 			}
 			
 		$form -> see = true;

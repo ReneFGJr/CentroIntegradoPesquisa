@@ -468,6 +468,7 @@ class semic_trabalhos extends CI_Model {
 	function mostra_agenda_pessoal($id = 0, $ano = 0, $completa = 0) {
 		$ano = 2015;
 		$ano2 = ($ano - 1);
+		$data = date("Y-m-d");
 
 		$cp = "avaliador, ust_titulacao_sigla, id_us, us_nome, situacao, 
 					sb_data, sb_hora, sb_hora_fim, sl_nome, sb_nome,
@@ -487,7 +488,7 @@ class semic_trabalhos extends CI_Model {
 						left join us_titulacao on ust_id = usuario_titulacao_ust_id
 						left join semic_bloco on id_bl = id_sb
 						left join semic_salas on id_sl = sb_sala
-						where id_us = $id
+						where id_us = $id and sb_data >= '$data'
 						group by $cp
 						order by us_nome, sb_data, sb_hora				
 				";
@@ -574,7 +575,7 @@ class semic_trabalhos extends CI_Model {
 			}
 			$sx .= '</table>';
 		} else {
-			$sx = '';
+			$sx = '<center><font color="red" class="lt6">Nenhuma avaliação pendente</font></center>';
 		}
 		/* Cabecalho */
 
@@ -1235,6 +1236,10 @@ class semic_trabalhos extends CI_Model {
 			$wh .= " (pa_area = '" . trim($key) . "') ";
 		}
 		/* Orientadores */
+		if (count($orientadores) == 0)
+			{
+				$wh_prof = '1=0';
+			}
 		foreach ($orientadores as $key => $value) {
 			if (strlen($wh_prof) > 0) { $wh_prof .= ' or ';
 			}
