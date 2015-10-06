@@ -512,7 +512,8 @@ class semic_trabalhos extends CI_Model {
 			$sx .= '<td colspan=1 width="95%" class="lt1">Clique na data e hora para visualizar os trabalhos</td></tr>';
 
 			for ($r = 0; $r < count($rs); $r++) {
-				$id_sl = $rs[0]['id_bl'];
+				
+				$id_sl = $rs[$r]['id_bl'];
 				$link = '<A href="' . base_url('index.php/semic_avaliacao/bloco') . '/' . $id_sl . '/' . checkpost_link($id_sl) . '" class="link">';
 				$link_off = '</a>';
 

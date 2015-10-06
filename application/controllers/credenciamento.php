@@ -76,6 +76,7 @@ class credenciamento extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('KITS', 'Distribuição dos Kits', 'ITE', '/credenciamento/cockpit_kits'));
 		array_push($menu, array('Presença', 'Participação nas apresentações', 'ITE', '/credenciamento/cockpit_presenca'));
+		array_push($menu, array('Presença', 'Alavliadores nos Pôster', 'ITE', '/credenciamento/cockpit_poster'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -98,6 +99,37 @@ class credenciamento extends CI_Controller {
 		$this -> load -> view('header/content_close', $data);
 		$this -> load -> view('header/foot', $data);				
 		}
+		
+	function cockpit_poster($bloco='')
+		{
+		$data = date("Y-m-d");
+		/* Model */
+		$this -> load -> model('credenciamento/credenciamentos');
+		$this -> load -> model('semic/semic_avaliacoes');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open', $data);
+		
+		$data['tela'] = '<h1>Presença dos Avaliadores Pôster</h1>';
+		$data['tela'] .= $this->semic_avaliacoes->posicao_avaliadores($data);
+		$this -> load -> view("credenciamento/content", $data);
+		
+		if (strlen($bloco) > 0)
+			{
+				$data['tela'] = '<h1>Situação dos Avaliadores Pôster</h1>';
+				$data['tela'] .= $this->semic_avaliacoes->posicao_avaliadores_bloco($bloco);
+				$this -> load -> view("credenciamento/content", $data);
+				
+				$data['tela'] = '<h1>Trabalhos sem avaliação</h1>';
+				$data['tela'] .= $this->semic_avaliacoes->posicao_avaliacao_poster($bloco);
+				$this -> load -> view("credenciamento/content", $data);									
+			}
+			
+		$this -> load -> view('header/content_close', $data);
+		$this -> load -> view('header/foot', $data);				
+		}		
 	function cockpit_kits() {
 		/* Model */
 		$this -> load -> model('credenciamento/credenciamentos');

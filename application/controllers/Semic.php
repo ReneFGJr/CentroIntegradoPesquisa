@@ -572,6 +572,95 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	function trabalhos_correcao($id = 0) {
+		/* Load Models */
+		$this -> load -> model('semic/semic_trabalhos');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$sql = "select * from semic_trabalho 
+							where sm_titulo like '%[e]%' 
+							or sm_titulo_en like '%[e]%'
+							or sm_rem_01 like '%[e]%'
+							or sm_rem_02 like '%[e]%'
+							or sm_rem_03 like '%[e]%'
+							or sm_rem_04 like '%[e]%'
+							or sm_rem_05 like '%[e]%'
+							or sm_rem_06 like '%[e]%'
+							or sm_rem_11 like '%[e]%'
+							or sm_rem_12 like '%[e]%'
+							or sm_rem_13 like '%[e]%'
+							or sm_rem_14 like '%[e]%'
+							or sm_rem_15 like '%[e]%'
+							or sm_rem_16 like '%[e]%'
+							limit 10
+							";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		
+		for ($rq=0;$rq < count($rlt);$rq++)
+			{
+				$line = $rlt[$rq];
+				
+				$tit = $line['sm_titulo'];
+				echo '<BR>'.$tit;
+				$tit = troca($tit,'[e]','&');
+				$tit = troca($tit,'&rt;','>');
+				$tit = troca($tit,'&lt;','<');
+				
+				$tite = $line['sm_titulo_en'];
+				$tite = troca($tite,'[e]','&');
+				$tite = troca($tite,'&rt;','>');
+				$tite = troca($tite,'&lt;','<');
+				
+				$rm = array();
+				for ($r=1;$r <= 6;$r++)
+					{
+					$rm[$r] = $line['sm_rem_0'.$r]; 
+					$rm[$r] = troca($rm[$r],'[e]','&');
+					$rm[$r] = troca($rm[$r],'&rt;','>');
+					$rm[$r] = troca($rm[$r],'&lt;','<');
+					}
+				for ($r=11;$r <= 16;$r++)
+					{
+					$rm[$r] = $line['sm_rem_'.$r]; 
+					$rm[$r] = troca($rm[$r],'[e]','&');
+					$rm[$r] = troca($rm[$r],'&rt;','>');
+					$rm[$r] = troca($rm[$r],'&lt;','<');
+					}									
+				
+				$sql = "update semic_trabalho set
+						sm_titulo = '$tit',
+						sm_titulo_en = '$tite',
+						sm_rem_01 = '".$rm[1]."',
+						sm_rem_02 = '".$rm[2]."', 
+						sm_rem_03 = '".$rm[3]."', 
+						sm_rem_04 = '".$rm[4]."', 
+						sm_rem_05 = '".$rm[5]."', 
+						sm_rem_06 = '".$rm[6]."', 
+						sm_rem_11 = '".$rm[11]."', 
+						sm_rem_12 = '".$rm[12]."',
+						sm_rem_13 = '".$rm[13]."',
+						sm_rem_14 = '".$rm[14]."',
+						sm_rem_15 = '".$rm[15]."',
+						sm_rem_16 = '".$rm[16]."'   
+						where id_sm = ".$line['id_sm'];
+					$rlta = $this->db->query($sql);
+					echo $sql;
+					echo '<HR>';
+			}
+			
+		$form -> see = true;
+		$form -> edit = true;
+		$form = $this -> semic_trabalhos -> row($form);
+
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	function trabalhos_row($id = 0) {
 		/* Load Models */

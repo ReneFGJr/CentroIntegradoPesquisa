@@ -34,6 +34,130 @@ class semic_avaliacoes extends CI_Model {
 		}
 		return ($sx);
 	}
+	
+	function posicao_avaliadores($data)
+		{
+			$sql = "select * from 
+					(select st_bloco_poster from semic_nota_trabalhos 
+					where st_bloco_poster > 0
+					group by st_bloco_poster
+					) as tabela 
+					left join semic_bloco on st_bloco_poster = id_sb
+					order by sb_data, sb_hora						
+						
+						";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<ul>';
+			for ($r=0;$r < count($rlt); $r++)
+				{
+					$line = $rlt[$r];
+					
+					$link = '<a href="'.base_url('index.php/credenciamento/cockpit_poster/'.$line['st_bloco_poster']).'" class="link">';
+					$sx .= '<li class="lt3">';
+					$sx .= $link;
+					$sx .= stodbr($line['sb_data']).' '.$line['sb_hora'];
+					$sx .= ' ';
+					$sx .= $line['sb_nome'];
+					$sx .= '</a>';				
+					$sx .= '</li>';
+				}
+			$sx .= '</ul>';
+			return($sx);
+						
+		}
+		
+	function posicao_avaliacao_poster($bloco)
+		{
+			$sql = "select * from semic_nota_trabalhos
+					left join pibic_parecer_2015 on st_codigo = pp_protocolo
+					left join us_usuario on id_us = st_avaliador_1 and st_avaliador_1 <> 0
+					where st_bloco_poster = $bloco
+					order by us_nome, pp_status, st_section, lpad(st_nr,3,0)
+			";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="800">';
+			for ($r=0;$r < count($rlt); $r++)
+				{
+					$line = $rlt[$r];
+					$ref = $this->semic_salas->referencia($line);
+					
+					$st = trim($line['pp_status']);
+					if (strlen($st)> 0)
+						{
+							$bg = ' bgcolor="#AAFFAA" ';
+						} else {
+							$bg = ' bgcolor="#FFAAAA" ';
+						}
+					$sx .= '<tr '.$bg.'><td>';
+					$sx .= $line['st_codigo'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>'.$ref.'</td>';
+					
+					$sx .= '<td>'.$line['st_modalidade'].'</td>';
+					$sx .= '<td>'.$line['pp_status'].'</td>';
+					$sx .= '<td>'.$line['us_nome'].'</td>';
+					//exit;
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
+		
+	function posicao_avaliadores_bloco($bloco)
+		{
+		$data = date("Y-m-d");
+		$ano = date("Y");
+		$ano2 = (date("Y")-1);
+		
+		$cp = "avaliador, id_us, us_nome, st_bloco_poster, pp_avaliador_id ";
+		$sql = "select $cp, count(*) as total from ( 
+							SELECT st_bloco_poster, st_avaliador_1 as avaliador, st_avaliador_situacao_1 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_1 > 0 and st_bloco_poster = $bloco
+								union
+							SELECT st_bloco_poster, st_avaliador_2 as avaliador, st_avaliador_situacao_2 as situacao FROM semic_nota_trabalhos WHERE st_ano = '$ano2' and st_avaliador_2 > 0 and st_bloco_poster = $bloco				
+																				
+							) as total 
+						inner join us_usuario on id_us = avaliador
+						left join (
+						SELECT pp_avaliador_id FROM `semic_nota_trabalhos` 
+							left join pibic_parecer_2015 on st_codigo = pp_protocolo
+							WHERE st_bloco_poster = $bloco
+							group by pp_avaliador_id
+						) as tabela2 on pp_avaliador_id = id_us
+						group by $cp
+						order by us_nome				
+				";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		$sx = '<table width="800">';
+		$tot = 0;
+		for ($r=0;$r < count($rlt); $r++)
+			{
+				$line = $rlt[$r];
+				$sit = trim($line['pp_avaliador_id']);
+				if (strlen($sit) == 0)
+					{
+						$bg = ' bgcolor="#ffa0a0" ';
+						$tot++; 
+					} else {
+						$bg = ' bgcolor="#a0ffa0"' ;
+					}
+				
+				$sx .= '<tr '.$bg.'>';
+				$sx .= '<td >';
+				$sx .= $line['us_nome'];
+				$sx .= '</td>';
+				$sit = trim($line['pp_avaliador_id']);
+				$sx .= '<td>';
+				$sx .= $sit;
+				$sx .= '</td>';										
+			}
+		$sx .= '<tr><td colspan=3>Sem avaliação: '.$tot.'</td></tr>';
+		$sx .= '</table>';
+		return($sx);
+		}
+		
 
 	function mostra_etiquetas_avaliadores_todas() {
 		$ano2 = (date("Y") - 1);
