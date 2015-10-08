@@ -5,14 +5,14 @@ if ($ri < 1) { $ri = 1; }
 for ($r=$ri;$r < count($rlt);$r++)
 	{
 		$link = '<A href="'.base_url('index.php/semic/premiacao/'.$r).'" class="link">';
-		echo '<tr align="center"><td class="border1" width="40">'.$link.$r.'</a></td></tr>';
+		echo '<tr align="center"><td class="border2" width="40">'.$link.$r.'</a></td></tr>';
 	}
 echo '</table>';
 $line = $rlt[$id];
 $spt_area = $line['spt_area'];
 $spt_modalidade = $line['spt_modalidade'];
 $nome_aluno = $line['us_aluno'];
-$titulo_trabalho = $line['sm_titulo'];
+$titulo_trabalho = $line['sm_titulo'];	
 $nome_professor = $line['us_professor'];
 
 
@@ -34,6 +34,7 @@ $nome_professor = $line['us_professor'];
 		</div>
 	</div>
 
+
 	<div class="miolo">
 		<div class="premios">
 			<div class="icone">
@@ -49,6 +50,8 @@ $nome_professor = $line['us_professor'];
 			</div>
 		</div>
 	</div>
+	
+	
 </div>
 </body>
 </html>
