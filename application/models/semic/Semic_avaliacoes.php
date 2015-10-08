@@ -1,5 +1,210 @@
 <?php
 class semic_avaliacoes extends CI_Model {
+	
+	function resultado_semic($area, $edital='PIBIC', $mod= 'POSTER')
+		{
+			switch ($area)
+				{
+				case '1':
+					$wh = " (st_area_geral like '1.%' or st_area_geral like '3.%') ";
+					$narea = "Ciências Exatas e Engenharias";
+					break;
+				case '2':
+					$wh = " (st_area_geral like '2.%' or st_area_geral like '4.%') ";
+					$narea = "Ciências da Vida";
+					break;	
+				case '5':
+					$wh = " (st_area_geral like '5.%') ";
+					$narea = "Ciências Agrárias";
+					break;													
+				case '6':
+					$wh = " (st_area_geral like '6.%') ";
+					$narea = "Ciências Sociais Aplicadas";
+					break;													
+				case '7':
+					$wh = " (st_area_geral like '7.%' or st_area_geral like '8.%') ";
+					$narea = "Ciências Humanas, Lingística e Artes";
+					break;	
+				}
+			
+			if (strlen($edital) > 0)
+				{
+					$wh .= " and st_edital = '$edital' ";
+					if ($edital == 'PIBITI')
+						{
+							$wh = " st_edital = '$edital' "; 
+						}
+					if ($edital == 'PIBIC_EM')
+						{
+							$wh = " st_edital = '$edital' "; 
+						}											
+				}
+			if (strlen($mod) > 0)
+				{
+					if ($mod == 'POSTER')
+						{
+						$wh .= " and st_poster = 'S' and pp_p19 = 'POSTE' ";
+						}
+					if ($mod == 'ORAL')
+						{
+						$wh .= " and st_oral = 'S' and pp_p19 <> 'POSTE' ";
+						}
+				}
+			$sql = "select count(*) as av, pp_protocolo, avg(nota) as nota, st_section, st_nr, st_poster, st_oral,
+						st_edital, st_status, st_eng,  
+						avg(outras) as outras, avg(nf) as nf, avg(st_nota_media) as st_nota_media,
+						avg(uaf_fc) as uaf_fc from
+					(
+					select pp_protocolo, pp_p08 as nota, st_section, st_nr, st_poster, st_oral,
+						st_edital, st_status, st_eng,  
+						(pp_p01 + pp_p02 + pp_p03 + pp_p04 + pp_p06) / 5 as outras,
+						(pp_p08 + uaf_fc + st_nota_media) / 2 as nf , st_nota_media, uaf_fc
+						from pibic_parecer_".date("Y")." 
+						inner join semic_nota_trabalhos on st_codigo = pp_protocolo 
+						inner join us_avaliador_fc on us_usuario_us_id = pp_avaliador_id
+					where $wh
+					) as tabela01
+					group by pp_protocolo, st_section, st_nr, st_poster, st_oral,
+						st_edital, st_status, st_eng
+					order by nf desc, nota desc, outras desc
+					limit 40
+					";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%">';
+			$sx .= '<tr><td class="lt6" colspan=10>'.$narea.' - '.$edital.' - '.$mod.'</td></tr>';
+			$sx .= '<tr><th>Pos</th>
+						<th>Protocolo</th>
+						<th>Nota final</th>
+						<th>Codigo</th>
+						<th>Avaliação Pôster</th>
+						<th>Média Sub+RP+RF</th>
+						<th>desempate</th>
+						<th>Pôster</th>
+						<th>Oral</th>
+						<th>CN</th>
+						</tr>';
+						
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$sx .= '<tr align="center">';
+					
+					$sx .= '<td width="20">'.($r+1).'.</td>';
+					$sx .= '<td>';
+					$sx .= $line['pp_protocolo'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= number_format($line['nf'],3);
+					$sx .= '</td>';					
+					 
+					$sx .= '<td>';
+					$sx .= $this->semic_salas->referencia($line);
+					$sx .= '</td>'; 
+
+					$nota = $line['nota'];
+					if ($nota == 110)
+						{
+							$nota = '10 com mérito';
+						} else {
+							$nota = ($nota / 10);
+						}
+					$sx .= '<td>';
+					$sx .= $nota;
+					$sx .= '</td>';
+
+					 					 
+					$sx .= '<td>';
+					$sx .= $line['st_nota_media']/10;
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['outras']/10;
+					$sx .= '</td>';
+					 
+					$sx .= '<td>';
+					$sx .= $line['st_poster'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['st_oral'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= number_format($line['uaf_fc']/10,4);
+					$sx .= ' / '.$line['av'];
+					$sx .= '</td>';
+				}
+				$sx .= '</table>';
+				return($sx);
+						
+		}
+	
+	/* Calcular fator de correcao do avaliador */
+	function avaliador_cn()
+		{
+			
+			$sql = "SELECT avg(pp_p08) as media  
+					FROM pibic_parecer_".date("Y")." WHERE pp_p08 > 60  ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$line = $rlt[0];
+			$vfct = $line['media'];			
+			$sx = '<h1>FC: '.$vfct.'</h1>';
+			$sql = "SELECT pp_avaliador_id, count(*) as total, avg(pp_p08) as media, 
+						max(pp_p08) as max, min(pp_p08) as min, sum(pp_p08) as soma
+					FROM pibic_parecer_".date("Y")." WHERE pp_p08 > 60 
+					group by pp_avaliador_id ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$tot = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$tot++;
+					$line = $rlt[$r];
+					$vm = $line['media'];
+					$vtotal = $line['total'];
+					$vmax = $line['max'];
+					$vmin = $line['min'];
+					$vsoma = $line['soma'];
+					$id = $line['pp_avaliador_id'];
+					$data = date("Y-m-d");
+					$vfc = $vfct - $line['media'];	
+					$sql = "select * from us_avaliador_fc 
+								where us_usuario_us_id = ".$line['pp_avaliador_id'];
+					$rrr = $this->db->query($sql);
+					$rrr = $rrr->result_array();
+					if (count($rrr) > 0)
+						{
+							$sql = "update us_avaliador_fc set
+										uaf_media = $vm,
+										uaf_max = $vmax,
+										uaf_min = $vmin,
+										uaf_total = $vtotal,
+										uaf_fc = $vfc,
+										uaf_update = '$data',
+										uaf_somatoria = $vsoma
+									where us_usuario_us_id = ".$id;
+							$rq = $this->db->query($sql);
+						} else {
+							$sql = "insert into us_avaliador_fc
+									(
+									uaf_media, uaf_max, uaf_min,
+									uaf_total, uaf_fc, uaf_update, 
+									uaf_somatoria, us_usuario_us_id
+									) values (
+									$vm, $vmax, $vmin,
+									$vtotal, $vfc, '$data',
+									$vsoma, $id)
+							";
+							$rq = $this->db->query($sql);
+						}
+						$sx .= '. ';
+				}
+			$sx .= '<br>'.$tot.' avaliadores ';
+			return($sx);
+		}
 	function set_avaliador($id, $nome) {
 		$chk = md5($id . $nome . 'SeMiC' . date("Ymd"));
 		$se = array('id' => $id, 'nome' => $nome, 'chk' => $chk);
@@ -280,7 +485,7 @@ class semic_avaliacoes extends CI_Model {
 		$sql = "select * from semic_nota_trabalhos 
 						left join semic_bloco on id_sb = st_bloco
 						left join semic_trabalho on st_codigo = sm_codigo
-						left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo and pp_avaliador_id = $av and pp_p19 = 'POSTE'
+						left join pibic_parecer_" . date("Y") . " on pp_protocolo = st_codigo and pp_avaliador_id = $av and (pp_p19 = 'POSTE' OR pp_p19 = 'JI' or pp_p10 = 'PE')
 						where st_poster = 'S' and st_bloco_poster = $bl
 						and st_status <> 'C'
 						and (st_avaliador_1 = $av or st_avaliador_2 = $av)
@@ -361,7 +566,7 @@ class semic_avaliacoes extends CI_Model {
 		$sql = "select * from semic_nota_trabalhos 
 						left join semic_bloco on id_sb = st_bloco
 						left join semic_trabalho on st_codigo = sm_codigo
-						left join pibic_parecer_" . date("Y") . " on (pp_protocolo = st_codigo) and (pp_avaliador_id = $av) and (pp_p19 = 'ORAL')
+						left join pibic_parecer_" . date("Y") . " on (pp_protocolo = st_codigo) and (pp_avaliador_id = $av) and (pp_p19 = 'ORAL'  OR pp_p19 = 'JI' or pp_p10 = 'PE')
 						where st_oral = 'S' and st_bloco = $bl
 						and st_status <> 'C'
 						and (sb_avaliador_1 = $av or sb_avaliador_2 = $av or sb_avaliador_3 = $av)

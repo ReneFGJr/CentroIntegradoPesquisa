@@ -125,6 +125,23 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
+	function resultado_semic($area=0,$modalidade='',$edital)
+		{
+		/* Load Models */
+		$this -> load -> model('semic/semic_avaliacoes');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$data['content'] = $this->semic_avaliacoes->resultado_semic($area,$modalidade,$edital);
+		$this -> load -> view('content', $data);		
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}
+
 	function aceite() {
 		/* Load Models */
 		$this -> load -> model('avaliadores');
@@ -165,6 +182,22 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function calculo_fc($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('semic/semic_avaliacoes');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+		$data['content'] = $this->semic_avaliacoes->avaliador_cn();
+		$this -> load -> view('content', $data);		
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	/* Exportar dados */
 	function anais_exportar() {
@@ -360,6 +393,34 @@ class semic extends CI_Controller {
 
 		$menu = array();
 		array_push($menu, array('SEMIC', 'Resumos', 'ITE', '/semic/acompanhamento_resumos'));
+		
+		array_push($menu, array('Notas', 'Gerar Fator de Correção Avaliador', 'ITE', '/semic/calculo_fc'));
+		
+		array_push($menu, array('Resultado PIBIC', 'Pôster - Área (1 e 3)', 'ITE', '/semic/resultado_semic/1/PIBIC/POSTER'));
+		array_push($menu, array('Resultado PIBIC', 'Pôster - Área (2 e 4)', 'ITE', '/semic/resultado_semic/2/PIBIC/POSTER'));
+		array_push($menu, array('Resultado PIBIC', 'Pôster - Área (5)', 'ITE', '/semic/resultado_semic/5/PIBIC/POSTER'));
+		array_push($menu, array('Resultado PIBIC', 'Pôster - Área (6)', 'ITE', '/semic/resultado_semic/6/PIBIC/POSTER'));
+		array_push($menu, array('Resultado PIBIC', 'Pôster - Área (7 e 8)', 'ITE', '/semic/resultado_semic/7/PIBIC/POSTER'));
+
+		array_push($menu, array('Resultado PIBIC', 'Oral - Área (1 e 3)', 'ITE', '/semic/resultado_semic/1/PIBIC/ORAL'));
+		array_push($menu, array('Resultado PIBIC', 'Oral - Área (2 e 4)', 'ITE', '/semic/resultado_semic/2/PIBIC/ORAL'));
+		array_push($menu, array('Resultado PIBIC', 'Oral - Área (5)', 'ITE', '/semic/resultado_semic/5/PIBIC/ORAL'));
+		array_push($menu, array('Resultado PIBIC', 'Oral - Área (6)', 'ITE', '/semic/resultado_semic/6/PIBIC/ORAL'));
+		array_push($menu, array('Resultado PIBIC', 'Oral - Área (7 e 8)', 'ITE', '/semic/resultado_semic/7/PIBIC/ORAL'));
+
+		array_push($menu, array('Resultado Internacional', 'Oral - Área (1 e 3)', 'ITE', '/semic/resultado_semic/0/PIBIC/ORAL'));
+
+		array_push($menu, array('Resultado PIBITI', 'Pôster', 'ITE', '/semic/resultado_semic/1/PIBITI/POSTER'));
+		array_push($menu, array('Resultado PIBITI', 'Oral', 'ITE', '/semic/resultado_semic/2/PIBITI/ORAL'));
+
+		array_push($menu, array('Resultado PIBIC_EM', 'Pôster', 'ITE', '/semic/resultado_semic/1/PIBIC_EM/POSTER'));
+		array_push($menu, array('Resultado PIBIC_EM', 'Oral', 'ITE', '/semic/resultado_semic/2/PIBIC_EM/ORAL'));
+
+		array_push($menu, array('Resultado PIBIC_EM', 'Pôster', 'ITE', '/semic/resultado_semic/1/PIBIC_EM/POSTER'));
+		array_push($menu, array('Resultado PIBIC_EM', 'Oral', 'ITE', '/semic/resultado_semic/2/PIBIC_EM/ORAL'));
+
+		array_push($menu, array('Resultado JI', 'Pôster', 'ITE', '/semic/resultado_semic/1/JI/POSTER'));
+		array_push($menu, array('Resultado JI', 'Oral', 'ITE', '/semic/resultado_semic/2/JI/ORAL'));
 
 		$data = array();
 		$data['menu'] = $menu;
