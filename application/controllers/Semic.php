@@ -49,6 +49,80 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
+	function premiacao_row($id = 0, $ref = '') {
+		/* Carrega classes adicionais */
+		$this -> load -> model('semic/semic_avaliacoes');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		$tela = $this -> semic_avaliacoes -> premiacao_row();
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+		$this -> load -> view('header/content_close');
+	}
+	
+	function premiacao_ed($id = 0, $ref = '') {
+		/* Load Models */
+		$this -> load -> model('semic/semic_avaliacoes');
+		$cp = $this -> semic_avaliacoes -> cp_premiacao();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, 'semic_premiacao_trabalho');
+		$data['title'] = msg('premiação');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/semic/premiacao_row'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+	
+
+	function premiacao($id = '') {
+		/* Load Models */
+		$this -> load -> model('semic/semic_avaliacoes');
+				
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'style_cab.css');
+		array_push($css, 'form_sisdoc.css');
+		array_push($css, 'style_semic_2015.css');
+		array_push($css, 'semic/2015/style_semic_2015.css');
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		$sql = "select * from ";
+
+		/* Monta telas */
+		$data['pos'] = $id;
+		$this -> load -> view('header/header', $data);
+
+		if (strlen($id) == 0) {
+			$this -> load -> view('semic/premiacao/capa');
+		} else {
+			$data['rlt'] = $this->semic_avaliacoes->premiacoes_lista();
+			$data['id'] = $id;
+			$this -> load -> view('semic/premiacao/premios', $data);
+		}
+
+	}
+
 	function poster_localizacao($id = 0, $ref = '') {
 		/* Carrega classes adicionais */
 		$this -> load -> model('semic/semic_trabalhos');
@@ -125,8 +199,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
-	function resultado_semic($area=0,$modalidade='',$edital)
-		{
+	function resultado_semic($area = 0, $modalidade = '', $edital) {
 		/* Load Models */
 		$this -> load -> model('semic/semic_avaliacoes');
 		$this -> load -> model('semic/semic_salas');
@@ -135,12 +208,12 @@ class semic extends CI_Controller {
 		$data = array();
 		$this -> load -> view('header/content_open');
 
-		$data['content'] = $this->semic_avaliacoes->resultado_semic($area,$modalidade,$edital);
-		$this -> load -> view('content', $data);		
-		
+		$data['content'] = $this -> semic_avaliacoes -> resultado_semic($area, $modalidade, $edital);
+		$this -> load -> view('content', $data);
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}
+	}
 
 	function aceite() {
 		/* Load Models */
@@ -182,7 +255,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
+
 	function calculo_fc($id = 0) {
 
 		/* Load Models */
@@ -191,13 +264,13 @@ class semic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		
-		$data['content'] = $this->semic_avaliacoes->avaliador_cn();
-		$this -> load -> view('content', $data);		
+
+		$data['content'] = $this -> semic_avaliacoes -> avaliador_cn();
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	}	
+	}
 
 	/* Exportar dados */
 	function anais_exportar() {
@@ -392,10 +465,12 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 		$menu = array();
+		array_push($menu, array('SEMIC', 'Resultado - Premiação', 'ITE', '/semic/premiacao'));
+
 		array_push($menu, array('SEMIC', 'Resumos', 'ITE', '/semic/acompanhamento_resumos'));
-		
+
 		array_push($menu, array('Notas', 'Gerar Fator de Correção Avaliador', 'ITE', '/semic/calculo_fc'));
-		
+
 		array_push($menu, array('Resultado PIBIC', 'Pôster - Área (1 e 3)', 'ITE', '/semic/resultado_semic/1/PIBIC/POSTER'));
 		array_push($menu, array('Resultado PIBIC', 'Pôster - Área (2 e 4)', 'ITE', '/semic/resultado_semic/2/PIBIC/POSTER'));
 		array_push($menu, array('Resultado PIBIC', 'Pôster - Área (5)', 'ITE', '/semic/resultado_semic/5/PIBIC/POSTER'));
@@ -633,6 +708,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
 	function trabalhos_correcao($id = 0) {
 		/* Load Models */
 		$this -> load -> model('semic/semic_trabalhos');
@@ -659,67 +735,63 @@ class semic extends CI_Controller {
 							or sm_rem_16 like '%[e]%'
 							limit 10
 							";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		
-		for ($rq=0;$rq < count($rlt);$rq++)
-			{
-				$line = $rlt[$rq];
-				
-				$tit = $line['sm_titulo'];
-				echo '<BR>'.$tit;
-				$tit = troca($tit,'[e]','&');
-				$tit = troca($tit,'&rt;','>');
-				$tit = troca($tit,'&lt;','<');
-				
-				$tite = $line['sm_titulo_en'];
-				$tite = troca($tite,'[e]','&');
-				$tite = troca($tite,'&rt;','>');
-				$tite = troca($tite,'&lt;','<');
-				
-				$rm = array();
-				for ($r=1;$r <= 6;$r++)
-					{
-					$rm[$r] = $line['sm_rem_0'.$r]; 
-					$rm[$r] = troca($rm[$r],'[e]','&');
-					$rm[$r] = troca($rm[$r],'&rt;','>');
-					$rm[$r] = troca($rm[$r],'&lt;','<');
-					}
-				for ($r=11;$r <= 16;$r++)
-					{
-					$rm[$r] = $line['sm_rem_'.$r]; 
-					$rm[$r] = troca($rm[$r],'[e]','&');
-					$rm[$r] = troca($rm[$r],'&rt;','>');
-					$rm[$r] = troca($rm[$r],'&lt;','<');
-					}									
-				
-				$sql = "update semic_trabalho set
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		for ($rq = 0; $rq < count($rlt); $rq++) {
+			$line = $rlt[$rq];
+
+			$tit = $line['sm_titulo'];
+			echo '<BR>' . $tit;
+			$tit = troca($tit, '[e]', '&');
+			$tit = troca($tit, '&rt;', '>');
+			$tit = troca($tit, '&lt;', '<');
+
+			$tite = $line['sm_titulo_en'];
+			$tite = troca($tite, '[e]', '&');
+			$tite = troca($tite, '&rt;', '>');
+			$tite = troca($tite, '&lt;', '<');
+
+			$rm = array();
+			for ($r = 1; $r <= 6; $r++) {
+				$rm[$r] = $line['sm_rem_0' . $r];
+				$rm[$r] = troca($rm[$r], '[e]', '&');
+				$rm[$r] = troca($rm[$r], '&rt;', '>');
+				$rm[$r] = troca($rm[$r], '&lt;', '<');
+			}
+			for ($r = 11; $r <= 16; $r++) {
+				$rm[$r] = $line['sm_rem_' . $r];
+				$rm[$r] = troca($rm[$r], '[e]', '&');
+				$rm[$r] = troca($rm[$r], '&rt;', '>');
+				$rm[$r] = troca($rm[$r], '&lt;', '<');
+			}
+
+			$sql = "update semic_trabalho set
 						sm_titulo = '$tit',
 						sm_titulo_en = '$tite',
-						sm_rem_01 = '".$rm[1]."',
-						sm_rem_02 = '".$rm[2]."', 
-						sm_rem_03 = '".$rm[3]."', 
-						sm_rem_04 = '".$rm[4]."', 
-						sm_rem_05 = '".$rm[5]."', 
-						sm_rem_06 = '".$rm[6]."', 
-						sm_rem_11 = '".$rm[11]."', 
-						sm_rem_12 = '".$rm[12]."',
-						sm_rem_13 = '".$rm[13]."',
-						sm_rem_14 = '".$rm[14]."',
-						sm_rem_15 = '".$rm[15]."',
-						sm_rem_16 = '".$rm[16]."'   
-						where id_sm = ".$line['id_sm'];
-					$rlta = $this->db->query($sql);
-			}
-			
+						sm_rem_01 = '" . $rm[1] . "',
+						sm_rem_02 = '" . $rm[2] . "', 
+						sm_rem_03 = '" . $rm[3] . "', 
+						sm_rem_04 = '" . $rm[4] . "', 
+						sm_rem_05 = '" . $rm[5] . "', 
+						sm_rem_06 = '" . $rm[6] . "', 
+						sm_rem_11 = '" . $rm[11] . "', 
+						sm_rem_12 = '" . $rm[12] . "',
+						sm_rem_13 = '" . $rm[13] . "',
+						sm_rem_14 = '" . $rm[14] . "',
+						sm_rem_15 = '" . $rm[15] . "',
+						sm_rem_16 = '" . $rm[16] . "'   
+						where id_sm = " . $line['id_sm'];
+			$rlta = $this -> db -> query($sql);
+		}
+
 		$form -> see = true;
 		$form -> edit = true;
 		$form = $this -> semic_trabalhos -> row($form);
 
-
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	}	
+	}
 
 	function trabalhos_row($id = 0) {
 		/* Load Models */

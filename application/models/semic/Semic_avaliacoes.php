@@ -309,6 +309,126 @@ class semic_avaliacoes extends CI_Model {
 			$sx .= '</table>';
 			return($sx);
 		}
+
+	function cp_premiacao()
+		{
+			$cp = array();
+			$area = '&Todas as áreas:Todas as áreas';
+			$area .= '&Ciências Exatas e Engenharias:Ciências Exatas e Engenharias';
+			$area .= '&Ciências da Vida:Ciências da Vida';
+			$area .= '&Ciências Agrárias:Ciências Agrárias';
+			$area .= '&Ciências Humanas, Linguistica, Letras e Artes:Ciências Humanas, Linguistica, Letras e Artes';
+			$area .= '&Ciências Sociais Aplicadas:Ciências Sociais Aplicadas';
+			$area .= '&Pesquisar é Evoluir:Pesquisar é Evoluir';
+			$area .= '&Jovens Ideias:Jovens Ideias';
+			
+			$mod = 'PÔSTER:PÔSTER';
+			$mod .= '&ORAL:ORAL';
+			$mod .= '&APRESENTAÇÃO:APRESENTAÇÃO';
+			
+			$ed = 'PIBIC:PIBIC';
+			$ed .= '&PIBITI:PIBITI';
+			$ed .= '&PIBIC Internaciona:PIBIC Internacional';
+			$ed .= '&PIBIC_EM:PIBIC_EM';
+			$ed .= '&Jovens Ideias:Jovens Ideias';
+			$ed .= '&Pesquisar é Evoluir:Pesquisar é Evoluir';
+			$ed .= '&Pesquisar é Evoluir Junior:Pesquisar é Evoluir Junior';
+			$ed .= '&Concurso:Concurso';			
+			
+			array_push($cp,array('$H8','id_spt','',False,True));
+			array_push($cp,array('$Q id_smp:smp_modalidade:select * from semic_premiacao order by smp_modalidade','spt_premiacao','Prêmio',True,True));
+			array_push($cp,array('$O '.$area,'spt_area','Área',True,True));
+			array_push($cp,array('$O '.$mod,'spt_modalidade','Modalidade',True,True));
+			array_push($cp,array('$O '.$ed,'spt_edital','Edital',True,True));
+			array_push($cp,array('$[1-99]','spt_ordem','Ordem',True,True));
+			array_push($cp,array('$['.date("Y").'-'.date("Y").']','spt_ano','Ano',True,True));
+			array_push($cp,array('$S8','spt_protocolo','Protocolo do trabalho',False,True));
+			return($cp);			
+		}
+
+	function premiacao_row()
+		{
+			$ano = date("Y");
+			$sql = "SELECT * FROM `semic_premiacao_trabalho` 
+					left join semic_premiacao on spt_premiacao = id_smp
+					left join semic_nota_trabalhos on spt_protocolo = st_codigo
+					left join (select us_nome as us_professor, us_cracha as us_ch1, us_campus_vinculo as us_professor_campus from us_usuario ) as prof on us_ch1 = st_professor
+					left join (select us_nome as us_aluno, us_cracha as us_ch2 from us_usuario ) as est on us_ch2 = st_aluno 
+					WHERE spt_ano = '$ano' 
+					order by spt_ordem ";
+			$rlt = db_query($sql);
+			$sx = '<table width="100%" class="lt2">';
+			$xarea = '';
+			while ($line = db_read($rlt))
+				{
+					$area = $line['spt_area'];
+					if ($area != $xarea)
+						{
+							$sx .= '<tr><td colspan=10 class="lt6">';
+							$sx .= $line['spt_modalidade'] .' - '.$line['spt_area'];
+							$sx .= '</td></tr>';
+							$xarea = $area;
+						}
+					$link = '<A href="'.base_url('index.php/semic/premiacao_ed/'.$line['id_spt'].'/'.checkpost_link($line['id_spt'])).'" class="link">';
+					$sx .= '<tr>';
+					
+					$sx .= '<td class="borderb1" align="center" width="40">';
+					$sx .= $line['spt_ordem'];
+					$sx .= '</td>';
+					
+					$sx .= '<td class="borderb1" align="center" width="70">';
+					$sx .= $line['spt_edital'];
+					$sx .= '</td>';						
+					
+					$sx .= '<td class="borderb1" align="center" width="70">';
+					$sx .= $line['spt_modalidade'];
+					$sx .= '</td>';	
+					
+					$sx .= '<td class="borderb1" align="center" width="120">';
+					$sx .= $this->semic_salas->referencia($line);
+					$sx .= '</td>';
+
+					$sx .= '<td class="borderb1" align="left" width="140">';
+					$sx .= $line['smp_modalidade'];
+					$sx .= '</td>';
+					
+					$sx .= '<td class="borderb1" align="left">';
+					$sx .= $line['us_aluno'];
+					$sx .= '</td>';					
+					
+					$sx .= '<td class="borderb1" align="left">';
+					$sx .= $line['us_professor'];
+					$sx .= '</td>';					
+
+					$sx .= '<td class="borderb1" align="left">';
+					$sx .= $line['us_professor_campus'];
+					$sx .= '</td>';
+					$sx .= '<td class="borderb1" align="center"  width="40">';
+					$sx .= $link;
+					$sx .= 'editar';
+					$sx .= '</a>';
+					$sx .= '</td>';					
+
+					$sx .= '</tr>';
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
+	function premiacoes_lista()
+		{
+			$ano = date("Y");
+			$sql = "SELECT * FROM semic_premiacao_trabalho 
+					left join semic_premiacao on spt_premiacao = id_smp
+					left join semic_nota_trabalhos on spt_protocolo = st_codigo
+					left join (select us_nome as us_professor, us_cracha as us_ch1, us_campus_vinculo as us_professor_campus from us_usuario ) as prof on us_ch1 = st_professor
+					left join (select us_nome as us_aluno, us_cracha as us_ch2 from us_usuario ) as est on us_ch2 = st_aluno 
+					left join semic_trabalho on st_codigo = sm_codigo
+					WHERE spt_ano = '$ano' 
+					order by spt_ordem ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			return($rlt);			
+		}
 		
 	function posicao_avaliadores_bloco($bloco)
 		{
