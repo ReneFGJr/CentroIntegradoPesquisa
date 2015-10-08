@@ -116,7 +116,7 @@ class semic extends CI_Controller {
 		if (strlen($id) == 0) {
 			$this -> load -> view('semic/premiacao/capa');
 		} else {
-			$data['rlt'] = $this->semic_avaliacoes->premiacoes_lista();
+			$data = $this->semic_avaliacoes->premiacoes_lista($id);
 			$data['id'] = $id;
 			$this -> load -> view('semic/premiacao/premios', $data);
 		}
@@ -483,7 +483,7 @@ class semic extends CI_Controller {
 		array_push($menu, array('Resultado PIBIC', 'Oral - Área (6)', 'ITE', '/semic/resultado_semic/6/PIBIC/ORAL'));
 		array_push($menu, array('Resultado PIBIC', 'Oral - Área (7 e 8)', 'ITE', '/semic/resultado_semic/7/PIBIC/ORAL'));
 
-		array_push($menu, array('Resultado Internacional', 'Oral - Área (1 e 3)', 'ITE', '/semic/resultado_semic/0/PIBIC/ORAL'));
+		array_push($menu, array('Resultado Internacional', 'Oral', 'ITE', '/semic/resultado_semic/10/PIBIC/ORAL'));
 
 		array_push($menu, array('Resultado PIBITI', 'Pôster', 'ITE', '/semic/resultado_semic/1/PIBITI/POSTER'));
 		array_push($menu, array('Resultado PIBITI', 'Oral', 'ITE', '/semic/resultado_semic/2/PIBITI/ORAL'));
@@ -491,11 +491,11 @@ class semic extends CI_Controller {
 		array_push($menu, array('Resultado PIBIC_EM', 'Pôster', 'ITE', '/semic/resultado_semic/1/PIBIC_EM/POSTER'));
 		array_push($menu, array('Resultado PIBIC_EM', 'Oral', 'ITE', '/semic/resultado_semic/2/PIBIC_EM/ORAL'));
 
-		array_push($menu, array('Resultado PIBIC_EM', 'Pôster', 'ITE', '/semic/resultado_semic/1/PIBIC_EM/POSTER'));
-		array_push($menu, array('Resultado PIBIC_EM', 'Oral', 'ITE', '/semic/resultado_semic/2/PIBIC_EM/ORAL'));
 
-		array_push($menu, array('Resultado JI', 'Pôster', 'ITE', '/semic/resultado_semic/1/JI/POSTER'));
-		array_push($menu, array('Resultado JI', 'Oral', 'ITE', '/semic/resultado_semic/2/JI/ORAL'));
+
+		array_push($menu, array('Resultado JI', 'Resultado', 'ITE', '/semic/resultado_semic/12/JI/JI'));
+		array_push($menu, array('Resultado PE', 'Resultado', 'ITE', '/semic/resultado_semic/11/PE/PE'));
+		array_push($menu, array('Resultado PEjr', 'Resultado', 'ITE', '/semic/resultado_semic/13/PEjr/PEjr'));
 
 		$data = array();
 		$data['menu'] = $menu;

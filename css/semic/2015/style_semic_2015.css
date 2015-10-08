@@ -3,6 +3,7 @@
 body{background-color:#f8f6e1;}
 a{font-family:Arial;}
 
+#content {  margin:0 auto; }
 .content{margin: 0 auto; width:960px; heigth:100%;}
 .topo{height:225px; width:100%;}
 .topoesq{width:386px; height:225px; float:left;}

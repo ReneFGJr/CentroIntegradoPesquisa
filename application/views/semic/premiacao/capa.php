@@ -1,6 +1,6 @@
 <?php
 echo '<table align="right">';
-$link = '<A href="'.base_url('index.php/semic/premiacao/1').'" class="link">';
+$link = '<A href="'.base_url('index.php/semic/premiacao/0').'" class="link">';
 echo '<tr align="center"><td class="border1" width="40">'.$link.'Início</a></td></tr>';
 echo '</table>';
 ?>
@@ -26,7 +26,7 @@ echo '</table>';
 				<img src="<?php echo base_url('img/semic/2015/icone_1.png');?>" width="290" height="143" align="left">
 				<img src="<?php echo base_url('img/semic/2015/icone_2.png');?>" width="290" height="143" align="left">
 				<img src="<?php echo base_url('img/semic/2015/icone_3.png');?>" width="290" height="143" align="left">
-				<img src="<?php echo base_url('img/semic/2015/icone_mh.png');?>" width="290" height="143" align="left">
+				<img src="<?php echo base_url('img/semic/2015/icone_mencao.png');?>" width="290" height="143" align="left">
 			</div>
 			<div class="conteudopremio">
 				<font class="aluno"></font>

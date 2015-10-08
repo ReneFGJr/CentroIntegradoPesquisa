@@ -25,6 +25,25 @@ class semic_avaliacoes extends CI_Model {
 					$wh = " (st_area_geral like '7.%' or st_area_geral like '8.%') ";
 					$narea = "Ciências Humanas, Lingística e Artes";
 					break;	
+				case '10':
+					$wh = " (st_eng = 'S') ";
+					$narea = "Internacional";
+					break;	
+				case '11':
+					$wh = " (st_section = 'PE') ";
+					$narea = "Pesquisar é evoluir";
+					$edital = '';
+					break;	
+				case '12':
+					$wh = " (st_section = 'JI') ";
+					$narea = "Jovens Ideias";
+					$edital = '';
+					break;	
+				case '13':
+					$wh = " (st_section = 'PEjr') ";
+					$narea = "Jovens Ideias (jr)";
+					$edital = '';
+					break;	
 				}
 			
 			if (strlen($edital) > 0)
@@ -50,6 +69,7 @@ class semic_avaliacoes extends CI_Model {
 						$wh .= " and st_oral = 'S' and pp_p19 <> 'POSTE' ";
 						}
 				}
+			
 			$sql = "select count(*) as av, pp_protocolo, avg(nota) as nota, st_section, st_nr, st_poster, st_oral,
 						st_edital, st_status, st_eng,  
 						avg(outras) as outras, avg(nf) as nf, avg(st_nota_media) as st_nota_media,
@@ -414,7 +434,7 @@ class semic_avaliacoes extends CI_Model {
 			$sx .= '</table>';
 			return($sx);
 		}
-	function premiacoes_lista()
+	function premiacoes_lista($r)
 		{
 			$ano = date("Y");
 			$sql = "SELECT * FROM semic_premiacao_trabalho 
@@ -423,10 +443,13 @@ class semic_avaliacoes extends CI_Model {
 					left join (select us_nome as us_professor, us_cracha as us_ch1, us_campus_vinculo as us_professor_campus from us_usuario ) as prof on us_ch1 = st_professor
 					left join (select us_nome as us_aluno, us_cracha as us_ch2 from us_usuario ) as est on us_ch2 = st_aluno 
 					left join semic_trabalho on st_codigo = sm_codigo
-					WHERE spt_ano = '$ano' 
-					order by spt_ordem ";
+					WHERE spt_ano = '$ano'
+					order by spt_ordem
+					 ";
+					 echo $r;
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
+			$rlt = $rlt[$r];
 			return($rlt);			
 		}
 		
