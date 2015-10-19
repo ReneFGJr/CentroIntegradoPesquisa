@@ -62,6 +62,20 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 	}
 	
+	function premiacao_gerar($id = 0, $ref = '') {
+		/* Carrega classes adicionais */
+		$this -> load -> model('semic/semic_avaliacoes');
+		$this -> load -> model('semic/semic_salas');
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		$tela = $this -> semic_avaliacoes -> premiacao_gerar();
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+		$this -> load -> view('header/content_close');
+	}
+		
+	
 	function premiacao_ed($id = 0, $ref = '') {
 		/* Load Models */
 		$this -> load -> model('semic/semic_avaliacoes');
@@ -322,6 +336,9 @@ class semic extends CI_Controller {
 
 		/* Sumario */
 		$this -> semic_anais -> gerar_paginas_trabalho($ano);
+		
+		$data['content'] = '<br>FIM';
+		$this -> load -> view('content', $data);
 
 		/* Phase II - Gerar Sumario por Areas */
 		$this -> load -> view('header/content_close');
@@ -466,6 +483,8 @@ class semic extends CI_Controller {
 
 		$menu = array();
 		array_push($menu, array('SEMIC', 'Resultado - Premiação', 'ITE', '/semic/premiacao'));
+		array_push($menu, array('SEMIC', 'Resultado - Premiação Editar', 'ITE', '/semic/premiacao_row'));
+		array_push($menu, array('SEMIC', 'Gerar lista de Premiados no site', 'ITE', '/semic/premiacao_gerar'));
 
 		array_push($menu, array('SEMIC', 'Resumos', 'ITE', '/semic/acompanhamento_resumos'));
 

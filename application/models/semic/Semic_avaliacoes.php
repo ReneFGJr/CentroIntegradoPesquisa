@@ -337,7 +337,7 @@ class semic_avaliacoes extends CI_Model {
 			$area .= '&Ciências Exatas e Engenharias:Ciências Exatas e Engenharias';
 			$area .= '&Ciências da Vida:Ciências da Vida';
 			$area .= '&Ciências Agrárias:Ciências Agrárias';
-			$area .= '&Ciências Humanas, Linguistica, Letras e Artes:Ciências Humanas, Linguistica, Letras e Artes';
+			$area .= '&Ciências Humanas, Linguística, Letras e Artes:Ciências Humanas, Linguística, Letras e Artes';
 			$area .= '&Ciências Sociais Aplicadas:Ciências Sociais Aplicadas';
 			$area .= '&Pesquisar é Evoluir:Pesquisar é Evoluir';
 			$area .= '&Jovens Ideias:Jovens Ideias';
@@ -348,7 +348,7 @@ class semic_avaliacoes extends CI_Model {
 			
 			$ed = 'PIBIC:PIBIC';
 			$ed .= '&PIBITI:PIBITI';
-			$ed .= '&PIBIC Internaciona:PIBIC Internacional';
+			$ed .= '&PIBIC Internacional:PIBIC Internacional';
 			$ed .= '&PIBIC_EM:PIBIC_EM';
 			$ed .= '&Jovens Ideias:Jovens Ideias';
 			$ed .= '&Pesquisar é Evoluir:Pesquisar é Evoluir';
@@ -432,6 +432,79 @@ class semic_avaliacoes extends CI_Model {
 					$sx .= '</tr>';
 				}
 			$sx .= '</table>';
+			return($sx);
+		}
+
+	function premiacao_gerar()
+		{
+			$ano = date("Y");
+			$sql = "SELECT * FROM `semic_premiacao_trabalho` 
+					left join semic_premiacao on spt_premiacao = id_smp
+					left join semic_nota_trabalhos on spt_protocolo = st_codigo
+					left join (select us_nome as us_professor, us_cracha as us_ch1, us_campus_vinculo as us_professor_campus from us_usuario ) as prof on us_ch1 = st_professor
+					left join (select us_nome as us_aluno, us_cracha as us_ch2 from us_usuario ) as est on us_ch2 = st_aluno 
+					WHERE spt_ano = '$ano' 
+					order by spt_modalidade, spt_area, spt_ordem desc";
+			$rlt = db_query($sql);
+			$sx = '<table width="100%" class="lt2">';
+			$xarea = '';
+			$xmod = '';
+			while ($line = db_read($rlt))
+				{
+					$area = $line['spt_area'];
+					$mod = $line['spt_edital'];
+					if (($area != $xarea) or ($mod != $xmod))
+						{
+							$sx .= '<tr><td colspan=10 class="lt6">';
+							$sx .= $line['spt_edital']  .' - '.$line['spt_area'] 
+									. ' <br><font class="lt2">'. $line['spt_modalidade'].'</font>';
+							$sx .= '</td></tr>';
+							$xarea = $area;
+							$xmod = $mod;
+						}
+					$img = base_url('/img/semic/'.date("Y").'/icone_'.$line['id_smp'].'.png');
+					$sx .= '<tr>';
+					
+					$sx .= '<td><img src="'.$img.'" height="30">';
+										
+					$sx .= '<td  align="center" width="120">';
+					$sx .= $this->semic_salas->referencia($line);
+					$sx .= '</td>';
+
+					$sx .= '<td align="left" width="140">';
+					$sx .= $line['smp_modalidade'];
+					$sx .= '</td>';
+					
+					$sx .= '<td align="left">';
+					$sx .= $line['us_aluno'];
+					$sx .= '</td>';					
+					
+					$sx .= '<td align="left">';
+					$prof = trim($line['us_ch1']);
+					if ((strlen($prof) > 0) and ($prof <> '00000000'))
+						{
+						$sx .= 'Prof.: '.$line['us_professor'];
+						}
+					$sx .= '</td>';					
+
+					$sx .= '<td align="left">';
+					$sx .= $line['us_professor_campus'];
+					$sx .= '</td>';		
+
+					$sx .= '</tr>';
+				}
+			$sx .= '</table>';
+			
+			$path = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
+			$file = $path . '/semic/system/application/views/semic2015/anais/';
+			$file .=  'premiacao.php';
+			
+			echo $file;
+			
+			$flt = fopen($file, 'w+');
+			fwrite($flt, $sx);
+			fclose($flt);			
+			
 			return($sx);
 		}
 	function premiacoes_lista($r)

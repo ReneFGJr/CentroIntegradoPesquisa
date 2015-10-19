@@ -103,6 +103,7 @@ class semic_anais extends CI_Model {
 		}
 		$sc .= '</div>';
 		/* Salva arquivo */
+		echo '<h3>Iniciando salvamento dos arquivos .'.$this->save.'</h3>';
 		if ($this -> save == 1) {
 			$file = $this -> dir . 'sumario_cloud' . '.php';
 			$flt = fopen($file, 'w+');
@@ -254,6 +255,7 @@ class semic_anais extends CI_Model {
 			/* Salva arquivo */
 			if ($this -> save == 1) {
 				$file = $this -> dir . trim($line['st_codigo']) . '.php';
+				echo '<br>saved: '.$file;
 				$flt = fopen($file, 'w+');
 				fwrite($flt, $tela);
 				fclose($flt);

@@ -48,7 +48,8 @@ $imm = '<?php echo base_url(\''.$imagem.'\');?>';
 <div id="trabalho">
 	<table width="100%" border=0>
 		<tr valign="top">
-			<td colspan=2><?php echo $nome_cita;?> <?php echo $sm_titulo;?>. In: SEMIC, Seminário de Iniciação Científica, 23, 2015, Curitiba-PR. Anais do 23º Seminário de Iniciação Científica. Curitiba: PUCPR, 2015. p. <?php echo $ref;?>. ISSN 2176-1930.</td>
+			<td colspan=2><?php echo $nome_cita;?> <?php echo $sm_titulo;?>. 
+				In: SEMINÁRIO DE INICIAÇÃO CIENTÍFICA - SEMIC, 23., 2015, Curitiba. <b>Anais...</b> Curitiba: PUCPR, 2015. p. <?php echo $ref;?>. ISSN 2176-1930.</td>
 			<td width="100" align="right" rowspan=2>
 				<?php echo $imagem_texto;?>
 				<br>
