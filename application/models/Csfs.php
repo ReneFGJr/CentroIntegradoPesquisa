@@ -338,10 +338,10 @@ class csfs extends CI_model {
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
+			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $link . $line['nome'] . '</A>';
+			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
@@ -725,10 +725,10 @@ class csfs extends CI_model {
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
+			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
-			$sx .= $link . $line['nome'] . '</A>';
+			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
@@ -813,8 +813,8 @@ class csfs extends CI_model {
 
 	/** Alunos por pais */
 	function mostra_dados_std_country() {
-		$sql = "select nome, count(nome) as qtd
-				from csf_view group by nome order by qtd desc limit 7
+		$sql = "select nome_pt, count(nome_pt) as qtd
+				from csf_view group by nome_pt order by qtd desc limit 7
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -825,7 +825,7 @@ class csfs extends CI_model {
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$dados[$line['nome']] = $line['qtd'];
+			$dados[$line['nome_pt']] = $line['qtd'];
 		}
 
 		return ($dados);
