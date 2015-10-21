@@ -1,8 +1,39 @@
 <?php
 class journals extends CI_model {
 	
+	function clear()
+		{
+			$a = array('(Print)','(print)','(Impresso)','(impresso)','(Online)','(online)','(ONLINE)','. Impresso','. Online','. Internet'
+					,'.Impresso','. Print');
+			for ($rz=0;$rz < count($a);$rz++)
+				{
+					$txt = $a[$rz];
+					$sql = "SELECT * FROM journals WHERE `jnl_name` like '%".$txt."%'";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$id = $line['id_jnl'];
+							$name = ($line['jnl_name']);
+							
+							echo '<br>'.$name;
+							$name = trim(troca($name,$a[$rz],''));
+							$sql = "update journals set jnl_name = '$name' where id_jnl = $id ";
+							$qrlt = $this->db->query($sql);
+						}
+				}
+		}
+	
+	function qualis()
+		{
+			$sql = "select * from ";
+		}
+	
 	function search_issn_scimago($issn)
 		{
+			// http://miar.ub.edu/issn/1344-9702
+			// http://www.issn.cc/1344-9702
 			$issn = troca($issn,'-','');	
 			$site = 'http://www.scimagojr.com/journalsearch.php?q='.$issn.'&tip=iss';
 			$txt = load_page($site);

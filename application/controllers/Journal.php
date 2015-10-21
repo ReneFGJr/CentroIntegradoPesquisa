@@ -81,6 +81,17 @@ class Journal extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function clear()
+		{
+			/* Load Models */
+			$this -> load -> model('journals');
+			$data = array();
+	
+			$this -> cab();			
+			$this->journals->clear();
+		}
+
+
 	function harvesting_issn_scimago($issn ='') {
 		/* Load Models */
 		$this -> load -> model('journals');
