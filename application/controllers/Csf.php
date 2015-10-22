@@ -105,13 +105,17 @@ class csf extends CI_Controller {
 		$dd1 = $this -> input -> post('dd1');
 		$aluno = '';
 		if (strlen($dd1) > 0) {
-			$aluno = $this -> usuarios -> findStudentByCracha($dd1);
+			$dtt = $this -> usuarios -> readByCracha($dd1);
+			if (isset($dtt['us_cracha']) > 0)
+				{
+					$aluno = $dtt['us_cracha'];
+				}
 		}
 
 		if (strlen($aluno) > 0) {
 			/* Parte II do formulario */
 			$alunoDados = $this -> usuarios -> readByCracha($aluno);
-			$this -> load -> view('usuario/view', $alunoDados);
+			$this -> load -> view('perfil/user', $alunoDados);
 
 			/* Montar formulario */
 			$cp = $this -> csfs -> cp_novo($aluno);
@@ -272,6 +276,25 @@ class csf extends CI_Controller {
 				}
 				echo $tela;
 				break;
+			case 'fim_viagem' :
+				$cp = $this -> csfs -> cp_retorno();
+				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$rst = $form -> ajax_submit($cp, $url, $ack);
+
+				if ($rst == '1') {/* saved */
+					$dh1 = $this -> input -> post('dd1');
+					$dh2 = $this -> input -> post('dd2');
+					$dh5 = $this -> input -> post('dd5');
+					$comment = 'Retorno:[' . stodbr($dh1) . ']';
+					$this -> csfs -> inserir_historico($id, 13, $comment);
+					$tela = '<font color="green">' . msg('save successful') . '</font>';
+					reload();
+				} else {
+					$tela .= '' . $rst;
+				}
+				echo $tela;
+				break;				
 			case 'cancelar' :
 				$cp = $this -> csfs -> cp_cancelar();
 				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
@@ -450,7 +473,7 @@ class csf extends CI_Controller {
 
 		/* Parte II do formulario */
 		$alunoDados = $this -> usuarios -> readByCracha($aluno);
-		$this -> load -> view('usuario/view', $alunoDados);
+		$this -> load -> view('perfil/user', $alunoDados);
 
 		$data['content'] = '<BR><BR>' . $this -> csfs -> mostra_todas_csf($aluno_id);
 		$this -> load -> view('content', $data);

@@ -17,31 +17,67 @@ class usuario extends CI_Controller {
 		/* Security */
 		$this -> security();
 	}
-	
-	function consulta_usuario($cracha='')
-		{
-			if (strlen($cracha) == 0)
-				{
-					$cracha = $this->input->post("dd10");
-				}
-				
-			$this->cab();
-			if (strlen($cracha) == 0)
-				{
-					$this->load->view('usuario/form_cracha');
-				} else {
-					$this->load->model('usuarios');
-					$this->load->model('webservice/ws_sga');
-					$rs = $this->ws_sga->findStudentByCracha($cracha);
-					
-					$cracha = $rs['pessoa'];
-					$data = $this->usuarios->le_cracha($cracha);
-					$this->load->view('usuario/view',$data);
-					
-				}
+
+	function integracao_sga($id = 0) {
+		/* Load Models */
+		$this -> load -> model('usuarios');
+		$this -> load -> model('webservice/ws_sga');
+
+		$this -> cab();
+		$data = array();
+		$sql = "select * from us_usuario 
+					where usuario_tipo_ust_id = 3
+					and us_dt_update_cs < '" . date("Y-m") . "-01'
+					limit 10";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$cracha = $line['us_cracha'];
+			$idu = $line['id_us'];
+			
+			/* Atualiza data */
+			$sql = "update us_usuario set us_dt_update_cs = '".date("Y-m-d")."'
+				where id_us = $idu ";
+			$this->db->query($sql);
+						
+			$rs = $this -> ws_sga -> findStudentByCracha($cracha);
+
+			if (isset($rs['pessoa'])) {
+				$cracha = $rs['pessoa'];
+				$data = $this -> usuarios -> le($idu);
+				$this -> load -> view('perfil/user', $data);
+			}
 		}
-	function row($id=0)
-		{
+		if ($r > 0)
+			{
+				echo '<meta http-equiv="refresh" content="3">';
+			}
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot');
+	}
+
+	function consulta_usuario($cracha = '') {
+		if (strlen($cracha) == 0) {
+			$cracha = $this -> input -> post("dd10");
+		}
+
+		$this -> cab();
+		if (strlen($cracha) == 0) {
+			$this -> load -> view('usuario/form_cracha');
+		} else {
+			$this -> load -> model('usuarios');
+			$this -> load -> model('webservice/ws_sga');
+			$rs = $this -> ws_sga -> findStudentByCracha($cracha);
+
+			$cracha = $rs['pessoa'];
+			$data = $this -> usuarios -> le_cracha($cracha);
+			$this -> load -> view('usuario/view', $data);
+
+		}
+	}
+
+	function row($id = 0) {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 
@@ -67,8 +103,8 @@ class usuario extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);			
-		}		
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function security() {
 
@@ -104,17 +140,16 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 	}
-	
-	function email_mod($id,$chk)
-		{
+
+	function email_mod($id, $chk) {
 		/* Model */
-		$this->load->model('usuarios');
-		
+		$this -> load -> model('usuarios');
+
 		/* Carrega classes adicionais */
 		$css = array();
 		array_push($css, 'form_sisdoc.css');
 		$js = array();
-		
+
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
 
@@ -123,46 +158,43 @@ class usuario extends CI_Controller {
 		$data['js'] = $js;
 
 		/* Monta telas */
-		$email = $this->input->post("dd1");
-		$acao = $this->input->post("acao");
-		
+		$email = $this -> input -> post("dd1");
+		$acao = $this -> input -> post("acao");
+
 		/* Se não existe acao, recupera e-mail */
-		if (strlen($acao) == 0)
-			{
-			$email = $this->usuarios->recupera_email($id);
-			}
-		
+		if (strlen($acao) == 0) {
+			$email = $this -> usuarios -> recupera_email($id);
+		}
+
 		$this -> load -> view('header/header', $data);
 		$data['email'] = $email;
 		$data['bt_acao'] = msg('email_modificar');
 		$data['bt_excluir'] = msg('email_excluir');
-		$this->load->view('usuario/add_email.php',$data);
-		
-		if ($acao == $data['bt_excluir'])
-			{
-				$data['content'] = $this->usuarios->email_excluir($id);
-				$this->load->view('content',$data);
-				return(0);
-			}
-		
-		if ((strlen($email) > 0) and ($acao == $data['bt_acao']))
-			{
-				$data['content'] = $this->usuarios->email_modify($id,$email);
-			} else {
-				$data['content'] = '';
-			}
-		$this->load->view('content',$data);	
+		$this -> load -> view('usuario/add_email.php', $data);
+
+		if ($acao == $data['bt_excluir']) {
+			$data['content'] = $this -> usuarios -> email_excluir($id);
+			$this -> load -> view('content', $data);
+			return (0);
 		}
+
+		if ((strlen($email) > 0) and ($acao == $data['bt_acao'])) {
+			$data['content'] = $this -> usuarios -> email_modify($id, $email);
+		} else {
+			$data['content'] = '';
+		}
+		$this -> load -> view('content', $data);
+	}
 
 	function email_add($id, $chk) {
 		/* Model */
-		$this->load->model('usuarios');
-		
+		$this -> load -> model('usuarios');
+
 		/* Carrega classes adicionais */
 		$css = array();
 		array_push($css, 'form_sisdoc.css');
 		$js = array();
-		
+
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
 
@@ -171,22 +203,21 @@ class usuario extends CI_Controller {
 		$data['js'] = $js;
 
 		/* Monta telas */
-		$email = $this->input->post("dd1");
-		$acao = $this->input->post("acao");
+		$email = $this -> input -> post("dd1");
+		$acao = $this -> input -> post("acao");
 		$this -> load -> view('header/header', $data);
 		$data['email'] = $email;
 		$data['bt_acao'] = msg('email_adicionar');
 		$data['bt_excluir'] = '';
-		$this->load->view('usuario/add_email.php',$data);
-		
-		if (strlen($email) > 0)
-			{
-				$data['content'] = $this->usuarios->email_add($id,$email);
-			} else {
-				$data['content'] = '';
-			}
-			
-		$this->load->view('content',$data);		
+		$this -> load -> view('usuario/add_email.php', $data);
+
+		if (strlen($email) > 0) {
+			$data['content'] = $this -> usuarios -> email_add($id, $email);
+		} else {
+			$data['content'] = '';
+		}
+
+		$this -> load -> view('content', $data);
 	}
 
 	function index() {
@@ -207,7 +238,7 @@ class usuario extends CI_Controller {
 		$data = $this -> usuarios -> le($id);
 
 		$tipo = $data['usuario_tipo_ust_id'];
-		
+
 		switch ($tipo) {
 			/* Docente */
 			case '2' :

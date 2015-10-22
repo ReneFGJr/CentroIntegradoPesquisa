@@ -1,5 +1,4 @@
 <?php
-
 function enviaremail_usuario($para, $assunto, $texto, $de)
 	{
 		$CI = &get_instance();

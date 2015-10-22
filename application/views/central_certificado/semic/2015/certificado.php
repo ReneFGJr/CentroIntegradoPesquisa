@@ -1,26 +1,84 @@
 <?
+/* Dados */
+$nome = 'rene faustino gabriel junior';
+$nome = UpperCase($nome);
+
+/* Texto do certificado */
+$content = "Declaro, para os devidos fins, que prof. Dr. <b>$nome</b> , ou doutorando <b>xxxxx</b> atuou como avaliador de trabalhos científicos no XXIII Seminário de Iniciação Científica da PUCPR, durante os dias 6, 7 e 8 de outubro de 2015.";
+$content = utf8_encode($content);
+
+$ass_2_1 = utf8_encode('Profa. Dra. Cleybe Vieira');
+$ass_2_2 = utf8_encode('Coordenadora da Iniciação Científica PUCPR');
+$ass_2_3 = utf8_encode('');
+
+$ass_1_1 = utf8_encode('Profa. Dra. Paula Cristina Trevilatto');
+$ass_1_2 = utf8_encode('Pró-Reitora de Pesquisa e Pós-Graduação');
+$ass_1_3 = utf8_encode('');
+
+/* Background */
+$img_file = 'img/certificado/semic-2015.jpg';
+
+/* Construção do PDF */
 tcpdf();
-$obj_pdf = new TCPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-$obj_pdf->SetCreator(PDF_CREATOR);
-$title = "Certificado";
-$obj_pdf->SetTitle($title);
-/*
-$obj_pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, $title, PDF_HEADER_STRING);
-$obj_pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-$obj_pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-*/
-$obj_pdf->SetDefaultMonospacedFont('helvetica');
-$obj_pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-$obj_pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-$obj_pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-$obj_pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-$obj_pdf->SetFont('helvetica', '', 9);
-$obj_pdf->setFontSubsetting(false);
-$obj_pdf->AddPage();
-ob_start();
-    // we can have any view part here like HTML, PHP etc
-    $content = "HELLO";
-ob_end_clean();
-$obj_pdf->writeHTML($content, true, false, true, false, '');
-$obj_pdf->Output('output.pdf', 'I');
+
+$pdf = new TCPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+// PAGE 1 - BIG background image
+$pdf->AddPage();
+$pdf->SetAutoPageBreak(false, 0);
+
+/* Background */
+$pdf->Image($img_file, 0, 0, 297, 210, '', '', '', false, 300, '', false, false, 0);
+
+// Texto do certificado
+$pdf -> SetFont('helvetica', '', 22);
+$pdf->SetTextColor(101,45,38);
+
+/* Posição de impressão */
+$pdf->SetXY(20,70);
+$pdf->writeHTMLCell(0, 0, '', '', $content, 0, 2, 0, true, 'C', true);
+
+
+/* Assinatura 1 */
+$pdf -> SetFont('helvetica', '', 13);
+$pdf->writeHTMLCell(0, 0, 0, 165, '<b>'.$ass_1_1.'</b>', 0, 2, 0, true, 'C', true);
+
+$pdf->SetXY(0,161);
+$pdf -> SetFont('helvetica', '', 10);
+$pdf->writeHTMLCell(0, 0, 0, 171, $ass_1_2, 0, 2, 0, true, 'C', true);
+
+/* Assinatura 2 */
+$pdf -> SetFont('helvetica', '', 13);
+$pdf->writeHTMLCell(0, 0, 180, 165, '<b>'.$ass_2_1.'</b>', 0, 2, 0, true, 'C', true);
+
+$pdf->SetXY(150,161);
+$pdf -> SetFont('helvetica', '', 10);
+$pdf->writeHTMLCell(0, 0, 180, 171, $ass_2_2, 0, 2, 0, true, 'C', true);
+
+
+$pdf->SetXY(150,161);
+$pdf -> SetFont('helvetica', '', 10);
+$pdf->writeHTMLCell(0, 0, 180, 140, 'Curitiba, 8 de outubro de 2015.', 0, 2, 0, true, 'R', true);
+
+$pdf -> SetFont('helvetica', '', 6);
+$pdf->writeHTMLCell(0, 0, 6, 205, 'CERTIFICADO EMITIDO DIGITALMENTE', 0, 2, 0, true, 'L', true);
+
+
+// set style for barcode
+$style = array(
+    'border' => true,
+    'vpadding' => 'auto',
+    'hpadding' => 'auto',
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, //array(255,255,255)
+    'module_width' => 1, // width of a single module in points
+    'module_height' => 1 // height of a single module in points
+);
+
+// QRCODE,L : QR-CODE Low error correction
+$pdf->write2DBarcode('http://cip.pucpr.br/index.php/certificado/validar/', 'QRCODE,L', 20, 140, 30, 30, $style, 'N');
+$pdf -> SetFont('helvetica', '', 6);
+$pdf->Text(20, 137, utf8_encode('LINK DE VALIDAÇÂO'));
+
+/* Arquivo de saida */
+$pdf -> Output('output.pdf', 'I');
 ?>

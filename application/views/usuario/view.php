@@ -19,16 +19,16 @@ if (!isset($botao_editar)) { $botao_editar = '';
 		<td width="280" >email <div id="email_list" style="width: 280px;"></div></td>
 	</tr>
 	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('titulacao');?>:</td><td class="lt2"><B><?php echo $us_titulacao;?></B></td>
+		<td width="10%" align="right" class="lt1"><?php echo msg('titulacao');?>:</td><td class="lt2"><B><?php echo $ust_titulacao;?></B></td>
 	</tr>
 	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('perfil');?>:</td><td class="lt2"><B><?php echo $us_perfil;?></B></td>
+		<td width="10%" align="right" class="lt1"><?php echo msg('perfil');?>:</td><td class="lt2"><B><?php echo $ustp_nome;?></B></td>
 	</tr>
 	<tr>
 		<td width="10%" align="right" class="lt1"><?php echo msg('cpf');?>:</td><td class="lt2"><B><?php echo $us_cpf;?></B></td>
 	</tr>
 	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('curso');?>:</td><td class="lt2"><B><?php echo $us_curso;?></B></td>
+		<td width="10%" align="right" class="lt1"><?php echo msg('curso');?>:</td><td class="lt2"><B><?php echo $us_curso_vinculo;?></B></td>
 	</tr>
 	<tr>
 		<td width="10%" align="right" class="lt1"><?php echo msg('cracha');?>:</td><td class="lt2"><B><?php echo $us_cracha;?></B></td>

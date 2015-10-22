@@ -3,57 +3,55 @@ class usuarios extends CI_model {
 	var $tabela = 'us_usuario';
 
 	function mostra_prefil($data) {
-		$sx = $this -> load -> view('perfil/docente', $data);
+		$this -> load -> view('perfil/docente', $data);
+		return ('');
+	}
+
+	function search($termos, $page, $popup = 0) {
+		$termos = troca($termos, ' ', ';');
+		$termos = splitx(';', $termos);
+
+		$wh1 = '';
+		$wh2 = '';
+		$wh3 = '';
+		for ($r = 0; $r < count($termos); $r++) {
+			if ($r > 0) { $wh1 .= ' and ';
+				$wh2 .= ' and ';
+				$wh3 .= ' and ';
+			}
+			$t = $termos[$r];
+			$wh1 .= "( us_nome like '%" . $t . "%')";
+			$wh2 .= "( us_cracha = '" . $t . "')";
+			$wh3 .= "( us_cpf = '" . $t . "')";
+		}
+		$sql = "select * from us_usuario where ($wh1) or ($wh2) or ($wh3) order by us_nome limit 20";
+		$sx = '<table width="100%" class="tabela00 lt2">';
+		$sx .= '<tr><th>cracha</th><th>nome</th><th>CPF</th></tr>';
+		$rlt = db_query($sql);
+
+		while ($line = db_read($rlt)) {
+			$id = $line['id_us'];
+			$link = '<a href="' . base_url($page) . '/' . $line['id_us'] . '" class="link">';
+			if ($popup == 1) {
+				$link = '<a href="#" onclick="newxy3(\'' . base_url('index.php/credenciamento/voucher/' . $id . '/' . checkpost_link($id)) . '\',800,500);"  class="link">';
+			}
+			$sx .= '<tr class="lt3" valign="top">';
+			$sx .= '<td align="center" width="80">';
+			$sx .= $link . $line['us_cracha'] . '</a>';
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= $link . $line['us_nome'] . '</a>';
+			$sx .= '</td>';
+			$sx .= '<td align="center">';
+			$sx .= $link . mask_cpf($line['us_cpf']) . '</a>';
+			$sx .= '</td>';
+			$sx .= '</tr>';
+		}
+		$sx .= '</table>';
 		return ($sx);
 	}
-	
-	function search($termos,$page,$popup=0)
-		{
-			$termos = troca($termos,' ',';');
-			$termos = splitx(';',$termos);
-			
-			$wh1 = '';
-			$wh2 = '';
-			$wh3 = '';
-			for ($r=0;$r < count($termos);$r++)
-				{
-					if ($r > 0) { $wh1 .= ' and '; $wh2 .= ' and '; $wh3 .= ' and ';}
-					$t = $termos[$r];
-					$wh1 .= "( us_nome like '%".$t."%')";
-					$wh2 .= "( us_cracha = '".$t."')";
-					$wh3 .= "( us_cpf = '".$t."')";
-				}
-			$sql = "select * from us_usuario where ($wh1) or ($wh2) or ($wh3) order by us_nome limit 20";
-			$sx = '<table width="100%" class="tabela00 lt2">';
-			$sx .= '<tr><th>cracha</th><th>nome</th><th>CPF</th></tr>';
-			$rlt = db_query($sql);
-			
-			while ($line = db_read($rlt))
-				{
-					$id = $line['id_us'];
-					$link = '<a href="'.base_url($page).'/'.$line['id_us'].'" class="link">';
-					if ($popup == 1)
-						{
-							$link = '<a href="#" onclick="newxy3(\'' . base_url('index.php/credenciamento/voucher/' . $id . '/' . checkpost_link($id)) . '\',800,500);"  class="link">';
-						}
-					$sx .= '<tr class="lt3" valign="top">';
-					$sx .= '<td align="center" width="80">';
-					$sx .= $link.$line['us_cracha'].'</a>';
-					$sx .= '</td>';					
-					$sx .= '<td>';
-					$sx .= $link.$line['us_nome'].'</a>';
-					$sx .= '</td>';
-					$sx .= '<td align="center">';
-					$sx .= $link.mask_cpf($line['us_cpf']).'</a>';
-					$sx .= '</td>';					
-					$sx .= '</tr>';
-				}
-			$sx .= '</table>';
-			return($sx);
-		}	
-	
-	function tabela_view()
-		{
+
+	function tabela_view() {
 		$sql = "(select *
 				from
 	                us_usuario
@@ -62,8 +60,8 @@ class usuarios extends CI_model {
 	                left join ies_instituicao on id_ies = ies_instituicao_ies_id
 	                left join us_tipo on id_ustp = usuario_tipo_ust_id
 				) as usuario";
-		return($sql);
-		}
+		return ($sql);
+	}
 
 	function cp_perfil() {
 		$cp = array();
@@ -101,25 +99,34 @@ class usuarios extends CI_model {
 	}
 
 	function row($obj) {
-		$obj -> fd = array('id_us', 'us_nome', 'us_cracha', 'us_cpf', 'us_emplid','ies_sigla','ustp_nome');
-		$obj -> lb = array('ID', 'Nome', 'Cracha', 'CPF', 'EmployEd','Instituição','Perfil');
+		$obj -> fd = array('id_us', 'us_nome', 'us_cracha', 'us_cpf', 'us_emplid', 'ies_sigla', 'ustp_nome');
+		$obj -> lb = array('ID', 'Nome', 'Cracha', 'CPF', 'EmployEd', 'Instituição', 'Perfil');
 		$obj -> mk = array('', 'L', 'C', 'C', 'C');
 		return ($obj);
 	}
 
 	function le_cracha($cracha) {
 		$rs = $this -> readByCracha($cracha);
+		$id = $rs['id_us'];
+		$rs = $this -> usuarios -> le($id);		
 		return ($rs);
 	}
-
-	function consulta_cracha($cracha = '') {
+	/* Consulta Usuario */
+	function consulta_cracha($cracha = '',$source='sga') {
 		if (strlen($cracha) == 0) {
 			return ('');
 		}
 
 		$this -> load -> model('usuarios');
 		$this -> load -> model('webservice/ws_sga');
-		$rs = $this -> ws_sga -> findStudentByCracha($cracha);
+		
+		
+		if ($source='cs')
+			{
+				
+			} else {
+				$rs = $this -> ws_sga -> findStudentByCracha($cracha);
+			}
 
 		if (isset($rs['pessoa'])) {
 			$cracha = $rs['pessoa'];
@@ -139,6 +146,7 @@ class usuarios extends CI_model {
 	                left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
 	                left join us_avaliador_situacao on us_avaliador = id_as
 	                left join ies_instituicao on id_ies = ies_instituicao_ies_id
+	                left join us_tipo on usuario_tipo_ust_id = id_ustp 
 				where id_us = " . $id;
 
 		$rlt = $this -> db -> query($sql);
@@ -147,7 +155,17 @@ class usuarios extends CI_model {
 		$line['us_ss'] = '';
 		$line['us_lattes'] = '';
 		$line['avaliador'] = $line['as_situacao'];
-		$line['editar'] = '<a href="'.base_url('index.php/usuario/edit/'.$line['id_us'].'/'.checkpost_link($line['id_us'])).'" class="lt0 link">editar</a>';
+		$line['us_contatos'] = $this->recupera_fone($id);
+
+		$line['editar'] = '';
+		if (function_exists('perfil')) {
+			if (perfil('#CPP#SPI#ADM') == 1) {
+				$line['editar'] = '<a href="' . base_url('index.php/usuario/edit/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">editar</a>';
+			}
+		}
+		
+		if ($line['us_genero'] == 'M') { $line['us_genero'] = msg('Masculino'); }
+		if ($line['us_genero'] == 'F') { $line['us_genero'] = msg('Feminino'); }
 
 		$line['email'] = $this -> lista_email($id);
 		return ($line);
@@ -156,7 +174,7 @@ class usuarios extends CI_model {
 	function email_add($id, $email) {
 		$email = lowercase($email);
 		if (validaemail($email)) {
-			$sx = 'OK';
+			$sx = '';
 			/* valida se já não existe */
 			$sql = "select * from us_email 
 								where usm_email = '$email' and usuario_id_us = $id ";
@@ -195,12 +213,67 @@ class usuarios extends CI_model {
 		return ($sx);
 	}
 
+	function tel_add($id, $fone) {
+		$fone = sonumero($fone);
+		//if (validafone($email)) {
+			$sx = '';
+			/* valida se já não existe */
+			$sql = "select * from us_fone 
+								where usf_fone = '$fone' and usuario_id_us = $id ";
+			$rlt = db_query($sql);
+			if ($line = db_read($rlt)) {
+				if ($line['usf_ativo'] == '0') {
+					$sql = "update us_fone set usf_ativo = '1' 
+											where usf_fone = '$fone' and usuario_id_us = $id ";
+					$rlt = $this -> db -> query($sql);
+					$sx .= 'telefone atualizado';
+					$sx .= '<script> wclose(); </script>';
+				} else {
+					$sx = '<span class="error">E-mail já cadastrado</span>';
+				}
+
+			} else {
+				$data = date("Y-m-d");
+
+				$sql = "insert into us_fone 
+									(
+									usuario_id_us, usf_tipo, usf_fone,
+									usf_ativo, usf_fone_preferencial
+									) values (
+									'$id','corp','$fone',
+									'1','1'
+									)";
+				$rlt = $this -> db -> query($sql);
+				$sx .= '<script> wclose(); </script>';
+			}
+		//} else {
+		//	$sx = '<span class="error">E-mail inválido</span>';
+		//}
+		return ($sx);
+	}
+
 	function recupera_email($id) {
 		$sql = "select * from us_email where id_usm = " . $id;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$line = $rlt[0];
 		return ($line['usm_email']);
+	}
+
+	function recupera_fone($id) {
+		$sql = "select * from us_fone where usuario_id_us = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				if (strlen($sx) > 0)
+					{ $sx .= ', '; }
+				$sx .= format_fone($line['usf_fone']);
+			}
+		
+		return ($sx);
 	}
 
 	function email_excluir($id) {
@@ -225,12 +298,20 @@ class usuarios extends CI_model {
 		return ($sx);
 	}
 
-	function lista_email($id = 0, $edit = 1) {
+	function lista_email($id = 0, $edit = 0) {
 		$sql = "select * from us_email where usm_ativo = 1 and usuario_id_us = " . $id;
 		$sx = msg('nenhum e-mail localizado');
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<font class="lt2">';
+
+		if (function_exists('perfil')) {
+			if (perfil('#CPP#SPI#ADM') == 1) {
+				$edit = 1;
+			}
+		}
+		
+		/* Adiciona e-mail */
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$idx = $line['id_usm'];
@@ -320,7 +401,7 @@ class usuarios extends CI_model {
 		$sql = "select count(*) as total from us_usuario ";
 		$rlt = db_query($sql);
 		$line = db_read($rlt);
-		$cracha = 'F' . strzero(($line['total']+1), 7);
+		$cracha = 'F' . strzero(($line['total'] + 1), 7);
 		return ($cracha);
 	}
 
@@ -383,36 +464,80 @@ class usuarios extends CI_model {
 	}
 
 	function insere_usuario($DadosUsuario) {
+		
 		$nome = nbr_autor($DadosUsuario['nome'], 7);
 		$cpf = $DadosUsuario['cpf'];
+		
+		$email1 = trim($DadosUsuario['email1']);
+		$email2 = trim($DadosUsuario['email2']);
+		
+		$tel1 = trim($DadosUsuario['tel1']);
+		$tel2 = trim($DadosUsuario['tel2']);
+		
 		$genero = $DadosUsuario['sexo'];
 		$dtnasc = sonumero($DadosUsuario['dataNascimento']);
 		$dtnasc = substr($dtnasc, 4, 4) . '-' . substr($dtnasc, 2, 2) . '-' . substr($dtnasc, 0, 2);
 		$cracha = $DadosUsuario['pessoa'];
+		$curso = trim(limpaCursos($DadosUsuario['nomeCurso']));
 		$emplid = '';
 		$tipo = $DadosUsuario['tipo'];
 
-		$sql = "select * from " . $this -> tabela . " where us_cpf = '$cpf' ";
+		$sql = "select * from " . $this -> tabela . " where 
+				us_cpf = '$cpf' 
+				or us_cracha = '$cracha'
+				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 
 		if (count($rlt) > 0) {
 			/* Ja existe */
 			$sql = "";
+			$line = $rlt[0];
+			$idu = $line['id_us'];
+
+			
+			$sql = "update ".$this->tabela." set
+						us_curso_vinculo = '$curso',
+						us_dt_update_cs = '".date("Y-m-d")."'
+					where id_us = $idu ";
+			$this -> db -> query($sql);
 		} else {
 			/* Novo registro */
 			$sql = "insert into " . $this -> tabela . " 
 							(
 							us_nome, us_cpf, us_cracha,
-							us_emplid, usuario_tipo_ust_id, us_dt_nascimento
+							us_emplid, usuario_tipo_ust_id, us_dt_nascimento,
+							us_curso_vinculo, us_dt_update_cs
 							) values (
 							'$nome','$cpf','$cracha',
-							'$emplid','$tipo','$dtnasc'
+							'$emplid','$tipo','$dtnasc',
+							'$curso', '".date("Y-m-d")."'
 							)					
 					";
 			$this -> db -> query($sql);
+			
+			$sql = "select * from " . $this -> tabela . " where us_cpf = '$cpf' ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array($rlt);
+			$line = $rlt[0];
+			$idu = $line['id_us'];						
 		}
+		if ($idu > 0)
+			{
+			if (strlen($email1) > 0) { $this->email_add($idu,$email1); }
+			if (strlen($email2) > 0) { $this->email_add($idu,$email2); }
+			if (strlen($tel1) > 0) { $this->tel_add($idu,$tel1); }
+			if (strlen($tel2) > 0) { $this->tel_add($idu,$tel2); }	
+			}
 	}
 
 }
+
+function limpaCursos($c)
+	{
+		$c = troca($c,'(Tarde)','');
+		$c = troca($c,'(Diurno)','');
+		$c = troca($c,'(Noturno)','');
+		return($c);
+	}
 ?>

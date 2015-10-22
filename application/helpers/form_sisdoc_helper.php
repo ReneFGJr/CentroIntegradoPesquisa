@@ -169,7 +169,26 @@ function mst($txt) {
 	$txt = troca($txt, chr(13), '<br/>');
 	return ($txt);
 }
-
+function format_fone($tel)
+	{
+		if (strlen($tel) > 9)
+			{
+				if (strlen($tel) > 10)
+					{
+						$tel = '('.substr($tel,0,2).') '.substr($tel,2,5).'-'.substr($tel,7,4);
+					} else {
+						$tel = '('.substr($tel,0,2).') '.substr($tel,2,4).'-'.substr($tel,6,4);
+					}
+			} else {
+				if (strlen($tel) > 8)
+					{
+						$tel = substr($tel,0,5).'-'.substr($tel,5,4);
+					} else {
+						$tel = substr($tel,0,4).'-'.substr($tel,4,4);
+					}
+			}
+		return($tel);
+	}
 function sonumero($it) {
 	$rlt = '';
 	for ($ki = 0; $ki < strlen($it); $ki++) {

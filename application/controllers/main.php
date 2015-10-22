@@ -79,6 +79,9 @@ class main extends CI_Controller {
 		}
 		if (perfil('#CPS#COO#ADM') == 1) { array_push($menu, array('CIP', 'Administração do Centro Integrado de Pesquisa, Administração', 'BTA', '/cip'));
 		}
+		if (perfil('#ADM') == 1) {
+			array_push($menu, array('Stricto Sensu', 'Secretaria e Coordenação do <i>stricto sensu</i>', 'BTA', '/stricto_sensu'));
+		}		
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Fomento', 'Observatório de Pesquisa', 'BTA', '/edital'));
 		}
 		if (perfil('#DGP#ADM') == 1) { array_push($menu, array('Grupo de Pesquisa', 'Pesquisas da PUCPR', 'BTN', '/dgp'));

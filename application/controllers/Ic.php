@@ -276,6 +276,8 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
+		$data['content'] = '<A href="'.base_url('index.php/usuario/consulta_usuario/').'">'.msg('consulta').' '.msg('cracha').'</a>';
+		$this -> load -> view('content',$data);
 
 		/* Lista de comunicacoes anteriores */
 		$form = new form;

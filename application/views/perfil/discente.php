@@ -10,9 +10,9 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<li class="lt5"><B><?php echo $us_nome; ?>&nbsp;</B></li>
 				<li>CPF: <?php echo $us_cpf; ?> </li>
 				<li><?php echo $us_nada;?> </li>
-				<li><?php echo $us_nada;?> </li>
+				<li><?php echo $us_curso_vinculo;?> </li>
 				<li><?php echo $usm_email; ?> <BR>
-				<?php echo $us_nada;?> </li>
+				<?php echo $us_contatos;?> </li>
 				<li></li>
 				<li><a href="<?php echo $us_lattes;?>" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0></li>
 				
@@ -27,7 +27,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<li><strong>Centro:</strong> <?php echo $us_nada;?> </li>
 				<li><strong>Escola:</strong> <?php echo $us_nada;?> </li>
 				<li><strong>Instituição:</strong> <?php echo $ies_sigla;?> </li>
-				<li><strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_updat_drh);?></li>
+				<li><strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_update_cs);?></li>
 				<li><strong><?php echo $editar;?></li>				
 			</div>	
 			</table>

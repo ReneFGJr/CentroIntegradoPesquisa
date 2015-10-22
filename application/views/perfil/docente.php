@@ -66,7 +66,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				horas
 			</li>
 			<li>
-				<strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_updat_drh);?>
+				<strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_update_cs);?>
 			</li>
 			<li><strong><?php echo $editar;?></li>
 		</div>

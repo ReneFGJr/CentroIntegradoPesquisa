@@ -73,7 +73,9 @@ class admin extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Parceiros', 'Parceiros da PUCPR', 'ITE', '/parceiro'));
 		array_push($menu, array('Idiomas', 'Idiomas do Sistema', 'ITE', '/idioma'));
-		array_push($menu, array('Perfis', 'Perfil de usuário do Sistema', 'ITE', '/perfil'));
+		
+		array_push($menu, array('Usuários', 'Integração SGA/CIP Estudantes', 'ITE', '/usuario/integracao_sga'));
+		array_push($menu, array('Usuários', 'Perfil de usuário do Sistema', 'ITE', '/perfil'));
 		array_push($menu, array('Unidades', 'Unidades da PUCPR', 'ITE', '/unidade'));
 		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/instituicao'));
 
