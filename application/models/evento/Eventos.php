@@ -2,6 +2,58 @@
 class eventos extends CI_model {
 	var $tabela = 'evento_nome';
 	var $tabela_mailing = 'evento_mailing';
+	
+	function emitir($evento,$tipo,$ano,$us)
+		{
+			$cracha = $us['us_cracha'];
+			$id = $us['id_us'];
+			
+			if ($ano == '2015')
+				{
+					if ($tipo = 'OUVINTE')
+						{
+							/* Declaracao de Ouvite */
+							$cracha = strzero($cracha,11);
+							$sql = "select count(*) as total, r_id from evento_registro where r_id = '$cracha' group by r_id ";
+							$rlt = $this->db->query($sql);
+							$rlt = $rlt->result_array();
+							if (count($rlt) > 0)
+								{
+									$line = $rlt[0];
+									$total = $line['total'];
+									if ($total > 5)
+										{
+										/* ID da declaracao de ouvinte - 9 */
+										$this->insere_declaracao($id,0,9);
+										}		
+								}
+							return('');													
+						}
+				}
+		}
+	function insere_declaracao($us1,$us2,$tipo)
+		{
+			$data = date("Y-m-d");
+			$hora = date("H:i:s");
+			$sql = "select * from central_declaracao 
+						where dc_us_usuario_id = $us1
+						and dc_us_usuario_id_2 = $us2
+						and dc_tipo = $tipo	";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return(0);
+				}
+			$sql = "insert into central_declaracao
+					(dc_us_usuario_id, dc_us_usuario_id_2, dc_tipo,
+					dc_data, dc_hora
+					) values (
+					'$us1', '$us2', '$tipo',
+					'$data', '$hora')";
+			$rlt = $this->db->query($sql);
+			return(1);					
+		}
 
 	function enviar_email($id = 0, $msg = '') {
 		global $email_own;

@@ -37,18 +37,26 @@ class central_declaracao extends CI_Controller {
 		$data['css'] = $css;
 		$data['js'] = $js;
 
-		/* Menu */
-		$menus = array();
-		array_push($menus, array('CIP', '/cip/'));
-
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 	}
-	
-	function perfil()
-		{
-			$this->cab();
-		}
+
+	function perfil() {
+		/* load model */
+		$this -> load -> model('usuarios');
+		$this -> load -> model('evento/eventos');
+
+		$this -> cab();
+		$id = $this -> session -> userdata('cc_user');
+		$data = $this -> usuarios -> le($id);
+
+		$this -> load -> view("perfil/user", $data);
+		$cracha = $data['us_cracha'];
+
+		$declara = array();
+		$this -> eventos -> emitir('SEMIC', 'OUVINTE', date("Y"), $data);
+
+	}
 
 	function index($id = 0) {
 		$this -> load -> model('usuarios');
@@ -68,19 +76,18 @@ class central_declaracao extends CI_Controller {
 				$line = $this -> usuarios -> readByCracha($dd1);
 			}
 			if (count($line) > 0) {
-				$data = array('cc_user'=>$line['id_us']);
-				$this->session->set_userdata($data);
+				$data = array('cc_user' => $line['id_us']);
+				$this -> session -> set_userdata($data);
 				redirect(base_url('index.php/central_declaracao/perfil/'));
 			} else {
 				$msg = 'Código ou CPF Inválido';
 			}
-		} 
+		}
 
 		/* Mostra tela de login */
-		if (strlen($dd1) == 0)
-			{
-				$this -> load -> view('central_certificado/central_certificado');
-			}
+		if (strlen($dd1) == 0) {
+			$this -> load -> view('central_certificado/central_certificado');
+		}
 	}
 
 	/* Avaliador SEMIC */
@@ -98,15 +105,24 @@ class central_declaracao extends CI_Controller {
 		 * DATA
 		 */
 		/* Dados */
+		$tipo = $data['dc_tipo'];
 		$data['nome'] = $data['nome_1'];
 		$data['nome'] = UpperCase($data['nome']);
 		$data['prof'] = 'Prof.';
 		$data['titulacao'] = 'Dr.';
-		$content = 'Declaramos para os devidos fins que '.$data['prof'].' '.$data['titulacao'].' <b>'.$data['nome'].'</b> atuou como avaliador de trabalhos científicos no XXIII Seminário de Iniciação Científica da PUCPR, durante os dias 6, 7 e 8 de outubro de 2015.';
-		$content = utf8_encode($content);		
-		$data['content'] = '<font style="line-height: 150%">' . $content;
-		$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 8 de outubro de 2015.</td></tr></table>';
 
+		switch ($tipo) {
+			case '2' :
+				$content = 'Declaramos para os devidos fins que ' . $data['prof'] . ' ' . $data['titulacao'] . ' <b>' . $data['nome'] . '</b> atuou como avaliador de trabalhos científicos no XXIII Seminário de Iniciação Científica da PUCPR, durante os dias 6, 7 e 8 de outubro de 2015.';
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 8 de outubro de 2015.</td></tr></table>';
+				break;
+			default :
+				echo 'ERRO INTERNO ' . $tipo;
+				exit ;
+				break;
+		}
 		$this -> load -> view($view, $data);
 	}
 
