@@ -189,6 +189,25 @@ class central_declaracao extends CI_Controller {
 				if ($data['us_g2'] == 'F') { $artigo_estudante = 'profa.';
 				}
 
+				/* Consulta avaliacao */
+				$protocolo = trim($data['dc_texto_1']);
+				$sql = "select max(pp_p08) as nota from pibic_parecer_2015 WHERE pp_protocolo = '$protocolo'";
+				$rlt = $this->db->query($sql);				
+				$rlt = $rlt->result_array();
+				if (count($rlt)==0)
+					{
+						echo 'Emissão bloqueada, consulte pibicpr@pucpr.br informando o código: #45/'.$id.'/'.$protocolo;
+						exit;
+					}
+			
+				$ln = $rlt[0];
+				if ($ln['nota'] < 40)
+					{
+						echo 'Emissão bloqueada, consulte pibicpr@pucpr.br informando o código: #46/'.$id.'/'.$protocolo;
+						exit;						
+					}
+				
+
 				$content = 'Certificamos que ' . $artigo_estudante . ' estudante, <b>' . $data['nome'] . '</b> participou do programa ' . $data['edital'] . ' nesta Universidade, com ' . $data['modalidade'] . ', com o projeto de pesquisa intitulado <b>"' . $data['titulo_projeto'] . '"</b> sob orientação do ' . $artigo_professor . ' <b>' . $data['nome2'] . '</b> , no período de agosto 2014 a julho 2015, com 20 horas semanais.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
