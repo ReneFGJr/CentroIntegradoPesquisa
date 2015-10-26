@@ -1,12 +1,4 @@
 <?
-/* Dados */
-$nome = 'rene faustino gabriel junior';
-$nome = UpperCase($nome);
-
-/* Texto do certificado */
-$content = "Declaro, para os devidos fins, que prof. Dr. <b>$nome</b> , ou doutorando <b>xxxxx</b> atuou como avaliador de trabalhos científicos no XXIII Seminário de Iniciação Científica da PUCPR, durante os dias 6, 7 e 8 de outubro de 2015.";
-$content = utf8_encode($content);
-
 $ass_2_1 = utf8_encode('Profa. Dra. Cleybe Vieira');
 $ass_2_2 = utf8_encode('Coordenadora da Iniciação Científica PUCPR');
 $ass_2_3 = utf8_encode('');
@@ -30,12 +22,12 @@ $pdf->SetAutoPageBreak(false, 0);
 $pdf->Image($img_file, 0, 0, 297, 210, '', '', '', false, 300, '', false, false, 0);
 
 // Texto do certificado
-$pdf -> SetFont('helvetica', '', 22);
+$pdf -> SetFont('helvetica', '', 16);
 $pdf->SetTextColor(101,45,38);
 
 /* Posição de impressão */
 $pdf->SetXY(20,70);
-$pdf->writeHTMLCell(0, 0, '', '', $content, 0, 2, 0, true, 'C', true);
+$pdf->writeHTMLCell(0, 0, '', '', $content, 0, 2, 0, true, 'J', true);
 
 
 /* Assinatura 1 */
@@ -53,11 +45,6 @@ $pdf->writeHTMLCell(0, 0, 180, 165, '<b>'.$ass_2_1.'</b>', 0, 2, 0, true, 'C', t
 $pdf->SetXY(150,161);
 $pdf -> SetFont('helvetica', '', 10);
 $pdf->writeHTMLCell(0, 0, 180, 171, $ass_2_2, 0, 2, 0, true, 'C', true);
-
-
-$pdf->SetXY(150,161);
-$pdf -> SetFont('helvetica', '', 10);
-$pdf->writeHTMLCell(0, 0, 180, 140, 'Curitiba, 8 de outubro de 2015.', 0, 2, 0, true, 'R', true);
 
 $pdf -> SetFont('helvetica', '', 6);
 $pdf->writeHTMLCell(0, 0, 6, 205, 'CERTIFICADO EMITIDO DIGITALMENTE', 0, 2, 0, true, 'L', true);

@@ -2,58 +2,175 @@
 class eventos extends CI_model {
 	var $tabela = 'evento_nome';
 	var $tabela_mailing = 'evento_mailing';
-	
-	function emitir($evento,$tipo,$ano,$us)
-		{
-			$cracha = $us['us_cracha'];
-			$id = $us['id_us'];
-			
-			if ($ano == '2015')
-				{
-					if ($tipo = 'OUVINTE')
-						{
-							/* Declaracao de Ouvite */
-							$cracha = strzero($cracha,11);
-							$sql = "select count(*) as total, r_id from evento_registro where r_id = '$cracha' group by r_id ";
-							$rlt = $this->db->query($sql);
-							$rlt = $rlt->result_array();
-							if (count($rlt) > 0)
-								{
-									$line = $rlt[0];
-									$total = $line['total'];
-									if ($total > 5)
-										{
-										/* ID da declaracao de ouvinte - 9 */
-										$this->insere_declaracao($id,0,9);
-										}		
-								}
-							return('');													
-						}
+
+	function emitir($evento, $tipo, $ano, $us) {
+		$cracha = $us['us_cracha'];
+		$id = $us['id_us'];
+
+		if ($ano == '2015') {
+
+			/* OUVINTE */
+			if ($tipo == 'OUVINTE') {
+				/* Declaracao de Ouvite */
+				$cracha = strzero($cracha, 11);
+				$sql = "select count(*) as total, r_id from evento_registro where r_id = '$cracha' group by r_id ";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				if (count($rlt) > 0) {
+					$line = $rlt[0];
+					$total = $line['total'];
+					if ($total > 5) {
+						/* ID da declaracao de ouvinte - 9 */
+						$this -> insere_declaracao($id, 0, 9);
+					}
 				}
+			}
+
+			/* AVALIADOR */
+			if ($tipo == 'AVALIADOR') {
+				/* Declaracao de Avaliador */
+				$cracha = strzero($cracha, 11);
+				$sql = "select count(*) as total, pp_avaliador_id 
+							from pibic_parecer_2015
+						where pp_avaliador_id = '$id' group by pp_avaliador_id 
+						and pp_tipo = 'SEMIC' ";
+				$rlt = $this -> db -> query($sql);
+
+				$rlt = $rlt -> result_array();
+				if (count($rlt) > 0) {
+					$line = $rlt[0];
+					$total = $line['total'];
+					if ($total > 5) {
+						/* ID da declaracao de avaliador - 2 */
+						$this -> insere_declaracao($id, 0, 2);
+					}
+				}
+			}
+
+			/* ESTUDANTE */
+			if ($tipo == 'ESTUDANTE') {
+				/* Declaracao de Estudante SEMIC */
+				$cracha = strzero($cracha, 11);
+				$sql = "select count(*) as total, pp_avaliador_id 
+							from pibic_parecer_2015
+						where pp_avaliador_id = '$id' group by pp_avaliador_id 
+						and pp_tipo = 'SEMIC' ";
+				$rlt = $this -> db -> query($sql);
+
+				$rlt = $rlt -> result_array();
+				if (count($rlt) > 0) {
+					$line = $rlt[0];
+					$total = $line['total'];
+					if ($total > 5) {
+						/* ID da declaracao de avaliador - 2 */
+						$this -> insere_declaracao($id, 0, 2);
+					}
+				}
+			}
+
+			/* ORIENTADOR */
+			if ($tipo == 'ORIENTADOR') {
+
+				/* Declaracao de Estudante SEMIC */
+				$cracha = strzero($cracha, 8);
+				$sql = "select * from semic_nota_trabalhos
+							left join us_usuario on st_aluno = us_cracha
+							left join (select pp_protocolo from pibic_parecer_2015 group by pp_protocolo) as avaliacao on pp_protocolo = st_codigo 
+							where st_professor = '$cracha'
+							and (st_poster = 'S' or st_oral = 'S') ";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				for ($r = 0; $r < count($rlt); $r++) {
+					$line = $rlt[$r];
+					$protocolo = $line['st_codigo'];
+					$id2 = $line['id_us'];
+					/* ID da declaracao de avaliador - 7 */
+					$this -> insere_declaracao($id, $id2, 7, $protocolo);
+				}
+			}
+
 		}
-	function insere_declaracao($us1,$us2,$tipo)
-		{
-			$data = date("Y-m-d");
-			$hora = date("H:i:s");
-			$sql = "select * from central_declaracao 
+			/* ESTUDANTE */
+			if ($tipo == 'ESTUDANTE') {
+
+				/* Declaracao de Estudante SEMIC */
+				$cracha = strzero($cracha, 8);
+				$sql = "select * from semic_nota_trabalhos
+							left join us_usuario on st_professor = us_cracha
+							left join (select pp_protocolo from pibic_parecer_2015 group by pp_protocolo) as avaliacao on pp_protocolo = st_codigo 
+							where st_aluno = '$cracha'
+							and (st_poster = 'S' or st_oral = 'S') ";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				for ($r = 0; $r < count($rlt); $r++) {
+					$line = $rlt[$r];
+					$protocolo = $line['st_codigo'];
+					$id2 = $line['id_us'];
+					/* ID da declaracao de avaliador - 7 */
+					$this -> insere_declaracao($id, $id2, 12, $protocolo);
+				}
+			}
+
+	}
+
+	function mostra_declaracoes($us1) {
+		$sql = "select * from central_declaracao
+						inner join central_declaracao_evento on dc_tipo = id_cde 
+						left join us_usuario on id_us = dc_us_usuario_id_2
+						where dc_us_usuario_id = $us1 order by dc_data desc ";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="800" class="lt2" cellpadding=10 cellspacing=0 border=1 align="center">';
+		$sx .= '<tr><td class="lt4" colspan=2 >Declarações disponíveis</td></tr>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$url = base_url('index.php/central_declaracao/declaracao/' . $line['id_dc'] . '/' . checkpost_link($line['id_dc']));
+			$link = '<A href="#" onclick="newxy(\'' . $url . '\',1024,640);" class="link lt2">';
+			$sx .= '<tr>';
+			$sx .= '<td>';
+			$sx .= $link;
+			$sx .= $line['cde_nome'];
+			$sx .= '</a>';
+
+			$sx .= '</td>';
+			$sx .= '<td width="50%">';
+			
+			/* Nome do aluno ou orientador */
+			$nome = trim($line['us_nome']);
+			$idd = $line['id_us'];
+			if ($idd > 0) {
+				$sx .= $nome;
+			}
+			$sx .= '</td>';
+			$sx .= '</tr>';
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function insere_declaracao($us1, $us2, $tipo, $protocolo = '') {
+		$data = date("Y-m-d");
+		$hora = date("H:i:s");
+		$sql = "select * from central_declaracao 
 						where dc_us_usuario_id = $us1
 						and dc_us_usuario_id_2 = $us2
-						and dc_tipo = $tipo	";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					return(0);
-				}
-			$sql = "insert into central_declaracao
+						and dc_tipo = $tipo	
+						and dc_texto_1 = '$protocolo'";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (0);
+		}
+		$sql = "insert into central_declaracao
 					(dc_us_usuario_id, dc_us_usuario_id_2, dc_tipo,
-					dc_data, dc_hora
+					dc_data, dc_hora, dc_texto_1
 					) values (
 					'$us1', '$us2', '$tipo',
-					'$data', '$hora')";
-			$rlt = $this->db->query($sql);
-			return(1);					
-		}
+					'$data', '$hora','$protocolo')";
+		$rlt = $this -> db -> query($sql);
+		return (1);
+	}
 
 	function enviar_email($id = 0, $msg = '') {
 		global $email_own;
@@ -67,18 +184,17 @@ class eventos extends CI_model {
 		$ass = $t['ml_subject'];
 		$email_own = 2;
 		$idu = 1;
-		
+
 		$sql = "SELECT id_us, csf_aluno, us_nome FROM `csf`
 					inner join us_usuario on csf_aluno = id_us 
 				where csf_retorno > '2015-04-01' ";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$line = $rlt[$r];
-				$idu = $line['id_us'];
-				enviaremail_usuario($idu, $ass, $texto, 2);
-			}
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$idu = $line['id_us'];
+			enviaremail_usuario($idu, $ass, $texto, 2);
+		}
 	}
 
 	function cp() {
