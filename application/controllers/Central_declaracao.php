@@ -127,6 +127,12 @@ class central_declaracao extends CI_Controller {
 					where id_dc = " . round($id);
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
+		
+		if (count($rlt)==0)
+			{
+				echo 'Emissão não permitida, consulte pibicpr@pucpr.br informando o ID:'.$id;
+				exit;
+			}
 		$view = $rlt[0]['cde_view'];
 		$data = $rlt[0];
 

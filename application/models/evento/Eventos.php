@@ -152,6 +152,7 @@ class eventos extends CI_model {
 	function insere_declaracao($us1, $us2, $tipo, $protocolo = '') {
 		$data = date("Y-m-d");
 		$hora = date("H:i:s");
+		if (strlen($us2) == 0) { $us2 = 0; }
 		$sql = "select * from central_declaracao 
 						where dc_us_usuario_id = $us1
 						and dc_us_usuario_id_2 = $us2
