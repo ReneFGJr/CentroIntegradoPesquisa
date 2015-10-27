@@ -381,6 +381,10 @@ class usuarios extends CI_model {
 
 	function readByCracha($cracha) {
 		/* Busca dados do cadastro */
+		if (strlen($cracha)==0)
+			{
+				return(array());
+			}
 		$sql = "select * from " . $this -> tabela . " as t1
 					left join us_titulacao as t2 on t1.usuario_titulacao_ust_id = t2.ust_id				 
 					where us_cracha = '" . $cracha . "' ";
@@ -452,7 +456,7 @@ class usuarios extends CI_model {
 		}
 		if (strlen($cracha) == 11) { $cracha = substr($cracha, 3, 8);
 		}
-		if (strlen($cracha) == 9) { $cracha = substr($cracha, 0, 9);
+		if (strlen($cracha) == 9) { $cracha = substr($cracha, 0, 8);
 		}
 		if (strlen($cracha) > 8) {
 			return ('');
