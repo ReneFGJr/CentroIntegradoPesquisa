@@ -119,7 +119,7 @@ class central_declaracao extends CI_Controller {
 		{
 			/* Carrega Modelos */
 			$this -> load -> model('evento/eventos' );
-				$chk2 = checkpost_link($id);
+				$chk2 = substr(checkpost_link($id.'certificado'),4,6);
 
 				$this->cab();
 
