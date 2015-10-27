@@ -62,7 +62,7 @@ $style = array(
 );
 
 // QRCODE,L : QR-CODE Low error correction
-$pdf->write2DBarcode('http://cip.pucpr.br/index.php/certificado/validar/', 'QRCODE,L', 20, 140, 30, 30, $style, 'N');
+$pdf->write2DBarcode('https://cip.pucpr.br/index.php/central_declaracao/validador/'.$id_dc.'/'.substr(checkpost_link($id_dc.'certificado'),4,6), 'QRCODE,L', 20, 140, 30, 30, $style, 'N');
 $pdf -> SetFont('helvetica', '', 6);
 $pdf->Text(20, 137, utf8_encode('LINK DE VALIDAÇÂO'));
 

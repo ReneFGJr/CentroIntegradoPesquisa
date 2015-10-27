@@ -113,6 +113,27 @@ class eventos extends CI_model {
 
 	}
 
+	function valida_certificado($id)
+		{
+		$sql = "select * from central_declaracao
+					inner join central_declaracao_evento on id_cde = dc_tipo
+					inner join (select us_nome as nome_1, id_us as id_us_1, us_genero as us_g1 from us_usuario) as user_1 on id_us_1 = dc_us_usuario_id 
+					left join (select us_nome as nome_2, id_us as id_us_2, us_genero as us_g2 from us_usuario) as user_2 on id_us_2 = dc_us_usuario_id_2
+					left join ic on ic_plano_aluno_codigo = dc_texto_1 
+					inner join ic_aluno as pa on ic_id = id_ic
+					left join ic_modalidade_bolsa as mode on mb_id = id_mb
+					where id_dc = " . round($id);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) == 0)
+			{
+				$rt = array();
+			} else {
+				$rt = $rlt[0];
+			}			
+		return($rt);
+		}
+
 	function mostra_declaracoes($us1) {
 		$sql = "select * from central_declaracao
 						inner join central_declaracao_evento on dc_tipo = id_cde 

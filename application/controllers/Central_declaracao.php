@@ -115,6 +115,28 @@ class central_declaracao extends CI_Controller {
 		}
 	}
 
+	function validador($id=0,$chk='')
+		{
+			/* Carrega Modelos */
+			$this -> load -> model('evento/eventos' );
+				$chk2 = checkpost_link($id);
+
+				$this->cab();
+
+				if ($chk != $chk2)
+				{
+					$this->load->view('central_certificado/declaracao_link_invalido',null);
+				} else {
+					$data = $this->eventos->valida_certificado($id);
+					if (count($data) > 0)
+					{
+						$this->load->view('central_certificado/declaracao_valida',$data);
+					} else {
+						$this->load->view('central_certificado/declaracao_invalida',$data);
+					}
+				}
+		}
+
 	/* Avaliador SEMIC */
 	function declaracao($id = '', $check = '') {
 		$sql = "select * from central_declaracao
