@@ -1,4 +1,4 @@
-<?
+<?php
 $ass_2_1 = utf8_encode('Profa. Dra. Cleybe Vieira');
 $ass_2_2 = utf8_encode('Coordenadora da Iniciação Científica PUCPR');
 $ass_2_3 = utf8_encode('');
@@ -67,5 +67,7 @@ $pdf -> SetFont('helvetica', '', 6);
 $pdf->Text(20, 137, utf8_encode('LINK DE VALIDAÇÂO'));
 
 /* Arquivo de saida */
-$pdf -> Output('output.pdf', 'I');
+$nome_asc = UpperCaseSql($nome);
+$nome_asc = troca($nome_asc,' ','_');
+$pdf -> Output('certificado-'.$nome_asc.'.pdf', 'I');
 ?>
