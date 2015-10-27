@@ -47,27 +47,6 @@ class eventos extends CI_model {
 				}
 			}
 
-			/* ESTUDANTE */
-			if ($tipo == 'ESTUDANTE') {
-				/* Declaracao de Estudante SEMIC */
-				$cracha = strzero($cracha, 11);
-				$sql = "select count(*) as total, pp_avaliador_id 
-							from pibic_parecer_2015
-						where pp_avaliador_id = '$id' group by pp_avaliador_id 
-						and pp_tipo = 'SEMIC' ";
-				$rlt = $this -> db -> query($sql);
-
-				$rlt = $rlt -> result_array();
-				if (count($rlt) > 0) {
-					$line = $rlt[0];
-					$total = $line['total'];
-					if ($total > 5) {
-						/* ID da declaracao de avaliador - 2 */
-						$this -> insere_declaracao($id, 0, 2);
-					}
-				}
-			}
-
 			/* ORIENTADOR */
 			if ($tipo == 'ORIENTADOR') {
 
@@ -83,38 +62,89 @@ class eventos extends CI_model {
 				for ($r = 0; $r < count($rlt); $r++) {
 					$line = $rlt[$r];
 					$protocolo = $line['st_codigo'];
-					$id2 = $line['id_us'];
-					/* ID da declaracao de avaliador - 7 */
-					$this -> insere_declaracao($id, $id2, 7, $protocolo);
+
+					$sql = "SELECT * FROM semic_nota_trabalhos 
+							left join ( select pp_protocolo as pp_cp, pp_p19, max(pp_p01) as nota from pibic_parecer_2015 
+											where pp_tipo = 'SEMIC' and pp_p19 = 'POSTE' group by pp_protocolo) as tabela on st_codigo = pp_cp 
+							left join ( select pp_protocolo as pp_co, pp_p19 as pp_p19a, max(pp_p01) as nota_a from pibic_parecer_2015 
+											where pp_tipo = 'SEMIC' and pp_p19 = 'ORAL' group by pp_protocolo) as tabela2 on st_codigo = pp_co 
+						WHERE (st_codigo = '$protocolo')";
+					$rrr = $this -> db -> query($sql);
+					$rrr = $rrr -> result_array();
+
+					/* Regra de validação */
+					$ok = 1;
+					$err = '';
+					$ll = $rrr[0];
+					if (($ll['st_poster'] == 'S') and (round($ll['nota']) < 40)) { $ok = 0;
+						$err .= '<br>Erro #404/' . $protocolo . '<br>';
+					}
+					if (($ll['st_oral'] == 'S') and (round($ll['nota_a']) < 40)) { $ok = 0;
+						$err .= '<br>Erro #405/' . $protocolo . '<br>';
+					}
+
+					if ($ok == 1) {
+						$id2 = $line['id_us'];
+						/* ID da declaracao de avaliador - 7 */
+						$this -> insere_declaracao($id, $id2, 7, $protocolo);
+					}
+					return($err);
 				}
 			}
 
 		}
-			/* ESTUDANTE */
-			if ($tipo == 'ESTUDANTE') {
+		/* ESTUDANTE */
+		if ($tipo == 'ESTUDANTE') {
 
-				/* Declaracao de Estudante SEMIC */
-				$cracha = strzero($cracha, 8);
-				$sql = "select * from semic_nota_trabalhos
+			/* Declaracao de Estudante SEMIC */
+			$cracha = strzero($cracha, 8);
+			$sql = "select * from semic_nota_trabalhos
 							left join us_usuario on st_professor = us_cracha
 							left join (select pp_protocolo from pibic_parecer_2015 group by pp_protocolo) as avaliacao on pp_protocolo = st_codigo 
 							where st_aluno = '$cracha'
 							and (st_poster = 'S' or st_oral = 'S') ";
-				$rlt = $this -> db -> query($sql);
-				$rlt = $rlt -> result_array();
-				for ($r = 0; $r < count($rlt); $r++) {
-					$line = $rlt[$r];
-					$protocolo = $line['st_codigo'];
-					$id2 = $line['id_us'];
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+
+				$protocolo = $line['st_codigo'];
+
+				$sql = "SELECT * FROM semic_nota_trabalhos 
+							left join ( select pp_protocolo as pp_cp, pp_p19, max(pp_p01) as nota from pibic_parecer_2015 
+											where pp_tipo = 'SEMIC' and pp_p19 = 'POSTE' group by pp_protocolo) as tabela on st_codigo = pp_cp 
+							left join ( select pp_protocolo as pp_co, pp_p19 as pp_p19a, max(pp_p01) as nota_a from pibic_parecer_2015 
+											where pp_tipo = 'SEMIC' and pp_p19 = 'ORAL' group by pp_protocolo) as tabela2 on st_codigo = pp_co 
+						WHERE (st_codigo = '$protocolo')";
+				$rrr = $this -> db -> query($sql);
+				$rrr = $rrr -> result_array();
+
+				/* Regra de validação */
+				$ok = 1;
+				$err = '';
+				$ll = $rrr[0];
+				if (($ll['st_poster'] == 'S') and (round($ll['nota']) < 40)) { $ok = 0;
+					$err .= '<br>Erro #404/' . $protocolo . '<br>';
+				}
+				if (($ll['st_oral'] == 'S') and (round($ll['nota_a']) < 40)) { $ok = 0;
+					$err .= '<br>Erro #405/' . $protocolo . '<br>';
+				}
+
+				$id2 = $line['id_us'];
+				if ($ok == 1) {
 					/* ID da declaracao de avaliador - 7 */
 					$this -> insere_declaracao($id, $id2, 12, $protocolo);
+					return ('');
+				} else {
+					$err = 'Erro na geração da declaração de participação, entre em contato com pibicpr@pucpr.br e informe o código ' . $err;
+					return ($err);
 				}
 			}
+		}
 
 	}
 
-	function valida_certificado($id)
-		{
+	function valida_certificado($id) {
 		$sql = "select * from central_declaracao
 					inner join central_declaracao_evento on id_cde = dc_tipo
 					inner join (select us_nome as nome_1, id_us as id_us_1, us_genero as us_g1 from us_usuario) as user_1 on id_us_1 = dc_us_usuario_id 
@@ -125,14 +155,13 @@ class eventos extends CI_model {
 					where id_dc = " . round($id);
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		if (count($rlt) == 0)
-			{
-				$rt = array();
-			} else {
-				$rt = $rlt[0];
-			}			
-		return($rt);
+		if (count($rlt) == 0) {
+			$rt = array();
+		} else {
+			$rt = $rlt[0];
 		}
+		return ($rt);
+	}
 
 	function mostra_declaracoes($us1) {
 		$sql = "select * from central_declaracao
@@ -156,7 +185,7 @@ class eventos extends CI_model {
 
 			$sx .= '</td>';
 			$sx .= '<td width="50%">';
-			
+
 			/* Nome do aluno ou orientador */
 			$nome = trim($line['us_nome']);
 			$idd = $line['id_us'];
@@ -173,7 +202,8 @@ class eventos extends CI_model {
 	function insere_declaracao($us1, $us2, $tipo, $protocolo = '') {
 		$data = date("Y-m-d");
 		$hora = date("H:i:s");
-		if (strlen($us2) == 0) { $us2 = 0; }
+		if (strlen($us2) == 0) { $us2 = 0;
+		}
 		$sql = "select * from central_declaracao 
 						where dc_us_usuario_id = $us1
 						and dc_us_usuario_id_2 = $us2

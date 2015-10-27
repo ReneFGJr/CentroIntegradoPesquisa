@@ -63,15 +63,16 @@ class central_declaracao extends CI_Controller {
 		$this -> eventos -> emitir('SEMIC', 'AVALIADOR', date("Y"), $data);
 
 		/* Orientador IC */
-		$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', date("Y"), $data);
+		$err2 = $this -> eventos -> emitir('SEMIC', 'ORIENTADOR', date("Y"), $data);
 
 		/* Orientador IC */
-		$this -> eventos -> emitir('SEMIC', 'ESTUDANTE', date("Y"), $data);
+		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', date("Y"), $data);
 
 		$this -> load -> view("perfil/user", $data);
 		$cracha = $data['us_cracha'];
 
 		$data['content'] = $this -> eventos -> mostra_declaracoes($id);
+		$data['content'] .= '<table width="800" align="center"><tr><td><font color="red">'.$err1.$err2.'</font></td></tr></table>';
 		$this -> load -> view('content', $data);
 
 	}
