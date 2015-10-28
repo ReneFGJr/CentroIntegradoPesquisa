@@ -6,7 +6,8 @@ class eventos extends CI_model {
 	function emitir($evento, $tipo, $ano, $us) {
 		$cracha = $us['us_cracha'];
 		$id = $us['id_us'];
-
+		$err='';
+		
 		if ($ano == '2015') {
 
 			/* OUVINTE */
@@ -57,10 +58,12 @@ class eventos extends CI_model {
 							left join (select pp_protocolo from pibic_parecer_2015 group by pp_protocolo) as avaliacao on pp_protocolo = st_codigo 
 							where st_professor = '$cracha'
 							and (st_poster = 'S' or st_oral = 'S') ";
-				$rlt = $this -> db -> query($sql);
-				$rlt = $rlt -> result_array();
-				for ($r = 0; $r < count($rlt); $r++) {
-					$line = $rlt[$r];
+				$qrlt = $this -> db -> query($sql);
+				$qrlt = $qrlt -> result_array();
+
+				for ($rq = 0; $rq < count($qrlt); $rq++) {
+					$line = $qrlt[$rq];
+
 					$protocolo = $line['st_codigo'];
 
 					$sql = "SELECT * FROM semic_nota_trabalhos 
@@ -86,11 +89,15 @@ class eventos extends CI_model {
 					if ($ok == 1) {
 						$id2 = $line['id_us'];
 						/* ID da declaracao de avaliador - 7 */
-						$this -> insere_declaracao($id, $id2, 7, $protocolo);
+						if ($id2 > 0)
+							{
+								$this -> insere_declaracao($id, $id2, 7, $protocolo);
+							}
 					}
-					return($err);
 				}
 			}
+
+			return ($err);
 
 		}
 		/* ESTUDANTE */
@@ -143,7 +150,7 @@ class eventos extends CI_model {
 		}
 		/* APRESENTACAO DE TRABALHO */
 		if ($tipo == 'APRESENTACAO') {
-			
+
 			/* Declaracao de Estudante SEMIC que apresentou trabalho*/
 			$cracha = strzero($cracha, 8);
 			$sql = "select * from semic_nota_trabalhos
@@ -177,14 +184,17 @@ class eventos extends CI_model {
 				if (($ll['st_oral'] == 'S') and (round($ll['nota_a']) < 40)) { $ok = 0;
 					$err .= '<br>Erro #505/' . $protocolo . '<br>';
 				}
-			
+
 				$id2 = $line['id_us'];
 				if ($ok == 1) {
 					/* ID da declaracao de avaliador - 7 */
 					$tipop = 21;
-					if (($ll['st_poster']=='S') and ($ll['st_oral']!='S')) { $tipop = 21; }
-					if (($ll['st_poster']!='S') and ($ll['st_oral']=='S')) { $tipop = 18; }
-					if (($ll['st_poster']=='S') and ($ll['st_oral']=='S')) { $tipop = 15; }
+					if (($ll['st_poster'] == 'S') and ($ll['st_oral'] != 'S')) { $tipop = 21;
+					}
+					if (($ll['st_poster'] != 'S') and ($ll['st_oral'] == 'S')) { $tipop = 18;
+					}
+					if (($ll['st_poster'] == 'S') and ($ll['st_oral'] == 'S')) { $tipop = 15;
+					}
 
 					$this -> insere_declaracao($id, 0, $tipop, $protocolo);
 					return ('');
