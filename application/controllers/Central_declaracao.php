@@ -67,6 +67,9 @@ class central_declaracao extends CI_Controller {
 
 		/* Orientador IC */
 		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', date("Y"), $data);
+		
+		/* Estudante Apresentação */
+		$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', date("Y"), $data);		
 
 		$this -> load -> view("perfil/user", $data);
 		$cracha = $data['us_cracha'];
@@ -236,6 +239,46 @@ class central_declaracao extends CI_Controller {
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 8 de outubro de 2015.</td></tr></table>';
 				break;
+			/* Apresentacao Oral e Poster */
+			case '15' :
+				$artigo_estudante = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
+				}
+
+				/* Consulta avaliacao */
+				$protocolo = trim($data['dc_texto_1']);
+				$content = 'Declaramos que <b>' . $data['nome'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" nas modalidades <b>Oral e Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 6 a 8 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 8 de outubro de 2015.</td></tr></table>';
+				break;				
+			/* Apresentacao Postre */
+			case '18' :
+				$artigo_estudante = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
+				}
+
+				/* Consulta avaliacao */
+				$protocolo = trim($data['dc_texto_1']);
+				$content = 'Declaramos que <b>' . $data['nome'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" na modalidade <b>Oral</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 6 a 8 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 8 de outubro de 2015.</td></tr></table>';
+				break;				
+			/* Apresentacao Postre */
+			case '21' :
+				$artigo_estudante = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
+				}
+
+				/* Consulta avaliacao */
+				$protocolo = trim($data['dc_texto_1']);
+				$content = 'Declaramos que <b>' . $data['nome'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" na modalidade <b>Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 6 a 8 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 8 de outubro de 2015.</td></tr></table>';
+				break;				
+				
 			default :
 				echo 'ERRO INTERNO ' . $tipo;
 				exit ;
