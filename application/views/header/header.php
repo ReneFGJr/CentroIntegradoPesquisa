@@ -28,7 +28,7 @@ header ('Content-type: text/html; charset=ISO-8859-1');
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/jquery.js');?>"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/jquery.mask.js');?>"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/jquery-ui.min.js');?>"></script>
-
+<script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/sisdoc_form.js');?>"></script>
 
 <?php
 		/* BIBLIOTECAS JAVA SCRIPT

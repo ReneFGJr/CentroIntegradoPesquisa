@@ -7,7 +7,7 @@ class email_local extends CI_Model {
 	function enviaremail($para, $titulo, $texto) {
 
 		$this -> email -> from($this->e_mail, $this->e_nome);
-		$this -> email -> to($para);
+		$this -> email -> to($para[0]);
 		//$this -> email -> cc('rene.gabriel@pucpr.br');
 		//$this -> email -> bcc('them@their-example.com');
 
@@ -15,7 +15,7 @@ class email_local extends CI_Model {
 		$this -> email -> message($texto);
 
 		$this -> email -> send();
-		echo $this->email->print_debugger();
+		//echo $this->email->print_debugger();
 	}
 
 	function enviaremail2($para, $titulo, $texto) {

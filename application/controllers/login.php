@@ -66,7 +66,59 @@ class login extends CI_Controller {
 		echo 'ERRO DE ACESSO!';
 		exit ;
 	}
+	function r($id=0, $chk='') {
+		$data = array();
+		$this -> load -> view('header/header', $data);
+		$check = checkpost_link($id.'avaliador_semic');
+		echo $chk.'<BR>';
+		echo $check;
+		if ($chk != $check) {
+			$this->load->view('header/503.php');
+			return('');
+		} else {
+			$id = round($id);
+			$sql = "select * from us_usuario where id_us = " . $id;
+			
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$line = $rlt[0];
+			
+			/* Model */
+			$this -> load -> model('login/josso_login_pucpr');
 
+			if (count($rlt) > 0) {
+				/* Recupera dados */
+				echo '===>'.$line['us_cpf'];
+				$prefil = '#AVA';
+				
+				$this -> josso_login_pucpr -> cpf = $line['us_cpf'];
+				//$this -> josso_login_pucpr -> josso = $line['jossoSession'];
+				$this -> josso_login_pucpr -> nome = $line['us_nome'];
+				$this -> josso_login_pucpr -> perfil = $perfil;
+				$this -> josso_login_pucpr -> id = $line['id_us'];
+				$this -> josso_login_pucpr -> cracha = '';
+				$this -> josso_login_pucpr -> nomeEmpresa = '';
+				$this -> josso_login_pucpr -> nomeFilial = '';
+				$this -> josso_login_pucpr -> loged = 1;
+				$rs = $this -> josso_login_pucpr -> security();
+				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'],'ADR');
+				
+				
+				/*
+				/* Grava dados na Session */
+				if ($rs == 0)
+					{
+					$dados = array('perfil' => $perfil, 'id_us' => $this -> josso_login_pucpr -> id, 'cracha' => '', 'cpf' => $line['us_cpf'], 'josso' => $this -> josso, 'nome' => $line['us_nome']);
+					$this -> session -> set_userdata($dados);
+					}
+				  
+				$link = base_url('index.php/semic/aceite');
+				redirect($link);
+			}
+		}
+		echo 'ERRO DE ACESSO!';
+		exit ;
+	}
 	function logout() {
 		/* Model */
 		$this -> load -> model('login/josso_login_pucpr');

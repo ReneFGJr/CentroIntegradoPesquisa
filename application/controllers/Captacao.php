@@ -1,0 +1,103 @@
+<?php
+class Captacao extends CI_Controller {
+	function __construct() {
+		global $dd, $acao;
+		parent::__construct();
+		$this -> lang -> load("app", "portuguese");
+		$this -> load -> library('form_validation');
+		$this -> load -> database();
+		$this -> load -> helper('form');
+		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('url');
+		$this -> load -> library('session');
+
+		date_default_timezone_set('America/Sao_Paulo');
+		/* Security */
+		$this -> security();
+	}
+
+	function security() {
+
+		/* Seguranca */
+		$this -> load -> model('login/josso_login_pucpr');
+		$this -> josso_login_pucpr -> security();
+	}
+
+	function cab() {
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'style_cab.css');
+		array_push($css, 'form_sisdoc.css');
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Menu */
+		$menus = array();
+		array_push($menus, array('CIP', '/cip/'));
+
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+		$data['title_page'] = 'Captacação de Recursos';
+		$data['menu'] = 1;
+		$data['menus'] = $menus;
+		$this -> load -> view('header/cab', $data);
+	}
+
+	function index($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('usuarios');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+			
+		$menu = array();
+		$data['title_menu'] = 'Captacação de Recursos & Bonificação de Artigos';
+		array_push($menu,array('Captação de Recursos','Meus projetos cadastrados','ITE','/captacao/grants'));
+		array_push($menu,array('Captação de Recursos','Cadastrar novo projeto','ITE','/captacao/grants_new'));
+		
+		array_push($menu,array('Isenções','Minhas Isenções','ITE','/captacao/isencoes'));
+		array_push($menu,array('Isenções','Indicar Isenções','ITE','/captacao/isencao_indicar'));
+
+		array_push($menu,array('Artigos Científicos (A1, A2, Q1 e ExR)','Meus artigos cadastrados','ITE','/captacao/articles'));
+		array_push($menu,array('Artigos Científicos (A1, A2, Q1 e ExR)','Cadastrar novo artigos','ITE','/captacao/article_new'));
+
+		$data['menu'] = $menu;
+		
+		
+		$this->load->view('header/main_menu',$data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	function grants($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('usuarios');
+		$this -> load -> model('captacoes');
+		
+		$id = $_SESSION['id_us'];
+		$us = $this->usuarios->le($id);
+		$cracha = $us['us_cracha'];
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
+		$data = array();
+		$data['title'] = 'Captacação de Recursos';
+		$data['content'] = $this->captacoes->lista($cracha);
+		$this->load->view('content',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+}
+?>

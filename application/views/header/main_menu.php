@@ -9,7 +9,7 @@
 		switch ($tipo) {
 			case 'BTN' :
 				echo '
-				<a href="' . base_url('index.php' . $menu[$r][3]) . '\" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
+				<a href="' . base_url('index.php' . $menu[$r][3]) . '" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
 					<div id="icone-cip-2" class="icone-iniciacao-cientifica icone-cip">
 						<h2 class="icone-iniciacao-cientifica-cor">' . $menu[$r][0] . '</h2>
 						<p>
@@ -21,7 +21,7 @@
 				break;
 			case 'BTA' :
 				echo '
-				<a href="' . base_url('index.php' . $menu[$r][3]) . '\" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
+				<a href="' . base_url('index.php' . $menu[$r][3]) . '" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
 					<div id="icone-cip-2" class="icone-admin icone-cip">
 						<h2 class="icone-admin-cor">' . $menu[$r][0] . '</h2>
 						<p>
@@ -33,7 +33,7 @@
 				break;
 			case 'BTB' :
 				echo '
-				<a href="' . base_url('index.php' . $menu[$r][3]) . '\" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
+				<a href="' . base_url('index.php' . $menu[$r][3]) .'" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
 					<div id="icone-cip-2" class="icone-green icone-cip">
 						<h2 class="icone-green-cor">' . $menu[$r][0] . '</h2>
 						<p>
@@ -54,11 +54,27 @@
 					$div = 1;
 				}
 				echo '
-				<a href="' . base_url('index.php' . $menu[$r][3]) . '\" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
-					<span>' . $menu[$r][1] . '</span><BR>
+				<a href="' . base_url('index.php' . $menu[$r][3]) .'" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="link no-undeline">     
+					<span class="menu_item_li">' . $menu[$r][1] . '</span><BR>
 				</a>
 			';
-				break;
+			break;
+			case 'ITS' :
+				$tit = $menu[$r][0];
+				if ($tit != $xtit) {
+					if ($div == 1) { echo '</div>';
+					}
+					echo '<div class="menu_item">';
+					echo '<span class="lt3"><B>' . $tit . '</B></span><BR>';
+					$xtit = $tit;
+					$div = 1;
+				}
+				echo '
+				<a href="' . base_url('index.php' . $menu[$r][3]) .'" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="link no-undeline">     
+					<span class="menu_item_li_3">' . $menu[$r][1] . '</span><BR>
+				</a>
+			';
+			break;			
 		}
 	}
 	/* Fecha div */

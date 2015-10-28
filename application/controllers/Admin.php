@@ -12,14 +12,14 @@ class admin extends CI_Controller {
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
-		
+
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 		$this -> security();
 	}
 
 	function security() {
-			
+
 		/* Seguranca */
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> security();
@@ -48,114 +48,162 @@ class admin extends CI_Controller {
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Administração';
-		
-		if (perfil('#ADM'))
-			{
+
+		if (perfil('#ADM')) {
 			$data['menu'] = 1;
 			$data['menus'] = $menus;
-			} else {
+		} else {
 			$data['menu'] = 0;
-			$data['menus'] = $menus;				
-			}
+			$data['menus'] = $menus;
+		}
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
-		
-		if (perfil('#ADM',1)==false)
-			{
-				redirect(base_url('index.php'));			
-				return(0);
-			}
+
+		if (perfil('#ADM', 1) == false) {
+			redirect(base_url('index.php'));
+			return (0);
+		}
 	}
-	
-	
+
 	function index() {
 		$this -> cab();
 		$data = array();
-		
+
 		/* Menu de botões na tela Admin*/
 		$menu = array();
-		array_push($menu,array('Parceiros','Parceiros da PUCPR','ITE','/parceiro'));
-		array_push($menu,array('Idiomas','Idiomas do Sistema','ITE','/idioma'));
-		array_push($menu,array('Perfis','Perfil de usuário do Sistema','ITE','/perfil'));
-		array_push($menu,array('Unidades','Unidades da PUCPR','ITE','/unidade'));
-		array_push($menu,array('Instituições','Instituições de ensino','ITE','/instituicao'));
+		array_push($menu, array('Parceiros', 'Parceiros da PUCPR', 'ITE', '/parceiro'));
+		array_push($menu, array('Idiomas', 'Idiomas do Sistema', 'ITE', '/idioma'));
 		
-		array_push($menu,array('SEMIC','Salas de Apresentação','ITE','/semic/salas'));
-		
+		array_push($menu, array('Usuários', 'Integração SGA/CIP Estudantes', 'ITE', '/usuario/integracao_sga'));
+		array_push($menu, array('Usuários', 'Perfil de usuário do Sistema', 'ITE', '/perfil'));
+		array_push($menu, array('Unidades', 'Unidades da PUCPR', 'ITE', '/unidade'));
+		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/instituicao'));
+
+		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas', 'ITE', '/admin/ic'));
+
+		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
+		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
+		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
+
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
-		$this -> load -> view('header/main_menu',$data);
-		
+		$this -> load -> view('header/main_menu', $data);
+
 		/*Fecha */ 		/*Gera rodapé*/
-		$this -> load -> view('header/content_close'); 	
+		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
-	
-	function centro_resultado($id = 0)
-		{
-		$this->load->model('centro_resultados');
+
+	function ic($id = 0, $pg = '') {
+		$this -> load -> model('ics');
 		$this -> cab();
 		$data = array();
-		
+
 		$form = new form;
-		$form->tabela = $this->centro_resultados->tabela;
-		$form->see = true;
-		$form = $this->centro_resultados->row($form);
-		
+		$form -> tabela = $this -> ics -> table_row();
+		$form -> see = true;
+		$form -> edit = true;
+		$form -> novo = true;
+		$form = $this -> ics -> row($form);
+
+		$form -> row_edit = base_url('index.php/admin/ic_edit/');
+		$form -> row_view = '';
+		$form -> row = base_url('index.php/admin/ic/');
+
+		$tela['tela'] = row($form, $id);
+
+		$tela['title'] = $this -> lang -> line('ic');
+
+		$this -> load -> view('form/form', $tela);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function ic_edit($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this -> ics -> cp();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> ics -> tabela);
+		$data['title'] = msg('ic');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/admin/ic'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function centro_resultado($id = 0) {
+		$this -> load -> model('centro_resultados');
+		$this -> cab();
+		$data = array();
+
+		$form = new form;
+		$form -> tabela = $this -> centro_resultados -> tabela;
+		$form -> see = true;
+		$form = $this -> centro_resultados -> row($form);
+
 		$form -> row_edit = base_url('index.php/admin/centro_resultado_edit/');
 		$form -> row_view = '';
 		$form -> row = base_url('index.php/admin/centro_resultado/');
 
 		$tela['tela'] = row($form, $id);
 
-		$tela['title'] = $this->lang->line('title_centro_resultado');
+		$tela['title'] = $this -> lang -> line('title_centro_resultado');
 
-		$this -> load -> view('form/form', $tela);	
+		$this -> load -> view('form/form', $tela);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}	
-	
-	function logins_view($id = 0,$check = '',$act='',$id_act=0)
-		{
+	}
+
+	function logins_view($id = 0, $check = '', $act = '', $id_act = 0) {
 		/* Load Models */
-		$this->load->model('logins');
-		
+		$this -> load -> model('logins');
+
 		/* Se acao EXCLUIR */
-		if ($act == 'del')
-			{
-				$data = $this->logins->perfil_desassociar($id_act);
-			}
-		
+		if ($act == 'del') {
+			$data = $this -> logins -> perfil_desassociar($id_act);
+		}
+
 		$this -> cab();
-		$data = array();	
-		
-		if (!checkpost_link($id) == $check)
-			{
-				redirect("index.php/main");
-			}
-		
-		
-		$data = $this->logins->le($id);
+		$data = array();
+
+		if (!checkpost_link($id) == $check) {
+			redirect("index.php/main");
+		}
+
+		$data = $this -> logins -> le($id);
 		$this -> load -> view('login/login_show', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}	
-	
-	function logins($id = 0)
-		{
-		$this->load->model('logins');
+	}
+
+	function logins($id = 0) {
+		$this -> load -> model('logins');
 		$this -> cab();
 		$data = array();
-		
+
 		$form = new form;
-		$form->tabela = $this->logins->tabela;
-		$form->see = true;
-		$form = $this->logins->row($form);
-		
+		$form -> tabela = $this -> logins -> tabela;
+		$form -> see = true;
+		$form = $this -> logins -> row($form);
+
 		$form -> row_edit = base_url('index.php/admin/logins_edit/');
 		$form -> row_view = base_url('index.php/admin/logins_view/');
 		$form -> row = base_url('index.php/admin/logins/');
@@ -163,12 +211,12 @@ class admin extends CI_Controller {
 		$tela['tela'] = row($form, $id);
 		$url = base_url('author');
 
-		$tela['title'] = $this->lang->line('title_admin');
+		$tela['title'] = $this -> lang -> line('title_admin');
 
-		$this -> load -> view('form/form', $tela);	
+		$this -> load -> view('form/form', $tela);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}
+	}
 
 }

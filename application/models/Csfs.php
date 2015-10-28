@@ -54,18 +54,27 @@ class csfs extends CI_model {
 	function cp_homologar() {
 		$cp = array();
 		$cp = array();
-		$sql_pais = 'iso3:nome:select * from pais order by nome';
+		$sql_pais = 'iso3:nome_pt:select * from pais order by nome_pt';
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
 		array_push($cp, array('$Q ' . $sql_pais, 'csf_pais', msg('csf_pais'), True, True));
 		array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
 		array_push($cp, array('$HV', 'csf_status', '2', True, True));
 		return ($cp);
 	}
+	
+	function cp_retorno() {
+		$cp = array();
+		$cp = array();
+		array_push($cp, array('$H8', 'id_csf', '', False, False));
+		array_push($cp, array('$MES', 'csf_retorno', msg('csf_retorno'), True, True));
+		array_push($cp, array('$HV', 'csf_status', '13', True, True));
+		return ($cp);
+	}	
 
 	function cp_homologar_no() {
 		$cp = array();
 		$cp = array();
-		//$sql_pais = 'iso3:nome:select * from pais order by nome';
+		//$sql_pais = 'iso3:nome_pt:select * from pais order by nome';
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
 		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '2', True, True));
@@ -74,7 +83,7 @@ class csfs extends CI_model {
 
 	function cp_homologar_capes() {
 		$cp = array();
-		$sql_pais = 'iso3:nome:select * from pais order by nome';
+		$sql_pais = 'iso3:nome_pt:select * from pais order by nome_pt';
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
 		array_push($cp, array('$Q ' . $sql_pais, 'csf_pais', msg('csf_pais'), True, True));
 		array_push($cp, array('$MES', 'csf_saida_previsao', msg('csf_prev_saida'), false, True));
@@ -84,7 +93,7 @@ class csfs extends CI_model {
 
 	function cp_homologar_capes_no() {
 		$cp = array();
-		//$sql_pais = 'iso3:nome:select * from pais order by nome';
+		//$sql_pais = 'iso3:nome_pt:select * from pais order by nome';
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
 		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '10', True, True));
@@ -93,7 +102,7 @@ class csfs extends CI_model {
 
 	function cp_cancelar() {
 		$cp = array();
-		//$sql_pais = 'iso3:nome:select * from pais order by nome';
+		//$sql_pais = 'iso3:nome_pt:select * from pais order by nome';
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
 		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '11', True, True));
@@ -102,7 +111,7 @@ class csfs extends CI_model {
 
 	function cp_viagem() {
 		$cp = array();
-		$sql_pais = 'iso3:nome:select * from pais order by nome';
+		$sql_pais = 'iso3:nome_pt:select * from pais order by nome_pt';
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
 		array_push($cp, array('$Q ' . $sql_pais, 'csf_pais', msg('csf_pais'), True, True));
 		array_push($cp, array('$MES', 'csf_saida', msg('csf_saida'), True, True));
@@ -113,7 +122,7 @@ class csfs extends CI_model {
 
 	function cp_desistente() {
 		$cp = array();
-		//$sql_pais = 'iso3:nome:select * from pais order by nome';
+		//$sql_pais = 'iso3:nome_pt:select * from pais order by nome';
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
 		array_push($cp, array('$T80:5', '', msg('csf_justificativa'), True, True));
 		array_push($cp, array('$HV', 'csf_status', '8', True, True));
@@ -131,7 +140,7 @@ class csfs extends CI_model {
 
 	function cp_homologar_parceira() {
 		$cp = array();
-		$sql_pais = 'iso3:nome:select * from pais order by nome';
+		$sql_pais = 'iso3:nome_pt:select * from pais order by nome_pt';
 		$sql_parceiro = 'id_cp:cp_descricao:select * from csf_parceiro where cp_ativo = 1 order by cp_descricao';
 		//array_push($cp, array('$Q id_cp:cp_descricao:select * from csf_parceiro order by cp_descricao where cp_ativo = 1', 'csf_parceiro', msg('csf_parceiro'), True, True));
 		array_push($cp, array('$H8', 'id_csf', '', False, False));
@@ -175,7 +184,7 @@ class csfs extends CI_model {
 					    left join curso on csf_curso = id_curso
 					    */			
 			";
-
+		echo $sql;
 		$sql = "CREATE OR REPLACE VIEW csf_view AS (" . $sql . ");";
 		$rlt = $this -> db -> query($sql);
 		return (1);
@@ -235,7 +244,7 @@ class csfs extends CI_model {
 			$sx .= '</td>';
 
 			$sx .= '<td class="borderb1">';
-			$sx .= $line['nome'];
+			$sx .= $line['nome_pt'];
 			$sx .= '</td>';
 
 			$sx .= '<td class="borderb1">';
@@ -338,10 +347,10 @@ class csfs extends CI_model {
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
+			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
-			$sx .= $link . $line['nome'] . '</A>';
+			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
@@ -496,7 +505,7 @@ class csfs extends CI_model {
 
 		array_push($cp, array('$MES', '', 'Previsão de saída', True, True));
 
-		$sql = "iso3:nome:select * from pais order by nome";
+		$sql = "iso3:nome_pt:select * from pais order by nome_pt";
 		array_push($cp, array('$Q ' . $sql, '', 'País', False, True));
 
 		return ($cp);
@@ -549,10 +558,10 @@ class csfs extends CI_model {
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
+			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
-			$sx .= $link . $line['nome'] . '</A>';
+			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
@@ -607,10 +616,10 @@ class csfs extends CI_model {
 			$sx .= $link . $line['gpip_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
+			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
-			$sx .= $link . $line['nome'] . '</A>';
+			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
@@ -667,10 +676,10 @@ class csfs extends CI_model {
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
+			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
-			$sx .= $link . $line['nome'] . '</A>';
+			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
@@ -725,10 +734,10 @@ class csfs extends CI_model {
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['id'] . '/' . checkpost_link($line['id']));
+			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
-			$sx .= $link . $line['nome'] . '</A>';
+			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
 			$link = base_url('index.php/csf/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
@@ -813,8 +822,8 @@ class csfs extends CI_model {
 
 	/** Alunos por pais */
 	function mostra_dados_std_country() {
-		$sql = "select nome, count(nome) as qtd
-				from csf_view group by nome order by qtd desc limit 7
+		$sql = "select nome_pt, count(nome_pt) as qtd
+				from csf_view group by nome_pt order by qtd desc limit 7
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -825,7 +834,7 @@ class csfs extends CI_model {
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$dados[$line['nome']] = $line['qtd'];
+			$dados[$line['nome_pt']] = $line['qtd'];
 		}
 
 		return ($dados);

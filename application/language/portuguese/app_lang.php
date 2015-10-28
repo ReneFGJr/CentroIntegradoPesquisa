@@ -15,6 +15,40 @@ if (!function_exists(('msg')))
 
 $lang['versao'] = 'v0.15.25';
 
+/****************************** AVALIADORES */
+$lang['desactive'] = 'desativar';
+$lang['active'] = 'ativar';
+$lang['avaliador'] = 'avaliador';
+$lang['desativar_como_avaliador'] = 'desativar avaliador';
+$lang['ativar_como_avaliador'] = 'ativar como avaliador';
+$lang['active_area'] = 'Ativar área';
+$lang['add_area'] = 'Incorporado área';
+
+$lang['add_area'] = 'Incorporado área';
+$lang['aceitar_avaliacao'] = 'ACEITAR';
+$lang['recusar_avaliacao'] = 'RECUSAR';
+$lang['recusar_avaliacao_confirma'] = 'GRAVAR RECUSA >>';
+
+
+/*****************************************************************/
+$lang['page_docentes'] = 'Docentes';
+$lang['page_avaliadores'] = 'Avaliadores';
+$lang['page_discente'] = 'Discentes';
+$lang['Vigencia'] = 'Vigência';
+$lang['Orientador'] = 'Orientador';
+
+$lang['pt_BR'] = 'Português';
+$lang['en'] = 'Inglês';
+$lang['Orientador'] = 'Orientador';
+$lang['Areas'] = 'Áreas';
+$lang['area_nao_definida'] = 'Área não definida';
+
+$lang['email_modificar'] = 'Atualizar e-mail';
+$lang['email_excluir'] = 'Excluir e-mail';
+$lang['email_adicionar'] = 'Adicionar e-mail';
+$lang['email_sem'] = 'Sem e-mail';
+$lang['email_ok'] = 'E-mail ok';
+
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /* Ciencia sem fronteiras */
 $lang['csf_bt_cancelar'] 			= 'Cancelar processo';

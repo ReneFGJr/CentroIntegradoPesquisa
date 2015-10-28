@@ -45,6 +45,18 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 	}
 
+	function index() {
+		$this -> load -> model('dgps');
+		$this -> cab();
+		$data = array();
+		$data['acoes'] = $this -> dgps -> acoes();
+		$data = $this -> dgps -> resumo($data);
+		$this -> load -> view('dgp/index', $data);
+		$this -> load -> view('dgp/view_mygroups', $data);
+		$this -> load -> view('dgp/view_indicadores', $data);
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function admin($id = 0) {
 		/* Models */
 		$this -> load -> model('dgps');
@@ -102,7 +114,7 @@ class dgp extends CI_Controller {
 		$this -> load -> model('dgps');
 		$this -> load -> model('phplattess');
 
-		$id = $this->dgps -> next_harvesting();
+		$id = $this -> dgps -> next_harvesting();
 
 		$this -> cab();
 		$data = array();
@@ -119,7 +131,7 @@ class dgp extends CI_Controller {
 			$text = $this -> phplattess -> dgp_import($link);
 			$this -> dgps -> grava_dados_importados($text, $id, $link);
 			$data['tempo'] = 5;
-			$this->load->view('header/refresh',$data);
+			$this -> load -> view('header/refresh', $data);
 		} else {
 			/* fim da importacao */
 		}
@@ -218,24 +230,6 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function index() {
-		$this -> load -> model('dgps');
-		$this -> cab();
-		$data = array();
-		$data['acoes'] = $this -> dgps -> acoes();
-		$data = $this -> dgps -> resumo($data);
-		$this -> load -> view('dgp/index', $data);
-		$this -> load -> view('dgp/view_mygroups', $data);
-		$this -> load -> view('dgp/view_indicadores', $data);
-		$this -> load -> view('header/foot', $data);
-	
-
-
-
-
-
-}
-
 	function comunicar_alteracao() {
 		$this -> load -> model('dgps');
 		$this -> cab();
@@ -266,8 +260,7 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	
-	function lista_grupos(){
+	function lista_grupos() {
 		/* Load Models */
 		$this -> load -> model('dgps');
 
@@ -294,9 +287,7 @@ class dgp extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		
-		
-	}
 
+	}
 
 }
