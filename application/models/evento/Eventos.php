@@ -36,12 +36,11 @@ class eventos extends CI_model {
 						where pp_avaliador_id = '$id' group by pp_avaliador_id 
 						and pp_tipo = 'SEMIC' ";
 				$rlt = $this -> db -> query($sql);
-
 				$rlt = $rlt -> result_array();
 				if (count($rlt) > 0) {
 					$line = $rlt[0];
 					$total = $line['total'];
-					if ($total > 5) {
+					if ($total > 0) {
 						/* ID da declaracao de avaliador - 2 */
 						$this -> insere_declaracao($id, 0, 2);
 					}
