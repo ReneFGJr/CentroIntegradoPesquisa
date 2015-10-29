@@ -212,7 +212,10 @@ class central_declaracao extends CI_Controller {
 				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
 				}
 				$artigo_professor = 'prof.';
-				if ($data['us_g2'] == 'F') { $artigo_professor = 'profa.';
+				$artigo_prof_complemento = 'o';
+				if ($data['us_g2'] == 'F') {
+					 $artigo_professor = 'profa.';
+					 $artigo_prof_complemento = 'a';	
 				}
 
 				/* Consulta avaliacao */
@@ -232,9 +235,9 @@ class central_declaracao extends CI_Controller {
 						echo 'Emissão bloqueada, consulte pibicpr@pucpr.br informando o código: #46/'.$id.'/'.$protocolo;
 						exit;						
 					}
-				
-
-				$content = 'Certificamos que ' . $artigo_estudante . ' estudante, <b>' . $data['nome'] . '</b> participou do programa ' . $data['edital'] . ' nesta Universidade, com ' . $data['modalidade'] . ', com o projeto de pesquisa intitulado <b>"' . $data['titulo_projeto'] . '"</b> sob orientação do ' . $artigo_professor . ' <b>' . $data['nome2'] . '</b> , no período de agosto 2014 a julho 2015, com 20 horas semanais.';
+																																																							
+											
+				$content = 'Certificamos que ' . $artigo_estudante . ' estudante, <b>' . $data['nome'] . '</b> participou do programa ' . $data['edital'] . ' nesta Universidade, com ' . $data['modalidade'] . ', com o projeto de pesquisa intitulado <b>"' . $data['titulo_projeto'] . '"</b> sob orientação d'.$artigo_prof_complemento. ' ' . $artigo_professor . ' <b>' . $data['nome2'] . '</b> , no período de agosto 2014 a julho 2015, com 20 horas semanais.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 8 de outubro de 2015.</td></tr></table>';
