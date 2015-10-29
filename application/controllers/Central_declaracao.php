@@ -212,7 +212,7 @@ class central_declaracao extends CI_Controller {
 				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
 				}
 				$artigo_professor = 'prof.';
-				if ($data['us_g2'] == 'F') { $artigo_estudante = 'profa.';
+				if ($data['us_g2'] == 'F') { $artigo_professor = 'profa.';
 				}
 
 				/* Consulta avaliacao */
