@@ -305,7 +305,7 @@ class usuarios extends CI_model {
 		$rlt = $rlt -> result_array();
 		$sx = '<font class="lt2">';
 
-		if (function_exists('perfil')) {
+		if ((function_exists('perfil'))) {
 			if (perfil('#CPP#SPI#ADM') == 1) {
 				$edit = 1;
 			}

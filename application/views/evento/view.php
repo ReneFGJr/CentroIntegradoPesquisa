@@ -18,7 +18,14 @@
 		<td width="300">
 			<?php echo $mailing; ?>
 			<a href="<?php echo base_url('index.php/evento/editar_mailing/0/0/'.$id_ev);?>" class="link lt0">nova comunicação</a>
-			
+			<?php
+			if (strlen($ev_query) > 0) {
+				echo ' | ';
+				echo '<a href="'.base_url('index.php/evento/ver_lista/'.$id_ev).'" class="link lt0">ver lista</a>';
+			} else {
+				
+			}
+		?>	
 		</td>		
 	</tr>
 	

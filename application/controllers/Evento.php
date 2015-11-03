@@ -184,6 +184,49 @@ class evento extends CI_controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function ver_lista($id = 0, $chk = '') {
+		/* Load Models */
+		$this -> load -> model('evento/eventos');
+		$this -> load -> model('usuarios');
+		$cp = $this -> eventos -> cp();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		
+		$ml = $this->eventos->le($id);
+		$sql = $ml['ev_query'];
+		$sql = 'select * from us_usuario as user inner join 
+					('.$sql.') as tabela on tabela.id_us = user.id_us 
+				order by user.us_nome'; 
+				
+		$sx = '';
+		$sql = troca($sql,'´',"'");
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		$sx = '<table>';
+		$email = '';
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				$id = $line['id_us'];
+				$sx .= '<tr>';
+				$sx .= '<td>'.($r+1).'.</td>';
+				$sx .= '<td>';
+				$sx .= $line['us_nome'];
+				$sx .= '</td>';
+				$sx .= '<td>';
+				$em = $this -> usuarios-> lista_email($id,0);
+				$email .= $em.'; ';
+				$sx .= $em;
+				$sx .= '</td>';
+				$sx .= '</tr>';
+			}
+		$sx .= '<tr><td colspan=10>'.$email.'</td></tr>';
+		$sx .= '</table>';
+		$data['content'] = $sx;
+		$this -> load -> view('content',$data);			
+	}
+
 	function ver($id = 0, $chk = '', $idm = 0) {
 		/* Load Models */
 		$this -> load -> model('evento/eventos');
@@ -194,6 +237,7 @@ class evento extends CI_controller {
 
 		$data = $this -> eventos -> le($id);
 		$data['ev_mailing'] = '';
+		
 		/* Mailing */
 		if ($idm > 0)
 			{

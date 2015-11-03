@@ -331,7 +331,7 @@ class eventos extends CI_model {
 		array_push($cp, array('$D8', 'ev_ate', msg('ev_ate'), True, True));
 		array_push($cp, array('$S100', 'ev_logo', msg('ev_logo'), False, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'ev_ativo', msg('ev_ativo'), True, True));
-
+		array_push($cp, array('$T80:4', 'ev_query', msg('ev_lista'), False, True));
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 
 		return ($cp);
