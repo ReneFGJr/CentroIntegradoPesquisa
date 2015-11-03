@@ -29,7 +29,9 @@ $lang['aceitar_avaliacao'] = 'ACEITAR';
 $lang['recusar_avaliacao'] = 'RECUSAR';
 $lang['recusar_avaliacao_confirma'] = 'GRAVAR RECUSA >>';
 
-
+/* Perfil */
+$lang['captacao_academica'] = 'Total de captações acadêmicas';
+$lang['captacao_institucional'] =  'Total de captação institucionais';
 /*****************************************************************/
 $lang['page_docentes'] = 'Docentes';
 $lang['page_avaliadores'] = 'Avaliadores';

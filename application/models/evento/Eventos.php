@@ -289,15 +289,14 @@ class eventos extends CI_model {
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
 		$this -> load -> library('email', $config);
 
-		$t = $this -> show_mailing(3);
+		$t = $this -> show_mailing($id);
 		$texto = $t['ml_html'];
 		$ass = $t['ml_subject'];
+		$sql = $t['ml_query'];
 		$email_own = 2;
 		$idu = 1;
 
-		$sql = "SELECT id_us, csf_aluno, us_nome FROM `csf`
-					inner join us_usuario on csf_aluno = id_us 
-				where csf_retorno > '2015-04-01' ";
+		$sql = troca($sql, '´', "'");
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -305,6 +304,23 @@ class eventos extends CI_model {
 			$idu = $line['id_us'];
 			enviaremail_usuario($idu, $ass, $texto, 2);
 		}
+	}
+
+	function enviar_email_test($id = 0) {
+		global $email_own;
+		/* Perfil do usuário */
+		$this -> load -> model('email_local');
+		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
+		$this -> load -> library('email', $config);
+
+		$t = $this -> show_mailing($id);
+		$texto = $t['ml_html'];
+		$ass = $t['ml_subject'];
+		$sql = $t['ml_query'];
+		$email_own = 2;
+		$idu = $_SESSION['id_us'];
+
+		enviaremail_usuario($idu, $ass, $texto, 2);
 	}
 
 	function cp() {
@@ -375,6 +391,7 @@ class eventos extends CI_model {
 		$sql = "select * from " . $this -> tabela_mailing . " where id_ml = " . $id;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
+
 		$line = $rlt[0];
 		return ($line);
 	}

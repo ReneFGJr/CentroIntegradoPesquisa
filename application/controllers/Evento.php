@@ -110,9 +110,8 @@ class evento extends CI_controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function email() {
+	function email($id=0) {
 		global $email_own;
-		$id = 1;
 		$email=1;
 		$email_own = 2;
 		/* Load Models */
@@ -122,7 +121,7 @@ class evento extends CI_controller {
 		$this -> cab();
 		$data = array();
 		
-		$this->eventos->enviar_email();
+		$this->eventos->enviar_email($id);
 		
 		/*		
 		$this->email->attach('img/img_noPhoto.jpg');
@@ -138,7 +137,26 @@ class evento extends CI_controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	function email_test($id=0) {
+		global $email_own;
+		$email=1;
+		$email_own = 2;
+		/* Load Models */
+		$this -> load -> model('usuarios');
+		$this -> load -> model('evento/eventos');
 
+		$this -> cab();
+		$data = array();
+		
+		$this -> load -> view('header/content_open');
+		
+		$this->eventos->enviar_email_test($id);
+		$data['content'] = 'Enviado teste';
+		$this -> load -> view('content',$data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 	function editar_mailing($id = 0, $chk = '', $evento=0) {
 		/* Load Models */
 		$this -> load -> model('usuarios');
@@ -188,7 +206,15 @@ class evento extends CI_controller {
 			}
 		
 		$this -> load -> view('evento/view', $data);
-
+		
+		//$data['content'] = 'https://cip.pucpr.br/img/evento/SwB/';
+		$data['content'] = '<a href="'.base_url('index.php/evento/editar_mailing/'.$idm).'" class="link lt1">editar</a>';
+		$data['content'] .= ' | ';
+		$data['content'] .= '<a href="'.base_url('index.php/evento/email_test/'.$idm).'" class="link lt1">enviar teste de e-mail</a>';
+		$data['content'] .= ' | ';
+		$data['content'] .= '<a href="'.base_url('index.php/evento/email/'.$idm).'" class="link lt1">disparar e-mail</a>';
+		$this -> load -> view('content', $data);
+		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}

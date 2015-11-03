@@ -75,6 +75,9 @@ class main extends CI_Controller {
 		/* Menu */
 		$menu = array();
 		/* Libera Menus */
+		array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
+		
+		/* Libera Menus */
 		if (perfil('#CPP#SPI#ADM') == 1) { array_push($menu, array('Inciação Científica', 'Administração do Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTA', '/ic'));
 		}
 		if (perfil('#CPS#COO#ADM') == 1) { array_push($menu, array('CIP', 'Administração do Centro Integrado de Pesquisa, Administração', 'BTA', '/cip'));
