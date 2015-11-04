@@ -107,8 +107,15 @@ class usuarios extends CI_model {
 
 	function le_cracha($cracha) {
 		$rs = $this -> readByCracha($cracha);
-		$id = $rs['id_us'];
-		$rs = $this -> usuarios -> le($id);		
+		
+		if (count($rs)==0)
+			{
+				$rs = array();
+			} else {
+				$id = $rs['id_us'];
+				$rs = $this -> usuarios -> le($id);		
+			}
+				
 		return ($rs);
 	}
 	
