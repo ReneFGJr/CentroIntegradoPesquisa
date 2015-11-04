@@ -111,6 +111,7 @@ class usuarios extends CI_model {
 		$rs = $this -> usuarios -> le($id);		
 		return ($rs);
 	}
+	
 	/* Consulta Usuario */
 	function consulta_cracha($cracha = '',$source='sga') {
 		if (strlen($cracha) == 0) {
