@@ -39,6 +39,8 @@ class Swb2 extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
+		$this -> load -> view('evento/swb2/img_cab', $data);
+		
 		$data['title_page'] = 'SWB2';
 	}
 	
@@ -114,6 +116,7 @@ class Swb2 extends CI_Controller {
 	function finalizacao()
 		{
 			$this->cab();
+			//$this -> load -> view('evento/swb2/img_cab', $data);
 			$this->load->view('evento/swb2/agredecimento');
 		}	
 	
