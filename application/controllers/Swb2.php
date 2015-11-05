@@ -19,6 +19,7 @@ class Swb2 extends CI_Controller {
 	}
 	public function index()
 	{
+			
 		$this->load->view('index');
 	}
 	
@@ -120,7 +121,9 @@ class Swb2 extends CI_Controller {
 			$this->cab();
 			//$this -> load -> view('evento/swb2/img_cab', $data);
 			$this->load->view('evento/swb2/agredecimento');
-		}	
+		}
+		
+	
 	
 }
 
