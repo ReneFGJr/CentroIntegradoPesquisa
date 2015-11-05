@@ -276,6 +276,7 @@ class evento extends CI_controller {
 		$cp = $this -> eventos -> cp();
 
 		$this -> cab();
+		
 		$this -> load -> view('header/content_open');
 		
 		$ml = $this->eventos->le($id);
@@ -290,13 +291,14 @@ class evento extends CI_controller {
 		$rlt = $this->db->query($sql);
 		$rlt = $rlt->result_array();
 		
-		$sx = '<table>';
-		$sx .= '<fieldset><legend>Alunos já inscritos</legend>';
-		$email = '';
+		$sx .= '<table>';
 		
+		$sx .= '<h1>Estudantes Inscritos</h1>';
+		
+		$email = '';
+		//$sx .= '<fieldset><legend><b>teste</b></legend>';
 		for ($r=0;$r < count($rlt);$r++)
 			{
-				
 				$line = $rlt[$r];
 				$id_us = $line['id_us'];
 				
@@ -322,13 +324,11 @@ class evento extends CI_controller {
 				$sx .= $em;
 				$sx .= '</td>';
 				$sx .= '</tr>';
-				
-	
 			}
-	
-		$sx .= '<tr><td colspan=10><fieldset><legend>Lista de todos os e-mails</legend>'.$email.'</fieldset></td></tr>';
+		//$sx .= '</fieldset>';
+		$sx .= '<tr><td colspan=10></br><fieldset style="border:2px solid #d5d5d5; "><legend><b>Lista com todos os e-mails dos inscritos</b></legend>'.$email.'</fieldset></td></tr>';
 		$sx .= '</table>';
-			
+		
 		$sx .= '';
 		$data['content'] = $sx;
 		$this -> load -> view('content',$data);	
