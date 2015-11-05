@@ -149,8 +149,7 @@ class evento extends CI_controller {
 		$data = array();
 		
 		$this -> load -> view('header/content_open');
-		$id_us = $_SESSION['id_us'];
-		$this->eventos->enviar_email_test($id_us);
+		$this->eventos->enviar_email_test($id);
 
 		$data['content'] = 'Enviado teste';
 		
@@ -254,12 +253,15 @@ class evento extends CI_controller {
 		$this -> load -> view('evento/view', $data);
 		
 		//$data['content'] = 'https://cip.pucpr.br/img/evento/SwB/';
-		$data['content'] = '<a href="'.base_url('index.php/evento/editar_mailing/'.$idm).'" class="link lt1">editar</a>';
-		$data['content'] .= ' | ';
-		$data['content'] .= '<a href="'.base_url('index.php/evento/email_test/'.$idm).'" class="link lt1">enviar teste de e-mail</a>';
-		$data['content'] .= ' | ';
-		$data['content'] .= '<a href="'.base_url('index.php/evento/email/'.$idm).'" class="link lt1">disparar e-mail</a>';
-		$this -> load -> view('content', $data);
+		if ($idm > 0)
+			{
+			$data['content'] = '<a href="'.base_url('index.php/evento/editar_mailing/'.$idm).'" class="link lt1">editar</a>';
+			$data['content'] .= ' | ';
+			$data['content'] .= '<a href="'.base_url('index.php/evento/email_test/'.$idm).'" class="link lt1">enviar teste de e-mail</a>';
+			$data['content'] .= ' | ';
+			$data['content'] .= '<a href="'.base_url('index.php/evento/email/'.$idm).'" class="link lt1">disparar e-mail</a>';
+			$this -> load -> view('content', $data);
+			}
 		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -278,10 +280,10 @@ class evento extends CI_controller {
 		
 		$ml = $this->eventos->le($id);
 		$sql = $ml['ev_query'];
-		$sql = 'Select user.us_nome, us_cracha, ei_evento_id, id_us, ei_data_inscricao from evento_inscricao as evento
-						inner join us_usuario as user on user.id_us = id_ei 
-						where ei_evento_id = 4	
-						order by user.us_nome'; 
+		$sql = "Select user.us_nome, us_cracha, ei_evento_id, id_us, ei_data_inscricao from evento_inscricao as evento
+						inner join us_usuario as user on user.id_us = ei_us_usuario_id 
+						where ei_evento_id = $id	
+						order by user.us_nome"; 
 				
 		$sx = '';
 		$sql = troca($sql,'´',"'");
@@ -296,7 +298,6 @@ class evento extends CI_controller {
 			{
 				
 				$line = $rlt[$r];
-			
 				$id_us = $line['id_us'];
 				
 				$sx .= '<tr>';
@@ -315,6 +316,7 @@ class evento extends CI_controller {
 					$sx .= '<td>'." | ".'</td>';	
 
 				$sx .= '<td>';
+				$em = '';
 				$em = $this -> usuarios-> recupera_email($id_us,0);
 				$email .= $em.'; ';
 				$sx .= $em;

@@ -261,11 +261,16 @@ class usuarios extends CI_model {
 	}
 
 	function recupera_email($id) {
-		$sql = "select * from us_email where id_usm = " . $id;
+		$sql = "select * from us_email where usuario_id_us = " . $id;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		$line = $rlt[0];
-		return ($line['usm_email']);
+		if (count($rlt) > 0)
+			{
+				$line = $rlt[0];
+				return ($line['usm_email']);
+			} else {
+				return('');
+			}
 	}
 
 	function recupera_fone($id) {
