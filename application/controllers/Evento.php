@@ -149,9 +149,11 @@ class evento extends CI_controller {
 		$data = array();
 		
 		$this -> load -> view('header/content_open');
-		
-		$this->eventos->enviar_email_test($id);
+		$id_us = $_SESSION['id_us'];
+		$this->eventos->enviar_email_test($id_us);
+
 		$data['content'] = 'Enviado teste';
+		
 		$this -> load -> view('content',$data);
 
 		$this -> load -> view('header/content_close');
@@ -261,6 +263,74 @@ class evento extends CI_controller {
 		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	function lista_inscritos($id = 0, $chk = '') {
+		/* Load Models */
+		$this -> load -> model('evento/eventos');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('eventos/swb2s');
+		
+		$cp = $this -> eventos -> cp();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		
+		$ml = $this->eventos->le($id);
+		$sql = $ml['ev_query'];
+		$sql = 'Select user.us_nome, us_cracha, ei_evento_id, id_us, ei_data_inscricao from evento_inscricao as evento
+						inner join us_usuario as user on user.id_us = id_ei 
+						where ei_evento_id = 4	
+						order by user.us_nome'; 
+				
+		$sx = '';
+		$sql = troca($sql,'´',"'");
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		
+		$sx = '<table>';
+		$sx .= '<fieldset><legend>Alunos já inscritos</legend>';
+		$email = '';
+		
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				
+				$line = $rlt[$r];
+			
+				$id_us = $line['id_us'];
+				
+				$sx .= '<tr>';
+					$sx .= '<td>'.($r+1).'.</td>';
+					$sx .= '<td>';
+					$sx .= $line['us_nome'];
+					$sx .= '</td>';
+					$sx .= '<td>'." | ".'</td>';				
+					$sx .= '<td>';
+					$sx .= $line['us_cracha'];
+					$sx .= '</td>';
+					$sx .= '<td>'." | ".'</td>';				
+					$sx .= '<td>';
+					$sx .= $line['ei_data_inscricao'];
+					$sx .= '</td>';	
+					$sx .= '<td>'." | ".'</td>';	
+
+				$sx .= '<td>';
+				$em = $this -> usuarios-> recupera_email($id_us,0);
+				$email .= $em.'; ';
+				$sx .= $em;
+				$sx .= '</td>';
+				$sx .= '</tr>';
+				
+	
+			}
+	
+		$sx .= '<tr><td colspan=10><fieldset><legend>Lista de todos os e-mails</legend>'.$email.'</fieldset></td></tr>';
+		$sx .= '</table>';
+			
+		$sx .= '';
+		$data['content'] = $sx;
+		$this -> load -> view('content',$data);	
+		
 	}
 
 }

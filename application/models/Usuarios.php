@@ -11,7 +11,7 @@ class usuarios extends CI_model {
 		$termos = troca($termos, ' ', ';');
 		$termos = splitx(';', $termos);
 
-		$wh1 = '';
+		$wh1 = '';
 		$wh2 = '';
 		$wh3 = '';
 		for ($r = 0; $r < count($termos); $r++) {
