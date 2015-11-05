@@ -332,16 +332,16 @@ a.lt1 {
 	}
 /* Borders */
 .border1 {
-	border: 1px solid #000000;
+	border: 1px solid #c0c0c0;
 }
 .borderb1 {
-	border-bottom: 1px solid #000000;
+	border-bottom: 1px solid #c0c0c0;
 }
 .bordert1 {
-	border-top: 1px solid #000000;
+	border-top: 1px solid #c0c0c0;
 }
 .borderr1 {
-	border-right: 1px solid #000000;
+	border-right: 1px solid #c0c0c0;
 }
 .radius10 {
 	border-radius: 10px;

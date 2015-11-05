@@ -40,7 +40,7 @@ class stricto_sensu extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		
+
 		$data['title_page'] = 'Stricto Sensu';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
@@ -52,41 +52,57 @@ class stricto_sensu extends CI_Controller {
 		$data = array();
 		$this -> load -> view('header/content_open');
 		$this -> load -> view('ss/index', $data);
-		
-		$data['content'] = $this->stricto_sensus->lista_programas();
-		$this->load->view('content',$data);
+
+		$data['content'] = $this -> stricto_sensus -> lista_programas();
+		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function editar($id=0,$check='') {
-		$tabela = 'ss_programa_pos';
-		
+	function ver($id=0,$chk='') {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
 		$this -> load -> view('ss/index', $data);
+
+		$data = $this->stricto_sensus->le($id);
 		
-		$form = new form;
-		$form->id = $id;
-		$form->tabela = $tabela;
-		
-		$cp = $this->stricto_sensus->cp();
-		
-		$tela = $form->editar($cp,$tabela);
-		if ($form->saved > 0)
-			{
+		$this -> load -> view('content', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function editar($id = 0, $check = '') {
+		if (perfil('#CPP#SPI#ADM') == 1) {
+			$tabela = 'ss_programa_pos';
+
+			$this -> load -> model('stricto_sensus');
+			$this -> cab();
+			$data = array();
+			$this -> load -> view('header/content_open');
+			$this -> load -> view('ss/index', $data);
+
+			$form = new form;
+			$form -> id = $id;
+			$form -> tabela = $tabela;
+
+			$cp = $this -> stricto_sensus -> cp();
+
+			$tela = $form -> editar($cp, $tabela);
+			if ($form -> saved > 0) {
 				$url = base_url('index.php/stricto_sensu');
 				redirect($url);
 			}
-		
-		$data['content'] = $tela;
-		$this->load->view('content',$data);
-		
 
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		} else {
+			redirect(base_url('index.php/main'));
+		}
 	}
 
 }

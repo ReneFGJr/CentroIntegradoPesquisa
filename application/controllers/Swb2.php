@@ -97,6 +97,8 @@ class Swb2 extends CI_Controller {
 		
 		$dados = $this->swb2s->le($id);
 		$user = $dados['ei_us_usuario_id'];
+
+		
 		$data = $this->usuarios->le($user);
 		$this->load->view('usuario/view',$data);
 		
