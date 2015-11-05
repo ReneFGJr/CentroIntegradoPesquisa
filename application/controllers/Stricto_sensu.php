@@ -59,16 +59,17 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function ver($id=0,$chk='') {
+	function ver($id = 0, $chk = '') {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
 		$this -> load -> view('ss/index', $data);
 
-		$data = $this->stricto_sensus->le($id);
-		
-		$this -> load -> view('content', $data);
+		$data = $this -> stricto_sensus -> le($id);
+		print_r($data);
+		$this -> load -> view('ss/show', $data);
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}

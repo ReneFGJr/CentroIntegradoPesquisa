@@ -6,7 +6,7 @@ class Stricto_sensus extends CI_model {
 			$sql = "select * from ss_programa_pos
 						left join us_usuario on id_us = id_us_coordenador
 						left join area_avaliacao on pp_area = id_area  
-						where id_pp = '.$id.' 
+						where id_pp = '$id' 
 					order by pp_nome 
 					";
 			$rlt = $this->db->query($sql);
@@ -14,7 +14,10 @@ class Stricto_sensus extends CI_model {
 			
 			if (count($rlt) > 0)
 				{
-					return($rlt[0]);
+					$line = $rlt[0];
+					$line['modalidade'] = $this->modalidade($line);
+					$line['link_pp_codigo_capes'] = '<a href="http://conteudoweb.capes.gov.br/conteudoweb/ProjetoRelacaoCursosServlet?acao=detalhamentoIes&codigoPrograma=' . $line['pp_codigo_capes'] . '" class="link lt2" target="_new">'.$line['pp_codigo_capes'].'</a>';
+					return($line);
 				} else {
 					return(array());
 				}			
@@ -48,6 +51,22 @@ class Stricto_sensus extends CI_model {
 		return ($cp);
 	}
 
+	function modalidade($line)
+		{
+			$modalidade = '';
+			if ($line['pp_mestrado'] == '1') { $modalidade .= 'M;';
+			}
+			if ($line['pp_doutorado'] == '1') { $modalidade .= 'D;';
+			}
+			if ($line['pp_mestrado_prof'] == '1') { $modalidade .= 'P;';
+			}
+			if ($line['pp_pos_doutorado'] == '1') { $modalidade .= 'PhD;';
+			}
+			$modalidade = substr($modalidade, 0, strlen($modalidade) - 1);
+			$modalidade = troca($modalidade, ';', '/');
+			return($modalidade);			
+		}
+
 	function lista_programas() {
 		$sql = "select * from ss_programa_pos
 						left join us_usuario on id_us = id_us_coordenador
@@ -77,17 +96,7 @@ class Stricto_sensus extends CI_model {
 			$sx .= '<td class="border1">' . ($r + 1) . '</td>';
 			$sx .= '<td class="border1">' . $link . $line['pp_nome'] . '</a>' . '</td>';
 			$sx .= '<td align="left" class="border1">' . $link . $line['pp_sigla'] . '</a>' . '</td>';
-			$modalidade = '';
-			if ($line['pp_mestrado'] == '1') { $modalidade .= 'M;';
-			}
-			if ($line['pp_doutorado'] == '1') { $modalidade .= 'D;';
-			}
-			if ($line['pp_mestrado_prof'] == '1') { $modalidade .= 'P;';
-			}
-			if ($line['pp_pos_doutorado'] == '1') { $modalidade .= 'PhD;';
-			}
-			$modalidade = substr($modalidade, 0, strlen($modalidade) - 1);
-			$modalidade = troca($modalidade, ';', '/');
+			$modalidade = $this->modalidade($line);
 			$sx .= '<td class="border1" align="center">' . $modalidade . '</td>';
 
 			$linkc = '<a href="http://conteudoweb.capes.gov.br/conteudoweb/ProjetoRelacaoCursosServlet?acao=detalhamentoIes&codigoPrograma=' . $line['pp_codigo_capes'] . '" class="link lt2" target="_new">';
