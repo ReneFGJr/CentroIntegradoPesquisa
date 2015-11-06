@@ -4,7 +4,8 @@ class Stricto_sensus extends CI_model {
 	function professores_do_programa($prog=0)
 		{
 			$sql = "select * from (
-						select distinct us_usuario_id_us, programa_pos_id_pp from ss_professor_programa_linha where sspp_ativo = 1 
+						select count(*) as linhas, sspp_tipo as situacao, min(sspp_dt_entrada) as entrada, us_usuario_id_us, programa_pos_id_pp from ss_professor_programa_linha where sspp_ativo = 1
+							group by us_usuario_id_us, programa_pos_id_pp, situacao
 					) as professor
 					inner join us_usuario on us_usuario_id_us = id_us
 					where programa_pos_id_pp = $prog
@@ -12,7 +13,14 @@ class Stricto_sensus extends CI_model {
 					";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="lt2">';
+			$sx = '<table width="100%" class="lt2 border1">';
+			$sx .= '<tr><th>Pos</th>
+						<th>Professor</th>
+						<th>Área de formação</th>
+						<th>Situação no programa</th>
+						<th>Ano de entrada</th>
+						<th>Linhas de Pesquisa</th>
+						';
 			for ($r=0;$r < count($rlt);$r++)
 				{
 					$line = $rlt[$r];
@@ -23,6 +31,17 @@ class Stricto_sensus extends CI_model {
 					$sx .= '<td>';
 					$sx .= $line['us_nome'];
 					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$lattes = $line['us_link_lattes'];
+					if (strlen($lattes) > 0)
+						{
+							$sx .= '<img src="'.base_url('img/icone/icone_lattes.png').'" height="30">';
+						}
+					$sx .= '</td>';
+					$sx .= '<td align="center">'.$line['situacao'].'</td>';
+					$sx .= '<td align="center">'.$line['entrada'].'</td>';
+					$sx .= '<td align="center">'.$line['linhas'].'</td>';
 					$sx .= '</tr>';	
 				}
 			$sx .= '</table>';
