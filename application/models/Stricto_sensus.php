@@ -1,11 +1,41 @@
 <?php
 class Stricto_sensus extends CI_model {
+	
+	function professores_do_programa($prog=0)
+		{
+			$sql = "select * from (
+						select distinct us_usuario_id_us, programa_pos_id_pp from ss_professor_programa_linha where sspp_ativo = 1 
+					) as professor
+					inner join us_usuario on us_usuario_id_us = id_us
+					where programa_pos_id_pp = $prog
+					order by us_nome
+					";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="lt2">';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$sx .= '<tr>';
+					$sx .= '<td width="20" align="center"> ';
+					$sx .= ($r+1);
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= $line['us_nome'];
+					$sx .= '</td>';
+					$sx .= '</tr>';	
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
 	function le($id=0)
 		{
 			$id = round($id);
 			$sql = "select * from ss_programa_pos
 						left join us_usuario on id_us = id_us_coordenador
 						left join area_avaliacao on pp_area = id_area  
+						left join (select us_nome as us_secretaria_1, id_us as id_us_sec1 from us_usuario) as secretaria1 on id_us_sec1 = id_us_secretaria1
+						left join (select us_nome as us_secretaria_2, id_us as id_us_sec2 from us_usuario) as secretaria2 on id_us_sec2 = id_us_secretaria2
 						where id_pp = '$id' 
 					order by pp_nome 
 					";

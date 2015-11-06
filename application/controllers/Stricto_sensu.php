@@ -67,8 +67,10 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('ss/index', $data);
 
 		$data = $this -> stricto_sensus -> le($id);
-		print_r($data);
 		$this -> load -> view('ss/show', $data);
+		
+		$data['content'] = $this->stricto_sensus->professores_do_programa($id);
+		$this->load->view('content',$data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

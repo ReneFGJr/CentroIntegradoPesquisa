@@ -55,8 +55,8 @@
 	<!---- AREAS --->
 	<tr><td style="height: 10px;"></td></tr>
 	<tr class="lt0">
-		<td colspan=2>ÁREA DE AVALIAÇÃO</td>		
-		<td colspan=2>COORDENADOR DO PROGRAMA</td>
+		<td colspan=2>Área de avaliação</td>		
+		<td colspan=2>Coordenador do programa</td>
 		<td colspan=2>CóD CAPES</td>
 	</tr>
 	
@@ -76,15 +76,20 @@
 	<tr><td style="height: 10px;"></td></tr>
 	<tr class="lt0">
 		<td colspan=2>Escola / Centro</td>		
-		<td colspan=2>Secretaria</td>
+		<td colspan=1>Secretaria</td>
+		<td colspan=2>Contato</td>
 	</tr>
 	
 	<tr>
 		<td colspan=2>
 			<?php echo $area_avaliacao_nome; ?>
 		</td>
+		<td colspan=1>
+			<?php echo $us_secretaria_1; ?><br>
+			<?php echo $us_secretaria_2; ?><br>
+		</td>
 		<td colspan=2>
-			<?php echo $us_nome; ?>
+			<?php echo $pp_fone1. ' '.$pp_fone2. ' '. $pp_email1. ' '. $pp_email2; ?>
 		</td>		
 	</tr>	
 </table>
