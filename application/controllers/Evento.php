@@ -15,8 +15,14 @@ class evento extends CI_controller {
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
-		$this -> security();
 	}
+	
+	/* Eventos Redirecionados */
+	function spsr()
+		{
+			$this->load->view('evento/spsr/home');
+		}
+	
 
 	function security() {
 
@@ -25,7 +31,10 @@ class evento extends CI_controller {
 		$this -> josso_login_pucpr -> security();
 	}
 
-	function cab() {
+function cab() {
+		/* Security */
+		$this -> security();
+		
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
@@ -281,9 +290,10 @@ class evento extends CI_controller {
 		
 		$ml = $this->eventos->le($id);
 		$sql = $ml['ev_query'];
-		$sql = "Select user.us_nome, us_cracha, ei_evento_id, id_us, ei_data_inscricao from evento_inscricao as evento
-						inner join us_usuario as user on user.id_us = ei_us_usuario_id 
-						where ei_evento_id = $id	
+		$sql = "Select id_ei, ei_us_usuario_id, user.us_nome, us_cracha, ei_evento_id, id_us, ei_data_inscricao, ei_status 
+						from evento_inscricao as evento
+						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
+						where evento.ei_evento_id = $id	
 						order by user.us_nome"; 
 				
 		$sx = '';
@@ -291,10 +301,10 @@ class evento extends CI_controller {
 		$rlt = $this->db->query($sql);
 		$rlt = $rlt->result_array();
 		
-		$sx .= '<table>';
+		$sx .= '<table width="100%" class="lt2">';
 		
 		$sx .= '<h1>Estudantes Inscritos</h1>';
-		
+		$sx .= '<th align=left>id<th>nome<th><th align=center>nº inscricao<th align=right>cracha<th><th>data da insc.<th><th>email contato<th><th>inscrito';
 		$email = '';
 		//$sx .= '<fieldset><legend><b>teste</b></legend>';
 		for ($r=0;$r < count($rlt);$r++)
@@ -304,18 +314,26 @@ class evento extends CI_controller {
 				
 				$sx .= '<tr>';
 					$sx .= '<td>'.($r+1).'.</td>';
+					
 					$sx .= '<td>';
 					$sx .= $line['us_nome'];
 					$sx .= '</td>';
-					$sx .= '<td>'." | ".'</td>';				
-					$sx .= '<td>';
+					
+					$sx .= '<td align=center>'." | ".'</td>';	
+					
+					$sx .= '<td align=right>';
+					$sx .= $line['ei_us_usuario_id'];
+					$sx .= '</td>';
+					
+					$sx .= '<td >'." | ".'</td>';
+					$sx .= '<td align=right>';
 					$sx .= $line['us_cracha'];
 					$sx .= '</td>';
-					$sx .= '<td>'." | ".'</td>';				
-					$sx .= '<td>';
+					$sx .= '<td >'." | ".'</td>';				
+					$sx .= '<td align=right>';
 					$sx .= $line['ei_data_inscricao'];
 					$sx .= '</td>';	
-					$sx .= '<td>'." | ".'</td>';	
+					$sx .= '<td >'." | ".'</td>';	
 
 				$sx .= '<td>';
 				$em = '';
@@ -323,6 +341,28 @@ class evento extends CI_controller {
 				$email .= $em.'; ';
 				$sx .= $em;
 				$sx .= '</td>';
+				$sx .= '<td align=center>'." | ".'</td>';	
+								
+				$inscrito = $line['ei_status'];
+				
+				$id_ei = $line['id_ei'];
+				
+				
+				if($inscrito = '1'){
+					
+					$sx .= '<td align=center>';
+					$link = '<A HREF="' .base_url("index.php/evento/lista_inscritos_editar/".$id_ei."/".checkpost_link($id_ei))
+					. '"><font color="blue">sim</font>';
+					$sx .= $link;
+					$sx .= '</td>';
+				
+				}else{
+					$sx .= '<td>';
+					$sx .= '<font color="blue">não</font>';
+					$sx .= '</td>';
+				}
+				
+				
 				$sx .= '</tr>';
 			}
 		//$sx .= '</fieldset>';
@@ -334,6 +374,41 @@ class evento extends CI_controller {
 		$this -> load -> view('content',$data);	
 		
 	}
+
+function lista_inscritos_editar($id = 0, $chk = '') {
+		/* Load Models */
+				/* Load Models */
+		$this -> load -> model('evento/eventos');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('eventos/swb2s');
+		
+		$this -> cab();
+		
+		$cp = $this -> eventos -> cp_editar_status();
+		
+		$ev = $this->eventos->le_inscricao($id);
+
+		$us = $this->usuarios->le($ev['ei_us_usuario_id']);
+
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$this->load -> view('usuario/view', $us);
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, 'evento_inscricao');
+		$data['title'] = msg('fm_titulo');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/evento/lista_inscritos/'.$ev));
+		}
+			
+		}
 
 }
 ?>

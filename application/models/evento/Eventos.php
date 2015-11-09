@@ -2,6 +2,7 @@
 class eventos extends CI_model {
 	var $tabela = 'evento_nome';
 	var $tabela_mailing = 'evento_mailing';
+	var $tabela_usuario = 'us_usuario';
 
 	function emitir($evento, $tipo, $ano, $us) {
 		$cracha = $us['us_cracha'];
@@ -368,6 +369,23 @@ class eventos extends CI_model {
 
 		return ($cp);
 	}
+	
+		function cp_editar_status() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ei', '', False, True));
+		array_push($cp, array('${', '', 'Dados da inscrição no evento', false, false));
+		array_push($cp, array('$S20', 'ei_us_usuario_id', msg('Nº da inscrição'), false, false));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'ei_status', msg('Inscrito'), false, True));
+		array_push($cp, array('$S30', 'ei_data_inscricao', msg('Período da Inscrição'), false, false));
+		array_push($cp, array('$q', 'ei_evento', msg('Evento'), false, false));
+		array_push($cp, array('$}', '', '', false, false));
+		
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+	}
+	
+	
 
 	function le($id = 0) {
 		$sql = "select * from " . $this -> tabela . " where id_ev = " . round($id);
@@ -376,6 +394,20 @@ class eventos extends CI_model {
 		if (count($rlt) > 0) {
 			$line = $rlt[0];
 			$line['mailing'] = $this -> le_mailing($line['id_ev']);
+			return ($line);
+		} else {
+			return ( array());
+		}
+	}
+
+	function le_inscricao($id = 0) {
+		$sql = "select * from evento_inscricao as evento 
+		inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id
+		where evento.id_ei = " . round($id);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
 			return ($line);
 		} else {
 			return ( array());
@@ -463,5 +495,8 @@ class eventos extends CI_model {
 		$sx .= '</table>';
 		return ($sx);
 	}
+
+
+
 
 }
