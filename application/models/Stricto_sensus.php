@@ -1,5 +1,131 @@
 <?php
 class Stricto_sensus extends CI_model {
+	function resumo_programa($prog=0)
+		{
+			/* Cacula linhas */
+			$linhas = $this->calcula_linhas($prog);
+			$profs = $this->calcula_professores($prog);
+			
+			$cols = 5;
+			$size = round(100 / $cols).'%';
+			$sx = '<h2>Resumo do Programa</h2>';
+			$sx .= '<table width="100%" class="lt2 border1">';
+			$sx .= '<tr class="lt1" align="center">';
+			$sx .= '<th width="'.$size.'" align="center">Total de Professores</th>';
+			$sx .= '<th width="'.$size.'" align="center">Total de Linhas de Pesquisa</th>';
+			$sx .= '<th width="'.$size.'" align="center">Total de Discentes</th>';
+			$sx .= '<th width="'.$size.'" align="center">Total de Artigos Publicados</th>';
+			$sx .= '<th width="'.$size.'" align="center">Captações '.(date("Y")-1).'/'.(date("Y")).'</th>';
+			
+			$sx .= '<tr class="lt6" align="center">';
+			$sx .= '<th width="'.$size.'" align="center">'.$profs.'</th>';
+			$sx .= '<th width="'.$size.'" align="center">'.$linhas.'</th>';
+			$sx .= '<th width="'.$size.'" align="center">-</th>';
+			$sx .= '<th width="'.$size.'" align="center">-</th>';
+			$sx .= '<th width="'.$size.'" align="center">-</th>';			
+			
+			$sx .= '</tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
+	function calcula_linhas($prog)
+		{
+			$sql = "select distinct count(*) as total from ss_linha_pesquisa_programa where pp_id = $prog and sslpp_ativo = 1 ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return($rlt[0]['total']);
+				} else {
+					return(0);
+				}
+		}
+	function calcula_professores($prog)
+		{
+			$sql = "select count(*) as total from (
+						select distinct us_usuario_id_us from ss_professor_programa_linha 
+							where programa_pos_id_pp = $prog and sspp_ativo = 1
+					) as tabela
+					";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return($rlt[0]['total']);
+				} else {
+					return(0);
+				}
+		}
+	function linhas_do_programa($prog=0)
+		{
+			$cp = 'sslpp_nome_linha, id_sslpp, sspp_tipo, us_usuario_id_us, us_nome, id_us ';
+			$sql = "select distinct $cp from ss_linha_pesquisa_programa 
+						left join ss_professor_programa_linha on sslpp_id = id_sslpp
+						left join us_usuario on id_us = us_usuario_id_us
+						 where sslpp_ativo = 1 and pp_id = $prog 
+					order by sslpp_nome_linha";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$ln = array();
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$id = $line['id_sslpp'];
+					if (isset($ln[$id]))
+						{
+							
+						} else {
+							$ln[$id] = array();
+							$ln[$id]['nome'] = trim($line['sslpp_nome_linha']);
+							$ln[$id]['permanente'] = 0;
+							$ln[$id]['visitante'] = 0;
+							$ln[$id]['colaborador'] = 0;
+						}
+					$tipo = trim($line['sspp_tipo']);
+					
+					switch ($tipo)
+						{
+						case 'Permanente':
+							$ln[$id]['permanente'] = $ln[$id]['permanente'] + 1;
+							break; 
+						case 'Colaborador':
+							$ln[$id]['colaborador'] = $ln[$id]['colaborador'] + 1;
+							break; 
+						case 'Visitante':
+							$ln[$id]['visitante'] = $ln[$id]['visitante'] + 1;
+							break; 
+						default:
+							$ln[$id]['permanente'] = $ln[$id]['permanente'] + 1;
+							break; 
+						}
+				}
+			$sx = '<h2>Linhas de Pesquisa</h2>';
+			$sx .= '<table width="100%" class="lt2 border1">';				
+			$sx .= '<tr>
+						<th>Nome da linha</th>
+						<th>Profs. Permanentes</th>
+						<th>Profs. Colaboradores</th>
+						<th>Profs. Visitantes</th>
+					</tr>';
+			foreach ($ln as $key => $value) {
+				$sx .= '<tr>';
+				$sx .= '<td class="borderb1">';
+				$sx .= $ln[$key]['nome'];
+				$sx .= '</td>';
+				$sx .= '<td align="center" width="10%" class="borderb1">';
+				$sx .= $ln[$key]['permanente'];
+				$sx .= '</td>';
+				$sx .= '<td align="center" width="10%" class="borderb1">';
+				$sx .= $ln[$key]['colaborador'];
+				$sx .= '</td>';
+				$sx .= '<td align="center" width="10%" class="borderb1">';
+				$sx .= $ln[$key]['visitante'];
+				$sx .= '</td>';												
+			}
+			$sx .= '</table>';
+			return($sx);
+		}
 	
 	function professores_do_programa($prog=0)
 		{
@@ -13,9 +139,11 @@ class Stricto_sensus extends CI_model {
 					";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="lt2 border1">';
+			$sx = '<h2>Professores do Programa</h2>';
+			$sx .= '<table width="100%" class="lt2 border1">';
 			$sx .= '<tr><th>Pos</th>
 						<th>Professor</th>
+						<th>Lattes</th>
 						<th>Área de formação</th>
 						<th>Situação no programa</th>
 						<th>Ano de entrada</th>
@@ -24,24 +152,29 @@ class Stricto_sensus extends CI_model {
 			for ($r=0;$r < count($rlt);$r++)
 				{
 					$line = $rlt[$r];
-					$sx .= '<tr>';
-					$sx .= '<td width="20" align="center"> ';
+					$sx .= '<tr class="borderb1">';
+					$sx .= '<td width="20" align="center" class="borderb1"> ';
 					$sx .= ($r+1);
 					$sx .= '</td>';
-					$sx .= '<td>';
-					$sx .= $line['us_nome'];
+					$sx .= '<td class="borderb1">';
+					$link = link_perfil($line['us_nome'],$line['id_us']);
+					$sx .= $link.'</a>';
 					$sx .= '</td>';
 					
-					$sx .= '<td>';
+					$sx .= '<td class="borderb1" align="center">';
 					$lattes = $line['us_link_lattes'];
 					if (strlen($lattes) > 0)
 						{
-							$sx .= '<img src="'.base_url('img/icone/icone_lattes.png').'" height="30">';
+							$sx .= '<a href="'.$lattes.'" target="_new'.$line['id_us'].'">';
+							$sx .= '<img src="'.base_url('img/icon/icone_lattes.png').'" height="20" border=0 >';
+							$sx .= '</a>';
 						}
 					$sx .= '</td>';
-					$sx .= '<td align="center">'.$line['situacao'].'</td>';
-					$sx .= '<td align="center">'.$line['entrada'].'</td>';
-					$sx .= '<td align="center">'.$line['linhas'].'</td>';
+					$sx .= '<td class="borderb1">';
+					$sx .= '</td>';
+					$sx .= '<td align="center" class="borderb1">'.$line['situacao'].'</td>';
+					$sx .= '<td align="center" class="borderb1">'.$line['entrada'].'</td>';
+					$sx .= '<td align="center" class="borderb1">'.$line['linhas'].'</td>';
 					$sx .= '</tr>';	
 				}
 			$sx .= '</table>';

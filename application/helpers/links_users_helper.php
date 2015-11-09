@@ -58,6 +58,27 @@ function link_ic($id=0)
 		$href = '<a href="'.base_url('index.php/ic/view/'.$id.'/'.checkpost_link($id)).'" class="link lt4">';
 		return($href);
 	}
+	
+function link_perfil($nome='',$id)
+	{
+		$id = round($id);
+		$href = '<a href="'.base_url('index.php/persona/view/'.$id.'/'.checkpost_link($id)).'" target="_new" class="link">';
+		if ($id == 0)
+			{
+				$href = '<font color="blue">-sem indicação-</A>';
+			} else {
+				if (strlen($nome) == '')
+					{
+						$sql = "select * from us_usuario where id_us = ".round($id);
+						$rlt = db_query($sql);
+						$line = db_read($rlt);
+						$nome = $line['us_nome'];
+					}
+				$href .= $nome.'</A>';		
+			}
+		
+		return($href);
+	}	
 function link_avaliador($nome='',$id)
 	{
 		$id = round($id);

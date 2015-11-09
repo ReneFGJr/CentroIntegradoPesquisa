@@ -10,6 +10,7 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 
@@ -69,7 +70,14 @@ class stricto_sensu extends CI_Controller {
 		$data = $this -> stricto_sensus -> le($id);
 		$this -> load -> view('ss/show', $data);
 		
+		$data['content'] = $this->stricto_sensus->resumo_programa($id);
+		$this->load->view('content',$data);
+		
+		
 		$data['content'] = $this->stricto_sensus->professores_do_programa($id);
+		$this->load->view('content',$data);
+
+		$data['content'] = $this->stricto_sensus->linhas_do_programa($id);
 		$this->load->view('content',$data);
 
 		$this -> load -> view('header/content_close');
