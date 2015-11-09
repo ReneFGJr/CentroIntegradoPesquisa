@@ -290,10 +290,9 @@ function cab() {
 		
 		$ml = $this->eventos->le($id);
 		$sql = $ml['ev_query'];
-		$sql = "Select id_ei, ei_us_usuario_id, user.us_nome, us_cracha, ei_evento_id, id_us, ei_data_inscricao, ei_status 
-						from evento_inscricao as evento
+		$sql = "Select * from evento_inscricao as evento
 						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
-						where evento.ei_evento_id = $id	
+						where evento.ei_evento_id = $id
 						order by user.us_nome"; 
 				
 		$sx = '';
@@ -304,70 +303,94 @@ function cab() {
 		$sx .= '<table width="100%" class="lt2">';
 		
 		$sx .= '<h1>Estudantes Inscritos</h1>';
-		$sx .= '<th align=left>id<th>nome<th><th align=center>nº inscricao<th align=right>cracha<th><th>data da insc.<th><th>email contato<th><th>inscrito';
+		$sx .= '<th align=left>id<th>nome<th><th align=center>nº inscricao<th><th align=right>cracha<th><th>data da insc.<th><th>email contato<th><th>inscrito';
+		
 		$email = '';
-		//$sx .= '<fieldset><legend><b>teste</b></legend>';
+		$tot = 0;
+		
 		for ($r=0;$r < count($rlt);$r++)
 			{
+				$tot++;
+				
 				$line = $rlt[$r];
+				$inscrito = $line['ei_status'];				
+				if($inscrito != '1'){
+					$ft = '<font color = red><s>' ;
+					$ftend = '</s></font>';
+				} else {
+					$ft = '';
+					$ftend = '';
+				}
 				$id_us = $line['id_us'];
 				
 				$sx .= '<tr>';
 					$sx .= '<td>'.($r+1).'.</td>';
-					
 					$sx .= '<td>';
-					$sx .= $line['us_nome'];
+					$sx .= $ft.$line['us_nome'].$ftend;
 					$sx .= '</td>';
-					
 					$sx .= '<td align=center>'." | ".'</td>';	
-					
 					$sx .= '<td align=right>';
-					$sx .= $line['ei_us_usuario_id'];
+					$sx .= $ft.$line['id_ei'].$ftend;
 					$sx .= '</td>';
-					
 					$sx .= '<td >'." | ".'</td>';
 					$sx .= '<td align=right>';
-					$sx .= $line['us_cracha'];
+					$sx .= $ft.$line['us_cracha'].$ftend;
 					$sx .= '</td>';
 					$sx .= '<td >'." | ".'</td>';				
 					$sx .= '<td align=right>';
-					$sx .= $line['ei_data_inscricao'];
+					$sx .= $ft.$line['ei_data_inscricao'].$ftend;
 					$sx .= '</td>';	
 					$sx .= '<td >'." | ".'</td>';	
-
-				$sx .= '<td>';
-				$em = '';
-				$em = $this -> usuarios-> recupera_email($id_us,0);
-				$email .= $em.'; ';
-				$sx .= $em;
-				$sx .= '</td>';
-				$sx .= '<td align=center>'." | ".'</td>';	
-								
-				$inscrito = $line['ei_status'];
+					$sx .= '<td>';
+					$em = '';
+					$em = $this -> usuarios-> recupera_email($id_us,0);
+					$email .= $em.'; ';
+					$sx .= $ft.$em.$ftend;
+					$sx .= '</td>';
+					$sx .= '<td align=center>'." | ".'</td>';	
 				
 				$id_ei = $line['id_ei'];
 				
-				
-				if($inscrito = '1'){
-					
+				if($inscrito == '1'){
 					$sx .= '<td align=center>';
-					$link = '<A HREF="' .base_url("index.php/evento/lista_inscritos_editar/".$id_ei."/".checkpost_link($id_ei))
-					. '"><font color="blue">sim</font>';
+					$link = '<A HREF="' .base_url("index.php/evento/lista_inscritos_editar/".$id_ei."/".checkpost_link($id_ei)). '" class="link lt2" >  editar';
 					$sx .= $link;
 					$sx .= '</td>';
-				
 				}else{
-					$sx .= '<td>';
-					$sx .= '<font color="blue">não</font>';
+					$sx .= '<td align=center>';
+					$link = '<A HREF="' .base_url("index.php/evento/lista_inscritos_editar/".$id_ei."/".checkpost_link($id_ei)). '"><font color="red">editar</font>';
+					$sx .= $link;
 					$sx .= '</td>';
 				}
 				
-				
 				$sx .= '</tr>';
 			}
-		//$sx .= '</fieldset>';
-		$sx .= '<tr><td colspan=10></br><fieldset style="border:2px solid #d5d5d5; "><legend><b>Lista com todos os e-mails dos inscritos</b></legend>'.$email.'</fieldset></td></tr>';
-		$sx .= '</table>';
+		
+		/**	
+		//Soma os inscritos	
+		$sql_inscrito = "Select count(*) as total
+											from evento_inscricao 
+											where ei_status = 1";
+		
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		$tot = '';
+			
+		for ($r=0;$r < count($rlt);$r++)
+				{
+					
+					$tot++;
+					$line = $rlt[$r];
+					
+				}
+			
+		$sx .=  '<TR>
+				 		<TD colspan=12 align=right BGCOLOR="#C0C0C0" valign="bottom">
+						<font color="white">Total de '.$tot.' estudantes inscritos</font>';	
+		*/
+		//Lista de e-mails
+		$sx .= '<tr><td colspan=10></br><fieldset style="border:3px solid #d5d5d5; "><legend><b>Lista com todos os e-mails dos inscritos no evento </b></legend>'.$email.'</fieldset></td></tr>';
+		$sx  .= '</table>';
 		
 		$sx .= '';
 		$data['content'] = $sx;
@@ -385,9 +408,7 @@ function lista_inscritos_editar($id = 0, $chk = '') {
 		$this -> cab();
 		
 		$cp = $this -> eventos -> cp_editar_status();
-		
 		$ev = $this->eventos->le_inscricao($id);
-
 		$us = $this->usuarios->le($ev['ei_us_usuario_id']);
 
 		$data = array();
@@ -402,10 +423,10 @@ function lista_inscritos_editar($id = 0, $chk = '') {
 		$data['title'] = msg('fm_titulo');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form', $data);
-
 		/* Salva */
 		if ($form -> saved > 0) {
-			redirect(base_url('index.php/evento/lista_inscritos/'.$ev));
+			
+			redirect(base_url('index.php/evento/lista_inscritos/'.$ev['ei_evento_id']));
 		}
 			
 		}

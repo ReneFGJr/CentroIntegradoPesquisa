@@ -370,7 +370,8 @@ class eventos extends CI_model {
 		return ($cp);
 	}
 	
-		function cp_editar_status() {
+	function cp_editar_status() {
+			
 		$cp = array();
 		array_push($cp, array('$H8', 'id_ei', '', False, True));
 		array_push($cp, array('${', '', 'Dados da inscrição no evento', false, false));
@@ -379,7 +380,6 @@ class eventos extends CI_model {
 		array_push($cp, array('$S30', 'ei_data_inscricao', msg('Período da Inscrição'), false, false));
 		array_push($cp, array('$q', 'ei_evento', msg('Evento'), false, false));
 		array_push($cp, array('$}', '', '', false, false));
-		
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 
 		return ($cp);
