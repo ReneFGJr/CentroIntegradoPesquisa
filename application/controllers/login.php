@@ -34,7 +34,7 @@ class login extends CI_Controller {
 		$chk = checkpost_link($id);
 		
 		if ($chk != checkpost_link($id)) {
-			echo checkpost_link($id);
+			//echo checkpost_link($id);
 		} else {
 			$id = round($id);
 			$sql = "select * from logins where id_us = " . $id;
@@ -56,6 +56,7 @@ class login extends CI_Controller {
 				$this -> josso_login_pucpr -> cracha = '';
 				$this -> josso_login_pucpr -> nomeEmpresa = '';
 				$this -> josso_login_pucpr -> nomeFilial = '';
+				$this -> josso_login_pucpr -> id_us = $line['us_id'];
 				$this -> josso_login_pucpr -> loged = 1;
 				$this -> josso_login_pucpr -> security();
 				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'],'ADR');
@@ -176,6 +177,7 @@ class login extends CI_Controller {
 		$data['login_error'] = '';
 
 		/* Carrega modelo */
+		$this -> load -> model('usuarios');
 		$err = $this -> load -> model('login/josso_login_pucpr');
 		$login = '';
 		$password = '';
@@ -190,9 +192,29 @@ class login extends CI_Controller {
 			$login = $this -> input -> get_post('dd1');
 			$password = $this -> input -> get_post('dd2');
 			$ok = $this -> josso_login_pucpr -> consulta_login($login, $password);
-
 			switch($ok) {
 				case (1) :
+					/* Associar login com user */
+					$sql = "select * from logins where us_login = '$login' ";
+					$rlo = $this->db->query($sql);
+					$rlo = $rlo->result_array();
+					$line = $rlo[0];
+					$idu = trim($line['us_id']);
+					$cracha = trim($line['us_cracha']);
+					if ((strlen($idu) == 0) or (strlen($cracha) == 0))
+						{
+							$cpf = $line['us_cpf'];
+							$usr = $this->usuarios->readByCPF($cpf);
+							$idu = $usr['id_us'];
+							$cracha = $usr['us_cracha'];	
+							
+							$sql = "update logins set 
+										us_id = ".$idu.",
+										us_cracha = '$cracha'							 
+										where us_login = '$login' ";
+							$rly = $this->db->query($sql);						
+						}
+					$_SESSION['us_id'] = $idu;
 					$link = index_page();
 					if (strlen($link) > 0) { $link .= '/';
 					}

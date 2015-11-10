@@ -46,6 +46,7 @@ class josso_login_pucpr extends CI_Model {
 			} else {
 				$line = $rlt[0];
 				$this -> perfil = trim($line['us_perfil']);
+				$this -> cracha = trim($line['us_cracha']);
 				$this -> id = trim($line['id_us']);
 
 				$sql = "update logins set 
@@ -77,7 +78,7 @@ class josso_login_pucpr extends CI_Model {
 	 *
 	 */
 	function logout() {
-		$dados = array('cracha' => '', 'cpf' => '', 'josso' => '', 'nome' => '');
+		$dados = array('cracha' => '', 'cpf' => '', 'josso' => '', 'nome' => '', 'us_id'=>'', 'id_us'=>'', 'cracha'=>'');
 		$this -> session -> set_userdata($dados);
 		return (1);
 	}

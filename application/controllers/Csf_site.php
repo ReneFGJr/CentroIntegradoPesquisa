@@ -1,5 +1,5 @@
 <?php
-class csf extends CI_Controller {
+class csf_site extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -41,7 +41,7 @@ class csf extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Ciência sem Fronteiras', 'index.php/csf'));
+		array_push($menus, array('Ciência sem Fronteiras', 'index.php/csf_site'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -57,17 +57,17 @@ class csf extends CI_Controller {
 
 	function index() {
 		/* Models */
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 
 		$this -> cab();
 		$data = array();
 
 		$this -> load -> view('form/form_busca.php');
 
-		$data['content'] = $this -> csfs -> csf_resumo();
+		$data['content'] = $this -> csf_sites -> csf_resumo();
 
 		$this -> load -> view('content', $data);
-		$this -> load -> view('csf/menu');
+		$this -> load -> view('csf_site/menu');
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -75,15 +75,15 @@ class csf extends CI_Controller {
 
 	function status($sta, $check) {
 		/* Models */
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 
 		$this -> cab();
 		$data = array();
 
-		$data['content'] = $this -> csfs -> lista_status($sta);
+		$data['content'] = $this -> csf_sites -> lista_status($sta);
 
 		$this -> load -> view('content', $data);
-		$this -> load -> view('csf/menu');
+		$this -> load -> view('csf_site/menu');
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -93,7 +93,7 @@ class csf extends CI_Controller {
 		/* Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('sga_pucpr');
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 
 		$this -> cab();
 		$data = array();
@@ -118,7 +118,7 @@ class csf extends CI_Controller {
 			$this -> load -> view('perfil/user', $alunoDados);
 
 			/* Montar formulario */
-			$cp = $this -> csfs -> cp_novo($aluno);
+			$cp = $this -> csf_sites -> cp_novo($aluno);
 			$form = new form;
 			$data['tela'] = $form -> editar($cp, '');
 			$data['title'] = '';
@@ -128,7 +128,7 @@ class csf extends CI_Controller {
 				$edital = $this -> input -> post('dd2');
 				$saida = $this -> input -> post('dd3');
 				$pais = $this -> input -> post('dd4');
-				$this -> csfs -> insere_candidato($aluno, $edital, $saida, $pais);
+				$this -> csf_sites -> insere_candidato($aluno, $edital, $saida, $pais);
 				redirect(base_url('index.php/csf'));
 			}
 
@@ -143,23 +143,23 @@ class csf extends CI_Controller {
 	}
 
 	function ajax_acao($id = 0, $ack = '', $chk = '') {
-		$this -> load -> model("csfs");
+		$this -> load -> model("csf_sites");
 
 		$form = new form;
 		$form -> id = $id;
-		$form -> tabela = $this -> csfs -> tabela;
+		$form -> tabela = $this -> csf_sites -> tabela;
 		switch ($chk) {
 			case 'homologar' :
-				$cp = $this -> csfs -> cp_homologar();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_homologar();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
 					$dh1 = $this -> input -> post('dd1');
 					$dh2 = $this -> input -> post('dd2');
 					$comment = 'Pais:[' . $dh1 . '],Previsao:[' . $dh2 . ']';
-					$this -> csfs -> inserir_historico($id, 2, $comment);
+					$this -> csf_sites -> inserir_historico($id, 2, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -168,15 +168,15 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;
 			case 'homologar_no' :
-				$cp = $this -> csfs -> cp_homologar_no();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_homologar_no();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
 					$dh1 = $this -> input -> post('dd1');
 					$comment = 'Justificativa:[' . $dh1 . ']';
-					$this -> csfs -> inserir_historico($id, 9, $comment);
+					$this -> csf_sites -> inserir_historico($id, 9, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -185,16 +185,16 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;
 			case 'homologar_capes' :
-				$cp = $this -> csfs -> cp_homologar_capes();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_homologar_capes();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
 					$dh1 = $this -> input -> post('dd1');
 					$dh2 = $this -> input -> post('dd2');
 					$comment = 'Pais:[' . $dh1 . '],Previsao:[' . $dh2 . ']';
-					$this -> csfs -> inserir_historico($id, 3, $comment);
+					$this -> csf_sites -> inserir_historico($id, 3, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -203,15 +203,15 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;
 			case 'homologar_capes_no' :
-				$cp = $this -> csfs -> cp_homologar_capes_no();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_homologar_capes_no();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
 					$dh1 = $this -> input -> post('dd1');
 					$comment = 'Justificativa:[' . $dh1 . ']';
-					$this -> csfs -> inserir_historico($id, 10, $comment);
+					$this -> csf_sites -> inserir_historico($id, 10, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -220,9 +220,9 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;
 			case 'troca_universidade' :
-				$cp = $this -> csfs -> cp_troca_universidade();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_troca_universidade();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
@@ -230,7 +230,7 @@ class csf extends CI_Controller {
 					$dh2 = $this -> input -> post('dd2');
 					$dh5 = $this -> input -> post('dd5');
 					$comment = 'Pais:[' . $dh1 . '],Previsao:[' . $dh2 . '],Parceira:[' . $dh5 . ']';
-					$this -> csfs -> inserir_historico($id, 13, $comment);
+					$this -> csf_sites -> inserir_historico($id, 13, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -239,9 +239,9 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;
 			case 'trocar_parceiro' :
-				$cp = $this -> csfs -> cp_trocar_parceira();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_trocar_parceira();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
@@ -249,7 +249,7 @@ class csf extends CI_Controller {
 					$dh2 = $this -> input -> post('dd2');
 					$dh5 = $this -> input -> post('dd5');
 					$comment = 'Pais:[' . $dh1 . '],Previsao:[' . $dh2 . '],Parceira:[' . $dh5 . ']';
-					$this -> csfs -> inserir_historico($id, 13, $comment);
+					$this -> csf_sites -> inserir_historico($id, 13, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -258,9 +258,9 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;
 			case 'homologar_parceiro' :
-				$cp = $this -> csfs -> cp_homologar_parceira();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_homologar_parceira();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
@@ -268,7 +268,7 @@ class csf extends CI_Controller {
 					$dh2 = $this -> input -> post('dd2');
 					$dh5 = $this -> input -> post('dd5');
 					$comment = 'Pais:[' . $dh1 . '],Previsao:[' . $dh2 . '],Parceira:[' . $dh5 . ']';
-					$this -> csfs -> inserir_historico($id, 4, $comment);
+					$this -> csf_sites -> inserir_historico($id, 4, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -277,9 +277,9 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;
 			case 'fim_viagem' :
-				$cp = $this -> csfs -> cp_retorno();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_retorno();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
@@ -287,7 +287,7 @@ class csf extends CI_Controller {
 					$dh2 = $this -> input -> post('dd2');
 					$dh5 = $this -> input -> post('dd5');
 					$comment = 'Retorno:[' . stodbr($dh1) . ']';
-					$this -> csfs -> inserir_historico($id, 13, $comment);
+					$this -> csf_sites -> inserir_historico($id, 13, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -296,15 +296,15 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;				
 			case 'cancelar' :
-				$cp = $this -> csfs -> cp_cancelar();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_cancelar();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
 					$dh1 = $this -> input -> post('dd1');
 					$comment = 'Justificativa:[' . $dh1 . ']';
-					$this -> csfs -> inserir_historico($id, 10, $comment);
+					$this -> csf_sites -> inserir_historico($id, 10, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -313,15 +313,15 @@ class csf extends CI_Controller {
 				echo $tela;
 				break;
 			case 'desistente' :
-				$cp = $this -> csfs -> cp_cancelar();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_cancelar();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
 					$dh1 = $this -> input -> post('dd1');
 					$comment = 'Justificativa:[' . $dh1 . ']';
-					$this -> csfs -> inserir_historico($id, 8, $comment);
+					$this -> csf_sites -> inserir_historico($id, 8, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -331,15 +331,15 @@ class csf extends CI_Controller {
 				break;
 
 			case 'homologar_viagem' :
-				$cp = $this -> csfs -> cp_viagem();
-				$url = base_url('index.php/csf/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
-				$tela = $form -> editar($cp, $this -> csfs -> tabela);
+				$cp = $this -> csf_sites -> cp_viagem();
+				$url = base_url('index.php/csf_site/ajax_acao/' . $id . '/' . $ack . '/' . $chk);
+				$tela = $form -> editar($cp, $this -> csf_sites -> tabela);
 				$rst = $form -> ajax_submit($cp, $url, $ack);
 
 				if ($rst == '1') {/* saved */
 					$dh1 = $this -> input -> post('dd1');
 					$comment = 'Justificativa:[' . $dh1 . ']';
-					$this -> csfs -> inserir_historico($id, 5, $comment);
+					$this -> csf_sites -> inserir_historico($id, 5, $comment);
 					$tela = '<font color="green">' . msg('save successful') . '</font>';
 					reload();
 				} else {
@@ -355,8 +355,8 @@ class csf extends CI_Controller {
 	}
 
 	function ajax($id = 0, $ack = '', $chk = '') {
-		$this -> load -> model('csfs');
-		$data = $this -> csfs -> le($id);
+		$this -> load -> model('csf_sites');
+		$data = $this -> csf_sites -> le($id);
 
 		$sta = $data['csf_status'];
 		$data['ack'] = $ack;
@@ -368,31 +368,31 @@ class csf extends CI_Controller {
 				/* Em homologacao */
 				$bts = array('cancelar' => 1, 'homologar' => 1, 'homologar_no' => 1);
 				$data = array_merge($bts, $data);
-				$this -> load -> view('csf/ajax_botao_acao.php', $data);
+				$this -> load -> view('csf_site/ajax_botao_acao.php', $data);
 				break;
 			case 2 :
 				/* Em homologacao cnpq/capes */
 				$bts = array('cancelar' => 1, 'homologar_capes' => 1, 'homologar_capes_no' => 1);
 				$data = array_merge($bts, $data);
-				$this -> load -> view('csf/ajax_botao_acao.php', $data);
+				$this -> load -> view('csf_site/ajax_botao_acao.php', $data);
 				break;
 			case 3 :
 				/* Em homologacao parceiro */
 				$bts = array('cancelar' => 1, 'homologar_parceiro' => 1);
 				$data = array_merge($bts, $data);
-				$this -> load -> view('csf/ajax_botao_acao.php', $data);
+				$this -> load -> view('csf_site/ajax_botao_acao.php', $data);
 				break;
 			case 4 :
 				/* Em viagem */
 				$bts = array('cancelar' => 1, 'viagem' => 1, 'desistente' => 1);
 				$data = array_merge($bts, $data);
-				$this -> load -> view('csf/ajax_botao_acao.php', $data);
+				$this -> load -> view('csf_site/ajax_botao_acao.php', $data);
 				break;
 			case 5 :
 				/* Em viagem */
 				$bts = array('fim_viagem' => 1, 'retorno' => 1, 'troca_pais' => 1, 'troca_universidade' => 1, 'trocar_parceiro' => 1);
 				$data = array_merge($bts, $data);
-				$this -> load -> view('csf/ajax_botao_acao.php', $data);
+				$this -> load -> view('csf_site/ajax_botao_acao.php', $data);
 				break;
 			default :
 				$content = 'Not found:' . $sta;
@@ -405,51 +405,51 @@ class csf extends CI_Controller {
 
 	function indicadores() {
 		/* Models */
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 		$this -> cab();
 
-		//$this -> load -> view('csf/view_genero');
+		//$this -> load -> view('csf_site/view_genero');
 
 		//carrega grafico da situacao dos estudantes intercambistas
 		$data = array();
-		$line = $this -> csfs -> mostra_dados_std_status();
+		$line = $this -> csf_sites -> mostra_dados_std_status();
 		$data['dado'] = $line;
-		$this -> load -> view('csf/view_std_status', $data);
+		$this -> load -> view('csf_site/view_std_status', $data);
 
 		//carrega grafico estudantes por genero
 		$data_gen = array();
-		$line = $this -> csfs -> mostra_dados_std_genero();
+		$line = $this -> csf_sites -> mostra_dados_std_genero();
 		$data_gen['dado_gen'] = $line;
-		$this -> load -> view('csf/view_std_gen', $data_gen);
+		$this -> load -> view('csf_site/view_std_gen', $data_gen);
 
 		//carrega grafico estudantes por universidade
 		$data_university = array();
-		$line = $this -> csfs -> mostra_dados_std_university();
+		$line = $this -> csf_sites -> mostra_dados_std_university();
 		$data_university['dado_university'] = $line;
-		$this -> load -> view('csf/view_std_university', $data_university);
+		$this -> load -> view('csf_site/view_std_university', $data_university);
 
 		//carrega grafico estudantes por paises
 		$data_country = array();
-		$line = $this -> csfs -> mostra_dados_std_country();
+		$line = $this -> csf_sites -> mostra_dados_std_country();
 		$data_country['dado_country'] = $line;
-		$this -> load -> view('csf/view_std_country', $data_country);
+		$this -> load -> view('csf_site/view_std_country', $data_country);
 
 		//carrega grafico de parceiros
 		$data_partners = array();
-		$line = $this -> csfs -> mostra_dados_std_partners();
+		$line = $this -> csf_sites -> mostra_dados_std_partners();
 		$data_partners['dado_partners'] = $line;
-		$this -> load -> view('csf/view_std_partners', $data_partners);
+		$this -> load -> view('csf_site/view_std_partners', $data_partners);
 
 		//carrega grafico dos cursos que mais enviam alunos
 		$data_partners = array();
-		$line = $this -> csfs -> mostra_dados_std_course();
+		$line = $this -> csf_sites -> mostra_dados_std_course();
 		$data_partners['dado_course'] = $line;
-		$this -> load -> view('csf/view_std_course', $data_partners);
+		$this -> load -> view('csf_site/view_std_course', $data_partners);
 
 
 
 		//View de agrupamento das divs
-		$this -> load -> view('csf/indicadores');
+		$this -> load -> view('csf_site/indicadores');
 		
 		//rodapé
 		$this -> load -> view('header/content_close');
@@ -461,11 +461,11 @@ class csf extends CI_Controller {
 		/* Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('sga_pucpr');
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 
 		$this -> cab();
 
-		$line = $this -> csfs -> le($id);
+		$line = $this -> csf_sites -> le($id);
 		$data = $line;
 
 		$aluno = trim($line['us_cracha']);
@@ -475,10 +475,10 @@ class csf extends CI_Controller {
 		$alunoDados = $this -> usuarios -> readByCracha($aluno);
 		$this -> load -> view('perfil/user', $alunoDados);
 
-		$data['content'] = '<BR><BR>' . $this -> csfs -> mostra_todas_csf($aluno_id);
+		$data['content'] = '<BR><BR>' . $this -> csf_sites -> mostra_todas_csf($aluno_id);
 		$this -> load -> view('content', $data);
 
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('scf_historico') . '</legend>' . $this -> csfs -> mostra_historico($id) . '</fieldset>';
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('scf_historico') . '</legend>' . $this -> csf_sites -> mostra_historico($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
 
 		$this -> load -> model('geds');
@@ -499,19 +499,19 @@ class csf extends CI_Controller {
 		/* Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('sga_pucpr');
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 
 		$this -> cab();
 
-		$line = $this -> csfs -> le($id);
+		$line = $this -> csf_sites -> le($id);
 		$data = $line;
 
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
 		$data = array();
 		$this -> load -> view('form/form_busca.php');
-		$data['content'] = $this -> csfs -> csf_resumo();
+		$data['content'] = $this -> csf_sites -> csf_resumo();
 
-		$this -> load -> view('csf/menu');
+		$this -> load -> view('csf_site/menu');
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
@@ -521,18 +521,18 @@ class csf extends CI_Controller {
 	function ver_edital($id = 0, $chk = '') {
 		/* Models */
 		$this -> load -> model('usuarios');
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 
 		//cabeçalho
 		$this -> cab();
 
 		//conteúdo da pagína
-		$line = $this -> csfs -> ler_view_csf($id, 'id_ed');
+		$line = $this -> csf_sites -> ler_view_csf($id, 'id_ed');
 		$data = $line;
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
-		$this -> load -> view('csf/view_compac', $data);
+		$this -> load -> view('csf_site/view_compac', $data);
 
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital($id) . '</fieldset>';
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csf_sites -> mostra_lista_edital($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
 
 		//rodapé
@@ -543,17 +543,17 @@ class csf extends CI_Controller {
 	function ver_pais($id = 0, $chk = '') {
 		/* Models */
 		$this -> load -> model('usuarios');
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 
 		$this -> cab();
 
-		$line = $this -> csfs -> ler_view_csf($id, 'id');
+		$line = $this -> csf_sites -> ler_view_csf($id, 'id');
 		$data = $line;
 
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
-		$this -> load -> view('csf/ver_pais', $data);
+		$this -> load -> view('csf_site/ver_pais', $data);
 
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_pais($id) . '</fieldset>';
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csf_sites -> mostra_lista_edital_pais($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
@@ -563,14 +563,14 @@ class csf extends CI_Controller {
 	function ver_parceiro($id = 0, $chk = '') {
 		//* Load Models */
 		$this -> load -> model('parceiros');
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 		$this -> cab();
 
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
 		$data = $this -> parceiros -> le($id);
 		$this -> load -> view('parceiro/view_compac', $data);
 
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_parceiro($id) . '</fieldset>';
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csf_sites -> mostra_lista_edital_parceiro($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
@@ -580,14 +580,14 @@ class csf extends CI_Controller {
 	function ver_universidade($id = 0, $chk = '') {
 		//* Load Models */
 		$this -> load -> model('instituicoes');
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 		$this -> cab();
 
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';
 		$data = $this -> instituicoes -> le($id);
 		$this -> load -> view('instituicao/view_compac', $data);
 
-		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csfs -> mostra_lista_edital_universidades($id) . '</fieldset>';
+		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . msg('Relacionados') . '</legend>' . $this -> csf_sites -> mostra_lista_edital_universidades($id) . '</fieldset>';
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
@@ -599,11 +599,11 @@ class csf extends CI_Controller {
 		$data = array();
 
 		/* Model */
-		$this -> load -> model('csfs');
+		$this -> load -> model('csf_sites');
 
 		$this -> load -> view('usuario/view', $data);
 
-		$data['content'] = $this -> csfs -> mostra_bolsa($id);
+		$data['content'] = $this -> csf_sites -> mostra_bolsa($id);
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
@@ -621,7 +621,7 @@ class csf extends CI_Controller {
 		$this -> load -> model('geds');
 
 		$this -> geds -> tabela = 'csf_ged';
-		$this -> geds -> page = base_url('index.php/csf/ged/' . $id);
+		$this -> geds -> page = base_url('index.php/csf_site/ged/' . $id);
 
 		$data['content'] = $this -> geds -> form($id, $proto, $tipo);
 		$this -> load -> view('content', $data);

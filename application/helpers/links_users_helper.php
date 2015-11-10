@@ -53,9 +53,9 @@ function usuario_tipo($tp)
 		return($sx);
 	}
 	
-function link_ic($id=0)
+function link_ic($id=0,$page='ic')
 	{
-		$href = '<a href="'.base_url('index.php/ic/view/'.$id.'/'.checkpost_link($id)).'" class="link lt4">';
+		$href = '<a href="'.base_url('index.php/'.$page.'/view/'.$id.'/'.checkpost_link($id)).'" class="link lt4">';
 		return($href);
 	}
 	

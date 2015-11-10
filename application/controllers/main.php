@@ -75,7 +75,12 @@ class main extends CI_Controller {
 		/* Menu */
 		$menu = array();
 		/* Libera Menus */
-		array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
+		$idu = $_SESSION['us_id'];
+		
+		if (strlen($idu) > 0)
+			{
+			array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
+			}
 		
 		/* Libera Menus */
 		if (perfil('#CPP#SPI#ADM') == 1) { array_push($menu, array('Inciação Científica', 'Administração do Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTA', '/ic'));
@@ -94,7 +99,7 @@ class main extends CI_Controller {
 		}
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Pró-Equipamentos', 'Laboratórios e equipamentos', 'BTA', '/equipamento'));
 		}
-		if (perfil('#CPP#SPI#ADM#CSF') == 1) { array_push($menu, array('Programa CsF', 'Ciência sem Fronteiras', 'BTA', '/csf'));
+		if (perfil('#CPP#SPI#ADM#CSF') == 1) { array_push($menu, array('Programa CsF', 'Ciência sem Fronteiras', 'BTA', '/csf_site'));
 		}
 		if (perfil('#SEC#SEM#ADM') == 1) { array_push($menu, array('SEMIC', 'Seminário de Iniciação Científica - PUCPR', 'BTA', '/semic'));
 		}
@@ -104,9 +109,6 @@ class main extends CI_Controller {
 		}
 		if (perfil('#DGP#ADM') == 1) {
 			array_push($menu, array('Banco de Projetos', 'Pesquisa realizadas na PUCPR', 'BTN', '/banco_projetos'));
-		}
-		if (perfil('#DOC#EST#ADM') == 1) {
-			array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
 		}
 		if (perfil('#DOC#EST#ADM') == 1) {
 			array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));

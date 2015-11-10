@@ -14,6 +14,16 @@ if (!function_exists(('msg')))
 	}
 
 $lang['versao'] = 'v0.15.25';
+/***************************** PIBIC */
+$lang['nao_postado'] = 'não postado';
+$lang['resumo_postado'] = 'resumo postado';
+$lang['list_arquivos'] = 'Arquivos postados';
+
+/* Status */
+$lang['status_protocolo_C'] = 'Cancelado';
+
+/* Tipo de serviço */
+$lang['protocolo_ic_ALT'] = 'Substituição de estudante';
 
 /****************************** AVALIADORES */
 $lang['desactive'] = 'desativar';

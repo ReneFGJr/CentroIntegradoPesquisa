@@ -2,6 +2,40 @@
 class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
+	
+	function orientacoes()
+		{
+			$cracha = $_SESSION['cracha'];
+			$sql = "select * from ic 
+						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha' ";
+			$sql = "select * from ic
+            			left join ic_aluno as pa on ic_id = id_ic
+						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha from us_usuario) AS us_est on ic.ic_cracha_aluno = us_est.id_al
+						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
+						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
+						left join ic_situacao on id_s = icas_id
+						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha'
+						order by ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
+						";
+						
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%">';
+			$sx .= '<tr><td colspan=10>Orientações abertas</td></tr>';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$edital = trim($line['mb_tipo']);
+					$line['img'] = $this -> logo_modalidade($edital); 
+					$line['page'] = 'pibic';
+					$sx .= $this->load->view("ic/plano-lista",$line,true);
+				}
+			
+			
+			
+			$sx .= '</table>';
+			return($sx);
+		}
 
 	function search($terms = '', $type = 1) {
 		$cps = array('us_nome');
@@ -49,6 +83,7 @@ class ics extends CI_model {
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
 			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
 		$sx .= '</table>';
@@ -522,8 +557,8 @@ class ics extends CI_model {
 
 		$tabela = "		select * from ic
             			left join ic_aluno as pa on ic_id = id_ic
-						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha from us_usuario) AS us_est on ic.ic_cracha_aluno = us_est.id_al
-						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
+						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha,us_curso_vinculo as al_curso from us_usuario) AS us_est on ic.ic_cracha_aluno = us_est.id_al
+						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha, us_curso_vinculo as pf_curso from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id
 						$wh

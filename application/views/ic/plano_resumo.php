@@ -24,8 +24,11 @@ if (isset($resumo)) {
 	if (isset($resumo))
 		{
 			echo '<font style="color: blue;">'.msg('resumo_postado').'</font>';
-			echo ' | ';
-			echo '<a href="'.base_url('index.php/ic/postar_resumo/'.$id_ic.'/'.checkpost_link($id_ic)).'" class="link lt0">editar</A>';
+			if (isset($edit))
+				{
+				echo ' | ';			
+				echo '<a href="'.base_url('index.php/ic/postar_resumo/'.$id_ic.'/'.checkpost_link($id_ic)).'" class="link lt0">editar</A>';
+				}
 			
 			?>
 			<table width="100%" border=0>
@@ -76,8 +79,11 @@ if (isset($resumo)) {
 			<?php
 			} else {
 			echo '<font class="error">'.msg('nao_postado').'</font>';
-			echo ' | ';
-			echo '<a href="'.base_url('index.php/ic/postar_resumo/'.$id_ic.'/'.checkpost_link($id_ic)).'" class="link lt0">postar resumo</A>';
+			if (isset($edit))
+				{
+				echo ' | ';
+				echo '<a href="'.base_url('index.php/ic/postar_resumo/'.$id_ic.'/'.checkpost_link($id_ic)).'" class="link lt0">postar resumo</A>';
+				}
 			}
 	?>
 </fieldset>

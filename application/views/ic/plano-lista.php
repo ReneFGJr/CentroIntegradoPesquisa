@@ -4,7 +4,7 @@
 		
 	</td>
 	<td class="lt3" align="left">
-		<B><?php echo link_ic($id_ic).$ic_projeto_professor_titulo.'</a>'; ?></B>
+		<B><?php echo link_ic($id_ic,$page).$ic_projeto_professor_titulo.'</a>'; ?></B>
 	</td>			
 	<td class="lt0" align="right" rowspan=3>
 		Protocolo:<br>
@@ -28,7 +28,7 @@
 </tr>
 
 <tr class="lt0">
-		<td><?php echo mst('Vigencia'); ?>
+		<td><?php echo msg('Vigencia'); ?>
 		<br><font class="lt1">
 		<B><?php echo stodbr($aic_dt_entrada); ?> - <?php echo stodbr($aic_dt_saida); ?></td>
 

@@ -66,7 +66,12 @@ class persona extends CI_Controller {
 		if ($id == 0)
 			{
 				//$id = $this->session('id');
-				$id = $_SESSION['id_us'];
+				$id = round($_SESSION['us_id']);
+				if ($id == 0)
+					{
+						redirect(base_url('index.php/main'));
+						exit;
+					}
 			}
 
 		//* Dados */

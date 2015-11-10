@@ -1,5 +1,5 @@
 <?php
-class csfs extends CI_model {
+class csf_sites extends CI_model {
 	var $tabela = "csf";
 
 	function mostra_historico($protocolo) {
@@ -223,7 +223,7 @@ class csfs extends CI_model {
 			$tot++;
 			$line = $rlt[$r];
 
-			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt4 link">';
 
 			$sx .= '<tr valign="top">';
@@ -290,7 +290,7 @@ class csfs extends CI_model {
 					
 					$idr = "#"+$id;
 					$($idr).fadeIn();
-					var $url = "' . base_url('index.php/csf/ajax/') . '/"+$reg+"/"+$id;
+					var $url = "' . base_url('index.php/csf_site/ajax/') . '/"+$reg+"/"+$id;
 					$.ajax({
 					        url: $url,
 					        type: "post",
@@ -328,32 +328,32 @@ class csfs extends CI_model {
 			$tot++;
 			$line = $rlt[$r];
 
-			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="borderb1">';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="borderb1">';
 			$sx .= $link . $line['cs_descricao'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
+			$link = base_url('index.php/csf_site/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
+			$link = base_url('index.php/csf_site/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
+			$link = base_url('index.php/csf_site/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $link . $line['cp_descricao'] . '</A>';
@@ -386,14 +386,14 @@ class csfs extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 
-			$link = base_url('index.php/csf/status/' . $line['csf_status'] . '/' . checkpost_link($line['csf_status']));
+			$link = base_url('index.php/csf_site/status/' . $line['csf_status'] . '/' . checkpost_link($line['csf_status']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<tr>';
 			$sx .= '<td borderb1" align=left>';
 			$sx .= $link . trim($line['cs_descricao']) . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/status/' . $line['csf_status'] . '/' . checkpost_link($line['csf_status']));
+			$link = base_url('index.php/csf_site/status/' . $line['csf_status'] . '/' . checkpost_link($line['csf_status']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td borderb1" align=center>';
 			$sx .= $link . trim($line['total']) . '</A>';
@@ -539,38 +539,38 @@ class csfs extends CI_model {
 			$tot++;
 			$line = $rlt[$r];
 
-			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['cs_descricao'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
+			$link = base_url('index.php/csf_site/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
+			$link = base_url('index.php/csf_site/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
+			$link = base_url('index.php/csf_site/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"align=left>';
 			$sx .= $link . $line['gpip_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
+			$link = base_url('index.php/csf_site/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['cp_descricao'] . '</A>';
@@ -603,26 +603,26 @@ class csfs extends CI_model {
 			$tot++;
 			$line = $rlt[$r];
 
-			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
+			$link = base_url('index.php/csf_site/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['gpip_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
+			$link = base_url('index.php/csf_site/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
+			$link = base_url('index.php/csf_site/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
 			$sx .= $link . $line['ed_titulo'] . '</A>';
@@ -657,38 +657,38 @@ class csfs extends CI_model {
 			$tot++;
 			$line = $rlt[$r];
 
-			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/status/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/status/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="borderb1" align=left>';
 			$sx .= $link . $line['cs_descricao'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
+			$link = base_url('index.php/csf_site/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
+			$link = base_url('index.php/csf_site/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
 			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
+			$link = base_url('index.php/csf_site/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
 			$sx .= $link . $line['gpip_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
+			$link = base_url('index.php/csf_site/ver_parceiro/' . $line['id_cp'] . '/' . checkpost_link($line['id_cp']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
 			$sx .= $link . $line['cp_descricao'] . '</A>';
@@ -721,26 +721,26 @@ class csfs extends CI_model {
 			$tot++;
 			$line = $rlt[$r];
 
-			$link = base_url('index.php/csf/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = base_url('index.php/csf_site/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
+			$link = base_url('index.php/csf_site/ver_edital/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1" align=left>';
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
+			$link = base_url('index.php/csf_site/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
 			$sx .= $link . $line['nome_pt'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
+			$link = base_url('index.php/csf_site/ver_universidade/' . $line['id_gpip'] . '/' . checkpost_link($line['id_gpip']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1"  align=left>';
 			$sx .= $link . $line['gpip_nome'] . '</A>';
