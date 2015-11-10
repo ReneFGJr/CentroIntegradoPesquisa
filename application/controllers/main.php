@@ -35,20 +35,20 @@ class main extends CI_Controller {
 		array_push($css, 'style_cab.css');
 		array_push($css, 'switch_onoff.css');
 		array_push($css, 'form_sisdoc.css');
-		
+
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
 
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
-		
+
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
 		$data['title_page'] = 'Parceiros PUCPR';
 		$data['menu'] = 0;
 		//$data['menus'] = $menus;
-		$this -> load -> view('header/cab', $data);		
+		$this -> load -> view('header/cab', $data);
 	}
 
 	function index() {
@@ -75,13 +75,20 @@ class main extends CI_Controller {
 		/* Menu */
 		$menu = array();
 		/* Libera Menus */
-		$idu = $_SESSION['us_id'];
-		
-		if (strlen($idu) > 0)
-			{
+		if (isset($_SESSION['us_id'])) {
+			$idu = $_SESSION['us_id'];
+		} else {
+			$idu = '';
+		}
+
+		if (strlen($idu) > 0) {
 			array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
-			}
+		}
 		
+		/* Libera Menus */
+		if (perfil('#DGP#CPS#COO#CPP#SPI#ADM') == 1) { array_push($menu, array('Docentes & Discentes', 'Cadastrao de docentes, discentes, avaliadores e usuarios do sistema', 'BTA', '/usuario/row'));
+		}		
+
 		/* Libera Menus */
 		if (perfil('#CPP#SPI#ADM') == 1) { array_push($menu, array('Inciação Científica', 'Administração do Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTA', '/ic'));
 		}
@@ -89,10 +96,10 @@ class main extends CI_Controller {
 		}
 		if (perfil('#ADM') == 1) {
 			array_push($menu, array('Stricto Sensu', 'Secretaria e Coordenação do <i>stricto sensu</i>', 'BTA', '/stricto_sensu'));
-		}		
+		}
 		if (perfil('#CPP#SPI#ADM') == 1) {
 			array_push($menu, array('Eventos', 'Sistema de Gestão de Eventos', 'BTA', '/evento'));
-		}		
+		}
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Fomento', 'Observatório de Pesquisa', 'BTA', '/edital'));
 		}
 		if (perfil('#DGP#ADM') == 1) { array_push($menu, array('Grupo de Pesquisa', 'Pesquisas da PUCPR', 'BTN', '/dgp'));
@@ -113,9 +120,9 @@ class main extends CI_Controller {
 		if (perfil('#DGP#ADM') == 1) {
 			array_push($menu, array('Banco de Projetos', 'Pesquisa realizadas na PUCPR', 'BTN', '/banco_projetos'));
 		}
-		if (perfil('#DOC#EST#ADM') == 1) {
-			array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
-		}
+		/* Iniciação Científica */
+		array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
+
 		array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));
 
 		$data['menu'] = $menu;

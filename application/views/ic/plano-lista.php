@@ -34,4 +34,21 @@
 
 <td align="right" class="lt3"><font color="<?php echo $s_cor; ?>"><b><?php echo $s_situacao; ?></b></font></td>			
 </tr>			
+<?php
+/* Parametros adicionais */
+if (isset($botao))
+	{
+	echo '<tr class="lt0">';
+	echo '<td></td>';
+	echo '<td>';
+	echo '<form>';
+	echo '<input type="submit" value="'.$botao.'">';
+	echo '<input type="hidden" name="dd2" value="'.$ic_plano_aluno_codigo.'">';
+	echo '<input type="hidden" name="dd3" value="'.checkpost_link($ic_plano_aluno_codigo.$acao).'">';
+	echo '<input type="hidden" name="dd4" value="'.$acao.'">';
+	echo '</form>';
+	echo '</td>';
+	echo '</tr>';		
+	}
+?>
 <tr><td colspan=3><hr width="50%" size="1"></td></tr>

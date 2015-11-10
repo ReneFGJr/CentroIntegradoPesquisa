@@ -37,7 +37,7 @@ class login extends CI_Controller {
 			//echo checkpost_link($id);
 		} else {
 			$id = round($id);
-			$sql = "select * from logins where id_us = " . $id;
+			$sql = "select * from us_usuario where id_us = " . $id;
 			
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
@@ -51,15 +51,17 @@ class login extends CI_Controller {
 				$this -> josso_login_pucpr -> cpf = $line['us_cpf'];
 				//$this -> josso_login_pucpr -> josso = $line['jossoSession'];
 				$this -> josso_login_pucpr -> nome = $line['us_nome'];
-				$this -> josso_login_pucpr -> perfil = $line['us_perfil'];
+				//$this -> josso_login_pucpr -> perfil = $line['us_perfil'];
 				$this -> josso_login_pucpr -> id = $line['id_us'];
 				$this -> josso_login_pucpr -> cracha = '';
 				$this -> josso_login_pucpr -> nomeEmpresa = '';
 				$this -> josso_login_pucpr -> nomeFilial = '';
-				$this -> josso_login_pucpr -> id_us = $line['us_id'];
+				$this -> josso_login_pucpr -> cracha = $line['us_cracha'];
+				$this -> josso_login_pucpr -> id_us = $line['id_us'];
 				$this -> josso_login_pucpr -> loged = 1;
-				$this -> josso_login_pucpr -> security();
-				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'],'ADR');
+				$this -> josso_login_pucpr -> josso = date("YmfHis");
+				$this -> josso_login_pucpr -> security_ac();
+				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'],'ACR');
 				$link = base_url('index.php/main');
 				redirect($link);
 			}

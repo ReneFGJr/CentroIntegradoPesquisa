@@ -6,6 +6,54 @@ class usuarios extends CI_model {
 		$this -> load -> view('perfil/docente', $data);
 		return ('');
 	}
+	
+	function mostra_carga_horaria($cpf)
+		{
+			$sql = "select * from us_importar_drh where cpf = '$cpf' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<table width="100%" class="lt1 border1">';
+			$sx .= '<tr><th>Curso</th>
+						<th>Horas</th>
+						<th>Integral</th>
+						<th>Tipo Horas</th>
+						<th>Função</th>
+						<th>Vinculo</th>
+					</tr>
+					';
+			$tot = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$tot = $tot + $line['horas_semanais'];
+					$sx .= '<tr>';
+					$sx .= '<td>';
+					$sx .= $line['curso'];
+					$sx .= '</td>';
+					$sx .= '<td align="center">';
+					$sx .= $line['horas_semanais'];
+					$sx .= '</td>';
+					$sx .= '<td align="center">';
+					$sx .= $line['tempo_integral'];
+					$sx .= '</td>';
+					$sx .= '<td align="center">';
+					$sx .= $line['tipo_hora'];
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= $line['funcao'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['curso_vinculo'];
+					$sx .= '</td>';
+					
+					$sx .= '</tr>';
+				}
+			$sx .= '<tr><td colspan="5">Total de horas <b>'.$tot.'</b></td></tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
 
 	function search($termos, $page, $popup = 0) {
 		$termos = troca($termos, ' ', ';');

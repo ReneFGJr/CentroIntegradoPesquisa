@@ -12,6 +12,8 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+/* pagina de usuarios */
+$lang['page_usuarios'] = 'Cadastro de pessoas';
 
 $lang['versao'] = 'v0.15.25';
 /***************************** PIBIC */
@@ -21,9 +23,34 @@ $lang['list_arquivos'] = 'Arquivos postados';
 
 /* Status */
 $lang['status_protocolo_C'] = 'Cancelado';
+$lang['status_protocolo_A'] = 'Aberto';
+$lang['status_protocolo_B'] = 'Em análise';
+$lang['status_protocolo_F'] = 'Finalizado';
 
 /* Tipo de serviço */
 $lang['protocolo_ic_ALT'] = 'Substituição de estudante';
+$lang['protocolo_ic_CAN'] = 'Cancelamento de orientação';
+$lang['protocolo_ic_CAN_info'] = 'Informe a orientação que deseja solicitar cancelamento.';
+$lang['protocolo_botao_CAN'] = 'Solicitar cancelamento de orientação deste trabalho';
+
+$lang['protocolo_ic_SBS'] = 'Substituição de estudante';
+$lang['protocolo_ic_RCS'] = 'Recurso de avaliação';
+$lang['protocolo_ic_RSM'] = 'Recurso para o SEMIC';
+
+$lang['justify'] = 'Justificativa';
+$lang['pr_descricao'] = 'Motivo do cancelamento';
+$lang['pr_confirm_cancel'] = 'Confirmar cancelamento';
+$lang['bt_confirm'] = 'Confirmar >>>';
+$lang['::select an option::'] = ':: Selecion uma opção ::';
+$lang['Already_exists_protocol'] = 'Já existe um protocolo aberto deste tipo';
+
+$lang['proto_th_open'] = 'abertas';
+$lang['proto_th_close'] = 'fechadas';
+$lang['proto_th_cancel'] = 'canceladas';
+$lang['request'] = 'Solicitações';
+$lang['protocol_successful'] = 'Protocolo aberto com sucesso!';
+$lang['guidelines_ic'] = 'Orientações IC/IT';
+
 
 /****************************** AVALIADORES */
 $lang['desactive'] = 'desativar';

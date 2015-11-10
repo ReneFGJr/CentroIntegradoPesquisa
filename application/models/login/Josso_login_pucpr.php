@@ -34,6 +34,47 @@ class josso_login_pucpr extends CI_Model {
 	/* SESSAO
 	 *
 	 */
+	function security_ac() {
+		$data = date("Y-m-d");
+		$hora = date("H:i:s");
+		if ($this -> loged > 0) {
+			$sql = "select * from logins where us_cpf = '" . $this -> cpf . "'";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			if (count($rlt) == 0) {
+				/* Sem perfil */
+				$this -> perfil = '';
+				
+			} else {
+				$line = $rlt[0];
+				$this -> perfil = trim($line['us_perfil']);
+				$this -> cracha = trim($line['us_cracha']);
+				$this -> id = trim($line['id_us']);
+
+				$sql = "update logins set 
+							us_lastupdate = '" . $data . "',
+							us_lastupdate_hora = '" . $hora . "' 
+						where us_cpf = '" . $this -> cpf . "'";
+				$rlt = $this -> db -> query($sql);
+			}
+			/* Grava dados na Session */
+			$dados = array('perfil' => $this -> perfil, 'id_us' => $this -> id, 'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);
+			$this -> session -> set_userdata($dados);
+		} else {
+
+			$dados = $this -> session -> userdata();
+			$josso = $this -> session -> userdata('nome');
+
+			if (strlen($josso) == 0) {
+				$link = base_url('index.php/login');
+				redirect($link);
+			} else {
+				$this -> session -> set_userdata($dados);
+				return (1);
+			}
+			return (0);
+		}
+	}	
 	function security() {
 		$data = date("Y-m-d");
 		$hora = date("H:i:s");

@@ -3,6 +3,15 @@ class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
 	
+	function resumo_orientacoes()
+		{
+			$sx = '';
+			$sx .= '<table width="100%" class="border1 lt1">';
+			$sx .= '<tr><th>'.msg('guidelines_ic').'</th></tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
+	
 	function orientacoes()
 		{
 			$cracha = $_SESSION['cracha'];
@@ -30,9 +39,6 @@ class ics extends CI_model {
 					$line['page'] = 'pibic';
 					$sx .= $this->load->view("ic/plano-lista",$line,true);
 				}
-			
-			
-			
 			$sx .= '</table>';
 			return($sx);
 		}

@@ -1580,7 +1580,7 @@ if (!function_exists('form_edit')) {
 				$n1 = substr($ntype, 0, strpos($ntype, '-'));
 				$n2 = sonumero(substr($ntype, strpos($ntype, '-'), strlen($ntype)));
 				$n3 = substr($ntype, strlen($ntype) - 1, 1);
-				$options = array('' => '::select an option::');
+				$options = array('' => msg('::select an option::'));
 
 				if ($n3 != 'D') {
 					/* Crescente */
@@ -1699,7 +1699,7 @@ if (!function_exists('form_edit')) {
 
 			/* Select Box - Mes */
 			case 'MES' :
-				$options = array('' => '::select an option::');
+				$options = array('' => msg('::select an option::'));
 
 				/* recupera dados */
 				for ($r = (date("Y") + 4); $r > 1990; $r--) {
@@ -1739,7 +1739,7 @@ if (!function_exists('form_edit')) {
 				$ntype = troca($ntype, '&', ';') . ';';
 				$param = splitx(';', $ntype);
 
-				$options = array('' => '::select an option::');
+				$options = array('' => msg('::select an option::'));
 				for ($r = 0; $r < count($param); $r++) {
 					if (count(trim($param[$r])) > 0) {
 						$nterm = splitx(':', $param[$r] . ':');
@@ -1769,7 +1769,7 @@ if (!function_exists('form_edit')) {
 				$ntype = trim(substr($type, 2, strlen($type)));
 				$ntype = troca($ntype, ':', ';') . ';';
 				$param = splitx(';', $ntype);
-				$options = array('' => '::select an option::');
+				$options = array('' => msg('::select an option::'));
 
 				/* recupera dados */
 				$sql = "select * from (" . $param[2] . ") as tabela order by " . $param[1];

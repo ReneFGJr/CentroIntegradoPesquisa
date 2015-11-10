@@ -83,7 +83,6 @@ class usuario extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
 
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
@@ -245,6 +244,9 @@ class usuario extends CI_Controller {
 				$data['logo'] = base_url('img/logo/logo_docentes.jpg');
 				$this -> load -> view('header/logo', $data);
 				$this -> load -> view('perfil/docente', $data);
+				$cpf = strzero(sonumero($data['us_cpf']),11);				
+				$data['content'] = $this->usuarios->mostra_carga_horaria($cpf);
+				$this-> load->view('content',$data);
 				break;
 			/* Colaborador */
 			case '4' :

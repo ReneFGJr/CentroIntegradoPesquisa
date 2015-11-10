@@ -25,6 +25,7 @@ class logins extends CI_Model {
 			$this->db->query($sql);
 			return($perf);			
 		}
+		
 	function le($id = 0) {
 		$sql = "select * from " . $this -> tabela . " where id_us = " . round($id);
 		$rlt = $this -> db -> query($sql);
