@@ -106,6 +106,7 @@ $lang['Label_csf_edital'] 	  		  = 'Edital';
 
 /*Fomento*/
 $lang['fm_titulo'] 			= 'Nome da chamada';
+$lang['fm_titulo_swb'] 			= '2nd SWB Experience - PUCPR';
 $lang['fm_titulo_email'] 	= 'Titulo do e-mail(opcional)';
 $lang['fm_agencia'] 		= 'Agência';
 $lang['fm_idioma'] 			= 'Idioma';

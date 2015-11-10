@@ -366,7 +366,6 @@ function cab() {
 				$sx .= '</tr>';
 			}
 		
-		/**	
 		//Soma os inscritos	
 		$sql_inscrito = "Select count(*) as total
 											from evento_inscricao 
@@ -376,18 +375,15 @@ function cab() {
 		$rlt = $rlt->result_array();
 		$tot = '';
 			
-		for ($r=0;$r < count($rlt);$r++)
-				{
-					
-					$tot++;
-					$line = $rlt[$r];
-					
-				}
+		for ($r=0;$r < count($rlt);$r++){
+				$tot++;
+				$line = $rlt[$r];
+			}
 			
 		$sx .=  '<TR>
 				 		<TD colspan=12 align=right BGCOLOR="#C0C0C0" valign="bottom">
 						<font color="white">Total de '.$tot.' estudantes inscritos</font>';	
-		*/
+		
 		//Lista de e-mails
 		$sx .= '<tr><td colspan=10></br><fieldset style="border:3px solid #d5d5d5; "><legend><b>Lista com todos os e-mails dos inscritos no evento </b></legend>'.$email.'</fieldset></td></tr>';
 		$sx  .= '</table>';
@@ -397,7 +393,7 @@ function cab() {
 		$this -> load -> view('content',$data);	
 		
 	}
-
+/** Monta a lista de inscritos no evento SWB2  */
 function lista_inscritos_editar($id = 0, $chk = '') {
 		/* Load Models */
 				/* Load Models */
@@ -406,7 +402,7 @@ function lista_inscritos_editar($id = 0, $chk = '') {
 		$this -> load -> model('eventos/swb2s');
 		
 		$this -> cab();
-		
+		//consulta  
 		$cp = $this -> eventos -> cp_editar_status();
 		$ev = $this->eventos->le_inscricao($id);
 		$us = $this->usuarios->le($ev['ei_us_usuario_id']);
@@ -420,7 +416,7 @@ function lista_inscritos_editar($id = 0, $chk = '') {
 		$form -> id = $id;
 
 		$tela = $form -> editar($cp, 'evento_inscricao');
-		$data['title'] = msg('fm_titulo');
+		$data['title'] = msg('fm_titulo_swb');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form', $data);
 		/* Salva */
