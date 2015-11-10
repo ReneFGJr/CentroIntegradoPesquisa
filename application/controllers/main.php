@@ -99,8 +99,11 @@ class main extends CI_Controller {
 		}
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Pró-Equipamentos', 'Laboratórios e equipamentos', 'BTA', '/equipamento'));
 		}
-		if (perfil('#CPP#SPI#ADM#CSF') == 1) { array_push($menu, array('Programa CsF', 'Ciência sem Fronteiras', 'BTA', '/csf_site'));
+		if (perfil('#CPP#SPI#ADM#CSF') == 1) { array_push($menu, array('Programa CsF - Gestão', 'Ciência sem Fronteiras', 'BTA', '/csf_site'));
 		}
+		if (perfil('#CPP#SPI#ADM#CSF') == 1) { array_push($menu, array('Programa CsF - Site', 'Ciência sem Fronteiras', 'BTA', '/csf'));
+		}
+		
 		if (perfil('#SEC#SEM#ADM') == 1) { array_push($menu, array('SEMIC', 'Seminário de Iniciação Científica - PUCPR', 'BTA', '/semic'));
 		}
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Fomento', 'Observatório de Pesquisa', 'BTN', '/edital'));
