@@ -6607,12 +6607,12 @@ button.close {
 
 @font-face {
     font-family: 'humnst777_btbold';
-    src: url('../fonts/humnst777_bt_bold-webfont.eot');
-    src: url('../fonts/humnst777_bt_bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/humnst777_bt_bold-webfont.woff2') format('woff2'),
-         url('../fonts/humnst777_bt_bold-webfont.woff') format('woff'),
-         url('../fonts/humnst777_bt_bold-webfont.ttf') format('truetype'),
-         url('../fonts/humnst777_bt_bold-webfont.svg#humnst777_btbold') format('svg');
+    src: url('font/humnst777_bt_bold-webfont.eot');
+    src: url('font/humnst777_bt_bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('font/humnst777_bt_bold-webfont.woff2') format('woff2'),
+         url('font/humnst777_bt_bold-webfont.woff') format('woff'),
+         url('font/humnst777_bt_bold-webfont.ttf') format('truetype'),
+         url('font/humnst777_bt_bold-webfont.svg#humnst777_btbold') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -6620,12 +6620,12 @@ button.close {
 
 @font-face {
     font-family: 'humnst777_btroman';
-    src: url('../fonts/humnst777_bt_roman-webfont.eot');
-    src: url('../fonts/humnst777_bt_roman-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/humnst777_bt_roman-webfont.woff2') format('woff2'),
-         url('../fonts/humnst777_bt_roman-webfont.woff') format('woff'),
-         url('../fonts/humnst777_bt_roman-webfont.ttf') format('truetype'),
-         url('../fonts/humnst777_bt_roman-webfont.svg#humnst777_btroman') format('svg');
+    src: url('font/humnst777_bt_roman-webfont.eot');
+    src: url('font/humnst777_bt_roman-webfont.eot?#iefix') format('embedded-opentype'),
+         url('font/humnst777_bt_roman-webfont.woff2') format('woff2'),
+         url('font/humnst777_bt_roman-webfont.woff') format('woff'),
+         url('font/humnst777_bt_roman-webfont.ttf') format('truetype'),
+         url('font/humnst777_bt_roman-webfont.svg#humnst777_btroman') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -6633,12 +6633,12 @@ button.close {
 
 @font-face {
     font-family: 'humnst777_lt_btlight';
-    src: url('../fonts/humnst777_lt_bt_light-webfont.eot');
-    src: url('../fonts/humnst777_lt_bt_light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/humnst777_lt_bt_light-webfont.woff2') format('woff2'),
-         url('../fonts/humnst777_lt_bt_light-webfont.woff') format('woff'),
-         url('../fonts/humnst777_lt_bt_light-webfont.ttf') format('truetype'),
-         url('../fonts/humnst777_lt_bt_light-webfont.svg#humnst777_lt_btlight') format('svg');
+    src: url('font/humnst777_lt_bt_light-webfont.eot');
+    src: url('font/humnst777_lt_bt_light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('font/humnst777_lt_bt_light-webfont.woff2') format('woff2'),
+         url('font/humnst777_lt_bt_light-webfont.woff') format('woff'),
+         url('font/humnst777_lt_bt_light-webfont.ttf') format('truetype'),
+         url('font/humnst777_lt_bt_light-webfont.svg#humnst777_lt_btlight') format('svg');
     font-weight: normal;
     font-style: normal;
 

@@ -1,10 +1,13 @@
+<?php
+$link_ic = link_ic($id_ic,$page);
+?>
 <tr class="lt0" valign="top">
 	<td rowspan="5" width="80">
 		<img src="<?php echo $img; ?>" height="40">
 		
 	</td>
 	<td class="lt3" align="left">
-		<B><?php echo link_ic($id_ic,$page).$ic_projeto_professor_titulo.'</a>'; ?></B>
+		<B><?php echo $link_ic.$ic_projeto_professor_titulo.'</a>'; ?></B>
 	</td>			
 	<td class="lt0" align="right" rowspan=3>
 		Protocolo:<br>

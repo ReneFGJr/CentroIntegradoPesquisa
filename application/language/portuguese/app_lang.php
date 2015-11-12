@@ -34,6 +34,9 @@ $lang['protocolo_ic_CAN_info'] = 'Informe a orientação que deseja solicitar canc
 $lang['protocolo_botao_CAN'] = 'Solicitar cancelamento de orientação deste trabalho';
 
 $lang['protocolo_ic_SBS'] = 'Substituição de estudante';
+$lang['protocolo_botao_SBS'] = 'Solicitar substituição de estudante';
+$lang['codigo_aluno_novo'] = 'Código do novo aluno';
+
 $lang['protocolo_ic_RCS'] = 'Recurso de avaliação';
 $lang['protocolo_ic_RSM'] = 'Recurso para o SEMIC';
 
@@ -41,8 +44,9 @@ $lang['justify'] = 'Justificativa';
 $lang['pr_descricao'] = 'Motivo do cancelamento';
 $lang['pr_confirm_cancel'] = 'Confirmar cancelamento';
 $lang['bt_confirm'] = 'Confirmar >>>';
-$lang['::select an option::'] = ':: Selecion uma opção ::';
+$lang['::select an option::'] = ':: Selecione uma opção ::';
 $lang['Already_exists_protocol'] = 'Já existe um protocolo aberto deste tipo';
+$lang['pr_confirm_sbs'] = 'Confirmar solicitação de substituíção';
 
 $lang['proto_th_open'] = 'abertas';
 $lang['proto_th_close'] = 'fechadas';
@@ -50,7 +54,8 @@ $lang['proto_th_cancel'] = 'canceladas';
 $lang['request'] = 'Solicitações';
 $lang['protocol_successful'] = 'Protocolo aberto com sucesso!';
 $lang['guidelines_ic'] = 'Orientações IC/IT';
-
+$lang['codigo_aluno_novo'] = 'Informe o código do novo estudante';
+$lang['pr_descricao_sbs'] = 'Motivo da substituição';
 
 /****************************** AVALIADORES */
 $lang['desactive'] = 'desativar';

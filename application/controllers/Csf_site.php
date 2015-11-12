@@ -547,7 +547,7 @@ class csf_site extends CI_Controller {
 
 		$this -> cab();
 
-		$line = $this -> csf_sites -> ler_view_csf($id, 'id');
+		$line = $this -> csf_sites -> ler_view_csf($id, 'csf_pais');
 		$data = $line;
 
 		$data['content'] = '<BR><BR><fieldset><legend class="lt2 bold">' . 'testando' . '</fieldset>';

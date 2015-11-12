@@ -347,7 +347,7 @@ class csf_sites extends CI_model {
 			$sx .= $link . $line['ed_titulo'] . '</A>';
 			$sx .= '</td>';
 
-			$link = base_url('index.php/csf_site/ver_pais/' . $line['codigo'] . '/' . checkpost_link($line['codigo']));
+			$link = base_url('index.php/csf_site/ver_pais/' . $line['csf_pais'] . '/' . checkpost_link($line['csf_pais']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $link . $line['nome_pt'] . '</A>';
@@ -512,7 +512,7 @@ class csf_sites extends CI_model {
 	}
 
 	function ler_view_csf($id = 0, $fd = 'id_csf') {
-		$sql = "select * from csf_view where $fd = " . $id;
+		$sql = "select * from csf_view where $fd = '" . $id."'";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$line = $rlt[0];
@@ -521,7 +521,7 @@ class csf_sites extends CI_model {
 
 	function mostra_lista_edital_pais($id) {
 		$this -> create_view();
-		$sql = "select * from csf_view where id = " . $id . ' order by csf_pais ';
+		$sql = "select * from csf_view where csf_pais = '" . $id . "' order by csf_pais ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$sx = '<table width="100%" align="left" class="border1 tabela01">';

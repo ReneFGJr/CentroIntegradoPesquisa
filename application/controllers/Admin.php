@@ -84,6 +84,7 @@ class admin extends CI_Controller {
 		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
 		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
 		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
+		array_push($menu, array('Usuários', 'Limpa Curso (Turnos)', 'ITE', '/admin/limpa_curso'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -120,6 +121,28 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 
+	}
+	/* Discente */
+	function limpa_curso() {
+		/* Load Models */
+		$this -> load -> model('discentes');
+		$this -> cab();
+		$data = array();
+		
+		$tela = '<h3>Buscando cursos</h3>';
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
+		
+		$tela = $this->discentes->limpar_habilitacao_curso();
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
+		
+		$tela = $this->discentes->limpar_turno_curso_estudante();
+		$data['content'] = $tela;		
+		$this->load->view('content',$data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 
 	function ic_edit($id = 0, $check = '') {

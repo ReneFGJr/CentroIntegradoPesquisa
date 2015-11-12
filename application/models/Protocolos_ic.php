@@ -5,14 +5,13 @@ class protocolos_ic extends CI_Model {
 					pr_tipo = '$tipo' and
 					pr_protocolo_original = '$proto' and
 					pr_status = 'A'	";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		if (count($rlt) > 0)
-			{
-				return (1);
-			} else {
-				return(0);
-			}
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
+		}
 	}
 
 	function orientacoes_protocolo($tp, $bt) {
@@ -103,13 +102,41 @@ class protocolos_ic extends CI_Model {
 
 	function abrir($tp, $proto = '') {
 		$form = new form;
-		$cp = $this -> cp_cancelar();
+
+		switch ($tp) {
+			case 'CAN' :
+				$cp = $this -> cp_cancelar();
+				$motivo = $this -> input -> post("dd2");
+				$justificativa = $this -> input -> post("dd3");
+				$aluno = '';				
+				break;
+			case 'SBS' :
+				$dd2 = $this -> input -> post("dd2");
+				$motivo = $this -> input -> post("dd5");
+				$justificativa = '';				
+				/* Recupera dados do aluno */
+				if (strlen($dd2) == 8)
+					{
+					$user = $this -> usuarios -> readByCracha($dd2);
+					$justificativa = '<b>Substituição de estudante<b><br>';
+					$justificativa .= $this -> load -> view('usuario/view_simple', $user, True);
+					$justificativa = troca($justificativa,chr(13),' ');
+					$justificativa = troca($justificativa,chr(10),'');
+					}
+				$justificativa .= '<hr><tt>'.$this -> input -> post("dd6").'</tt>';
+				$aluno = $this -> input -> post("dd2");				
+				$cp = $this -> cp_substituir();
+				break;
+			default :
+				echo 'OPS ' . $tp;
+				exit ;
+		}
+
 		$tela = $form -> editar($cp, '');
 		if ($form -> saved > 0) {
 			$solicitante = $_SESSION['cracha'];
-			$motivo = $this -> input -> post("dd2");
-			$justificativa = $this -> input -> post("dd3");
-			$rs = $this -> protocolo_inserir($solicitante, $proto, $motivo, $justificativa, 'CAN');
+
+			$rs = $this -> protocolo_inserir($solicitante, $proto, $motivo, $justificativa, $tp, $aluno);
 			if ($rs[0] == '0') {
 				$tela .= '<br><font color="red">' . $rs[1] . '</font>';
 			} else {
@@ -131,15 +158,53 @@ class protocolos_ic extends CI_Model {
 		array_push($cp, array('$C8', '', msg('pr_confirm_cancel'), True, True));
 		array_push($cp, array('$B8', '', msg('bt_confirm'), False, False));
 		return ($cp);
+	}
+
+	/* Cancelar protocolo */
+	function cp_substituir() {
+
+		$cp = array();
+		$dd2 = $this -> input -> post("dd2");
+		$dados_aluno = '';
+		$msg = '';
+		/* Valida */
+		if (strlen($dd2) > 0) {
+			$dd2 = $this -> usuarios -> limpa_cracha($dd2);
+			$_POST['dd2'] = $dd2;
+
+			if (strlen($dd2) == 8) {
+				$user = $this -> usuarios -> readByCracha($dd2);
+				$dados_aluno = $this -> load -> view('usuario/view', $user, True);
+			} else {
+				$dd2 = '';
+				$_POST['dd2'] = '';
+				$dados_aluno = '<center><font class="lt3"><font color="red">Código inválido</font></font>';
+			}
+		}
+
+		array_push($cp, array('$H8', '', '', False, False));
+		array_push($cp, array('$M', '', '<h2>' . msg('protocolo_ic_SBS') . '</h2>', False, False));
+		array_push($cp, array('$S14', '', msg('codigo_aluno_novo'), True, True));
+		array_push($cp, array('$M', '', $dados_aluno, False, True));
+		/* */
+		if (strlen($dd2) == 8) {
+			array_push($cp, array('$C8', '', msg('pr_confirm_sbs'), True, True));
+			array_push($cp, array('$Q pm_descricao:pm_descricao:select * from ic_protocolo_motivos where pm_ativo=1 and pm_tipo = \'SBS\' order by pm_ordem, pm_descricao', '', msg('pr_descricao_sbs'), '', True, True));
+			array_push($cp, array('$T80:4', '', msg('justify'), True, True));
+			
+		} else {
+			array_push($cp, array('$H8', '', msg('pr_confirm_sbs'), False, True));
+		}
+		return ($cp);
 
 	}
 
 	function acoes_abertas() {
 		$sx = '<h3>' . msg('request') . ':</h3>';
-		$sx .= '<ul >';
+		$sx .= '<ul>';
 		/* */
-		//$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/SBS/') . '" class="link lt2">';
-		//$sx .= '<li>' . $linka . 'Substituição do aluno' . '</a>' . '</li>';
+		$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/SBS/') . '" class="link lt2">';
+		$sx .= '<li>' . $linka . 'Substituição do aluno' . '</a>' . '</li>';
 
 		/* cancelamento de orientação */
 		$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/CAN/') . '" class="link lt2">';
@@ -160,44 +225,49 @@ class protocolos_ic extends CI_Model {
 		return ($sx);
 	}
 
-	function resumo_protocolos($cracha='')
-		{
+	function resumo_protocolos($cracha = '') {
 		$sql = "select count(*) as total, pr_status from ic_protocolos 
 					left join us_usuario on us_cracha = pr_solicitante
 						where pr_solicitante = '$cracha'
 					group by pr_status
 					 ";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		$rst = array('0'=>0,'1'=>0,'2'=>0);
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$line = $rlt[$r];
-				$sta = $line['pr_status'];
-				$t = $line['total'];
-				switch ($sta)
-					{
-					case 'A': $rst[0] = $rst[0] + $t; break;
-					case 'B': $rst[0] = $rst[0] + $t; break;
-					case 'C': $rst[1] = $rst[1] + $t; break;
-					case 'F': $rst[2] = $rst[2] + $t; break;
-					}
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$rst = array('0' => 0, '1' => 0, '2' => 0);
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sta = $line['pr_status'];
+			$t = $line['total'];
+			switch ($sta) {
+				case 'A' :
+					$rst[0] = $rst[0] + $t;
+					break;
+				case 'B' :
+					$rst[0] = $rst[0] + $t;
+					break;
+				case 'C' :
+					$rst[1] = $rst[1] + $t;
+					break;
+				case 'F' :
+					$rst[2] = $rst[2] + $t;
+					break;
 			}
+		}
 		$sx = '<table class="lt0 border1" width="100%">';
-		$sx .= '<tr><th class="lt3" align="center">'.msg('request').'</th></tr>';
+		$sx .= '<tr><th class="lt3" align="center">' . msg('request') . '</th></tr>';
 		$sx .= '<tr>';
-		$sx .= '<th width="33%">'.msg('proto_th_open').'</th>';
-		$sx .= '<th width="33%">'.msg('proto_th_close').'</th>';
-		$sx .= '<th width="33%">'.msg('proto_th_cancel').'</th>';	
+		$sx .= '<th width="33%">' . msg('proto_th_open') . '</th>';
+		$sx .= '<th width="33%">' . msg('proto_th_close') . '</th>';
+		$sx .= '<th width="33%">' . msg('proto_th_cancel') . '</th>';
 		$sx .= '</tr>';
 		$sx .= '<tr class="lt6">';
-		$sx .= '<th width="33%">'.$rst[0].'</th>';
-		$sx .= '<th width="33%">'.$rst[1].'</th>';
-		$sx .= '<th width="33%">'.$rst[2].'</th>';	
-		$sx .= '</tr>';		
+		$sx .= '<th width="33%">' . $rst[0] . '</th>';
+		$sx .= '<th width="33%">' . $rst[1] . '</th>';
+		$sx .= '<th width="33%">' . $rst[2] . '</th>';
+		$sx .= '</tr>';
 		$sx .= '</table>';
-		return($sx);
-		}
+		return ($sx);
+	}
 
 	function protocolos_abertos_pesquisador($cracha = '') {
 		$sql = "select * from ic_protocolos 
@@ -205,9 +275,9 @@ class protocolos_ic extends CI_Model {
 						where pr_solicitante = '$cracha'
 						order by pr_status, pr_data
 					 ";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
 		$total = 0;
 		$sx = '<table width="100%" class="lt2">';
 		$sx .= '<tr><th>protocolo</th>
@@ -217,8 +287,8 @@ class protocolos_ic extends CI_Model {
 						<th>status</th>
 					</tr>						
 					';
-					
-		for ($r=0;$r < count($rlt);$r++) {
+
+		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$link = '<a href="' . base_url('index.php/pibic/pibic_protocolo_ver/' . $line['id_pr']) . '/' . checkpost_link($line['id_pr']) . '" class="link lt2">';
 			$total++;

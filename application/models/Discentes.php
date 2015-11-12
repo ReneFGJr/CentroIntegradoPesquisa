@@ -1,5 +1,64 @@
 <?php
 class discentes extends CI_Model {
+	
+	function limpar_habilitacao_curso()
+		{
+			$t = ' - Hab.:';
+			$sql = "select * from us_usuario where us_curso_vinculo like '%".$t."%' ";
+			$sql .= "limit 10";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$tot = 0;
+			$sx = '';
+			for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				
+				$tot = 0;
+				$curso = trim($line['us_curso_vinculo']);
+				$pos = strpos($curso,$t);
+				if ($pos > 0)
+					{
+						$curso2 = troca($curso,$t,':');
+						$sx .= $curso.'<BR>'.$curso2;
+						$sx .= '<HR>';
+						
+						$sql = "update us_usuario set us_curso_vinculo = '".$curso2."' where us_curso_vinculo = '".$curso."' ";
+						$this->db->query($sql);
+					}
+			}
+			return($sx);
+		}
+	
+	function limpar_turno_curso_estudante()
+		{
+			$sql = "select * from us_usuario where us_curso_vinculo like '%(%' ";
+			$sql .= "limit 10";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$tot = 0;
+			$sx = '';
+			for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				
+				$tot = 0;
+				$curso = trim($line['us_curso_vinculo']);
+				$pos = strpos($curso,'(');
+				if ($pos > 0)
+					{
+						$curso2 = substr($curso,0,$pos);
+						$sx .= $curso.'<BR>'.$curso2;
+						$sx .= '<HR>';
+						
+						$sql = "update us_usuario set us_curso_vinculo = '".$curso2."' where us_curso_vinculo = '".$curso."' ";
+						$this->db->query($sql);
+					}
+			}
+			return($sx);
+		}	
 
 	function le($id) {
 		$tabela = $this->tabela_view();

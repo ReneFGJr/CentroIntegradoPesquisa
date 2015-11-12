@@ -1,4 +1,5 @@
 /* Class Erro */
+.footer { display: block; page-break-before: always; }
 .error
 	{
 		color: red;
@@ -82,10 +83,17 @@
 		.back_red {
 			background: red;
 			color: #fff;
-		}		
+		}	
+		.back_grey {
+			background: #888;
+			color: #fff;
+		}			
 		.back_green_shadown {
 			box-shadow: 0px 5px 0px #006000;
 		}
+		.back_grey_shadown {
+			box-shadow: 0px 5px 0px #606060;
+		}		
 		.back_red_shadown {
 			box-shadow: 0px 5px 0px #600000;
 		}		

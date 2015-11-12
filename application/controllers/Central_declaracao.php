@@ -69,7 +69,10 @@ class central_declaracao extends CI_Controller {
 		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', date("Y"), $data);
 		
 		/* Estudante Apresentação */
-		$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', date("Y"), $data);		
+		$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', date("Y"), $data);
+		
+		/* SwB2 - Participação */
+		$err1 = $this -> eventos -> emitir('SWB', 'SWB2', date("Y"), $data);		
 
 		$this -> load -> view("perfil/user", $data);
 		$cracha = $data['us_cracha'];
@@ -281,7 +284,19 @@ class central_declaracao extends CI_Controller {
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 8 de outubro de 2015.</td></tr></table>';
 				break;				
-				
+			/* Apresentacao SWB 2nd */
+			case '22' :
+				$artigo_estudante = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
+				}
+
+				/* Consulta avaliacao */
+				$protocolo = trim($data['dc_texto_1']);
+				$content = 'Declaro para os devidos fins que <b>' . $data['nome'] . '</b> participou do 2nd Science without Borders na PUCPR no dia 11 de novembro de 2015 no período da tarde, cumprindo uma carga horária de 6horas.';
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 11 de novembro de 2015.</td></tr></table>';
+				break;
 			default :
 				echo 'ERRO INTERNO ' . $tipo;
 				exit ;

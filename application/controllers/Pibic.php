@@ -55,7 +55,7 @@ class pibic extends CI_Controller {
 
 	function pibic_protocolo_ver($id = '', $chk = '') {
 		$cracha = $_SESSION['cracha'];
-		
+
 		$this -> load -> model('protocolos_ic');
 		$cracha = $_SESSION['cracha'];
 
@@ -68,7 +68,7 @@ class pibic extends CI_Controller {
 		/* Le dados */
 		$this -> cab();
 		$data = array();
-		$data['resumo'] = $this->protocolos_ic->resumo_protocolos($cracha);
+		$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
 
 		/* Dados */
 		$dados = $this -> protocolos_ic -> le($id);
@@ -85,18 +85,17 @@ class pibic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['resumo'] = $this -> protocolos_ic -> acoes_abertas();
-		$data['resumo'] .= $this->protocolos_ic->resumo_protocolos($cracha);
-		
+		$data['resumo'] .= $this -> protocolos_ic -> resumo_protocolos($cracha);
+
 		$data['search'] = $this -> protocolos_ic -> protocolos_abertos_pesquisador($cracha);
-		
-		
+
 		$this -> load -> view('ic/home', $data);
 		$this -> load -> view('header/content_close');
 	}
 
 	function proto_abrir($tp = '', $id = '', $chk = '') {
 		$cracha = $_SESSION['cracha'];
-		
+
 		$this -> load -> model('protocolos_ic');
 		$this -> load -> model('ics');
 
@@ -114,7 +113,7 @@ class pibic extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$data['resumo'] = $this->protocolos_ic->resumo_protocolos($cracha);
+		$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
 		$tela = '<h1>' . msg('protocolo_ic_' . $tp) . '</h1>';
 		$tela .= '<p>' . msg('protocolo_ic_' . $tp . '_info') . '</p>';
 		$bt = msg('protocolo_botao_' . $tp);
@@ -124,29 +123,56 @@ class pibic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 	}
 
-	function proto_abrir_tipo($tp = '', $id = '', $chk = '') {
+	function substituir_aluno($id, $chk = '') {
+		/* Models */
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('protocolos_ic');
+
 		$cracha = $_SESSION['cracha'];
 		
+		$data = $this->ics->le($id);
+		$plano = $this->load->view('ic/plano',$data,true);
+
+		$this -> cab();
+		$data = array();
+		$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
+		$data['search'] = $plano;
+		$data['search'] .= $this -> protocolos_ic -> abrir('SBS', $id);
+		
+		$this -> load -> view('ic/home', $data);
+	}
+
+	function proto_abrir_tipo($tp = '', $id = '', $chk = '') {
 		/* Models */
 		$this -> load -> model('protocolos_ic');
+
+		$cracha = $_SESSION['cracha'];
+
+		/* Substituição de aluno, caminho alternativo */
+		if ($tp == 'SBS') {
+			$url = base_url('index.php/pibic/substituir_aluno/' . $id . '/' . checkpost_link($id));
+			redirect($url);
+		}
+
 		$this -> cab();
 
 		/* Valida */
 		if ($this -> protocolos_ic -> verifica_se_existe_aberto($tp, $id) == '1') {
 			$data = array();
 			$texto = msg('Already_exists_protocol');
-			$data['resumo'] = $this->protocolos_ic->resumo_protocolos($cracha);
-			$data['search'] = '<center><h3><font color="red">'.$texto.'</font></h3></center>';
+			$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
+			$data['search'] = '<center><h3><font color="red">' . $texto . '</font></h3></center>';
 			$this -> load -> view('ic/home', $data);
 		} else {
 			$chk2 = checkpost_link($tp . $id);
-			
+
 			if ($chk != $chk2) {
 				redirect(base_url('index.php/pibic'));
 			}
 
 			$data = array();
-			$data['resumo'] = $this->protocolos_ic->resumo_protocolos($cracha);
+			$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
 			$data['search'] = $this -> protocolos_ic -> abrir($tp, $id);
 			$this -> load -> view('ic/home', $data);
 		}
@@ -156,14 +182,14 @@ class pibic extends CI_Controller {
 	public function index($id = 0) {
 		$this -> load -> model('protocolos_ic');
 		$this -> load -> model('ics');
-		
+
 		$cracha = $_SESSION['cracha'];
 
 		$this -> cab();
 		$data = array();
 		$data['resumo'] = $this -> protocolos_ic -> acoes_abertas();
-		$data['resumo'] .= $this->protocolos_ic->resumo_protocolos($cracha);
-		$data['resumo'] .= '<br>'.$this->ics->resumo_orientacoes($cracha);
+		$data['resumo'] .= $this -> protocolos_ic -> resumo_protocolos($cracha);
+		$data['resumo'] .= '<br>' . $this -> ics -> resumo_orientacoes($cracha);
 		$data['search'] = $this -> ics -> orientacoes();
 		$this -> load -> view('ic/home', $data);
 		$this -> load -> view('header/content_close');
