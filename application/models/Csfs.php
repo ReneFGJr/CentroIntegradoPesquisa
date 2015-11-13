@@ -809,8 +809,8 @@ class csfs extends CI_Model {
 
 	/** Alunos por cursos csf_curso*/
 	function mostra_std_course() {
-		$sql = "select us_curso_vinculo, count(us_curso_vinculo) as qtd
-				from csf_view group by us_curso_vinculo order by qtd desc limit 10
+		$sql = "select c_nome_curso, count(c_nome_curso) as qtd
+				from csf_view group by c_nome_curso order by qtd desc limit 10
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -819,7 +819,7 @@ class csfs extends CI_Model {
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$dados[$line['us_curso_vinculo']] = $line['qtd'];
+			$dados[$line['c_nome_curso']] = $line['qtd'];
 		}
 		return ($dados);
 	}
@@ -842,7 +842,7 @@ class csfs extends CI_Model {
 		return ($dados);
 	}
 
-	/** Alunos por parceiros */
+	/** Graficos de alunos por parceiros */
 	function mostra_std_partners() {
 		$sql = "select cp_descricao, count(cp_descricao) as qtd
 				from csf_view group by cp_descricao order by qtd desc limit 7
