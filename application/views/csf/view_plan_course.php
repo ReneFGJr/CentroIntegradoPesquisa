@@ -22,7 +22,7 @@ foreach ($dado_course_plan as $key => $value) {
 				<fieldset>
 					<table >
 						<tr>
-							<th>Pais</th>
+							<th>Curso</th>
 							<th>Qtd. de Estudantes</th>
 						</tr>
 						<?php
