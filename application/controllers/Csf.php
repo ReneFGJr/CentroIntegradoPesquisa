@@ -215,6 +215,12 @@ class csf extends CI_Controller {
 			$line = $this -> csfs -> mostra_std_partners();
 			$data_partners['dado_partners'] = $line;
 			$this -> load -> view('csf/view_std_partners', $data_partners);
+			
+			//carrega planilha de parceiros
+			$data_partners_plan = array();
+			$line = $this -> csfs -> plan_std_partners();
+			$data_partners_plan['dados_plan'] = $line;
+			$this -> load -> view('csf/view_plan_partners', $data_partners_plan);
 
 		}
 		$this -> load -> view('componentes/footer');
@@ -237,6 +243,12 @@ class csf extends CI_Controller {
 			$line = $this -> csfs -> mostra_dados_std_country();
 			$data_country['dado_country'] = $line;
 			$this -> load -> view('csf/view_std_country', $data_country);
+			
+			//carrega planilha estudantes por paises
+			$data_country_plan = array();
+			$line = $this -> csfs -> plan_dados_std_country();
+			$data_country_plan['dado_country_plan'] = $line;
+			$this -> load -> view('csf/view_plan_country', $data_country_plan);
 
 		}
 		$this -> load -> view('componentes/footer');
@@ -259,6 +271,12 @@ class csf extends CI_Controller {
 			$line = $this -> csfs -> mostra_std_course();
 			$data_course['dado_course'] = $line;
 			$this -> load -> view('csf/view_std_course', $data_course);
+			
+			//carrega planilha dos cursos que mais enviam alunos
+			$data_course_plan = array();
+			$line = $this -> csfs -> plan_std_course();
+			$data_course_plan['dado_course_plan'] = $line;
+			$this -> load -> view('csf/view_plan_course', $data_course_plan);
 
 		}
 		$this -> load -> view('componentes/footer');
@@ -281,6 +299,12 @@ class csf extends CI_Controller {
 			$line = $this -> csfs -> mostra_dados_std_university();
 			$data_university['dado_university'] = $line;
 			$this -> load -> view('csf/view_std_university', $data_university);
+			
+			//carrega planilha de estudantes por universidade
+			$data_university_plan = array();
+			$line = $this -> csfs -> plan_dados_std_university();
+			$data_university_plan['dado_university_plan'] = $line;
+			$this -> load -> view('csf/view_plan_university', $data_university_plan);
 
 		}
 		$this -> load -> view('componentes/footer');
