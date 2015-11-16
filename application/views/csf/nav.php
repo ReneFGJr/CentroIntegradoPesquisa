@@ -9,7 +9,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="<?php echo base_url('index.php/csf/');?>" class="teste-ajuda-deus" style="color: #fff; font-weight: 600;">Ciência sem Fronteiras</a>
+					<a class="navbar-brand" href="<?php echo base_url('index.php/csf/');?>" class="teste-ajuda-deus" style="color: #fff; font-weight: 600;"><?php echo msg('csf_csf');?></a>
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
@@ -26,7 +26,7 @@
 									<a href="oque-e.php"><?php echo msg('csf_o_que_e');?></a>
 								</li>
 								<li>
-									<a href="editais.php"><?php echo msg('csf_ediais');?></a>
+									<a href="editais.php"><?php echo msg('csf_editais');?></a>
 								</li>
 								<!-- <li><a href="#">Something else here</a></li> -->
 								<!-- <li class="divider"></li>
@@ -42,7 +42,7 @@
 									<a href="http://www2.pucpr.br/reol/eventos/swbexperience/index.php">1st SWB Experience</a>
 								</li>
 								<li>
-									<a href="despedida-1.php">Despedida 2015 1º Semestre</a>
+									<a href="despedida-1.php"><?php echo msg('csf_despedida');?></a>
 								</li>
 								<!-- <li><a href="#">Something else here</a></li> -->
 								<!-- <li class="divider"></li>
