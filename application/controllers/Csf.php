@@ -36,7 +36,8 @@ class csf extends CI_Controller {
 		array_push($js, 'jquery.js');
 		array_push($js, 'ui/jquery-ui.js');
 		array_push($js, 'bootstrap-3.3.5/js/bootstrap.js');
-		array_push($js, 'bootstrap-3.3.5/js/bootstrap-dropdown.js');
+		//array_push($js, 'bootstrap-3.3.5/js/bootstrap-dropdown.js');
+		array_push($js, 'bootstrap-3.3.5/js/bootsrap-submenu.js');
 		array_push($js, 'high/highcharts.js');
 
 		/* transfere para variavel do codeigniter */
