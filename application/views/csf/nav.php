@@ -39,7 +39,10 @@
 							<a href="sobre-programa.php" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="color: #fff;"><?php echo msg('csf_eventos');?><span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 								<li>
-									<a href="http://www2.pucpr.br/reol/eventos/swbexperience/index.php">1st SWB Experience</a>
+									<a href="http://www2.pucpr.br/reol/eventos/swbexperience1st/index.php">1st SWB Experience</a>
+								</li>
+								<li>
+									<a href="http://www2.pucpr.br/reol/eventos/swbexperience/index.php">2st SWB Experience</a>
 								</li>
 								<li>
 									<a href="despedida-1.php"><?php echo msg('csf_despedida');?></a>
