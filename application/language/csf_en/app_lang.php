@@ -13,6 +13,7 @@ if (!function_exists(('msg')))
 			}
 	}
 /* pagina de usuarios */
+/* menu */
 $lang['csf_home'] = 'Home';
 $lang['csf_indicadores'] = 'Indicators';
 $lang['csf_sobre'] = 'About the Programme';

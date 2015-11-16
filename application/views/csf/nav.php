@@ -23,10 +23,10 @@
 							<a href="sobre-programa.php" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="color: #fff;"><?php echo msg('csf_sobre');?> <span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 								<li>
-									<a href="oque-e.php"><?php echo msg('csf_o_que_e');?></a>
+									<a href="<?php echo base_url('index.php/csf/what');?>"><?php echo msg('csf_o_que_e');?></a>
 								</li>
 								<li>
-									<a href="editais.php"><?php echo msg('csf_editais');?></a>
+									<a href="#"><?php echo msg('csf_editais');?></a>
 								</li>
 								<!-- <li><a href="#">Something else here</a></li> -->
 								<!-- <li class="divider"></li>
@@ -42,7 +42,7 @@
 									<a href="http://www2.pucpr.br/reol/eventos/swbexperience1st/index.php">1st SWB Experience</a>
 								</li>
 								<li>
-									<a href="http://www2.pucpr.br/reol/eventos/swbexperience/index.php">2st SWB Experience</a>
+									<a href="https://cip.pucpr.br/eventos/swbexperience/">2st SWB Experience</a>
 								</li>
 								<li>
 									<a href="despedida-1.php"><?php echo msg('csf_despedida');?></a>
