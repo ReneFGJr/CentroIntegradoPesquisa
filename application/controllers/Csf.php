@@ -5,12 +5,22 @@ class csf extends CI_Controller {
 		parent::__construct();
 		$this -> load -> database();
 		$this -> load -> helper('cookie');
-
-		$this -> lang -> load("app", "portuguese");
-		//$this -> load -> library('form_validation');
-		//$this -> load -> database();
-		//$this -> load -> helper('url');
 		$this -> load -> library('session');
+		$this -> load -> helper('url');
+		
+		
+		if (isset($_SESSION['idioma'])) {
+			$id = $_SESSION['idioma'];
+		} else {
+			$id = 'pt';
+		}
+		
+		if (strlen($id) == 0) {
+			$id = 'pt';
+		}
+		$this -> lang -> load("app", "csf_".$id);
+		//$this -> load -> library('form_validation');
+		
 
 		date_default_timezone_set('America/Sao_Paulo');
 	}
@@ -20,53 +30,35 @@ class csf extends CI_Controller {
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
-		array_push($css, 'style_cab.css');
+		array_push($css, 'bootstrap.css');
+		//array_push($css, 'style_cab.css');
 		array_push($css, 'style_csf.css');
-
-		array_push($js, 'js_cab.js');
-		array_push($js, 'unslider.min.js');
-		array_push($js, 'high/highcharts.js');
+		array_push($css, 'caroussel.css');
+		
+		array_push($js, 'jquery.js');
+		array_push($js, 'ui/jquery-ui.js');
+		array_push($js, 'bootstrap-3.3.5/js/bootstrap.js');
+		array_push($js, 'bootstrap-3.3.5/js/bootstrap-dropdown.js');
+		
+	
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
 
-		//$id = $this -> session -> userdata('idioma');
-		if (isset($_SESSION['idioma'])) {
-			$id = $_SESSION['idioma'];
-		} else {
-			$id = 'pt';
-		}
-
-		if (strlen($id) == 0) {
-			$id = 'pt';
-		}
-		$this -> idioma = trim($id);
 		$this -> load -> view("csf/header",$data);
-		$this -> load -> view('componentes/headerpuc');
-
-		if ($this -> idioma == 'en') {
-			$this -> load -> view('componentes/nav_en');
-		} else {
-			$this -> load -> view('componentes/nav');
-		}
+		$this -> load -> view('pucpr/headerpuc');
+		$this -> load -> view('csf/nav');
 
 	}
 
 	function index() {
 		$this -> cab();
 
-		if ($this -> idioma == 'en') {
-			$this -> load -> view('csf/site_crousel_part_01_en');
-			$this -> load -> view('csf/site_crousel_part_02_en');
-			$this -> load -> view('csf/site_crousel_part_03_en');
+		//$this -> load -> view('csf/site_crousel_part_01');
+		//$this -> load -> view('csf/site_crousel_part_02');
+		//$this -> load -> view('csf/site_crousel_part_03');
 
-		} else {
-			$this -> load -> view('csf/site_crousel_part_01');
-			$this -> load -> view('csf/site_crousel_part_02');
-			$this -> load -> view('csf/site_crousel_part_03');
-		}
-
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	function en() {
@@ -74,7 +66,7 @@ class csf extends CI_Controller {
 		//$this -> session -> set_userdata($some_cookie_array);
 		$_SESSION['idioma'] = 'en';
 		$this -> idioma = 'en';
-		$this -> index();
+		redirect(base_url('index.php/csf'));
 	}
 
 	function pt() {
@@ -82,7 +74,7 @@ class csf extends CI_Controller {
 		//$this -> session -> set_userdata($some_cookie_array);
 		$_SESSION['idioma'] = 'pt';
 		$this -> idioma = 'pt';
-		$this -> index();
+		redirect(base_url('index.php/csf'));
 	}
 
 	function what() {
@@ -95,7 +87,7 @@ class csf extends CI_Controller {
 
 		}
 
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	function editais() {
@@ -114,20 +106,18 @@ class csf extends CI_Controller {
 
 		}
 
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	function eventos() {
 		$this -> cab();
-
 		if ($this -> idioma == 'en') {
 			$this -> load -> view('csf/site_eventos_en');
 		} else {
 			$this -> load -> view('csf/site_eventos');
-
 		}
 
-		$this -> load -> view('componentes/footer');
+//		$this -> load -> view('csf/footer');
 	}
 
 	function despedida_01() {
@@ -140,7 +130,7 @@ class csf extends CI_Controller {
 
 		}
 
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	function indicadores() {
@@ -155,7 +145,7 @@ class csf extends CI_Controller {
 
 		}
 
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	function depoimentos() {
@@ -168,7 +158,7 @@ class csf extends CI_Controller {
 
 		}
 
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	function faq() {
@@ -181,7 +171,7 @@ class csf extends CI_Controller {
 
 		}
 
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	function contato() {
@@ -194,7 +184,7 @@ class csf extends CI_Controller {
 
 		}
 
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	/*******************NOVOS INDICADORES******************************/
@@ -223,7 +213,7 @@ class csf extends CI_Controller {
 			$this -> load -> view('csf/view_plan_partners', $data_partners_plan);
 
 		}
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 	
 	//GRAFICO 2 => grafico de estudantes por paises
@@ -251,7 +241,7 @@ class csf extends CI_Controller {
 			$this -> load -> view('csf/view_plan_country', $data_country_plan);
 
 		}
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 	
 	//GRAFICO 3 => grafico dos cursos que mais enviam alunos
@@ -279,7 +269,7 @@ class csf extends CI_Controller {
 			$this -> load -> view('csf/view_plan_course', $data_course_plan);
 
 		}
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	//GRAFICO 4 => grafico de estudantes por universidade
@@ -307,7 +297,7 @@ class csf extends CI_Controller {
 			$this -> load -> view('csf/view_plan_university', $data_university_plan);
 
 		}
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	//GRAFICO 5 => grafico da situacao dos estudantes intercambistas
@@ -329,7 +319,7 @@ class csf extends CI_Controller {
 			$this -> load -> view('csf/view_std_status', $data_status);
 
 		}
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 
 	//GRAFICO 6 => grafico dos estudantes por genero
@@ -351,7 +341,7 @@ class csf extends CI_Controller {
 			$this -> load -> view('csf/view_std_gen', $data_genero);
 
 		}
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}
 	
 	//Mapa 01 => estudantes no mundo
@@ -374,7 +364,7 @@ class csf extends CI_Controller {
 			//$this -> load -> view('csf/view_std_map_word');
 			$this -> load -> view('csf/view_std_map_word', $data_map);
 		}
-		$this -> load -> view('componentes/footer');
+		$this -> load -> view('csf/footer');
 	}	
 	
 	function total(){

@@ -42,8 +42,7 @@ class ws_sga extends CI_model {
 				return(array());
 				exit;
 			}		
-		$DadoAluno = $response['DadoAluno'];
-		
+		$DadoAluno = $response['DadoAluno'];	
 		if (count($DadoAluno) == 0) {
 			/* Retorna vazio */
 			return ('');
@@ -110,7 +109,7 @@ class ws_sga extends CI_model {
 			}
 			if (count($pref1) > 0) {
 				$DadoAluno = $pref1[0];
-				$DadoAluno['tipo'] = '2';
+				$DadoAluno['tipo'] = '3';
 				/* Aluno */
 				$this -> load -> model('usuarios');
 				$this -> usuarios -> insere_usuario($DadoAluno);
@@ -118,7 +117,7 @@ class ws_sga extends CI_model {
 			}
 			if (count($pref3) > 0) {
 				$DadoAluno = $pref3[0];
-				$DadoAluno['tipo'] = '2';
+				$DadoAluno['tipo'] = '3';
 				/* Aluno */
 				$this -> load -> model('usuarios');
 				$this -> usuarios -> insere_usuario($DadoAluno);

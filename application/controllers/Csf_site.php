@@ -42,6 +42,7 @@ class csf_site extends CI_Controller {
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Ciência sem Fronteiras', 'index.php/csf_site'));
+		array_push($menus, array('Indicadores', 'index.php/csf_site/indicadores'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);

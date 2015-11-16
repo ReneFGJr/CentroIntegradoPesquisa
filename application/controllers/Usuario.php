@@ -309,6 +309,15 @@ class usuario extends CI_Controller {
 
 		$data['title'] = 'Formulário';
 		$this -> load -> view('form/form', $data);
+		
+		$cracha = trim($data['us_cracha']);
+		if (strlen($cracha) > 0)
+			{
+			$link = '<A href="'.base_url('index.php/usuario/consulta_usuario/'.$cracha).'">Consulta SGA</a>';
+			$data2['title'] = '';
+			$data2['content'] = $link;
+			$this -> load -> view('content', $data2);
+			}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

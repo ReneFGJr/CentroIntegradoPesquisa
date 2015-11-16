@@ -317,6 +317,7 @@ class csf_sites extends CI_model {
 		$sx = '<table width="100%" align="left" class="border1 tabela01">';
 		$sx .= '<tr>						
 						<th width="30%" align=left>estudantes</th>
+						<th width="30%" align=left>genero</th>
 						<th width="10%" align=left>situação</th>
 						<th width="30%" align=left>edital</th>
 						<th width="10%" align=left>país</th>
@@ -334,6 +335,17 @@ class csf_sites extends CI_model {
 			$sx .= '<td class="borderb1">';
 			$sx .= $link . $line['us_nome'] . '</A>';
 			$sx .= '</td>';
+			
+			$link = base_url('index.php/csf_site/ver/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
+			$link = '<A HREF="' . $link . '" class="lt2 link">';
+			$sx .= '<td class="borderb1">';
+			$g = $line['us_genero'];
+			if ((strlen($g) == 0) or ($g != 'F' and $g != 'M'))
+				{
+						$g = '<font color="red">X</font>';
+				}
+			$sx .=  $g;
+			$sx .= '</td>';			
 
 			$link = base_url('index.php/csf_site/ver_situacao/' . $line['id_csf'] . '/' . checkpost_link($line['id_csf']));
 			$link = '<A HREF="' . $link . '" class="lt2 link">';

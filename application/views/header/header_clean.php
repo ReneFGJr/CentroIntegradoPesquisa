@@ -4,7 +4,7 @@ if (isset($title))
 	{
 		
 	} else {
-		$title = msg('Ciência sem Fronteiras - PUCPR');
+		$title = ':: CIP ::';
 	}
 ?>
 <head>

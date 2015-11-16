@@ -529,9 +529,13 @@ class usuarios extends CI_model {
 	}
 
 	function insere_usuario($DadosUsuario) {
+				
+		print_r($DadosUsuario);
+		exit;
 		
 		$nome = nbr_autor($DadosUsuario['nome'], 7);
 		$cpf = $DadosUsuario['cpf'];
+		$cpf = strzero($cpf,11);
 		
 		$email1 = trim($DadosUsuario['email1']);
 		$email2 = trim($DadosUsuario['email2']);
@@ -563,7 +567,10 @@ class usuarios extends CI_model {
 			
 			$sql = "update ".$this->tabela." set
 						us_curso_vinculo = '$curso',
-						us_dt_update_cs = '".date("Y-m-d")."'
+						us_cpf = '$cpf',
+						us_dt_update_cs = '".date("Y-m-d")."',
+						usuario_tipo_ust_id = $tipo,
+						us_genero = '$genero'
 					where id_us = $idu ";
 			$this -> db -> query($sql);
 		} else {
