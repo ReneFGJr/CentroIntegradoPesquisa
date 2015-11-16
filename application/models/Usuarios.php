@@ -530,9 +530,6 @@ class usuarios extends CI_model {
 
 	function insere_usuario($DadosUsuario) {
 				
-		print_r($DadosUsuario);
-		exit;
-		
 		$nome = nbr_autor($DadosUsuario['nome'], 7);
 		$cpf = $DadosUsuario['cpf'];
 		$cpf = strzero($cpf,11);

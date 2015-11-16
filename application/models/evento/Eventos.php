@@ -10,40 +10,37 @@ class eventos extends CI_model {
 			exit ;
 		}
 		$id = $_SESSION['evento'];
-		
+
 		$sql = "select ei_evento_confirmar, count(*) as total 
 				from evento_inscricao 
 					where ei_evento_id = $id 
 					and ei_status > 0
 				group by ei_evento_confirmar ";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
 		$ps = 0;
 		$au = 0;
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$line = $rlt[$r];
-				if ($line['ei_evento_confirmar'] == '1')
-				{
-					$ps = $ps + $line['total'];
-				} 
-				if ($line['ei_evento_confirmar'] == '0')
-				{
-					$au = $au + $line['total'];
-				} 
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			if ($line['ei_evento_confirmar'] == '1') {
+				$ps = $ps + $line['total'];
 			}
+			if ($line['ei_evento_confirmar'] == '0') {
+				$au = $au + $line['total'];
+			}
+		}
 		$sx = '<table width="500" align="center">';
 		$sx .= '<tr><th width="33%">Inscritos</th>
 					<th width="33%">Presentes</th>
 					<th width="33%">Total</th>
 					</tr>';
 		$sx .= '<tr align="center" class="lt5">
-					<td width="33%" class="border1">'.$au.'</td>
-					<td width="33 %" class="border1">'.$ps.'</td>
-					<td width="33%" class="border1">'.($au+$ps).'</td>
+					<td width="33%" class="border1">' . $au . '</td>
+					<td width="33 %" class="border1">' . $ps . '</td>
+					<td width="33%" class="border1">' . ($au + $ps) . '</td>
 					</tr>';
 		$sx .= '</table>';
-		return($sx);
+		return ($sx);
 	}
 
 	function emitir($evento, $tipo, $ano, $us) {
@@ -77,6 +74,32 @@ class eventos extends CI_model {
 			}
 		}
 
+		/*********************************************************************************************
+		 * Evento SEMIC - SENAI
+		 *
+		 */
+		if ($evento == 'SENAI') {
+			
+			if ($ano == '2015') {
+				/* OUVINTE */
+
+				if ($tipo == 'APRESENTACAO') {
+					/* Declaracao de Ouvite */
+					$sql = "select * from semic_nota_trabalhos
+							left join us_usuario on st_professor = us_cracha
+							left join (select pp_protocolo from pibic_parecer_2015 group by pp_protocolo) as avaliacao on pp_protocolo = st_codigo 
+							where st_aluno = '$cracha'
+							and (st_poster = 'S' or st_oral = 'S') ";
+
+					$rlt = $this -> db -> query($sql);
+					$rlt = $rlt -> result_array();
+					if (count($rlt) > 0) {
+						/* ID da declaracao de ouvinte - 9 */
+						$this -> insere_declaracao($id, 0, 24);
+					}
+				}
+			}
+		}
 		/*********************************************************************************************
 		 * Evento SEMIC
 		 *
