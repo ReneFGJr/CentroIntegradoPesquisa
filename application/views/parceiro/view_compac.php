@@ -13,7 +13,7 @@
 	</tr>
 	<tr>		
 		<td align="left" width="80"><?php echo msg('Label_csf_nome_pais_parceiro'); ?></td>
-		<td align="left" class="lt2 border1" width="40%"><?php echo $nome; ?></td>
+		<td align="left" class="lt2 border1" width="40%"><?php echo $nome_pt; ?></td>
 	</tr>
 	<tr>		
 		<td align="left" width="80"><?php echo msg('Label_csf_site_parceiro'); ?></td>

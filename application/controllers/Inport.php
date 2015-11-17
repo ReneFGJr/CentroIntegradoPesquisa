@@ -3,12 +3,14 @@ class inport extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
-		$this -> load -> database();
 		$this -> lang -> load("app", "portuguese");
+
+		$this -> load -> library('form_validation');
+		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
-		$this -> load -> helper('xml');
+		$this -> load -> library("nuSoap_lib");
 		$this -> load -> library('session');
 
 		date_default_timezone_set('America/Sao_Paulo');
@@ -82,6 +84,7 @@ class inport extends CI_Controller {
 
 	function ro8($id = '',$off='',$ano='') {
 		/* Load Models */
+		$this -> load -> model('ics');
 		$this -> load -> model('ro8s');
 
 		$this -> cab();

@@ -3,6 +3,137 @@ class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
 	
+	function indicacoes_sem_id_usuario()
+		{
+			$sql = "SELECT * FROM ic_aluno 
+						left join us_usuario on us_cracha = ic_aluno_cracha
+						where aluno_id = 0
+						and not us_nome is null
+						";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$data = date("Y-m-d");
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					print_r($line);
+				} 
+			
+		}
+	
+	function cancelar_protocolo($protocolo)
+		{
+			$sql = "SELECT * FROM ic_aluno
+					inner join ic on id_ic = ic_id
+						WHERE ic_plano_aluno_codigo = '$protocolo'
+						and (icas_id = 1 or icas_id = 3 or icas_id = 2)
+					";	
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$data = date("Y-m-d");
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					
+					$idc = $line['id_ica'];
+					$sql = "update ic_aluno set
+								icas_id_char = 'C',
+								icas_id = 2,
+								aic_dt_saida = '$data',
+								aic_dt_fim_bolsa = '$data'								
+							where id_ica = ".$idc.';'.cr();	
+							
+					$sqlf = "update ic set 
+								s_id_char = 'C',
+								s_id = 2
+								where ic_plano_aluno_codigo = '$protocolo' ";	
+								echo $sql;										
+					$this->db->query($sql);
+					$this->db->query($sqlf);
+					print_r($line);
+					echo '<hr>';
+				}
+			exit;					
+		}
+	
+	function substituicao_aluno($cracha,$protocolo,$cracha_novo,$data)
+		{
+			/* Baixa aluno (`ic_aluno`)  WHERE `ic_aluno_cracha` = '89317614'
+			 * 
+			 */
+			
+			$us = $this->usuarios->le_cracha(trim($cracha_novo));
+			if (count($us) == 0)
+				{
+					echo 'ERRO DE CONSULTA: '.$cracha_novo;
+					exit;
+				}
+			$ida = $us['id_us'];
+			
+			$sql = "SELECT * FROM ic_aluno
+					inner join ic on id_ic = ic_id
+						WHERE ic_aluno_cracha = '$cracha'
+						and ic_plano_aluno_codigo = '$protocolo'
+					";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					$ic_id = $line['ic_id'];
+					$mb_id = $line['mb_id'];
+					$mb_id_char = $line['mb_id_char'];
+					$icas_id_char = $line['icas_id_char'];
+					$icas_id = $line['icas_id'];
+					
+					echo '<font color="blue">';
+					print_r($line);
+					
+					echo '</font>';
+					$idc = $line['id_ica'];
+					$sql = "update ic_aluno set
+								icas_id_char = 'S',
+								icas_id = 3,
+								aic_dt_saida = '$data',
+								aic_dt_fim_bolsa = '$data'								
+							where id_ica = ".$idc.';'.cr();
+							
+					$sqli = "
+							insert into ic_aluno 
+							(
+							aluno_id, ic_aluno_cracha, ic_id,
+							mb_id, mb_id_char, icas_id, 
+							icas_id_char,
+							aic_dt_entrada, aic_dt_saida, aic_dt_inicio_bolsa,
+							aic_dt_fim_bolsa 
+							)
+							values
+							(
+							$ida, '$cracha_novo','$ic_id',
+							'$mb_id','$mb_id_char','$icas_id', '$icas_id_char',
+							'$data','0000-00-00','$data',
+							'0000-00-00'
+							) 
+					";
+					$sqld = "
+							update ic_aluno
+							set aluno_id = $ida, ic_aluno_cracha = '$cracha_novo'
+							where id_ica = ".$idc; 
+					
+					
+					$sqlf = "update ic set 
+								ic_cracha_aluno = '$cracha_novo',
+								ic_dt_ativacao = '$data'
+								where ic_plano_aluno_codigo = '$protocolo' ";
+					//$this->db->query($sql);
+					//$this->db->query($sqli);
+					$this->db->query($sqld);
+					$this->db->query($sqlf);
+				}
+			echo '<hr>'.$sql.'<hr>';
+			echo '<hr>'.$sqli.'<hr>';			
+		}
+	
 	function resumo_orientacoes()
 		{
 			$sx = '';
@@ -561,9 +692,9 @@ class ics extends CI_model {
 			$wh = 'where (' . $wh . ') ';
 		}
 
-		$tabela = "		select * from ic
+		$tabela = "	select * from ic
             			left join ic_aluno as pa on ic_id = id_ic
-						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha,us_curso_vinculo as al_curso from us_usuario) AS us_est on ic.ic_cracha_aluno = us_est.id_al
+						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha,us_curso_vinculo as al_curso from us_usuario) AS us_est on pa.ic_aluno_cracha = us_est.id_al
 						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha, us_curso_vinculo as pf_curso from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id

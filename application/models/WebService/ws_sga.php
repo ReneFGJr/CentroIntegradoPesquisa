@@ -47,10 +47,9 @@ class ws_sga extends CI_model {
 			/* Retorna vazio */
 			return ('');
 		}
-
 		/* Modelo 1 - Somente um curso */
 		if (isset($DadoAluno['pessoa'])) {
-			$DadoAluno['tipo'] = '2';
+			$DadoAluno['tipo'] = '3';
 			/* Aluno */
 			$this -> load -> model('usuarios');
 			$this -> usuarios -> insere_usuario($DadoAluno);

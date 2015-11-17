@@ -94,7 +94,7 @@ echo '
 <script>
 	function bt_enviar($acao)
 	{
-		var $url = "' . base_url('index.php/csf/ajax_acao/') . '/' . $id . '/' . $ack . '/" + $acao;
+		var $url = "' . base_url('index.php/csf_site/ajax_acao/') . '/' . $id . '/' . $ack . '/" + $acao;
 		$.ajax({
 			url : $url,
 			type : "post",

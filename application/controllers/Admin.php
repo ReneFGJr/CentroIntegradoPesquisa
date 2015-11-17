@@ -80,6 +80,7 @@ class admin extends CI_Controller {
 		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/instituicao'));
 
 		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas', 'ITE', '/admin/ic'));
+		array_push($menu, array('Iniciação Científica', 'ID/usuarios bas bolsas', 'ITE', '/admin/ic_id'));
 
 		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
 		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
@@ -117,6 +118,18 @@ class admin extends CI_Controller {
 		$tela['title'] = $this -> lang -> line('ic');
 
 		$this -> load -> view('form/form', $tela);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function ic_id($id = 0, $pg = '') {
+		$this -> load -> model('ics');
+		$this -> cab();
+		$data = array();
+
+		$this->ics->indicacoes_sem_id_usuario();
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

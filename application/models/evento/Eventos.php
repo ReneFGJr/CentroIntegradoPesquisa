@@ -88,7 +88,7 @@ class eventos extends CI_model {
 					$sql = "select * from semic_nota_trabalhos
 							left join us_usuario on st_professor = us_cracha
 							left join (select pp_protocolo from pibic_parecer_2015 group by pp_protocolo) as avaliacao on pp_protocolo = st_codigo 
-							where st_aluno = '$cracha'
+							where st_aluno = '$cracha' and st_edital = 'SENAI'
 							and (st_poster = 'S' or st_oral = 'S') ";
 
 					$rlt = $this -> db -> query($sql);
@@ -250,6 +250,7 @@ class eventos extends CI_model {
 							left join (select pp_protocolo from pibic_parecer_2015 group by pp_protocolo) as avaliacao on pp_protocolo = st_codigo 
 							where st_aluno = '$cracha'
 							and (st_poster = 'S' or st_oral = 'S') ";
+							
 					$rlt = $this -> db -> query($sql);
 					$rlt = $rlt -> result_array();
 					for ($r = 0; $r < count($rlt); $r++) {
@@ -278,6 +279,7 @@ class eventos extends CI_model {
 						}
 
 						$id2 = $line['id_us'];
+						echo $err;
 						if ($ok == 1) {
 							/* ID da declaracao de avaliador - 7 */
 							$tipop = 21;

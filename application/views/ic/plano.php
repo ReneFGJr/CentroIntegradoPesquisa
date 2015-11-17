@@ -20,7 +20,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 			</td>
 			<td width="400" rowspan=10 >
 			<div id="plano" style="width: 400px; z-index: 1; display: table; ">
-				<div id="banner" style="background-image: url( 'http://www2.pucpr.br/reol/img/banner_ativo.png');
+				<div id="banner" style="background-image: url( '<?php echo base_url("img/ic/banner_".$id_s.'.png'); ?>');
 				width: 200px; height: 134px;
 				position: absolute;
 				z-index: 2;
@@ -31,7 +31,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 					<table width="100%" border=0 cellspan=0 cellpadding=0 style="background-color: #F0F0F0;">
 						<tr>
 							<td align="right" class="lt0"><I>Status</I></td>
-							<td class="lt2" ><font color="<?php echo $s_cor; ?>"><b><?php echo $s_situacao; ?></b></font></td>
+							<td class="lt2" ><font color="#333333"><b><?php echo $s_situacao; ?></b></font></td>
 						</tr>
 						
 						<tr>

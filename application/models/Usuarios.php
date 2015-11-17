@@ -449,6 +449,7 @@ class usuarios extends CI_model {
 		$sql = "select * from " . $this -> tabela . " as t1
 					left join us_titulacao as t2 on t1.usuario_titulacao_ust_id = t2.ust_id				 
 					where us_cracha = '" . $cracha . "' ";
+					
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 
@@ -554,20 +555,27 @@ class usuarios extends CI_model {
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
-
+		
 		if (count($rlt) > 0) {
 			/* Ja existe */
 			$sql = "";
 			$line = $rlt[0];
 			$idu = $line['id_us'];
-
+			
+			if ($line['us_cracha'] != $cracha)
+				{
+					$up = ", us_cracha = '$cracha' ";
+				} else {
+					$up = '';
+				}
 			
 			$sql = "update ".$this->tabela." set
 						us_curso_vinculo = '$curso',
 						us_cpf = '$cpf',
 						us_dt_update_cs = '".date("Y-m-d")."',
-						usuario_tipo_ust_id = $tipo,
+						usuario_tipo_ust_id = $tipo,						
 						us_genero = '$genero'
+						$up
 					where id_us = $idu ";
 			$this -> db -> query($sql);
 		} else {
