@@ -1,7 +1,12 @@
 <?php
 $dados = '';
 foreach ($dado_university as $key => $value) {
-	$dados .= "['$key',   $value],";
+	$key2 = trim(substr($key,0,40));
+	if ($key2 != $key)
+		{
+			$key2 .= '...';
+		}
+	$dados .= "['$key2',   $value],";
 }
 ?>
 <!-- Grafico HighChart--->
@@ -27,14 +32,14 @@ foreach ($dado_university as $key => $value) {
 					rotation : -45,
 					style : {
 						fontSize : '10px',
-						fontFamily : 'Verdana, sans-serif'
+						fontFamily : 'Arial, Verdana, sans-serif'
 					}
 				}
 			},
 			yAxis : {
 				min : 0,
 				title : {
-					text : 'Escala'
+					text : '<?php echo msg('studentes');?>'
 				}
 			},
 			legend : {
@@ -48,13 +53,13 @@ foreach ($dado_university as $key => $value) {
 				data : [<?php echo "$dados" ?>],
 				dataLabels : {
 					enabled : true,
-					rotation : -45,
+					rotation : 0,
 					color : '#FFFFFF',
 					align : 'right',
 					format : '{point.y:.0f}', // no decimal in number, format for inbteger
-					y : 3, // 3 pixels down from the top
+					y : 15, // 3 pixels down from the top
 					style : {
-						fontSize : '10px',
+						fontSize : '15px',
 						fontFamily : 'Verdana, sans-serif'
 					}
 				}

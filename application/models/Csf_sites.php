@@ -184,7 +184,6 @@ class csf_sites extends CI_model {
 					    left join curso on csf_curso = id_curso
 					    */			
 			";
-		echo $sql;
 		$sql = "CREATE OR REPLACE VIEW csf_view AS (" . $sql . ");";
 		$rlt = $this -> db -> query($sql);
 		return (1);
@@ -377,7 +376,6 @@ class csf_sites extends CI_model {
 					</tr>';
 		$sx .= '</table>';
 		return ($sx);
-		echo $sql;
 	}
 
 	function csf_resumo() {

@@ -827,8 +827,8 @@ class csfs extends CI_Model {
 
 	/**Graficos de alunos por cursos**/
 	function mostra_std_course() {
-		$sql = "select c_nome_curso, count(c_nome_curso) as qtd
-				from csf_view group by c_nome_curso order by qtd desc limit 10
+		$sql = "select us_curso_vinculo, count(us_curso_vinculo) as qtd
+				from csf_view group by us_curso_vinculo order by qtd desc limit 10
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -837,15 +837,18 @@ class csfs extends CI_Model {
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$dados[$line['c_nome_curso']] = $line['qtd'];
+			if (strlen(trim($line['us_curso_vinculo'])) > 4)
+				{
+					$dados[$line['us_curso_vinculo']] = $line['qtd'];
+				}			
 		}
 		return ($dados);
 	}
 	
 	/**Planilha de alunos por cursos **/
 	function plan_std_course() {
-		$sql = "select c_nome_curso, count(c_nome_curso) as qtd
-				from csf_view group by c_nome_curso order by qtd desc
+		$sql = "select us_curso_vinculo, count(us_curso_vinculo) as qtd
+				from csf_view group by us_curso_vinculo order by qtd desc
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -854,7 +857,10 @@ class csfs extends CI_Model {
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$dados[$line['c_nome_curso']] = $line['qtd'];
+			if (strlen(trim($line['us_curso_vinculo'])) > 4)
+				{
+					$dados[$line['us_curso_vinculo']] = $line['qtd'];
+				}
 		}
 		return ($dados);
 	}	
