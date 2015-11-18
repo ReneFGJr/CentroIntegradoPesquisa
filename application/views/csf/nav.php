@@ -26,7 +26,7 @@
 									<a href="<?php echo base_url('index.php/csf/what');?>"><?php echo msg('csf_o_que_e');?></a>
 								</li>
 								<li>
-									<a href="#"><?php echo msg('csf_editais');?></a>
+									<a href="<?php echo base_url('index.php/csf/editais');?>"><?php echo msg('csf_editais');?></a>
 								</li>
 								<!-- <li><a href="#">Something else here</a></li> -->
 								<!-- <li class="divider"></li>

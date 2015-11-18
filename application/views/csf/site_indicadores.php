@@ -1,10 +1,13 @@
 <div class="page-header">
-	<br /><br /><br /><br />
-	<h1>Indicadores <i>Ciência sem Fronteiras</i> administrado pela PUCPR.</h1>
+	<br />
+	<br />
+	<br />
+	<br />
+	<h1><?php echo msg('csf_indicadores_a');?></h1>
 </div>
 <div class="indicadores-paragrafo">
 	<p>
-		A PUCPR participou de todos os editais lançados pelo Governo Federal desde 2012. É a 1ª. Instituição de Ensino Superior Privado em número de bolsas no Estado do Paraná e a 3ª entre todas as IES do Estado. Já enviamos bolsistas para mais de 20 países em mais de 150 Universidades de Destino. Alguns de nossos bolsistas que já concluíram a graduação deram continuidade em sua formação realizando cursos de especializados e mestrado; vários estão se preparando para o doutorado. Confira estas e outras informações nos indicadores a seguir:
+		<?php echo msg('csf_indicadores_b');?>
 	</p>
 </div>
 <!--Botões-->
@@ -12,37 +15,37 @@
 	<!--Grafico Parceiros-->
 	<a href="<?php echo base_url('index.php/csf/view_std_partners');?>">
 	<div class="botao-1">
-		<span><i class="fa fa-map-marker"></i>Bolsas por Parceiros</span>
+		<span><i class="fa fa-map-marker"></i><?php echo msg('csf_indicadores_bt_1');?></span>
 	</div> </a>
 	<!--Grafico estudantes por pais-->
 	<a href="<?php echo base_url('index.php/csf/view_std_country');?>">
 	<div class="botao-1">
-		<span>Bolsas por país</span>
+		<span></i><?php echo msg('csf_indicadores_bt_2');?></span>
 	</div> </a>
 	<!--Grafico estudantes por cursos-->
 	<a href="<?php echo base_url('index.php/csf/view_std_course');?>">
 	<div class="botao-1">
-		<span>Bolsas por curso</span>
+		<span></i><?php echo msg('csf_indicadores_bt_3');?></span>
 	</div> </a>
 	<!--Grafico estudantes por instituicao de ensino-->
 	<a href="<?php echo base_url('index.php/csf/view_std_university');?>">
 	<div class="botao-2">
-		<span>Bolsas por instituição</span>
+		<span></i><?php echo msg('csf_indicadores_bt_4');?></span>
 	</div> </a>
 	<!--Grafico estudantes por status-->
 	<a href="<?php echo base_url('index.php/csf/view_std_status');?>">
 	<div class="botao-2">
-		<span>Situação dos estudantes</span>
+		<span></i><?php echo msg('csf_indicadores_bt_5');?></span>
 	</div></a>
 	<!--Grafico estudantes por genero-->
 	<a href="<?php echo base_url('index.php/csf/view_std_genero');?>">
 	<div class="botao-2">
-		<span>Bolsas por gênero </span>
+		<span></i><?php echo msg('csf_indicadores_bt_6');?></span>
 	</div> </a>
 	<!--Grafico mapa mundi de onde estão os estudantes-->
 	<a href="<?php echo base_url('index.php/csf/view_std_map_word');?>">
 	<div class="botao-3">
-		<span>Avanço anual </span>
+		<span></i><?php echo msg('csf_indicadores_bt_7');?></span>
 	</div> </a>
 	<!--
 	<a href="<?php echo base_url('index.php/csf/view_std_xxx');?>">

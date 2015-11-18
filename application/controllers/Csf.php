@@ -78,28 +78,21 @@ class csf extends CI_Controller {
 
 	function what() {
 		$this -> cab();
-
-		if ($this -> idioma == 'en') {
-			$this -> load -> view('csf/site_what_en');
-		} else {
-			$this -> load -> view('csf/site_what');
-		}
-
+		$this -> load -> view('csf/site_what');
 		$this -> load -> view('csf/footer');
 	}
 
 	function editais() {
 		$this -> cab();
-
 		$this -> load -> view('csf/site_editais');
 
 		/**
-		carrega grafico da situacao dos estudantes intercambistas
-		$data = array();
-		$line = $this -> csfs -> mostra_dados_std_status();
-		$data['dado'] = $line;
-		$this -> load -> view('csf/view_std_status', $data);
-		*/
+		 carrega grafico da situacao dos estudantes intercambistas
+		 $data = array();
+		 $line = $this -> csfs -> mostra_dados_std_status();
+		 $data['dado'] = $line;
+		 $this -> load -> view('csf/view_std_status', $data);
+		 */
 
 		$this -> load -> view('csf/footer');
 	}
@@ -115,32 +108,30 @@ class csf extends CI_Controller {
 		$this -> cab();
 		/* Models */
 		$this -> load -> model('csfs');
-
 		$this -> load -> view('csf/site_indicadores');
-
 		$this -> load -> view('csf/footer');
 	}
 
 	function depoimentos() {
 		$this -> cab();
-
+		
+		if ($this -> idioma == 'en') {
+		$this -> load -> view('csf/site_depoimentos_en');
+		}else{
 		$this -> load -> view('csf/site_depoimentos');
+		}	
 		$this -> load -> view('csf/footer');
-	}
+}
 
 	function faq() {
 		$this -> cab();
-
 		$this -> load -> view('csf/site_faq');
-
 		$this -> load -> view('csf/footer');
 	}
 
 	function contato() {
 		$this -> cab();
-
 		$this -> load -> view('csf/site_contato');
-
 		$this -> load -> view('csf/footer');
 	}
 

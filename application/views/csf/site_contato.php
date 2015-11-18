@@ -6,7 +6,7 @@
 	<h1>Contato</h1>
 </div>
 <div class="col-md-4">
-	<h4><strong>Coordenação do Ciência sem Fronteiras da PUCPR</strong></h4>
+	<h4><strong><?php echo msg('csf_contact_01');?></strong></h4>
 	<p>
 		<strong>Cleybe Vieira</strong>
 		<br />
@@ -14,31 +14,31 @@
 		<br />
 		55(41)3271-2112 | 3271-1602
 		<br />
-		Rua Imaculada Conceição, 1155
+		<?php echo msg('csf_contact_04');?>
 		<br />
-		Prédio Administrativo - 6º Andar Câmpus Curitiba
+		<?php echo msg('csf_contact_05');?>
 		<br />
-		Bairro Prado Velho - CEP 80215-901
+		<?php echo msg('csf_contact_06');?> - <?php echo msg('csf_contact_07');?>
 		<br />
 		Curitiba - Paraná - Brasil
 	</p>
 </div>
 <div class="col-md-4">
-	<h4><strong>Coordenação de Intercâmbio Internacional e Cooperação</strong></h4>
+	<h4><strong><?php echo msg('csf_contact_02');?></strong></h4>
 	<p>
 		+55(41)3271-1556 | 3271-1697
 		<br />
-		Rua Imaculada Conceição, 1155
+		<?php echo msg('csf_contact_04');?>
 		<br />
-		Prédio Administrativo - Térreo Câmpus Curitiba
+		<?php echo msg('csf_contact_08');?>
 		<br />
-		Bairro Prado Velho - CEP 80215-901
+		<?php echo msg('csf_contact_06');?> - <?php echo msg('csf_contact_07');?>
 		<br />
 		Curitiba - Paraná - Brasil
 	</p>
 </div>
 <div class="col-md-4" style="padding-bottom: 60px;">
-	<h4><strong>Administrativo</strong></h4>
+	<h4><strong><?php echo msg('csf_contact_03');?></strong></h4>
 	<p>
 		<strong>Alessandra Lacerda</strong>
 		<br />

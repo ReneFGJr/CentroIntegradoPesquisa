@@ -11,12 +11,12 @@
 			<img class="first-slide" src="<?php echo base_url('img/evento/csf/photo-99.jpg');?>" alt="First slide">
 			<div class="container">
 				<div class="carousel-caption">
-					<h1>Somos 421 alunos CsF PUCPR pelo mundo.</h1>
+					<h1><?php echo msg('csf_banner_01_a');?></h1>
 					<p>
-						Saiba mais sobre os nossos bolsistas.
+						<?php echo msg('csf_banner_01_b');?>
 					</p>
 					<p>
-						<a class="btn btn-lg btn-primary botao-home" href="<?php echo base_url('index.php/csf/indicadores');?>" role="button">Ver indicadores</a>
+						<a class="btn btn-lg btn-primary botao-home" href="<?php echo base_url('index.php/csf/indicadores');?>" role="button"><?php echo msg('csf_banner_bt_1');?></a>
 					</p>
 				</div>
 			</div>
@@ -25,12 +25,12 @@
 			<img class="second-slidee" src="<?php echo base_url('img/evento/csf/photo-55.jpg');?>" alt="Second slide">
 			<div class="container">
 				<div class="carousel-caption">
-					<h1>Depoimento dos intercâmbistas CsF da PUCPR.</h1>
+					<h1><?php echo msg('csf_banner_01_c');?></h1>
 					<p>
-						Veja o que os estudantes da PUCPR estão falando sobre o <i>Ciência sem Fronteiras</i>.
+						<?php echo msg('csf_banner_01_d');?>
 					</p>
 					<p>
-						<a class="btn btn-lg btn-primary botao-home" href="<?php echo base_url('index.php/csf/depoimentos');?>" role="button">Ver detalhes</a>
+						<a class="btn btn-lg btn-primary botao-home" href="<?php echo base_url('index.php/csf/depoimentos');?>" role="button"><?php echo msg('csf_banner_bt_2');?></a>
 					</p>
 				</div>
 			</div>

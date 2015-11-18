@@ -19,12 +19,126 @@ $lang['csf_indicadores'] = 'Indicadores';
 $lang['csf_sobre'] = 'Sobre';
 $lang['csf_eventos'] = 'Eventos';
 $lang['csf_depoimentos'] = 'Depoimentos';
-$lang['csf_faq'] = 'Faq';
+$lang['csf_faq'] = 'FAQ';
 $lang['csf_contato'] = 'Contato';
 $lang['csf_o_que_e'] = 'O que é?';
 $lang['csf_editais'] = 'Editais';
 $lang['csf_despedida'] = 'Despedida 2015 1º Semestre';
 $lang['csf_csf'] = 'Ciência sem Fronteiras';
+
+/* Crousel_parte_01 */
+$lang['csf_banner_01_a'] = 'Somos 421 alunos CsF PUCPR pelo mundo.';
+$lang['csf_banner_01_b'] = 'Saiba mais sobre os nossos bolsistas.';
+$lang['csf_banner_01_c'] = 'Depoimento dos intercâmbistas CsF da PUCPR.';
+$lang['csf_banner_01_d'] = 'Veja o que os estudantes da PUCPR estão falando sobre o Ciência sem Fronteiras.';
+/* Botoes */
+$lang['csf_banner_bt_1'] = 'Ver indicadores';
+$lang['csf_banner_bt_2'] = 'Ver detalhes';
+
+/* Crousel_part_02 */
+$lang['csf_crousel_2_a'] = 'Indicadores CsF PUCPR';
+$lang['csf_crousel_2_b'] = 'Resultados do Ciência sem Fronteiras na PUCPR desde 2012.';
+$lang['csf_crousel_2_c'] = 'Depoimentos';
+$lang['csf_crousel_2_d'] = 'Saiba como foi a experiência dos alunos PUCPR que já foram para o intercâmbio Ciência sem Fronteiras.';
+$lang['csf_crousel_2_e'] = 'Dúvidas?';
+$lang['csf_crousel_2_f'] = 'Acesse a nossa sessão de Perguntas Frequentes e tire suas dúvidas.';
+
+/* Crousel_part_03 */
+$lang['csf_crousel_3_a'] = 'Alunos aprovam 100% o Ciência sem Fronteiras';
+$lang['csf_crousel_3_b'] = '100% dos alunos responderam que fariam o intercâmbio novamente. Ainda está com dúvidas que o Ciência sem Fronteiras é uma ótima oportunidade para sua carreira? Veja os ';
+$lang['csf_crousel_3_c'] = 'depoimentos dos alunos.';
+
+/* indicadores */
+$lang['csf_indicadores_a'] = 'Indicadores Ciência sem Fronteiras administrado pela PUCPR.';
+$lang['csf_indicadores_b'] = 'A PUCPR participou de todos os editais lançados pelo Governo Federal desde 2012. É a 1ª. Instituição de Ensino Superior Privado em número de bolsas no Estado do Paraná e a 3ª entre todas as IES do Estado. Já enviamos bolsistas para mais de 20 países em mais de 150 Universidades de Destino. Alguns de nossos bolsistas que já concluíram a graduação deram continuidade em sua formação realizando cursos de especializados e mestrado; vários estão se preparando para o doutorado. Confira estas e outras informações nos indicadores a seguir:';
+$lang['csf_indicadores_bt_1'] = 'Bolsas por Parceiros';
+$lang['csf_indicadores_bt_2'] = 'Bolsas por país';
+$lang['csf_indicadores_bt_3'] = 'Bolsas por curso';
+$lang['csf_indicadores_bt_4'] = 'Bolsas por instituição';
+$lang['csf_indicadores_bt_5'] = 'Situação dos estudantes';
+$lang['csf_indicadores_bt_6'] = 'Bolsas por gênero';
+$lang['csf_indicadores_bt_7'] = 'Avanço anual';
+
+/* footer */
+$lang['csf_bt_back'] = 'Voltar';
+
+/* faq */
+$lang['csf_faq_title'] = 'Perguntas Frequentes';
+$lang['csf_faq_question_01'] = 'Como faço para me inscrever no programa?';
+$lang['csf_faq_question_02'] = 'Quem inscreve os candidatos? O coordenador responsável ou o próprio candidato?';
+$lang['csf_faq_question_03'] = 'O meu curso de graduação se inclui dentro das áreas prioritárias?';
+$lang['csf_faq_question_04'] = 'Há exigência de proficiência em língua estrangeira? Quais exames de proficiência em língua estrangeira serão aceitos?';
+$lang['csf_faq_question_05'] = 'Quais Universidades no exterior podem participar do programa?';
+$lang['csf_faq_question_06'] = 'Quais são as áreas áreas prioritárias que posso concorrer?';
+$lang['csf_faq_question_07'] = 'Quem decide se o curso do candidato está dentro das áreas prioritárias?';
+$lang['csf_faq_question_08'] = 'Os estudantes e pesquisadores beneficiados pelo programa só poderão atuar dentro das áreas prioritárias do CsF?';
+$lang['csf_faq_question_09'] = 'Ainda não tenho o resultado do Teste de Proficiência, posso enviar depois?';
+$lang['csf_faq_question_10'] = 'Ainda não concluí a graduação, posso participar do programa?';
+$lang['csf_faq_question_11'] = 'Sou aluno PIBIC, como devo proceder?';
+$lang['csf_faq_question_12'] = 'Onde devo anexar os documentos exigidos na inscrição?';
+$lang['csf_faq_question_13'] = 'A documentação exigida pode ser enviada por e-mail?';
+$lang['csf_faq_question_14'] = 'Tenho Bolsa auxílio da PUCPR, ProUNI ou FIES, como devo proceder?';
+$lang['csf_faq_question_15'] = 'Qual é o valor da bolsa para alunos que vão para o Exterior?';
+$lang['csf_faq_question_16'] = 'Quando ficarei sabendo para qual instituição irei?';
+$lang['csf_faq_question_17'] = 'Posso escolher em que Universidade quero estudar no exterior?';
+
+$lang['csf_faq_resp_quest_01_a'] = 'O aluno candidato deverá inscrever - se no site do Ciência Sem Fronteiras pelo seguinte link:';
+$lang['csf_faq_resp_quest_01_b'] = 'É necessária a inscrição nesse canal para que toda e qualquer informação sobre a candidatura do aluno seja disponibilizada a Coordenação do Ciência sem Fronteiras da PUCPR(CSF). Sendo assim, poderemos acompanhar o processo de inscrição e aprovação de cada aluno para assim esclarecer qualquer dúvida que se faça necessária.';
+$lang['csf_faq_resp_quest_02'] = 'O próprio candidato é responsável pela sua inscrição tanto no site do governo como no site da PUCPR. O coordenador é responsável por divulgar as chamadas, prazos e procedimentos específicos. Após o término das inscrições a CAPES/CNPq enviam as inscrições realizadas para que o coordenador faça a homologação.';
+$lang['csf_faq_resp_quest_03'] = 'A relação das áreas consideradas prioritárias no programa do Ciência sem Fronteiras pode ser consultada no Portal do Programa.';
+$lang['csf_faq_resp_quest_04'] = 'A exigência será feita conforme acordo realizado entre as agências (CNPq e CAPES) e a instituição de ensino estrangeira. Leia com atenção o texto completo da Chamada ao País que você está se candidatando. Cada chamada tem suas regras específicas.';
+$lang['csf_faq_resp_quest_05'] = 'As Universidades de excelência no exterior  firmaram acordos com os representantes Educacionais (parceiros) de cada país ou com o CNPq e a CAPES. O parceiro de cada chamada é que disponibilizará a relação das Universidades participantes do Programa.';
+$lang['csf_faq_resp_quest_06'] = 'Temas e áreas de interesse: Engenharias e demais áreas tecnológicas; Ciências Exatas e da Terra: Física, Química, Biologia e Geociências, Ciências Biomédicas e da Saúde; Computação e tecnologias da informação; Tecnologia Aeroespacial; Fármacos; Produção Agrícola Sustentável; Petróleo, Gás e Carvão Mineral; Energias Renováveis; Tecnologia Mineral; Biotecnologia; Nanotecnologia e Novos materiais; Tecnologias de Prevenção e Mitigação de Desastres Naturais; Biodiversidade e Bioprospecção; Ciências do Mar; Indústria criativa; Novas Tecnologias de Engenharia Construtiva; Formação de Tecnólogos. Veja se há restrição de alguma área prioritária na chamada de seu interesse.';
+$lang['csf_faq_resp_quest_07'] = 'A CAPES/CNPq analisam se o curso de graduação do candidato está ou não incluído entre as áreas prioritárias.';
+$lang['csf_faq_resp_quest_08'] = 'Sim. Tanto estudantes como pesquisadores deverão seguir as áreas prioritárias, constantes do Programa.';
+$lang['csf_faq_resp_quest_09'] = 'Leia com atenção o cronograma da chamada que está se candidatando e siga rigorosamente o prazo estabelecido. Geralmente é possível enviar posteriormente ao término da inscrição o  resultado do teste de proficiência';
+$lang['csf_faq_resp_quest_10'] = 'Sim, desde que tenha concluído de 20% a no máximo 90% do curso na instituição de ensino brasileira e esteja devidamente matriculado. Neste caso, a aluno pode pleitear a bolsa Graduação Sanduíche no Exterior (SWG) para fazer intercâmbio de 6 a 12 meses no exterior,de acordo com cada Chamada.';
+$lang['csf_faq_resp_quest_11'] = 'Você deverá comunicar a Coordenação do PIBIC da PUCPR sobre a sua aprovação  na Universidade Destino, para que a bolsa  PIBIC seja cancelada. Só assim você poderá dar o aceite a sua bolsa do CSF. O CNPq/CAPES não autorizam o acúmulo de bolsas.';
+$lang['csf_faq_resp_quest_12'] = 'Os documentos da inscrição exigidos na chamada pública devem ser anexados dentro do formulário de inscrição disponível no "formulário de inscrições". Todos os documentos deverão anexados em PDF.';
+$lang['csf_faq_resp_quest_13'] = 'Não. As documentações exigidas deverão ser anexadas no site na página do programa, respeitando o respectivo calendário. Lembrando que todos os documentos devem estar no formato PDF.';
+$lang['csf_faq_resp_quest_14'] = 'Você deverá comunicar a Coordenação do CsF caso tenha qualquer auxílio para cursar a graduação na Universidade, seja Bolsa PUCPR, FIES ou ProUNI. Esse auxílio será suspenso pela Coordenação e o aluno deverá comparecer ao SIGA para assinar o termo de "suspensão temporária", assim a bolsa não será cancelada tendo o aluno direito de reativá-la no seu retorno à PUCPR.';
+$lang['csf_faq_resp_quest_15'] = 'No site do Ciência Sem Fronteiras na chamada de cada País tem os valores específicos. Os valores variam de um País para o outro.';
+$lang['csf_faq_resp_quest_16'] = 'O estudante será comunicado por e-mail em qual Universidade foi aceito, bem como os procedimentos para os passos posteriores.';
+$lang['csf_faq_resp_quest_17'] = 'Os parceiros que intermedeiam as universidades estrangeiras e as agências responsáveis pelo programa Ciência sem Fronteiras serão os responsáveis por aplicar as universidades, utilizando a pertinência quanto às áreas prioritárias do Programa Ciência sem Fronteiras.';
+
+/* contato */
+$lang['csf_contact_title'] = 'Contato';
+$lang['csf_contact_01'] = 'Coordenação do Ciência sem Fronteiras da PUCPR';
+$lang['csf_contact_02'] = 'Coordenação de Intercâmbio Internacional e Cooperação';
+$lang['csf_contact_03'] = 'Administrativo';
+$lang['csf_contact_04'] = 'Rua Imaculada Conceição, 1155';
+$lang['csf_contact_05'] = 'Prédio Administrativo - Térreo Câmpus Curitiba';
+$lang['csf_contact_06'] = 'Bairro Prado Velho';
+$lang['csf_contact_07'] = 'CEP 80215-901';
+$lang['csf_contact_08'] = 'Prédio Administrativo - Térreo Câmpus Curitiba';
+
+/* o que e */
+$lang['csf_whats_title'] = 'O que é?';
+$lang['csf_whats_01'] = 'O Programa Ciência sem Fronteiras objetiva propiciar a formação de recursos humanos altamente qualificados nas melhores universidades e instituições de pesquisa estrangeiras, com vistas a promover a internacionalização da ciência e da tecnologia nacional, estimulando estudos e pesquisas de brasileiros no exterior, inclusive com a expansão significativa do intercâmbio e da mobilidade de graduandos.';
+
+$lang['csf_whats_title_02'] = 'Objetivos específicos:';
+$lang['csf_whats_02'] = 'oferecer oportunidade de estudo a discentes brasileiros em universidades de excelência, bem como oferecer a possibilidade de estágio programado de pesquisa ou inovação tecnológica com acompanhamento;';
+$lang['csf_whats_03'] = 'permitir a atualização de conhecimentos em grades curriculares diferenciadas, possibilitando o acesso de estudantes brasileiros a instituições de elevado padrão de qualidade, visando a complementar sua formação técnico-científica em áreas prioritárias e estratégicas para o desenvolvimento do Brasil;';
+$lang['csf_whats_04'] = 'complementar a formação de estudantes brasileiros, dando-lhes a oportunidade de vivenciar experiências educacionais voltadas para a qualidade, o empreendedorismo, a competitividade e inovação;';
+$lang['csf_whats_05'] = 'estimular iniciativas de internacionalização das universidades brasileiras;';
+$lang['csf_whats_06'] = 'possibilitar a formação, com qualidade, de uma força de trabalho técnico-científica altamente especializada.';
+
+/* o que e */
+$lang['csf_editais_title'] = 'Editais';
+$lang['csf_editais_01'] = 'Nenhum edital disponível no momento.';
+
+/* footer */
+$lang['csf_footer_01'] = 'Coordenação do Ciência sem Fronteiras da PUCPR';
+$lang['csf_footer_bt_back'] = 'Voltar';
+
+
+
+
+
+
+
+
+
 
 
 ?>
