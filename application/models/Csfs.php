@@ -806,11 +806,11 @@ class csfs extends CI_Model {
 		}
 		return ($dados);
 	}
-	
+
 	/**Planilha de alunos por universidade */
 	function plan_dados_std_university() {
 		$sql = "select gpip_nome, count(gpip_nome) as qtd
-				from csf_view group by gpip_nome order by qtd desc
+				from csf_view group by gpip_nome HAVING count(gpip_nome)>= 1 order by qtd desc
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -827,8 +827,8 @@ class csfs extends CI_Model {
 
 	/**Graficos de alunos por cursos**/
 	function mostra_std_course() {
-		$sql = "select us_curso_vinculo, count(us_curso_vinculo) as qtd
-				from csf_view group by us_curso_vinculo order by qtd desc limit 10
+		$sql = "select c_nome_curso, count(c_nome_curso) as quantidade
+						from csf_view group by c_nome_curso order by quantidade desc limit 10
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -837,18 +837,17 @@ class csfs extends CI_Model {
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			if (strlen(trim($line['us_curso_vinculo'])) > 4)
-				{
-					$dados[$line['us_curso_vinculo']] = $line['qtd'];
-				}			
+			if (strlen(trim($line['c_nome_curso'])) > 4) {
+				$dados[$line['c_nome_curso']] = $line['quantidade'];
+			}
 		}
 		return ($dados);
 	}
-	
+
 	/**Planilha de alunos por cursos **/
 	function plan_std_course() {
-		$sql = "select us_curso_vinculo, count(us_curso_vinculo) as qtd
-				from csf_view group by us_curso_vinculo order by qtd desc
+		$sql = "select c_nome_curso, count(c_nome_curso) as quantidade
+						from csf_view group by c_nome_curso HAVING count(c_nome_curso) > 2 order by quantidade desc
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -857,13 +856,12 @@ class csfs extends CI_Model {
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			if (strlen(trim($line['us_curso_vinculo'])) > 4)
-				{
-					$dados[$line['us_curso_vinculo']] = $line['qtd'];
-				}
+			if (strlen(trim($line['c_nome_curso'])) > 4) {
+				$dados[$line['c_nome_curso']] = $line['quantidade'];
+			}
 		}
 		return ($dados);
-	}	
+	}
 
 	/**Graficos de alunos por pais */
 	function mostra_dados_std_country() {
@@ -918,7 +916,7 @@ class csfs extends CI_Model {
 		}
 		return ($dados);
 	}
-	
+
 	/** Planilha de alunos por parceiros */
 	function plan_std_partners() {
 		$sql = "select cp_descricao, count(cp_descricao) as qtd 
@@ -937,7 +935,7 @@ class csfs extends CI_Model {
 			$dados[$line['cp_descricao']] = $line['qtd'];
 		}
 		return ($dados);
-	}	
+	}
 
 	/** Alunos no mundo */
 	function mostra_std_map() {
@@ -958,17 +956,16 @@ class csfs extends CI_Model {
 		}
 		return ($dados);
 	}
-	
-	function total_std(){
+
+	function total_std() {
 		$sql = "select count(us_genero) as qtd
 				from csf_view 
 				";
 		$rlt = $this -> db -> query($sql);
-	
+
 		return $rlt;
-		
+
 	}
-	
 
 }
 ?>
