@@ -61,6 +61,19 @@ function normalizarNome($nome) {
  * @filesource
  */
 
+function get($key)
+{
+	$CI = &get_instance();
+	$dp = $CI->input->post($key);
+	$dp .= $CI->input->get($key);
+	/* tratamento */
+	$dp = trim($dp);
+	
+	$dp = troca($dp,"'",'´');
+	return($dp);
+	
+}
+ 
 function validaemail($email) {
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 		list($alias, $domain) = explode("@", $email);
@@ -206,7 +219,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,         // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10, // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -879,11 +892,9 @@ class form {
 function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 	$page = uri_string();
 	$pagm = $tot;
-	
+
 	/* Campos para busca */
-	$fd = $obj->lb;
-	
-	
+	$fd = $obj -> lb;
 
 	/* algoritimo */
 	$page = substr($page, 0, strpos($page, '/'));
@@ -937,34 +948,30 @@ function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 	$sx .= '</li>';
 	$sx .= '<li style="width: 220px; border: 0px solid #FFFFFF; background-color: #ffffff;"><nobr>';
 
-	if (isset($_POST['dd1']))
-		{
-			$vlr = $_POST['dd1'];
-		} else {
-			$vlr = '';
-		}
+	if (isset($_POST['dd1'])) {
+		$vlr = $_POST['dd1'];
+	} else {
+		$vlr = '';
+	}
 	$sx .= form_open();
 	$data = array('name' => 'dd1', 'id' => 'dd1', 'value' => $vlr, 'maxlength' => '100', 'size' => '100', 'style' => 'width:150px', );
 	$sx .= form_input($data);
-	
-	
-		if (isset($_POST['dd5']))
-		{
-			$dd5 = sonumero($_POST['dd5']); 
-		} else {
-			$dd5 = 1;
-		}
-		
-	$sx .= 'em: <select name="dd5" id="dd5">'.cr();
-	for ($rt=1;$rt < count($fd);$rt++)
-		{
+
+	if (isset($_POST['dd5'])) {
+		$dd5 = sonumero($_POST['dd5']);
+	} else {
+		$dd5 = 1;
+	}
+
+	$sx .= 'em: <select name="dd5" id="dd5">' . cr();
+	for ($rt = 1; $rt < count($fd); $rt++) {
 		$sel = '';
-		if ($rt == $dd5)
-			{ $sel = "selected"; }
-		$sx .= '<option value="'.$rt.'" '.$sel.'>'.msg($fd[$rt]).'</option>'.cr();
+		if ($rt == $dd5) { $sel = "selected";
 		}
-	$sx .= '</select>'.cr();
-	
+		$sx .= '<option value="' . $rt . '" ' . $sel . '>' . msg($fd[$rt]) . '</option>' . cr();
+	}
+	$sx .= '</select>' . cr();
+
 	$sx .= form_hidden('dd2', 'search');
 
 	$sx .= form_submit('acao', 'busca');
@@ -1021,7 +1028,7 @@ if (!function_exists('form_edit')) {
 		$offset = $obj -> offset;
 		$start = $pag * $offset;
 		$CI = &get_instance();
-		
+
 		/* Dados do objeto */
 		$fd = $obj -> fd;
 		$mk = $obj -> mk;
@@ -1050,13 +1057,13 @@ if (!function_exists('form_edit')) {
 			}
 			$term = troca($term, "'", "´");
 		}
-		if (isset($post['dd5']))
-			{
-				$field_search = round($post['dd5']);
-			}
-		if ($field_search < 1) { $field_search = 1; }
-		if ($field_search >= count($fd)) { $field_search = count($fd)-1; }
-
+		if (isset($post['dd5'])) {
+			$field_search = round($post['dd5']);
+		}
+		if ($field_search < 1) { $field_search = 1;
+		}
+		if ($field_search >= count($fd)) { $field_search = count($fd) - 1;
+		}
 
 		/* parametros */
 		$edit = $obj -> edit;
@@ -1103,25 +1110,25 @@ if (!function_exists('form_edit')) {
 
 		/* Where */
 		if (strlen($term) > 0) {
-			if (isset($_POST['dd5']))
-				{
-					$field_search = $_POST['dd5'];
-				} else {
-					$field_search = round($_SESSION['row_field']);
-					if ($field_search <= 1) { $field_search = 1; }
+			if (isset($_POST['dd5'])) {
+				$field_search = $_POST['dd5'];
+			} else {
+				$field_search = round($_SESSION['row_field']);
+				if ($field_search <= 1) { $field_search = 1;
 				}
-			$newdata = array('row_termo' => $term, 'row_field' => $field_search, 'row_page'=>'1');
+			}
+			$newdata = array('row_termo' => $term, 'row_field' => $field_search, 'row_page' => '1');
 			$CI -> session -> set_userdata($newdata);
 
 			$term = troca($term, ' ', ';');
 			$term = splitx(';', $term);
 
 			$wh = '';
-			for ($rt=0;$rt < count($term);$rt++)
-				{
-					if (strlen($wh) > 0) { $wh .= ' and '; }
-					$wh .= ' (' . $fd[$field_search] . " like '%" . $term[$rt] . "%') ";
+			for ($rt = 0; $rt < count($term); $rt++) {
+				if (strlen($wh) > 0) { $wh .= ' and ';
 				}
+				$wh .= ' (' . $fd[$field_search] . " like '%" . $term[$rt] . "%') ";
+			}
 			$wh = ' where ' . $wh;
 		} else {
 			$wh = '';
@@ -1609,6 +1616,18 @@ if (!function_exists('form_edit')) {
 				$tela .= form_dropdown($dados, $options, $vlr);
 				break;
 
+			/* Caption - Header*/
+			case 'A' :
+				
+				if (strlen($label) > 0) {
+
+					if (substr($tdl,0,3) == '<td') {
+						$tdd= '<td colspan=2 align="left">';
+						$tela .= $tdd . '<h1>'. $label . '</h1> ';
+					}
+				}
+				break;
+
 			/* Select Box - Autocomplete*/
 			case 'AA' :
 				$ntype = trim(substr($type, 2, strlen($type)));
@@ -1667,13 +1686,14 @@ if (!function_exists('form_edit')) {
 				$tela .= $tdn . $trn;
 				break;
 			case 'C' :
-			/* TR da tabela */
+				/* TR da tabela */
 				$tela .= $tr;
 
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr); ;
+				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr);
+				;
 
 				/* label */
 				if (strlen($label) > 0) {
@@ -1838,7 +1858,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'D' :
-			/* TR da tabela */
+				/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1864,7 +1884,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'LINK' :
-			/* TR da tabela */
+				/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1882,7 +1902,7 @@ if (!function_exists('form_edit')) {
 				break;
 
 			case 'M' :
-			/* TR da tabela */
+				/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1892,7 +1912,7 @@ if (!function_exists('form_edit')) {
 
 			/* form_number */
 			case 'N' :
-			/* TR da tabela */
+				/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1911,7 +1931,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'S' :
-			/* TR da tabela */
+				/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */

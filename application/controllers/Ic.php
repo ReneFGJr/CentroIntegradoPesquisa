@@ -50,12 +50,12 @@ class ic extends CI_Controller {
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Home', 'index.php/ic/'));
-		
+
 		array_push($menus, array('Pessoas', 'index.php/ic/usuarios'));
 		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
-		
+
 		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
-		
+
 		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
 		array_push($menus, array('Relatórios', 'index.php/ic/report'));
 		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
@@ -178,8 +178,56 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Relatórios', 'Guia do Estudante', 'ITE', '/ic/report_guia'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu Administração';
+		$this -> load -> view('header/main_menu', $data);
+
+		/*Fecha */	/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+
+	}
+
+	/* Reports */
+	function report_guia($id = 0, $gr = '') {
+		global $form;
+		/* Load Models */
+		$this->load->model('ics');
+
+		$this -> cab();
+		$data = array();
+
+		$form = new form;
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, False));
+		array_push($cp, array('$A', '', msg('Guia do Estudante'), False, true));
+		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano inicial'), True, TRUE));
+		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano final'), True, True));
+		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
+		array_push($cp, array('$Q id_mb:mb_descricao:'.$sql, '', msg('ic_modalidade'), False, False));
+		$tela = $form -> editar($cp, '');
+
+		if ($form -> saved) {
+			$ano_ini = get("dd2");
+			$ano_fim = get("dd3");
+			$modalidade = get("dd4");
+			$data['content'] = $this->ics->report_guia_estudante($ano_ini,$ano_fim,$modalidade);
+			$this->load->view('content',$data);
+		} else {
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+		}
+
+
+		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
 	}
 
 	function comunicacao($id = 0, $gr = 0, $tp = 0) {
@@ -276,8 +324,8 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		$data['content'] = '<A href="'.base_url('index.php/usuario/consulta_usuario/').'">'.msg('consulta').' '.msg('cracha').'</a>';
-		$this -> load -> view('content',$data);
+		$data['content'] = '<A href="' . base_url('index.php/usuario/consulta_usuario/') . '">' . msg('consulta') . ' ' . msg('cracha') . '</a>';
+		$this -> load -> view('content', $data);
 
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
@@ -507,12 +555,11 @@ class ic extends CI_Controller {
 		/* */
 		$protocolo = $data['ic_plano_aluno_codigo'];
 		$rs = $this -> ics -> le_resumo($protocolo);
-		
-		if (count($rs) > 0)
-			{
-				$data['line'] = $rs;
-				$data['resumo'] = '1';
-			}
+
+		if (count($rs) > 0) {
+			$data['line'] = $rs;
+			$data['resumo'] = '1';
+		}
 
 		$this -> load -> view('ic/plano_resumo', $data);
 
@@ -578,8 +625,7 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();
@@ -633,9 +679,9 @@ class ic extends CI_Controller {
 
 		/* Finalizado */
 		if ($page > count($bp)) {
-				$url = base_url('index.php/ic/view/' . $id . '/' . $check);
-				redirect($url);
-				exit ;	
+			$url = base_url('index.php/ic/view/' . $id . '/' . $check);
+			redirect($url);
+			exit ;
 		}
 		if ($page < 1) { $page = 1;
 		}
@@ -676,20 +722,20 @@ class ic extends CI_Controller {
 				break;
 			case '3' :
 				$form = new form;
-				$cp = $form->cp = $this->ics->cp_resumo_1();
-				$data['tela'] = $form->editar($cp,'');
-				$data['line'] =  $rs;
+				$cp = $form -> cp = $this -> ics -> cp_resumo_1();
+				$data['tela'] = $form -> editar($cp, '');
+				$data['line'] = $rs;
 				$this -> load -> view('ic/postar_resumo_3', $data);
 				break;
 			case '4' :
 				$form = new form;
-				$cp = $form->cp = $this->ics->cp_resumo_2();
-				$data['tela'] = $form->editar($cp,'');
-				$data['line'] =  $rs;
+				$cp = $form -> cp = $this -> ics -> cp_resumo_2();
+				$data['tela'] = $form -> editar($cp, '');
+				$data['line'] = $rs;
 				$this -> load -> view('ic/postar_resumo_4', $data);
 				break;
 			case '5' :
-				$data['line'] =  $rs;
+				$data['line'] = $rs;
 				$this -> load -> view('ic/postar_resumo_5', $data);
 				break;
 			default :

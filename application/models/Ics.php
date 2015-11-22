@@ -2,103 +2,177 @@
 class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
-	
-	function indicacoes_sem_id_usuario()
-		{
-			$sql = "SELECT * FROM ic_aluno 
+
+	function report_guia_estudante($ano1 = 0, $ano2 = 0, $mod = '') {
+		$sx = '';
+		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
+		if (strlen($mod) > 0) {
+			$wh .= ' and id_mb = ' . $mod;
+		}
+		$sql = $this -> table_view($wh, 0, 9999999);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<table width="100%" class="lt1">';
+		$to = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$to++;
+			$line = $rlt[$r];
+			$sx .= '<tr>';
+
+			$sx .= '<td>';
+			$sx .= $line['ic_plano_aluno_codigo'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['ic_ano'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['al_nome'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['ic_cracha_aluno'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['al_curso'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['pf_nome'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['ic_cracha_prof'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['pf_curso'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['s_situacao'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['mb_tipo'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['mb_descricao'];
+			$sx .= '</td>';
+			
+			$sx .= '<td>';
+			$sx .= $line['mb_fomento'];
+			$sx .= '</td>';
+
+
+			$sx .= '<td>';
+			$sx .= $line['ic_projeto_professor_titulo'];
+			$sx .= '</td>';
+
+			$sx .= '</tr>';
+
+		}
+		$sx .= '<tr><td colspan=10>Total ' . $to . ' registros</td></tr>';
+		$sx .= '</table>';
+
+		print_r($line);
+
+		return ($sx);
+	}
+
+	function indicacoes_sem_id_usuario() {
+		$sql = "SELECT * FROM ic_aluno 
 						left join us_usuario on us_cracha = ic_aluno_cracha
 						where aluno_id = 0
 						and not us_nome is null
 						";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$data = date("Y-m-d");
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					print_r($line);
-				} 
-			
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$data = date("Y-m-d");
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			print_r($line);
 		}
-	
-	function cancelar_protocolo($protocolo)
-		{
-			$sql = "SELECT * FROM ic_aluno
+
+	}
+
+	function cancelar_protocolo($protocolo) {
+		$sql = "SELECT * FROM ic_aluno
 					inner join ic on id_ic = ic_id
 						WHERE ic_plano_aluno_codigo = '$protocolo'
 						and (icas_id = 1 or icas_id = 3 or icas_id = 2)
-					";	
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$data = date("Y-m-d");
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					
-					$idc = $line['id_ica'];
-					$sql = "update ic_aluno set
+					";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$data = date("Y-m-d");
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$idc = $line['id_ica'];
+			$sql = "update ic_aluno set
 								icas_id_char = 'C',
 								icas_id = 2,
 								aic_dt_saida = '$data',
 								aic_dt_fim_bolsa = '$data'								
-							where id_ica = ".$idc.';'.cr();	
-							
-					$sqlf = "update ic set 
+							where id_ica = " . $idc . ';' . cr();
+
+			$sqlf = "update ic set 
 								s_id_char = 'C',
 								s_id = 2
-								where ic_plano_aluno_codigo = '$protocolo' ";	
-								echo $sql;										
-					$this->db->query($sql);
-					$this->db->query($sqlf);
-					print_r($line);
-					echo '<hr>';
-				}
-			exit;					
+								where ic_plano_aluno_codigo = '$protocolo' ";
+			echo $sql;
+			$this -> db -> query($sql);
+			$this -> db -> query($sqlf);
+			print_r($line);
+			echo '<hr>';
 		}
-	
-	function substituicao_aluno($cracha,$protocolo,$cracha_novo,$data)
-		{
-			/* Baixa aluno (`ic_aluno`)  WHERE `ic_aluno_cracha` = '89317614'
-			 * 
-			 */
-			
-			$us = $this->usuarios->le_cracha(trim($cracha_novo));
-			if (count($us) == 0)
-				{
-					echo 'ERRO DE CONSULTA: '.$cracha_novo;
-					exit;
-				}
-			$ida = $us['id_us'];
-			
-			$sql = "SELECT * FROM ic_aluno
+		exit ;
+	}
+
+	function substituicao_aluno($cracha, $protocolo, $cracha_novo, $data) {
+		/* Baixa aluno (`ic_aluno`)  WHERE `ic_aluno_cracha` = '89317614'
+		 *
+		 */
+
+		$us = $this -> usuarios -> le_cracha(trim($cracha_novo));
+		if (count($us) == 0) {
+			echo 'ERRO DE CONSULTA: ' . $cracha_novo;
+			exit ;
+		}
+		$ida = $us['id_us'];
+
+		$sql = "SELECT * FROM ic_aluno
 					inner join ic on id_ic = ic_id
 						WHERE ic_aluno_cracha = '$cracha'
 						and ic_plano_aluno_codigo = '$protocolo'
 					";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					$ic_id = $line['ic_id'];
-					$mb_id = $line['mb_id'];
-					$mb_id_char = $line['mb_id_char'];
-					$icas_id_char = $line['icas_id_char'];
-					$icas_id = $line['icas_id'];
-					
-					echo '<font color="blue">';
-					print_r($line);
-					
-					echo '</font>';
-					$idc = $line['id_ica'];
-					$sql = "update ic_aluno set
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$ic_id = $line['ic_id'];
+			$mb_id = $line['mb_id'];
+			$mb_id_char = $line['mb_id_char'];
+			$icas_id_char = $line['icas_id_char'];
+			$icas_id = $line['icas_id'];
+
+			echo '<font color="blue">';
+			print_r($line);
+
+			echo '</font>';
+			$idc = $line['id_ica'];
+			$sql = "update ic_aluno set
 								icas_id_char = 'S',
 								icas_id = 3,
 								aic_dt_saida = '$data',
 								aic_dt_fim_bolsa = '$data'								
-							where id_ica = ".$idc.';'.cr();
-							
-					$sqli = "
+							where id_ica = " . $idc . ';' . cr();
+
+			$sqli = "
 							insert into ic_aluno 
 							(
 							aluno_id, ic_aluno_cracha, ic_id,
@@ -115,40 +189,37 @@ class ics extends CI_model {
 							'0000-00-00'
 							) 
 					";
-					$sqld = "
+			$sqld = "
 							update ic_aluno
 							set aluno_id = $ida, ic_aluno_cracha = '$cracha_novo'
-							where id_ica = ".$idc; 
-					
-					
-					$sqlf = "update ic set 
+							where id_ica = " . $idc;
+
+			$sqlf = "update ic set 
 								ic_cracha_aluno = '$cracha_novo',
 								ic_dt_ativacao = '$data'
 								where ic_plano_aluno_codigo = '$protocolo' ";
-					//$this->db->query($sql);
-					//$this->db->query($sqli);
-					$this->db->query($sqld);
-					$this->db->query($sqlf);
-				}
-			echo '<hr>'.$sql.'<hr>';
-			echo '<hr>'.$sqli.'<hr>';			
+			//$this->db->query($sql);
+			//$this->db->query($sqli);
+			$this -> db -> query($sqld);
+			$this -> db -> query($sqlf);
 		}
-	
-	function resumo_orientacoes()
-		{
-			$sx = '';
-			$sx .= '<table width="100%" class="border1 lt1">';
-			$sx .= '<tr><th>'.msg('guidelines_ic').'</th></tr>';
-			$sx .= '</table>';
-			return($sx);
-		}
-	
-	function orientacoes()
-		{
-			$cracha = $_SESSION['cracha'];
-			$sql = "select * from ic 
+		echo '<hr>' . $sql . '<hr>';
+		echo '<hr>' . $sqli . '<hr>';
+	}
+
+	function resumo_orientacoes() {
+		$sx = '';
+		$sx .= '<table width="100%" class="border1 lt1">';
+		$sx .= '<tr><th>' . msg('guidelines_ic') . '</th></tr>';
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function orientacoes() {
+		$cracha = $_SESSION['cracha'];
+		$sql = "select * from ic 
 						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha' ";
-			$sql = "select * from ic
+		$sql = "select * from ic
             			left join ic_aluno as pa on ic_id = id_ic
 						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha from us_usuario) AS us_est on ic.ic_cracha_aluno = us_est.id_al
 						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
@@ -157,39 +228,37 @@ class ics extends CI_model {
 						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha'
 						order by ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
 						";
-						
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%">';
-			$sx .= '<tr><td colspan=10>Orientações abertas</td></tr>';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$edital = trim($line['mb_tipo']);
-					$line['img'] = $this -> logo_modalidade($edital); 
-					$line['page'] = 'pibic';
-					$sx .= $this->load->view("ic/plano-lista",$line,true);
-				}
-			$sx .= '</table>';
-			return($sx);
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%">';
+		$sx .= '<tr><td colspan=10>Orientações abertas</td></tr>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$edital = trim($line['mb_tipo']);
+			$line['img'] = $this -> logo_modalidade($edital);
+			$line['page'] = 'pibic';
+			$sx .= $this -> load -> view("ic/plano-lista", $line, true);
 		}
+		$sx .= '</table>';
+		return ($sx);
+	}
 
 	function search($terms = '', $type = 1) {
 		$cps = array('us_nome');
 
 		$terms = troca($terms, ' ', ';');
 		$term = splitx(';', $terms);
-		
+
 		$wh = '';
 		$wh1 = '';
 		$wh2 = '';
 		$wh3 = '';
 		$wh4 = '';
-		
-		if (strlen(sonumero($terms))==0)
-			{
-				$type = '2';
-			}
+
+		if (strlen(sonumero($terms)) == 0) {
+			$type = '2';
+		}
 		if ($type == 2) {
 			for ($r = 0; $r < count($term); $r++) {
 				if ($r > 0) {
@@ -206,20 +275,20 @@ class ics extends CI_model {
 
 			$wh = '(' . $wh1 . ' or ' . $wh2 . ' or ' . $wh3 . ') 	';
 		}
-		if ($type == '1')
-			{
+		if ($type == '1') {
 			$wh .= " (ic_cracha_prof = '" . $term[0] . "') ";
 			$wh .= " or (ic_cracha_aluno = '" . $term[0] . "') ";
 			$wh .= " or (ic_plano_aluno_codigo like '" . $term[0] . "%') ";
-			}
-		
+		}
+
 		$sql = $this -> table_view($wh, 0, 50);
 		$rlt = db_query($sql);
-		
+
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -234,98 +303,91 @@ class ics extends CI_model {
 		return ($obj);
 	}
 
-	function resumo_autores_mostra($id)
-		{
-			$funcao = array();
-			$funcao['0'] = 'Discente';
-			$funcao['1'] = '???';
-			$funcao['2'] = 'Co-orientador';
-			$funcao['3'] = 'Colaborador';
-			$funcao['4'] = 'Pibic Junior';
-			$funcao['5'] = 'Supervisor Pibic Junior';
-			$funcao['6'] = 'Escola (para Pibic Júnior)';
-			$funcao['7'] = 'Mestrando de Pós-Graduação';
-			$funcao['8'] = 'Doutorando de Pós-Graduação';
-			$funcao['9'] = 'Orientador';
-			
-			$sql = "select * from semic_trabalho_autor 
+	function resumo_autores_mostra($id) {
+		$funcao = array();
+		$funcao['0'] = 'Discente';
+		$funcao['1'] = '???';
+		$funcao['2'] = 'Co-orientador';
+		$funcao['3'] = 'Colaborador';
+		$funcao['4'] = 'Pibic Junior';
+		$funcao['5'] = 'Supervisor Pibic Junior';
+		$funcao['6'] = 'Escola (para Pibic Júnior)';
+		$funcao['7'] = 'Mestrando de Pós-Graduação';
+		$funcao['8'] = 'Doutorando de Pós-Graduação';
+		$funcao['9'] = 'Orientador';
+
+		$sql = "select * from semic_trabalho_autor 
 					where sma_protocolo = '$id'
 						and sma_ativo > 0 
 					order by sma_funcao
 			";
-			$rlt = db_query($sql);
-			$sx = '<table width="100%" class="lt2" border=0>';
-			$sx .= '<tr align="center">
+		$rlt = db_query($sql);
+		$sx = '<table width="100%" class="lt2" border=0>';
+		$sx .= '<tr align="center">
 						<th width="40%">Autor</th>
 						<th width="20%">participacao</th>
 						<th width="20%">Instituição (SIGLA)</th>
 						<th width="10%">ação</th>
 					</tr>';
-			$tot = 0;
-			while ($line = db_read($rlt))
-				{
-					$link = '<a href="#" onclick="remove('.$line['id_sma'].');" class="link">remover</a>';
-					if ($line['sma_ativo'] > 1) { $link = ''; }
-					$sx .= '<tr>';
-					$sx .= '<td class="tabela01">'.$line['sma_nome'].'</td>';
-					$sx .= '<td class="tabela01" align="center">'.$funcao[$line['sma_funcao']].'</td>';
-					$sx .= '<td class="tabela01" align="center">'.$line['sma_instituicao'].'</td>';
-					$sx .= '<td class="tabela01" align="center">'.$link.'</td>';
-					$tot++;
-				}
-			if ($tot == 0)
-				{
-					$sx .= '<tr><td colspan=4 align="center" class="border1 pad5">
+		$tot = 0;
+		while ($line = db_read($rlt)) {
+			$link = '<a href="#" onclick="remove(' . $line['id_sma'] . ');" class="link">remover</a>';
+			if ($line['sma_ativo'] > 1) { $link = '';
+			}
+			$sx .= '<tr>';
+			$sx .= '<td class="tabela01">' . $line['sma_nome'] . '</td>';
+			$sx .= '<td class="tabela01" align="center">' . $funcao[$line['sma_funcao']] . '</td>';
+			$sx .= '<td class="tabela01" align="center">' . $line['sma_instituicao'] . '</td>';
+			$sx .= '<td class="tabela01" align="center">' . $link . '</td>';
+			$tot++;
+		}
+		if ($tot == 0) {
+			$sx .= '<tr><td colspan=4 align="center" class="border1 pad5">
 									<font class="error"><b>Sem autores incluídos</B>
 							</td></tr>';
-				}
-			$sx .= '</table><br>';
-			return($sx);
 		}
+		$sx .= '</table><br>';
+		return ($sx);
+	}
 
-	function salvar_resumo($page,$data)
-		{
-			$protocolo = trim($data['ic_plano_aluno_codigo']);
-			$dd1 = $data['dd1'];
-			$dd2 = $data['dd2'];
-			$dd3 = $data['dd3'];
-			$dd4 = $data['dd4'];
-			$dd5 = $data['dd5'];
-			$dd6 = $data['dd6'];
-			
-			if (strlen($protocolo) == 0)
-				{
-					return('');
-				}
-			if ($page=='1')
-				{
-					/* Titulo e Titulo em Inglês */
-					$sql = "update semic_trabalho set
+	function salvar_resumo($page, $data) {
+		$protocolo = trim($data['ic_plano_aluno_codigo']);
+		$dd1 = $data['dd1'];
+		$dd2 = $data['dd2'];
+		$dd3 = $data['dd3'];
+		$dd4 = $data['dd4'];
+		$dd5 = $data['dd5'];
+		$dd6 = $data['dd6'];
+
+		if (strlen($protocolo) == 0) {
+			return ('');
+		}
+		if ($page == '1') {
+			/* Titulo e Titulo em Inglês */
+			$sql = "update semic_trabalho set
 								sm_titulo = '$dd1', 
 								sm_titulo_en = '$dd2'
 								where sm_codigo = '$protocolo' ";
-					$rlt = $this->db->query($sql);
-					return(1);
-				}
-			/* Page 2 */
-			if ($page=='2')
-				{
-					echo "PAGE2";
-					return(1);
-				}
-				
-			/* Page 3 */
-			if ($page=='3')
-				{
-					$dd1 = troca($dd1,"'","´");
-					$dd2 = troca($dd2,"'","´");
-					$dd3 = troca($dd3,"'","´");
-					$dd4 = troca($dd4,"'","´");
-					$dd5 = troca($dd5,"'","´");
-					$dd6 = troca($dd6,"'","´");
-					
-					/* Titulo e Titulo em Inglês */
-					$sql = "update semic_trabalho set
+			$rlt = $this -> db -> query($sql);
+			return (1);
+		}
+		/* Page 2 */
+		if ($page == '2') {
+			echo "PAGE2";
+			return (1);
+		}
+
+		/* Page 3 */
+		if ($page == '3') {
+			$dd1 = troca($dd1, "'", "´");
+			$dd2 = troca($dd2, "'", "´");
+			$dd3 = troca($dd3, "'", "´");
+			$dd4 = troca($dd4, "'", "´");
+			$dd5 = troca($dd5, "'", "´");
+			$dd6 = troca($dd6, "'", "´");
+
+			/* Titulo e Titulo em Inglês */
+			$sql = "update semic_trabalho set
 								sm_rem_01 = '$dd1',
 								sm_rem_02 = '$dd2',
 								sm_rem_03 = '$dd3',
@@ -333,22 +395,21 @@ class ics extends CI_model {
 								sm_rem_05 = '$dd5',								 
 								sm_rem_06 = '$dd6'
 								where sm_codigo = '$protocolo' ";
-					$rlt = $this->db->query($sql);
-					return(1);
-				}
-				
-			/* Page 4 */
-			if ($page=='4')
-				{
-					$dd1 = troca($dd1,"'","´");
-					$dd2 = troca($dd2,"'","´");
-					$dd3 = troca($dd3,"'","´");
-					$dd4 = troca($dd4,"'","´");
-					$dd5 = troca($dd5,"'","´");
-					$dd6 = troca($dd6,"'","´");
+			$rlt = $this -> db -> query($sql);
+			return (1);
+		}
 
-					/* Titulo e Titulo em Inglês */
-					$sql = "update semic_trabalho set
+		/* Page 4 */
+		if ($page == '4') {
+			$dd1 = troca($dd1, "'", "´");
+			$dd2 = troca($dd2, "'", "´");
+			$dd3 = troca($dd3, "'", "´");
+			$dd4 = troca($dd4, "'", "´");
+			$dd5 = troca($dd5, "'", "´");
+			$dd6 = troca($dd6, "'", "´");
+
+			/* Titulo e Titulo em Inglês */
+			$sql = "update semic_trabalho set
 								sm_rem_11 = '$dd1',
 								sm_rem_12 = '$dd2',
 								sm_rem_13 = '$dd3',
@@ -356,117 +417,109 @@ class ics extends CI_model {
 								sm_rem_15 = '$dd5',								 
 								sm_rem_16 = '$dd6'
 								where sm_codigo = '$protocolo' ";
-					$rlt = $this->db->query($sql);
-					return(1);
-				}
-				
-			/* page 5 */
-			if ($page=='5')
-			{
-					/* Titulo e Titulo em Inglês */
-					$sql = "update semic_trabalho set
+			$rlt = $this -> db -> query($sql);
+			return (1);
+		}
+
+		/* page 5 */
+		if ($page == '5') {
+			/* Titulo e Titulo em Inglês */
+			$sql = "update semic_trabalho set
 								sm_trava = '1',
 								sm_status = 'A'
 								where sm_codigo = '$protocolo' ";
-					$rlt = $this->db->query($sql);
-					return(1);
-				exit;
-			}								
+			$rlt = $this -> db -> query($sql);
+			return (1);
+			exit ;
 		}
+	}
 
-	function le_resumo($protocolo='')
-		{
-			/* Ver RESUMO */
-			$sql = "select * from semic_trabalho where sm_codigo = '$protocolo' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			if (count($rlt) == 0)
-				{
-					return(array());
-				} else{
-					$line = $rlt[0];
-					return($line);
-				}	
+	function le_resumo($protocolo = '') {
+		/* Ver RESUMO */
+		$sql = "select * from semic_trabalho where sm_codigo = '$protocolo' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		if (count($rlt) == 0) {
+			return ( array());
+		} else {
+			$line = $rlt[0];
+			return ($line);
 		}
-		
-	function resumo_remove_autor($id)
-		{
-			$sql = "update semic_trabalho_autor set sma_ativo = 0 where id_sma = ".round($id);
-			$this->db->query($sql);
-			return('');
-		}
-	function resumo_inserir_autor($protocolo,$nome,$tipo,$instituicao,$lock=1)
-		{
-			$sql = "select * from semic_trabalho_autor 
+	}
+
+	function resumo_remove_autor($id) {
+		$sql = "update semic_trabalho_autor set sma_ativo = 0 where id_sma = " . round($id);
+		$this -> db -> query($sql);
+		return ('');
+	}
+
+	function resumo_inserir_autor($protocolo, $nome, $tipo, $instituicao, $lock = 1) {
+		$sql = "select * from semic_trabalho_autor 
 						where sma_protocolo = '$protocolo' 
 							and sma_nome = '$nome' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) == 0)
-				{
-				$sql = "insert into semic_trabalho_autor
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) == 0) {
+			$sql = "insert into semic_trabalho_autor
 					(
 					sma_protocolo, sma_nome, sma_funcao, 
 					sma_instituicao, sma_ativo, sma_titulacao
 					) values (
 					'$protocolo','$nome','$tipo',
 					'$instituicao','$lock','') ";
-				$rlt = $this->db->query($sql);
-				} else {
-					return('Nome já foi inserido!');
-				}
+			$rlt = $this -> db -> query($sql);
+		} else {
+			return ('Nome já foi inserido!');
 		}
-		
-	function resumo_postado_inserir_autores($rs)
-		{
-			$line = $rs;
-					$professor = $line['ic_cracha_prof'];
-					$estudante = $line['ic_cracha_aluno'];
-					$protocolo = $rs['ic_plano_aluno_codigo'];
-					
-					/* Bloquear edicao */
-					$lock = 2;
-										
-					/* Estudante */
-					$estu = $this->usuarios->le_cracha($estudante);
-					$instituicao = trim($estu['ies_sigla']);
-					$nome = trim($estu['us_nome']);	
-					$this->resumo_inserir_autor($protocolo,$nome,'0',$instituicao,$lock);
-					
-					/* Professor */
-					$prof = $this->usuarios->le_cracha($professor);
-					$instituicao = trim($prof['ies_sigla']);
-					$nome = trim($prof['us_nome']);	
-									
-					$this->resumo_inserir_autor($protocolo,$nome,'9',$instituicao,$lock);
-			return('');
-		}
+	}
 
-	function resumo_postado($id)
-		{
-			$this->load->model("ics");
-			
-			$rs = $this->ics->le($id);
-			
-			$protocolo = $rs['ic_plano_aluno_codigo'];
-			
-			/* Ver RESUMO */
-			$sql = "select * from semic_trabalho where sm_codigo = '$protocolo' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			if (count($rlt) == 0)
-				{
-					$line = $rs;
-					$titulo = trim($rs['ic_projeto_professor_titulo']);
-					$data = date("Ymd");
-					$professor = $line['ic_cracha_prof'];
-					$aluno = $line['ic_cracha_aluno'];
-					$edital = $line['mb_tipo'];
-					$ano = $line['ic_ano'];
-					/* Insere reumo */
-					$sql = "insert into semic_trabalho
+	function resumo_postado_inserir_autores($rs) {
+		$line = $rs;
+		$professor = $line['ic_cracha_prof'];
+		$estudante = $line['ic_cracha_aluno'];
+		$protocolo = $rs['ic_plano_aluno_codigo'];
+
+		/* Bloquear edicao */
+		$lock = 2;
+
+		/* Estudante */
+		$estu = $this -> usuarios -> le_cracha($estudante);
+		$instituicao = trim($estu['ies_sigla']);
+		$nome = trim($estu['us_nome']);
+		$this -> resumo_inserir_autor($protocolo, $nome, '0', $instituicao, $lock);
+
+		/* Professor */
+		$prof = $this -> usuarios -> le_cracha($professor);
+		$instituicao = trim($prof['ies_sigla']);
+		$nome = trim($prof['us_nome']);
+
+		$this -> resumo_inserir_autor($protocolo, $nome, '9', $instituicao, $lock);
+		return ('');
+	}
+
+	function resumo_postado($id) {
+		$this -> load -> model("ics");
+
+		$rs = $this -> ics -> le($id);
+
+		$protocolo = $rs['ic_plano_aluno_codigo'];
+
+		/* Ver RESUMO */
+		$sql = "select * from semic_trabalho where sm_codigo = '$protocolo' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		if (count($rlt) == 0) {
+			$line = $rs;
+			$titulo = trim($rs['ic_projeto_professor_titulo']);
+			$data = date("Ymd");
+			$professor = $line['ic_cracha_prof'];
+			$aluno = $line['ic_cracha_aluno'];
+			$edital = $line['mb_tipo'];
+			$ano = $line['ic_ano'];
+			/* Insere reumo */
+			$sql = "insert into semic_trabalho
 							(
 							sm_codigo, sm_titulo, sm_titulo_en,
 							sm_programa, sm_status, sm_curso,
@@ -487,13 +540,12 @@ class ics extends CI_model {
 							'1'
 							)
 					 ";
-					 $this->db->query($sql);
-					 /* Cadastro automático do estudante e orientador */
-					 $this->resumo_postado_inserir_autores($rs);
-				}
-			return(0);
+			$this -> db -> query($sql);
+			/* Cadastro automático do estudante e orientador */
+			$this -> resumo_postado_inserir_autores($rs);
 		}
-
+		return (0);
+	}
 
 	function resumo($ano = '') {
 		if (strlen($ano) == 0) {
@@ -567,16 +619,14 @@ class ics extends CI_model {
 		if ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
 			$line['logo'] = $this -> logo_modalidade($edital);
-			
-	
+
 			$ida = $line['mb_id'];
-			if ($ida == 0)
-				{			
-				$link_a = '<A href="'.base_url('index.php/ic/ativar_plano/'.$id.'/'.checkpost_link($id)).'">'.msg('ativar_plano').'</a>';
+			if ($ida == 0) {
+				$link_a = '<A href="' . base_url('index.php/ic/ativar_plano/' . $id . '/' . checkpost_link($id)) . '">' . msg('ativar_plano') . '</a>';
 				$line['ic_ativar'] = $link_a;
-				} else {
-				$line['ic_ativar'] = '';	
-				}
+			} else {
+				$line['ic_ativar'] = '';
+			}
 			return ($line);
 		}
 	}
@@ -610,7 +660,7 @@ class ics extends CI_model {
 				break;
 			case 'SENAI' :
 				$img = base_url('img/logo/logo_ic_senai.png');
-				break;				
+				break;
 			default :
 				$img = base_url('img/logo/logo_ic_semimagem.png');
 				break;
@@ -704,14 +754,14 @@ class ics extends CI_model {
 						";
 		return ($tabela);
 	}
-	function ativar_bolsa($id,$ida,$cracha,$d1,$d2,$d3,$d4,$tipo,$situacao)
-		{
-			$d1 = brtos($d1);
-			$d2 = brtos($d2);
-			$d3 = brtos($d3);
-			$d4 = brtos($d4);
-			
-			$sql = "insert into ic_aluno 
+
+	function ativar_bolsa($id, $ida, $cracha, $d1, $d2, $d3, $d4, $tipo, $situacao) {
+		$d1 = brtos($d1);
+		$d2 = brtos($d2);
+		$d3 = brtos($d3);
+		$d4 = brtos($d4);
+
+		$sql = "insert into ic_aluno 
 					(
 					aluno_id, ic_aluno_cracha, ic_id,
 					mb_id, icas_id, 
@@ -722,12 +772,11 @@ class ics extends CI_model {
 					'$d1','$d2','$d3','$d4'
 					)
 			";
-			$this->db->query($sql);
-			return(1);
-		}
-	
-	function cp_ativar()
-		{
+		$this -> db -> query($sql);
+		return (1);
+	}
+
+	function cp_ativar() {
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, True));
 		array_push($cp, array('$H8', '', '', False, True));
@@ -735,14 +784,13 @@ class ics extends CI_model {
 		array_push($cp, array('$D8', '', msg('vigencia_bolsa_fim'), True, True));
 		array_push($cp, array('$D8', '', msg('Entrada_estudante'), True, True));
 		array_push($cp, array('$D8', '', msg('Previsao_encerramento'), True, True));
-		array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_ativo = 1','',msg('modalidade'), True,True));
+		array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_ativo = 1', '', msg('modalidade'), True, True));
 		array_push($cp, array('$Q id_icas:icas_situacao:select * from ic_aluno_situacao where icas_ativo = 1', '', msg('protocolo_professor'), False, True));
 
-		return($cp);			
-		}
-	
-	function cp_resumo_1()
-		{
+		return ($cp);
+	}
+
+	function cp_resumo_1() {
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, True));
 		array_push($cp, array('$T80:6', '', 'Introdução', True, True));
@@ -752,13 +800,11 @@ class ics extends CI_model {
 		array_push($cp, array('$T80:6', '', 'Conclusão(ões)', True, True));
 		array_push($cp, array('$T80:2', '', 'Palavras-chave', True, True));
 		array_push($cp, array('$B8', '', 'Avançar próxima página >>>', False, True));
-		
 
-		return($cp);			
-		}
-		
-	function cp_resumo_2()
-		{
+		return ($cp);
+	}
+
+	function cp_resumo_2() {
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, True));
 		array_push($cp, array('$T80:6', '', 'Introduction', True, True));
@@ -769,8 +815,8 @@ class ics extends CI_model {
 		array_push($cp, array('$T80:2', '', 'Keywords', True, True));
 		array_push($cp, array('$B8', '', 'Avançar próxima página >>>', False, True));
 
-		return($cp);			
-		}		
+		return ($cp);
+	}
 
 	function cp() {
 		$cp = array();
@@ -782,8 +828,8 @@ class ics extends CI_model {
 		array_push($cp, array('$S4', 'ic_ano', msg('ano'), True, True));
 		array_push($cp, array('$D8', 'ic_dt_ativacao', msg('Ativação'), True, True));
 		array_push($cp, array('$T80:6', 'ic_projeto_professor_titulo', msg('ic_plano_titulo'), True, True));
-		array_push($cp, array('$H8', 'ic_plano_aluno_nome','', False, True));
-		
+		array_push($cp, array('$H8', 'ic_plano_aluno_nome', '', False, True));
+
 		//array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_ativo=1 order by mb_tipo, mb_descricao', 'ic_dt_ativacao', msg('Ativação'), True, True));
 
 		return ($cp);
