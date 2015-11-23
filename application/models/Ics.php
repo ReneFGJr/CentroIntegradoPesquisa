@@ -12,8 +12,9 @@ class ics extends CI_model {
 		$sql = $this -> table_view($wh, 0, 9999999);
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-
+		
 		$sx = '<table width="100%" class="lt1">';
+		$sx .= '<tr><th>protocolo<th>ano<th>nome_aluno<th>cracha_aluno<th>curso_aluno<th>nome_prof<th>cracha_prof<th>curso_prof<th>status<th>bolsa<th>modalidade<th>fomento<th>titulo</tr>';
 		$to = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$to++;
@@ -79,7 +80,7 @@ class ics extends CI_model {
 		$sx .= '<tr><td colspan=10>Total ' . $to . ' registros</td></tr>';
 		$sx .= '</table>';
 
-		print_r($line);
+		//print_r($line);
 
 		return ($sx);
 	}
