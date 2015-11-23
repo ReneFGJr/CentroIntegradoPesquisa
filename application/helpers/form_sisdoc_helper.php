@@ -87,6 +87,17 @@ function validaemail($email) {
 	}
 }
 
+function meses($id=0)
+	{
+		$mes = array('','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro');
+		$id = round($id);
+		return($mes[$id]);
+	}
+function meses_short()
+	{
+		$mes = array('','Jan.','Fev.','Mar.','Abr.','Maio','Jun.','Jul.','Ago.','Set.','Out.','Nov.','Dez.');
+	}
+
 function enviaremail($para, $assunto, $texto, $de) {
 	$CI = &get_instance();
 
