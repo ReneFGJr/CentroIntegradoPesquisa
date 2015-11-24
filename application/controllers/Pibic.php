@@ -130,22 +130,24 @@ class pibic extends CI_Controller {
 		$this -> load -> model('protocolos_ic');
 
 		$cracha = $_SESSION['cracha'];
-		
-		$data = $this->ics->le($id);
-		$plano = $this->load->view('ic/plano',$data,true);
+
+		$data = $this -> ics -> le_protocolo($id);
+		$plano = $this -> load -> view('ic/plano', $data, true);
 
 		$this -> cab();
 		$data = array();
 		$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
 		$data['search'] = $plano;
 		$data['search'] .= $this -> protocolos_ic -> abrir('SBS', $id);
-		
+
 		$this -> load -> view('ic/home', $data);
 	}
 
 	function proto_abrir_tipo($tp = '', $id = '', $chk = '') {
 		/* Models */
 		$this -> load -> model('protocolos_ic');
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');		
 
 		$cracha = $_SESSION['cracha'];
 
@@ -156,12 +158,13 @@ class pibic extends CI_Controller {
 		}
 
 		$this -> cab();
-
+		$data = array();
+		$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
+		
 		/* Valida */
 		if ($this -> protocolos_ic -> verifica_se_existe_aberto($tp, $id) == '1') {
-			$data = array();
+			
 			$texto = msg('Already_exists_protocol');
-			$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
 			$data['search'] = '<center><h3><font color="red">' . $texto . '</font></h3></center>';
 			$this -> load -> view('ic/home', $data);
 		} else {
@@ -171,9 +174,12 @@ class pibic extends CI_Controller {
 				redirect(base_url('index.php/pibic'));
 			}
 
-			$data = array();
-			$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
-			$data['search'] = $this -> protocolos_ic -> abrir($tp, $id);
+			$data2 = array();
+			$data2 = $this -> ics -> le_protocolo($id);
+			$data = array_merge($data,$data2);
+			$plano = $this -> load -> view('ic/plano', $data, true);
+
+			$data['search'] = $plano. $this -> protocolos_ic -> abrir($tp, $id);
 			$this -> load -> view('ic/home', $data);
 		}
 		$this -> load -> view('header/content_close');

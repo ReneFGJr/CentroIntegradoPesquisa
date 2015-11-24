@@ -841,14 +841,148 @@ class ro8s extends CI_Model {
 			$pb_data_ativacao = substr($pb_data_ativacao,0,4).'-'.substr($pb_data_ativacao,4,2).'-'.substr($pb_data_ativacao,6,2);
 			$pb_status = $xml->pb_status;
 			
+			/* Conversao do Tipo */
+			$pb_tipo_c = 0;
+			switch ($pb_tipo)
+				{
+				/* Desqualificado */
+				case 'D':
+					$pb_tipo_c = 18;
+					break;					
+				/* CNPq */
+				case 'C':
+					$pb_tipo_c = 3;
+					break;
+				/* PUCPR */
+				case 'P':
+					$pb_tipo_c = 14;
+					break;
+				/* PUCPR - PIBITI*/
+				case 'O':
+					$pb_tipo_c = 8;
+					break;
+				/* PUCPR - BOLSA ESTRATEGICA */
+				case 'U':
+					$pb_tipo_c = 20;
+					break;						
+				/* PUCPR - CIENCIA E TRANSCENDENCIA */
+				case '[':
+					$pb_tipo_c = 13;
+					break;	
+				/* PUCPR - Mobilidade Internacional (Alunos estarngeiros) */
+				case '5':
+					$pb_tipo_c = 36;
+					break;	
+				/* PUCPR - Mobilidade Internacional (Alunos estarngeiros) */
+				case '4':
+					$pb_tipo_c = 11;
+					break;	
+				/* PUCPR - Mobilidade Internacional (Alunos estarngeiros) */
+				case '3':
+					$pb_tipo_c = 12;
+					break;															
+				/* PUCPR - JUVENTUDES */
+				case '7':
+					$pb_tipo_c = 6;
+					break;
+				/* PUCPR - DOUTORANDO */
+				case 'M':
+					$pb_tipo_c = 33;
+					break;							
+				/* PUCPR - EM */
+				case 'J':
+					$pb_tipo_c = 24;
+					break;	
+				/* CNPq - EM */
+				case 'H':
+					$pb_tipo_c = 25;
+					break;
+				/* CNPq - EM */
+				case 'L':
+					$pb_tipo_c = 26;
+					break;					
+				/* CNPq - Estrategica */
+				case 'E':
+					$pb_tipo_c = 19;
+					break;						
+				/* CNPq - GR2 */
+				case '2':
+					$pb_tipo_c = 15;
+					break;																													
+				/* AGENCIA */
+				case 'G':
+					$pb_tipo_c = 22;
+					break;	
+				/* FUNDACAO */
+				case 'F':
+					$pb_tipo_c = 4;
+					break;
+				/* FUNDACAO - PIBITI */
+				case '=':
+					$pb_tipo_c = 9;
+					break;							
+				/* FUNDACAO - IS */
+				case 'N':
+					$pb_tipo_c = 5;
+					break;	
+				/* FUNDACAO - IS Tecnológica */
+				case 'Z':
+					$pb_tipo_c = 7;
+					break;												
+				/* CNPQ - PIBITI */
+				case 'B':
+					$pb_tipo_c = 21;
+					break;											
+				/* VOLUNTARIOS */
+				case 'I':
+					$pb_tipo_c = 16;
+					break;	
+				/* VOLUNTARIOS */
+				case 'A':
+					$pb_tipo_c = 16;
+					break;					
+				/* VOLUNTARIOS - PIBITI */
+				case 'V':
+					$pb_tipo_c = 23	;
+					break;
+				case 'Y':
+					$pb_tipo_c = 23	;
+					break;						
+				/* CsF */
+				case 'S':
+					$pb_tipo_c = -1	;
+					break;
+				case 'T':
+					$pb_tipo_c = -1	;
+					$pb_tipo = 'S';
+					break;
+				case '':
+					$pb_tipo_c = -1	;
+					$pb_tipo = 'S';
+					break;	
+				case '{':
+					$pb_tipo_c = -1	;
+					$pb_tipo = 'S';
+					break;	
+				case '}':
+					$pb_tipo_c = -1	;
+					$pb_tipo = 'S';
+					break;																			
+				default:
+					echo 'OPS - ['.$pb_tipo.'] - '.$pb_protocolo;
+					exit;
+					break; 
+				}
+			
 			$data_saida = $xml -> pb_data . '01';
 			$data_saida = substr($data_saida, 0, 4) . '-' . substr($data_saida, 4, 2) . '-' . substr($data_saida, 6, 2);
 			$sx .= '<tr><td>'.$pb_protocolo.'</td>';
 			$sx .= '<td>'.$pb_ano.'</td>';
 			$ok = 0;
-			if ($pb_ano == '2015')
+			if (($pb_ano == '2015') and ($pb_tipo != 'S'))
 				{
-				$sql = "select * from ic where ic_plano_aluno_codigo = '$pb_protocolo' ";
+				$sql = "select * from ic 
+							where ic_plano_aluno_codigo = '$pb_protocolo' ";
 				$rlt = $this->db->query($sql);
 				$rlt = $rlt->result_array();
 				
@@ -857,9 +991,16 @@ class ro8s extends CI_Model {
 						$line = $rlt[0];
 						$lt_aluno = trim($line['ic_cracha_aluno']);
 						$lt_status = $line['s_id_char'];
-						
+											
 						/* Comparacoes */
 						$ok = 0;
+						/* Modalidade da Bolsa */
+						$sql = "update ic_aluno set
+									mb_id = $pb_tipo_c,
+									mb_id_char = '$pb_tipo'
+									where ic_aluno_cracha = '$lt_aluno' ";
+						$rrr = $this->db->query($sql);									
+						
 						/* Status */
 						if ($pb_status != $line['s_id_char'])
 							{

@@ -1,5 +1,5 @@
 <?php
-$us_nada = '<font color="blue">[em construção]</font>';
+$us_nada = '<font color="grey">[em construção]</font>';
 ?>
 <table id="cabecalho-user-perfil" class="info-pessoais" border=0>
 	<TR valign="top">

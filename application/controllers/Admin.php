@@ -4,7 +4,6 @@ class admin extends CI_Controller {
 		global $dd, $acao;
 		parent::__construct();
 
-		$this -> load -> library("nuSoap_lib");
 		$this -> lang -> load("app", "portuguese");
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
@@ -12,6 +11,7 @@ class admin extends CI_Controller {
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
+		$this -> load -> library("nuSoap_lib");
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
@@ -64,6 +64,43 @@ class admin extends CI_Controller {
 			return (0);
 		}
 	}
+	
+	function checar_cpf($pg=0)
+		{
+			$this -> load -> model('usuarios');
+			$this -> cab();
+			
+			$tela = $this->usuarios->checar_cpf($pg);
+			echo $tela;
+		}
+	function checar_cracha_aluno_ic()
+		{
+			$this -> load -> model('webservice/ws_sga');
+			$this -> load -> model('usuarios');
+			$this -> cab();
+						
+			$sql = "SELECT distinct ic_aluno_cracha FROM ic_aluno 
+						left join us_usuario on us_cracha = ic_aluno_cracha 
+					where us_nome is null and ic_aluno_cracha <> ''";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '';
+			
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$cracha = $line['ic_aluno_cracha'];
+					
+					$sx .= '<br>->'.$cracha;
+					$this->ws_sga->findStudentByCracha($cracha,1);
+					$sx .= 'ok';					
+				}
+			$data['content'] = $sx;
+			$this->load->view('content',$data);
+			
+			
+		}
 
 	function index() {
 		$this -> cab();
@@ -73,7 +110,7 @@ class admin extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Parceiros', 'Parceiros da PUCPR', 'ITE', '/parceiro'));
 		array_push($menu, array('Idiomas', 'Idiomas do Sistema', 'ITE', '/idioma'));
-		
+
 		array_push($menu, array('Usuários', 'Integração SGA/CIP Estudantes', 'ITE', '/usuario/integracao_sga'));
 		array_push($menu, array('Usuários', 'Perfil de usuário do Sistema', 'ITE', '/perfil'));
 		array_push($menu, array('Unidades', 'Unidades da PUCPR', 'ITE', '/unidade'));
@@ -81,11 +118,15 @@ class admin extends CI_Controller {
 
 		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas', 'ITE', '/admin/ic'));
 		array_push($menu, array('Iniciação Científica', 'ID/usuarios bas bolsas', 'ITE', '/admin/ic_id'));
+		array_push($menu, array('Iniciação Científica', 'Vinculo Usuários / Bolsas', 'ITE', '/admin/checar_cracha_aluno_ic'));
+		
 
 		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
 		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
 		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
 		array_push($menu, array('Usuários', 'Limpa Curso (Turnos)', 'ITE', '/admin/limpa_curso'));
+		array_push($menu, array('Usuários', 'Cruzar dados do professor', 'ITE', '/admin/inporta_professor'));
+		array_push($menu, array('Usuários', 'Ajustar/Validar CPF', 'ITE', '/admin/checar_cpf'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -95,6 +136,16 @@ class admin extends CI_Controller {
 		/*Fecha */ 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	function inporta_professor() {
+		$this -> load -> model('usuarios');
+		$this -> cab();
+
+		$tela = $this -> usuarios -> inport_professores();
+		$data['title'] = 'Inportação dos professores';
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
 	}
 
 	function ic($id = 0, $pg = '') {
@@ -129,30 +180,31 @@ class admin extends CI_Controller {
 		$this -> cab();
 		$data = array();
 
-		$this->ics->indicacoes_sem_id_usuario();
+		$this -> ics -> indicacoes_sem_id_usuario();
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 
 	}
+
 	/* Discente */
 	function limpa_curso() {
 		/* Load Models */
 		$this -> load -> model('discentes');
 		$this -> cab();
 		$data = array();
-		
+
 		$tela = '<h3>Buscando cursos</h3>';
 		$data['content'] = $tela;
-		$this->load->view('content',$data);
-		
-		$tela = $this->discentes->limpar_habilitacao_curso();
+		$this -> load -> view('content', $data);
+
+		$tela = $this -> discentes -> limpar_habilitacao_curso();
 		$data['content'] = $tela;
-		$this->load->view('content',$data);
-		
-		$tela = $this->discentes->limpar_turno_curso_estudante();
-		$data['content'] = $tela;		
-		$this->load->view('content',$data);
+		$this -> load -> view('content', $data);
+
+		$tela = $this -> discentes -> limpar_turno_curso_estudante();
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

@@ -73,6 +73,8 @@ class usuario extends CI_Controller {
 			$cracha = $rs['pessoa'];
 			$data = $this -> usuarios -> le_cracha($cracha);
 			$this -> load -> view('usuario/view', $data);
+			
+			$this -> load -> view('usuario/form_cracha');
 
 		}
 	}
@@ -83,6 +85,12 @@ class usuario extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
+		
+			$link = '<A href="'.base_url('index.php/usuario/consulta_usuario/').'">Consulta SGA</a>';
+			$data2['title'] = '';
+			$data2['content'] = $link;
+			$this -> load -> view('content', $data2);
+		
 
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
@@ -230,6 +238,7 @@ class usuario extends CI_Controller {
 
 	function view($id = 0) {
 		$this -> load -> model('usuarios');
+		$this -> load -> model('ics');
 
 		$this -> cab();
 		$data = array();
@@ -237,7 +246,6 @@ class usuario extends CI_Controller {
 		$data = $this -> usuarios -> le($id);
 
 		$tipo = $data['usuario_tipo_ust_id'];
-
 		switch ($tipo) {
 			/* Docente */
 			case '2' :
@@ -254,11 +262,19 @@ class usuario extends CI_Controller {
 				$this -> load -> view('header/logo', $data);
 				$this -> load -> view('perfil/colaborador', $data);
 				break;
-			/* Colaborador */
+			/* Discente */
 			case '3' :
 				$data['logo'] = base_url('img/logo/logo_discente.jpg');
 				$this -> load -> view('header/logo', $data);
 				$this -> load -> view('perfil/discente', $data);
+				
+				$cpf = strzero(sonumero($data['us_cpf']),11);
+				$data['content'] = $this->usuarios->mostra_formacao($cpf);
+				$this-> load->view('content',$data);				
+
+				$data['content'] = $this->usuarios->mostra_ic($cpf);
+				$this-> load->view('content',$data);				
+
 				break;
 			default :
 				$data['logo'] = base_url('img/logo/logo_discente.jpg');

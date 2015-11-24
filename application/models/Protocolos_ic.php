@@ -37,8 +37,15 @@ class protocolos_ic extends CI_Model {
 			$CI = &get_instance();
 			$line['img'] = $CI -> ics -> logo_modalidade($edital);
 			$line['page'] = 'pibic';
+			$st = $line['id_s'];
+			if (($st == '2') or ($st == '4')) {
+				$bt = '';
+				$tp = '';
+			}
+
 			$line['botao'] = $bt;
 			$line['acao'] = $tp;
+
 			$sx .= $this -> load -> view("ic/plano-lista", $line, true);
 			$sx .= '</td></tr>';
 		}
@@ -108,23 +115,22 @@ class protocolos_ic extends CI_Model {
 				$cp = $this -> cp_cancelar();
 				$motivo = $this -> input -> post("dd2");
 				$justificativa = $this -> input -> post("dd3");
-				$aluno = '';				
+				$aluno = '';
 				break;
 			case 'SBS' :
 				$dd2 = $this -> input -> post("dd2");
 				$motivo = $this -> input -> post("dd5");
-				$justificativa = '';				
+				$justificativa = '';
 				/* Recupera dados do aluno */
-				if (strlen($dd2) == 8)
-					{
+				if (strlen($dd2) == 8) {
 					$user = $this -> usuarios -> readByCracha($dd2);
 					$justificativa = '<b>Substituição de estudante<b><br>';
 					$justificativa .= $this -> load -> view('usuario/view_simple', $user, True);
-					$justificativa = troca($justificativa,chr(13),' ');
-					$justificativa = troca($justificativa,chr(10),'');
-					}
-				$justificativa .= '<hr><tt>'.$this -> input -> post("dd6").'</tt>';
-				$aluno = $this -> input -> post("dd2");				
+					$justificativa = troca($justificativa, chr(13), ' ');
+					$justificativa = troca($justificativa, chr(10), '');
+				}
+				$justificativa .= '<hr><tt>' . $this -> input -> post("dd6") . '</tt>';
+				$aluno = $this -> input -> post("dd2");
 				$cp = $this -> cp_substituir();
 				break;
 			default :
@@ -191,7 +197,7 @@ class protocolos_ic extends CI_Model {
 			array_push($cp, array('$C8', '', msg('pr_confirm_sbs'), True, True));
 			array_push($cp, array('$Q pm_descricao:pm_descricao:select * from ic_protocolo_motivos where pm_ativo=1 and pm_tipo = \'SBS\' order by pm_ordem, pm_descricao', '', msg('pr_descricao_sbs'), '', True, True));
 			array_push($cp, array('$T80:4', '', msg('justify'), True, True));
-			
+
 		} else {
 			array_push($cp, array('$H8', '', msg('pr_confirm_sbs'), False, True));
 		}

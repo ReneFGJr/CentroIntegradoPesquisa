@@ -9,7 +9,9 @@ class ics extends CI_model {
 		if (strlen($mod) > 0) {
 			$wh .= ' and id_mb = ' . $mod;
 		}
-		$sql = $this -> table_view($wh, 0, 9999999);
+		$sql = $this -> table_view($wh, 0, 9999999, 'al_nome');
+		//$sql .= " order by al_nome ";
+		
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		
@@ -64,11 +66,10 @@ class ics extends CI_model {
 			$sx .= '<td>';
 			$sx .= $line['mb_descricao'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td>';
 			$sx .= $line['mb_fomento'];
 			$sx .= '</td>';
-
 
 			$sx .= '<td>';
 			$sx .= $line['ic_projeto_professor_titulo'];
@@ -288,8 +289,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -632,6 +632,25 @@ class ics extends CI_model {
 		}
 	}
 
+	function le_protocolo($id = 0) {
+		$sql = $this -> table_view("ic.ic_plano_aluno_codigo = '" . $id . "'", $offset = 0, $limit = 9999999);
+		$rlt = db_query($sql);
+
+		if ($line = db_read($rlt)) {
+			$edital = trim($line['mb_tipo']);
+			$line['logo'] = $this -> logo_modalidade($edital);
+
+			$ida = $line['mb_id'];
+			if ($ida == 0) {
+				$link_a = '<A href="' . base_url('index.php/ic/ativar_plano/' . $id . '/' . checkpost_link($id)) . '">' . msg('ativar_plano') . '</a>';
+				$line['ic_ativar'] = $link_a;
+			} else {
+				$line['ic_ativar'] = '';
+			}
+			return ($line);
+		}
+	}
+
 	function lista_ic_professor($id) {
 		$wh = "prof_id = " . round($id);
 		$sql = $this -> table_view($wh);
@@ -738,19 +757,22 @@ class ics extends CI_model {
 		return ($tabela);
 	}
 
-	function table_view($wh = '', $offset = 0, $limit = 9999999) {
+	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby='') {
 		if (strlen($wh) > 0) {
 			$wh = 'where (' . $wh . ') ';
 		}
-
+		if (strlen($orderby) > 0)
+			{
+				$orderby .= ', ';
+			}
 		$tabela = "	select * from ic
             			left join ic_aluno as pa on ic_id = id_ic
-						left join (select us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha,us_curso_vinculo as al_curso from us_usuario) AS us_est on pa.ic_aluno_cracha = us_est.id_al
-						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha, us_curso_vinculo as pf_curso from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
+						left join (select us_cpf as al_cpf, us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha,us_curso_vinculo as al_curso from us_usuario) AS us_est on pa.ic_aluno_cracha = us_est.id_al
+						left join (select us_cpf as pf_cpf, us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha, us_curso_vinculo as pf_curso from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id
 						$wh
-						order by ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
+						order by $orderby ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
 						limit $limit offset $offset
 						";
 		return ($tabela);

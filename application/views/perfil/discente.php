@@ -1,5 +1,5 @@
 <?php
-$us_nada = '<font color="blue">[em construção]</font>';
+$us_nada = '<font color="grey">[em construção]</font>';
 ?>
 <table id="cabecalho-user-perfil" class="info-pessoais" border=0>
 			<TR valign="top">
@@ -9,13 +9,13 @@ $us_nada = '<font color="blue">[em construção]</font>';
 			<div id="nome-dados-perfil">
 				<li class="lt5"><B><?php echo $us_nome; ?>&nbsp;</B></li>
 				<li>CPF: <?php echo $us_cpf; ?> </li>
-				<li><?php echo $us_nada;?> </li>
+				<li class="lt1">Data Nascimento <?php echo stodbr($us_dt_nascimento);?> - <?php echo $us_idade;?></li>
 				<li><?php echo $us_curso_vinculo;?> </li>
 				<li><?php echo $usm_email; ?> <BR>
 				<?php echo $us_contatos;?> </li>
 				<li></li>
-				<li><a href="<?php echo $us_lattes;?>" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0></li>
-				
+				<li><a href="<?php echo $us_lattes;?>" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0></a></li>
+				<li><?php echo $us_cc;?></li>
 			</div>
 			<TD width="300">
 			<div id="info-pesquisador" class="info-pesquisador lt1">
@@ -23,7 +23,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<li><strong>Crachá / EmployerID:</strong> <?php echo $us_cracha;?> / <?php echo $us_emplid;?></li>
 				<li><strong>Genero:</strong> <?php echo $us_genero;?></li>
 				<li><strong>Maior titulação:</strong> <?php echo $ust_titulacao_sigla;?> </li>
-				<li><strong>Curso:</strong> <?php echo $us_nada;?> </li>
+				<li><strong>Curso:</strong> <?php echo $us_curso_vinculo;?> </li>
 				<li><strong>Centro:</strong> <?php echo $us_nada;?> </li>
 				<li><strong>Escola:</strong> <?php echo $us_nada;?> </li>
 				<li><strong>Instituição:</strong> <?php echo $ies_sigla;?> </li>

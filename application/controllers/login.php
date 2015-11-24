@@ -207,14 +207,18 @@ class login extends CI_Controller {
 						{
 							$cpf = $line['us_cpf'];
 							$usr = $this->usuarios->readByCPF($cpf);
-							$idu = $usr['id_us'];
-							$cracha = $usr['us_cracha'];	
 							
-							$sql = "update logins set 
-										us_id = ".$idu.",
-										us_cracha = '$cracha'							 
-										where us_login = '$login' ";
-							$rly = $this->db->query($sql);						
+							if (isset($usr['id_us']))
+								{
+								$idu = $usr['id_us'];
+								$cracha = $usr['us_cracha'];	
+							
+								$sql = "update logins set 
+											us_id = ".$idu.",
+											us_cracha = '$cracha'							 
+											where us_login = '$login' ";
+								$rly = $this->db->query($sql);
+								}						
 						}
 					$_SESSION['us_id'] = $idu;
 					$link = index_page();
