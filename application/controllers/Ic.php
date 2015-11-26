@@ -195,47 +195,44 @@ class ic extends CI_Controller {
 	}
 
 	/* Reports */
-	function report_resumo($ano=0,$tipo=0)
-		{
+	function report_resumo($ano = 0, $tipo = 0) {
 		/* Load Models */
-		$this->load->model('ics');
-		if ($ano == 0)
-			{
-				if (date("m") < 8)
-					{
-						$ano = (date("Y")-1);
-					} else {
-						$ano = date("Y");
-					}
+		$this -> load -> model('ics');
+		if ($ano == 0) {
+			if (date("m") < 8) {
+				$ano = (date("Y") - 1);
+			} else {
+				$ano = date("Y");
 			}
+		}
 		$result = '';
-		if ($tipo > 0)
-			{
+		if ($tipo > 0) {
 			$ano_ini = $ano;
 			$ano_fim = $ano;
 			$modalidade = $tipo;
-			$result = $this->ics->report_guia_estudante($ano_ini,$ano_fim,$modalidade);
-				
-			}
+			$result = $this -> ics -> report_guia_estudante($ano_ini, $ano_fim, $modalidade);
+
+		}
 
 		$this -> cab();
 		$data = array();
-		
-		$tela = $this->ics->resumo_implemendados($ano,$tipo);
-		$data['content'] = $tela;
-		$this->load->view('content',$data);
 
-		$data['content'] = '<br><hr><br>'.$result;
-		$this->load->view('content',$data);
-		
+		$tela = $this -> ics -> resumo_implemendados($ano, $tipo);
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+		$data['content'] = '<br><hr><br>' . $result;
+		$this -> load -> view('content', $data);
+
 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}
+	}
+
 	function report_guia($id = 0, $gr = '') {
 		global $form;
 		/* Load Models */
-		$this->load->model('ics');
+		$this -> load -> model('ics');
 
 		$this -> cab();
 		$data = array();
@@ -247,20 +244,19 @@ class ic extends CI_Controller {
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano inicial'), True, TRUE));
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano final'), True, True));
 		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
-		array_push($cp, array('$Q id_mb:mb_descricao:'.$sql, '', msg('ic_modalidade'), False, False));
+		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('ic_modalidade'), False, False));
 		$tela = $form -> editar($cp, '');
 
 		if ($form -> saved) {
 			$ano_ini = get("dd2");
 			$ano_fim = get("dd3");
 			$modalidade = get("dd4");
-			$data['content'] = $this->ics->report_guia_estudante($ano_ini,$ano_fim,$modalidade);
-			$this->load->view('content',$data);
+			$data['content'] = $this -> ics -> report_guia_estudante($ano_ini, $ano_fim, $modalidade);
+			$this -> load -> view('content', $data);
 		} else {
 			$data['content'] = $tela;
-			$this->load->view('content',$data);
+			$this -> load -> view('content', $data);
 		}
-
 
 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
@@ -315,15 +311,14 @@ class ic extends CI_Controller {
 		$search_acao = $this -> input -> post("acao");
 		if ((strlen($search_acao) > 0) and (strlen($search_term) > 0)) {
 			$search_term = troca($search_term, "'", '´');
-			if ((strlen(sonumero($search_term)) > 0) and (strlen(sonumero($search_term)) <= 8))
-				{
-					$mt = 1;
-					$data['search'] .= $this -> ics -> search($search_term);
-				} else {
-					$mt = 2;
-					$data['search'] .= $this -> ics -> search_term($search_term);
-				}
-			$data['search'] .= '<br>Metodo: '.$mt;
+			if ((strlen(sonumero($search_term)) > 0) and (strlen(sonumero($search_term)) <= 8)) {
+				$mt = 1;
+				$data['search'] .= $this -> ics -> search($search_term);
+			} else {
+				$mt = 2;
+				$data['search'] .= $this -> ics -> search_term($search_term);
+			}
+			$data['search'] .= '<br>Metodo: ' . $mt;
 		}
 
 		/* Mostra tela principal */
@@ -370,7 +365,6 @@ class ic extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
 		$data['content'] = '<A href="' . base_url('index.php/usuario/consulta_usuario/') . '">' . msg('consulta') . ' ' . msg('cracha') . '</a>';
 		$this -> load -> view('content', $data);
 
@@ -442,16 +436,82 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
-	function protocolo($status = '',$chk='',$pag='') {
+
+	function protocolo_view($id = '', $chk = '') {
+		/* Load Models */
+		$this -> load -> model('protocolos_ic');
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+
+		$data = $this -> protocolos_ic -> le($id);
+		$proto = $data['pr_protocolo_original'];
+		$tip = $data['pr_tipo'];
+
+		/* Recupera Projeto */
+		$data2 = $this -> ics -> le_protocolo($proto);
+
+		$this -> load -> view('ic/plano', $data2);
+
+		$data['content'] = '<h2>Dados do protocolo de serviço</h2>';
+		$this -> load -> view('content', $data);
+
+		$sta = $data['pr_status'];
+		$this -> load -> view('ic/protocolo.php', $data);
+
+		/**/
+		if ($sta == 'A') {
+			$form = new form;
+			switch ($tip) {
+				case 'CAN' :
+					$cp = $this -> protocolos_ic -> cp_CAN();
+					break;
+				default :
+					$data['content'] = '<h1><center><font color="red">Ações para este serviço não estão liberadas - '.$tip.'</font></center></h1>';
+					$this -> load -> view('content', $data);
+					return('');
+					break;
+			}
+
+			/* Fomulário de Edição */
+			$tela = $form -> editar($cp, '');
+			$obj = array_merge($data, $data2);
+			if ($form -> saved > 0) {
+				switch ($tip) {
+					/****************** cancelamento de protocolo *****/
+					case 'CAN' :
+						$cp = $this -> protocolos_ic -> protocolo_CAN($obj);
+						break;
+				}
+
+				$data['content'] = 'FIM';
+				$this -> load -> view('content', $data);
+			} else {
+				/* Mostra */
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			}
+		} else {
+			$data['content'] = '<center><h1><font color="red">Protocolo já encerrado!</font></h1></center>';
+			$this -> load -> view('content', $data);
+		}
+
+		/* Detalhes do protocolo */
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function protocolo($status = '', $chk = '', $pag = '') {
 		/* Load Models */
 		$this -> load -> model('protocolos_ic');
 
 		$this -> cab();
 		$data = array();
-		
-		$data['title'] = msg('Protocolos') . ' ' . msg('protocolo_'.$status);
-		
+
+		$data['title'] = msg('Protocolos') . ' ' . msg('protocolo_' . $status);
+
 		$tabela = "(
 						select * from ic_protocolos
 						left join us_usuario on pr_solicitante = us_cracha
@@ -466,18 +526,17 @@ class ic extends CI_Controller {
 		$form -> novo = false;
 		$form -> edit = false;
 		$form -> offset = 20;
-		$form -> row_view = base_url('index.php/');
-		$form -> row = base_url('index.php/ic/protocolo/'.$status.'/'.$chk);
+		$form -> row_view = base_url('index.php/ic/protocolo_view/');
+		$form -> row = base_url('index.php/ic/protocolo/' . $status . '/' . $chk);
 		$form = $this -> protocolos_ic -> row($form);
-		
+
 		$tela = row($form, $pag);
-		$data['content'] = $tela;		
+		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
 
 	function avaliadores_row($id = 0) {
 
@@ -624,7 +683,7 @@ class ic extends CI_Controller {
 		$data = $this -> ics -> le($id);
 
 		$this -> cab();
-		
+
 		$this -> load -> view('ic/plano', $data);
 
 		/* arquivos */

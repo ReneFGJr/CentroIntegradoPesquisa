@@ -1,6 +1,7 @@
 <?php
 function enviaremail_usuario($para, $assunto, $texto, $de)
 	{
+		global $server_type;
 		$CI = &get_instance();
 		$sql = "select usm_email from us_email where usuario_id_us = ".$para." and usm_ativo = 1 order by usm_email_preferencial desc ";
 		$rlt = $CI->db->query($sql);
@@ -17,7 +18,7 @@ function enviaremail_usuario($para, $assunto, $texto, $de)
 					}
 			}
 		
-		if (count($email) > 0)
+		if ((count($email) > 0) and ($server_type > 1))
 			{
 				$ok = enviaremail($email, $assunto, $texto, $de);
 			}

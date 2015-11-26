@@ -1,8 +1,91 @@
 <?php
 class protocolos_ic extends CI_Model {
-	
+
 	var $tabela = 'ic_protocolos';
 	
+	function fechamento_protocolo($obj)
+		{
+			$sta = get("dd4");
+			$sol = get("dd3");
+			$id = $obj['id_pr'];
+			$date = date("Y-m-d");
+			$hora = date("H:i");
+			$log = $_SESSION['cracha'];
+			
+			$sql = "update ic_protocolos set
+						pr_status = '$sta',
+						pr_solucao = '$sol',
+						pr_solucao_data = '$date',
+						pr_solucao_hora = '$hora',
+						pr_solucao_log = '$log'
+					where id_pr = $id ";
+			$this->db->query($sql);
+			return(0);
+		}
+	
+	/* CANCELAMENTO
+	 * 
+	 * 
+	 */ 
+	function protocolo_CAN($obj)
+		{
+			/*  Acoes ******************************************************************************
+			 ***************************************************************************************
+			 */
+			$proto = $obj['pr_protocolo_original'];
+			$ac = '999';
+			$hist = 'Cancelamento do plano do aluno';
+			$aluno1 = '';
+			$aluno2 = '';
+			$motivo = '999';
+			$obs = 'Cancelamento da orientação: <b>'.mst($obj['pr_descricao']).'</b>';
+			$obs .= '<br>Justificativa:'.$obj['pr_justificativa'];
+	
+			/*********************************/
+			/* Lancar historico              */
+			$this->ics->inserir_historico($proto,$ac,$hist,$aluno1,$aluno2,$motivo,$obs);
+			
+
+			
+			/*****************************************/
+			/* Cancelar iniciacao na tabela ic       */
+			/* Cancelar iniciacao na tabela ic_aluno */
+			$this->ics->cancelar_protocolo($proto);			
+			
+			/*****************************************/
+			/* Fechar protocolo                      */
+			$this->fechamento_protocolo($obj);
+			
+			
+			/****************************************/
+			/* Enviar e-mail de cancelamento        */
+			$id = $obj['id_pr'];
+			$us_id = $obj['id_us'];
+			$data = $this -> protocolos_ic -> le($id);
+			$data2 = $this -> ics -> le_protocolo($proto);
+			$data = array_merge($data,$data2);
+			
+			$txt = $this -> load -> view('ic/plano-email', $data, true);
+			$txt .= '<hr>'.$this -> load -> view('ic/protocolo.php', $data,true);
+			enviaremail_usuario($us_id,'Cancelamento de orientação', $txt, 1);
+			
+			return(1);			
+		}
+
+	function cp_CAN() {
+		$cp = array();
+		$cp[0] = array('$HV', '', get('dd0'), False, False);
+		$cp[1] = array('$HV', '', get('dd0'), False, False);
+		$cp[2] = array('$A', '', 'Solução da solicitação', False, True);
+		$cp[3] = array('$T80:5', '', 'Resolução', True, True);
+
+		$op = 'F:Finalizar protocolo de serviço';
+		$op .= '&C:Cancelar protocolo de serviço';
+		$cp[4] = array('$O ' . $op, '', 'Ação', True, True);
+		$cp[5] = array('$B8', '', 'Gravar', False, True);
+		return($cp);
+	}
+
 	function verifica_se_existe_aberto($tipo, $proto) {
 		$sql = "select * from ic_protocolos where
 					pr_tipo = '$tipo' and
@@ -16,11 +99,11 @@ class protocolos_ic extends CI_Model {
 			return (0);
 		}
 	}
-	
+
 	function row($obj) {
-		$obj -> fd = array('id_pr', 'pr_protocolo_original', 'us_nome', 'pts_descricao', 'pr_data', 'pr_hora', 'pr_ano','ict_descricao','pr_tipo');
-		$obj -> lb = array('ID', 'Protocolo','Nome', 'Situação', 'Data','Hora', 'Login','Serviço','Tipo');
-		$obj -> mk = array('', 'C', 'L','C','C');
+		$obj -> fd = array('id_pr', 'pr_protocolo_original', 'us_nome', 'pts_descricao', 'pr_data', 'pr_hora', 'pr_ano', 'ict_descricao', 'pr_tipo');
+		$obj -> lb = array('ID', 'Protocolo', 'Nome', 'Situação', 'Data', 'Hora', 'Login', 'Serviço', 'Tipo');
+		$obj -> mk = array('', 'C', 'L', 'C', 'C');
 		return ($obj);
 	}
 
@@ -53,14 +136,14 @@ class protocolos_ic extends CI_Model {
 		$link0 = '';
 		$link1 = '';
 		$link2 = '';
-		if ($v[0] > 0) { 
-		$link0 = '<a href="' . base_url('index.php/ic/protocolo/A/' . checkpost_link('A')) . '" class="link lt6" stlye="color: red;">';
+		if ($v[0] > 0) {
+			$link0 = '<a href="' . base_url('index.php/ic/protocolo/A/' . checkpost_link('A')) . '" class="link lt6" stlye="color: red;">';
 		}
 		if ($v[1] > 0) {
-		$link1 = '<a href="' . base_url('index.php/ic/protocolo/F/' . checkpost_link('F')) . '" class="link lt6">';
+			$link1 = '<a href="' . base_url('index.php/ic/protocolo/F/' . checkpost_link('F')) . '" class="link lt6">';
 		}
 		if ($v[2] > 0) {
-		$link2 = '<a href="' . base_url('index.php/ic/protocolo/C/' . checkpost_link('C')) . '" class="link lt6">';
+			$link2 = '<a href="' . base_url('index.php/ic/protocolo/C/' . checkpost_link('C')) . '" class="link lt6">';
 		}
 
 		$sx .= '<tr class="lt6" align="center">';

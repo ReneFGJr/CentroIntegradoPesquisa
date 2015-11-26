@@ -10,6 +10,7 @@
  * @since	Version v0.15.23
  * @filesource
  */
+
 class login extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;

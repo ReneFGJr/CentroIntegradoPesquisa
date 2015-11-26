@@ -84,10 +84,10 @@ class main extends CI_Controller {
 		if (strlen($idu) > 0) {
 			array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
 		}
-		
+
 		/* Libera Menus */
 		if (perfil('#DGP#CPS#COO#CPP#SPI#ADM') == 1) { array_push($menu, array('Docentes & Discentes', 'Cadastrao de docentes, discentes, avaliadores e usuarios do sistema', 'BTA', '/usuario/row'));
-		}		
+		}
 
 		/* Libera Menus */
 		if (perfil('#CPP#SPI#ADM') == 1) { array_push($menu, array('Inciação Científica', 'Administração do Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTA', '/ic'));
@@ -110,7 +110,7 @@ class main extends CI_Controller {
 		}
 		if (perfil('#CPP#SPI#ADM#CSF') == 1) { array_push($menu, array('Programa CsF - Site', 'Ciência sem Fronteiras', 'BTA', '/csf'));
 		}
-		
+
 		if (perfil('#SEC#SEM#ADM') == 1) { array_push($menu, array('SEMIC', 'Seminário de Iniciação Científica - PUCPR', 'BTA', '/semic'));
 		}
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Fomento', 'Observatório de Pesquisa', 'BTN', '/edital'));
@@ -123,7 +123,9 @@ class main extends CI_Controller {
 		/* Iniciação Científica */
 		array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
 
-		array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));
+		if (perfil('#TST') == 1) {
+			array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));
+		}
 
 		$data['menu'] = $menu;
 

@@ -14,11 +14,13 @@
 		</tr>
 		<?php
 		$sql = "select * from ic_historico
-				left join us_usuario on id_us = bh_log 
+				left join us_usuario on us_cracha = bh_log 
 					where bh_protocolo = '$ic_plano_aluno_codigo' order by bh_data desc, bh_hora desc";
-		$rlt = db_query($sql);
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
 		$sx = '';
-		while ($line = db_read($rlt)) {
+		for ($r=0;$r < count($rlt);$r++) {
+			$line = $rlt[$r];
 			$sx .= '
 				<tr valign="top" class="lt2">
 					<td  align="center">' . stodbr($line['bh_data']) . '</td>

@@ -2,6 +2,39 @@
 class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
+	
+		function inserir_historico($proto,$ac,$hist,$aluno1,$aluno2,$motivo,$obs='')
+			{
+				$data = date("Ymd");
+				$hora = date("H:i");
+				$log = $_SESSION['cracha'];
+				
+				$sql = "select * from ic_historico
+						where bh_protocolo = '$proto'
+						and bh_data = $data
+						and bh_acao = $ac
+					";
+				$rlt = db_query($sql);
+				
+				if ($line = db_read($rlt))
+					{
+								
+					} else {
+						$sql = "insert into ic_historico 
+							(bh_protocolo, bh_data, bh_hora,
+							bh_log, bh_acao, bh_historico,
+							bh_aluno_1, bh_aluno_2, bh_motivo,
+							bh_obs
+							) values (
+							'$proto',$data,'$hora',
+							'$log','$ac','$hist',
+							'$aluno2','$aluno1','$motivo',
+							'$obs')
+					";
+					$rlt = $this->db->query($sql);
+					}
+				return('');
+			}	
 
 	function resumo_implemendados($ano) {
 		$sql = "select * from 
@@ -315,13 +348,10 @@ class ics extends CI_model {
 								s_id_char = 'C',
 								s_id = 2
 								where ic_plano_aluno_codigo = '$protocolo' ";
-			echo $sql;
 			$this -> db -> query($sql);
 			$this -> db -> query($sqlf);
-			print_r($line);
-			echo '<hr>';
 		}
-		exit ;
+		return(1);
 	}
 
 	function substituicao_aluno($cracha, $protocolo, $cracha_novo, $data) {
