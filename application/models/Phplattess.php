@@ -214,11 +214,13 @@ class phpLattess extends CI_Model {
 		}
 
 		$data = $this -> inport_data($link);
+		echo $data;
+		exit;
 		$data = $this -> removeSCRIPT($data);
 		$data = $this -> removeCLASS($data);
 		$data = $this -> removeSPACE($data);
 		$data = $this -> removeTAG($data);
-
+		
 		/* Dados da instituicao */
 		$datar = array();
 		$datar['espelho'] = $this -> phplattess -> recupera_espelho($data);
@@ -230,8 +232,24 @@ class phpLattess extends CI_Model {
 		$datar['equipe'] = $this -> phplattess -> recupera_recursosHumanos($data);
 		$datar['parceiras'] = $this -> phplattess -> recupera_instituicoesparceiras($data);
 		$datar['equipamentos'] = $this -> phplattess -> recupera_equipamentos_softwares($data);
+		$datar['atualizacao'] = $this -> phplattess -> recupera_atualizacao($data);
 		return ($datar);
 	}
+
+	function recupera_atualizacao($text)
+		{
+		/* */
+		$text = troca($text, '<span >ui-button</span>', '');
+		$text = troca($text, '<span >', '');
+		$text = troca($text, '</span>', '');
+		$text = troca($text, chr(13) . chr(10) . chr(13) . chr(10), chr(13) . chr(10));
+		$text = troca($text, chr(13) . chr(10) . ' ', '');
+		$data = array();
+		$dt = $this -> recupera_method_3($text, 'Data do último envio:', '</div>');
+		$dt = substr($dt,0,10);
+		$dt = brtosql($dt);
+		return ($dt);
+		}
 
 	function recupera_nomegrupo($text) {
 		/* */
@@ -595,21 +613,22 @@ class phpLattess extends CI_Model {
 		$data = date("Y-m-d");
 		$new = 1;
 		/* Verifica se ja foi coletado */
-		$sql = "select * from dgp_cache where dgpc_link = '$link'";
+		$sql = "select * from dgp_cache where dgpc_link = '$link' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) > 0) {
 			$new = 0;
 			$line = $rlt[0];
 			$sta = $line['dgpc_status'];
-			return ($line['dgpc_content']);
+			//return ($line['dgpc_content']);
 		}
 		echo '<BR>Coletar!';
 		$content = '';
 
 		if ($new == 0) {
 			$sql = "update dgp_cache 
-							set dgpc_status = '@'
+							set dgpc_status = '@',
+							dgpc_content = '$content'
 							where id_dgpc = " . $line['id_dgpc'];
 			$this -> db -> query($sql);
 		} else {

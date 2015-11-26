@@ -12,9 +12,9 @@ $us_nada = '<font color="grey">[em construção]</font>';
 				<li><?php echo $email;?> <BR>
 				<li></li>
 				<?php
-				if (strlen($us_lattes) > 0)
+				if (strlen($us_link_lattes) > 0)
 					{
-						echo '<li><a href="'.$us_lattes.'" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0></li>';
+						echo '<a href="'.$us_link_lattes.'" target="new"><img src="'.base_url('img/icon/icone_lattes.png').'" height="26" border=0></a>';
 					}
 				?>			
 			</div>

@@ -73,6 +73,15 @@ class admin extends CI_Controller {
 			$tela = $this->usuarios->checar_cpf($pg);
 			echo $tela;
 		}
+	function cracha_duplicados()
+		{
+			$this -> load -> model('usuarios');
+			$this -> cab();
+			
+			$sx = $this->usuarios->cracha_duplicados();
+			$data['content'] = $sx;
+			$this->load->view('content',$data);			
+		}
 	function checar_cracha_aluno_ic()
 		{
 			$this -> load -> model('webservice/ws_sga');
@@ -119,6 +128,9 @@ class admin extends CI_Controller {
 		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas', 'ITE', '/admin/ic'));
 		array_push($menu, array('Iniciação Científica', 'ID/usuarios bas bolsas', 'ITE', '/admin/ic_id'));
 		array_push($menu, array('Iniciação Científica', 'Vinculo Usuários / Bolsas', 'ITE', '/admin/checar_cracha_aluno_ic'));
+		array_push($menu, array('Iniciação Científica', 'Finalizar projetos do ano anterior', 'ITE', '/admin/finalizar_ic'));
+		
+		array_push($menu, array('Iniciação Científica', 'Converter Pasta GED', 'ITE', '/admin/ged_ic'));
 		
 
 		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
@@ -127,6 +139,7 @@ class admin extends CI_Controller {
 		array_push($menu, array('Usuários', 'Limpa Curso (Turnos)', 'ITE', '/admin/limpa_curso'));
 		array_push($menu, array('Usuários', 'Cruzar dados do professor', 'ITE', '/admin/inporta_professor'));
 		array_push($menu, array('Usuários', 'Ajustar/Validar CPF', 'ITE', '/admin/checar_cpf'));
+		array_push($menu, array('Usuários', 'Crachas duplicados', 'ITE', '/admin/cracha_duplicados'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -186,6 +199,56 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 
 	}
+	
+	function ged_ic() {
+		$this -> load -> model('ics');
+		$this -> cab();
+		$data = array();
+
+		//$this -> ics -> indicacoes_sem_id_usuario();
+		$folder = '/pucpr/httpd/htdocs/www2.pucpr.br/reol/pibic/document/';
+		$folder_new = '_document/pibic/';
+		$tabela = 'ic_ged_documento';
+		$sql = "select * from $tabela where doc_arquivo like '%".$folder."%' limit 300";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		$sx = '';
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				$path = $line['doc_arquivo'];
+				$path_new = troca($path,$folder,$folder_new);
+				$id = $line['id_doc'];
+				$sx .= '<br>'.$id.' - '.$path.' -> '.$path_new;
+				$sql = "update ".$tabela." set doc_arquivo = '$path_new' where id_doc = $id ";
+				$xrlt = $this->db->query($sql);
+			}
+		if (strlen($sx) > 0)
+			{
+				$sx .= '<meta http-equiv="refresh" content="2">';
+			}
+		$data['content'] = $sx;
+		$this -> load -> view('content',$data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}	
+	
+	/* Discente */
+	function finalizar_ic() {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$this -> cab();
+		$data = array();
+
+		$tela = $this -> ics -> encerrar_planos_ano_anterior();
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	/* Discente */
 	function limpa_curso() {

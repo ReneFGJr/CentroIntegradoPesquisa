@@ -174,6 +174,7 @@ class Geds extends CI_Model {
 		}
 		if ($this -> le($this -> id_file)) {
 			$arq = $this -> file_path;
+			
 			if (!(file_exists($arq))) {
 				$arq = substr($arq, strpos($arq, '/') + 1, strlen($arq));
 				if (!(file_exists($arq))) {

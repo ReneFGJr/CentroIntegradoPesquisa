@@ -180,6 +180,7 @@ class ic extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
+		array_push($menu, array('Relatórios', 'Resumo de implementações', 'ITE', '/ic/report_resumo'));
 		array_push($menu, array('Relatórios', 'Guia do Estudante', 'ITE', '/ic/report_guia'));
 
 		/*View principal*/
@@ -194,6 +195,43 @@ class ic extends CI_Controller {
 	}
 
 	/* Reports */
+	function report_resumo($ano=0,$tipo=0)
+		{
+		/* Load Models */
+		$this->load->model('ics');
+		if ($ano == 0)
+			{
+				if (date("m") < 8)
+					{
+						$ano = (date("Y")-1);
+					} else {
+						$ano = date("Y");
+					}
+			}
+		$result = '';
+		if ($tipo > 0)
+			{
+			$ano_ini = $ano;
+			$ano_fim = $ano;
+			$modalidade = $tipo;
+			$result = $this->ics->report_guia_estudante($ano_ini,$ano_fim,$modalidade);
+				
+			}
+
+		$this -> cab();
+		$data = array();
+		
+		$tela = $this->ics->resumo_implemendados($ano,$tipo);
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
+
+		$data['content'] = '<br><hr><br>'.$result;
+		$this->load->view('content',$data);
+		
+		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}
 	function report_guia($id = 0, $gr = '') {
 		global $form;
 		/* Load Models */
@@ -269,14 +307,23 @@ class ic extends CI_Controller {
 
 		/* Formulario */
 		$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
-		$data['resumo'] = $this -> ics -> resumo();
+		$data['resumo'] = $this -> protocolos_ic -> resumo();
+		$data['resumo'] .= $this -> ics -> resumo();
 
 		/* Search */
 		$search_term = $this -> input -> post("dd89");
 		$search_acao = $this -> input -> post("acao");
 		if ((strlen($search_acao) > 0) and (strlen($search_term) > 0)) {
 			$search_term = troca($search_term, "'", '´');
-			$data['search'] .= $this -> ics -> search($search_term);
+			if ((strlen(sonumero($search_term)) > 0) and (strlen(sonumero($search_term)) <= 8))
+				{
+					$mt = 1;
+					$data['search'] .= $this -> ics -> search($search_term);
+				} else {
+					$mt = 2;
+					$data['search'] .= $this -> ics -> search_term($search_term);
+				}
+			$data['search'] .= '<br>Metodo: '.$mt;
 		}
 
 		/* Mostra tela principal */
@@ -395,6 +442,42 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function protocolo($status = '',$chk='',$pag='') {
+		/* Load Models */
+		$this -> load -> model('protocolos_ic');
+
+		$this -> cab();
+		$data = array();
+		
+		$data['title'] = msg('Protocolos') . ' ' . msg('protocolo_'.$status);
+		
+		$tabela = "(
+						select * from ic_protocolos
+						left join us_usuario on pr_solicitante = us_cracha
+						left join ic_protocolos_tipo on ict_tipo = pr_tipo
+						left join ic_protocolos_situacao on pts_status = pr_status
+						where pr_status = '$status'
+					) as ic_protocolo ";
+		$form = new form;
+
+		$form -> tabela = $tabela;
+		$form -> see = true;
+		$form -> novo = false;
+		$form -> edit = false;
+		$form -> offset = 20;
+		$form -> row_view = base_url('index.php/');
+		$form -> row = base_url('index.php/ic/protocolo/'.$status.'/'.$chk);
+		$form = $this -> protocolos_ic -> row($form);
+		
+		$tela = row($form, $pag);
+		$data['content'] = $tela;		
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
 
 	function avaliadores_row($id = 0) {
 
@@ -541,6 +624,7 @@ class ic extends CI_Controller {
 		$data = $this -> ics -> le($id);
 
 		$this -> cab();
+		
 		$this -> load -> view('ic/plano', $data);
 
 		/* arquivos */
@@ -773,7 +857,7 @@ class ic extends CI_Controller {
 
 		$this -> load -> model('geds');
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$this -> geds -> file_path = '_document/ic/';
+		$this -> geds -> file_path = '';
 		$this -> geds -> download($id);
 	}
 

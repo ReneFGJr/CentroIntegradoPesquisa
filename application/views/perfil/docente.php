@@ -26,7 +26,12 @@ $us_nada = '<font color="grey">[em construção]</font>';
 			</li>
 			<li></li>
 			<li>
-				<a href="<?php echo $us_lattes;?>" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0>
+				<?php
+				if (strlen($us_link_lattes) > 0)
+					{
+						echo '<a href="'.$us_link_lattes.'" target="new"><img src="'.base_url('img/icon/icone_lattes.png').'" height="26" border=0></a>';
+					}
+				?>
 			</li>
 		</div><TD width="300">
 		<div id="info-pesquisador" class="info-pesquisador lt1">

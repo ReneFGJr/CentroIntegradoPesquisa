@@ -827,7 +827,7 @@ class ro8s extends CI_Model {
 		$sx = '<table width="100%" align="center" class="tabela00 lt0">';
 		for ($r = 0; $r < $RowT; $r++) {
 			$xml = $xmlRaw -> record[$r];
-			
+
 			$pb_protocolo = utf8_decode($xml -> pb_protocolo);
 			$pb_aluno = utf8_decode($xml -> pb_aluno);
 			$pb_tipo = utf8_decode($xml -> pb_tipo);
@@ -836,214 +836,218 @@ class ro8s extends CI_Model {
 			$pb_area_conhecimento = utf8_decode($xml -> pb_area_conhecimento);
 			$pb_ano = utf8_decode($xml -> pb_ano);
 			$pb_professor = utf8_decode($xml -> pb_professor);
-			$pb_aluno = utf8_decode($xml->pb_aluno);
-			$pb_data_ativacao = $xml->pb_ativacao;
-			$pb_data_ativacao = substr($pb_data_ativacao,0,4).'-'.substr($pb_data_ativacao,4,2).'-'.substr($pb_data_ativacao,6,2);
-			$pb_status = $xml->pb_status;
-			
+			$pb_aluno = utf8_decode($xml -> pb_aluno);
+			$pb_data_ativacao = $xml -> pb_ativacao;
+			$pb_data_ativacao = substr($pb_data_ativacao, 0, 4) . '-' . substr($pb_data_ativacao, 4, 2) . '-' . substr($pb_data_ativacao, 6, 2);
+			$pb_status = $xml -> pb_status;
+
 			/* Conversao do Tipo */
 			$pb_tipo_c = 0;
-			switch ($pb_tipo)
-				{
+			switch ($pb_tipo) {
 				/* Desqualificado */
-				case 'D':
+				case 'D' :
 					$pb_tipo_c = 18;
-					break;					
+					break;
 				/* CNPq */
-				case 'C':
+				case 'C' :
 					$pb_tipo_c = 3;
 					break;
 				/* PUCPR */
-				case 'P':
+				case 'P' :
 					$pb_tipo_c = 14;
 					break;
 				/* PUCPR - PIBITI*/
-				case 'O':
+				case 'O' :
 					$pb_tipo_c = 8;
 					break;
 				/* PUCPR - BOLSA ESTRATEGICA */
-				case 'U':
+				case 'U' :
 					$pb_tipo_c = 20;
-					break;						
+					break;
 				/* PUCPR - CIENCIA E TRANSCENDENCIA */
-				case '[':
+				case '[' :
 					$pb_tipo_c = 13;
-					break;	
+					break;
 				/* PUCPR - Mobilidade Internacional (Alunos estarngeiros) */
-				case '5':
+				case '5' :
 					$pb_tipo_c = 36;
-					break;	
+					break;
 				/* PUCPR - Mobilidade Internacional (Alunos estarngeiros) */
-				case '4':
+				case '4' :
 					$pb_tipo_c = 11;
-					break;	
+					break;
 				/* PUCPR - Mobilidade Internacional (Alunos estarngeiros) */
-				case '3':
+				case '3' :
 					$pb_tipo_c = 12;
-					break;															
+					break;
 				/* PUCPR - JUVENTUDES */
-				case '7':
+				case '7' :
 					$pb_tipo_c = 6;
 					break;
 				/* PUCPR - DOUTORANDO */
-				case 'M':
+				case 'M' :
 					$pb_tipo_c = 33;
-					break;							
+					break;
 				/* PUCPR - EM */
-				case 'J':
+				case 'J' :
 					$pb_tipo_c = 24;
-					break;	
+					break;
 				/* CNPq - EM */
-				case 'H':
+				case 'H' :
 					$pb_tipo_c = 25;
 					break;
 				/* CNPq - EM */
-				case 'L':
+				case 'L' :
 					$pb_tipo_c = 26;
-					break;					
+					break;
 				/* CNPq - Estrategica */
-				case 'E':
+				case 'E' :
 					$pb_tipo_c = 19;
-					break;						
+					break;
 				/* CNPq - GR2 */
-				case '2':
+				case '2' :
 					$pb_tipo_c = 15;
-					break;																													
+					break;
 				/* AGENCIA */
-				case 'G':
+				case 'G' :
 					$pb_tipo_c = 22;
-					break;	
+					break;
 				/* FUNDACAO */
-				case 'F':
+				case 'F' :
 					$pb_tipo_c = 4;
 					break;
 				/* FUNDACAO - PIBITI */
-				case '=':
+				case '=' :
 					$pb_tipo_c = 9;
-					break;							
+					break;
 				/* FUNDACAO - IS */
-				case 'N':
+				case 'N' :
 					$pb_tipo_c = 5;
-					break;	
+					break;
 				/* FUNDACAO - IS Tecnológica */
-				case 'Z':
+				case 'Z' :
 					$pb_tipo_c = 7;
-					break;												
+					break;
 				/* CNPQ - PIBITI */
-				case 'B':
+				case 'B' :
 					$pb_tipo_c = 21;
-					break;											
+					break;
 				/* VOLUNTARIOS */
-				case 'I':
+				case 'I' :
 					$pb_tipo_c = 16;
-					break;	
+					break;
 				/* VOLUNTARIOS */
-				case 'A':
+				case 'A' :
 					$pb_tipo_c = 16;
-					break;					
+					break;
 				/* VOLUNTARIOS - PIBITI */
-				case 'V':
-					$pb_tipo_c = 23	;
+				case 'V' :
+					$pb_tipo_c = 23;
 					break;
-				case 'Y':
-					$pb_tipo_c = 23	;
-					break;						
+				case 'Y' :
+					$pb_tipo_c = 23;
+					break;
 				/* CsF */
-				case 'S':
-					$pb_tipo_c = -1	;
+				case 'S' :
+					$pb_tipo_c = -1;
 					break;
-				case 'T':
-					$pb_tipo_c = -1	;
+				case 'T' :
+					$pb_tipo_c = -1;
 					$pb_tipo = 'S';
 					break;
-				case '':
-					$pb_tipo_c = -1	;
+				case '' :
+					$pb_tipo_c = -1;
 					$pb_tipo = 'S';
-					break;	
-				case '{':
-					$pb_tipo_c = -1	;
+					break;
+				case '{' :
+					$pb_tipo_c = -1;
 					$pb_tipo = 'S';
-					break;	
-				case '}':
-					$pb_tipo_c = -1	;
+					break;
+				case '}' :
+					$pb_tipo_c = -1;
 					$pb_tipo = 'S';
-					break;																			
-				default:
-					echo 'OPS - ['.$pb_tipo.'] - '.$pb_protocolo;
-					exit;
-					break; 
-				}
-			
+					break;
+				default :
+					echo 'OPS - [' . $pb_tipo . '] - ' . $pb_protocolo;
+					exit ;
+					break;
+			}
+
 			$data_saida = $xml -> pb_data . '01';
 			$data_saida = substr($data_saida, 0, 4) . '-' . substr($data_saida, 4, 2) . '-' . substr($data_saida, 6, 2);
-			$sx .= '<tr><td>'.$pb_protocolo.'</td>';
-			$sx .= '<td>'.$pb_ano.'</td>';
+			$sx .= '<tr><td>' . $pb_protocolo . '</td>';
+			$sx .= '<td>' . $pb_ano . '</td>';
 			$ok = 0;
-			if (($pb_ano == '2015') and ($pb_tipo != 'S'))
-				{
+			if ($pb_tipo != 'S') {
 				$sql = "select * from ic 
 							where ic_plano_aluno_codigo = '$pb_protocolo' ";
-				$rlt = $this->db->query($sql);
-				$rlt = $rlt->result_array();
-				
-				if (count($rlt) > 0)
-					{
-						$line = $rlt[0];
-						$lt_aluno = trim($line['ic_cracha_aluno']);
-						$lt_status = $line['s_id_char'];
-											
-						/* Comparacoes */
-						$ok = 0;
-						/* Modalidade da Bolsa */
-						$sql = "update ic_aluno set
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+
+				if (count($rlt) > 0) {
+					$line = $rlt[0];
+					$lt_aluno = trim($line['ic_cracha_aluno']);
+					$lt_status = $line['s_id_char'];
+					$ida = $line['id_ic'];
+
+					/* Comparacoes */
+					$ok = 0;
+					/* Modalidade da Bolsa */
+					$sql = "update ic_aluno set
 									mb_id = $pb_tipo_c,
 									mb_id_char = '$pb_tipo'
-									where ic_aluno_cracha = '$lt_aluno' ";
-						$rrr = $this->db->query($sql);									
-						
-						/* Status */
-						if ($pb_status != $line['s_id_char'])
-							{
-								 
-								echo '<br>Status Diferente - '.$pb_status.' '.$lt_status.' - '.$pb_protocolo.'<hr>';
-								
-								if (($pb_status == 'C') and ($lt_status == 'A'))
-									{
-										$this->ics->cancelar_protocolo($pb_protocolo);	
-										$ok = 1;								
-									}
-								if ($ok == 0)
-									{
-										print_r($line);
-										echo '<hr>';
-										print_r($xml);
-										exit;										
-									}
-							}
-						if ($pb_professor != $line['ic_cracha_prof'])
-							{
-								echo '<br>Professor diferente';
-								$ok = 1;
-							}
-						if ($pb_aluno != $line['ic_cracha_aluno'])
-							{
-								/* Consulta dados do aluno */
-								$rs = $this -> ws_sga -> findStudentByCracha($pb_aluno);																
-								
-								$this->ics->substituicao_aluno($lt_aluno, $pb_protocolo, $pb_aluno, $pb_data_ativacao);
-								echo '<br>Aluno diferente';
-								$ok = 1;
-							}
+									where ic_id = $ida ";
+					$rrr = $this -> db -> query($sql);
+
+					/* Status */
+					if ($pb_status != $line['s_id_char']) {
+
+						echo '<br>Status Diferente - ' . $pb_status . ' ' . $lt_status . ' - ' . $pb_protocolo . '<hr>';
+
+						if (($pb_status == 'C') and ($lt_status == 'A')) {
+							$this -> ics -> cancelar_protocolo($pb_protocolo);
+							$ok = 1;
+						}
+						if (($pb_status == 'F')) {
+							$sql = "update ic_aluno set
+									icas_id = 4,
+									icas_id_char = 'F'
+									where ic_id = $ida; ".cr();
+							$sql = "update ic set
+										s_id_char = 'F',
+										s_id = 4
+									where id_ic = $ida ";
+							
+							$rrr = $this -> db -> query($sql);
+						}
+						if ($ok == 0) {
+							//print_r($line);
+							//echo '<hr>';
+							//print_r($xml);
+							//exit;
+						}
+					}
+					if ($pb_professor != $line['ic_cracha_prof']) {
+						echo '<br>Professor diferente';
+						$ok = 1;
+					}
+					if ($pb_aluno != $line['ic_cracha_aluno']) {
+						/* Consulta dados do aluno */
+						$rs = $this -> ws_sga -> findStudentByCracha($pb_aluno);
+
+						$this -> ics -> substituicao_aluno($lt_aluno, $pb_protocolo, $pb_aluno, $pb_data_ativacao);
+						echo '<br>Aluno diferente';
+						$ok = 1;
 					}
 				}
+			}
 		}
 		$sx .= '</tr>';
 		$sx .= '</table>';
-		if ($RowT > 0)
-			{
-				$url = base_url('index.php/inport/ro8/pibic/'.($offset+100));
-				$sx .= '<meta http-equiv="refresh" content="5;'.$url.'">';
-			}
+		if ($RowT > 0) {
+			$url = base_url('index.php/inport/ro8/pibic/' . ($offset + 100));
+			$sx .= '<meta http-equiv="refresh" content="5;' . $url . '">';
+		}
 		return ($sx);
 	}
 
@@ -1149,7 +1153,12 @@ class ro8s extends CI_Model {
 			$update = $xml -> pa_update;
 			$genero = utf8_decode($xml -> pa_genero);
 			$nasc = utf8_decode($xml -> pa_nasc);
-			$lattes = utf8_decode($xml -> pa_nome_lattes);
+			$lattes = utf8_decode($xml -> pa_lattes);
+			$lattes_nome = utf8_decode($xml -> pa_nome_lattes);
+			if (strlen($lattes_nome) == 0)
+				{
+					$lattes_nome = utf8_decode($xml -> pa_nome);		
+				}
 			$nasc = substr($nasc, 0, 4) . '-' . substr($nasc, 4, 2) . '-' . substr($nasc, 6, 2);
 			$data = date("Y-m-d");
 
@@ -1159,6 +1168,8 @@ class ro8s extends CI_Model {
 			$sx .= '<tr class="lt0">';
 			$sx .= '<td>' . $to . '.</td>';
 			$sx .= '<td>' . $nome . '</td>';
+			$sx .= '<td>' . $lattes . '</td>';
+			$sx .= '<td>' . $lattes_nome . '</td>';
 			$sx .= '<td>' . $cracha . '</td>';
 
 			$sql = "select * from us_usuario where us_cracha = '$cracha' ";
@@ -1172,7 +1183,7 @@ class ro8s extends CI_Model {
 				$sql = "insert into us_usuario 
 									(
 										us_nome, us_cpf, us_cracha,
-										us_emplid, us_link_lattes, us_ativo,
+										us_emplid, us_link_lattes, us_nome_lattes, us_ativo,
 										us_teste, us_origem, us_professor_tipo, 
 
 										us_usuario_cursando, us_regime, us_genero,
@@ -1180,8 +1191,8 @@ class ro8s extends CI_Model {
 										us_dt_nascimento, us_prof_drh, us_avaliador
 									) values (
 										'$nome','$cpf','$cracha',
-										'','$lattes',1,
-										'0','2', '1',
+										'','$lattes','$lattes_nome',1,
+										'0','3', '1',
 										
 										'1', '0', '$genero',
 										'3', 1, 1,
@@ -1194,8 +1205,9 @@ class ro8s extends CI_Model {
 				/* Atualiza registro */
 				$sx .= '<td>atualizado registro</td>';
 				$sql = "update us_usuario set
-											us_nome = '$nome', 
-											us_link_lattes = '$lattes',
+											us_nome = '$nome',
+											us_link_lattes = '$lattes', 
+											us_nome_lattes = '$lattes_nome',
 											us_genero = '$genero'
 										where us_cracha = '$cracha'
 								";

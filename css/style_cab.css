@@ -159,6 +159,17 @@
 	padding: 4px;
 	display: inline;
 }
+/* Fieldsets */
+fieldset
+	{
+		border: 1px solid #eee;
+	}
+
+.fieldset01
+	{
+		border: 1px solid #eee;
+	}
+
 /* MENU PRINCIPAL */
 .icone-iniciacao-cientifica-cor {
 	color: #b82955;

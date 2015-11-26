@@ -86,7 +86,12 @@ function validaemail($email) {
 		return false;
 	}
 }
-
+function brtosql($dt)
+	{
+		$dt = brtos($dt);
+		$dt = substr($dt,0,4).'-'.substr($dt,4,2).'-'.substr($dt,6,2);
+		return($dt);
+	}
 function meses($id=0)
 	{
 		$mes = array('','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro');

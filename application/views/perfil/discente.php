@@ -14,7 +14,14 @@ $us_nada = '<font color="grey">[em construção]</font>';
 				<li><?php echo $usm_email; ?> <BR>
 				<?php echo $us_contatos;?> </li>
 				<li></li>
-				<li><a href="<?php echo $us_lattes;?>" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0></a></li>
+				<li>
+				<?php
+				if (strlen($us_link_lattes) > 0)
+					{
+						echo '<a href="'.$us_link_lattes.'" target="new"><img src="'.base_url('img/icon/icone_lattes.png').'" height="26" border=0></a>';
+					}
+				?>					
+				</li>
 				<li><?php echo $us_cc;?></li>
 			</div>
 			<TD width="300">

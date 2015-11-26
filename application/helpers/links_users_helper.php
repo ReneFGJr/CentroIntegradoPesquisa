@@ -55,14 +55,14 @@ function usuario_tipo($tp)
 	
 function link_ic($id=0,$page='ic')
 	{
-		$href = '<a href="'.base_url('index.php/'.$page.'/view/'.$id.'/'.checkpost_link($id)).'" class="link lt4">';
+		$href = '<a href="'.base_url('index.php/'.$page.'/view/'.$id.'/'.checkpost_link($id)).'" class="link">';
 		return($href);
 	}
 	
 function link_perfil($nome='',$id)
 	{
 		$id = round($id);
-		$href = '<a href="'.base_url('index.php/persona/view/'.$id.'/'.checkpost_link($id)).'" target="_new" class="link">';
+		$href = '<a href="'.base_url('index.php/usuario/view/'.$id.'/'.checkpost_link($id)).'" target="_new" class="link">';
 		if ($id == 0)
 			{
 				$href = '<font color="blue">-sem indicação-</A>';

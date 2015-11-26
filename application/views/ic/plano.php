@@ -1,23 +1,17 @@
 <?php
 $us_nada = '<font color="blue">[em construção]</font>';
 ?>
-<fieldset class="fieldset01">
+<fieldset class="fieldset01" >
 	<legend class="legend01">
 		Dados do projeto
 	</legend>
 	<table width="100%" class="tabela01" border=0>
 		<tr class="lt0">
 			<tr valign="top">
-				<td class="lt0" align="left" colspan=3>Título da pesquisa do estudante (Plano do aluno)
+				<td class="lt0" align="left" colspan=4>Título da pesquisa do estudante (Plano do aluno)
 				<BR>
 				<font class="lt3"><B><?php echo $ic_projeto_professor_titulo; ?></B></td>
 		
-			<td class="lt0" align="right" rowspan=3>Protocolo</td>
-				<td width="160" rowspan=3><B><?php echo $ic_plano_aluno_codigo; ?> / <?php echo $ic_projeto_professor_codigo; ?>
-				<br>
-				<img src="<?php echo $logo; ?>" height="50">				
-				
-			</td>
 			<td width="400" rowspan=10 >
 			<div id="plano" style="width: 400px; z-index: 1; display: table; ">
 				<div id="banner" style="background-image: url( '<?php echo base_url("img/ic/banner_".$id_s.'.png'); ?>');
@@ -70,10 +64,17 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				</div>
 			</div>
 
-			<tr class="lt0">
+			<tr class="lt0" valign="top">
 				<td colspan=3>Nome do orientador (professor)
 				<br>
 				<font class="lt1"> <B><?php echo $pf_nome . ' (' . $pf_cracha . ')'; ?></td>
+			<td class="lt0" align="right" rowspan=3 width="150">Protocolo
+				<br><B><font class="lt2"><nobr><?php echo $ic_plano_aluno_codigo; ?> / <?php echo $ic_projeto_professor_codigo; ?></nobr></font>
+				<br>
+				<img src="<?php echo $logo; ?>" height="50">				
+				
+			</td>
+					
 			</tr>
 			<tr class="lt0">
 				<td colspan=3>Nome do estudante
@@ -81,12 +82,12 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<font class="lt1"> <B><?php echo $al_nome . ' (' . $al_cracha . ')'; ?></td>
 			</tr>
 			<tr class="lt0">
-				<td colspan=5>Curso professor / aluno<font class="lt1">
+				<td colspan=2>Curso professor / aluno<font class="lt1">
 				<BR>
 				<B><?php echo $pf_curso; ?> / <?php echo $al_curso; ?></td>
 			</tr>
 			<tr class="lt0">
-				<td colspan=5><?php echo msg('Vigencia'); ?>
+				<td colspan=2><?php echo msg('Vigencia'); ?>
 				<br><font class="lt1">
 				<B><?php echo stodbr($aic_dt_entrada); ?> - <?php echo stodbr($aic_dt_saida); ?> <?php echo $ic_ativar; ?></td>
 			</tr>			

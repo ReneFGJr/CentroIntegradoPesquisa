@@ -3,7 +3,99 @@ class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
 
-	function report_guia_estudante($ano1 = 0, $ano2 = 0, $mod = '') {
+	function resumo_implemendados($ano) {
+		$sql = "select * from 
+					(
+					select count(*) as total, mb_id from ic_aluno 
+						inner join ic on ic_id = id_ic
+					where ic_ano = '$ano' 
+						and (icas_id = 1 or icas_id = 4)
+					group by mb_id) as tabela
+					inner join ic_modalidade_bolsa on mb_id = id_mb 
+					order by mb_tipo, mb_descricao";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$xfom = '';
+		$xedi = '';
+		$sx = '<h2>Resumo de implementações ' . ($ano) . '-' . ($ano + 1) . '</h2>';
+		$sx .= '<table width="600" class="tabela01 border1 lt1">';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$link = '<a href="' . base_url('index.php/ic/report_resumo/' . $ano . '/' . $line['mb_id']) . '" class="link">';
+			$fom = $line['mb_fomento'];
+			$sx .= '<tr>';
+
+			$sx .= '<td>';
+			$sx .= $line['mb_tipo'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['mb_fomento'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $link;
+			$sx .= $line['mb_descricao'];
+			$sx .= '</a>';
+			$sx .= '</td>';
+
+			$sx .= '<td align="right">';
+			$sx .= $line['total'];
+			$sx .= '</td>';
+		}
+		$sx .= '</table>';
+
+		$sx = '<div class="nopr">' . $sx . '</div>';
+
+		return ($sx);
+
+	}
+
+	function encerrar_planos_ano_anterior() {
+		$sx = '';
+		if (date("m") > 7) {
+			$ano = (date("Y") - 1);
+			$sql = "select * from ic 
+							where s_id = 1
+							and ic_ano <= $ano
+					limit 300 ";
+
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				$ida = $line['id_ic'];
+				$proto = $line['ic_plano_aluno_codigo'];
+
+				if (substr($proto, 0, 1) == 'S') {
+					/* CANCELAR */
+					$sql = "delete from ic_aluno where ic_id = $ida ";
+					$rrr = $this -> db -> query($sql);
+					$sql = "delete from ic where id_ic = $ida ";
+					$rrr = $this -> db -> query($sql);
+					$sx .= '<br>' . $proto . ' excluido';
+				} else {
+					$sql = "update ic_aluno set
+									icas_id = 4,
+									icas_id_char = 'F'
+									where ic_id = $ida; " . cr();
+					$rrr = $this -> db -> query($sql);
+
+					$sql = "update ic set
+										s_id_char = 'F',
+										s_id = 4
+									where id_ic = $ida ";
+					$rrr = $this -> db -> query($sql);
+					$sx .= '<br>' . $proto . ' finalizado';
+				}
+
+			}
+		}
+		return ($sx);
+	}
+
+	function report_guia_estudante_xls($ano1 = 0, $ano2 = 0, $mod = '') {
 		$sx = '';
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
 		if (strlen($mod) > 0) {
@@ -11,10 +103,10 @@ class ics extends CI_model {
 		}
 		$sql = $this -> table_view($wh, 0, 9999999, 'al_nome');
 		//$sql .= " order by al_nome ";
-		
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		$sx = '<table width="100%" class="lt1">';
 		$sx .= '<tr><th>protocolo<th>ano<th>nome_aluno<th>cracha_aluno<th>curso_aluno<th>nome_prof<th>cracha_prof<th>curso_prof<th>status<th>bolsa<th>modalidade<th>fomento<th>titulo</tr>';
 		$to = 0;
@@ -81,7 +173,104 @@ class ics extends CI_model {
 		$sx .= '<tr><td colspan=10>Total ' . $to . ' registros</td></tr>';
 		$sx .= '</table>';
 
-		//print_r($line);
+		return ($sx);
+	}
+
+	function report_guia_estudante($ano1 = 0, $ano2 = 0, $mod = '') {
+		$sx = '';
+		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
+		if (strlen($mod) > 0) {
+			$wh .= ' and id_mb = ' . $mod;
+		}
+		$sql = $this -> table_view($wh, 0, 9999999, 'al_nome');
+		//$sql .= " order by al_nome ";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '';
+		$sh = '<tr><th>protocolo</th>
+					<th>ano</th>
+					<th>nome_aluno</th>
+					<th>curso_aluno</th>
+					<th>nome_prof</th>
+					<th>curso_prof</th>
+					<th>status</th>
+					</tr>';
+		$to = 0;
+		$xmb = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+
+			$line = $rlt[$r];
+			$st = $line['icas_id'];
+			$sf = '';
+			$sff = '';
+			if ($st == '2') {
+				$sf = '<font color="red"><s>';
+				$sff = '</s></font>';
+			} else {
+				$to++;
+			}
+
+			/**/
+			$link_ic = link_ic($line['id_ic'], 'ic');
+
+			$mb = $line['mb_descricao'];
+
+			$sx .= '<tr>';
+
+			$sx .= '<td align="center">';
+			$sx .= $link_ic . $line['ic_plano_aluno_codigo'] . '</a>';
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $sf . $line['ic_ano'] . $sff;
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$link = $sf . link_perfil($line['al_nome'], $line['aluno_id']);
+			$sx .= $link . $sff;
+
+			$sx .= '<td>';
+			$sx .= $sf . $line['al_curso'] . $sff;
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$link = $sf . link_perfil($line['pf_nome'], $line['prof_id']);
+			$sx .= $link . $sff . '</a>';
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $sf . $line['pf_curso'] . $sff;
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $sf . $line['s_situacao'] . $sff;
+			$sx .= '</td>';
+
+			$sx .= '</tr>';
+
+		}
+		$sx .= '<tr><td colspan=10>Total ' . $to . ' registros</td></tr>';
+		$sx .= '</table>';
+		$sxc = $sx;
+		/****/
+		$sx = '<table width="100%" class="lt1">';
+		$sx .= '<tr  >';
+		$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
+		$sx .= $line['mb_descricao'];
+		$sx .= ' - ';
+		$sx .= $line['mb_fomento'];
+		$sx .= ' - ';
+		$sx .= $line['mb_tipo'];
+		$sx .= ' - ';
+		$sx .= $ano1.'-'.($ano2);
+		$sx .= ' - ';		
+		$sx .= 'Total: ' . $to;
+		$sx .= '</td>';
+		$sx .= '</tr>';
+		$sx .= $sh;
+		$sx .= $sxc;
 
 		return ($sx);
 	}
@@ -289,7 +478,74 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
+			$line['page'] = 'ic';
+			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function search_term($terms = '', $type = 1) {
+		$cps = array('us_nome');
+
+		$terms = troca($terms, ' ', ';');
+		$term = splitx(';', $terms);
+
+		$wh = '';
+		$wh1 = '';
+		$wh3 = '';
+		$wh4 = '';
+
+		if (strlen(sonumero($terms)) == 0) {
+			$type = '2';
+		}
+		if ($type == 2) {
+			for ($r = 0; $r < count($term); $r++) {
+				if ($r > 0) {
+					$wh1 .= ' and ';
+					$wh3 .= ' and ';
+					//$wh4 .= ' and ';
+				}
+				$wh1 .= " (us_nome like '%" . $term[$r] . "%') ";
+				$wh3 .= " (ic_projeto_professor_titulo like '%" . $term[$r] . "%') ";
+				//$wh4 .= " (ic_projeto_professor_titulo like '%" . $term[$r] . "%') ";
+			}
+			/********** Busca por nome */
+			$sql = "select us_cracha as cracha from us_usuario where " . $wh1;
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$wh = '';
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				if (strlen($wh) > 0) { $wh .= ' or ';
+				}
+				$wh .= " (ic_cracha_prof = '" . $line['cracha'] . "') or ";
+				$wh .= " (ic_cracha_aluno = '" . $line['cracha'] . "') ";
+			}
+
+			/********** Busca por projeto */
+			$sql = "select ic_plano_aluno_codigo as proto 
+								from ic where " . $wh3;
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				if (strlen($wh) > 0) { $wh .= ' or ';
+				}
+				$wh .= " (ic_plano_aluno_codigo = '" . $line['proto'] . "') ";
+			}
+		}
+
+		$sql = $this -> table_view($wh, 0, 50);
+		$rlt = db_query($sql);
+
+		$sx = '<table width="100%" class="tabela01" border=0>';
+		while ($line = db_read($rlt)) {
+			$edital = trim($line['mb_tipo']);
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -757,14 +1013,13 @@ class ics extends CI_model {
 		return ($tabela);
 	}
 
-	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby='') {
+	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
 			$wh = 'where (' . $wh . ') ';
 		}
-		if (strlen($orderby) > 0)
-			{
-				$orderby .= ', ';
-			}
+		if (strlen($orderby) > 0) {
+			$orderby .= ', ';
+		}
 		$tabela = "	select * from ic
             			left join ic_aluno as pa on ic_id = id_ic
 						left join (select us_cpf as al_cpf, us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, us_cracha as al_cracha,us_curso_vinculo as al_curso from us_usuario) AS us_est on pa.ic_aluno_cracha = us_est.id_al

@@ -2,6 +2,45 @@
 class usuarios extends CI_model {
 	var $tabela = 'us_usuario';
 	
+	function cracha_duplicados()
+		{
+			$sql = "select * from (
+					select us_cracha, count(*) as total, max(id_us) as max from us_usuario 
+						where us_cracha <> ''
+						group by us_cracha
+					) as tabela where total > 1
+					";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '';
+			
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$total = $line['total'];
+					$cracha = $line['us_cracha'];
+					$sx .= '<br>CRACHA: '.$cracha.' '.$total;
+				}
+				
+			$sql = "select * from (
+					select us_cpf, count(*) as total, max(id_us) as max from us_usuario 
+						where us_cpf <> '' and us_ativo = 1
+						group by us_cpf
+					) as tabela where total > 1
+					";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$total = $line['total'];
+					$cracha = $line['us_cpf'];
+					$sx .= '<br>CPF: '.$cracha.' '.$total;
+				}
+			return($sx);				
+		}
+	
 	function mostra_ic($cpf)
 		{
 			$wh = " al_cpf = '$cpf' ";
@@ -373,7 +412,7 @@ class usuarios extends CI_model {
 		$rlt = $rlt -> result_array();
 		$line = $rlt[0];
 		$line['us_ss'] = '';
-		$line['us_lattes'] = '';
+		//$line['us_lattes'] = '';
 		$line['avaliador'] = $line['as_situacao'];
 		$line['us_contatos'] = $this -> recupera_fone($id);
 		$line['us_cc'] = $this -> mostra_conta($id);

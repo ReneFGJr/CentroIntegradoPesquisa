@@ -58,7 +58,6 @@ class dgps extends CI_model {
 
 		/* Dados */
 		$nome = $dt['grupo']['nome_grupo'];
-		$sql = "update " . $this -> tabela . " ";
 
 		/* Grava registro */
 		$this -> salva_dados_do_grupo($link, $nome);
@@ -69,7 +68,7 @@ class dgps extends CI_model {
 		$this -> salva_dados_do_instituicao($link, $dt);
 
 		/* Dados de endereço */
-		$this -> salva_dados_endereco($link, $dt);
+		$this -> salva_dados_endereco($id, $dt);
 
 		/* Dads dos lideres */
 		$this -> salva_lideres($link, $dt);
@@ -80,6 +79,7 @@ class dgps extends CI_model {
 		/* Dads dos lideres */
 		$this -> salva_membros($link, $dt);
 
+		/* Atualiza area de atualização */
 	}
 
 	function salva_membros($link, $dt) {
@@ -302,7 +302,7 @@ class dgps extends CI_model {
 		}
 	}
 
-	function salva_dados_endereco($link, $dt) {
+	function salva_dados_endereco($id, $dt) {
 
 		$logradouro = $dt['endereco']['logradouro'];
 		$numero = $dt['endereco']['numero'];
@@ -322,6 +322,7 @@ class dgps extends CI_model {
 
 		$situacao = $dt['instituicao']['situacao_grupo'];
 		$espelho = $dt['espelho']['espelho'];
+		$atualizacao = $dt['atualizacao'];
 		$situacao = $this -> busca_situacao($situacao);
 
 		$sql = "update gp_grupo_pesquisa set
@@ -341,8 +342,9 @@ class dgps extends CI_model {
 						gp_contato = '$contato_email',
 						gp_website = '$website',
 						gp_repercussao = '$repercussao',
-						gps_id = '$situacao'
-					where gp_egp_espelho = '" . $link . "' ";
+						gps_id = '$situacao',
+						gp_dt_ultimo_envio = '$atualizacao'
+					where id_gp = '" . $id . "' ";
 		$rlt = $this -> db -> query($sql);
 		return (1);
 	}

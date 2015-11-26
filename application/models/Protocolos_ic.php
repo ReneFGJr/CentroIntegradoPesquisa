@@ -1,5 +1,8 @@
 <?php
 class protocolos_ic extends CI_Model {
+	
+	var $tabela = 'ic_protocolos';
+	
 	function verifica_se_existe_aberto($tipo, $proto) {
 		$sql = "select * from ic_protocolos where
 					pr_tipo = '$tipo' and
@@ -13,9 +16,70 @@ class protocolos_ic extends CI_Model {
 			return (0);
 		}
 	}
+	
+	function row($obj) {
+		$obj -> fd = array('id_pr', 'pr_protocolo_original', 'us_nome', 'pts_descricao', 'pr_data', 'pr_hora', 'pr_ano','ict_descricao','pr_tipo');
+		$obj -> lb = array('ID', 'Protocolo','Nome', 'Situação', 'Data','Hora', 'Login','Serviço','Tipo');
+		$obj -> mk = array('', 'C', 'L','C','C');
+		return ($obj);
+	}
+
+	function resumo() {
+		$v = array('-', '-', '-');
+		$sql = "select count(*) as total, pr_status from ic_protocolos group by pr_status ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sta = trim($line['pr_status']);
+			if ($sta == 'A') { $v[0] = $line['total'];
+			}
+			if ($sta == 'F') { $v[1] = $line['total'];
+			}
+			if ($sta == 'C') { $v[2] = $line['total'];
+			}
+		}
+
+		$sx = '<div class="border1 radius10">';
+		$sx .= '<table width="100%">';
+		$sx .= '<tr><td class="lt3" colspan=3><b>Serviços protocolados</b></td></tr>';
+		$sx .= '<tr class="lt0" align="center">';
+		$sx .= '<td width="33%">Aberto(s)</td>';
+		$sx .= '<td width="33%">Fechados(s)</td>';
+		$sx .= '<td width="33%">Cancelados(s)</td>';
+		$sx .= '</tr>';
+
+		$link0 = '';
+		$link1 = '';
+		$link2 = '';
+		if ($v[0] > 0) { 
+		$link0 = '<a href="' . base_url('index.php/ic/protocolo/A/' . checkpost_link('A')) . '" class="link lt6" stlye="color: red;">';
+		}
+		if ($v[1] > 0) {
+		$link1 = '<a href="' . base_url('index.php/ic/protocolo/F/' . checkpost_link('F')) . '" class="link lt6">';
+		}
+		if ($v[2] > 0) {
+		$link2 = '<a href="' . base_url('index.php/ic/protocolo/C/' . checkpost_link('C')) . '" class="link lt6">';
+		}
+
+		$sx .= '<tr class="lt6" align="center">';
+		$sx .= '<td width="33%">' . $link0 . '<b>' . $v[0] . '</b></a></td>';
+		$sx .= '<td width="33%">' . $link1 . '<b>' . $v[1] . '</b></a></td>';
+		$sx .= '<td width="33%">' . $link2 . '<b>' . $v[2] . '</b></a></td>';
+		$sx .= '</tr>';
+
+		$sx .= '</table>';
+		$sx .= '</div><br>';
+		return ($sx);
+	}
 
 	function orientacoes_protocolo($tp, $bt) {
 		$cracha = $_SESSION['cracha'];
+
+		if (strlen($bt) > 0) {
+			$wh = ' and (s_id = 1) ';
+		}
 		$sql = "select * from ic 
 						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha' ";
 		$sql = "select * from ic
@@ -25,6 +89,7 @@ class protocolos_ic extends CI_Model {
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id
 						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha'
+						$wh
 						order by ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
 						";
 

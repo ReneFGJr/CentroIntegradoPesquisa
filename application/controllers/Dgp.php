@@ -106,6 +106,7 @@ class dgp extends CI_Controller {
 
 		$link = trim($data['gp_egp_espelho']);
 		$text = $this -> phplattess -> dgp_import($link);
+
 		$this -> dgps -> grava_dados_importados($text, $id, $link);
 		redirect(base_url('index.php/dgp/admin'));
 	}
