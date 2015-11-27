@@ -18,8 +18,8 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<BR>
 			<li></li>
 			<?php
-			if (strlen($us_lattes) > 0) {
-				echo '<li><a href="' . $us_lattes . '" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0></li>';
+			if (strlen($us_link_lattes) > 0) {
+				echo '<li><a href="' . $us_link_lattes . '" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0></li>';
 			}
 			?>
 		</div><TD width="300">
