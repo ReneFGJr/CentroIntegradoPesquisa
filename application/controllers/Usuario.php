@@ -35,12 +35,12 @@ class usuario extends CI_Controller {
 			$line = $rlt[$r];
 			$cracha = $line['us_cracha'];
 			$idu = $line['id_us'];
-			
+
 			/* Atualiza data */
-			$sql = "update us_usuario set us_dt_update_cs = '".date("Y-m-d")."'
+			$sql = "update us_usuario set us_dt_update_cs = '" . date("Y-m-d") . "'
 				where id_us = $idu ";
-			$this->db->query($sql);
-						
+			$this -> db -> query($sql);
+
 			$rs = $this -> ws_sga -> findStudentByCracha($cracha);
 
 			if (isset($rs['pessoa'])) {
@@ -49,10 +49,9 @@ class usuario extends CI_Controller {
 				$this -> load -> view('perfil/user', $data);
 			}
 		}
-		if ($r > 0)
-			{
-				echo '<meta http-equiv="refresh" content="3">';
-			}
+		if ($r > 0) {
+			echo '<meta http-equiv="refresh" content="3">';
+		}
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot');
 	}
@@ -73,7 +72,7 @@ class usuario extends CI_Controller {
 			$cracha = $rs['pessoa'];
 			$data = $this -> usuarios -> le_cracha($cracha);
 			$this -> load -> view('usuario/view', $data);
-			
+
 			$this -> load -> view('usuario/form_cracha');
 
 		}
@@ -85,12 +84,11 @@ class usuario extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		
-			$link = '<A href="'.base_url('index.php/usuario/consulta_usuario/').'">Consulta SGA</a>';
-			$data2['title'] = '';
-			$data2['content'] = $link;
-			$this -> load -> view('content', $data2);
-		
+
+		$link = '<A href="' . base_url('index.php/usuario/consulta_usuario/') . '">Consulta SGA</a>';
+		$data2['title'] = '';
+		$data2['content'] = $link;
+		$this -> load -> view('content', $data2);
 
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
@@ -239,6 +237,8 @@ class usuario extends CI_Controller {
 	function view($id = 0) {
 		$this -> load -> model('usuarios');
 		$this -> load -> model('ics');
+		$this -> load -> model('producoes');
+		$this -> load -> model('programas_pos');
 
 		$this -> cab();
 		$data = array();
@@ -252,9 +252,26 @@ class usuario extends CI_Controller {
 				$data['logo'] = base_url('img/logo/logo_docentes.jpg');
 				$this -> load -> view('header/logo', $data);
 				$this -> load -> view('perfil/docente', $data);
-				$cpf = strzero(sonumero($data['us_cpf']),11);				
-				$data['content'] = $this->usuarios->mostra_carga_horaria($cpf);
-				$this-> load->view('content',$data);
+				$cpf = strzero(sonumero($data['us_cpf']), 11);
+				$data['content'] = $this -> usuarios -> mostra_carga_horaria($cpf);
+				$this -> load -> view('content', $data);
+
+				/* Area de avaliacao */
+				$area = 41;
+
+				/* SS */
+				$pos = $this -> programas_pos -> professor_ss_area($id);
+
+				for ($r = 0; $r < count($pos); $r++) {
+					$area = $pos[$r]['pp_area'];
+					/* Producao */
+					$data['content'] = $this -> producoes -> producao_perfil_grafico($cpf, $area);
+					$this -> load -> view('content', $data);
+				}
+
+				$data['content'] = $this -> producoes -> producao_perfil($cpf, $area);
+				$this -> load -> view('content', $data);
+
 				break;
 			/* Colaborador */
 			case '4' :
@@ -267,13 +284,13 @@ class usuario extends CI_Controller {
 				$data['logo'] = base_url('img/logo/logo_discente.jpg');
 				$this -> load -> view('header/logo', $data);
 				$this -> load -> view('perfil/discente', $data);
-				
-				$cpf = strzero(sonumero($data['us_cpf']),11);
-				$data['content'] = $this->usuarios->mostra_formacao($cpf);
-				$this-> load->view('content',$data);				
 
-				$data['content'] = $this->usuarios->mostra_ic($cpf);
-				$this-> load->view('content',$data);				
+				$cpf = strzero(sonumero($data['us_cpf']), 11);
+				$data['content'] = $this -> usuarios -> mostra_formacao($cpf);
+				$this -> load -> view('content', $data);
+
+				$data['content'] = $this -> usuarios -> mostra_ic($cpf);
+				$this -> load -> view('content', $data);
 
 				break;
 			default :
@@ -325,15 +342,14 @@ class usuario extends CI_Controller {
 
 		$data['title'] = 'Formulário';
 		$this -> load -> view('form/form', $data);
-		
+
 		$cracha = trim($data['us_cracha']);
-		if (strlen($cracha) > 0)
-			{
-			$link = '<A href="'.base_url('index.php/usuario/consulta_usuario/'.$cracha).'">Consulta SGA</a>';
+		if (strlen($cracha) > 0) {
+			$link = '<A href="' . base_url('index.php/usuario/consulta_usuario/' . $cracha) . '">Consulta SGA</a>';
 			$data2['title'] = '';
 			$data2['content'] = $link;
 			$this -> load -> view('content', $data2);
-			}
+		}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

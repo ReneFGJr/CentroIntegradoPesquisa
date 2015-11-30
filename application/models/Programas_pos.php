@@ -19,6 +19,18 @@ class programas_pos extends CI_model {
 			array_push($cp,array('$[1-7]','pp_conceito',msg('pos_conceito'),False,True));
 			return($cp);
 		}
+		
+	function professor_ss_area($prof=0)
+		{
+			$sql = "SELECT distinct pp_area FROM ss_professor_programa_linha 
+						inner join ss_programa_pos on programa_pos_id_pp = id_pp 
+						
+					WHERE us_usuario_id_us = $prof 
+							and sspp_ativo = 1";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();	
+			return($rlt);
+		}		
 
 	function edit() {
 
