@@ -179,7 +179,7 @@ class usuarios extends CI_model {
 			$ag = $line['usc_agencia'];
 			$cc = $line['usc_conta_corrente'];
 			$banco = $line['usc_banco'];
-			$mod = $line['usc_mod'];
+			$mod = $line['usc_modo'];
 			$situacao = $this -> bancos -> checadv($ag, $cc, $banco, $mod);
 
 			$sx .= '<tr>';
@@ -189,7 +189,7 @@ class usuarios extends CI_model {
 			$sx .= '</tr><tr>';
 			$sx .= '<td align="right">Agência:</td><td><b>' . $line['usc_agencia'] . '</b></td>';
 			$sx .= '</tr><tr>';
-			$sx .= '<td align="right">CC:</td><td><b>' . trim($line['usc_mod'] . ' ' . $line['usc_conta_corrente']) . '</b></td>';
+			$sx .= '<td align="right">CC:</td><td><b>' . trim($line['usc_modo'] . ' ' . $line['usc_conta_corrente']) . '</b></td>';
 			$sx .= '<td align="right">Situação:</td><td><b>' . $situacao . '</b></td>';
 			//$sx .= '</tr><tr>';
 			//$sx .= '<td>'.$line['usc_tipo'].'</td>';
