@@ -38,11 +38,73 @@ class dgp extends CI_Controller {
 		$data['css'] = $css;
 		$data['js'] = $js;
 
+		/* Menu */
+		$menus = array();
+		array_push($menus, array('Relatório', 'index.php/dgp/report'));
+
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Grupos de Pesquisa';
+		$data['title_page'] = msg('page_discente');
 		$data['menu'] = 1;
+		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
+	}
+
+	function reports($id = 0, $gr = '') {
+		$this -> load -> model('dgps');
+		
+		$this -> cab();
+		$data = array();
+		
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);
+		
+		switch ($id)
+			{
+			case 'ge':
+				$tela = $this->dgps->grupos_escolas();
+				
+				if (strlen($gr) > 0)
+					{
+						$tela = $this->dgps->grupos_escolas_detalhes($gr);		
+					}
+				break;
+			default:
+				$tela = '';
+				break;
+		}
+		
+		$data['content'] = $tela;
+		$this->load->view('content',$data);		
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+	
+	function report($id = 0, $gr = '') {
+		$this -> cab();
+		$data = array();
+		
+		$data['logo'] = base_url('img/logo/logo_dgp.png');
+		$this -> load -> view('header/content_open', $data);
+		$this -> load -> view('header/logo', $data);		
+
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Indicadores', 'Grupos por escolas (lider)', 'ITE', '/dgp/reports/ge'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Relatórios';
+		$this -> load -> view('header/main_menu', $data);
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
 	}
 
 	function index() {

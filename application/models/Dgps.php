@@ -10,6 +10,65 @@ class dgps extends CI_model {
 		$obj -> mk = array('', 'L', 'C', 'C');
 		return ($obj);
 	}
+	function grupos_escolas_detalhes($escola='')
+		{
+			$sql = "select distinct gp_id 
+						from gpus_cnpq left join us_usuario on gpus_cnpq_nome = us_nome 
+						left join gp_usuario on gp_usuario.us_id = id_gpus_cnpq 
+						where us_campus_vinculo = '$escola' and us_ativo = 1 
+			";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$to = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					print_r($line);
+					echo '<hr>';
+				}			
+		}
+	function grupos_escolas()
+		{
+			$sql = "select count(*) as total, us_campus_vinculo from ( 
+						select distinct us_campus_vinculo, gp_id 
+						from gpus_cnpq left join us_usuario on gpus_cnpq_nome = us_nome 
+						left join gp_usuario on gp_usuario.us_id = id_gpus_cnpq 
+						where usgp_lider = 2 and us_ativo = 1 
+						) as tabela group by us_campus_vinculo
+						order by total desc";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<table width="400" class="lt3 border1">';
+			$sx .= '<tr><th>Campus</th><th>Total</th>';
+			$to = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					
+					$to = $to + $line['total'];
+					$nome = trim($line['us_campus_vinculo']);
+					if (strlen($nome)==0)
+						{
+							$nome = 'não indentificado';
+						}
+
+					$link = base_url('index.php/dgp/reports/ge/'.$nome);
+					$link = '<a href="'.$link.'" class="link lt3">';
+					
+					$sx .= '<tr>';
+					$sx .= '<td class="border1">';
+					$sx .= $link.$nome.'</a>';
+					$sx .= '';
+					$sx .= '<td align="center" class="border1">';
+					$sx .= $link.$line['total'].'</a>';
+					$sx .= '</td>';					
+					$sx .= '</tr>';
+				}
+			$sx .= '<tr><td align="right"><b>Total</b></td><td align="center"><b>'.$to.'</b></td></tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
 	function next_harvesting()
 		{
 			$sql = "select * from gp_grupo_pesquisa order by gp_dt_coleta limit 1";

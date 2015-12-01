@@ -1,5 +1,9 @@
 <?php
 $link = '<a href="' . base_url('index.php/dgp/inport/' . $id_gp . '/' . checkpost_link($id_gp)) . '">coletar</A>';
+if (!isset($ged_arquivos))
+	{
+		$ged_arquivos = '';
+	}
 ?>
 <font class="lt0">nome do grupo</font>
 <br>
