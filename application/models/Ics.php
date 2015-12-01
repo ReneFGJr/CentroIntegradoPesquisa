@@ -2,25 +2,24 @@
 class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
-	
-		function inserir_historico($proto,$ac,$hist,$aluno1,$aluno2,$motivo,$obs='')
-			{
-				$data = date("Ymd");
-				$hora = date("H:i");
-				$log = $_SESSION['cracha'];
-				
-				$sql = "select * from ic_historico
+	var $tabela_2 = "ic_modalidade_bolsa";
+
+	function inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '') {
+		$data = date("Ymd");
+		$hora = date("H:i");
+		$log = $_SESSION['cracha'];
+
+		$sql = "select * from ic_historico
 						where bh_protocolo = '$proto'
 						and bh_data = $data
 						and bh_acao = $ac
 					";
-				$rlt = db_query($sql);
-				
-				if ($line = db_read($rlt))
-					{
-								
-					} else {
-						$sql = "insert into ic_historico 
+		$rlt = db_query($sql);
+
+		if ($line = db_read($rlt)) {
+
+		} else {
+			$sql = "insert into ic_historico 
 							(bh_protocolo, bh_data, bh_hora,
 							bh_log, bh_acao, bh_historico,
 							bh_aluno_1, bh_aluno_2, bh_motivo,
@@ -31,10 +30,10 @@ class ics extends CI_model {
 							'$aluno2','$aluno1','$motivo',
 							'$obs')
 					";
-					$rlt = $this->db->query($sql);
-					}
-				return('');
-			}	
+			$rlt = $this -> db -> query($sql);
+		}
+		return ('');
+	}
 
 	function resumo_implemendados($ano) {
 		$sql = "select * from 
@@ -297,8 +296,8 @@ class ics extends CI_model {
 		$sx .= ' - ';
 		$sx .= $line['mb_tipo'];
 		$sx .= ' - ';
-		$sx .= $ano1.'-'.($ano2);
-		$sx .= ' - ';		
+		$sx .= $ano1 . '-' . ($ano2);
+		$sx .= ' - ';
 		$sx .= 'Total: ' . $to;
 		$sx .= '</td>';
 		$sx .= '</tr>';
@@ -351,7 +350,7 @@ class ics extends CI_model {
 			$this -> db -> query($sql);
 			$this -> db -> query($sqlf);
 		}
-		return(1);
+		return (1);
 	}
 
 	function substituicao_aluno($cracha, $protocolo, $cracha_novo, $data) {
@@ -508,8 +507,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -574,8 +572,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -587,6 +584,13 @@ class ics extends CI_model {
 		$obj -> fd = array('id_ic', 'ic_plano_aluno_codigo', 'ic_projeto_professor_codigo', 'ic_cracha_prof', 'ic_cracha_aluno', 'ic_ano', 'ic_projeto_professor_titulo', 's_id');
 		$obj -> lb = array('ID', msg('protocol'), msg('protocol'), msg('prof'), msg('estudante'), msg('ano'), msg('title'), msg('status'));
 		$obj -> mk = array('', 'L', 'L', 'L', 'C');
+		return ($obj);
+	}
+
+	function row_ic_modal_bolsas($obj) {
+		$obj -> fd = array('id_mb', 'mb_descricao', 'mb_tipo', 'mb_ativo', 'mb_moeda', 'mb_valor', 'mb_fomento');
+		$obj -> lb = array('ID', msg('lb_mb_descricao'), msg('lb_mb_tipo'), msg('lb_mb_ativo'), msg('lb_mb_moeda'), msg('lb_mb_valor'), msg('lb_mb_fomento'));
+		$obj -> mk = array('', 'L', 'L', 'C', 'C','R','L','C');
 		return ($obj);
 	}
 
@@ -1042,6 +1046,12 @@ class ics extends CI_model {
 		$tabela = "ic";
 		return ($tabela);
 	}
+	
+	function table_row_modal_bolsa() {
+		$tabela = "ic_modalidade_bolsa";
+		return ($tabela);
+	}
+
 
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
@@ -1152,8 +1162,23 @@ class ics extends CI_model {
 		array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
 	}
+	
+	function cp_modal_bolsa() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_mb', '', False, True));
+		array_push($cp, array('${', '', 'Gestão de Bolsas', False, True));
+		array_push($cp, array('$S25', 'mb_descricao', msg('lb_mb_descricao'), False, True));
+		array_push($cp, array('$S8', 'mb_tipo', msg('lb_mb_tipo'), True, True));
+		array_push($cp, array('$O 1:sim&0:não', 'mb_ativo', msg('lb_mb_ativo'), True, True));
+		array_push($cp, array('$S4', 'mb_moeda', msg('lb_mb_moeda'), True, True));
+		array_push($cp, array('$S10', 'mb_valor', msg('lb_mb_valor'), True, True));
+		array_push($cp, array('$S8', 'mb_fomento', msg('lb_mb_fomento'), True, True));
+		array_push($cp, array('$}', '', '', False, True));
+		
+		return ($cp);
+	}
 
-	/** Proetos por escolas */
+	/** Projetos por escolas */
 	function mostra_projetos_por_escolas() {
 		$dados = array();
 		$dados['Escola de Arquitetura e Design'] = 51;
@@ -1196,7 +1221,7 @@ class ics extends CI_model {
 		$rlt = $rlt -> result_array($rlt);
 		$line = $rlt[0];
 
-		//return values
+		//return values2
 		$tot = 0;
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {

@@ -280,6 +280,15 @@ $lang['bt_update'] = 'ATUALIZAR';
 $lang['bt_salvar_continuar'] = 'Salvar e continuar >>>';
 $lang['busca'] = 'BUSCA';
 
+/**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
+/* Grupos de Pesquisa */
+$lang['lb_mb_descricao'] = 'Descrição';
+$lang['lb_mb_tipo'] = 'Tipo';
+$lang['lb_mb_ativo'] = 'Bolsa Ativa';
+$lang['lb_mb_moeda'] = 'Moeda'; 	
+$lang['lb_mb_valor'] = 'Valor da bolsa';
+$lang['lb_mb_fomento'] = 'Fomento';
+$lang['lb_mb_titulo'] = 'Gestão das modalidades de Bolsas de IC';
 
 /* Atores do sistema */
 $lang['titulacao'] = 'titulação';

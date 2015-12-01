@@ -126,13 +126,13 @@ class admin extends CI_Controller {
 		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/instituicao'));
 
 		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas', 'ITE', '/admin/ic'));
+		array_push($menu, array('Iniciação Científica', 'Manutenção bolsas/modalidade', 'ITE', '/admin/ic_modal_bolsas'));
+		
 		array_push($menu, array('Iniciação Científica', 'ID/usuarios bas bolsas', 'ITE', '/admin/ic_id'));
 		array_push($menu, array('Iniciação Científica', 'Vinculo Usuários / Bolsas', 'ITE', '/admin/checar_cracha_aluno_ic'));
 		array_push($menu, array('Iniciação Científica', 'Finalizar projetos do ano anterior', 'ITE', '/admin/finalizar_ic'));
-		
 		array_push($menu, array('Iniciação Científica', 'Converter Pasta GED', 'ITE', '/admin/ged_ic'));
 		
-
 		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
 		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
 		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
@@ -297,6 +297,32 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function ic_edit_modal_bolsa($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this -> ics -> cp_modal_bolsa();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = $id;
+		
+
+		$tela = $form -> editar($cp, $this -> ics -> tabela_2);
+		$data['title'] = msg('lb_mb_titulo');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva e redireciona para pagina anterior*/ 
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/admin/ic_modal_bolsas'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function centro_resultado($id = 0) {
 		$this -> load -> model('centro_resultados');
@@ -369,5 +395,40 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function ic_modal_bolsas($id = 0, $pg = '') {
+		$this -> load -> model('ics');
+		$this -> cab();
+		$data = array();
+		
+		//Cria o Formulario
+		$form = new form;
+		//chama uma tabela exclusiva
+		$form -> tabela = $this -> ics -> table_row_modal_bolsa();
+		//Torna a linha da linha clicavel
+		//$form -> see = true;
+		//Mostra o action para editar os valores dos campos
+		$form -> edit = true;
+		//mostra o botão novo
+		$form -> novo = true;
+		//Define a qtd. de linha a mostrar do formulário por vez(default 25 a 30 linhas-form_sisdoc)
+		//$form -> offset = '25';
+		//Monta o formulario com os parametro acima
+		$form = $this -> ics -> row_ic_modal_bolsas($form);
+		//redireciona o edit para a view de edição dos campos
+		$form -> row_edit = base_url('index.php/admin/ic_edit_modal_bolsa/');
+		//Ao clicar na linha é redirecionado para uma view onde se vê os valores dos campos(opcional)
+		$form -> row_view = base_url('index.php/admin/view_modal_bolsa');
+				
+		$form -> row = base_url('index.php/admin/ic_modal_bolsas');
+
+		$tela['tela'] = row($form, $id);
+		$tela['title'] = $this -> lang -> line('ic');
+		
+		$this -> load -> view('form/form', $tela);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
+	
 
 }
