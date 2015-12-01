@@ -214,8 +214,6 @@ class phpLattess extends CI_Model {
 		}
 
 		$data = $this -> inport_data($link);
-		echo $data;
-		exit;
 		$data = $this -> removeSCRIPT($data);
 		$data = $this -> removeCLASS($data);
 		$data = $this -> removeSPACE($data);

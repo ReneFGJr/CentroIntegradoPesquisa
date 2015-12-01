@@ -4,7 +4,7 @@
 <span class="estilo-ano-turma-2014">2014 class</span>
 <div class="depoimento-total">
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-falavinha.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-falavinha.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Bruna Cristina Falavinha</h3>
 		<h4>United States, San Diego - University of California</h4>
 		<span class="botao-curso-depoimento">Biological Sciences</span>
@@ -24,7 +24,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-eloisa.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-eloisa.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Eloisa Fraga Canziani</h3>
 		<h4>United States, Kent - Kent State University</h4>
 		<span  class="botao-curso-depoimento">Biotechnology</span>
@@ -39,7 +39,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-fernanda-polli.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-fernanda-polli.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Fernanda Polli</h3>
 		<h4>Australia, Melbourne - Swinburne University of Technology</h4>
 		<span class="botao-curso-depoimento">Advertising and Marketing</span>
@@ -55,7 +55,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-gabriel-cordeiro.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-gabriel-cordeiro.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Gabriel de Oliveira Cordeiro</h3>
 		<h4>United Kingdom, Glasgow - University of Strathclyde</h4>
 		<span  class="botao-curso-depoimento">Production Engineering</span>
@@ -69,7 +69,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-jose-monteiro.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-jose-monteiro.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>José Monteiro da Gama Tetraneto</h3>
 		<h4>Australia, Sydney - University of Technology Sydney</h4>
 		<span  class="botao-curso-depoimento">Mechanical Engineering</span>
@@ -78,7 +78,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-leticia-caires.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-leticia-caires.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Leticia Borba Caires</h3>
 		<h4>Australia, Sydney - Macquarie University</h4>
 		<span  class="botao-curso-depoimento">Biological Sciences</span>
@@ -87,7 +87,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-marcela.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-marcela.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Marcela Kondo Sato</h3>
 		<h4>Australia, Newcastle - University of Newcastle</h4>
 		<span  class="botao-curso-depoimento">Medicine</span>
@@ -96,7 +96,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-maria.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-maria.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Maria Helena da Rosa Farfan</h3>
 		<h4>United Kingdom, Stirling - University of Stirling</h4>
 		<span  class="botao-curso-depoimento">Biotechnology</span>
@@ -105,7 +105,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-mariane.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-mariane.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Mariane Volce</h3>
 		<h4>Germany, Deggendorf - Technisch Hochschule Deggendorf</h4>
 		<span  class="botao-curso-depoimento">Chemical Engineering</span>
@@ -114,7 +114,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-mauricio-bottas.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-mauricio-bottas.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Maurício Bottas Pellini</h3>
 		<h4>Germany, Ilmenau - Technische Universität Ilmenau</h4>
 		<span  class="botao-curso-depoimento">Mechanical Engineering</span>
@@ -123,7 +123,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-mayara-moser.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-mayara-moser.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Mayara Stephanie Vieira Moser</h3>
 		<h4>Germany, Kempten, Allgäu - Hochschule Kempten University of Applied Sciences</h4>
 		<span  class="botao-curso-depoimento">Mechanical Engineering</span>
@@ -132,7 +132,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-natalia-aubrift.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-natalia-aubrift.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Natalia Aubrift de Lara e Silva</h3>
 		<h4>Germany, Lüneburg - Leuphana Universität</h4>
 		<span  class="botao-curso-depoimento">Environmental Engineering</span>
@@ -141,7 +141,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-pamela-golin.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-pamela-golin.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Pamella Golin Guarinello</h3>
 		<h4>Australia, Sydney - Sydney University</h4>
 		<span  class="botao-curso-depoimento">Civil Engineering</span>
@@ -150,7 +150,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-paulo-rizzardi.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-paulo-rizzardi.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Paulo Victor Arigoni Rizzardi </h3>
 		<h4>Australia, Melbourne - University of Melbourne</h4>
 		<span  class="botao-curso-depoimento">Production Engineering</span>
@@ -159,7 +159,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-pedro.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-pedro.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Pedro Henrique dos Santos Sbais</h3>
 		<h4>Germany, Deggendorf - Technische Hochschule Deggendorf</h4>
 		<span  class="botao-curso-depoimento">Control and Automation Engineering</span>
@@ -168,7 +168,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-rodrigo-brito.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-rodrigo-brito.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Rodrigo de Brito</h3>
 		<h4>Australia, Townsville - James Cook University of North Queensland</h4>
 		<span  class="botao-curso-depoimento">Physical Therapy</span>
@@ -177,7 +177,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-tiago-maass.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-tiago-maass.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Thiago Maass Steiner</h3>
 		<h4>Australia, Melbourne - The University of Melbourne</h4>
 		<span  class="botao-curso-depoimento">Biological Sciences</span>
@@ -186,7 +186,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-vitor-benetti.jpg');?>" class="foto-depoimento borda-img-2014" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-vitor-benetti.jpg');?>" class="foto-depoimento borda-img-2014" />
 		<h3>Vitor Piassa Benetti</h3>
 		<h4>Canada, Kitchener, Ontário - Conestoga College</h4>
 		<span  class="botao-curso-depoimento">Engenharia Civil</span>
@@ -199,7 +199,7 @@
 <span class="estilo-ano-turma-2013">2013 class</span>
 <div class="depoimento-total">
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-ana-vasques.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-ana-vasques.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Ana Amélia Mondin Vasques</h3>
 		<h4>Ireland, Dublin - Dublin Business School</h4>
 		<span  class="botao-curso-depoimento-2013">Architecture and Urban Planning</span>
@@ -208,7 +208,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-cassio.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-cassio.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Cássio Augusto da Silva</h3>
 		<h4>Canadá, Toronto - University of Toronto</h4>
 		<span  class="botao-curso-depoimento-2013">Control and Automation Engineering</span>
@@ -217,7 +217,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-cleiton.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-cleiton.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Cleiton Ferreira dos Santos</h3>
 		<h4>Canada, Thunder Bay - Lakehead University</h4>
 		<span  class="botao-curso-depoimento-2013">Control and Automation Engineering</span>
@@ -226,7 +226,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-felipe-oliveira.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-felipe-oliveira.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Felipe de Oliveira</h3>
 		<h4>Ireland, Sligo - Institute of Technology of Sligo</h4>
 		<span  class="botao-curso-depoimento-2013">Pharmacy</span>
@@ -235,7 +235,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-guilherme.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-guilherme.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Guilherme Nack Cordeiro</h3>
 		<h4>United Kingdom, Uxbridge - Brunel University</h4>
 		<span  class="botao-curso-depoimento-2013">Computer Engineering</span>
@@ -244,7 +244,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-igor-deitos.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-igor-deitos.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Igor Alexandre Deitos</h3>
 		<h4>Canada, Toronto - York University</h4>
 		<span  class="botao-curso-depoimento-2013">Mechanical Engineering</span>
@@ -254,7 +254,7 @@
 	</div>
 	<!-- ********************************************************************************************************************************  -->
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-julia.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-julia.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Julia Irene Rosales</h3>
 		<h4>Italy, Milan - Politecnico di Milano</h4>
 		<span  class="botao-curso-depoimento-2013">Architecture and Urban Plannin</span>
@@ -263,7 +263,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-luis-abib.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-luis-abib.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Luis Eduardo Abib</h3>
 		<h4>Finland, Lappeenranta - Lappeenranta University of Technology</h4>
 		<span  class="botao-curso-depoimento-2013">Production Engineering</span>
@@ -272,7 +272,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-luiz-greca.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-luiz-greca.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Luiz Guilherme Garcia Greca</h3>
 		<h4>Finland, Helsinque - Aalto University</h4>
 		<span  class="botao-curso-depoimento-2013">Mechanical Engineering</span>
@@ -281,7 +281,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-marilia.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-marilia.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Marilia Antunes Ferreira</h3>
 		<h4>United Kingdom, Dundee - University of Dundee</h4>
 		<span  class="botao-curso-depoimento-2013">Digital Design</span>
@@ -290,7 +290,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-pery.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-pery.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Pery Pinheiro Freitas</h3>
 		<h4>United Kingdom, Aberdeen - University of Aberdeen</h4>
 		<span  class="botao-curso-depoimento-2013">Dentistry</span>
@@ -300,7 +300,7 @@
 	</div>
 	<!-- ********************************************************************************************************************************  -->
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-rafael-dias.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-rafael-dias.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Rafael Alexandre Navas Dias</h3>
 		<h4>Germany, Duisburg - Universitaet Duisburg-Essen</h4>
 		<span  class="botao-curso-depoimento-2013">Mechanical Engineering</span>
@@ -309,7 +309,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-renata-bayer.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-renata-bayer.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Renata Bayer Battistotti</h3>
 		<h4>United Kingdom, Dundee - University of Dundee</h4>
 		<span  class="botao-curso-depoimento-2013">Medicine</span>
@@ -318,7 +318,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-valquiria.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-valquiria.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Valquiria Jablinski</h3>
 		<h4>United Kingdom, Edimburgo - Heriot Watt University</h4>
 		<span  class="botao-curso-depoimento-2013">Civil Engineering</span>
@@ -327,7 +327,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/tiago-costa.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/tiago-costa.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>Tiago Hilbert Gouvea da Costa</h3>
 		<h4>Netherlands, Amsterdã - VU University Amsterdam</h4>
 		<span  class="botao-curso-depoimento-2013">Production Engineering</span>
@@ -336,7 +336,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/depoimento-william.jpg');?>" class="foto-depoimento borda-img-2013" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/depoimento-william.jpg');?>" class="foto-depoimento borda-img-2013" />
 		<h3>William Schineider Rabelo</h3>
 		<h4>Hungary, Budapeste - Budapest University of Technology and Economics</h4>
 		<span  class="botao-curso-depoimento-2013">Civil Engineering</span>
@@ -348,7 +348,7 @@
 <span class="estilo-ano-turma-2012">2012 class</span>
 <div class="depoimento-total">
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/allan.jpg');?>" class="foto-depoimento borda-img-2012" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/allan.jpg');?>" class="foto-depoimento borda-img-2012" />
 		<h3>Allan Adley Fagundes Amorim</h3>
 		<h4>United States, The University of North Carolina at Charlotte</h4>
 		<span  class="botao-curso-depoimento-2012">Electrical Engineering</span>
@@ -357,7 +357,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/chris.jpg');?>" class="foto-depoimento borda-img-2012" />
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/chris.jpg');?>" class="foto-depoimento borda-img-2012" />
 		<h3>Christiane Scheidt Friedrich</h3>
 		<h4>Germany, Georg August Universitat Gottingen</h4>
 		<span class="botao-curso-depoimento-2012">Food Engineering</span>
@@ -366,7 +366,7 @@
 		</p>
 	</div>
 	<div class="depoimento-pagina" data-sr="enter bottom, hustle 10px">
-		<img src="<?php echo base_url('img/depoimentos-fotos/eduardo.jpg');?>" class="foto-depoimento borda-img-2012"/>
+		<img src="<?php echo base_url('img/evento/csf/depoimentos-fotos/eduardo.jpg');?>" class="foto-depoimento borda-img-2012"/>
 		<h3>Eduardo Martelli Moreira</h3>
 		<h4>Netherlands, Erasmus University Rotterdam</h4>
 		<span  class="botao-curso-depoimento-2012">Veterinary Medicine</span>

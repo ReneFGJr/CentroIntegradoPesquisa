@@ -114,14 +114,17 @@ class csf extends CI_Controller {
 
 	function depoimentos() {
 		$this -> cab();
-		
+		if (isset($_SESSION['idioma'])) {$this -> idioma = $_SESSION['idioma'];
+		} else {
+			$this -> idioma = - 'pt_BR';
+		}
 		if ($this -> idioma == 'en') {
-		$this -> load -> view('csf/site_depoimentos_en');
-		}else{
-		$this -> load -> view('csf/site_depoimentos');
-		}	
+			$this -> load -> view('csf/site_depoimentos_en');
+		} else {
+			$this -> load -> view('csf/site_depoimentos');
+		}
 		$this -> load -> view('csf/footer');
-}
+	}
 
 	function faq() {
 		$this -> cab();
