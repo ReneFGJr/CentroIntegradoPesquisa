@@ -126,7 +126,7 @@ class admin extends CI_Controller {
 		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/instituicao'));
 
 		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas', 'ITE', '/admin/ic'));
-		array_push($menu, array('Iniciação Científica', 'Manutenção bolsas/modalidade', 'ITE', '/admin/ic_modal_bolsas'));
+		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas por modalidade', 'ITE', '/admin/ic_modal_bolsas'));
 		
 		array_push($menu, array('Iniciação Científica', 'ID/usuarios bas bolsas', 'ITE', '/admin/ic_id'));
 		array_push($menu, array('Iniciação Científica', 'Vinculo Usuários / Bolsas', 'ITE', '/admin/checar_cracha_aluno_ic'));
