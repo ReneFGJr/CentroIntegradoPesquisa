@@ -7,7 +7,7 @@
 				plotShadow : false
 			},
 			title : {
-				text : 'Browser<br>shares',
+				text : '<?php echo $title;?>',
 				align : 'center',
 				verticalAlign : 'middle',
 				y : 50
@@ -19,23 +19,23 @@
 				pie : {
 					dataLabels : {
 						enabled : true,
-						distance : -50,
+						distance : -10,
 						style : {
 							fontWeight : 'bold',
 							color : 'white',
 							textShadow : '0px 1px 2px black'
 						}
 					},
-					startAngle : -90,
-					endAngle : 90,
+					startAngle : 0,
+					endAngle : 360,
 					center : ['50%', '75%']
 				}
 			},
 			series : [{
-				type : 'pie',
+				type : 'pyramid',
 				name : 'Browser share',
 				innerSize : '50%',
-				data : [['Firefox', 45.0], ['IE', 26.8], ['Chrome', 12.8], ['Safari', 8.5], ['Opera', 6.2], {
+				data : [<?php echo $data;?>, {
 					name : 'Others',
 					y : 0.7,
 					dataLabels : {
@@ -46,4 +46,4 @@
 		});
 	});
 </script>
-<div id="container-1" style="min-width: 310px; height: 310px; max-width: 310px; margin: 0 auto"></div>
+<div id="container-1" style="border: 5px solid #00000; min-width: 410px; height: 250px; max-width: 510px; margin: 0 auto"></div>

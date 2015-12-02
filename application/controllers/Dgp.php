@@ -10,6 +10,7 @@ class dgp extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 
@@ -33,13 +34,18 @@ class dgp extends CI_Controller {
 		array_push($css, 'form_sisdoc.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
-
+		/* HighCharts */
+		array_push($js, 'high/highcharts.js');
+		array_push($js, 'high/modules/funnel.js');
+		array_push($js, 'high/modules/exporting.js');
+		
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
 
 		/* Menu */
 		$menus = array();
+		array_push($menus, array('Home', 'index.php/dgp/'));
 		array_push($menus, array('Relatório', 'index.php/dgp/report'));
 
 		/* Monta telas */
@@ -62,14 +68,40 @@ class dgp extends CI_Controller {
 		
 		switch ($id)
 			{
-			case 'ge':
-				$tela = $this->dgps->grupos_escolas();
+			/* Grupos por campus */
+			case 'gc':
+				$tela = '<table border=0 class="border1"><tr><td>';
+				$tela .= $this->dgps->grupos_campus();
+				$tela .= '</td><td>';
+				$data['data'] = $this->dgps->graph;
+				$data['title'] = 'Distribuição dos Grupos de Pesquisa por campus';
+				$tela .= $this->load->view('dgp/dgp_indicador_01',$data,true);
+				$tela .= '</td></tr></table>';	
 				
+				/* Detalhes do relatorio */
 				if (strlen($gr) > 0)
 					{
-						$tela = $this->dgps->grupos_escolas_detalhes($gr);		
+						$tela .= '<br>';
+						$tela .= $this->dgps->grupos_campus_detalhes($gr);							
 					}
 				break;
+			/* Grupos por Escolas */
+			case 'ge':
+				$tela = '<table border=0 class="border1"><tr><td>';
+				$tela .= $this->dgps->grupos_escolas();
+				$tela .= '</td><td>';
+				$data['data'] = $this->dgps->graph;
+				$data['title'] = 'Distribuição dos Grupos de Pesquisa por Escola';
+				$tela .= $this->load->view('dgp/dgp_indicador_02',$data,true);
+				$tela .= '</td></tr></table>';	
+				
+				/* Detalhes do relatorio */
+				if (strlen($gr) > 0)
+					{
+						$tela .= '<br>';
+						$tela .= $this->dgps->grupos_escolas_detalhes($gr);							
+					}
+				break;				
 			default:
 				$tela = '';
 				break;
@@ -94,6 +126,7 @@ class dgp extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
+		array_push($menu, array('Indicadores', 'Grupos por campus (lider)', 'ITE', '/dgp/reports/gc'));
 		array_push($menu, array('Indicadores', 'Grupos por escolas (lider)', 'ITE', '/dgp/reports/ge'));
 
 		/*View principal*/

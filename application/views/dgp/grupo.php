@@ -33,7 +33,7 @@ if (!isset($ged_arquivos))
 					<nobr>
 						<?php echo msg('espelho_cnpq');?>
 					</nobr></td>
-					<td><B><A href="<?php echo $gp_egp_espelho;?>" target="_new"><?php echo $gp_egp_espelho;?></A></B></td>
+					<td><B><a href="<?php echo $gp_egp_espelho;?>" target="_new"><img src="<?php echo base_url('img/logo/logo_dgp_cnpq.png');?>" border=0 height="30" title="visualizar espelho no CNPq"></A></B></td>
 				</tr>
 				<tr valign="top">
 					<td align="right" width="30%">

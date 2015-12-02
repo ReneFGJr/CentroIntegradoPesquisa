@@ -1,6 +1,3 @@
-<script src="<?php echo base_url('js/high/highcharts.js');?>"></script>
-<script src="<?php echo base_url('js/high/modules/funnel.js');?>"></script>
-<script src="<?php echo base_url('js/high/modules/exporting.js');?>"></script>
 <div id="content-continue">
 	<h2>Indicadores</h2>
 	<table width="100%" border=0 cellpadding=0 cellspacing=0>

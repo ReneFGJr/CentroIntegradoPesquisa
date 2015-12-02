@@ -1,7 +1,7 @@
 <?php
 class dgps extends CI_model {
 	var $tabela = 'gp_grupo_pesquisa';
-
+	var $graph = '';
 	var $group_id = 0;
 	var $link = '';
 	function row($obj) {
@@ -10,118 +10,272 @@ class dgps extends CI_model {
 		$obj -> mk = array('', 'L', 'C', 'C');
 		return ($obj);
 	}
-	function grupos_escolas_detalhes($escola='')
-		{
-			$sql = "select distinct gp_id 
-						from gpus_cnpq left join us_usuario on gpus_cnpq_nome = us_nome 
-						left join gp_usuario on gp_usuario.us_id = id_gpus_cnpq 
-						where us_campus_vinculo = '$escola' and us_ativo = 1 
-			";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$to = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					print_r($line);
-					echo '<hr>';
-				}			
+
+	function grupos_campus_detalhes($escola = '') {
+		$escola = troca($escola, '%20', ' ');
+		if ($escola == 'null') {
+			$wh = " (us_campus_vinculo = '' or us_campus_vinculo is null)";
+		} else {
+			$wh = " us_campus_vinculo = '$escola' ";
 		}
-	function grupos_escolas()
-		{
-			$sql = "select count(*) as total, us_campus_vinculo from ( 
+
+		$sql = "select distinct us_campus_vinculo, gp_id 
+						from gpus_cnpq 
+						left join us_usuario on gpus_cnpq_nome = us_nome 
+						left join gp_usuario on gp_usuario.us_id = id_gpus_cnpq 
+						where usgp_lider = 2 and us_ativo = 1  and usuario_tipo_ust_id = 2
+						and $wh
+			";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$wh = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			if (strlen($wh) > 0) { $wh .= ' or ';
+			}
+			$wh .= ' (id_gp = ' . $line['gp_id'] . ')';
+		}
+		/* invalida consulta se vazio */
+		if (strlen($wh) == 0) { $wh = '1=2';
+		}
+		$sql = "select us.id_us as ida, id_gp, gp_ano_formacao, gp_nome, gpus_cnpq_nome
+					from gp_grupo_pesquisa
+					inner join gp_usuario on gp_id = id_gp
+					inner join gpus_cnpq as cp on cp.id_gpus_cnpq = gp_usuario.us_id
+					left join us_usuario as us on us.us_nome_lattes = cp.gpus_cnpq_nome 
+						where ($wh)
+						and usgp_lider = 2 and gpus_test = 0
+						/* us.usuario_tipo_ust_id */
+						order by gp_nome, gpus_cnpq_nome";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$wh = '';
+		$sx = '<table width="100%" class="border1 lt1" border=0>';
+		$sx .= '<tr>
+					<th>pos</th>
+					<th>ano<br>formação</td>
+					<th>nome do grupo de pesquisa</th>
+					<th>nome(s) do(s) lider(es)</th>
+				</tr>';
+		$to = 0;
+		$xigp = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			/* Links */
+			$linkg = '<a href="' . base_url('index.php/dgp/view/' . $line['id_gp']) . '" class="link lt2" target="_new">';
+			/* Id do usuario */
+			$idu = $line['ida'];
+
+			/* Grupo diferente */
+			if ($xigp != $line['id_gp']) {
+				if ($to > 0) {
+					$sx .= '</td></tr>';
+				}
+				$to++;
+				$xigp = $line['id_gp'];
+				$sx .= '<tr>';
+				$sx .= '<td width="10" align="center" class="border1">' . $to . '</td>';
+
+				$sx .= '<td width="20" align="center" class="border1">';
+				$sx .= $line['gp_ano_formacao'];
+				$sx .= '</td>';
+
+				$sx .= '<td class="border1" width="45%">';
+				$sx .= $linkg . $line['gp_nome'] . '</a>';
+				$sx .= '</td>';
+
+				$sx .= '<td class="border1" width="45%">';
+				$sx .= link_perfil($line['gpus_cnpq_nome'], $idu) . '</a>';
+			} else {
+				$sx .= '; ';
+				$sx .= link_perfil($line['gpus_cnpq_nome'], $idu) . '</a>';
+			}
+		}
+		if ($to > 0) {
+			$sx .= '</td></tr>';
+		}
+		$sx .= '<tr><td colspan=10>Total de ' . $to . ' grupos</td><tr>';
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function grupos_campus() {
+		$sql = "select count(*) as total, us_campus_vinculo from ( 
 						select distinct us_campus_vinculo, gp_id 
 						from gpus_cnpq left join us_usuario on gpus_cnpq_nome = us_nome 
 						left join gp_usuario on gp_usuario.us_id = id_gpus_cnpq 
-						where usgp_lider = 2 and us_ativo = 1 
-						) as tabela group by us_campus_vinculo
+						where usgp_lider = 2 and us_ativo = 1 and gpus_test = 0 
+						and usuario_tipo_ust_id = 2
+						) as tabela 
+						group by us_campus_vinculo
 						order by total desc";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			$sx = '<table width="400" class="lt3 border1">';
-			$sx .= '<tr><th>Campus</th><th>Total</th>';
-			$to = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					
-					$to = $to + $line['total'];
-					$nome = trim($line['us_campus_vinculo']);
-					if (strlen($nome)==0)
-						{
-							$nome = 'não indentificado';
-						}
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
 
-					$link = base_url('index.php/dgp/reports/ge/'.$nome);
-					$link = '<a href="'.$link.'" class="link lt3">';
-					
-					$sx .= '<tr>';
-					$sx .= '<td class="border1">';
-					$sx .= $link.$nome.'</a>';
-					$sx .= '';
-					$sx .= '<td align="center" class="border1">';
-					$sx .= $link.$line['total'].'</a>';
-					$sx .= '</td>';					
-					$sx .= '</tr>';
-				}
-			$sx .= '<tr><td align="right"><b>Total</b></td><td align="center"><b>'.$to.'</b></td></tr>';
-			$sx .= '</table>';
-			return($sx);
+		$this -> graph = '';
+		$dtg = '';
+		$sx = '<table width="400" class="lt3 border1">';
+		$sx .= '<tr class="lt2"><td><b>Grupos e vinculos de seus lideres aos campus</b></td></tr>';
+		$sx .= '<tr class="lt0"><th>Campus</th><th>Total</th></tr>';
+		$to = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$total = $line['total'];
+			$to = $to + $total;
+			$nome = trim($line['us_campus_vinculo']);
+			$nome_link = UpperCaseSql($nome);
+			if (strlen($nome) == 0) {
+				$nome = 'não indentificado';
+				$nome_link = 'null';
+			}
+
+			$link = base_url('index.php/dgp/reports/gc/' . $nome_link);
+			$link = '<a href="' . $link . '" class="link lt3">';
+
+			$sx .= '<tr>';
+			$sx .= '<td class="border1">';
+			$sx .= $link . $nome . '</a>';
+			$sx .= '';
+			$sx .= '<td align="center" class="border1">';
+			$sx .= $link . $line['total'] . '</a>';
+			$sx .= '</td>';
+			$sx .= '</tr>';
+			
+			/* Dados para o grafico */
+			if (strlen($dtg) > 0) { $dtg .= ', '; }
+			$dtg .= "['$nome', $total]";
 		}
-	function next_harvesting()
-		{
-			$sql = "select * from gp_grupo_pesquisa order by gp_dt_coleta limit 1";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$line = $rlt[0];
-			if ($line['gp_dt_coleta'] == date("Y-m-d"))
+		$sx .= '<tr><td align="right"><b>Total</b></td><td align="center"><b>' . $to . '</b></td></tr>';
+		$sx .= '<tr><td class="lt0" colspan=2>O número total de grupos pode diferenciar do total de grupos. Alguns grupos podem ter dois lideres de campus diferetnes';
+		$sx .= '</table>';
+		
+		$this -> graph = $dtg;
+		
+		return ($sx);
+	}
+
+/* Escolas */
+	function grupos_escolas() {
+		$sql = "select count(*) as total, es_escola from ( 
+						select distinct es_escola, gp_id 
+						from gpus_cnpq 
+						left join us_usuario on gpus_cnpq_nome = us_nome 
+						left join gp_usuario on gp_usuario.us_id = id_gpus_cnpq 
+						left join escola on us_escola_vinculo = id_es
+						where usgp_lider = 2  and gpus_test = 0 
+						/* and usuario_tipo_ust_id = 2 */
+						) as tabela 
+						group by es_escola
+						order by total desc";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$this -> graph = '';
+		$dtg = '';
+		$sx = '<table width="400" class="lt3 border1">';
+		$sx .= '<tr class="lt2"><td><b>Grupos e vinculos de seus lideres as Escolas</b></td></tr>';
+		$sx .= '<tr class="lt0"><th>Escola</th><th>Total</th></tr>';
+		$to = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$total = $line['total'];
+			$to = $to + $total;
+			$nome = trim($line['es_escola']);
+			$nome_link = UpperCaseSql($nome);
+			if (strlen($nome) == 0) {
+				$nome = 'não indentificado';
+				$nome_link = 'null';
+			}
+			$nome_gr = substr($nome,0,16);
+			if (strlen($nome_gr != $nome))
 				{
-					return(0);
-				} else {
-					return($line['id_gp']);
+					$nome_gr .= '...';
 				}
+			$link = base_url('index.php/dgp/reports/ge/' . $nome_link);
+			$link = '<a href="' . $link . '" class="link lt3">';
+
+			$sx .= '<tr>';
+			$sx .= '<td class="border1">';
+			$sx .= $link . $nome . '</a>';
+			$sx .= '';
+			$sx .= '<td align="center" class="border1">';
+			$sx .= $link . $line['total'] . '</a>';
+			$sx .= '</td>';
+			$sx .= '</tr>';
+			
+			/* Dados para o grafico */
+			if (strlen($dtg) > 0) { $dtg .= ', '; }
+			$dtg .= "{
+                		name: '$nome_gr',
+                		y: $total,
+                		drilldown: '$nome'
+           			 } ";
 		}
-	function resumo($data)
-		{
-			$sql = "select count(*) as total from ".$this->tabela." where 1=1 ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			$data['total_grupos'] = $rlt[0]['total'];
-			
-			$sql = "select count(*) as total from gp_linha where lp_ativo=1 ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-						
-			$data['total_linhas'] = $rlt[0]['total'];
-			
-			$sql = "SELECT count(*) as total, gprh_gp_id, gprh_recurso_humano
+		$sx .= '<tr><td align="right"><b>Total</b></td><td align="center"><b>' . $to . '</b></td></tr>';
+		$sx .= '<tr><td class="lt0" colspan=2>O número total de grupos pode diferenciar do total de grupos. Alguns grupos podem ter dois lideres de campus diferetnes';
+		$sx .= '</table>';
+		
+		$this -> graph = $dtg;
+		
+		return ($sx);
+	}
+
+	function next_harvesting() {
+		$sql = "select * from gp_grupo_pesquisa order by gp_dt_coleta limit 1";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$line = $rlt[0];
+		if ($line['gp_dt_coleta'] == date("Y-m-d")) {
+			return (0);
+		} else {
+			return ($line['id_gp']);
+		}
+	}
+
+	function resumo($data) {
+		$sql = "select count(*) as total from " . $this -> tabela . " where 1=1 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$data['total_grupos'] = $rlt[0]['total'];
+
+		$sql = "select count(*) as total from gp_linha where lp_ativo=1 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$data['total_linhas'] = $rlt[0]['total'];
+
+		$sql = "SELECT count(*) as total, gprh_gp_id, gprh_recurso_humano
 						FROM gp_usuario 
 						inner join gp_recursos_humanos on gprh_gp_id = id_gprh
 						inner join gpus_cnpq on id_gpus_cnpq = gp_usuario.us_id
 						WHERE gpus_test = 0
 						group by gprh_gp_id
 					";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$data['total_'.$line['gprh_gp_id']] = $line['total'];		
-				}	
-			return($data);			
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$data['total_' . $line['gprh_gp_id']] = $line['total'];
 		}
+		return ($data);
+	}
 
 	function grava_dados_importados($dt, $id, $link) {
 
 		/* Dados */
 		$nome = $dt['grupo']['nome_grupo'];
-
+		
 		/* Grava registro */
 		$this -> salva_dados_do_grupo($link, $nome);
 
 		$this -> group_id = $this -> recupera_id_grupo($link);
+		
+		/* Dados das area */
+		$this -> salva_areas($link, $dt);				
 
 		/* Grava instituicao */
 		$this -> salva_dados_do_instituicao($link, $dt);
@@ -137,9 +291,56 @@ class dgps extends CI_model {
 
 		/* Dads dos lideres */
 		$this -> salva_membros($link, $dt);
+		
+	
 
 		/* Atualiza area de atualização */
 	}
+	
+	function salva_areas($link, $dt) {
+		$area = $dt['instituicao']['area_predominante'];
+		$areas = array();
+
+		for ($r=0;$r < count($area);$r++)
+			{
+				$na = $area[$r];
+				$sql = "select * from area_conhecimento where ac_nome_area = '$na' ";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				
+				if (count($rlt) > 0)
+					{
+						$line = $rlt[0];
+						array_push($areas,$line['ac_cnpq']);
+					} else {
+						echo $link.'<br>';
+						echo 'OPS, área não localizada: '.$na;
+						exit;
+					}
+			}	
+		if (count($areas) != 2)
+			{
+						echo $link.'<br>';
+						echo 'OPS, área não localizada: '.$na;
+						exit;
+			}
+		$area1 = $areas[0];
+		$area2 = $areas[1];
+		$grupo = $this -> group_id;
+		
+		$sql = "delete from gp_area_predominante where id_gp = $grupo ";
+		$rlt = $this->db->query($sql);
+		
+		$sql = "insert into gp_area_predominante 
+					(
+					gpap_area_predominante, gpap_area_especifica, 
+					id_gp, gpap_cod_principal)
+					values
+					('$area1','$area2',
+					'$grupo','')";
+		$rlt = $this->db->query($sql);
+		return(1);
+	}	
 
 	function salva_membros($link, $dt) {
 		$eq = $dt['equipe'];
@@ -221,8 +422,6 @@ class dgps extends CI_model {
 		$data = date("Y-m-d");
 		$espelho = '';
 		$espelhonr = sonumero($this -> link) . '???????';
-
-		print_r($this);
 
 		$sql = "select * from gp_linha where lp_nome = '$nome' ";
 		$rlt = $this -> db -> query($sql);
@@ -575,9 +774,9 @@ class dgps extends CI_model {
 		$sx .= '<tr>';
 		$sx .= '<td>';
 		$sx .= '<ul>';
-		
+
 		$sx .= '<li><A HREF="' . base_url('index.php/dgp/lista_grupos') . '" class="link">Ver Grupos</A></li>';
-		
+
 		$sx .= '<li><A HREF="' . base_url('index.php/dgp/novo_grupo') . '" class="link">Abertura de novo Grupo</A></li>';
 		$sx .= '<li><A HREF="' . base_url('index.php/dgp/alterar_lider') . '" class="link">Alteração de(os) lider(es) do Grupo</A></li>';
 		$sx .= '<li><A HREF="' . base_url('index.php/dgp/comunicar_alteracao') . '" class="link">Comunicar alterações no Grupo</A></li>';
@@ -644,23 +843,23 @@ class dgps extends CI_model {
 			$line = $rlt[$r];
 
 			$tp = $line['gprh_recurso_humano'];
-			if ($tp != $xtp)
-				{
-					$sx .= '<tr>';
-					$sx .= '<td colspan=3 class="lt4" style="border-top: 1px solid #333333; border-bottom: 1px solid #333333;">';
-					$sx .= nbr_autor($line['gprh_recurso_humano'], 8);
-					$sx .= '</td>';
-					$xtp = $tp;					
-				}
+			if ($tp != $xtp) {
+				$sx .= '<tr>';
+				$sx .= '<td colspan=3 class="lt4" style="border-top: 1px solid #333333; border-bottom: 1px solid #333333;">';
+				$sx .= nbr_autor($line['gprh_recurso_humano'], 8);
+				$sx .= '</td>';
+				$xtp = $tp;
+			}
 			$sx .= '<tr class="lt2">';
 			$class = '';
 			$sxf = '';
-			if ($line['usgp_lider']=='2') { $class="bold"; $sxf = '(lider)'; }
-			$sx .= '<td class="'.$class.'">';
-			
-			
+			if ($line['usgp_lider'] == '2') { $class = "bold";
+				$sxf = '(lider)';
+			}
+			$sx .= '<td class="' . $class . '">';
+
 			$sx .= nbr_autor($line['gpus_cnpq_nome'], 8);
-			$sx .= ' '.$sxf;
+			$sx .= ' ' . $sxf;
 			$sx .= '</td>';
 			$sx .= '<td align="center">';
 			$sx .= trim($line['gpus_titulacao_max']);
@@ -706,13 +905,6 @@ class dgps extends CI_model {
 		array_push($cp, array('$S200', 'gp_nome', msg('dgp_nome'), True, True));
 		array_push($cp, array('$LINK', 'gp_egp_espelho', msg('dgp_espelho'), True, True));
 		array_push($cp, array('$HV', 'gp_dt_ultimo_envio', '0000-00-00', False, True));
-		
-		
-		
-		
-		
-		
-		
 
 		array_push($cp, array('$B', '', msg('gravar'), false, True));
 

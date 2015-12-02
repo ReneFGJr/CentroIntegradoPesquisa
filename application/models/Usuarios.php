@@ -324,6 +324,8 @@ class usuarios extends CI_model {
 
 		array_push($cp, array('$S100', 'us_link_lattes', msg('link_lattes'), False, True));
 		array_push($cp, array('$S100', 'us_nome_lattes', msg('link_nome'), False, True));
+		
+		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
 
 		//$sql = "select * from us_tipo order by ust_id ";
 		//array_push($cp, array('$Q ust_id:ust_nome:' . $sql, 'usuario_tipo_ust_id', msg('us_tipo'), False, True));

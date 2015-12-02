@@ -1,34 +1,32 @@
 <script type="text/javascript">
 	$(function() {
-
 		$('#container-2').highcharts({
 			chart : {
-				type : 'pyramid',
-				marginRight : 100
 			},
 			title : {
-				text : 'Sales pyramid',
-				x : -50
+				text : '<?php echo $title;?>',
+				align : 'center',
+				verticalAlign : 'top',
+				y : 10
 			},
-			plotOptions : {
-				series : {
-					dataLabels : {
-						enabled : true,
-						format : '<b>{point.name}</b> ({point.y:,.0f})',
-						color : (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
-						softConnector : true
-					}
-				}
+			tooltip : {
+				pointFormat : '{point.y:.1f}%'
 			},
-			legend : {
-				enabled : false
-			},
+        xAxis: {
+            type: 'category'
+        },			
+        yAxis: {
+            title: {
+                text: 'Total Grupos de Pesquisa'
+            }
+
+        },
 			series : [{
-				name : 'Unique users',
-				data : [['Website visits', 15654], ['Downloads', 4064], ['Requested price list', 1987], ['Invoice sent', 976], ['Finalized', 846]]
+				type : 'column',
+				name : 'Grupos de Pesquisa',
+				data : [<?php echo $data;?>]
 			}]
 		});
 	});
-
 </script>
-<div id="container-2" style="min-width: 310px; max-width: 310px; min-height: 310px; margin: 0 auto"></div>
+<div id="container-2" style="border: 5px solid #00000; min-width: 610px; height: 310px; max-width: 610px; margin: 0 auto"></div>
