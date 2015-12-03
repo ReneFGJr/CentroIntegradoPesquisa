@@ -241,6 +241,17 @@ $lang['Label_instituicao_ordem'] 		= 'Ordem';
 $lang['Label_index_instituicao'] 		= 'Lista de instituições';
 $lang['Label_editar_instituicao'] 		= 'Editar instituicao';
 
+/*Instituicoes de ensino  */
+$lang['lb_inst_nome'] 	= 'Nome';
+$lang['lb_inst_sigla'] 	= 'Sigla';
+$lang['lb_inst_endereco'] 	= 'Endereço';
+$lang['lb_inst_cidade'] 	= 'Cidade';
+$lang['lb_inst_uf'] 	= 'UF';
+$lang['lb_inst_regiao'] 	= 'Região';
+$lang['lb_lista_instituicao'] 	= 'Lista de Instituições';
+$lang['lb_editar_instituicao'] 	= 'Editar Instituição';
+
+
 
 /* Paises */
 $lang['Label_csf_pais'] 	= 'Nome do país';

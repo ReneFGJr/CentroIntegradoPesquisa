@@ -227,7 +227,8 @@ class admin extends CI_Controller {
 
 		array_push($menu, array('Unidades', 'Unidades da PUCPR', 'ITE', '/unidade'));
 
-		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/instituicao'));
+		array_push($menu, array('Instituições', 'Instituições do grupo de pesquisa', 'ITE', '/instituicao'));
+		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/ies_instituicao'));		
 
 		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas', 'ITE', '/admin/ic'));
 		array_push($menu, array('Iniciação Científica', 'ID/usuarios bas bolsas', 'ITE', '/admin/ic_id'));
