@@ -1,57 +1,53 @@
 <?php
 class usuarios extends CI_model {
 	var $tabela = 'us_usuario';
-	
-	function cracha_duplicados()
-		{
-			$sql = "select * from (
+
+	function cracha_duplicados() {
+		$sql = "select * from (
 					select us_cracha, count(*) as total, max(id_us) as max from us_usuario 
 						where us_cracha <> ''
 						group by us_cracha
 					) as tabela where total > 1
 					";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '';
-			
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$total = $line['total'];
-					$cracha = $line['us_cracha'];
-					$sx .= '<br>CRACHA: '.$cracha.' '.$total;
-				}
-				
-			$sql = "select * from (
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$total = $line['total'];
+			$cracha = $line['us_cracha'];
+			$sx .= '<br>CRACHA: ' . $cracha . ' ' . $total;
+		}
+
+		$sql = "select * from (
 					select us_cpf, count(*) as total, max(id_us) as max from us_usuario 
 						where us_cpf <> '' and us_ativo = 1
 						group by us_cpf
 					) as tabela where total > 1
 					";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$total = $line['total'];
-					$cracha = $line['us_cpf'];
-					$sx .= '<br>CPF: '.$cracha.' '.$total;
-				}
-			return($sx);				
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$total = $line['total'];
+			$cracha = $line['us_cpf'];
+			$sx .= '<br>CPF: ' . $cracha . ' ' . $total;
 		}
-	
-	function mostra_ic($cpf)
-		{
-			$wh = " al_cpf = '$cpf' ";
-			$sql = $this->ics->table_view($wh);
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$to = 0;
-			$sx = '';
-			$sx .= '<h2>Inicação Científica e Tecnológica</h2>';
-			$sx .= '<table width="100%" cellpadding=5 cellspacing=0 class="border1 lt1">';
-			$sx .= '<tr>
+		return ($sx);
+	}
+
+	function mostra_ic($cpf) {
+		$wh = " al_cpf = '$cpf' ";
+		$sql = $this -> ics -> table_view($wh);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$to = 0;
+		$sx = '';
+		$sx .= '<h2>Inicação Científica e Tecnológica</h2>';
+		$sx .= '<table width="100%" cellpadding=5 cellspacing=0 class="border1 lt1">';
+		$sx .= '<tr>
 						<td width="5%"><b>Protocolo</b></td>
 						<td width="5%"><b>Ano</b></td>
 						<td width="5%"><b>Edital</b></td>
@@ -60,67 +56,62 @@ class usuarios extends CI_model {
 						<td width="50%"><b>Trabalho</b></td>
 						<td width="5%"><b>Situação</b></td>
 					</tr>';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$to++;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$to++;
 
-					$line = $rlt[$r];
-										
-					$link = base_url('index.php/ic/view/'.$line['id_ic'].'/'.checkpost_link($line['id_ic']));
-					$link = '<a href="'.$link.'" class="link lt1" target="_new">';
-					$sx .= '<tr>';
-					$sx .= '<td>'.$link.$line['ic_plano_aluno_codigo'].'</a></td>';
-					$sx .= '<td>'.$line['ic_ano'].'</td>';
-					$sx .= '<td>'.$line['mb_tipo'].'</td>';
-					$sx .= '<td>'.$line['mb_descricao'].'</td>';
-					$sx .= '<td>'.$line['pf_nome'].'</td>';
-					$sx .= '<td>'.$line['ic_projeto_professor_titulo'].'</td>';
-					$sx .= '<td>'.$line['s_situacao'].'</td>';					
-					$sx .= '</tr>';
-				}
-			$sx .= '</table>';
-			if ($to == 0)
-				{
-					$sx = '';
-				}
-			return($sx);
-		}	
-	
-	function mostra_formacao($cpf)
-		{
-			$sql = "select distinct centroAcademico, nomeCurso, nivelCurso, situacao from us_usuario 
+			$line = $rlt[$r];
+
+			$link = base_url('index.php/ic/view/' . $line['id_ic'] . '/' . checkpost_link($line['id_ic']));
+			$link = '<a href="' . $link . '" class="link lt1" target="_new">';
+			$sx .= '<tr>';
+			$sx .= '<td>' . $link . $line['ic_plano_aluno_codigo'] . '</a></td>';
+			$sx .= '<td>' . $line['ic_ano'] . '</td>';
+			$sx .= '<td>' . $line['mb_tipo'] . '</td>';
+			$sx .= '<td>' . $line['mb_descricao'] . '</td>';
+			$sx .= '<td>' . $line['pf_nome'] . '</td>';
+			$sx .= '<td>' . $line['ic_projeto_professor_titulo'] . '</td>';
+			$sx .= '<td>' . $line['s_situacao'] . '</td>';
+			$sx .= '</tr>';
+		}
+		$sx .= '</table>';
+		if ($to == 0) {
+			$sx = '';
+		}
+		return ($sx);
+	}
+
+	function mostra_formacao($cpf) {
+		$sql = "select distinct centroAcademico, nomeCurso, nivelCurso, situacao from us_usuario 
 						inner join us_importar_sga on us_cracha = pessoa						 
 						where us_cpf = '$cpf' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$to = 0;
-			$sx = '';
-			$sx .= '<h2>Formação acadêmica</h2>';
-			$sx .= '<table width="100%" cellpadding=5 cellspacing=0 class="border1 lt1">';
-			$sx .= '<tr>
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$to = 0;
+		$sx = '';
+		$sx .= '<h2>Formação acadêmica</h2>';
+		$sx .= '<table width="100%" cellpadding=5 cellspacing=0 class="border1 lt1">';
+		$sx .= '<tr>
 						<td width="30%"><b>Centro / Escola</b></td>
 						<td width="30%"><b>Curso</b></td>
 						<td width="35%"><b>Nível</b></td>
 						<td width="5%"><b>Situação</b></td>
 					</tr>';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$to++;
-					$line = $rlt[$r];
-					$sx .= '<tr>';
-					$sx .= '<td>'.$line['centroAcademico'].'</td>';
-					$sx .= '<td>'.$line['nomeCurso'].'</td>';
-					$sx .= '<td>'.$line['nivelCurso'].'</td>';
-					$sx .= '<td>'.$line['situacao'].'</td>';					
-					$sx .= '</tr>';
-				}
-			$sx .= '</table>';
-			if ($to == 0)
-				{
-					$sx = '';
-				}
-			return($sx);
+		for ($r = 0; $r < count($rlt); $r++) {
+			$to++;
+			$line = $rlt[$r];
+			$sx .= '<tr>';
+			$sx .= '<td>' . $line['centroAcademico'] . '</td>';
+			$sx .= '<td>' . $line['nomeCurso'] . '</td>';
+			$sx .= '<td>' . $line['nivelCurso'] . '</td>';
+			$sx .= '<td>' . $line['situacao'] . '</td>';
+			$sx .= '</tr>';
 		}
+		$sx .= '</table>';
+		if ($to == 0) {
+			$sx = '';
+		}
+		return ($sx);
+	}
 
 	function mostra_idade($data) {
 
@@ -129,8 +120,8 @@ class usuarios extends CI_model {
 		$interval = $date -> diff(new DateTime('2011-12-14'));
 		// data definida
 
-		$idade = $interval -> format('%Y').' anos';
-		return($idade);
+		$idade = $interval -> format('%Y') . ' anos';
+		return ($idade);
 	}
 
 	function checar_cpf($pg = 0) {
@@ -342,9 +333,24 @@ class usuarios extends CI_model {
 		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), True, True));
 
 		array_push($cp, array('$Q id_ustp:ustp_nome:select * from us_tipo order by ustp_nome', 'usuario_tipo_ust_id', msg('perfil'), True, True));
-		
+
 		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
 
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+	}
+
+	function cp_edita_conta_usuario() {
+		$cp = array();
+		array_push($cp, array('$H8', 'us_usuario_id_us', '', False, True));
+
+		array_push($cp, array('$S100', 'usc_banco',   msg('lb_usc_banco'), False, True));
+		array_push($cp, array('$S50', 'usc_agencia', msg('lb_usc_agencia'), False, True));
+		array_push($cp, array('$S300', 'usc_conta_corrente', msg('lb_usc_conta_corrente'), False, True));
+		array_push($cp, array('$S10', 'usc_tipo', msg('lb_usc_tipo'), False, True));
+		array_push($cp, array('$S100', 'usc_modo', msg('lb_usc_modo'), False, True));
+		
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 
 		return ($cp);
@@ -739,7 +745,7 @@ class usuarios extends CI_model {
 	function insere_usuario($DadosUsuario) {
 
 		$nome = nbr_autor($DadosUsuario['nome'], 7);
-		$nome = troca($nome,"'",'´');
+		$nome = troca($nome, "'", '´');
 		$cpf = $DadosUsuario['cpf'];
 		$cpf = strzero($cpf, 11);
 

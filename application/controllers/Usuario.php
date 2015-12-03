@@ -355,5 +355,52 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	//edita conta do usuário
+	function edit_conta_usuario($id = 0) {
+		global $dd;
+		$this -> load -> model('usuarios');
+
+		$this -> cab();
+		$data = array();
+
+		$data = $this -> usuarios -> le($id);
+		$tipo = $data['usuario_tipo_ust_id'];
+
+		switch ($tipo) {
+			case '2' :
+				$this -> load -> view('perfil/docente', $data);
+				break;
+			default :
+				$this -> load -> view('perfil/discente', $data);
+				break;
+		}
+
+		/* Form */
+		$form = new form;
+		$form -> tabela = 'us_conta';
+		$form -> id = $id;
+		$cp = $this -> usuarios -> cp_edita_conta_usuario();
+		$data['tela'] = $form -> edita_conta($cp_edita_conta_usuario, 'us_conta');
+
+		/* salved */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/usuario/row'));
+		}
+
+		$data['title'] = 'Formulário';
+		$this -> load -> view('form/form', $data);
+
+		$cracha = trim($data['us_cracha']);
+		if (strlen($cracha) > 0) {
+			$link = '<A href="' . base_url('index.php/usuario/consulta_usuario/' . $cracha) . '">Consulta SGA</a>';
+			$data2['title'] = '';
+			$data2['content'] = $link;
+			$this -> load -> view('content', $data2);
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 }
 ?>
