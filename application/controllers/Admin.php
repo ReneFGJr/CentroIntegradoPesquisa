@@ -212,6 +212,8 @@ class admin extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Parceiros', 'Parceiros da PUCPR', 'ITE', '/parceiro'));
 		array_push($menu, array('Idiomas', 'Idiomas do Sistema', 'ITE', '/idioma'));
+		
+		array_push($menu, array('Cadastros', 'IC - Manutenção de Bolsas por modalidade', 'ITE', '/admin/ic_modal_bolsas'));
 
 		array_push($menu, array('Usuários', 'Integração SGA/CIP Estudantes', 'ITE', '/usuario/integracao_sga'));
 		array_push($menu, array('Usuários', 'Perfil de usuário do Sistema', 'ITE', '/perfil'));
@@ -220,7 +222,7 @@ class admin extends CI_Controller {
 		array_push($menu, array('Usuários', 'Cruzar dados do professor', 'ITE', '/admin/inporta_professor'));
 		array_push($menu, array('Usuários', 'Ajustar/Validar CPF', 'ITE', '/admin/checar_cpf'));
 		array_push($menu, array('Usuários', 'Crachas duplicados', 'ITE', '/admin/cracha_duplicados'));
-		array_push($menu, array('Usuários', 'Sem escolas', 'ITE', '/admin/nome_sem_escola'));
+		array_push($menu, array('Usuários', 'Sem escolas', 'ITE', '/admin/nome_sem_escola'));				
 
 		array_push($menu, array('Unidades', 'Unidades da PUCPR', 'ITE', '/unidade'));
 
@@ -463,5 +465,70 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+      function ic_modal_bolsas($id = 0, $pg = '') {
+            $this -> load -> model('ics');
+            $this -> cab();
+            $data = array();
 
+            //Cria o Formulario
+            $form = new form;
+
+            //chama uma tabela exclusiva
+            $form -> tabela = $this -> ics -> table_row_modal_bolsa();
+
+            //Torna a linha da linha clicavel
+            //$form -> see = true;
+
+            //Mostra o action para editar os valores dos campos
+            $form -> edit = true;
+
+            //mostra o botão novo
+            $form -> novo = true;
+
+            //Define a qtd. de linha a mostrar do formulário por vez(default 25 a 30 linhas-form_sisdoc)
+
+            //$form -> offset = '25';
+
+            //Monta o formulario com os parametro acima
+            $form = $this -> ics -> row_ic_modal_bolsas($form);
+
+            //redireciona o edit para a view de edição dos campos
+            $form -> row_edit = base_url('index.php/admin/ic_edit_modal_bolsa/');
+
+            //Ao clicar na linha é redirecionado para uma view onde se vê os valores dos campos(opcional)
+            $form -> row_view = base_url('index.php/admin/view_modal_bolsa');
+            $form -> row = base_url('index.php/admin/ic_modal_bolsas');
+            $tela['tela'] = row($form, $id);
+            $tela['title'] = $this -> lang -> line('ic');
+
+            $this -> load -> view('form/form', $tela);
+            $this -> load -> view('header/content_close');
+            $this -> load -> view('header/foot', $data);
+
+      }
+function ic_edit_modal_bolsa($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this -> ics -> cp_modal_bolsa();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = $id;
+		
+
+		$tela = $form -> editar($cp, $this -> ics -> tabela_2);
+		$data['title'] = msg('lb_mb_titulo');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva e redireciona para pagina anterior*/ 
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/admin/ic_modal_bolsas'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 }

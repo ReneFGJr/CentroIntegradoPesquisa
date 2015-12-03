@@ -2,39 +2,40 @@
 class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
-	
-		function inserir_historico($proto,$ac,$hist,$aluno1,$aluno2,$motivo,$obs='')
-			{
-				$data = date("Ymd");
-				$hora = date("H:i");
-				$log = $_SESSION['cracha'];
-				
-				$sql = "select * from ic_historico
-						where bh_protocolo = '$proto'
-						and bh_data = $data
-						and bh_acao = $ac
-					";
-				$rlt = db_query($sql);
-				
-				if ($line = db_read($rlt))
-					{
-								
-					} else {
-						$sql = "insert into ic_historico 
-							(bh_protocolo, bh_data, bh_hora,
-							bh_log, bh_acao, bh_historico,
-							bh_aluno_1, bh_aluno_2, bh_motivo,
-							bh_obs
-							) values (
-							'$proto',$data,'$hora',
-							'$log','$ac','$hist',
-							'$aluno2','$aluno1','$motivo',
-							'$obs')
-					";
-					$rlt = $this->db->query($sql);
-					}
-				return('');
-			}	
+	var $tabela_2 = "ic_modalidade_bolsa";
+
+	function inserir_historico($proto,$ac,$hist,$aluno1,$aluno2,$motivo,$obs='')
+		{
+			$data = date("Ymd");
+			$hora = date("H:i");
+			$log = $_SESSION['cracha'];
+			
+			$sql = "select * from ic_historico
+					where bh_protocolo = '$proto'
+					and bh_data = $data
+					and bh_acao = $ac
+				";
+			$rlt = db_query($sql);
+			
+			if ($line = db_read($rlt))
+				{
+							
+				} else {
+					$sql = "insert into ic_historico 
+						(bh_protocolo, bh_data, bh_hora,
+						bh_log, bh_acao, bh_historico,
+						bh_aluno_1, bh_aluno_2, bh_motivo,
+						bh_obs
+						) values (
+						'$proto',$data,'$hora',
+						'$log','$ac','$hist',
+						'$aluno2','$aluno1','$motivo',
+						'$obs')
+				";
+				$rlt = $this->db->query($sql);
+				}
+			return('');
+		}	
 
 	function resumo_implemendados($ano) {
 		$sql = "select * from 
@@ -1205,6 +1206,34 @@ class ics extends CI_model {
 		}
 
 		return ($dados);
+	}
+
+/*model do bolsa modalidae*/
+	function row_ic_modal_bolsas($obj) {
+		$obj -> fd = array('id_mb', 'mb_descricao', 'mb_tipo', 'mb_ativo', 'mb_moeda', 'mb_valor', 'mb_fomento');
+		$obj -> lb = array('ID', msg('lb_mb_descricao'), msg('lb_mb_tipo'), msg('lb_mb_ativo'), msg('lb_mb_moeda'), msg('lb_mb_valor'), msg('lb_mb_fomento'));
+		$obj -> mk = array('', 'L', 'L', 'C', 'C','R','L','C');
+		return ($obj);
+	}
+	
+	function table_row_modal_bolsa() {
+		$tabela = "ic_modalidade_bolsa";
+		return ($tabela);
+	}
+
+	function cp_modal_bolsa() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_mb', '', False, True));
+		array_push($cp, array('${', '', 'Gestão de Bolsas', False, True));
+		array_push($cp, array('$S25', 'mb_descricao', msg('lb_mb_descricao'), False, True));
+		array_push($cp, array('$S8', 'mb_tipo', msg('lb_mb_tipo'), True, True));
+		array_push($cp, array('$O 1:sim&0:não', 'mb_ativo', msg('lb_mb_ativo'), True, True));
+		array_push($cp, array('$S4', 'mb_moeda', msg('lb_mb_moeda'), True, True));
+		array_push($cp, array('$S10', 'mb_valor', msg('lb_mb_valor'), True, True));
+		array_push($cp, array('$S8', 'mb_fomento', msg('lb_mb_fomento'), True, True));
+		array_push($cp, array('$}', '', '', False, True));
+		
+		return ($cp);
 	}
 
 }

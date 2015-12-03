@@ -328,7 +328,51 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function pagamento_planilha($date = '', $action = '') {
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+
+		$this -> cab();
+		$data = array();
+
+		$cp = array();
+		array_push($cp,array('$H8','','',False,True));		
+		array_push($cp,array('$['.date("Y").'-'.(date("Y")+1).']','','Edital',True,True));
+		array_push($cp,array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_vigente = 1 and mb_valor > 0','','Modalidade',True,True));
+		
+		array_push($cp,array('$B8','',msg('avancar').' >>',False,True));
+
+		$form = new form;
+		$tela = $form->editar($cp,'');
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+			
+		/*Fecha */ 		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);		
+	}
+
 	function pagamentos($date = '', $action = '') {
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+
+		$this -> cab();
+		$data = array();
+		
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Gerar Pagamentos', 'Gerar planilha de pagamento', 'ITE', '/ic/pagamento_planilha'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Sistema de Pagamentos';
+		$this -> load -> view('header/main_menu', $data);
+
+		/*Fecha */ 		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);		
+	}
+	function pagamentos_realizados($date = '', $action = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
 

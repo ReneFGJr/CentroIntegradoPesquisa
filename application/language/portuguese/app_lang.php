@@ -27,7 +27,7 @@ $lang['status_protocolo_A'] = 'Aberto';
 $lang['status_protocolo_B'] = 'Em análise';
 $lang['status_protocolo_F'] = 'Finalizado';
 
-/* Tipo de serviço */
+/* IC */
 $lang['protocolo_ic_ALT'] = 'Substituição de estudante';
 $lang['protocolo_ic_CAN'] = 'Cancelamento de orientação';
 $lang['protocolo_ic_CAN_info'] = 'Informe a orientação que deseja solicitar cancelamento.';
@@ -56,6 +56,14 @@ $lang['protocol_successful'] = 'Protocolo aberto com sucesso!';
 $lang['guidelines_ic'] = 'Orientações IC/IT';
 $lang['codigo_aluno_novo'] = 'Informe o código do novo estudante';
 $lang['pr_descricao_sbs'] = 'Motivo da substituição';
+
+$lang['lb_mb_descricao'] = 'Descrição';
+$lang['lb_mb_tipo'] = 'Tipo';
+$lang['lb_mb_ativo'] = 'Bolsa Ativa';
+$lang['lb_mb_moeda'] = 'Moeda'; 	
+$lang['lb_mb_valor'] = 'Valor da bolsa';
+$lang['lb_mb_fomento'] = 'Fomento';
+$lang['lb_mb_titulo'] = 'Gestão das modalidades de Bolsas de IC';
 
 /****************************** AVALIADORES */
 $lang['desactive'] = 'desativar';
