@@ -1228,7 +1228,8 @@ class ics extends CI_model {
 		array_push($cp, array('$S25', 'mb_descricao', msg('lb_mb_descricao'), False, True));
 		array_push($cp, array('$S8', 'mb_tipo', msg('lb_mb_tipo'), True, True));
 		array_push($cp, array('$O 1:sim&0:não', 'mb_ativo', msg('lb_mb_ativo'), True, True));
-		array_push($cp, array('$S4', 'mb_moeda', msg('lb_mb_moeda'), True, True));
+		array_push($cp, array('$O 1:sim&0:não', 'mb_vigente', msg('lb_mb_vigente'), True, True));
+		array_push($cp, array('$O R$:R$&US:US', 'mb_moeda', msg('lb_mb_moeda'), False, True));
 		array_push($cp, array('$S10', 'mb_valor', msg('lb_mb_valor'), True, True));
 		array_push($cp, array('$S8', 'mb_fomento', msg('lb_mb_fomento'), True, True));
 		array_push($cp, array('$}', '', '', False, True));
