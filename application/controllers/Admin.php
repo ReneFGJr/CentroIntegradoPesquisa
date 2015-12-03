@@ -42,6 +42,8 @@ class admin extends CI_Controller {
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Perfis', 'index.php/admin/logins/'));
+		array_push($menus, array('ISSN', 'index.php/issn'));
+		
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 

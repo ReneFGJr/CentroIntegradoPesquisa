@@ -1,6 +1,10 @@
 <?php
 class producoes extends CI_model {
+	var $qualis_ano = '2014';
+	
 	function producao_perfil_grafico($cpf, $area = 0) {
+		$qualis = $this->qualis_ano;
+		
 		$sql = "select * from area_avaliacao where id_area = $area";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -17,7 +21,7 @@ class producoes extends CI_model {
 		$nome_lattes = $line['us_nome_lattes'];
 
 		$sql = "select * from cnpq_acpp
-							left join webqualis on issn2 = acpp_issn and area_id = $area
+							left join webqualis on issn2 = acpp_issn and area_id = $area and ano = '$qualis'
 							left join area_avaliacao on id_area = area_id
 							where acpp_autor = '$nome_lattes' 
 							order by acpp_ano desc
@@ -63,6 +67,7 @@ class producoes extends CI_model {
 	}
 
 	function producao_perfil($cpf, $area = 0) {
+		$qualis = $this->qualis_ano;
 		$sql = "select * from us_usuario where us_cpf = '$cpf' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -74,7 +79,7 @@ class producoes extends CI_model {
 				$nome_lattes = $line['us_nome_lattes'];
 
 				$sql = "select * from cnpq_acpp
-							left join webqualis on issn2 = acpp_issn and area_id = $area
+							left join webqualis on issn2 = acpp_issn and area_id = $area and ano = '$qualis'
 							left join area_avaliacao on id_area = area_id
 							where acpp_autor = '$nome_lattes' 
 							order by acpp_ano desc
