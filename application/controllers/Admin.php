@@ -107,7 +107,7 @@ class admin extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
-	
+
 	function nome_sem_escola() {
 		$this -> load -> model('usuarios');
 		$this -> cab();
@@ -128,7 +128,7 @@ class admin extends CI_Controller {
 			$to++;
 			$line = $rlt[$r];
 			print_r($line);
-			exit;
+			exit ;
 			$id = $line['id_us'];
 			$nome = $line['us_nome'];
 			$nome_asc = UpperCaseSQL($line['us_nome']);
@@ -155,7 +155,7 @@ class admin extends CI_Controller {
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
 
-	}	
+	}
 
 	function nome_lattes() {
 		$this -> load -> model('usuarios');
@@ -212,8 +212,9 @@ class admin extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Parceiros', 'Parceiros da PUCPR', 'ITE', '/parceiro'));
 		array_push($menu, array('Idiomas', 'Idiomas do Sistema', 'ITE', '/idioma'));
-		
+
 		array_push($menu, array('Cadastros', 'IC - Manutenção de Bolsas por modalidade', 'ITE', '/admin/ic_modal_bolsas'));
+		array_push($menu, array('Cadastros', 'Usuários do sistema', 'ITE', '/admin/usuarios'));
 
 		array_push($menu, array('Usuários', 'Integração SGA/CIP Estudantes', 'ITE', '/usuario/integracao_sga'));
 		array_push($menu, array('Usuários', 'Perfil de usuário do Sistema', 'ITE', '/perfil'));
@@ -222,7 +223,7 @@ class admin extends CI_Controller {
 		array_push($menu, array('Usuários', 'Cruzar dados do professor', 'ITE', '/admin/inporta_professor'));
 		array_push($menu, array('Usuários', 'Ajustar/Validar CPF', 'ITE', '/admin/checar_cpf'));
 		array_push($menu, array('Usuários', 'Crachas duplicados', 'ITE', '/admin/cracha_duplicados'));
-		array_push($menu, array('Usuários', 'Sem escolas', 'ITE', '/admin/nome_sem_escola'));				
+		array_push($menu, array('Usuários', 'Sem escolas', 'ITE', '/admin/nome_sem_escola'));
 
 		array_push($menu, array('Unidades', 'Unidades da PUCPR', 'ITE', '/unidade'));
 
@@ -465,48 +466,50 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-      function ic_modal_bolsas($id = 0, $pg = '') {
-            $this -> load -> model('ics');
-            $this -> cab();
-            $data = array();
 
-            //Cria o Formulario
-            $form = new form;
+	function ic_modal_bolsas($id = 0, $pg = '') {
+		$this -> load -> model('ics');
+		$this -> cab();
+		$data = array();
 
-            //chama uma tabela exclusiva
-            $form -> tabela = $this -> ics -> table_row_modal_bolsa();
+		//Cria o Formulario
+		$form = new form;
 
-            //Torna a linha da linha clicavel
-            //$form -> see = true;
+		//chama uma tabela exclusiva
+		$form -> tabela = $this -> ics -> table_row_modal_bolsa();
 
-            //Mostra o action para editar os valores dos campos
-            $form -> edit = true;
+		//Torna a linha da linha clicavel
+		//$form -> see = true;
 
-            //mostra o botão novo
-            $form -> novo = true;
+		//Mostra o action para editar os valores dos campos
+		$form -> edit = true;
 
-            //Define a qtd. de linha a mostrar do formulário por vez(default 25 a 30 linhas-form_sisdoc)
+		//mostra o botão novo
+		$form -> novo = true;
 
-            //$form -> offset = '25';
+		//Define a qtd. de linha a mostrar do formulário por vez(default 25 a 30 linhas-form_sisdoc)
 
-            //Monta o formulario com os parametro acima
-            $form = $this -> ics -> row_ic_modal_bolsas($form);
+		//$form -> offset = '25';
 
-            //redireciona o edit para a view de edição dos campos
-            $form -> row_edit = base_url('index.php/admin/ic_edit_modal_bolsa/');
+		//Monta o formulario com os parametro acima
+		$form = $this -> ics -> row_ic_modal_bolsas($form);
 
-            //Ao clicar na linha é redirecionado para uma view onde se vê os valores dos campos(opcional)
-            $form -> row_view = base_url('index.php/admin/view_modal_bolsa');
-            $form -> row = base_url('index.php/admin/ic_modal_bolsas');
-            $tela['tela'] = row($form, $id);
-            $tela['title'] = $this -> lang -> line('ic');
+		//redireciona o edit para a view de edição dos campos
+		$form -> row_edit = base_url('index.php/admin/ic_edit_modal_bolsa/');
 
-            $this -> load -> view('form/form', $tela);
-            $this -> load -> view('header/content_close');
-            $this -> load -> view('header/foot', $data);
+		//Ao clicar na linha é redirecionado para uma view onde se vê os valores dos campos(opcional)
+		$form -> row_view = base_url('index.php/admin/view_modal_bolsa');
+		$form -> row = base_url('index.php/admin/ic_modal_bolsas');
+		$tela['tela'] = row($form, $id);
+		$tela['title'] = $this -> lang -> line('ic');
 
-      }
-function ic_edit_modal_bolsa($id = 0, $check = '') {
+		$this -> load -> view('form/form', $tela);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function ic_edit_modal_bolsa($id = 0, $check = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
 		$cp = $this -> ics -> cp_modal_bolsa();
@@ -516,14 +519,13 @@ function ic_edit_modal_bolsa($id = 0, $check = '') {
 
 		$form = new form;
 		$form -> id = $id;
-		
 
 		$tela = $form -> editar($cp, $this -> ics -> tabela_2);
 		$data['title'] = msg('lb_mb_titulo');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form', $data);
 
-		/* Salva e redireciona para pagina anterior*/ 
+		/* Salva e redireciona para pagina anterior*/
 		if ($form -> saved > 0) {
 			redirect(base_url('index.php/admin/ic_modal_bolsas'));
 		}
@@ -531,4 +533,84 @@ function ic_edit_modal_bolsa($id = 0, $check = '') {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function usuarios($id = 0) {
+
+		/* Load Models */
+		$this -> load -> model('usuarios');
+
+		$this -> cab();
+		$data = array();
+		$data['content'] = '<A href="' . base_url('index.php/usuario/consulta_usuario/') . '">' . msg('consulta') . ' ' . msg('cracha') . '</a>';
+		$this -> load -> view('content', $data);
+
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = $this -> usuarios -> tabela_view();
+		$form -> see = true;
+		$form -> edit = false;
+		$form -> novo = true;
+		$form = $this -> usuarios -> row($form);
+
+		$form -> row_edit = base_url('index.php/admin/usuarios_edit');
+		$form -> row_view = base_url('index.php/usuario/view');
+		$form -> row = base_url('index.php/admin/usuarios/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('page_docentes');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function usuarios_edit($id=0)
+		{
+		global $dd;
+		$this -> load -> model('usuarios');
+
+		$this -> cab();
+		$data = array();
+
+		/* Form */
+		$form = new form;
+		$form -> tabela = 'us_usuario';
+		$form -> id = $id;
+		$cp = $this -> usuarios -> cp_usuario();
+		$data['tela'] = $form -> editar($cp, '');
+
+		/* salved */
+		if ($form -> saved > 0) {
+			$tabela = 'us_usuario';
+			$cracha = get("dd2");
+			$cracha = $this->usuarios->limpa_cracha($cracha);
+			$us = $this->usuarios->le_cracha($cracha);
+			
+			if (count($us) > 0)
+				{
+					$data['content'] = '<h2><font color="red">Usuário já cadastrado</font></h2>';
+					$this -> load -> view('content', $data);
+				} else {
+					$_POST['dd2'] = $cracha;
+					$form -> editar($cp, $tabela);
+					redirect(base_url('index.php/admin/usuarios'));
+				}
+			
+			//
+		}
+
+		$data['title'] = 'Cadastro de novo usuário';
+		$data['tela'] .=
+		'
+		<script>
+			$("#dd3").mask(\'999.999.999-99\');
+		</script>
+		';
+		$this -> load -> view('form/form', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);			
+		}
+
 }

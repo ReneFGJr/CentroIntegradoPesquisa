@@ -331,6 +331,8 @@ class ic extends CI_Controller {
 	function pagamento_planilha($date = '', $action = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
+		$this -> load -> model('bancos');
+		$this -> load -> model('ics');
 
 		$this -> cab();
 		$data = array();
@@ -344,8 +346,18 @@ class ic extends CI_Controller {
 
 		$form = new form;
 		$tela = $form->editar($cp,'');
-		$data['content'] = $tela;
+		$data['content'] = '<div class="nopr">'.$tela.'</div>';
 		$this -> load -> view('content', $data);
+		
+		if ($form->saved > 0)
+			{
+				$bolsa = get('dd2');
+				$ano = get('dd1');
+				
+				$tela = $this->pagamentos->gerar_pagamento_bolsa($bolsa,$ano);
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);				
+			}
 			
 		/*Fecha */ 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
@@ -401,6 +413,54 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function usuarios_edit($id=0)
+		{
+		global $dd;
+		$this -> load -> model('usuarios');
+
+		$this -> cab();
+		$data = array();
+
+		/* Form */
+		$form = new form;
+		$form -> tabela = 'us_usuario';
+		$form -> id = $id;
+		$cp = $this -> usuarios -> cp_usuario();
+		$data['tela'] = $form -> editar($cp, '');
+
+		/* salved */
+		if ($form -> saved > 0) {
+			$tabela = 'us_usuario';
+			$cracha = get("dd2");
+			$cracha = $this->usuarios->limpa_cracha($cracha);
+			$us = $this->usuarios->le_cracha($cracha);
+			
+			if (count($us) > 0)
+				{
+					$data['content'] = '<h2><font color="red">Usuário já cadastrado</font></h2>';
+					$this -> load -> view('content', $data);
+				} else {
+					$_POST['dd2'] = $cracha;
+					$form -> editar($cp, $tabela);
+					redirect(base_url('index.php/ic/usuarios'));
+				}
+			
+			//
+		}
+
+		$data['title'] = 'Cadastro de novo usuário';
+		$data['tela'] .=
+		'
+		<script>
+			$("#dd3").mask(\'999.999.999-99\');
+		</script>
+		';
+		$this -> load -> view('form/form', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);			
+		}	
 
 	function usuarios($id = 0) {
 
@@ -410,6 +470,8 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['content'] = '<A href="' . base_url('index.php/usuario/consulta_usuario/') . '">' . msg('consulta') . ' ' . msg('cracha') . '</a>';
+		$data['content'] .= ' | ';
+		$data['content'] .= '<A href="' . base_url('index.php/ic/usuarios_edit/0/0') . '">' . msg('novo') . ' ' . msg('cracha') . '</a>';
 		$this -> load -> view('content', $data);
 
 		/* Lista de comunicacoes anteriores */
@@ -420,7 +482,6 @@ class ic extends CI_Controller {
 		$form -> novo = false;
 		$form = $this -> usuarios -> row($form);
 
-		$form -> row_edit = base_url('index.php/ic/usuarios_edit');
 		$form -> row_view = base_url('index.php/usuario/view');
 		$form -> row = base_url('index.php/ic/usuarios/');
 

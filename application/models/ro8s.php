@@ -1136,6 +1136,7 @@ class ro8s extends CI_Model {
 	}
 
 	function inport_estudante($id = 0) {
+		return('');
 		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_aluno&limit=100&offset=' . $id;
 		$xmlRaw = simplexml_load_file($site);
 		$RowT = count($xmlRaw -> record);

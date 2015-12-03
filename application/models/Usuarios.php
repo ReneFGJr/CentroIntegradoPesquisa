@@ -341,6 +341,34 @@ class usuarios extends CI_model {
 		return ($cp);
 	}
 
+	function cp_usuario() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_us', '', False, True));
+		//		array_push($cp, array('$S20', 'us_cpf', msg('cpf'), False, True));
+		//		array_push($cp, array('$S20', 'us_emplid', msg('employID'), False, True));
+
+		array_push($cp, array('$S100', 'us_nome', msg('nome'), True, True));
+		array_push($cp, array('$S12', 'us_cracha', msg('cracha'), True, True));
+		array_push($cp, array('$S16', 'us_cpf', msg('cpf'), False, True));
+		
+		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
+
+		$sql = "select * from us_titulacao where ust_ativo = 1 order by ust_id ";
+		array_push($cp, array('$Q ust_id:ust_titulacao_sigla:' . $sql, 'usuario_titulacao_ust_id', msg('us_titulacao'), False, True));
+
+		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('Feminino'), 'us_genero', msg('us_genero'), True, True));
+
+		array_push($cp, array('$HV', 'us_ativo', '1', True, True));
+
+		array_push($cp, array('$Q id_ustp:ustp_nome:select * from us_tipo order by ustp_nome', 'usuario_tipo_ust_id', msg('perfil'), True, True));
+
+		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
+
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+	}
+
 	function cp_edita_conta_usuario() {
 		$cp = array();
 		array_push($cp, array('$H8', 'us_usuario_id_us', '', False, True));

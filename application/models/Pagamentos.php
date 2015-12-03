@@ -1,6 +1,113 @@
 <?php
 class pagamentos extends CI_Model {
 	var $tabela = 'ic_pagamentos';
+	
+	function gerar_pagamento_bolsa($bolsa=0,$ano=0)
+		{
+			$data = date("Y-m-d");
+			$sql = "select * from ic_aluno
+					left join us_usuario on us_cracha = ic_aluno_cracha
+					left join ic on ic_id = id_ic  
+					left join ic_modalidade_bolsa on id_mb = mb_id
+					left join us_conta on id_us = us_usuario_id_us
+						where mb_id = $bolsa 
+						and ic_ano = '$ano' 
+						and (aic_dt_saida = '0000-00-00' or aic_dt_saida > '$data') 
+					order by us_nome ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$to1=0;
+			$to2=0;
+			$to1v=0;
+			$to2v=0;			
+
+			$sx = '<br>';
+			$sx .= '<table width="100%" class="lt2 border1" border=0>';			
+			$sx .= '<tr>
+						<th width="60%">beneficiário</th>
+						<th width="80">CPF</th>
+						<th width="80">Valor</th>
+						<th width="30">Banco</th>
+						<th width="50">Ag.</th>
+						<th width="30">Mod.</th>
+						<th width="80">CC</th>
+						<th swith="20">Situação</th>
+					</tr>';
+			$xcpf = '';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					
+					$cpf = $line['us_cpf'];
+					$cor = '<font>';
+					if ($cpf == $xcpf)
+						{
+							$cor = '<font color="red">';
+						}	
+					$xcpf = $cpf;
+					
+					$sx .= '<tr>';
+					$sx .= '<td class="borderb1">';
+					$sx .= $cor.$line['us_nome'].'</font>';
+					//$sx .= '('.$line['id_us'].')';
+					$sx .= ' ('.$line['ic_aluno_cracha'].')';
+					$sx .= '</td>';
+
+					$sx .= '<td class="borderb1" align="center" width="110">';
+					$sx .= $cor.mask_cpf($line['us_cpf']).'</font>';
+					$sx .= '</td>';
+
+					$sx .= '<td align="right" class="borderb1" width="110">';
+					$sx .= $cor.$line['mb_moeda'].' ';
+					$sx .= number_format($line['mb_valor'],2,',','.').'</font>';
+					$sx .= '</td>';
+					
+					$sx .= '<td class="borderb1" align="center">'.$line['usc_banco'].'</td>';
+					$sx .= '<td class="borderb1" align="center">'.$line['usc_agencia'].'</td>';
+					$sx .= '<td class="borderb1" align="center">'.$line['usc_modo'].'</td>';
+					$sx .= '<td class="borderb1" align="center">'.$line['usc_conta_corrente'].'</td>';
+					
+					$banco = $line['usc_banco'];
+					$mod = $line['usc_modo'];
+					$cc = $line['usc_conta_corrente'];
+					$ag = $line['usc_agencia'];
+					
+					$situacao = $this -> bancos -> checadv($ag, $cc, $banco, $mod);
+					$sx .= '<td align="center" class="borderb1">'.$situacao.'</td>';
+
+					$sx .= '</tr>';	
+					
+					/* */
+					if ($situacao == 'ok')
+						{
+							$to1++;
+							$to1v = $to1v + $line['mb_valor'];
+						} else {
+							$to2++;
+							$to2v = $to2v + $line['mb_valor'];
+						}				
+				}
+			$sx .= '</table>';
+			
+			/* Resumo */
+			$sa = '<table width="100%" class="lt2 border1" border=0>';
+			$sa .= '<tr>';
+			$sa .= '<td colspan="10" class="lt5">'.$rlt[0]['mb_descricao'].'</td>';
+			$sa .= '<td class="lt0" align="center">Total de bolsas<br><font class="lt5">'.($to1+$to2).'</font></td>';
+			$sa .= '<td class="lt0" align="center" class="border1">Total de bolsas válidas<br><font class="lt5">'.($to1).'</font></td>';
+			$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5">'.number_format($to1v,2,',','.').'</font></td>';
+			$cor = '<font>';
+			if ($to2 > 0)
+				{
+					$sa .= '<td class="lt0" align="center">Total de bolsas inválidas<br><font class="lt5" color="red">'.($to2).'</font></font></td>';
+					$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5" color="red"><b>'.number_format($to2v,2,',','.').'</b></font></font></td>';
+				}
+			$sa .= '</tr>';
+			$sa .= '</table>';
+						
+			return($sa . $sx);
+		}
 
 	function gerar_pagamentos($bolsa, $credito, $ano = 2012, $bcos, $ss = '') {
 		global $total, $total1, $total2, $total3, $total4;

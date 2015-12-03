@@ -46,7 +46,7 @@ class bancos extends CI_model
 			$ccag = trim(troca($ag,'-',''));
 			$cca = substr($cccc,0,strlen($cccc)-1);
 			$ccr = substr($ccag,0,strlen($ccag)-1);
-			if ($ccc != '0000000')
+			if ($cc != '0000000')
 				{
 					$dva = $this->DVMOD13($ccr);
 					$dvc = substr($ccag,strlen($ccag)-1,1);
@@ -98,7 +98,7 @@ class bancos extends CI_model
 							$this->calc = '';
 							return('<font color="red">ERR AG./CC.'.$this->calc.'</font>');
 						} else {
-							return('OK');
+							return('ok');
 						}
 				} else {
 					if ($ccr == '00000') { return('<font color="red">SEM AG.</font>'); }					
@@ -120,7 +120,7 @@ class bancos extends CI_model
 							$this->calc = '';
 							return('<font color="red">ERR AG./CC.'.$this->calc.'</font>');
 						} else {
-							return('OK');
+							return('ok');
 						}
 				} else {
 					if ($ccr == '00000') { return('<font color="red">SEM AG.</font>'); }					
