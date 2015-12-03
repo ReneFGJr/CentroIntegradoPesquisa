@@ -65,6 +65,13 @@ $lang['lb_mb_valor'] = 'Valor da bolsa';
 $lang['lb_mb_fomento'] = 'Fomento';
 $lang['lb_mb_titulo'] = 'Gestão das modalidades de Bolsas de IC';
 
+$lang['lb_usc_banco'] = 'Banco';
+$lang['lb_usc_agencia'] = 'Agencia';
+$lang['lb_usc_conta'] = 'Conta';
+$lang['lb_usc_tipo'] = 'Tipo de Conta';
+$lang['lb_usc_modo'] = 'Modo';
+$lang['lb_sem_conta'] = 'Sem conta cadastrada';
+
 /****************************** AVALIADORES */
 $lang['desactive'] = 'desativar';
 $lang['active'] = 'ativar';
