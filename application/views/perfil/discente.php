@@ -22,7 +22,8 @@ $us_nada = '<font color="grey">[em construção]</font>';
 					}
 				?>					
 				</li>
-				<li><?php echo $us_cc;?><strong><?php echo $edita_conta;?></li>
+				<li><?php echo $us_cc;?></li>
+				
 			</div>
 			<TD width="300">
 			<div id="info-pesquisador" class="info-pesquisador lt1">
