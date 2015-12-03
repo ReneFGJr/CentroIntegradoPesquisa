@@ -164,34 +164,62 @@ class usuarios extends CI_model {
 
 		$sx .= '<table width="400" class="border1 lt1">';
 		if (count($rlt) > 0) {
+
 			$line = $rlt[0];
+			//Verifica se a conta existe
+			if (isset($rlt)) {
 
-			/* Valida conta */
-			$ag = $line['usc_agencia'];
-			$cc = $line['usc_conta_corrente'];
-			$banco = $line['usc_banco'];
-			$mod = $line['usc_modo'];
-			$situacao = $this -> bancos -> checadv($ag, $cc, $banco, $mod);
+				/* Valida conta */
+				$ag    = $line['usc_agencia'];
+				$cc    = $line['usc_conta_corrente'];
+				$banco = $line['usc_banco'];
+				$mod   = $line['usc_modo'];
+				
+				$situacao = $this -> bancos -> checadv($ag, $cc, $banco, $mod);
 
-			$sx .= '<tr>';
-			$sx .= '<td rowspan=4 width="40">' . '<img src="' . base_url('img/bancos/banco_' . $line['usc_banco']) . '.jpg" height="40"></td>';
-			$sx .= '<td align="right" width="40">Banco:</td>
+				$sx .= '<tr>';
+				$sx .= '<td rowspan=4 width="40">' . '<img src="' . base_url('img/bancos/banco_' . $line['usc_banco']) . '.jpg" height="40"></td>';
+				$sx .= '<td align="right" width="40">Banco:</td>
 								<td colspan=3 width="80%"><b>' . $line['usc_banco'] . ' - ' . $line['banco_nome'] . '</b></td>';
-			$sx .= '</tr><tr>';
-			$sx .= '<td align="right">Agência:</td><td><b>' . $line['usc_agencia'] . '</b></td>';
-			$sx .= '</tr><tr>';
-			$sx .= '<td align="right">CC:</td><td><b>' . trim($line['usc_modo'] . ' ' . $line['usc_conta_corrente']) . '</b></td>';
-			$sx .= '<td align="right">Situação:</td><td><b>' . $situacao . '</b></td>';
-			//$sx .= '</tr><tr>';
-			//$sx .= '<td>'.$line['usc_tipo'].'</td>';
-			$sx .= '</tr>';
+				$sx .= '</tr><tr>';
+				$sx .= '<td align="right">Agência:</td><td><b>' . $line['usc_agencia'] . '</b></td>';
+				$sx .= '</tr><tr>';
+				$sx .= '<td align="right">Conta:</td><td><b>' . trim($line['usc_modo'] . ' ' . $line['usc_conta_corrente']).'</b>'. ' tipo: ' .'<b>'. $line['usc_tipo'].'</b>'.'  </td>';
+				$sx .= '<td align="right">Situação:</td><td><b>' . $situacao . '</b></td>';
+				$sx .= '</tr>';
+				
+				
+				
+				//edita conta bancaria do usuario
+				$sx .= '<tr>';
+				$sx .= '<td align="right" width="40" colspan=4>';
+							$editar_conta = '';
+							if (function_exists('perfil')) {
+								if (perfil('#CPP#SPI#ADM') == 1) {
+									$editar_conta = '<a href="' . base_url('index.php/usuario/edit_conta_cc/' . $id . '/' . checkpost_link($id)) . '" class="lt0 link"><strong>editar</strong></a>';
+								}
+							}
+							$sx .= $editar_conta;
+							$sx .= '</td>';
+							$sx .= '</tr>';
+			}
 		} else {
-
-			$sx .= '<tr>';
-			$sx .= '<td>' . msg('sem_conta_corrente') . '</td>';
-			$sx .= '</tr>';
-		}
+							$sx .= '<tr>';
+							$sx .= '<td>' . msg('lb_sem_conta') .'<td>';
+							
+							$editar_conta = '';
+							if (function_exists('perfil')) {
+								if (perfil('#CPP#SPI#ADM') == 1) {
+									$editar_conta = '<a href="' . base_url('index.php/usuario/edit_conta_cc/' . $id . '/' . checkpost_link($id)) . '" class="lt0 link">editar</a>';
+								}
+							}
+							$sx .= $editar_conta;
+							$sx .= '</td>';
+							$sx .= '</tr>';
+							
+						}
 		$sx .= '</table>';
+
 		return ($sx);
 	}
 
@@ -315,7 +343,7 @@ class usuarios extends CI_model {
 
 		array_push($cp, array('$S100', 'us_link_lattes', msg('link_lattes'), False, True));
 		array_push($cp, array('$S100', 'us_nome_lattes', msg('link_nome'), False, True));
-		
+
 		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
 
 		//$sql = "select * from us_tipo order by ust_id ";
@@ -340,48 +368,22 @@ class usuarios extends CI_model {
 
 		return ($cp);
 	}
+	
+	/*cria  formulario para cadastro e edicao de contas do usuario */						
+	function cp_conta_usuario() {				
+		$cp_conta = array();
+		array_push($cp_conta, array('$H8', 'us_usuario_id_us', '', False, True));
+		array_push($cp_conta, array('${', '', 'Cadastro de Conta', True, True));
+		array_push($cp_conta, array('$Q id_banco:banco_nome:select * from banco order by banco_nome', 'usc_banco', msg('lb_usc_banco'), True, True));
+		array_push($cp_conta, array('$S15', 'usc_agencia', msg('lb_usc_agencia'), True, True));
+		array_push($cp_conta, array('$S20', 'usc_conta_corrente', msg('lb_usc_conta'), True, True));
+		array_push($cp_conta, array('$S5', 'usc_tipo', msg('lb_usc_tipo'), FALSE, FALSE));
+		array_push($cp_conta, array('$S10', 'usc_modo', msg('lb_usc_modo'), False, True));
+		array_push($cp_conta, array('$}', '', '', True, True));
 
-	function cp_usuario() {
-		$cp = array();
-		array_push($cp, array('$H8', 'id_us', '', False, True));
-		//		array_push($cp, array('$S20', 'us_cpf', msg('cpf'), False, True));
-		//		array_push($cp, array('$S20', 'us_emplid', msg('employID'), False, True));
+		array_push($cp_conta, array('$B', '', msg('enviar'), false, True));
 
-		array_push($cp, array('$S100', 'us_nome', msg('nome'), True, True));
-		array_push($cp, array('$S12', 'us_cracha', msg('cracha'), True, True));
-		array_push($cp, array('$S16', 'us_cpf', msg('cpf'), False, True));
-		
-		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
-
-		$sql = "select * from us_titulacao where ust_ativo = 1 order by ust_id ";
-		array_push($cp, array('$Q ust_id:ust_titulacao_sigla:' . $sql, 'usuario_titulacao_ust_id', msg('us_titulacao'), False, True));
-
-		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('Feminino'), 'us_genero', msg('us_genero'), True, True));
-
-		array_push($cp, array('$HV', 'us_ativo', '1', True, True));
-
-		array_push($cp, array('$Q id_ustp:ustp_nome:select * from us_tipo order by ustp_nome', 'usuario_tipo_ust_id', msg('perfil'), True, True));
-
-		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
-
-		array_push($cp, array('$B', '', msg('enviar'), false, True));
-
-		return ($cp);
-	}
-
-	function cp_edita_conta_usuario() {
-		$cp = array();
-		array_push($cp, array('$H8', 'us_usuario_id_us', '', False, True));
-
-		array_push($cp, array('$S100', 'usc_banco',   msg('lb_usc_banco'), False, True));
-		array_push($cp, array('$S50', 'usc_agencia', msg('lb_usc_agencia'), False, True));
-		array_push($cp, array('$S300', 'usc_conta_corrente', msg('lb_usc_conta_corrente'), False, True));
-		array_push($cp, array('$S10', 'usc_tipo', msg('lb_usc_tipo'), False, True));
-		array_push($cp, array('$S100', 'usc_modo', msg('lb_usc_modo'), False, True));
-		
-		array_push($cp, array('$B', '', msg('enviar'), false, True));
-
-		return ($cp);
+		return ($cp_conta);
 	}
 
 	function label($nome = '', $id) {

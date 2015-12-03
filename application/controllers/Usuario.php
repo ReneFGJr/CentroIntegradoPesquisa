@@ -384,7 +384,7 @@ class usuario extends CI_Controller {
 
 		/* salved */
 		if ($form -> saved > 0) {
-			redirect(base_url('index.php/usuario/row'));
+			redirect(base_url('index.php/usuario/view'));
 		}
 
 		$data['title'] = 'Manutenção de Conta bancária';
