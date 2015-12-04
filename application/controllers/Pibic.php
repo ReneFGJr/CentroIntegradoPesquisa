@@ -196,7 +196,9 @@ class pibic extends CI_Controller {
 		$data['resumo'] = $this -> protocolos_ic -> acoes_abertas();
 		$data['resumo'] .= $this -> protocolos_ic -> resumo_protocolos($cracha);
 		$data['resumo'] .= '<br>' . $this -> ics -> resumo_orientacoes($cracha);
-		$data['search'] = $this -> ics -> orientacoes();
+		
+		$data['search'] = $this -> ics -> entregas_abertas();
+		$data['search'] .= $this -> ics -> orientacoes();
 		$this -> load -> view('ic/home', $data);
 		$this -> load -> view('header/content_close');
 	}

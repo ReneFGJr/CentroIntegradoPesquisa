@@ -102,7 +102,9 @@ class main extends CI_Controller {
 		}
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Fomento', 'Observatório de Pesquisa', 'BTA', '/edital'));
 		}
-		if (perfil('#DGP#ADM') == 1) { array_push($menu, array('Grupo de Pesquisa', 'Pesquisas da PUCPR', 'BTN', '/dgp'));
+		if (perfil('#DGP#ADM') == 1) { array_push($menu, array('Grupo de Pesquisa', 'Pesquisas da PUCPR', 'BTA', '/dgp'));
+		}
+		if (perfil('#FND#ADM') == 1) { array_push($menu, array('Fundo de Pesquisa', 'Fundo de Pesquisa', 'BTA', '/fundo'));
 		}
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Pró-Equipamentos', 'Laboratórios e equipamentos', 'BTA', '/equipamento'));
 		}
