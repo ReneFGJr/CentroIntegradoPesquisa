@@ -147,7 +147,7 @@ class pibic extends CI_Controller {
 		/* Models */
 		$this -> load -> model('protocolos_ic');
 		$this -> load -> model('ics');
-		$this -> load -> model('usuarios');		
+		$this -> load -> model('usuarios');
 
 		$cracha = $_SESSION['cracha'];
 
@@ -160,10 +160,10 @@ class pibic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
-		
+
 		/* Valida */
 		if ($this -> protocolos_ic -> verifica_se_existe_aberto($tp, $id) == '1') {
-			
+
 			$texto = msg('Already_exists_protocol');
 			$data['search'] = '<center><h3><font color="red">' . $texto . '</font></h3></center>';
 			$this -> load -> view('ic/home', $data);
@@ -176,10 +176,10 @@ class pibic extends CI_Controller {
 
 			$data2 = array();
 			$data2 = $this -> ics -> le_protocolo($id);
-			$data = array_merge($data,$data2);
+			$data = array_merge($data, $data2);
 			$plano = $this -> load -> view('ic/plano', $data, true);
 
-			$data['search'] = $plano. $this -> protocolos_ic -> abrir($tp, $id);
+			$data['search'] = $plano . $this -> protocolos_ic -> abrir($tp, $id);
 			$this -> load -> view('ic/home', $data);
 		}
 		$this -> load -> view('header/content_close');
@@ -199,6 +199,7 @@ class pibic extends CI_Controller {
 		
 		$data['search'] = $this -> ics -> entregas_abertas();
 		$data['search'] .= $this -> ics -> orientacoes();
+		
 		$this -> load -> view('ic/home', $data);
 		$this -> load -> view('header/content_close');
 	}
@@ -223,6 +224,9 @@ class pibic extends CI_Controller {
 		$menus = array();
 		array_push($menus, array('Home', 'index.php/pibic'));
 		array_push($menus, array('Protocolos', 'index.php/pibic/protocolo'));
+
+		array_push($menus, array('Formulários', 'index.php/pibic/formularios/'));
+
 		/*
 		 array_push($menus, array('Trabalhos', 'index.php/semic/trabalhos'));
 		 array_push($menus, array('Localização Pôster', 'index.php/semic/poster'));
@@ -239,6 +243,47 @@ class pibic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
 	}
+
+	function formularios($id = 0, $gr = '') {
+		$cracha = $_SESSION['cracha'];
+		
+		$this -> cab();
+		$data = array();
+
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Pré-relatório parcial', 'Acompanhamento estudante', 'ITE', '/pibic/view_acomp_alunos'));
+		array_push($menu, array('Pré-relatório parcial', 'Acompanhamento orientador', 'ITE', '/pibic/view_acomp_prof'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Formulário';
+		$this -> load -> view('header/main_menu', $data);
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function view_acomp_alunos($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$data = $this -> ics -> le($id);
+
+		$this -> cab();
+		
+		$data['content'] =  $this -> ics -> cp_form_professor();
+		$this -> load -> view('content', $data);
+		
+		//$this -> load -> view('ic/form_acomp_aluno', $data);
+		
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+
 
 }
 ?>

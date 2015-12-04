@@ -53,12 +53,12 @@ class ic extends CI_Controller {
 
 		array_push($menus, array('Pessoas', 'index.php/ic/usuarios'));
 		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
-
 		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
-
 		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
 		array_push($menus, array('Relatórios', 'index.php/ic/report'));
 		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
+		array_push($menus, array('Formulários', 'index.php/ic/formularios/'));
+		
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -1042,5 +1042,5 @@ class ic extends CI_Controller {
 		$this -> geds -> file_path = '_document/ic/';
 		$this -> geds -> file_delete($id);
 	}
-
+	
 }
