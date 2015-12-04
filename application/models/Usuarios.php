@@ -11,6 +11,7 @@ class usuarios extends CI_model {
 		array_push($cp, array('$S100', 'us_nome', msg('nome'), True, True));
 		array_push($cp, array('$S12', 'us_cracha', msg('cracha'), True, True));
 		array_push($cp, array('$S16', 'us_cpf', msg('cpf'), False, True));
+		array_push($cp, array('$D8', 'us_dt_nascimento', msg('dt_nascimento'), False, True));
 
 		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
 
@@ -147,16 +148,25 @@ class usuarios extends CI_model {
 	}
 
 	function checar_cpf($pg = 0) {
-		$sql = "select * from us_usuario where us_cpf line '%.%' or us_cpf like '%-%' ";
+		$sql = "select * from us_usuario where us_cpf like '%.%' or us_cpf like '%-%' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-
+		$sx = '';
+		$to = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
+			$to++;
 			$line = $rlt[$r];
-			print_r($line);
-			echo '<hr>';
-			exit ;
+			$id = $line['id_us'];
+			$cpf = $line['us_cpf'];
+			$cpf = strzero(sonumero($cpf),11);
+			$sql = "update us_usuario set us_cpf = '$cpf' where id_us = $id ";
+			$rltx = $this -> db -> query($sql);
+			$sx .= '<br>'.$line['us_cpf'].'==>'.$cpf;
 		}
+		$sx = '<h1>Validação de CPF</h1>'.$sx;
+		$sx .= '<p>Total de '.$to.' CPFs ajustados</p>';
+		$data['content'] = $sx;
+		$this->load->view('content',$data);
 	}
 
 	function inport_professores() {
@@ -204,10 +214,11 @@ class usuarios extends CI_model {
 					$sx .= '<td>' . msg('lb_sem_conta') . '<td>';
 					$sx .= $editar_conta;
 				} else {
-
 					/* Valida conta */
 					$ag = $line['usc_agencia'];
 					$cc = $line['usc_conta_corrente'];
+					if ($cc=='0000000')
+						{$cc = '<font color="blue">ORDEM</font>'; }
 					$banco = $line['usc_banco'];
 					$mod = $line['usc_modo'];
 

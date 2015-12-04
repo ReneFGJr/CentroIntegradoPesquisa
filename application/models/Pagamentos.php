@@ -12,6 +12,7 @@ class pagamentos extends CI_Model {
 					left join us_conta on id_us = us_usuario_id_us
 						where mb_id = $bolsa 
 						and ic_ano = '$ano' 
+						and icas_id = 1
 						and (aic_dt_saida = '0000-00-00' or aic_dt_saida > '$data') 
 					order by us_nome ";
 			$rlt = $this->db->query($sql);
@@ -19,8 +20,11 @@ class pagamentos extends CI_Model {
 			
 			$to1=0;
 			$to2=0;
+			$to3=0;
+			$to4=0;
 			$to1v=0;
-			$to2v=0;			
+			$to2v=0;
+			$to3v=0;			
 
 			$sx = '<br>';
 			$sx .= '<table width="100%" class="lt2 border1" border=0>';			
@@ -44,6 +48,7 @@ class pagamentos extends CI_Model {
 					if ($cpf == $xcpf)
 						{
 							$cor = '<font color="red">';
+							$to4++;
 						}	
 					$xcpf = $cpf;
 					
@@ -54,23 +59,31 @@ class pagamentos extends CI_Model {
 					$sx .= ' ('.$line['ic_aluno_cracha'].')';
 					$sx .= '</td>';
 
-					$sx .= '<td class="borderb1" align="center" width="110">';
+					$sx .= '<td class="borderb1" align="center" width="110"><nobr>';
 					$sx .= $cor.mask_cpf($line['us_cpf']).'</font>';
-					$sx .= '</td>';
+					$sx .= '</nobr></td>';
 
-					$sx .= '<td align="right" class="borderb1" width="110">';
+					$sx .= '<td align="right" class="borderb1" width="110"><nobr>';
 					$sx .= $cor.$line['mb_moeda'].' ';
-					$sx .= number_format($line['mb_valor'],2,',','.').'</font>';
+					$sx .= number_format($line['mb_valor'],2,',','.').'</font></nobr>';
 					$sx .= '</td>';
+					
+					$ccv = trim($line['usc_conta_corrente']);
+					if ($ccv=='0000000')
+						{$ccv= '<font color="green"><b>ORDEM</b></font>';
+							$to3++;
+							$to3v = $to3v + $line['mb_valor']; 
+						}					
 					
 					$sx .= '<td class="borderb1" align="center">'.$line['usc_banco'].'</td>';
 					$sx .= '<td class="borderb1" align="center">'.$line['usc_agencia'].'</td>';
 					$sx .= '<td class="borderb1" align="center">'.$line['usc_modo'].'</td>';
-					$sx .= '<td class="borderb1" align="center">'.$line['usc_conta_corrente'].'</td>';
+					$sx .= '<td class="borderb1" align="center">'.$ccv.'</td>';
 					
 					$banco = $line['usc_banco'];
 					$mod = $line['usc_modo'];
-					$cc = $line['usc_conta_corrente'];
+					$cc = trim($line['usc_conta_corrente']);
+
 					$ag = $line['usc_agencia'];
 					
 					$situacao = $this -> bancos -> checadv($ag, $cc, $banco, $mod);
@@ -93,15 +106,35 @@ class pagamentos extends CI_Model {
 			/* Resumo */
 			$sa = '<table width="100%" class="lt2 border1" border=0>';
 			$sa .= '<tr>';
-			$sa .= '<td colspan="10" class="lt5">'.$rlt[0]['mb_descricao'].'</td>';
+			if (isset($rlt[0]))
+				{
+				$sa .= '<td colspan="10" class="lt5">'.$rlt[0]['mb_descricao'].'</td>';
+				}
 			$sa .= '<td class="lt0" align="center">Total de bolsas<br><font class="lt5">'.($to1+$to2).'</font></td>';
 			$sa .= '<td class="lt0" align="center" class="border1">Total de bolsas válidas<br><font class="lt5">'.($to1).'</font></td>';
 			$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5">'.number_format($to1v,2,',','.').'</font></td>';
+			if ($to4 > 0)
+				{
+					$sa .= '<td class="lt0" align="center" bgcolor="#ffe0e0">Pagamento duplicado<br><font class="lt5" color="red">'.($to4).'</font></font></td>';
+				}			
+			if ($to3 > 0)
+				{
+					$sa .= '<td class="lt0" align="center">Total de Ordem de Pagamento<br><font class="lt5" color="green">'.($to3).'</font></font></td>';
+					$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5" color="green"><b>'.number_format($to3v,2,',','.').'</b></font></font></td>';
+				}			
 			$cor = '<font>';
 			if ($to2 > 0)
 				{
 					$sa .= '<td class="lt0" align="center">Total de bolsas inválidas<br><font class="lt5" color="red">'.($to2).'</font></font></td>';
 					$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5" color="red"><b>'.number_format($to2v,2,',','.').'</b></font></font></td>';
+				}
+			if ($to1 > 0)
+				{
+				$sa .= '<td width="80" class="nopr">';
+				$sa .= '<form method="get" action="'.base_url('index.php/ic/pagamento_planilha_hsbc/'.$bolsa.'/'.$ano).'" target="_new">';
+				$sa .= '<input type="submit" name="button" value="'.msg("gerar_arquivo").'" class="botao3d back_green_shadown back_green" >';
+				$sa .= '</form>';
+				$sa .= '</td>';
 				}
 			$sa .= '</tr>';
 			$sa .= '</table>';
