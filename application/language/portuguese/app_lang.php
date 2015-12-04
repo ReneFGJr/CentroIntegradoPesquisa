@@ -72,6 +72,11 @@ $lang['lb_usc_tipo'] = 'Tipo de Conta';
 $lang['lb_usc_modo'] = 'Modo';
 $lang['lb_sem_conta'] = 'Sem conta cadastrada';
 
+$lang['lb_pa_TT_lista_registro'] = 'Acompanhamento de estudantes';
+$lang['lb_pa_protocolo'] = 'Protocolo';
+$lang['lb_pa_usuario_id'] = 'Usuário';
+$lang['lb_pa_status'] = 'Status';
+
 /****************************** AVALIADORES */
 $lang['desactive'] = 'desativar';
 $lang['active'] = 'ativar';

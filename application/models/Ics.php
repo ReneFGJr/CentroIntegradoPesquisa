@@ -3,6 +3,7 @@ class ics extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
 	var $tabela_2 = "ic_modalidade_bolsa";
+	var $tabela_3 = "pibic_acompanhamento";
 
 	function inserir_historico($proto,$ac,$hist,$aluno1,$aluno2,$motivo,$obs='')
 		{
@@ -1236,6 +1237,31 @@ class ics extends CI_model {
 		
 		return ($cp);
 	}
+
+	function cp_form_professor(){
+		
+		$form = new form;
+		
+		$cp = array();
+		
+		$op_pa2  = '';
+		$op_pa2 .= '1:estudante de ensino médio';
+		$op_pa2 .= '&2:aluno(s) de mestrado';
+		$op_pa2 .= '&3:aluno(s) de doutorado';
+		$op_pa2 .= '&4:aluno(s) de graduação';
+		$op_pa2 .= '&5:outros professores';
+		
+		array_push($cp, array('$H8', 'id_pa', '', False, True));
+		array_push($cp, array('$O 1:SIM&2:NÃO', 'pa_p01', msg('lb_form_prof_pa1'), True, True));
+		array_push($cp, array('$O '.$op_pa2, 'pa_p20', msg('lb_form_prof_pa1'), True, True));
+
+		$tela = $form -> editar($cp, 'pibic_acompanhamento');
+		
+		return $tela;
+		
+	}
+
+
 
 }
 ?>
