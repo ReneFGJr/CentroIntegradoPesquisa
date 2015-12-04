@@ -77,6 +77,28 @@ $lang['lb_pa_protocolo'] = 'Protocolo';
 $lang['lb_pa_usuario_id'] = 'Usuário';
 $lang['lb_pa_status'] = 'Status';
 
+/** Fomularios ******/
+ /** para aluno */
+$lang['lb_form_aluno_pa1'] = '1) Você tem participado das discussões com o grupo de pesquisa do professor orientador ?';
+$lang['lb_form_aluno_pa2'] = '2) No grupo de pesquisa tenho contato com:';
+$lang['lb_form_aluno_pa3'] = '3) Com que frequência você tem encontrado com seu orientador ?';
+$lang['lb_form_aluno_pa4'] = '4) Seu contato com professor orientador é: ';
+$lang['lb_form_aluno_pa5'] = '5) Até este momento realizei:';
+$lang['lb_form_aluno_pa6'] = '6) O cronograma do meu plano de atividades está: ';
+$lang['lb_form_aluno_pa7'] = '7) Você mantém seu curricullum lattes atualizado? ';
+$lang['lb_form_aluno_pa8'] = '8) Já incluiu seu projeto de PIBIC/PIBITI?';
+$lang['lb_form_aluno_pa9'] = '9) Qual sua avaliação geral sobre sua experiência no PIBIC/PIBITI ?';
+$lang['lb_form_aluno_pa10'] = 'Descrever atividades';
+
+ /** para professor */
+$lang['lb_form_prof_pa1'] = '1)	O estudante tem participado das discussões com seu grupo de pesquisa?';
+$lang['lb_form_prof_pa2'] = '2)	Com que frequência você tem encontrado com seu orientado? ';
+$lang['lb_form_prof_pa3'] = '3)	Seu contato com o estudante  é: ';
+$lang['lb_form_prof_pa4'] = '4)	O cronograma do plano de atividades está ';
+$lang['lb_form_prof_pa5'] = '5)	Há indícios de displicência do estudante com as atividades de pesquisa? ';
+$lang['lb_form_prof_pa6'] = '6)	Espaço livre para algum comentário';
+
+
 /****************************** AVALIADORES */
 $lang['desactive'] = 'desativar';
 $lang['active'] = 'ativar';
@@ -255,8 +277,6 @@ $lang['lb_inst_uf'] 	= 'UF';
 $lang['lb_inst_regiao'] 	= 'Região';
 $lang['lb_lista_instituicao'] 	= 'Lista de Instituições';
 $lang['lb_editar_instituicao'] 	= 'Editar Instituição';
-
-
 
 /* Paises */
 $lang['Label_csf_pais'] 	= 'Nome do país';

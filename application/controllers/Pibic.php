@@ -273,12 +273,23 @@ class pibic extends CI_Controller {
 
 		$this -> cab();
 		
+		$data['content'] =  $this -> ics -> cp_form_estudante();
+		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function view_acomp_prof($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$data = $this -> ics -> le($id);
+
+		$this -> cab();
+		
 		$data['content'] =  $this -> ics -> cp_form_professor();
 		$this -> load -> view('content', $data);
 		
-		//$this -> load -> view('ic/form_acomp_aluno', $data);
-		
-
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}

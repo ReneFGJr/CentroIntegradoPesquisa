@@ -1238,28 +1238,130 @@ class ics extends CI_model {
 		return ($cp);
 	}
 
-	function cp_form_professor(){
+	/* Formulario de acompanhamento de pré-avaliacao para estudantes   */
+	function cp_form_estudante(){
 		
 		$form = new form;
-		
 		$cp = array();
 		
 		$op_pa2  = '';
-		$op_pa2 .= '1:estudante de ensino médio';
+		$op_pa2 .= ' 1:estudante de ensino médio';
 		$op_pa2 .= '&2:aluno(s) de mestrado';
 		$op_pa2 .= '&3:aluno(s) de doutorado';
 		$op_pa2 .= '&4:aluno(s) de graduação';
 		$op_pa2 .= '&5:outros professores';
+		 
+		$op_pa3  = '';
+		$op_pa3 .= ' 1:1 vez por semana';
+		$op_pa3 .= '&2:2 vezes por semana';
+		$op_pa3 .= '&3:diariamente';
+		$op_pa3 .= '&4:sempre que necessito';
+		$op_pa3 .= '&5:1 vez por mês';
+		$op_pa3 .= '&6:2 vezes por mês';
+		$op_pa3 .= '&7:nunca';
 		
+		$op_pa4  = '';
+		$op_pa4 .= ' 1:por e-mail';
+		$op_pa4 .= '&2:presencial ';
+		$op_pa4 .= '&3:ambos';
+		
+		$op_pa5  = '';
+		$op_pa5 .= ' 1:levantamento bibliográfico';
+		$op_pa5 .= '&2:leituras e fichamento';
+		$op_pa5 .= '&3:questionário a ser aplicado posteriormente';
+		$op_pa5 .= '&4:atividades de laboratório';
+		$op_pa5 .= '&5:coleta de dados';
+		$op_pa5 .= '&6:envio do projeto para CEP ou CEUA';
+		$op_pa5 .= '&7:outras atividades. Especificar: ';
+		
+		$op_pa6  = '';
+		$op_pa6 .= ' 1:em dia';
+		$op_pa6 .= '&2:atrasado';
+		$op_pa6 .= '&3:adiantado';
+		
+		$op_pa7  = '';
+		$op_pa7 .= ' 1:SIM';
+		$op_pa7 .= '&2:NÃO';
+		$op_pa7 .= '&3:vou fazer agora!';
+		
+		$op_pa8  = '';
+		$op_pa8 .= ' 1:SIM';
+		$op_pa8 .= '&2:NÃO';
+		$op_pa8 .= '&3:vou fazer agora!';
+		
+		$op_pa9  = '';
+		$op_pa9 .= ' 1:péssima';
+		$op_pa9 .= '&2:fraca';
+		$op_pa9 .= '&3:regular';
+		$op_pa9 .= '&4:boa';
+		$op_pa9 .= '&5:ótima';		
+
 		array_push($cp, array('$H8', 'id_pa', '', False, True));
-		array_push($cp, array('$O 1:SIM&2:NÃO', 'pa_p01', msg('lb_form_prof_pa1'), True, True));
-		array_push($cp, array('$O '.$op_pa2, 'pa_p20', msg('lb_form_prof_pa1'), True, True));
+		array_push($cp, array('${', '', 'Estudante responder o questionário', False, True));
+		array_push($cp, array('$O 1:SIM&2:NÃO', 'pa_p01', msg('lb_form_aluno_pa1'), True, True));
+		array_push($cp, array('$CM'.$op_pa2, 'pa_p20', msg('lb_form_aluno_pa2'), True, True));
+		array_push($cp, array('$RM'.$op_pa3, 'pa_p21', msg('lb_form_aluno_pa3'), True, True));	
+		array_push($cp, array('$RM'.$op_pa4, 'pa_p22', msg('lb_form_aluno_pa4'), True, True));
+		array_push($cp, array('$CM'.$op_pa5, 'pa_p23', msg('lb_form_aluno_pa5'), True, True));
+		array_push($cp, array('$T80:5'      , 'pa_p28', msg('lb_form_aluno_pa10'), False, True));	
+		array_push($cp, array('$O'.$op_pa6, 'pa_p24', msg('lb_form_aluno_pa6'), True, True));
+		array_push($cp, array('$O'.$op_pa7, 'pa_p25', msg('lb_form_aluno_pa7'), True, True));
+		array_push($cp, array('$O'.$op_pa8, 'pa_p26', msg('lb_form_aluno_pa8'), True, True));
+		array_push($cp, array('$RM'.$op_pa9, 'pa_p27', msg('lb_form_aluno_pa9'), True, True));	
+		array_push($cp, array('$}', '', '', False, True));
+		
+		array_push($cp, array('$B', '', msg('bt_confirm'), False, True));	
 
 		$tela = $form -> editar($cp, 'pibic_acompanhamento');
 		
 		return $tela;
 		
 	}
+	
+	/* Formulario de acompanhamento de pré-avaliacao para professores   */
+	function cp_form_professor(){
+		
+		$form = new form;
+		$cp = array();
+		
+		$op_pa2  = '';
+		$op_pa2 .= ' 1:1 vez por semana';
+		$op_pa2 .= '&2:1 vezes por semana';
+		$op_pa2 .= '&3:diariamente';
+		$op_pa2 .= '&4:sempre que necessário';
+		$op_pa2 .= '&5:1 vez por mês';
+		$op_pa2 .= '&6:2 vezes por mês';
+		$op_pa2 .= '&7:nunca';
+		
+		$op_pa3  = '';
+		$op_pa3 .= ' 1:por e-mail';
+		$op_pa3 .= '&2:presencial';
+		$op_pa3 .= '&3:ambos';
+
+		$op_pa4  = '';
+		$op_pa4 .= ' 1:em dia';
+		$op_pa4 .= '&2:atrasado ';
+		$op_pa4 .= '&3:adiantado';
+
+		array_push($cp, array('$H8', 'id_pa', '', False, True));
+		array_push($cp, array('${', '', 'Professor responder o questionário', False, True));
+		array_push($cp, array('$O 1:SIM&2:NÃO', 'pa_p01', msg('lb_form_prof_pa1'), True, True));
+		array_push($cp, array('$CM '.$op_pa2, 'pa_p20', msg('lb_form_prof_pa2'), True, True));
+		array_push($cp, array('$RM '.$op_pa3, 'pa_p21', msg('lb_form_prof_pa3'), True, True));	
+		array_push($cp, array('$RM '.$op_pa4, 'pa_p22', msg('lb_form_prof_pa4'), True, True));
+		array_push($cp, array('$O 1:SIM&2:NÃO', 'pa_p02', msg('lb_form_prof_pa5'), True, True));
+		array_push($cp, array('$T80:5 ', 'pa_p23', msg('lb_form_prof_pa6'), False, True));	
+		array_push($cp, array('$}', '', '', False, True));
+		
+		array_push($cp, array('$B', '', msg('bt_confirm'), False, True));	
+
+		$tela = $form -> editar($cp, 'pibic_acompanhamento');
+		
+		return $tela;
+		
+	}
+
+
 
 
 
