@@ -235,7 +235,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10, // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,   // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -1298,6 +1298,10 @@ if (!function_exists('form_edit')) {
 						$sq2 .= ', ';
 					}
 					$sq1 .= $cp[$r][1];
+					if (is_array($vlr))
+						{
+							$vlr = implode(';', $vlr);
+						}
 					$sq2 .= "'" . $vlr . "'";
 					$sv++;
 				}
@@ -1415,7 +1419,12 @@ if (!function_exists('form_edit')) {
 			$requer = $cp[$r][3];
 			if ($requer == true) {
 				$vlr = $CI -> input -> post('dd' . $r);
-				if (strlen($vlr) == 0) { $saved = 0;
+				if (is_array($vlr)) {
+					if (count($vlr)==0) { $saved = 0; }
+				} else {
+					if (strlen($vlr) == 0) { $saved = 0;
+					}
+
 				}
 			}
 		}
@@ -1535,6 +1544,8 @@ if (!function_exists('form_edit')) {
 		if (substr($type, 0, 5) == '$LINK') { $tt = 'LINK';
 		}
 		if (substr($type, 0, 3) == '$AA') { $tt = 'AA';
+		}
+		if (substr($type, 0, 3) == '$CM') { $tt = 'CM';
 		}
 
 		/* form */
@@ -1677,7 +1688,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $tdn . $trn;
 				break;
 			case 'C' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
@@ -1693,6 +1704,45 @@ if (!function_exists('form_edit')) {
 				}
 
 				$tela .= $tdn . $trn;
+				break;
+
+			/* Select Box */
+			case 'CM' :
+				$ntype = trim(substr($type, 3, strlen($type)));
+				$ntype = troca($ntype, '&', ';') . ';';
+				$param = splitx(';', $ntype);
+
+				$tela .= $tr;
+
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= $tdl . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
+				}
+				
+				/* TR da tabela */
+				$tela .= '<td align="left">';
+				//echo implode(';',$vlr);
+				if (is_array($vlr))
+					{
+
+					} else {
+						$vlr = array();
+					}
+				for ($r = 0; $r < count($param); $r++) {
+					if (count(trim($param[$r])) > 0) {
+						$nterm = splitx(':', $param[$r] . ':');
+						$key = $nterm[0];
+						$valor = $nterm[1];
+						$check = '';
+						for ($rx=0;$rx < count($vlr);$rx++)
+							{
+								if ($vlr[$rx] == $key) { $check = 'checked'; }
+							}
+						$tela .= '<input type="checkbox" name="'.$dn.'[]" id="'.$dn.'" value="' . $key . '" '.$check.'>' . $valor . '<br>';
+					}
+				}
 				break;
 
 			/* Oculto */
@@ -1848,7 +1898,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'D' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1874,7 +1924,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'LINK' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1892,7 +1942,7 @@ if (!function_exists('form_edit')) {
 				break;
 
 			case 'M' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1902,7 +1952,7 @@ if (!function_exists('form_edit')) {
 
 			/* form_number */
 			case 'N' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
@@ -1921,7 +1971,7 @@ if (!function_exists('form_edit')) {
 
 			/* String */
 			case 'S' :
-				/* TR da tabela */
+			/* TR da tabela */
 				$tela .= $tr;
 
 				/* label */
