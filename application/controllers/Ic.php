@@ -544,6 +544,7 @@ class ic extends CI_Controller {
 
 	function protocolo_view($id = '', $chk = '') {
 		/* Load Models */
+		$this -> load -> model('usuarios');
 		$this -> load -> model('protocolos_ic');
 		$this -> load -> model('ics');
 
@@ -572,6 +573,9 @@ class ic extends CI_Controller {
 				case 'CAN' :
 					$cp = $this -> protocolos_ic -> cp_CAN();
 					break;
+				case 'SBS' :
+					$cp = $this -> protocolos_ic -> cp_SBS();
+					break;					
 				default :
 					$data['content'] = '<h1><center><font color="red">Ações para este serviço não estão liberadas - '.$tip.'</font></center></h1>';
 					$this -> load -> view('content', $data);
@@ -588,6 +592,10 @@ class ic extends CI_Controller {
 					case 'CAN' :
 						$cp = $this -> protocolos_ic -> protocolo_CAN($obj);
 						break;
+					/****************** cancelamento de protocolo *****/
+					case 'SBS' :
+						$cp = $this -> protocolos_ic -> protocolo_SBS($obj);
+						break;						
 				}
 
 				$data['content'] = 'FIM';
@@ -623,14 +631,15 @@ class ic extends CI_Controller {
 						left join ic_protocolos_tipo on ict_tipo = pr_tipo
 						left join ic_protocolos_situacao on pts_status = pr_status
 						where pr_status = '$status'
+						order by id_pr desc, pr_hora desc
 					) as ic_protocolo ";
 		$form = new form;
-
 		$form -> tabela = $tabela;
 		$form -> see = true;
 		$form -> novo = false;
 		$form -> edit = false;
 		$form -> offset = 20;
+		$form -> order = 'id_pr desc';
 		$form -> row_view = base_url('index.php/ic/protocolo_view/');
 		$form -> row = base_url('index.php/ic/protocolo/' . $status . '/' . $chk);
 		$form = $this -> protocolos_ic -> row($form);

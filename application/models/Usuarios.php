@@ -2,6 +2,19 @@
 class usuarios extends CI_model {
 	var $tabela = 'us_usuario';
 
+	function ghost_link($id = 0) {
+		if (function_exists("perfil")) {
+			if (perfil('#SPI#ADM#CPP#CPI') == 1) {
+				$link = '<a href="' . base_url('index.php/login/ap/' . $id . '/' . checkpost_link($id . date("Ymdhi"))) . '">';
+				$link .= '<img src="' . base_url('img/icon/icone_ghost.png') . '" border=0 height="16" title="' . msg("ghost_access") . '"></a>';
+				return ($link);
+			} else {
+				return ("");
+			}
+		}
+		return ("");
+	}
+
 	function cp_usuario() {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_us', '', False, True));
@@ -158,15 +171,15 @@ class usuarios extends CI_model {
 			$line = $rlt[$r];
 			$id = $line['id_us'];
 			$cpf = $line['us_cpf'];
-			$cpf = strzero(sonumero($cpf),11);
+			$cpf = strzero(sonumero($cpf), 11);
 			$sql = "update us_usuario set us_cpf = '$cpf' where id_us = $id ";
 			$rltx = $this -> db -> query($sql);
-			$sx .= '<br>'.$line['us_cpf'].'==>'.$cpf;
+			$sx .= '<br>' . $line['us_cpf'] . '==>' . $cpf;
 		}
-		$sx = '<h1>Validação de CPF</h1>'.$sx;
-		$sx .= '<p>Total de '.$to.' CPFs ajustados</p>';
+		$sx = '<h1>Validação de CPF</h1>' . $sx;
+		$sx .= '<p>Total de ' . $to . ' CPFs ajustados</p>';
 		$data['content'] = $sx;
-		$this->load->view('content',$data);
+		$this -> load -> view('content', $data);
 	}
 
 	function inport_professores() {
@@ -217,8 +230,8 @@ class usuarios extends CI_model {
 					/* Valida conta */
 					$ag = $line['usc_agencia'];
 					$cc = $line['usc_conta_corrente'];
-					if ($cc=='0000000')
-						{$cc = '<font color="blue">ORDEM</font>'; }
+					if ($cc == '0000000') {$cc = '<font color="blue">ORDEM</font>';
+					}
 					$banco = $line['usc_banco'];
 					$mod = $line['usc_modo'];
 
@@ -472,12 +485,10 @@ class usuarios extends CI_model {
 		if (strlen($cracha) == 0) {
 			return ('');
 		}
-
 		$this -> load -> model('usuarios');
 		$this -> load -> model('webservice/ws_sga');
 
-		if ($source = 'cs') {
-
+		if ($source == 'cs') {
 		} else {
 			$rs = $this -> ws_sga -> findStudentByCracha($cracha);
 		}
@@ -519,7 +530,7 @@ class usuarios extends CI_model {
 				$line['editar'] = '<a href="' . base_url('index.php/usuario/edit/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">editar</a>';
 			}
 		}
-
+		$line['ghost'] = $this -> ghost_link($line['id_us']);
 		if ($line['us_genero'] == 'M') { $line['us_genero'] = msg('Masculino');
 		}
 		if ($line['us_genero'] == 'F') { $line['us_genero'] = msg('Feminino');

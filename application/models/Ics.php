@@ -383,51 +383,41 @@ class ics extends CI_model {
 			$icas_id_char = $line['icas_id_char'];
 			$icas_id = $line['icas_id'];
 
-			echo '<font color="blue">';
-			print_r($line);
-
-			echo '</font>';
 			$idc = $line['id_ica'];
+			
+			/* Finaliza aluno atual */
 			$sql = "update ic_aluno set
-								icas_id_char = 'S',
-								icas_id = 3,
+								icas_id_char = 'C',
+								icas_id = 2,
 								aic_dt_saida = '$data',
 								aic_dt_fim_bolsa = '$data'								
 							where id_ica = " . $idc . ';' . cr();
-
-			$sqli = "
-							insert into ic_aluno 
-							(
+			
+			/* Inserre novo aluno */
+			$sqli = "insert into ic_aluno 
+						(
 							aluno_id, ic_aluno_cracha, ic_id,
 							mb_id, mb_id_char, icas_id, 
 							icas_id_char,
 							aic_dt_entrada, aic_dt_saida, aic_dt_inicio_bolsa,
 							aic_dt_fim_bolsa 
-							)
-							values
-							(
+						) values (
 							$ida, '$cracha_novo','$ic_id',
 							'$mb_id','$mb_id_char','$icas_id', '$icas_id_char',
 							'$data','0000-00-00','$data',
 							'0000-00-00'
-							) 
+						) 
 					";
-			$sqld = "
-							update ic_aluno
-							set aluno_id = $ida, ic_aluno_cracha = '$cracha_novo'
-							where id_ica = " . $idc;
 
+			/* Atualiza Dados do aluno */
 			$sqlf = "update ic set 
 								ic_cracha_aluno = '$cracha_novo',
 								ic_dt_ativacao = '$data'
 								where ic_plano_aluno_codigo = '$protocolo' ";
-			//$this->db->query($sql);
-			//$this->db->query($sqli);
-			$this -> db -> query($sqld);
+			$this->db->query($sql);
+			$this->db->query($sqli);			
 			$this -> db -> query($sqlf);
 		}
-		echo '<hr>' . $sql . '<hr>';
-		echo '<hr>' . $sqli . '<hr>';
 	}
 
 	function resumo_orientacoes() {

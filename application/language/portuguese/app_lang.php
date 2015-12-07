@@ -16,7 +16,18 @@ if (!function_exists(('msg')))
 $lang['page_usuarios'] = 'Cadastro de pessoas';
 
 $lang['versao'] = 'v0.15.25';
+/* Fundo de Pesquisa */
+$lang['page_fundo'] = 'Fundo de Pesquisa';
 /***************************** PIBIC */
+$lang['ic_atividade_aberta'] = 'Atividades para entrega';
+$lang['IC_FORM_PROF'] = 'Formulário Pré-Relatório Parcial (professor)';
+$lang['IC_FORM_ESTU'] = 'Formulário Pré-Relatório Parcial (estudante)';
+$lang['bt_entregar'] = 'Entregar Atividade';
+
+$lang['protocolo_F'] = 'Finalizados';
+$lang['protocolo_A'] = 'Abertos';
+$lang['protocolo_C'] = 'Indeferidos / cancelados';
+
 $lang['nao_postado'] = 'não postado';
 $lang['resumo_postado'] = 'resumo postado';
 $lang['list_arquivos'] = 'Arquivos postados';

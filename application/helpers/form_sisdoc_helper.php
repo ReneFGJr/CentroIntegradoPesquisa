@@ -104,10 +104,16 @@ function meses_short() {
 }
 
 function enviaremail($para, $assunto, $texto, $de) {
+	if (!is_array($para))
+	{
+		$para = array($para);
+	}
 	$CI = &get_instance();
-
+	
+	$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
+	$CI -> load -> library('email', $config);
 	$CI -> email -> subject($assunto);
-	$CI -> email -> message($texto);
+	$CI -> email -> message($texto);	
 
 	/* de */
 	$sql = "select * from mensagem_own where id_m = " . round($de);
@@ -117,17 +123,15 @@ function enviaremail($para, $assunto, $texto, $de) {
 		$line = $rlt[0];
 		$e_mail = trim($line['m_email']);
 		$e_nome = trim($line['m_descricao']);
-
+		
 		$CI -> email -> from($e_mail, $e_nome);
 		$CI -> email -> to($para[0]);
 		$CI -> email -> subject($assunto);
 		$CI -> email -> message($texto);
 
-		if (is_array($para)) {
-			array_push($para, trim($line['m_email']));
-		} else {
-			$para = array($para, trim($line['m_email']));
-		}
+		array_push($para, trim($line['m_email']));
+		array_push($para, 'renefgj@gmail.com');
+		
 		/* e-mail com copias */
 		$bcc = array();
 		for ($r = 1; $r < count($para); $r++) {
@@ -153,10 +157,10 @@ function enviaremail($para, $assunto, $texto, $de) {
 		echo $sx;
 
 		$CI -> email -> send();
-
 		return ('ok');
 	} else {
-		return ('Proprietário do e-mail não configurado (veja mensagem_own)');
+		echo ('Proprietário do e-mail não configurado (veja mensagem_own)');
+		exit;
 	}
 }
 
@@ -807,6 +811,7 @@ class form {
 	var $row_edit = '';
 	var $row = '';
 	var $offset = 30;
+	var $order = '';
 
 	function editar($cp, $tabela) {
 		$ed = new form;
@@ -1141,7 +1146,13 @@ if (!function_exists('form_edit')) {
 		}
 
 		$sql = "select $fld from " . $tabela . ' ' . $wh;
-		$sql .= " order by " . $fd[1];
+		if (strlen($obj ->order) > 0)
+			{
+				$sql .= " order by " . $obj ->order;
+			} else {
+				$sql .= " order by " . $fd[1];		
+			}
+		
 		$sql .= " limit " . $start_c . " , " . $offset;
 		$query = $CI -> db -> query($sql);
 		$data = '';

@@ -70,6 +70,48 @@ class login extends CI_Controller {
 		echo 'ERRO DE ACESSO!';
 		exit ;
 	}
+
+	function ap($id=0, $chk='') {
+		/* Remover */
+		$chk2 = checkpost_link($id.date("Ymdhi"));
+		
+		if ($chk != $chk2) {
+			redirect(base_url("index.php/login"));
+		} else {
+			$id = round($id);
+			$sql = "select * from us_usuario where id_us = " . $id;
+			
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$line = $rlt[0];
+			
+			/* Model */
+			$this -> load -> model('login/josso_login_pucpr');
+
+			if (count($rlt) > 0) {
+				/* Recupera dados */
+				$this -> josso_login_pucpr -> cpf = $line['us_cpf'];
+				//$this -> josso_login_pucpr -> josso = $line['jossoSession'];
+				$this -> josso_login_pucpr -> nome = $line['us_nome'];
+				//$this -> josso_login_pucpr -> perfil = $line['us_perfil'];
+				$this -> josso_login_pucpr -> id = $line['id_us'];
+				$this -> josso_login_pucpr -> cracha = '';
+				$this -> josso_login_pucpr -> nomeEmpresa = '';
+				$this -> josso_login_pucpr -> nomeFilial = '';
+				$this -> josso_login_pucpr -> cracha = $line['us_cracha'];
+				$this -> josso_login_pucpr -> id_us = $line['id_us'];
+				$this -> josso_login_pucpr -> loged = 1;
+				$this -> josso_login_pucpr -> ghost = 1;
+				$this -> josso_login_pucpr -> josso = date("YmfHis");
+				$this -> josso_login_pucpr -> security_ac();
+				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'],'ACP');
+				$link = base_url('index.php/main');
+				redirect($link);
+			}
+		}
+		echo 'ERRO DE ACESSO!';
+		exit ;
+	}
 	function r($id=0, $chk='') {
 		$data = array();
 		$this -> load -> view('header/header', $data);
@@ -207,6 +249,12 @@ class login extends CI_Controller {
 					if ((strlen($idu) == 0) or (strlen($cracha) == 0))
 						{
 							$cpf = $line['us_cpf'];
+							
+							if (strlen($cpf) == 0)
+								{
+									$this->load->view("errors/cli/cpf_not_found",$data);
+									return('');
+								}
 							$usr = $this->usuarios->readByCPF($cpf);
 							
 							if (isset($usr['id_us']))

@@ -7,7 +7,7 @@ class comunicacoes extends CI_Controller {
 		$this -> load -> library("nuSoap_lib");
 
 		$this -> load -> library('form_validation');
-		//$this -> load -> database();
+		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
@@ -23,9 +23,8 @@ class comunicacoes extends CI_Controller {
 	}
 
 	function index() {
-		$this -> load -> model('email_local');
-		$this -> email_local -> enviaremail('renefgj@gmail.com', 'teste', 'teste de <I>e-mail</i>');
-		echo 'Enviado!';
+		enviaremail('renefgj@gmail.com', 'teste', 'teste de <I>e-mail</i>',2);
+		echo 'Enviado Teste!';
 	}
 
 }

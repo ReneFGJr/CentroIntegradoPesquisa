@@ -58,7 +58,7 @@ class usuario extends CI_Controller {
 
 	function consulta_usuario($cracha = '') {
 		if (strlen($cracha) == 0) {
-			$cracha = $this -> input -> post("dd10");
+			$cracha = $get("dd10");
 		}
 
 		$this -> cab();

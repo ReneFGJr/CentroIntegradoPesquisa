@@ -8,7 +8,7 @@ $us_nada = '<font color="grey">[em construção]</font>';
 		</div><TD>
 		<div id="nome-dados-perfil">
 			<li class="lt5">
-				<B><?php echo $us_nome;?>&nbsp;</B>
+				<B><?php echo $us_nome;?>&nbsp;</B><?php echo $ghost;?>
 			</li>
 			<li>
 				CPF: <?php echo mask_cpf($us_cpf);?>

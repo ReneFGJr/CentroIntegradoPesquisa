@@ -2,75 +2,175 @@
 class protocolos_ic extends CI_Model {
 
 	var $tabela = 'ic_protocolos';
-	
-	function fechamento_protocolo($obj)
-		{
-			$sta = get("dd4");
-			$sol = get("dd3");
-			$id = $obj['id_pr'];
-			$date = date("Y-m-d");
-			$hora = date("H:i");
-			$log = $_SESSION['cracha'];
-			
-			$sql = "update ic_protocolos set
+
+	function fechamento_protocolo($obj) {
+		$sta = get("dd4");
+		$sol = get("dd3");
+		$id = $obj['id_pr'];
+		$date = date("Y-m-d");
+		$hora = date("H:i");
+		$log = $_SESSION['cracha'];
+
+		$sql = "update ic_protocolos set
 						pr_status = '$sta',
 						pr_solucao = '$sol',
 						pr_solucao_data = '$date',
 						pr_solucao_hora = '$hora',
 						pr_solucao_log = '$log'
 					where id_pr = $id ";
-			$this->db->query($sql);
-			return(0);
-		}
-	
+		$this -> db -> query($sql);
+		return (0);
+	}
+
 	/* CANCELAMENTO
-	 * 
-	 * 
-	 */ 
-	function protocolo_CAN($obj)
-		{
+	 *
+	 *
+	 */
+	function protocolo_CAN($obj) {
+		/*  Acoes ******************************************************************************
+		 ***************************************************************************************
+		 */
+		$proto = $obj['pr_protocolo_original'];
+		$ac = '999';
+		$hist = 'Cancelamento do plano do aluno';
+		$aluno1 = '';
+		$aluno2 = '';
+		$motivo = '999';
+		$obs = 'Cancelamento da orientação: <b>' . mst($obj['pr_descricao']) . '</b>';
+		$obs .= '<br>Justificativa:' . $obj['pr_justificativa'];
+
+		/*********************************/
+		/* Lancar historico              */
+		$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+
+		/*****************************************/
+		/* Cancelar iniciacao na tabela ic       */
+		/* Cancelar iniciacao na tabela ic_aluno */
+		$this -> ics -> cancelar_protocolo($proto);
+
+		/*****************************************/
+		/* Fechar protocolo                      */
+		$this -> fechamento_protocolo($obj);
+
+		/****************************************/
+		/* Enviar e-mail de cancelamento        */
+		$id = $obj['id_pr'];
+		$us_id = $obj['id_us'];
+		$data = $this -> protocolos_ic -> le($id);
+		$data2 = $this -> ics -> le_protocolo($proto);
+		$data = array_merge($data, $data2);
+
+		$txt = $this -> load -> view('ic/plano-email', $data, true);
+		$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
+		enviaremail_usuario($us_id, 'Cancelamento de orientação', $txt, 1);
+
+		return (1);
+	}
+
+	/* SUBSTITUICAO
+	 *
+	 *
+	 */
+	function protocolo_SBS($obj) {
+		$id = $obj['id_pr'];
+		$id = 1;
+		$us_id = $obj['id_us'];
+		$us_id = 1;
+
+		/* Situação */
+		$resolucao = get("dd4");
+		
+		/* Cancelado*/
+		if ($resolucao == 'C') {
+			/*****************************************/
+			/* Fechar protocolo                      */
+			$this->fechamento_protocolo($obj);
+				
 			/*  Acoes ******************************************************************************
 			 ***************************************************************************************
 			 */
 			$proto = $obj['pr_protocolo_original'];
-			$ac = '999';
-			$hist = 'Cancelamento do plano do aluno';
+			$ac = '997';
+			$hist = 'Substituição de Estudante CANCELADA';
 			$aluno1 = '';
 			$aluno2 = '';
-			$motivo = '999';
-			$obs = 'Cancelamento da orientação: <b>'.mst($obj['pr_descricao']).'</b>';
-			$obs .= '<br>Justificativa:'.$obj['pr_justificativa'];
-	
+			$motivo = '997';
+			$obs = 'Substituição do aluno: <b>' . mst($obj['pr_descricao']) . '</b>';
+			$obs .= '<br>Justificativa:' . $obj['pr_justificativa'];
+
 			/*********************************/
 			/* Lancar historico              */
-			$this->ics->inserir_historico($proto,$ac,$hist,$aluno1,$aluno2,$motivo,$obs);
+			$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
 			
+			/* recupera dados atuais aluno */
+			$data = $this -> protocolos_ic -> le($id);
+			$data2 = $this -> ics -> le_protocolo($proto);
+			$data_antigo = array_merge($data, $data2);
+			$txt = '<h1>Substituição de aluno</h1>';
+			$txt .= '<h2>De:</h2>';
+			$txt .= $this -> load -> view('ic/plano-email', $data_antigo, true);
+			$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
+			
+			enviaremail_usuario($us_id, 'Substituicao de orientação CANCELADA/INDEFIRIDA', $txt, 2);
+			return (1);								
+		}
 
-			
+		/* Finalizado*/
+		if ($resolucao == 'F') {
+
+			/*  Acoes ******************************************************************************
+			 ***************************************************************************************
+			 */
+			$proto = $obj['pr_protocolo_original'];
+			$ac = '998';
+			$hist = 'Substituição de Aluno';
+			$aluno1 = '';
+			$aluno2 = '';
+			$motivo = '998';
+			$obs = 'Substituição do aluno: <b>' . mst($obj['pr_descricao']) . '</b>';
+			$obs .= '<br>Justificativa:' . $obj['pr_justificativa'];
+
+			/*********************************/
+			/* Lancar historico              */
+			$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+
+			/* recupera dados atuais aluno */
+			$data = $this -> protocolos_ic -> le($id);
+			$data2 = $this -> ics -> le_protocolo($proto);
+			$data_antigo = array_merge($data, $data2);
+			$txt = '<h1>Substituição de aluno</h1>';
+			$txt .= '<h2>De:</h2>';
+			$txt .= $this -> load -> view('ic/plano-email', $data_antigo, true);
+
 			/*****************************************/
 			/* Cancelar iniciacao na tabela ic       */
 			/* Cancelar iniciacao na tabela ic_aluno */
-			$this->ics->cancelar_protocolo($proto);			
-			
+			$cracha_antigo = $data_antigo['ic_cracha_aluno'];
+			$cracha_novo = $obj['pr_beneficiador'];
+			$protocolo = $obj['pr_protocolo_original'];
+			$data = $obj['pr_data'];
+			$this->ics->substituicao_aluno($cracha_antigo, $protocolo, $cracha_novo, $data);
 			/*****************************************/
 			/* Fechar protocolo                      */
 			$this->fechamento_protocolo($obj);
-			
-			
+
 			/****************************************/
 			/* Enviar e-mail de cancelamento        */
-			$id = $obj['id_pr'];
-			$us_id = $obj['id_us'];
+			
+			/* recupera novo aluno */
 			$data = $this -> protocolos_ic -> le($id);
 			$data2 = $this -> ics -> le_protocolo($proto);
-			$data = array_merge($data,$data2);
-			
-			$txt = $this -> load -> view('ic/plano-email', $data, true);
-			$txt .= '<hr>'.$this -> load -> view('ic/protocolo.php', $data,true);
-			enviaremail_usuario($us_id,'Cancelamento de orientação', $txt, 1);
-			
-			return(1);			
-		}
+			$data = array_merge($data, $data2);
+			$txt2 = $this -> load -> view('ic/plano-email', $data, true);
+
+			$txt .= '<h2>Para:</h2>';
+			$txt .= $txt2;
+
+			$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
+			//enviaremail_usuario($us_id, 'Substituicao de orientação', $txt, 2);
+			return (1);
+		} 
+	}
 
 	function cp_CAN() {
 		$cp = array();
@@ -83,7 +183,21 @@ class protocolos_ic extends CI_Model {
 		$op .= '&C:Cancelar protocolo de serviço';
 		$cp[4] = array('$O ' . $op, '', 'Ação', True, True);
 		$cp[5] = array('$B8', '', 'Gravar', False, True);
-		return($cp);
+		return ($cp);
+	}
+
+	function cp_SBS() {
+		$cp = array();
+		$cp[0] = array('$HV', '', get('dd0'), False, False);
+		$cp[1] = array('$HV', '', get('dd0'), False, False);
+		$cp[2] = array('$A', '', 'Solução da solicitação', False, True);
+		$cp[3] = array('$T80:5', '', 'Resolução', True, True);
+
+		$op = 'F:Finalizar protocolo de serviço';
+		$op .= '&C:Cancelar protocolo de serviço';
+		$cp[4] = array('$O ' . $op, '', 'Ação', True, True);
+		$cp[5] = array('$B8', '', 'Gravar', False, True);
+		return ($cp);
 	}
 
 	function verifica_se_existe_aberto($tipo, $proto) {
@@ -266,19 +380,21 @@ class protocolos_ic extends CI_Model {
 				$aluno = '';
 				break;
 			case 'SBS' :
-				$dd2 = $this -> input -> post("dd2");
+				$dd2 = $this -> usuarios -> limpa_cracha(get("dd2"));
+				$aluno = $dd2;
 				$motivo = $this -> input -> post("dd5");
 				$justificativa = '';
 				/* Recupera dados do aluno */
 				if (strlen($dd2) == 8) {
+					$user = $this -> usuarios -> consulta_cracha($dd2);
 					$user = $this -> usuarios -> readByCracha($dd2);
 					$justificativa = '<b>Substituição de estudante<b><br>';
 					$justificativa .= $this -> load -> view('usuario/view_simple', $user, True);
 					$justificativa = troca($justificativa, chr(13), ' ');
 					$justificativa = troca($justificativa, chr(10), '');
 				}
-				$justificativa .= '<hr><tt>' . $this -> input -> post("dd6") . '</tt>';
-				$aluno = $this -> input -> post("dd2");
+				$justificativa .= '<hr><tt>' . get("dd6") . '</tt>';
+				$aluno = get("dd2");
 				$cp = $this -> cp_substituir();
 				break;
 			default :

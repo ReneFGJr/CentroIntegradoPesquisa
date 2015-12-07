@@ -106,9 +106,6 @@ class ic extends CI_Controller {
 		$this -> load -> model('comunicacoes');
 		$this -> load -> model('email_local');
 
-		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
-		$this -> load -> library('email', $config);
-
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');

@@ -29,6 +29,7 @@ class josso_login_pucpr extends CI_Model {
 	var $nomeEmpresa = '';
 	var $nomeFilial = '';
 	var $loged = 0;
+	var $ghost = 0;
 	var $perfil = '';
 
 	/* SESSAO
@@ -58,7 +59,7 @@ class josso_login_pucpr extends CI_Model {
 				$rlt = $this -> db -> query($sql);
 			}
 			/* Grava dados na Session */
-			$dados = array('perfil' => $this -> perfil, 'id_us' => $this -> id, 'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);
+			$dados = array('perfil' => $this -> perfil, 'ghost'=> $this->ghost, 'id_us' => $this -> id, 'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);
 			$this -> session -> set_userdata($dados);
 		} else {
 

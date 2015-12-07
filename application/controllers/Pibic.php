@@ -5,7 +5,7 @@ class pibic extends CI_Controller {
 		global $dd, $acao;
 		parent::__construct();
 		$this -> lang -> load("app", "portuguese");
-		$this -> load -> library("nuSoap_lib");
+		
 
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
@@ -13,6 +13,7 @@ class pibic extends CI_Controller {
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
+		$this -> load -> library("nuSoap_lib");
 		$this -> load -> library('session');
 
 		date_default_timezone_set('America/Sao_Paulo');
@@ -188,6 +189,7 @@ class pibic extends CI_Controller {
 	public function index($id = 0) {
 		$this -> load -> model('protocolos_ic');
 		$this -> load -> model('ics');
+		$this -> load -> model('ics_acompanhamento');
 
 		$cracha = $_SESSION['cracha'];
 
@@ -197,7 +199,7 @@ class pibic extends CI_Controller {
 		$data['resumo'] .= $this -> protocolos_ic -> resumo_protocolos($cracha);
 		$data['resumo'] .= '<br>' . $this -> ics -> resumo_orientacoes($cracha);
 		
-		$data['search'] = $this -> ics -> entregas_abertas();
+		$data['search'] = $this -> ics_acompanhamento -> entregas_abertas();
 		$data['search'] .= $this -> ics -> orientacoes();
 		
 		$this -> load -> view('ic/home', $data);
