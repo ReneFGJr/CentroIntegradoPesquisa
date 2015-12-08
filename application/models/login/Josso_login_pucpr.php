@@ -58,8 +58,16 @@ class josso_login_pucpr extends CI_Model {
 						where us_cpf = '" . $this -> cpf . "'";
 				$rlt = $this -> db -> query($sql);
 			}
+			/* reduz nome do ususario */
+			$n = trim($this -> nome);
+			$n = troca($n,' ',';').';';
+			$n = splitx(';',$n);
+			$nome_display = $n[0].' '.$n[1];
+			
 			/* Grava dados na Session */
-			$dados = array('perfil' => $this -> perfil, 'ghost'=> $this->ghost, 'id_us' => $this -> id, 'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);
+			$dados = array('perfil' => $this -> perfil, 'ghost'=> $this->ghost, 'id_us' => $this -> id, 
+							'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 
+							'nome' => $this -> nome, 'nome_display' => $nome_display);
 			$this -> session -> set_userdata($dados);
 		} else {
 
@@ -97,8 +105,16 @@ class josso_login_pucpr extends CI_Model {
 						where us_cpf = '" . $this -> cpf . "'";
 				$rlt = $this -> db -> query($sql);
 			}
+			/* reduz nome do ususario */
+			$n = trim($this -> nome);
+			$n = troca($n,' ',';').';';
+			$n = splitx(';',$n);
+			$nome_display = $n[0].' '.$n[1];
+						
 			/* Grava dados na Session */
-			$dados = array('perfil' => $this -> perfil, 'id_us' => $this -> id, 'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 'nome' => $this -> nome);
+			$dados = array('perfil' => $this -> perfil, 'ghost'=> $this->ghost, 'id_us' => $this -> id, 
+							'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 
+							'nome' => $this -> nome, 'nome_display' => $nome_display);
 			$this -> session -> set_userdata($dados);
 		} else {
 
@@ -120,7 +136,8 @@ class josso_login_pucpr extends CI_Model {
 	 *
 	 */
 	function logout() {
-		$dados = array('cracha' => '', 'cpf' => '', 'josso' => '', 'nome' => '', 'us_id'=>'', 'id_us'=>'', 'cracha'=>'');
+		$dados = array('cracha' => '', 'cpf' => '', 'josso' => '', 
+		'nome' => '', 'nome_display' => '', 'us_id'=>'', 'id_us'=>'', 'cracha'=>'');
 		$this -> session -> set_userdata($dados);
 		return (1);
 	}
@@ -161,12 +178,28 @@ class josso_login_pucpr extends CI_Model {
 
 			exit ;
 		}
+
 		if (count($response['return']) > 0) {
 			/* Analisa conteudo */
 			$line = $response['return'];
 
 			/* Recupera dados */
 			$this -> cpf = $line['cpf'];
+			if (strlen(trim($line['cpf']))==0)
+			{
+				$login_b = uppercase($login);
+				$sql = "select * from logins where us_login = '$login_b' ";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				if (count($rlt) > 0)
+					{
+						$ln = $rlt[0];
+						$this -> cpf = $ln['us_cpf'];
+					} else {
+						echo 'ERRO DE LOGIN #4334';
+						return(0);
+					}
+			}
 			$this -> email = $line['emailLogin'];
 			$this -> josso = $line['jossoSession'];
 			$this -> nome = $line['nome'];

@@ -1,11 +1,12 @@
 <?php
+$nome_display = $this -> session -> userdata('nome_display');
 $nome = $this -> session -> userdata('nome');
 $cracha = $this -> session -> userdata('cracha');
 
 $link = 'index.php/';
 ?>
 <div id="cab_user">
-	Seja bem-vindo, <B><?php echo $nome;?>
+	Seja bem-vindo, <B><?php echo $nome_display;?>
 	(<?php echo $cracha;?>)</B>
 </div>
 <div id="cabecalho_user_menu" style="border: 0px solid #FFFFFF;">

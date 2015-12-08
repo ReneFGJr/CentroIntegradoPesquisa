@@ -566,7 +566,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 		$sta = $data['pr_status'];
-		$this -> load -> view('ic/protocolo.php', $data);
+		$this -> load -> view('ic/protocolo', $data);
 
 		/**/
 		if ($sta == 'A') {
