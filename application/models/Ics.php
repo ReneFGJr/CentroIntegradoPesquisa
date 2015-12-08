@@ -494,7 +494,7 @@ class ics extends CI_model {
 			$wh .= " or (ic_plano_aluno_codigo like '" . $term[0] . "%') ";
 		}
 
-		$sql = $this -> table_view($wh, 0, 50);
+		$sql = $this -> table_view($wh, 0, 50,' ic_ano, id_ica desc ');
 		$rlt = db_query($sql);
 
 		$sx = '<table width="100%" class="tabela01" border=0>';
@@ -560,7 +560,7 @@ class ics extends CI_model {
 			}
 		}
 
-		$sql = $this -> table_view($wh, 0, 50);
+		$sql = $this -> table_view($wh, 0, 50,' ic_ano, id_ica desc ');
 		$rlt = db_query($sql);
 
 		$sx = '<table width="100%" class="tabela01" border=0>';
@@ -892,7 +892,7 @@ class ics extends CI_model {
 	}
 
 	function le($id = 0) {
-		$sql = $this -> table_view('ic.id_ic = ' . $id, $offset = 0, $limit = 9999999);
+		$sql = $this -> table_view('ic.id_ic = ' . $id, $offset = 0, $limit = 9999999, 'ic_ano, id_ica desc');
 		$rlt = db_query($sql);
 
 		if ($line = db_read($rlt)) {
