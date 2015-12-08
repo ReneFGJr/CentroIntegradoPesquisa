@@ -14,6 +14,7 @@ class inport extends CI_Controller {
 		$this -> load -> library('session');
 
 		date_default_timezone_set('America/Sao_Paulo');
+		set_time_limit(60*10);
 		/* Security */
 		$this -> security();
 	}
