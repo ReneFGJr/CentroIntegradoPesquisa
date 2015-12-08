@@ -503,16 +503,15 @@ class usuarios extends CI_model {
 	}
 
 	function le($id) {
-		$sql = "select *
-				from
-	                us_usuario
-	                left join us_hora as h on h.usuario_id_us = us_usuario.id_us
-	                left join us_email as e on e.usuario_id_us = us_usuario.id_us
-	                left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
-	                left join us_avaliador_situacao on us_avaliador = id_as
-	                left join ies_instituicao on id_ies = ies_instituicao_ies_id
-	                left join us_tipo on usuario_tipo_ust_id = id_ustp 
-				where id_us = " . $id;
+		$sql = "select * from
+            us_usuario
+            left join us_hora as h on h.usuario_id_us = us_usuario.id_us
+            left join us_email as e on e.usuario_id_us = us_usuario.id_us
+            left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
+            left join us_avaliador_situacao on us_avaliador = id_as
+            left join ies_instituicao on id_ies = ies_instituicao_ies_id
+            left join us_tipo on usuario_tipo_ust_id = id_ustp 
+						where id_us = " . $id;
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();

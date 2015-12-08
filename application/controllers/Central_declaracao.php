@@ -55,28 +55,48 @@ class central_declaracao extends CI_Controller {
 		}
 		$data = $this -> usuarios -> le($id);
 
-		/* Gerar declaracoes automaticamente */
-		/* Ouvinete SEMIC */
-		$this -> eventos -> emitir('SEMIC', 'OUVINTE', date("Y"), $data);
+		/**#############################################################################################*/
+		/**##########################################
+		/**#   Gerar declaracoes automaticamente   ##
+		/**##########################################*/
+		
+		/* SEMIC 2013 */
+		$ano_13 = '2013';
+		
+		/* Estudante IC 2013 */
+		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_13, $data);
+		/* Avaliador SEMIC 2013*/
+		$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_13, $data);
+		
+		
+		/**#############################################################################################*/
+		/**#############################################################################################*/		
+		/* SEMIC 2015 */
+		$ano_15 = '2015';
+		
+		/* Ouvinte SEMIC */
+		$this -> eventos -> emitir('SEMIC', 'OUVINTE', $ano_15, $data);
 
 		/* Avaliador SEMIC */
-		$this -> eventos -> emitir('SEMIC', 'AVALIADOR', date("Y"), $data);
+		$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_15, $data);
 
 		/* Orientador IC */
-		$err2 = $this -> eventos -> emitir('SEMIC', 'ORIENTADOR', date("Y"), $data);
+		$err2 = $this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_15, $data);
 
-		/* Orientador IC */
-		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', date("Y"), $data);
+		/* Estudante IC */
+		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_15, $data);
 		
 		/* Estudante Apresentação */
-		$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', date("Y"), $data);
+		$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', $ano_15, $data);
 		
 		/* SwB2 - Participação */
-		$err1 = $this -> eventos -> emitir('SWB', 'SWB2', date("Y"), $data);
+		$err1 = $this -> eventos -> emitir('SWB', 'SWB2', $ano_15, $data);
 		
 		/* SwB2 - Participação */
-		$err1 = $this -> eventos -> emitir('SENAI', 'APRESENTACAO', date("Y"), $data);				
+		$err1 = $this -> eventos -> emitir('SENAI', 'APRESENTACAO', $ano_15, $data);				
 
+		
+		/*********************************************************************************************/		
 		$this -> load -> view("perfil/user", $data);
 		$cracha = $data['us_cracha'];
 
@@ -241,7 +261,6 @@ class central_declaracao extends CI_Controller {
 						echo 'Emissão bloqueada, consulte pibicpr@pucpr.br informando o código: #46/'.$id.'/'.$protocolo;
 						exit;						
 					}
-																																																							
 											
 				$content = 'Certificamos que ' . $artigo_estudante . ' estudante, <b>' . $data['nome'] . '</b> participou do programa ' . $data['edital'] . ' nesta Universidade, com ' . $data['modalidade'] . ', com o projeto de pesquisa intitulado <b>"' . $data['titulo_projeto'] . '"</b> sob orientação d'.$artigo_prof_complemento. ' ' . $artigo_professor . ' <b>' . $data['nome2'] . '</b> , no período de agosto 2014 a julho 2015, com 20 horas semanais.';
 				$content = utf8_encode($content);
@@ -305,14 +324,46 @@ class central_declaracao extends CI_Controller {
 				$artigo_estudante = 'o';
 				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
 				}
-
+				
 				/* Consulta avaliacao */
 				$protocolo = trim($data['dc_texto_1']);
 				$content = 'Declaramos que <b>' . $data['nome'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" nas modalidades <b>Oral e Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR em parceria com o SENAI, realizado no período de 6 a 8 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 11 de novembro de 2015.</td></tr></table>';
-				break;				
+				break;	
+	
+			/*********************************************************************/
+			/*IC de 2013*/
+			/* Apresentacao Oral e Poster */
+			case '25' :
+				$artigo_estudante = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
+				}
+
+				/* Consulta avaliacao */
+				$protocolo = trim($data['dc_texto_1']);
+				
+				$content =
+				'Declaro para os devidos fins que o aluno(a) <b>' . $data['nome'] . '</b> 
+				participou do Programa Institucional de Bolsas de Iniciação Científica
+				('. $data['edital'] .') com Bolsa ' . $data['modalidade'] . ' no período de agosto de 2012 até julho de
+				2013, com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>", 
+				orientado pelo ' . $data['prof'] . ' ' . $data['titulacao'] . ' <b>' . $data['nome'] . '</b>"
+				e, com mesmo trabalho, realizou	apresentação oralmente e em forma de pôster no XXI Seminário de Iniciação
+				Científica da PUCPR, realizado nos dias 22, 23 e 24 de outubro de 2013. 
+				';	
+				
+
+				
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 30 de outubro de 2013.</td></tr></table>';
+				
+				break;
+				
+				
+							
 			default :
 				echo 'ERRO INTERNO ' . $tipo;
 				exit ;

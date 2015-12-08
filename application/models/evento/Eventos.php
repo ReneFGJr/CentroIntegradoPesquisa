@@ -3,6 +3,7 @@ class eventos extends CI_model {
 	var $tabela = 'evento_nome';
 	var $tabela_mailing = 'evento_mailing';
 	var $tabela_usuario = 'us_usuario';
+	var $tano_evento = '2014';
 
 	function resumo_presenca() {
 		if (!isset($_SESSION['evento'])) {
@@ -47,14 +48,36 @@ class eventos extends CI_model {
 		$cracha = $us['us_cracha'];
 		$id = $us['id_us'];
 		$err = '';
-
 		/*********************************************************************************************
-		 * Evento SEMIC
-		 *
-		 */
+		 /* IC 2013 */
+		if (($evento == 'SEMIC') and ($ano == '2013')) {
+			
+			/* Declaracao de Estudante 
+			 *************************/
+			$sql = "select * from ic_aluno
+										left join ic on id_ic = ic_id	 
+									where aluno_id = '$id'
+									and (icas_id = 1 or icas_id = 4)					 
+									 ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+
+			if (count($rlt) > 0) {
+				$line = $rlt[0];
+				$proto = $line['ic_plano_aluno_codigo'];
+
+				/* recupera dados do professor */
+				$prof = $this -> usuarios -> le_cracha($line['ic_cracha_prof']);
+				$id2 = $prof['id_us'];
+				/* ID da declaracao de ouvinte - 25 */
+				$this -> insere_declaracao($id, $id2, 25, $proto);
+			}
+		}
+		/*********************************************************************************************/ 
+		/* Evento SEMIC */
 		if ($evento == 'SWB') {
 
-			if ($ano == '2015') {
+			if ($ano == '$tano_evento') {
 				/* OUVINTE */
 
 				if ($tipo == 'SWB2') {
@@ -79,8 +102,8 @@ class eventos extends CI_model {
 		 *
 		 */
 		if ($evento == 'SENAI') {
-			
-			if ($ano == '2015') {
+
+			if ($ano == '$tano_evento') {
 				/* OUVINTE */
 
 				if ($tipo == 'APRESENTACAO') {
@@ -106,7 +129,7 @@ class eventos extends CI_model {
 		 */
 		if ($evento == 'SEMIC') {
 
-			if ($ano == '2015') {
+			if ($ano == '$tano_evento') {
 				/* OUVINTE */
 				if ($tipo == 'OUVINTE') {
 					/* Declaracao de Ouvite */
@@ -250,7 +273,7 @@ class eventos extends CI_model {
 							left join (select pp_protocolo from pibic_parecer_2015 group by pp_protocolo) as avaliacao on pp_protocolo = st_codigo 
 							where st_aluno = '$cracha'
 							and (st_poster = 'S' or st_oral = 'S') ";
-							
+
 					$rlt = $this -> db -> query($sql);
 					$rlt = $rlt -> result_array();
 					for ($r = 0; $r < count($rlt); $r++) {
@@ -326,7 +349,6 @@ class eventos extends CI_model {
 						inner join central_declaracao_evento on dc_tipo = id_cde 
 						left join us_usuario on id_us = dc_us_usuario_id_2
 						where dc_us_usuario_id = $us1 order by dc_data desc ";
-
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="800" class="lt2" cellpadding=10 cellspacing=0 border=1 align="center">';
@@ -366,12 +388,15 @@ class eventos extends CI_model {
 						where dc_us_usuario_id = $us1
 						and dc_us_usuario_id_2 = $us2
 						and dc_tipo = $tipo	
-						and dc_texto_1 = '$protocolo'";
+						and dc_texto_1 = '$protocolo'
+						";
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) > 0) {
 			return (0);
 		}
+
 		$sql = "insert into central_declaracao
 					(dc_us_usuario_id, dc_us_usuario_id_2, dc_tipo,
 					dc_data, dc_hora, dc_texto_1
