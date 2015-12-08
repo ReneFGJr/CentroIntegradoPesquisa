@@ -356,7 +356,9 @@ class ic extends CI_Controller {
 				
 				$tela = $this->pagamentos->gerar_pagamento_bolsa($bolsa,$ano);
 				$data['content'] = $tela;
-				$this -> load -> view('content', $data);				
+				$this -> load -> view('content', $data);
+				
+				$this -> load -> view('ic/assinatura_ic');				
 			}
 			
 		/*Fecha */ 		/*Gera rodapé*/

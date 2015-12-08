@@ -535,6 +535,11 @@ class usuarios extends CI_model {
 		}
 		if ($line['us_genero'] == 'F') { $line['us_genero'] = msg('Feminino');
 		}
+		
+		if (validaCPF($line['us_cpf']) == false)
+			{
+				$line['us_cpf'] = '<font color="red">inválido</font>';
+			}
 
 		$line['email'] = $this -> lista_email($id);
 		return ($line);
