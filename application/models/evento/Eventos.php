@@ -48,31 +48,58 @@ class eventos extends CI_model {
 		$cracha = $us['us_cracha'];
 		$id = $us['id_us'];
 		$err = '';
+
 		/*********************************************************************************************
-		 /* IC 2013 */
+		/*        IC 2013        */
+		/* Declaracao de Estudante 
+	   *************************/
 		if (($evento == 'SEMIC') and ($ano == '2013')) {
-			
-			/* Declaracao de Estudante 
-			 *************************/
-			$sql = "select * from ic_aluno
-										left join ic on id_ic = ic_id	 
-									where aluno_id = '$id'
-									and (icas_id = 1 or icas_id = 4)					 
-									 ";
-			$rlt = $this -> db -> query($sql);
-			$rlt = $rlt -> result_array();
+			/* Estudante */
+			if ($tipo == 'ESTUDANTE') {
+				$sql = "select * from ic_aluno
+								left join ic on id_ic = ic_id	 
+								where aluno_id = '$id'
+								and (icas_id = 1 or icas_id = 4)					 
+							 ";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+	
+				if (count($rlt) > 0) {
+					$line = $rlt[0];
+					$proto = $line['ic_plano_aluno_codigo'];
+	
+					/* recupera dados do professor */
+					$prof = $this -> usuarios -> le_cracha($line['ic_cracha_prof']);
+					$id2 = $prof['id_us'];
+					/* ID da declaracao de ouvinte - 25 */
+					$this -> insere_declaracao($id, $id2, 25, $proto);
+						}
+				}
 
-			if (count($rlt) > 0) {
-				$line = $rlt[0];
-				$proto = $line['ic_plano_aluno_codigo'];
-
-				/* recupera dados do professor */
-				$prof = $this -> usuarios -> le_cracha($line['ic_cracha_prof']);
-				$id2 = $prof['id_us'];
-				/* ID da declaracao de ouvinte - 25 */
-				$this -> insere_declaracao($id, $id2, 25, $proto);
-			}
-		}
+				/* AVALIADOR */
+				if ($tipo == 'AVALIADOR') {
+					/* Declaracao de Avaliador */
+					$cracha = strzero($cracha, 8);
+					$sql = "select count(*) as total, pp_avaliador 
+									from pibic_parecer_2013
+									where pp_avaliador = '$cracha' 
+									group by pp_avaliador 
+									and pp_tipo = 'SEMIC' ";
+					$rlt = $this -> db -> query($sql);
+					$rlt = $rlt -> result_array();
+					if (count($rlt) > 0) {
+						$line = $rlt[0];
+						$total = $line['total'];
+						if ($total > 0) {
+							/* ID da declaracao de avaliador - 2 */
+							$this -> insere_declaracao($id, 0, 26);
+							
+						}
+					}
+				}
+	
+}
+		
 		/*********************************************************************************************/ 
 		/* Evento SEMIC */
 		if ($evento == 'SWB') {
@@ -102,10 +129,8 @@ class eventos extends CI_model {
 		 *
 		 */
 		if ($evento == 'SENAI') {
-
 			if ($ano == '$tano_evento') {
 				/* OUVINTE */
-
 				if ($tipo == 'APRESENTACAO') {
 					/* Declaracao de Ouvite */
 					$sql = "select * from semic_nota_trabalhos
@@ -128,7 +153,6 @@ class eventos extends CI_model {
 		 *
 		 */
 		if ($evento == 'SEMIC') {
-
 			if ($ano == '$tano_evento') {
 				/* OUVINTE */
 				if ($tipo == 'OUVINTE') {
@@ -150,12 +174,15 @@ class eventos extends CI_model {
 				/* AVALIADOR */
 				if ($tipo == 'AVALIADOR') {
 					/* Declaracao de Avaliador */
-					$cracha = strzero($cracha, 11);
 					$sql = "select count(*) as total, pp_avaliador_id 
 							from pibic_parecer_2015
 						where pp_avaliador_id = '$id' group by pp_avaliador_id 
 						and pp_tipo = 'SEMIC' ";
 					$rlt = $this -> db -> query($sql);
+					
+					print_r($rlt);
+					exit;
+					
 					$rlt = $rlt -> result_array();
 					if (count($rlt) > 0) {
 						$line = $rlt[0];
@@ -217,7 +244,6 @@ class eventos extends CI_model {
 
 				/* ESTUDANTE */
 				if ($tipo == 'ESTUDANTE') {
-
 					/* Declaracao de Estudante SEMIC */
 					$cracha = strzero($cracha, 8);
 					$sql = "select * from semic_nota_trabalhos

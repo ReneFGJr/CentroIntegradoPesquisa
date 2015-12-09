@@ -592,12 +592,12 @@ class usuarios extends CI_model {
 		$sx = '';
 		/* valida se já não existe */
 		$sql = "select * from us_fone 
-								where usf_fone = '$fone' and usuario_id_us = $id ";
+						where usf_fone = '$fone' and usuario_id_us = $id ";
 		$rlt = db_query($sql);
 		if ($line = db_read($rlt)) {
 			if ($line['usf_ativo'] == '0') {
 				$sql = "update us_fone set usf_ativo = '1' 
-											where usf_fone = '$fone' and usuario_id_us = $id ";
+								where usf_fone = '$fone' and usuario_id_us = $id ";
 				$rlt = $this -> db -> query($sql);
 				$sx .= 'telefone atualizado';
 				$sx .= '<script> wclose(); </script>';
@@ -662,7 +662,6 @@ class usuarios extends CI_model {
 	function email_modify($id, $email) {
 		$email = lowercase($email);
 		/* $$$$ Inserir regra se já existe e-mail em outro registro */
-
 		if (validaemail($email)) {
 			$sql = "update us_email set usm_ativo = 1, usm_email = '$email' where id_usm = " . $id;
 			$rlt = $this -> db -> query($sql);
@@ -718,7 +717,6 @@ class usuarios extends CI_model {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_usm', '', False, True));
 		array_push($cp, array('$H8', 'usuario_id_us', '', False, True));
-
 		array_push($cp, array('$O PERN:' . msg('pessoal') . '&COOP:' . msg('corporativo'), 'usm_tipo', '', False, True));
 		array_push($cp, array('$EMAIL', 'usm_email', '', False, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'usm_ativo', '', False, True));

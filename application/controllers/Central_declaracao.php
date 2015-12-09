@@ -56,7 +56,7 @@ class central_declaracao extends CI_Controller {
 		$data = $this -> usuarios -> le($id);
 
 		/**#############################################################################################*/
-		/**##########################################
+		/**#############################################################################################
 		/**#   Gerar declaracoes automaticamente   ##
 		/**##########################################*/
 		
@@ -66,10 +66,9 @@ class central_declaracao extends CI_Controller {
 		/* Estudante IC 2013 */
 		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_13, $data);
 		/* Avaliador SEMIC 2013*/
-		$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_13, $data);
+		        $this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_13, $data);
 		
 		
-		/**#############################################################################################*/
 		/**#############################################################################################*/		
 		/* SEMIC 2015 */
 		$ano_15 = '2015';
@@ -204,6 +203,10 @@ class central_declaracao extends CI_Controller {
 		$data['edital'] = $data['mb_tipo'];
 
 		switch ($tipo) {
+					
+			/*#############################################################################################*/
+			/*#######################     INICIACAO CIENTIFICA DE 2015      ###############################*/
+			/*#############################################################################################*/
 			/* Declaracao de Avaliador */
 			case '2' :
 				$content = 'Declaramos para os devidos fins que ' . $data['prof'] . ' ' . $data['titulacao'] . ' <b>' . $data['nome'] . '</b> atuou como avaliador de trabalhos científicos no XXIII Seminário de Iniciação Científica da PUCPR, durante os dias 6, 7 e 8 de outubro de 2015.';
@@ -333,35 +336,44 @@ class central_declaracao extends CI_Controller {
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 11 de novembro de 2015.</td></tr></table>';
 				break;	
 	
-			/*********************************************************************/
-			/*IC de 2013*/
+			/*#############################################################################################*/
+			/*#######################     INICIACAO CIENTIFICA DE 2013      ###############################*/
+			/*#############################################################################################*/
 			/* Apresentacao Oral e Poster */
 			case '25' :
 				$artigo_estudante = 'o';
-				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';
-				}
-
+				if ($data['us_g1'] == 'F') { $artigo_estudante = 'a';}
 				/* Consulta avaliacao */
+				/*########### TEXTO DA AVALIACAO DE ESTUDANTE############################*/
 				$protocolo = trim($data['dc_texto_1']);
-				
-				$content =
-				'Declaro para os devidos fins que o aluno(a) <b>' . $data['nome'] . '</b> 
+				$content ='Declaro para os devidos fins que o aluno(a) <b>' . $data['nome'] . '</b> 
 				participou do Programa Institucional de Bolsas de Iniciação Científica
 				('. $data['edital'] .') com Bolsa ' . $data['modalidade'] . ' no período de agosto de 2012 até julho de
 				2013, com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>", 
 				orientado pelo ' . $data['prof'] . ' ' . $data['titulacao'] . ' <b>' . $data['nome'] . '</b>"
-				e, com mesmo trabalho, realizou	apresentação oralmente e em forma de pôster no XXI Seminário de Iniciação
+				e, com o mesmo trabalho, realizou	apresentação oralmente e em forma de pôster no XXI Seminário de Iniciação
 				Científica da PUCPR, realizado nos dias 22, 23 e 24 de outubro de 2013. 
 				';	
-				
-
-				
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 30 de outubro de 2013.</td></tr></table>';
-				
 				break;
 				
+				case '26' :
+				$artigo_professor = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';}
+				$artigo_doutor = 'Dr.';
+				if ($data['us_g1'] == 'F') { $artigo_doutor = 'Dra.';}
+				$artigo_gen = '';
+				if ($data['us_g1'] == 'F') { $artigo_gen = 'a';}
+				/* Consulta avaliacao */
+				/*########### TEXTO DA DECLARACAO PARA AVALIADOR ############################*/
+				$protocolo = trim($data['dc_texto_1']);
+				$content = 'Declaramos para os devidos fins que ' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome'] . '</b> atuou como avaliador' . $artigo_gen . ' de trabalhos científicos no XXI Seminário de Iniciação Científica da PUCPR, realizado nos dias 22, 23 e 24 de outubro de 2013.';	
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 30 de outubro de 2013.</td></tr></table>';
+				break;
 				
 							
 			default :
