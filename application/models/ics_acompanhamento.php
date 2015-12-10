@@ -3,6 +3,31 @@ class ics_acompanhamento extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
 	var $tabela_2 = "ic_modalidade_bolsa";
+	
+	function form_acompanhamento_exist($proto='',$tipo='')
+		{
+			$sql = "select * from ic_acompanhamento 
+					where
+						pa_protocolo = '$proto' and
+						pa_tipo = '$tipo'
+					";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) == 0)
+				{
+					$sqlx = "insert into ic_acompanhamento
+								(
+								pa_protocolo, 	pa_usuario_id, 	pa_tipo,
+								pa_status
+								) values (
+								'$proto',0,'$tipo',
+								'@') ";
+					$xrlt = $this->db->query($sqlx);
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+				}
+			return($rlt[0]['id_pa']);
+		}
 
 	function entregas_abertas() {
 		$sis = $this -> sistemas_abertos_para_submissao('PIBIC');
@@ -15,8 +40,7 @@ class ics_acompanhamento extends CI_model {
 			$f1 = $this -> submissao_questionarios_professor();
 			$action = array_merge($f1,$action);			
 			$f2 = $this -> submissao_questionarios_aluno();
-			$action = array_merge($f2,$action);
-			
+			$action = array_merge($f2,$action);			
 		}
 		
 		
@@ -63,8 +87,9 @@ class ics_acompanhamento extends CI_model {
 					where ic_cracha_prof = '$cracha' 
 						and ic_ano = '" . date("Y") . "'
 						and s_id = 1
-						and ic_pre_data = '0000-00-00'
+						and ic_pre_data < '2010-01-01'
 			 ";
+			 echo $sql;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '';

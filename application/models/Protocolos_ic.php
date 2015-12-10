@@ -277,6 +277,11 @@ class protocolos_ic extends CI_Model {
 		if (strlen($bt) > 0) {
 			$wh = ' and (s_id = 1) ';
 		}
+		/* Pré-relatorio parcial */
+		if ($tp == 'form_pre')
+		{
+			$wh = ' and ((s_id = 1) and (ic_pre_data = \'0000-00-00\'))';
+		}
 		$sql = "select * from ic 
 						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha' ";
 		$sql = "select * from ic
@@ -285,11 +290,11 @@ class protocolos_ic extends CI_Model {
 						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id
-						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha'
+						where (ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha')
 						$wh
 						order by ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
 						";
-
+		
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%">';
@@ -331,6 +336,11 @@ class protocolos_ic extends CI_Model {
 
 	/** ABRIR PROTOCOLO **/
 	function protocolo_inserir($cracha, $proto, $motivo, $just, $tipo, $estu = '', $local = 'IC') {
+		if (strlen($estu) > 0)
+			{
+				$estu = $this -> usuarios -> limpa_cracha($estu);
+			}
+		
 		$sql = "select * from ic_protocolos 
 					where pr_tipo = '$tipo' and
 					pr_solicitante = '$cracha' and

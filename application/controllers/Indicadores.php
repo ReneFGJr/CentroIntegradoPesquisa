@@ -64,6 +64,8 @@ class indicadores extends CI_Controller {
 		}
 
 		array_push($menu, array('Grupos de Pesquisa', 'Grupos', 'ITE', '/indicadores/gp/'));
+		
+		array_push($menu, array('Produção Científica e Técnica', 'Produção Bibliográfica', 'ITE', '/indicadores/bibliografica/'));
 		/*View principal*/
 		$data['menu'] = $menu;
 		
@@ -73,6 +75,92 @@ class indicadores extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function bibliografica()
+		{
+		/* Load Models */
+		$this -> load -> model('phplattess');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');	
+		
+		$data['title'] = 'Indicadores de Produção - PUCPR';
+		
+		/* Produção em artigos */
+		$art = $this->phplattess->producao_artigos();
+		$bil = $this->phplattess->producao_bibliografica();
+		$ori = $this->phplattess->producao_orientacao();
+		$pat = $this->phplattess->producao_patente();
+
+		
+		$sx = '<table width="600" class="border1">';
+		$sx .= '<tr><th>ano</th>
+					<th width="23%">Artigos</th>
+					<th width="23%">Livros/Cap./Livros Org.</th>
+					<th width="23%">Orientações Tese/Dissertações</th>
+					<th width="23%">Patente</th>
+				</tr>
+				';
+		for ($r=2005;$r <= date("Y");$r++)
+			{
+				$sx .= '<tr>';
+				$sx .= '<td align="center">';
+				$sx .= $r;
+				$sx .= '</td>';
+				
+				/* Artigos */
+				$sa = '<td></td>';
+				for ($a=0;$a < count($art);$a++)
+					{
+						if ($art[$a]['acpp_ano'] == $r)
+							{
+								$sa = '<td align="center" class="border1">'.$art[$a]['total'].'</td>';
+							} 
+					}
+				$sx .= $sa;
+				
+				/* Artigos */
+				$sa = '<td></td>';
+				for ($a=0;$a < count($bil);$a++)
+					{
+						if ($bil[$a]['cc_ano'] == $r)
+							{
+								$sa = '<td align="center" class="border1">'.$bil[$a]['total'].'</td>';
+							} 
+					}
+				$sx .= $sa;	
+				
+				/* Orientacoes */
+				$sa = '<td></td>';
+				for ($a=0;$a < count($ori);$a++)
+					{
+						if ($ori[$a]['or_ano'] == $r)
+							{
+								$sa = '<td align="center" class="border1">'.$ori[$a]['total'].'</td>';
+							} 
+					}
+				$sx .= $sa;	
+				
+				/* Patente */
+				$sa = '<td></td>';
+				for ($a=0;$a < count($pat);$a++)
+					{
+						if ($pat[$a]['pt_ano'] == $r)
+							{
+								$sa = '<td align="center" class="border1">'.$pat[$a]['total'].'</td>';
+							} 
+					}
+				$sx .= $sa;												
+			}
+		$sx .= '</table>';
+		
+		$data['content'] = $sx;
+		$this->load->view('content',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);		
+		}
 
 	function admin($id = 0) {
 		/* Load Models */

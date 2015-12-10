@@ -1309,14 +1309,15 @@ class ics extends CI_model {
 	}
 	
 	/* Formulario de acompanhamento de pré-avaliacao para professores   */
-	function cp_form_professor(){
+	function cp_form_professor($id=''){
 		
 		$form = new form;
+		$form->id = $id;
 		$cp = array();
 		
 		$op_pa2  = '';
 		$op_pa2 .= ' 1:1 vez por semana';
-		$op_pa2 .= '&2:1 vezes por semana';
+		$op_pa2 .= '&2:2 a 3 vezes por semana';
 		$op_pa2 .= '&3:diariamente';
 		$op_pa2 .= '&4:sempre que necessário';
 		$op_pa2 .= '&5:1 vez por mês';
@@ -1334,18 +1335,28 @@ class ics extends CI_model {
 		$op_pa4 .= '&3:adiantado';
 
 		array_push($cp, array('$H8', 'id_pa', '', False, True));
-		array_push($cp, array('${', '', 'Professor responder o questionário', False, True));
-		array_push($cp, array('$O 1:SIM&2:NÃO', 'pa_p01', msg('lb_form_prof_pa1'), True, True));
+		array_push($cp, array('$A', '', 'Formulário de acompanhamento IC/IT', False, True));
+		array_push($cp, array('$M', '', msg('lb_form_prof_inf'), False, True));
+		array_push($cp, array('$R 1:SIM&2:NÃO', 'pa_p01', msg('lb_form_prof_pa1'), True, True));
 		array_push($cp, array('$CM '.$op_pa2, 'pa_p20', msg('lb_form_prof_pa2'), True, True));
-		array_push($cp, array('$RM '.$op_pa3, 'pa_p21', msg('lb_form_prof_pa3'), True, True));	
-		array_push($cp, array('$RM '.$op_pa4, 'pa_p22', msg('lb_form_prof_pa4'), True, True));
-		array_push($cp, array('$O 1:SIM&2:NÃO', 'pa_p02', msg('lb_form_prof_pa5'), True, True));
-		array_push($cp, array('$T80:5 ', 'pa_p23', msg('lb_form_prof_pa6'), False, True));	
-		array_push($cp, array('$}', '', '', False, True));
+		array_push($cp, array('$R '.$op_pa3, 'pa_p02', msg('lb_form_prof_pa3'), True, True));	
+		array_push($cp, array('$R '.$op_pa4, 'pa_p03', msg('lb_form_prof_pa4'), True, True));
+		array_push($cp, array('$R 1:SIM&2:NÃO', 'pa_p04', msg('lb_form_prof_pa5'), True, True));
+		array_push($cp, array('$T80:5 ', 'pa_p22', msg('lb_form_prof_pa6'), False, True));
+		
+		/* Salvando dados adicionaios ocultos */
+		array_push($cp, array('$HV', 'pa_status', 'B', False, True));
+		array_push($cp, array('$HV', 'pa_data', date("Y-m-d"), False, True));
+		array_push($cp, array('$HV', 'pa_hora', date("H:i"), False, True));
+		array_push($cp, array('$HV', 'pa_usuario_id', $_SESSION['id_us'], False, True));
 		
 		array_push($cp, array('$B', '', msg('bt_confirm'), False, True));	
 
-		$tela = $form -> editar($cp, 'pibic_acompanhamento');
+		$tela = $form -> editar($cp, 'ic_acompanhamento');
+		if ($form->saved > 0)
+			{
+				$tela = 'SAVED';
+			}
 		
 		return $tela;
 		

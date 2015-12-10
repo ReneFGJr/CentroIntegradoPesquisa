@@ -242,6 +242,8 @@ class admin extends CI_Controller {
 		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
 		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
 		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
+		
+		array_push($menu, array('Inportação', 'Inportação de Dados', 'ITE', '/inport'));
 
 		/*View principal*/
 		$data['menu'] = $menu;

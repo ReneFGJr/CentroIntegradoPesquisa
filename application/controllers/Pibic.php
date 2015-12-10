@@ -5,7 +5,6 @@ class pibic extends CI_Controller {
 		global $dd, $acao;
 		parent::__construct();
 		$this -> lang -> load("app", "portuguese");
-		
 
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
@@ -198,11 +197,83 @@ class pibic extends CI_Controller {
 		$data['resumo'] = $this -> protocolos_ic -> acoes_abertas();
 		$data['resumo'] .= $this -> protocolos_ic -> resumo_protocolos($cracha);
 		$data['resumo'] .= '<br>' . $this -> ics -> resumo_orientacoes($cracha);
-		
+
 		$data['search'] = $this -> ics_acompanhamento -> entregas_abertas();
 		$data['search'] .= $this -> ics -> orientacoes();
-		
+
 		$this -> load -> view('ic/home', $data);
+		$this -> load -> view('header/content_close');
+	}
+
+	function form($form = '', $proto = '', $chk = '') {
+		$this -> load -> model('protocolos_ic');
+		$this -> load -> model('ics');
+		$this -> load -> model('ics_acompanhamento');
+
+		$this -> cab();
+
+		$chk2 = checkpost_link($form . $proto);
+		if ($chk2 != $chk) {
+			echo 'ERRO DE CHECKPOST';
+			exit ;
+		}
+
+		/* FORM */
+		if ($form == 'form_pre') {
+			$this -> load -> model('ics');
+			$this -> load -> model('ics_acompanhamento');
+			
+			/* valida entrada no ic_acompanhamento */
+			$id = $this->ics_acompanhamento->form_acompanhamento_exist($proto,'PRO');
+			
+			$data = $this -> ics -> le_protocolo($proto);
+			$this -> load -> view('ic/plano', $data);
+
+			$rest = $this -> ics -> cp_form_professor($id);
+			
+			/* salvo com sucesso */
+			if ($rest == 'SAVED')
+			{
+				$date = date("Y-m-d");
+				$sql = "update ic set 
+							ic_pre_data = '$date'
+						where ic_plano_aluno_codigo = '$proto'
+						";
+				$rlt = $this->db->query($sql);
+				$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_PROF');
+				$rest = $this->load->view('ic/tarefa_finalizada',$data,True);
+			}
+
+			$data['content'] = $rest; 
+			$this -> load -> view('content', $data);
+		}
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);		
+	}
+
+	function entrega($tipo = '') {
+		$this -> load -> model('protocolos_ic');
+		$this -> load -> model('ics');
+		$this -> load -> model('ics_acompanhamento');
+
+		$cracha = $_SESSION['cracha'];
+		$proto = get("dd2");
+
+		$this -> cab();
+		$data = array();
+		if ($tipo == 'IC_FORM_PROF') {
+			$data['content'] = 'dd';
+			$this -> load -> view('content', $data);
+			
+			if (strlen($proto) > 0) {
+				redirect(base_url('index.php/pibic/form/' . get("dd4") . '/' . $proto . '/' . checkpost_link(get("dd4") . $proto)));
+				exit ;
+			}
+			$tp = 'form_pre';
+			$bt = msg('protocolo_botao_' . $tp);
+			$data['content'] = $this -> protocolos_ic -> orientacoes_protocolo($tp, $bt);
+			$this -> load -> view('content', $data);
+		}
 		$this -> load -> view('header/content_close');
 	}
 
@@ -248,7 +319,7 @@ class pibic extends CI_Controller {
 
 	function formularios($id = 0, $gr = '') {
 		$cracha = $_SESSION['cracha'];
-		
+
 		$this -> cab();
 		$data = array();
 
@@ -274,29 +345,12 @@ class pibic extends CI_Controller {
 		$data = $this -> ics -> le($id);
 
 		$this -> cab();
-		
-		$data['content'] =  $this -> ics -> cp_form_estudante();
+
+		$data['content'] = $this -> ics -> cp_form_estudante();
 		$this -> load -> view('content', $data);
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-
-	function view_acomp_prof($id = 0, $check = '') {
-		/* Load Models */
-		$this -> load -> model('ics');
-		$data = $this -> ics -> le($id);
-
-		$this -> cab();
-		
-		$data['content'] =  $this -> ics -> cp_form_professor();
-		$this -> load -> view('content', $data);
-		
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
-	}
-
-
-
 }
 ?>

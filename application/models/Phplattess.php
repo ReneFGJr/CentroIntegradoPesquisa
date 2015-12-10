@@ -1,9 +1,402 @@
 <?php
 class phpLattess extends CI_Model {
+	
+	/********************************
+	 * Relatórios */
+	function producao_artigos()
+		{
+		$sql = "select acpp_ano, count(*) as total 
+					from cnpq_acpp inner 
+					join us_usuario on acpp_autor = us_nome_lattes 
+					group by acpp_ano";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		return($rlt);
+		}
+		
+	function producao_bibliografica()
+		{
+		$sql = "select cc_ano, count(*) as total 
+					from cnpq_bibliografia inner 
+					join us_usuario on cc_nome = us_nome_lattes 
+					where cc_ano > 1980 and cc_ano <= '".date("Y")."'
+					group by cc_ano";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		return($rlt);
+		}
+		
+	function producao_orientacao()
+		{
+		$sql = "select or_ano, count(*) as total 
+					from cnpq_orientacao inner 
+					join us_usuario on or_nome = us_nome_lattes 
+					where or_ano > 1980 and or_ano <= '".date("Y")."'
+					group by or_ano";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		return($rlt);
+		}	
+	function producao_patente()
+		{
+		$sql = "select pt_ano, count(*) as total 
+					from cnpq_patente inner 
+					join us_usuario on pt_nome = us_nome_lattes 
+					where pt_ano > 1980 and pt_ano <= '".date("Y")."'
+					group by pt_ano";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		return($rlt);
+		}			
+		
+	
+	function inport_lattes_orientacoes($tipo='TESE') {
+		$file = $this -> next_file_process($tipo.'_');
+		$sx = '<h3>Processando Arquivos Lattes - '.$tipo.'</h3>';
+
+		/* Processar */
+		if (strlen($file) > 0) {
+			/* Processar arquivo */
+			$sx .= $file;
+			$txt = fopen($file, 'r');
+			$s = '';
+			while (!feof($txt)) {
+				$s .= fread($txt, 1024);
+			}
+			fclose($txt);
+
+			$ln = troca($s, chr(13), '¢');
+			$ln = troca($ln, '"', '_');
+			$ln = splitx('¢', $ln);
+
+			for ($r = 1; $r < count($ln); $r++) {
+				$lll = $ln[$r];
+				$lll = troca($lll, "'", '´');
+				$l = splitx(';', $lll . ';');
+
+				if (count($l) > 0) {
+
+					/* Dados */
+					$autor = trim(troca($l[0], '_', ''));
+					$titulo = trim(troca($l[1], '_', ''));
+					$titulo = trim(troca($titulo, '\\', ''));
+					$ano = trim(troca($l[2], '_', ''));
+					$orientado = trim(troca($l[3], '_', ''));
+					$instituicao = trim(troca($l[4], '_', ''));
+					$curso = trim(troca($l[5], '_', ''));
+										
+					$outros = '';
+					for ($t = 4; $t < 20; $t++) {
+						if (isset($l[$t])) {
+							$outros .= $l[$t] . ' ';
+						}
+					}
+					$outros = trim(troca($outros,'_',' '));
+					
+					$sx .= '<br>' . $autor . ', <b>' . $titulo . '</b>';
+					$sx .= ', ' . $ano . ', ' . $orientado;
+
+					$sql = "select * from cnpq_orientacao
+								where or_nome = '$autor'
+									and or_orientado = '$orientado'
+									and or_ano = '$ano' 
+									and or_tipo = '$tipo' ";
+					$rlt = $this -> db -> query($sql);
+
+					$rlt = $rlt -> result_array();
+
+					if (count($rlt) == 0) {
+						//$sx .= '<br>'.$sql;
+						$sql = "insert into cnpq_orientacao
+								(
+								or_nome, or_orientado, or_ano, 
+								or_titulo, or_instituicao, or_tipo,
+								or_curso
+								) values (
+								'$autor','$orientado','$ano',
+								'$titulo','$instituicao','$tipo',
+								'$curso'
+								)
+							";
+						$rltx = $this -> db -> query($sql);
+						$sx .= ' <font color="green"><b>Inserido</b></font>';
+					} else {
+						$sx .= ' <font color="red"><b>já inserido</b></font>';
+					}
+				} else {
+					$sx .= '<br><font color="red">' . $ln[$r] . '</font>';
+				}
+
+			}
+			unlink($file);
+			$sx .= '<meta http-equiv="refresh" content="10">';
+		}
+		return ($sx);
+	}	
+
+	function inport_lattes_patente($tipo='PATEN') {
+		$file = $this -> next_file_process($tipo.'_');
+		$sx = '<h3>Processando Arquivos Lattes - '.$tipo.'</h3>';
+
+		/* Processar */
+		if (strlen($file) > 0) {
+			/* Processar arquivo */
+			$sx .= $file;
+			$txt = fopen($file, 'r');
+			$s = '';
+			while (!feof($txt)) {
+				$s .= fread($txt, 1024);
+			}
+			fclose($txt);
+
+			$ln = troca($s, chr(13), '¢');
+			$ln = troca($ln, '"', '_');
+			$ln = splitx('¢', $ln);
+
+			for ($r = 1; $r < count($ln); $r++) {
+				$lll = $ln[$r];
+				$lll = troca($lll, "'", '´');
+				$l = splitx(';', $lll . ';');
+
+				if (count($l) > 0) {
+
+					/* Dados */
+					$autor = trim(troca($l[0], '_', ''));
+					$titulo = trim(troca($l[1], '_', ''));
+					$titulo = trim(troca($titulo, '\\', ''));
+					$ano = trim(troca($l[2], '_', ''));
+					$registro = trim(troca($l[3], '_', ''));
+										
+					$outros = '';
+					for ($t = 4; $t < 20; $t++) {
+						if (isset($l[$t])) {
+							$outros .= $l[$t] . ' ';
+						}
+					}
+					$outros = trim(troca($outros,'_',' '));
+					
+					$sx .= '<br>' . $autor . ', <b>' . $titulo . '</b>';
+					$sx .= ', ' . $ano . ', ' . $registro;
+
+					$sql = "select * from cnpq_patente
+								where pt_nome = '$autor'
+									and pt_registro = '$registro'
+									and pt_ano = '$ano' ";
+					$rlt = $this -> db -> query($sql);
+
+					$rlt = $rlt -> result_array();
+
+					if (count($rlt) == 0) {
+						//$sx .= '<br>'.$sql;
+						$sql = "insert into cnpq_patente
+								(
+								pt_nome, pt_registro, pt_ano, 
+								pt_titulo, pt_outros
+								) values (
+								'$autor','$registro','$ano',
+								'$titulo','$outros'
+								)
+							";
+						$rltx = $this -> db -> query($sql);
+						$sx .= ' <font color="green"><b>Inserido</b></font>';
+					} else {
+						$sx .= ' <font color="red"><b>já inserido</b></font>';
+					}
+				} else {
+					$sx .= '<br><font color="red">' . $ln[$r] . '</font>';
+				}
+
+			}
+			unlink($file);
+			$sx .= '<meta http-equiv="refresh" content="10">';
+		}
+		return ($sx);
+	}
+	
+	function inport_lattes_evento($tipo='EVENC') {
+		$file = $this -> next_file_process($tipo.'_');
+		$sx = '<h3>Processando Arquivos Lattes - '.$tipo.'</h3>';
+
+		/* Processar */
+		if (strlen($file) > 0) {
+			/* Processar arquivo */
+			$sx .= $file;
+			$txt = fopen($file, 'r');
+			$s = '';
+			while (!feof($txt)) {
+				$s .= fread($txt, 1024);
+			}
+			fclose($txt);
+
+			$ln = troca($s, chr(13), '¢');
+			$ln = troca($ln, '"', '_');
+			$ln = splitx('¢', $ln);
+
+			for ($r = 1; $r < count($ln); $r++) {
+				$lll = $ln[$r];
+				$lll = troca($lll, "'", '´');
+				$l = splitx(';', $lll . ';');
+
+				if (count($l) > 0) {
+
+					/* Dados */
+					$autor = trim(troca($l[0], '_', ''));
+					$titulo = trim(troca($l[1], '_', ''));
+					$titulo = trim(troca($titulo, '\\', ''));
+					$evento = trim(troca($l[2], '_', ''));
+					$isbn = trim(troca($l[3], '_', ''));
+					$ano = trim(troca($l[4], '_', ''));
+					$vol = trim(troca($l[5], '_', ''));
+					$pagi = trim(troca($l[6],'_',''));
+					$pagf = trim(troca($l[7],'_',''));
+					$num = trim(troca($l[8],'_',''));
+					$ordem = trim(troca($l[9],'_',''));
+					$doi = trim(troca($l[10],'_',''));
+					
+					$outros = '';
+					for ($t = 6; $t < 20; $t++) {
+						if (isset($l[$t])) {
+							$outros .= $l[$t] . ' ';
+						}
+					}
+					$outros = trim(troca($outros,'_',' '));
+					
+					$sx .= '<br>' . $autor . ', <b>' . $titulo . '</b>';
+					$sx .= ', ' . $ano . ', ' . $isbn;
+
+					$sql = "select * from cnpq_evento
+								where ev_nome = '$autor'
+									and ev_isbn = '$isbn'
+									and ev_ano = '$ano'
+									and ev_titulo = '$titulo' 
+									and ev_tipo = '$tipo'
+									and ev_volume = '$vol'
+									and ev_pag_ini = '$pagi' ";
+					$rlt = $this -> db -> query($sql);
+
+					$rlt = $rlt -> result_array();
+
+					if (count($rlt) == 0) {
+						//$sx .= '<br>'.$sql;
+						$sql = "insert into cnpq_evento
+								(
+								ev_nome, ev_isbn, ev_ano, ev_volume, ev_num,
+								ev_titulo, ev_outros, ev_tipo, ev_pag_ini, ev_pag_fim,
+								ev_doi, ev_evento
+								) values (
+								'$autor','$isbn','$ano','$vol','$num',
+								'$titulo','$outros', '$tipo','$pagi','$pagf',
+								'$doi','$evento'
+								)
+							";
+						$rltx = $this -> db -> query($sql);
+						$sx .= ' <font color="green"><b>Inserido</b></font>';
+					} else {
+						$sx .= ' <font color="red"><b>já inserido</b></font>';
+					}
+				} else {
+					$sx .= '<br><font color="red">' . $ln[$r] . '</font>';
+				}
+
+			}
+			unlink($file);
+			$sx .= '<meta http-equiv="refresh" content="10">';
+		}
+		return ($sx);
+	}	
+
+	function inport_lattes_bibliografia($tipo='LIVRO') {
+		$file = $this -> next_file_process($tipo.'_');
+		$sx = '<h3>Processando Arquivos Lattes - '.$tipo.'</h3>';
+
+		/* Processar */
+		if (strlen($file) > 0) {
+			/* Processar arquivo */
+			$sx .= $file;
+			$txt = fopen($file, 'r');
+			$s = '';
+			while (!feof($txt)) {
+				$s .= fread($txt, 1024);
+			}
+			fclose($txt);
+
+			$ln = troca($s, chr(13), '¢');
+			$ln = troca($ln, '"', '_');
+			$ln = splitx('¢', $ln);
+
+			for ($r = 1; $r < count($ln); $r++) {
+				$lll = $ln[$r];
+				$lll = troca($lll, "'", '´');
+				$l = splitx(';', $lll . ';');
+
+				if (count($l) > 0) {
+
+					/* Dados */
+					$autor = trim(troca($l[0], '_', ''));
+					$titulo = trim(troca($l[1], '_', ''));
+					$isbn = trim(troca($l[2], '_', ''));
+					$ano = trim(troca($l[3], '_', ''));
+					$idioma = trim(troca($l[4], '_', ''));
+					$vol = trim(troca($l[5], '_', ''));
+					$pagina = trim(troca($l[6],'_',''));
+					$doi = trim(troca($l[11],'_',''));
+					$editora = trim(troca($l[7],'_',' '));
+
+					$outros = '';
+					for ($t = 6; $t < 20; $t++) {
+						if (isset($l[$t])) {
+							$outros .= $l[$t] . ' ';
+						}
+					}
+					$outros = trim(troca($outros,'_',' '));
+					
+					$sx .= '<br>' . $autor . ', <b>' . $titulo . '</b>';
+					$sx .= ', ' . $ano . ', ' . $isbn;
+
+					$sql = "select * from cnpq_bibliografia 
+								where cc_nome = '$autor'
+									and cc_isbn = '$isbn'
+									and cc_ano = '$ano'
+									and cc_titulo = '$titulo' 
+									and cc_tipo = '$tipo'
+									and cc_idioma = '$idioma'
+									and cc_volume = '$vol' ";
+					$rlt = $this -> db -> query($sql);
+
+					$rlt = $rlt -> result_array();
+
+					if (count($rlt) == 0) {
+						//$sx .= '<br>'.$sql;
+						$sql = "insert into cnpq_bibliografia
+								(
+								cc_nome, cc_isbn, cc_ano, cc_volume, cc_idioma,
+								cc_titulo, cc_outros, cc_tipo, cc_paginas,
+								cc_doi, cc_editora
+								) values (
+								'$autor','$isbn','$ano','$vol','$idioma',
+								'$titulo','$outros', '$tipo','$pagina',
+								'$doi', '$editora'
+								)
+							";
+						$rltx = $this -> db -> query($sql);
+						$sx .= ' <font color="green"><b>Inserido</b></font>';
+					} else {
+						$sx .= ' <font color="red"><b>já inserido</b></font>';
+					}
+				} else {
+					$sx .= '<br><font color="red">' . $ln[$r] . '</font>';
+				}
+
+			}
+			unlink($file);
+			$sx .= '<meta http-equiv="refresh" content="10">';
+		}
+		return ($sx);
+	}
 
 	function inport_lattes_professar() {
-		$sx = '<h1>Processando Arquivos Lattes</h1>';
-		$file = $this -> next_file_process();
+		$sx = '<h3>Processando Arquivos Lattes - Artigos</h3>';
+		$file = $this -> next_file_process('ARTIG_');
 		if (strlen($file) > 0) {
 			/* Processar arquivo */
 			$sx .= $file;
@@ -22,12 +415,12 @@ class phpLattess extends CI_Model {
 				$lll = troca($lll, "'", '´');
 				$l = splitx(';', $lll . ';');
 
-				$acpp_autor = troca(trim($l[0]),'"','');
+				$acpp_autor = troca(trim($l[0]), '"', '');
 				$acpp_tipo = $l[1];
 				$acpp_idioma = $l[2];
 
-				$acpp_ano = troca(trim($l[3]),'"','');
-				$acpp_titulo = troca(trim($l[4]),'"','');
+				$acpp_ano = troca(trim($l[3]), '"', '');
+				$acpp_titulo = troca(trim($l[4]), '"', '');
 				$acpp_ordem = $l[5];
 
 				$acpp_relevante = $l[6];
@@ -36,9 +429,9 @@ class phpLattess extends CI_Model {
 
 				$acpp_volume = $l[9];
 				$acpp_fasciculo = $l[10];
-				$acpp_pg_ini = troca(trim($l[11]),'"','');
+				$acpp_pg_ini = troca(trim($l[11]), '"', '');
 
-				$acpp_pg_fim = troca($l[12],'"','');
+				$acpp_pg_fim = troca($l[12], '"', '');
 				$acpp_editora = $l[13];
 				$acpp_doi = $l[14];
 
@@ -88,21 +481,21 @@ class phpLattess extends CI_Model {
 							)";
 					$sql = troca($sql, '"', '');
 					$this -> db -> query($sql);
-					$sx .= '<br>Inserido '.$acpp_autor.' '.$acpp_periodico.' '.$acpp_ano;
+					$sx .= '<br>Inserido ' . $acpp_autor . ' ' . $acpp_periodico . ' ' . $acpp_ano;
 				} else {
-					$sx .= '<br><font color="red">Já cadastrado</font>: '.$acpp_autor.' '.$acpp_periodico.' (<B>'.$acpp_titulo.'</B>) '.$acpp_ano.'-'.$acpp_pg_ini;
+					$sx .= '<br><font color="red">Já cadastrado</font>: ' . $acpp_autor . ' ' . $acpp_periodico . ' (<B>' . $acpp_titulo . '</B>) ' . $acpp_ano . '-' . $acpp_pg_ini;
 				}
 			}
-			unlink ($file);
+			unlink($file);
 			$sx .= '<meta http-equiv="refresh" content="10">';
 		}
 		return ($sx);
 	}
 
-	function next_file_process() {
+	function next_file_process($tipo = 'TIPO') {
 		$ft = 0;
 		for ($r = 0; $r < 1000; $r++) {
-			$fl = "ARTIG_" . strzero($r, 4);
+			$fl = $tipo . strzero($r, 4);
 			if (file_exists('_document/' . $fl)) {
 				return ('_document/' . $fl);
 			}
@@ -136,21 +529,59 @@ class phpLattess extends CI_Model {
 		return ($sx);
 	}
 
-	function tipo_obra($ln) {
+	function tipo_obra($ln, $file = '') {
+		$file = substr($file, 0, strpos($file, '0'));
+
 		$tp = '';
-		if (strpos($ln, '"Título do Livro";"ISBN";"Ano Publicação";') > 0) { $tp = 'LIVRO';
-		}
-		if (strpos($ln, '"Título da Obra Publicada";"ISBN";"Ano Publicação";"') > 0) { $tp = 'LVORG';
-		}
-		if (strpos($ln, '"Título do Trabalho";"Evento";"ISBN"') > 0) { $tp = 'EVENT';
-		}
-		if (strpos($ln, '"Título";"ISBN";"Ano Publicação";"DSC_IDIOMA";') > 0) { $tp = 'CAPIT';
+		if ($file == 'LP') { $tp = 'LIVRO';
 		}
 
 		if (strpos($ln, '"Título do Projeto";') > 0) { $tp = 'PROJE';
 		}
 
 		if (strpos($ln, '"Tipo da Produção";"Idioma";"Ano";"Título do Artigo";') > 0) { $tp = 'ARTIG';
+		}
+
+		if ($file == 'PAT') { $tp = 'PATEN';
+		}		
+
+		if (strpos($ln, '"Título da Dissertação de Mestrado";"Ano";"Orientado";"Instituição";"Curso"') > 0) {
+			$tp = 'DISSE';
+		}
+		if (strpos($ln, '"Título da Tese de Doutorado";"Ano";"Orientado";"Instituição";"Curso"') > 0) {
+			$tp = 'TESE';
+		}
+		/* Capitulos de livros */
+		if ($file == 'TCPE') {
+			$tp = 'EVENC';
+		}		
+		
+		/* Capitulos de livros */
+		if ($file == 'CLP') {
+			$tp = 'CAPIT';
+		}		
+
+		/* Obras organizadas */
+		if ($file == 'OOP') {
+			$tp = 'ORGAN';
+		}		
+		
+		/* Pós-Doc */
+		if ($file == 'OCSPD') {
+			$tp = 'POSDC';
+		}
+		/* Coorientacao Dissertação */
+		if ($file == 'OCSPD') {
+			$tp = 'CDISS';
+		}
+		/* Coorientação Tese */
+		if ($file == 'COCTD') {
+			$tp = 'CTESE';
+		}
+
+		if (strlen($tp) == 0) {
+			echo '<pre>' . $ln . '</pre>';
+			exit ;
 		}
 		return ($tp);
 	}
@@ -159,10 +590,11 @@ class phpLattess extends CI_Model {
 		if (isset($_POST['dd1'])) { $dd1 = $_POST['dd1'];
 		} else { $dd1 = '';
 		}
-
+		$file = '';
 		if (strlen($dd1) > 0) {
 			$temp = $_FILES['arquivo']['tmp_name'];
 			$size = $_FILES['arquivo']['size'];
+			$file = $_FILES['arquivo']['name'];
 		} else {
 			$temp = '';
 		}
@@ -170,7 +602,7 @@ class phpLattess extends CI_Model {
 		if (strlen($temp) == 0) {
 			$sx = '
 					<center>
-							<form id="upload" action="' . base_url('index.php/inport/lattes/artigos/') . '" method="post" enctype="multipart/form-data">
+							<form id="upload" action="' . base_url('index.php/inport/lattes/arquivo/') . '" method="post" enctype="multipart/form-data">
 							<input type="file" name="arquivo" id="arquivo" />
 							<input type="submit" name="dd1" value="enviar >>>">
 						</form>
@@ -178,7 +610,7 @@ class phpLattess extends CI_Model {
 					';
 			return ($sx);
 		} else {
-			$sx = 'Arquivo enviado com sucesso!';
+			$sx = 'Arquivo lido com sucesso!';
 			$rHandle = fopen($temp, "r");
 			$sData = '';
 			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Abrindo Arquivo ';
@@ -186,13 +618,13 @@ class phpLattess extends CI_Model {
 				$sData .= fread($rHandle, filesize($temp));
 			}
 			fclose($rHandle);
-			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Tamanho do arquivo lido ' . strlen($sData);
+			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Tamanho do arquivo lido ' . number_format(strlen($sData) / 1024, 1, ',', '.') . ' kBytes';
 
 			$ln = splitx(chr(13), $sData);
 			$sx .= '<BR>Total de linhas: ' . count($ln);
 			$sx .= '<BR>Indentificação do tipo de obra: ';
 			/* Identicação do tipo de obra */
-			$tpo = $this -> tipo_obra($ln[0]);
+			$tpo = $this -> tipo_obra($ln[0], $file);
 			if (strlen($tpo) > 0) {
 				$sx .= '<B>' . $tpo . '</B>';
 				$sx .= $this -> arquivos_salva_quebrado($ln, $tpo);
@@ -218,7 +650,7 @@ class phpLattess extends CI_Model {
 		$data = $this -> removeCLASS($data);
 		$data = $this -> removeSPACE($data);
 		$data = $this -> removeTAG($data);
-		
+
 		/* Dados da instituicao */
 		$datar = array();
 		$datar['espelho'] = $this -> phplattess -> recupera_espelho($data);
@@ -234,8 +666,7 @@ class phpLattess extends CI_Model {
 		return ($datar);
 	}
 
-	function recupera_atualizacao($text)
-		{
+	function recupera_atualizacao($text) {
 		/* */
 		$text = troca($text, '<span >ui-button</span>', '');
 		$text = troca($text, '<span >', '');
@@ -244,10 +675,10 @@ class phpLattess extends CI_Model {
 		$text = troca($text, chr(13) . chr(10) . ' ', '');
 		$data = array();
 		$dt = $this -> recupera_method_3($text, 'Data do último envio:', '</div>');
-		$dt = substr($dt,0,10);
+		$dt = substr($dt, 0, 10);
 		$dt = brtosql($dt);
 		return ($dt);
-		}
+	}
 
 	function recupera_nomegrupo($text) {
 		/* */

@@ -1263,6 +1263,12 @@ if (!function_exists('form_edit')) {
 				}
 				/* Excessoes */
 				if (isset($vlr)) {
+					/* Array */
+					if (is_array($vlr))
+						{
+							$vlr = serialize($vlr);
+						}
+					
 					/* verefica se o campo na gravavel */
 					if (strlen($cp[$r][1]) > 0) {
 						if ($sv > 0) { $sql .= ', ';
@@ -1713,7 +1719,6 @@ if (!function_exists('form_edit')) {
 				}
 				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
-
 				$tela .= $tdn . $trn;
 				break;
 
@@ -1754,6 +1759,7 @@ if (!function_exists('form_edit')) {
 						$tela .= '<input type="checkbox" name="'.$dn.'[]" id="'.$dn.'" value="' . $key . '" '.$check.'>' . $valor . '<br>';
 					}
 				}
+				$tela .= '<br>';
 				break;
 
 			/* Oculto */
@@ -1886,11 +1892,13 @@ if (!function_exists('form_edit')) {
 						if ($key == $vlr) { $checked = true;
 						}
 						$dados = array('name' => $dn, 'id' => $dn, 'value' => $key, 'class' => 'form_select', 'checked' => $checked);
-						$form .= '<tr valign="top"><td>' . form_radio($dados) . '</td>';
-						$form .= '<td class="form_radio">' . $valor . '</td>';
-						$form .= '</tr>';
+						$form .= '<tr valign="top"><td class="form_radio">' . form_radio($dados);
+						//$form .= '</td>';
+						$form .= '' . $valor . '</td>';
+						//$form .= '</tr>';
 					}
 				}
+				$form .= '<tr><td><br></td></tr>';
 				$form .= '</table>';
 
 				/* recupera dados */
