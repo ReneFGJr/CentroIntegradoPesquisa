@@ -59,6 +59,18 @@ class central_declaracao extends CI_Controller {
 		/**##############################################################################################
 		 /**###########################         GERA DECLARACOES                      ####################
 		 /**#############################################################################################*/
+		
+		/**#############################################################################################*/
+		/* SEMIC 2012 */
+		$ano_12 = '2012';
+		/* Estudante IC 2012 */
+		$err1 = $this -> eventos -> emitir('IC', 'ESTUDANTE', $ano_12, $data);
+		/* Avaliador SEMIC 2012*/
+		$this -> eventos -> emitir('IC', 'AVALIADOR', $ano_12, $data);
+		/* Orientador IC 2012*/
+		$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano_12, $data);
+		
+		/**#############################################################################################*/
 		/* SEMIC 2013 */
 		$ano_13 = '2013';
 		/* Estudante IC 2013 */
@@ -68,6 +80,7 @@ class central_declaracao extends CI_Controller {
 		/* Orientador IC 2013*/
 		$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_13, $data);
 
+		/**#############################################################################################*/
 		/* SEMIC 2014 */
 		$ano_14 = '2014';
 		/* Estudante IC 2014 */
@@ -411,9 +424,9 @@ class central_declaracao extends CI_Controller {
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 30 de outubro de 2013.</td></tr></table>';
 				break;
 
-			/*#############################################################################*/
-			/*#######################     CICPG DE 2014      ###############################*/
-			/*##############################################################################*/
+			/*#############################################################################################*/
+			/*#######################             CICPG DE 2014             ###############################*/
+			/*#############################################################################################*/
 
 			/* Declaracao de participacao estudante*/
 			case '28' :
@@ -483,6 +496,80 @@ class central_declaracao extends CI_Controller {
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 30 de outubro de 2013.</td></tr></table>';
 				break;
+				
+			/*#############################################################################################*/
+			/*#######################     INICIACAO CIENTIFICA DE 2012      ###############################*/
+			/*#############################################################################################*/
+
+			/* Declaracao de participacao estudante*/
+			case '31' :
+				//Artigos complementos	
+				$artigo_estudante = 'o';
+					if ($data['us_g1'] == 'F') { 
+						$artigo_estudante = 'a';
+					}
+					
+				$artigo_professor = 'prof.';
+				$artigo_prof_complemento = 'o';
+				$artigo_dr = 'Dr.';
+				$artigo_dr_complemento = 'o';
+				
+					if ($data['us_g2'] == 'F') {
+						$artigo_professor = 'profa.';
+						$artigo_dr = 'Dra.';
+						$artigo_prof_complemento = 'a';
+						$artigo_dr_complemento = 'a';
+					}
+				
+				/*########### TEXTO DA DECLARACAO DE ESTUDANTE############################*/
+				$protocolo = trim($data['dc_texto_1']);
+				$content = 'Declaro para os devidos fins que '. $artigo_estudante . ' alun'. $artigo_estudante . ' <b>' . $data['nome'] . '</b>
+				participou do Programa Institucional de Bolsas de Iniciação Científica (PIBIC)
+				com Bolsa (' . $data['edital'] . ') no período de agosto de 2012 até julho de 2013, 
+				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>" , orientad'. $artigo_estudante .' pel'. $artigo_prof_complemento .'
+				' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome_2'] . '</b>" e,
+				realizou apresentação no XX Seminário de Iniciação Científica, XIV Mostra de Pesquisa e I PIBITI da PUCPR, realizado nos dias 06, 07 e 08 de Novembro de 2012. 
+				';
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 12 de Novembro de 2012.</td></tr></table>';
+				break;
+
+			/* Declaracao de Avaliador */
+			case '32' :
+				$artigo_professor = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';
+				}
+				$artigo_doutor = 'Dr.';
+				if ($data['us_g1'] == 'F') { $artigo_doutor = 'Dra.';
+				}
+				$artigo_gen = '';
+				if ($data['us_g1'] == 'F') { $artigo_gen = 'a';
+				}
+				/*########### TEXTO DA DECLARACAO PARA AVALIADOR ############################*/
+				$protocolo = trim($data['dc_texto_1']);
+				$content = 'Declaramos para os devidos fins que ' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome'] . '</b> atuou como avaliador' . $artigo_gen . ' de trabalhos científicos no XXI Seminário de Iniciação Científica da PUCPR, realizado nos dias 04, 05 e 06 de Novembro de 2014.';
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 12 de Novembro de 2012.</td></tr></table>';
+				break;
+
+			/* Declaracao de Orientador */
+			case '33' :
+				$artigo_estudante = 'o';
+				if ($data['us_g2'] == 'F') { $artigo_estudante = 'a';
+				}
+				$artigo_professor = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';
+				}
+				/*########### TEXTO DA DECLARACAO PARA AVALIADOR ############################*/
+				$content = 'Declaramos para os devidos fins que o ' . $artigo_professor . ' <b>' . $data['nome'] . '</b> orientou ' . $artigo_estudante . ' alun' . $artigo_estudante . ' <b>' . $data['nome_2'] . '</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2012 até julho de 2013.';
+				$content = utf8_encode($content);
+				$data['content'] = '<font style="line-height: 150%">' . $content;
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 12 de Novembro de 2012.</td></tr></table>';
+				break;				
+				
+				
 
 			/*#######################     DEFAULT      ###############################*/
 			default :
