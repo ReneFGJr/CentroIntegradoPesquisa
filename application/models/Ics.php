@@ -14,6 +14,8 @@ class ics extends CI_model {
 					where bh_protocolo = '$proto'
 					and bh_data = $data
 					and bh_acao = $ac
+					and bh_aluno_1 = '$aluno1'
+					and bh_aluno_2 = '$aluno2'
 				";
 		$rlt = db_query($sql);
 
@@ -44,6 +46,14 @@ class ics extends CI_model {
 			return(1);
 		}
 
+	function alterar_orientador_plano($proto,$prof)
+		{
+			$sql = "update ic set ic_cracha_prof = '$prof'
+						where 	ic_plano_aluno_codigo = '$proto' ";
+			$rlt = $this -> db -> query($sql);
+			return(1);
+		}
+		
 	function resumo_implemendados($ano) {
 		$sql = "select * from 
 					(
@@ -1202,6 +1212,17 @@ class ics extends CI_model {
 		return ($cp);
 	}
 	
+	function cp_alterar_orientador()
+		{
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ic', '', False, True));
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$Q us_cracha:us_nome:select * from us_usuario where usuario_tipo_ust_id =2 and us_ativo = 1 order by us_nome', '', 'Nome do novo orientador', True, False));
+		array_push($cp, array('$T80:5', '', 'Justificativa', True, True));
+		array_push($cp, array('$B', '', 'Confirmar alteração >>>', False, True));
+		return ($cp);	
+		}
+	
 	function cp_cancelar()
 		{
 		$cp = array();
@@ -1291,7 +1312,10 @@ class ics extends CI_model {
 		array_push($cp, array('$H8', 'id_sw', '', False, True));
 		array_push($cp, array('$SW', 'sw_01', msg('sw_ic_submissao'), False, True));
 		array_push($cp, array('$SW', 'sw_02', msg('sw_ic_rel_pacial'), False, True));
-		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_rel_final'), False, True));
+		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_form_acompanhamento'), False, True));
+		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_rel_final'), False, True));
+		array_push($cp, array('$SW', 'sw_05', msg('sw_ic_resumo'), False, True));
+		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_rel_final'), False, True));
 		array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
 	}

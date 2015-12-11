@@ -81,7 +81,7 @@ class persona extends CI_Controller {
 		$this -> load -> view('header/content_open.php');
 		$this -> load -> view('header/cab', $data);
 		
-		$this->load->view('usuario/view',$data);
+		$this->load->view('perfil/view',$data);
 		
 		$this->load->view('perfil/perfil_captacao',$data);
 		$this->load->view('perfil/perfil_producao_cientifica',$data);

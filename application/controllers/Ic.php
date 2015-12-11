@@ -186,6 +186,9 @@ class ic extends CI_Controller {
 		array_push($menu, array('Gestão', 'Alterar título de plano de aluno', 'ITE', '/ic/admin_alterar_titulo'));
 		array_push($menu, array('Gestão', 'Cancelar plano de estudante', 'ITE', '/ic/admin_cancelar'));
 		array_push($menu, array('Gestão', 'Reativar plano cancelado', 'ITE', '/ic/admin_reativar'));
+		array_push($menu, array('Gestão', 'Substituição de orientador', 'ITE', '/ic/admin_substituir_orientador'));
+		
+		array_push($menu, array('Entregas', 'Formulário de acompanhamento', 'ITE', '/ic/acompanhamento'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -405,7 +408,7 @@ class ic extends CI_Controller {
 					$obs = '';
 					$ac = '175';
 
-					$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '');
+					$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
 
 					/* Fase II - Altera Título */
 					/******************************/
@@ -454,6 +457,112 @@ class ic extends CI_Controller {
 					} else {
 						/********************/
 						redirect(base_url('index.php/ic/admin_alterar_titulo/' . $id . '/' . checkpost_link($id)));
+					}
+					print_r($ic);
+				}
+			}
+		}
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	/***************************************************************************************** ALTERAR TITULO */
+	function admin_substituir_orientador($id = 0, $chk = '') {
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');
+		$this -> cab();
+		$data = array();
+		$link = base_url('index.php/ic/admin_substituir_orientador');
+		$tit = 'Alteração do professor orientador';
+
+		if ($id > 0) {
+			/****************************************************************
+			 ************************************ ID do protocolo informado *
+			 ****************************************************************/
+			$cp = $this -> ics -> cp_alterar_orientador();
+			$data = $this -> ics -> le($id);
+			$proto = $data['ic_plano_aluno_codigo'];
+			$this -> load -> view('ic/plano.php', $data);
+			$status = $data['icas_id'];
+
+			if ($status != '1') {
+				$data['title'] = $tit;
+				$data['content'] = 'Procolo Cancelado, Finalizado ou Suspenso';
+				$data['volta'] = $link;
+				$this -> load -> view('errors/erro_msg', $data);
+			} else {
+				$form = new form;
+				$form -> id = $id;
+				$tela = $form -> editar($cp, 'ic');
+				$data['title'] = 'Alteração do título do plano do aluno';
+				$data['content'] = $tela;
+
+				if ($form -> saved > 0) {
+					/* Fase I - Inserir histórico */
+					/******************************/
+					$prof1 = $data['pf_cracha'];
+					$nome1 = $data['pf_nome'];
+					
+					$prof2 = get("dd2");
+					$ln = $this->usuarios->le_cracha($prof2);
+					$nome2 = $ln['us_nome'];
+					
+					$hist = 'Alteração do professor orientador de "<b>' . $nome1 . '</b>" para "<b>' . $nome2.'</b>'; 
+					$obs = 	mst('Justificativa: ' . get("dd3"));
+					$motivo = '000';
+					$ac = '177';
+
+					$this -> ics -> inserir_historico($proto, $ac, $hist, $prof1, $prof2, $motivo, $obs);
+
+					/* Fase II - Altera Título */
+					/******************************/
+					$this -> ics -> alterar_orientador_plano($proto, $prof2);
+
+					/* Fase III - Comunicar Orientador */
+					/***********************************/
+
+					/* Fase IV - Tela de Fim */
+					/*************************/
+					$data['volta'] = base_url('index.php/ic/admin_substituir_orientador');
+					$this -> load -> view('sucesso', $data);
+				} else {
+					$this -> load -> view('content', $data);
+				}
+
+			}
+		} else {
+			/****************************************************************
+			 ************************************ nao informado o protocolo *
+			 ****************************************************************/
+			$proto = get("dd1");
+			if (strlen($proto) == 0) {
+				$cp = $this -> ics -> cp_protocolo();
+				$form = new form;
+				$tela = $form -> editar($cp, '');
+				$data['title'] = $tit;
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			} else {
+				$ic = $this -> ics -> le_protocolo($proto);
+				if (count($ic) == 0) {
+					$data['title'] = $tit;
+					$data['content'] = 'Procolo não localizado';
+					$data['volta'] = $link;
+					$this -> load -> view('errors/erro_msg', $data);
+				} else {
+					$status = $ic['s_id'];
+					$id = $ic['id_ic'];
+					/* Protocolo Finalizado, Cancelado ou Suspenso */
+					if ($status != '1') {
+						$data['title'] = $tit;
+						$data['content'] = 'Procolo Cancelado, Finalizado ou Suspenso';
+						$data['volta'] = $link;
+						$this -> load -> view('errors/erro_msg', $data);
+					} else {
+						/********************/
+						redirect(base_url('index.php/ic/admin_substituir_orientador/' . $id . '/' . checkpost_link($id)));
 					}
 					print_r($ic);
 				}
