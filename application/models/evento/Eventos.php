@@ -44,7 +44,7 @@ class eventos extends CI_model {
 		return ($sx);
 	}
 
-	
+	/*################>> EMITIR DECLARACOES E CERTIFICADOS DE IC <<###########################*/	
 	function emitir($evento, $tipo, $ano, $us) {
 		$cracha = $us['us_cracha'];
 		$id = $us['id_us'];
@@ -53,9 +53,9 @@ class eventos extends CI_model {
 		/*#############################################################################################*/
 		/*#######################     INICIACAO CIENTIFICA DE 2013      ###############################*/
 		/*#############################################################################################*/
-		/*****************************
-		 * Declaracao de Estudante
-		*****************************/
+		/****************************
+		** Declaracao de Estudante **
+		****************************/
 		if (($evento == 'SEMIC') and ($ano == '2013')) {
 			/* Estudante */
 			if ($tipo == 'ESTUDANTE') {
@@ -80,7 +80,7 @@ class eventos extends CI_model {
 			}
 
 		/*****************************
-		* Declaracao de AVALIADOR
+		** Declaracao de avaliador  **
 		*****************************/
 			if ($tipo == 'AVALIADOR') {
 				/* Declaracao de Avaliador */
@@ -104,7 +104,7 @@ class eventos extends CI_model {
 			}
 
 		/*****************************
-		* Declaracao de ORIENTADOR
+		** Declaracao de orientador **
 		*****************************/
 			if ($tipo == 'ORIENTADOR') {
 				/* Declaracao de Estudante SEMIC */
@@ -135,11 +135,11 @@ class eventos extends CI_model {
 
 
 		/*#############################################################################################*/
-		/*#######################     CICPG DE 2014      ###############################*/
+		/*#######################             CICPG DE 2014             ###############################*/
 		/*#############################################################################################*/
-		/*****************************
-		 * Declaracao de Estudante
-		*****************************/
+		/****************************
+		** Declaracao de Estudante **
+		****************************/
 		if (($evento == 'SEMIC') and ($ano == '2014')) {
 			/* Estudante */
 			if ($tipo == 'ESTUDANTE') {
@@ -222,9 +222,9 @@ class eventos extends CI_model {
 		/*#############################################################################################*/
 		/*#######################     SEMIC DE 2012                     ###############################*/
 		/*#############################################################################################*/
-		/*****************************
-		 * Declaracao de Estudante
-		*****************************/
+		/****************************
+		** Declaracao de Estudante **
+		****************************/
 		if (($evento == 'IC') and ($ano == '2012')) {
 			/* Estudante */
 			if ($tipo == 'ESTUDANTE') {
@@ -449,7 +449,9 @@ class eventos extends CI_model {
 
 				/* ESTUDANTE */
 				if ($tipo == 'ESTUDANTE') {
-					/* Declaracao de Estudante SEMIC */
+					/****************************
+					** Declaracao de Estudante **
+					****************************/
 					$cracha = strzero($cracha, 8);
 					$sql = "select * from semic_nota_trabalhos
 							left join us_usuario on st_professor = us_cracha
@@ -496,7 +498,6 @@ class eventos extends CI_model {
 				}
 				/* APRESENTACAO DE TRABALHO */
 				if ($tipo == 'APRESENTACAO') {
-
 					/* Declaracao de Estudante SEMIC que apresentou trabalho*/
 					$cracha = strzero($cracha, 8);
 					$sql = "select * from semic_nota_trabalhos
@@ -587,16 +588,15 @@ class eventos extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$url = base_url('index.php/central_declaracao/declaracao/' . $line['id_dc'] . '/' . checkpost_link($line['id_dc']));
-			$link = '<A href="#" onclick="newxy(\'' . $url . '\',1024,640);" class="link lt2">';
+			$link = '<a href="#" onclick="newxy(\'' . $url . '\',1024,640);" class="link lt2">';
 			$sx .= '<tr>';
 			$sx .= '<td>';
 			$sx .= $link;
 			$sx .= $line['cde_nome'];
 			$sx .= '</a>';
-
 			$sx .= '</td>';
+			
 			$sx .= '<td width="50%">';
-
 			/* Nome do aluno ou orientador */
 			$nome = trim($line['us_nome']);
 			$idd = $line['id_us'];
