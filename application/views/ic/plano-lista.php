@@ -68,7 +68,7 @@ switch ($id_s) {
 			echo '<td></td>';
 			echo '<td>';
 			echo '<form>';
-			echo '<input type="submit" value="' . $botao . '">';
+			echo '<input type="submit" value="' . $botao . '" class="botao3d back_green_shadown back_green" style="text-align: center;">';
 			echo '<input type="hidden" name="dd2" value="' . $ic_plano_aluno_codigo . '">';
 			echo '<input type="hidden" name="dd3" value="' . checkpost_link($ic_plano_aluno_codigo . $acao) . '">';
 			echo '<input type="hidden" name="dd4" value="' . $acao . '">';

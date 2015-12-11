@@ -18,6 +18,12 @@ $lang['page_usuarios'] = 'Cadastro de pessoas';
 $lang['versao'] = 'v0.15.25';
 /* Fundo de Pesquisa */
 $lang['page_fundo'] = 'Fundo de Pesquisa';
+
+
+$lang['protocolo_botao_form_pre'] = 'Entregar formulário de acompanhamento';
+$lang['lb_form_prof_inf'] = '<p class="lt3">Prezado orientador, este questionário tem como objetivo realizar um acompanhamento das ativididades e emprenho do seu aluno na Iniciação Científica e Tecnológica. Todas as questões são obrigatórias, existe um espaço livre ao final do formulário para seus comentários.</p>
+							 <p class="lt3">Destacamos que este formulário não será encaminhado para seu orientando.</p><BR><BR>';
+
 /***************************** PIBIC */
 $lang['ic_atividade_aberta'] = 'Atividades para entrega';
 $lang['IC_FORM_PROF'] = 'Formulário Pré-Relatório Parcial (professor)';

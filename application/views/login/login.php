@@ -54,6 +54,17 @@
 			?>
 			<BR>
 			<BR>
+			<br><br><br><br>
+			
+			</form>
+			
+			<div style="width: 300px; height: 60px; border: 1px solid #333; padding: 10px;">
+			<form method="get" action="<?php echo base_url('index.php/central_declaracao/');?>">
+			<b>Emita suas Declarações de Participaçao na Iniciação Científica</b>			
+			<input type="submit" value="Acessar a Central de Declarações" class="estilo-botao">
+			<br>		
+			<font class="lt0">Declarações para orientador, estudante e avaliadores.</font>
+			</div>
 
 			<?php echo $login_error;?>
 			<div id="modo"><?php echo $modo;?></div>

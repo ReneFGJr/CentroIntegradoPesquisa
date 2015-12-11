@@ -26,7 +26,7 @@ class ics_acompanhamento extends CI_model {
 					$rlt = $this->db->query($sql);
 					$rlt = $rlt->result_array();
 				}
-			return($rlt[0]['id_pa']);
+			return($rlt[0]);
 		}
 
 	function entregas_abertas() {
@@ -87,9 +87,7 @@ class ics_acompanhamento extends CI_model {
 					where ic_cracha_prof = '$cracha' 
 						and ic_ano = '" . date("Y") . "'
 						and s_id = 1
-						and ic_pre_data < '2010-01-01'
 			 ";
-			 echo $sql;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '';
@@ -97,10 +95,11 @@ class ics_acompanhamento extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$proto = trim($line['ic_plano_aluno_codigo']);
-			$protoPA = trim($line['pa_protocolo']);
-			if (strlen($protoPA) == 0) {
+			$data_pre = $line['ic_pre_data'];
+			if ($data_pre == '0000-00-00')
+				{
 				$tot++;
-			}
+				}
 		}
 		if ($tot > 0)
 			{
@@ -120,8 +119,7 @@ class ics_acompanhamento extends CI_model {
 					left join ic_acompanhamento on pa_protocolo = ic_plano_aluno_codigo 
 					where ic_cracha_aluno = '$cracha' 
 						and ic_ano = '" . date("Y") . "'
-						and s_id = 1
-						and ic_prec_aluno_data = '0000-00-00'
+						and s_id = 1						
 			 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -130,10 +128,7 @@ class ics_acompanhamento extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$proto = trim($line['ic_plano_aluno_codigo']);
-			$protoPA = trim($line['pa_protocolo']);
-			if (strlen($protoPA) == 0) {
-				$tot++;
-			}
+			$tot++;
 		}
 		if ($tot > 0)
 			{

@@ -222,33 +222,45 @@ class pibic extends CI_Controller {
 		if ($form == 'form_pre') {
 			$this -> load -> model('ics');
 			$this -> load -> model('ics_acompanhamento');
-			
+
 			/* valida entrada no ic_acompanhamento */
-			$id = $this->ics_acompanhamento->form_acompanhamento_exist($proto,'PRO');
-			
+			$rlt = $this -> ics_acompanhamento -> form_acompanhamento_exist($proto, 'PRO');
+			$id = $rlt['id_pa'];
+
+
 			$data = $this -> ics -> le_protocolo($proto);
 			$this -> load -> view('ic/plano', $data);
+			
+			/* Formulário já finalizado */
+			if ($rlt['pa_status'] != '@') {
+				$rest = 'Este formulário já foi enviado';
+				$data['content'] = $rest;
+				$this -> load -> view('errors/erro_msg', $data);
+
+				$this -> load -> view('header/content_close');
+				$this -> load -> view('header/foot', $data);
+				return('');
+			}			
 
 			$rest = $this -> ics -> cp_form_professor($id);
-			
+
 			/* salvo com sucesso */
-			if ($rest == 'SAVED')
-			{
+			if ($rest == 'SAVED') {
 				$date = date("Y-m-d");
 				$sql = "update ic set 
 							ic_pre_data = '$date'
 						where ic_plano_aluno_codigo = '$proto'
 						";
-				$rlt = $this->db->query($sql);
+				$rlt = $this -> db -> query($sql);
 				$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_PROF');
-				$rest = $this->load->view('ic/tarefa_finalizada',$data,True);
+				$rest = $this -> load -> view('ic/tarefa_finalizada', $data, True);
 			}
 
-			$data['content'] = $rest; 
+			$data['content'] = $rest;
 			$this -> load -> view('content', $data);
 		}
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);		
+		$this -> load -> view('header/foot', $data);
 	}
 
 	function entrega($tipo = '') {
@@ -262,9 +274,9 @@ class pibic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		if ($tipo == 'IC_FORM_PROF') {
-			$data['content'] = 'dd';
+			$data['content'] = '<h2>Formulário de acompanhamento</h2>';
 			$this -> load -> view('content', $data);
-			
+
 			if (strlen($proto) > 0) {
 				redirect(base_url('index.php/pibic/form/' . get("dd4") . '/' . $proto . '/' . checkpost_link(get("dd4") . $proto)));
 				exit ;
@@ -272,6 +284,12 @@ class pibic extends CI_Controller {
 			$tp = 'form_pre';
 			$bt = msg('protocolo_botao_' . $tp);
 			$data['content'] = $this -> protocolos_ic -> orientacoes_protocolo($tp, $bt);
+			if (strlen($data['content']) < 40)
+				{
+					$msg['content'] = 'Não existe formulário para envio';
+					$msg['volta'] = base_url('index.php/pibic');
+					$data['content'] = $this->load->view('errors/erro_msg',$msg,true);
+				}
 			$this -> load -> view('content', $data);
 		}
 		$this -> load -> view('header/content_close');
@@ -298,7 +316,7 @@ class pibic extends CI_Controller {
 		array_push($menus, array('Home', 'index.php/pibic'));
 		array_push($menus, array('Protocolos', 'index.php/pibic/protocolo'));
 
-		array_push($menus, array('Formulários', 'index.php/pibic/formularios/'));
+		//array_push($menus, array('Formulários', 'index.php/pibic/formularios/'));
 
 		/*
 		 array_push($menus, array('Trabalhos', 'index.php/semic/trabalhos'));
@@ -352,5 +370,6 @@ class pibic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
 }
 ?>
