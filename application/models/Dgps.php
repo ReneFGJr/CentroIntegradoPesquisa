@@ -159,17 +159,22 @@ class dgps extends CI_model {
 
 /* Escolas */
 	function grupos_escolas() {
+		$sql = "update gpus_cnpq set gpus_test = 1 
+					where gpus_cnpq_nome like '%Permite enviar email%'";
+		$rlt = $this -> db -> query($sql);
+		
 		$sql = "select count(*) as total, es_escola from ( 
 						select distinct es_escola, gp_id 
 						from gpus_cnpq 
 						left join us_usuario on gpus_cnpq_nome = us_nome 
 						left join gp_usuario on gp_usuario.us_id = id_gpus_cnpq 
 						left join escola on us_escola_vinculo = id_es
-						where usgp_lider = 2  and gpus_test = 0 
+						where usgp_lider = 2 and gpus_test = 0 
 						/* and usuario_tipo_ust_id = 2 */
 						) as tabela 
 						group by es_escola
 						order by total desc";
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -222,7 +227,95 @@ class dgps extends CI_model {
 		
 		return ($sx);
 	}
+	function grupos_escolas_detalhes($escola = '') {
+		$escola = troca($escola, '%20', ' ');
+		if ($escola == 'null') {
+			$wh = " (es_escola = '' or es_escola is null)";
+		} else {
+			$wh = " es_escola = '$escola' ";
+		}
 
+		$sql = "select distinct gpus_cnpq_nome, us_nome, us_cracha, gp_id
+						from gpus_cnpq 
+						left join us_usuario on gpus_cnpq_nome = us_nome 
+						left join gp_usuario on gp_usuario.us_id = id_gpus_cnpq 
+						left join escola on us_escola_vinculo = id_es
+						where usgp_lider = 2 and gpus_test = 0 
+						and $wh ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$wh = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			if (strlen($wh) > 0) { $wh .= ' or ';
+			}
+			$wh .= ' (id_gp = ' . $line['gp_id'] . ')';
+		}
+		/* invalida consulta se vazio */
+		if (strlen($wh) == 0) { $wh = '1=2';
+		}
+		$sql = "select us.id_us as ida, id_gp, gp_ano_formacao, gp_nome, gpus_cnpq_nome
+					from gp_grupo_pesquisa
+					inner join gp_usuario on gp_id = id_gp
+					inner join gpus_cnpq as cp on cp.id_gpus_cnpq = gp_usuario.us_id
+					left join us_usuario as us on us.us_nome_lattes = cp.gpus_cnpq_nome 
+						where ($wh)
+						and usgp_lider = 2 and gpus_test = 0
+						/* us.usuario_tipo_ust_id */
+						order by gp_nome, gpus_cnpq_nome";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$wh = '';
+		$sx = '<table width="100%" class="border1 lt1" border=0>';
+		$sx .= '<tr>
+					<th>pos</th>
+					<th>ano<br>formação</td>
+					<th>nome do grupo de pesquisa</th>
+					<th>nome(s) do(s) lider(es)</th>
+				</tr>';
+		$to = 0;
+		$xigp = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			/* Links */
+			$linkg = '<a href="' . base_url('index.php/dgp/view/' . $line['id_gp']) . '" class="link lt2" target="_new">';
+			/* Id do usuario */
+			$idu = $line['ida'];
+
+			/* Grupo diferente */
+			if ($xigp != $line['id_gp']) {
+				if ($to > 0) {
+					$sx .= '</td></tr>';
+				}
+				$to++;
+				$xigp = $line['id_gp'];
+				$sx .= '<tr>';
+				$sx .= '<td width="10" align="center" class="border1">' . $to . '</td>';
+
+				$sx .= '<td width="20" align="center" class="border1">';
+				$sx .= $line['gp_ano_formacao'];
+				$sx .= '</td>';
+
+				$sx .= '<td class="border1" width="45%">';
+				$sx .= $linkg . $line['gp_nome'] . '</a>';
+				$sx .= '</td>';
+
+				$sx .= '<td class="border1" width="45%">';
+				$sx .= link_perfil($line['gpus_cnpq_nome'], $idu) . '</a>';
+			} else {
+				$sx .= '; ';
+				$sx .= link_perfil($line['gpus_cnpq_nome'], $idu) . '</a>';
+			}
+		}
+		if ($to > 0) {
+			$sx .= '</td></tr>';
+		}
+		$sx .= '<tr><td colspan=10>Total de ' . $to . ' grupos</td><tr>';
+		$sx .= '</table>';
+		return ($sx);
+	}
 	function next_harvesting() {
 		$sql = "select * from gp_grupo_pesquisa order by gp_dt_coleta limit 1";
 		$rlt = $this -> db -> query($sql);
@@ -828,7 +921,7 @@ class dgps extends CI_model {
 		$sql = "select * from gp_usuario 
 						left join gp_recursos_humanos on id_gprh = gprh_gp_id
 						left join gpus_cnpq on id_gpus_cnpq = gp_usuario.us_id
-						where gp_id = $grupo
+						where gp_id = $grupo and gpus_test = 0
 						order by id_gprh, gpus_cnpq_nome
 					 ";
 		$rlt = $this -> db -> query($sql);
