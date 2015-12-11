@@ -1,4 +1,6 @@
 <?php
+/*
+ */
 class ics_acompanhamento extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';

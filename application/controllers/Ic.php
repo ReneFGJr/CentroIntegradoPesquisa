@@ -57,8 +57,8 @@ class ic extends CI_Controller {
 		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
 		array_push($menus, array('Relatórios', 'index.php/ic/report'));
 		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
-		array_push($menus, array('Formulários', 'index.php/ic/formularios/'));
-		
+		array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
+
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -173,6 +173,301 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	/*************************************************************************************************
+	 *************************************************************************** ADMINISTRATIVO ******
+	 *************************************************************************************************/
+	function admin($id = 0, $gr = '') {
+		$this -> cab();
+		$data = array();
+
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Gestão', 'Alterar título de plano de aluno', 'ITE', '/ic/admin_alterar_titulo'));
+		array_push($menu, array('Gestão', 'Cancelar plano de estudante', 'ITE', '/ic/admin_cancelar'));
+		array_push($menu, array('Gestão', 'Reativar plano cancelado', 'ITE', '/ic/admin_reativar'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu Administração';
+		$this -> load -> view('header/main_menu', $data);
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	/***************************************************************************************** ALTERAR TITULO */
+	function admin_cancelar($id = 0, $chk = '') {
+		$this -> load -> model('ics');
+		$this -> load -> model('protocolos_ic');
+		$this -> cab();
+		$data = array();
+		$tit = 'Cancelar plano de estudante';
+
+		if ($id > 0) {
+			/****************************************************************
+			 ************************************ ID do protocolo informado *
+			 ****************************************************************/
+			$cp = $this -> ics -> cp_cancelar();
+			$data = $this -> ics -> le($id);
+			$proto = $data['ic_plano_aluno_codigo'];
+			$this -> load -> view('ic/plano.php', $data);
+			$status = $data['icas_id'];
+
+			$form = new form;
+			$form -> id = $id;
+			$tela = $form -> editar($cp, 'ic');
+			$data['title'] = $tit;
+			$data['content'] = $tela;
+			
+			if ($form->saved > 0)
+				{
+					/* Fase I - Cancela */
+					/*************************/
+					$data['volta'] = base_url('index.php/ic/admin_cancelar');
+					$this -> load -> view('sucesso', $data);
+					
+					/* Fase II - Tela de Fim */
+					/*************************/
+					$data['pr_justificativa'] = get("dd2");
+					$data['pr_protocolo_original'] = $proto;
+					$data['pr_descricao'] = $data['al_nome'];
+					$this->ics->protocolo_CAN($data);
+					
+					$data['content'] = '';
+				} else {
+					$this -> load -> view('content', $data);		
+				}
+		} else {
+			/****************************************************************
+			 ************************************ nao informado o protocolo *
+			 ****************************************************************/
+			$proto = get("dd1");
+			if (strlen($proto) == 0) {
+				$cp = $this -> ics -> cp_protocolo();
+				$form = new form;
+				$tela = $form -> editar($cp, '');
+				$data['title'] = $tit;
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			} else {
+				$ic = $this -> ics -> le_protocolo($proto);
+				if (count($ic) == 0) {
+					$data['title'] = $tit;
+					$data['content'] = 'Procolo não localizado';
+					$data['volta'] = base_url('index.php/ic/admin_cancelar');
+					$this -> load -> view('errors/erro_msg', $data);
+				} else {
+					$status = $ic['s_id'];
+					$id = $ic['id_ic'];
+					/* Protocolo Finalizado, Cancelado ou Suspenso */
+					if ($status != '1') {
+						$data['title'] = $tit;
+						$data['content'] = 'Procolo Cancelado, Finalizado ou Suspenso';
+						$data['volta'] = base_url('index.php/ic/admin_cancelar');
+						$this -> load -> view('errors/erro_msg', $data);
+					} else {
+						/********************/
+						redirect(base_url('index.php/ic/admin_cancelar/' . $id . '/' . checkpost_link($id)));
+					}
+					print_r($ic);
+				}
+			}
+		}
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	/***************************************************************************************** ALTERAR TITULO */
+	function admin_reativar($id = 0, $chk = '') {
+		$tit = 'Reativar plano de aluno';
+		$this -> load -> model('ics');
+		$link = base_url('index.php/ic/admin_reativar');
+		$this -> cab();
+		$data = array();
+
+		if ($id > 0) {
+			/****************************************************************
+			 ************************************ ID do protocolo informado *
+			 ****************************************************************/
+			$cp = $this -> ics -> cp_reativar($id);
+			$data = $this -> ics -> le($id);
+			$proto = $data['ic_plano_aluno_codigo'];
+			$this -> load -> view('ic/plano.php', $data);
+			$status = $data['icas_id'];
+			
+
+			$form = new form;
+			$form -> id = $id;
+			$tela = $form -> editar($cp, 'ic');
+			$data['title'] = $tit;
+			$data['content'] = $tela;
+			
+			if ($form->saved > 0)
+				{
+					/* Fase I - Reativa */
+					/*************************/
+					$data['volta'] = $link;
+					$this -> load -> view('sucesso', $data);
+					
+					/* Fase II - Tela de Fim */
+					/*************************/
+					$data['pr_justificativa'] = get("dd2");
+					$data['pr_protocolo_original'] = $proto;
+					$data['pr_descricao'] = $data['al_nome'];
+					$data['pr_ica'] = get("dd3");
+					$this->ics->protocolo_RET($data);
+					
+					$data['content'] = '';
+				} else {
+					$this -> load -> view('content', $data);		
+				}
+
+		} else {
+			/****************************************************************
+			 ************************************ nao informado o protocolo *
+			 ****************************************************************/
+			$proto = get("dd1");
+			if (strlen($proto) == 0) {
+				$cp = $this -> ics -> cp_protocolo();
+				$form = new form;
+				$tela = $form -> editar($cp, '');
+				$data['title'] = $tit;
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			} else {
+				$ic = $this -> ics -> le_protocolo_cancelado($proto);
+				if (count($ic) == 0) {
+					$data['title'] = $tit;
+					$data['content'] = 'Procolo não localizado';
+					$data['volta'] = $link;
+					$this -> load -> view('errors/erro_msg', $data);
+				} else {
+					$status = $ic['s_id'];
+					$id = $ic['id_ic'];
+					/* Protocolo Finalizado, Cancelado ou Suspenso */
+					if ($status != '2') {
+						$data['title'] = $tit;
+						$data['content'] = 'Procolo ativo!';
+						$data['volta'] = $link;
+						$this -> load -> view('errors/erro_msg', $data);
+					} else {
+						/********************/
+						redirect(base_url('index.php/ic/admin_reativar/' . $id . '/' . checkpost_link($id)));
+					}
+				}
+			}
+		}
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	/***************************************************************************************** ALTERAR TITULO */
+	function admin_alterar_titulo($id = 0, $chk = '') {
+		$this -> load -> model('ics');
+		$this -> cab();
+		$data = array();
+
+		if ($id > 0) {
+			/****************************************************************
+			 ************************************ ID do protocolo informado *
+			 ****************************************************************/
+			$cp = $this -> ics -> cp_alterar_titulo();
+			$data = $this -> ics -> le($id);
+			$proto = $data['ic_plano_aluno_codigo'];
+			$this -> load -> view('ic/plano.php', $data);
+			$status = $data['icas_id'];
+
+			if ($status != '1') {
+				$data['title'] = 'Alteração do título do plano do aluno';
+				$data['content'] = 'Procolo Cancelado, Finalizado ou Suspenso';
+				$data['volta'] = base_url('index.php/ic/admin_alterar_titulo');
+				$this -> load -> view('errors/erro_msg', $data);
+			} else {
+				$form = new form;
+				$form -> id = $id;
+				$tela = $form -> editar($cp, 'ic');
+				$data['title'] = 'Alteração do título do plano do aluno';
+				$data['content'] = $tela;
+
+				if ($form -> saved > 0) {
+					/* Fase I - Inserir histórico */
+					/******************************/
+					$aluno1 = '';
+					$aluno2 = '';
+					$hist = 'Alteração do título de "<b>' . get("dd2") . '</b>" para "<b>' . get("dd3") . '</b>" com a justificativa: <b>' . get("dd4") . '</b>';
+					$motivo = '000';
+					$obs = '';
+					$ac = '175';
+
+					$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '');
+
+					/* Fase II - Altera Título */
+					/******************************/
+					$this -> ics -> alterar_titulo_plano($proto, get("dd3"));
+
+					/* Fase III - Comunicar Orientador */
+					/***********************************/
+
+					/* Fase IV - Tela de Fim */
+					/*************************/
+					$data['volta'] = base_url('index.php/ic/admin_alterar_titulo');
+					$this -> load -> view('sucesso', $data);
+				} else {
+					$this -> load -> view('content', $data);
+				}
+
+			}
+		} else {
+			/****************************************************************
+			 ************************************ nao informado o protocolo *
+			 ****************************************************************/
+			$proto = get("dd1");
+			if (strlen($proto) == 0) {
+				$cp = $this -> ics -> cp_protocolo();
+				$form = new form;
+				$tela = $form -> editar($cp, '');
+				$data['title'] = 'Alteração do título do plano do aluno';
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			} else {
+				$ic = $this -> ics -> le_protocolo($proto);
+				if (count($ic) == 0) {
+					$data['title'] = 'Alteração do título do plano do aluno';
+					$data['content'] = 'Procolo não localizado';
+					$data['volta'] = base_url('index.php/ic/admin_alterar_titulo');
+					$this -> load -> view('errors/erro_msg', $data);
+				} else {
+					$status = $ic['s_id'];
+					$id = $ic['id_ic'];
+					/* Protocolo Finalizado, Cancelado ou Suspenso */
+					if ($status != '1') {
+						$data['title'] = 'Alteração do título do plano do aluno';
+						$data['content'] = 'Procolo Cancelado, Finalizado ou Suspenso';
+						$data['volta'] = base_url('index.php/ic/admin_alterar_titulo');
+						$this -> load -> view('errors/erro_msg', $data);
+					} else {
+						/********************/
+						redirect(base_url('index.php/ic/admin_alterar_titulo/' . $id . '/' . checkpost_link($id)));
+					}
+					print_r($ic);
+				}
+			}
+		}
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	/*************************************************************************************************
+	 ********************************************************************************** REPORTS ******
+	 *************************************************************************************************/
 
 	function report($id = 0, $gr = '') {
 		$this -> cab();
@@ -338,32 +633,31 @@ class ic extends CI_Controller {
 		$data = array();
 
 		$cp = array();
-		array_push($cp,array('$H8','','',False,True));		
-		array_push($cp,array('$['.date("Y").'-'.(date("Y")+1).']','','Edital',True,True));
-		array_push($cp,array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_vigente = 1 and mb_valor > 0','','Modalidade',True,True));
-		
-		array_push($cp,array('$B8','',msg('avancar').' >>',False,True));
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$[' . date("Y") . '-' . (date("Y") + 1) . ']', '', 'Edital', True, True));
+		array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_vigente = 1 and mb_valor > 0', '', 'Modalidade', True, True));
+
+		array_push($cp, array('$B8', '', msg('avancar') . ' >>', False, True));
 
 		$form = new form;
-		$tela = $form->editar($cp,'');
-		$data['content'] = '<div class="nopr">'.$tela.'</div>';
+		$tela = $form -> editar($cp, '');
+		$data['content'] = '<div class="nopr">' . $tela . '</div>';
 		$this -> load -> view('content', $data);
-		
-		if ($form->saved > 0)
-			{
-				$bolsa = get('dd2');
-				$ano = get('dd1');
-				
-				$tela = $this->pagamentos->gerar_pagamento_bolsa($bolsa,$ano);
-				$data['content'] = $tela;
-				$this -> load -> view('content', $data);
-				
-				$this -> load -> view('ic/assinatura_ic');				
-			}
-			
+
+		if ($form -> saved > 0) {
+			$bolsa = get('dd2');
+			$ano = get('dd1');
+
+			$tela = $this -> pagamentos -> gerar_pagamento_bolsa($bolsa, $ano);
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+
+			$this -> load -> view('ic/assinatura_ic');
+		}
+
 		/*Fecha */ 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);		
+		$this -> load -> view('header/foot', $data);
 	}
 
 	function pagamentos($date = '', $action = '') {
@@ -372,7 +666,7 @@ class ic extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		
+
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Gerar Pagamentos', 'Gerar planilha de pagamento', 'ITE', '/ic/pagamento_planilha'));
@@ -384,8 +678,9 @@ class ic extends CI_Controller {
 
 		/*Fecha */ 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);		
+		$this -> load -> view('header/foot', $data);
 	}
+
 	function pagamentos_realizados($date = '', $action = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
@@ -415,9 +710,8 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
-	function usuarios_edit($id=0)
-		{
+
+	function usuarios_edit($id = 0) {
 		global $dd;
 		$this -> load -> model('usuarios');
 
@@ -435,25 +729,23 @@ class ic extends CI_Controller {
 		if ($form -> saved > 0) {
 			$tabela = 'us_usuario';
 			$cracha = get("dd2");
-			$cracha = $this->usuarios->limpa_cracha($cracha);
-			$us = $this->usuarios->le_cracha($cracha);
-			
-			if (count($us) > 0)
-				{
-					$data['content'] = '<h2><font color="red">Usuário já cadastrado</font></h2>';
-					$this -> load -> view('content', $data);
-				} else {
-					$_POST['dd2'] = $cracha;
-					$form -> editar($cp, $tabela);
-					redirect(base_url('index.php/ic/usuarios'));
-				}
-			
+			$cracha = $this -> usuarios -> limpa_cracha($cracha);
+			$us = $this -> usuarios -> le_cracha($cracha);
+
+			if (count($us) > 0) {
+				$data['content'] = '<h2><font color="red">Usuário já cadastrado</font></h2>';
+				$this -> load -> view('content', $data);
+			} else {
+				$_POST['dd2'] = $cracha;
+				$form -> editar($cp, $tabela);
+				redirect(base_url('index.php/ic/usuarios'));
+			}
+
 			//
 		}
 
 		$data['title'] = 'Cadastro de novo usuário';
-		$data['tela'] .=
-		'
+		$data['tela'] .= '
 		<script>
 			$("#dd3").mask(\'999.999.999-99\');
 		</script>
@@ -461,8 +753,8 @@ class ic extends CI_Controller {
 		$this -> load -> view('form/form', $data);
 
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);			
-		}	
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function usuarios($id = 0) {
 
@@ -577,11 +869,11 @@ class ic extends CI_Controller {
 					break;
 				case 'SBS' :
 					$cp = $this -> protocolos_ic -> cp_SBS();
-					break;					
+					break;
 				default :
-					$data['content'] = '<h1><center><font color="red">Ações para este serviço não estão liberadas - '.$tip.'</font></center></h1>';
+					$data['content'] = '<h1><center><font color="red">Ações para este serviço não estão liberadas - ' . $tip . '</font></center></h1>';
 					$this -> load -> view('content', $data);
-					return('');
+					return ('');
 					break;
 			}
 
@@ -597,7 +889,7 @@ class ic extends CI_Controller {
 					/****************** cancelamento de protocolo *****/
 					case 'SBS' :
 						$cp = $this -> protocolos_ic -> protocolo_SBS($obj);
-						break;						
+						break;
 				}
 
 				$data['content'] = 'FIM';
@@ -884,7 +1176,8 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO'; ;
+			$msg = 'REMOVIDO';
+			;
 		}
 
 		$data = array();
@@ -1053,5 +1346,5 @@ class ic extends CI_Controller {
 		$this -> geds -> file_path = '_document/ic/';
 		$this -> geds -> file_delete($id);
 	}
-	
+
 }

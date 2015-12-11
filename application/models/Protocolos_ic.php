@@ -62,7 +62,7 @@ class protocolos_ic extends CI_Model {
 
 		$txt = $this -> load -> view('ic/plano-email', $data, true);
 		$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
-		enviaremail_usuario($us_id, 'Cancelamento de orientação', $txt, 1);
+		enviaremail_usuario($us_id, 'Cancelamento de orientação', $txt, 2);
 
 		return (1);
 	}

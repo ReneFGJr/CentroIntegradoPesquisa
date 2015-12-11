@@ -5,7 +5,7 @@
 		}
 ?>
 <center>
-<h1><font style="color: red"><?php echo $content;?></font></h1>
+<h1><font style="color: green">Processo finalizado com sucesso!</font></h1>
 <br>
 	<?php
 	if (isset($volta))

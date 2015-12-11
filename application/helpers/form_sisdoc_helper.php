@@ -1552,6 +1552,8 @@ if (!function_exists('form_edit')) {
 		$tt = substr($type, 1, 1);
 
 		/* exessoes */
+		if (substr($type, 0, 3) == '$QR') { $tt = 'QR';
+		}				
 		if (substr($type, 0, 4) == '$MES') { $tt = 'MES';
 		}
 		if (substr($type, 0, 3) == '$SW') { $tt = 'SW';
@@ -1876,6 +1878,44 @@ if (!function_exists('form_edit')) {
 				break;
 
 			/* String */
+			
+			/* Select Box */
+			case 'QR' :
+				$ntype = trim(substr($type, 3, strlen($type)));
+				$ntype = troca($ntype, ':', ';') . ';';
+				$param = splitx(';', $ntype);
+				$options = array('' => msg('::select an option::'));
+
+				/* recupera dados */
+				$sql = "select * from (" . $param[2] . ") as tabela order by " . $param[1];
+				$CI = &get_instance();
+				$query = $CI -> db -> query($sql);
+				$form = '';
+				foreach ($query->result_array() as $row) {
+					/* recupera ID */
+					$flds = trim($param[0]);
+					$vlrs = trim($param[1]);
+					$flds = $row[$flds];
+					$vlrs = $row[$vlrs];
+					$options[$flds] = $vlrs;
+					$checked = '';
+					$dados = array('name' => $dn, 'id' => $dn, 'value' => $flds, 'class' => 'form_select', 'checked' => $checked);
+					$form .= form_radio($dados).' '.$vlrs.'<br>';					
+				}
+
+				$tela .= $tr;
+
+				/* label */
+				if (strlen($label) > 0) {
+					$tela .= $tdl . $label . ' ';
+				}
+				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
+				}
+				$tela .= '<TD>';
+				$tela .= $form;
+				break;
+
+			/* String */			
 			case 'R' :
 				$ntype = trim(substr($type, 2, strlen($type)));
 				$ntype = troca($ntype, '&', ';') . ';';

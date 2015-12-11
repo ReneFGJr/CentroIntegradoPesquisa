@@ -5,24 +5,22 @@ class ics extends CI_model {
 	var $tabela_2 = "ic_modalidade_bolsa";
 	var $tabela_3 = "pibic_acompanhamento";
 
-	function inserir_historico($proto,$ac,$hist,$aluno1,$aluno2,$motivo,$obs='')
-		{
-			$data = date("Ymd");
-			$hora = date("H:i");
-			$log = $_SESSION['cracha'];
-			
-			$sql = "select * from ic_historico
+	function inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '') {
+		$data = date("Ymd");
+		$hora = date("H:i");
+		$log = $_SESSION['cracha'];
+
+		$sql = "select * from ic_historico
 					where bh_protocolo = '$proto'
 					and bh_data = $data
 					and bh_acao = $ac
 				";
-			$rlt = db_query($sql);
-			
-			if ($line = db_read($rlt))
-				{
-							
-				} else {
-					$sql = "insert into ic_historico 
+		$rlt = db_query($sql);
+
+		if ($line = db_read($rlt)) {
+
+		} else {
+			$sql = "insert into ic_historico 
 						(bh_protocolo, bh_data, bh_hora,
 						bh_log, bh_acao, bh_historico,
 						bh_aluno_1, bh_aluno_2, bh_motivo,
@@ -33,10 +31,18 @@ class ics extends CI_model {
 						'$aluno2','$aluno1','$motivo',
 						'$obs')
 				";
-				$rlt = $this->db->query($sql);
-				}
-			return('');
-		}	
+			$rlt = $this -> db -> query($sql);
+		}
+		return ('');
+	}
+	
+	function alterar_titulo_plano($proto,$titulo)
+		{
+			$sql = "update ic set ic_projeto_professor_titulo = '$titulo'
+						where 	ic_plano_aluno_codigo = '$proto' ";
+			$rlt = $this -> db -> query($sql);
+			return(1);
+		}
 
 	function resumo_implemendados($ano) {
 		$sql = "select * from 
@@ -299,8 +305,8 @@ class ics extends CI_model {
 		$sx .= ' - ';
 		$sx .= $line['mb_tipo'];
 		$sx .= ' - ';
-		$sx .= $ano1.'-'.($ano2);
-		$sx .= ' - ';		
+		$sx .= $ano1 . '-' . ($ano2);
+		$sx .= ' - ';
 		$sx .= 'Total: ' . $to;
 		$sx .= '</td>';
 		$sx .= '</tr>';
@@ -353,7 +359,24 @@ class ics extends CI_model {
 			$this -> db -> query($sql);
 			$this -> db -> query($sqlf);
 		}
-		return(1);
+		return (1);
+	}
+
+	function reativar_protocolo($protocolo,$ica) {
+		$data = date("Y-m-d");
+		$sql = "update ic_aluno set
+							icas_id_char = 'A',
+							icas_id = 1,
+							aic_dt_saida = '0000-00-00',
+							aic_dt_fim_bolsa = '$data'								
+					where id_ica = " . $ica . ';' . cr();
+		$sqlf = "update ic set 
+							s_id_char = 'A',
+							s_id = 1
+					where ic_plano_aluno_codigo = '$protocolo' ";
+		$this -> db -> query($sql);
+		$this -> db -> query($sqlf);
+		return (1);
 	}
 
 	function substituicao_aluno($cracha, $protocolo, $cracha_novo, $data) {
@@ -384,7 +407,7 @@ class ics extends CI_model {
 			$icas_id = $line['icas_id'];
 
 			$idc = $line['id_ica'];
-			
+
 			/* Finaliza aluno atual */
 			$sql = "update ic_aluno set
 								icas_id_char = 'C',
@@ -392,7 +415,7 @@ class ics extends CI_model {
 								aic_dt_saida = '$data',
 								aic_dt_fim_bolsa = '$data'								
 							where id_ica = " . $idc . ';' . cr();
-			
+
 			/* Inserre novo aluno */
 			$sqli = "insert into ic_aluno 
 						(
@@ -414,8 +437,8 @@ class ics extends CI_model {
 								ic_cracha_aluno = '$cracha_novo',
 								ic_dt_ativacao = '$data'
 								where ic_plano_aluno_codigo = '$protocolo' ";
-			$this->db->query($sql);
-			$this->db->query($sqli);			
+			$this -> db -> query($sql);
+			$this -> db -> query($sqli);
 			$this -> db -> query($sqlf);
 		}
 	}
@@ -494,14 +517,13 @@ class ics extends CI_model {
 			$wh .= " or (ic_plano_aluno_codigo like '" . $term[0] . "%') ";
 		}
 
-		$sql = $this -> table_view($wh, 0, 50,' ic_ano desc, id_ica desc ');
+		$sql = $this -> table_view($wh, 0, 50, ' ic_ano desc, id_ica desc ');
 		$rlt = db_query($sql);
 
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -560,14 +582,13 @@ class ics extends CI_model {
 			}
 		}
 
-		$sql = $this -> table_view($wh, 0, 50,' ic_ano desc, id_ica desc ');
+		$sql = $this -> table_view($wh, 0, 50, ' ic_ano desc, id_ica desc ');
 		$rlt = db_query($sql);
 
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -911,7 +932,7 @@ class ics extends CI_model {
 	}
 
 	function le_protocolo($id = 0) {
-		$sql = $this -> table_view("ic.ic_plano_aluno_codigo = '" . $id . "'", $offset = 0, $limit = 9999999);
+		$sql = $this -> table_view("ic.ic_plano_aluno_codigo = '" . $id . "' and s_id = 1", $offset = 0, $limit = 9999999);
 		$rlt = db_query($sql);
 
 		if ($line = db_read($rlt)) {
@@ -928,6 +949,25 @@ class ics extends CI_model {
 			return ($line);
 		}
 	}
+	
+	function le_protocolo_cancelado($id = 0) {
+		$sql = $this -> table_view("ic.ic_plano_aluno_codigo = '" . $id . "' and s_id = 2", $offset = 0, $limit = 9999999);
+		$rlt = db_query($sql);
+
+		if ($line = db_read($rlt)) {
+			$edital = trim($line['mb_tipo']);
+			$line['logo'] = $this -> logo_modalidade($edital);
+
+			$ida = $line['mb_id'];
+			if ($ida == 0) {
+				$link_a = '<A href="' . base_url('index.php/ic/ativar_plano/' . $id . '/' . checkpost_link($id)) . '">' . msg('ativar_plano') . '</a>';
+				$line['ic_ativar'] = $link_a;
+			} else {
+				$line['ic_ativar'] = '';
+			}
+			return ($line);
+		}
+	}	
 
 	function lista_ic_professor($id) {
 		$wh = "prof_id = " . round($id);
@@ -1049,10 +1089,78 @@ class ics extends CI_model {
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id
 						$wh
-						order by $orderby ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
+						order by $orderby ic_ano desc, s_id, ic_plano_aluno_codigo, pf_nome, al_nome
 						limit $limit offset $offset
 						";
 		return ($tabela);
+	}
+	
+	function protocolo_CAN($obj) {
+		/*  Acoes ******************************************************************************
+		 ***************************************************************************************
+		 */
+		$proto = $obj['pr_protocolo_original'];
+		$ac = '999';
+		$hist = 'Cancelamento do plano do aluno';
+		$aluno1 = '';
+		$aluno2 = '';
+		$motivo = '999';
+		$obs = 'Cancelamento da orientação: <b>' . mst($obj['pr_descricao']) . '</b>';
+		$obs .= '<br>Justificativa:' . $obj['pr_justificativa'];
+		$us_id = $obj['prof_id'];
+
+		/*********************************/
+		/* Lancar historico              */
+		$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+
+		/*****************************************/
+		/* Cancelar iniciacao na tabela ic       */
+		/* Cancelar iniciacao na tabela ic_aluno */
+		$this -> ics -> cancelar_protocolo($proto);
+
+		/****************************************/
+		/* Enviar e-mail de cancelamento        */
+		$data = $this -> ics -> le_protocolo($proto);
+
+		$txt = $this -> load -> view('ic/plano-email', $data, true);
+		$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
+		enviaremail_usuario($us_id, 'Cancelamento de orientação', $txt, 2);
+
+		return (1);
+	}	
+
+	function protocolo_RET($obj) {
+		/*  Acoes ******************************************************************************
+		 ***************************************************************************************
+		 */
+		$proto = $obj['pr_protocolo_original'];
+		$ac = '990';
+		$hist = 'Reativação do plano do aluno';
+		$aluno1 = '';
+		$aluno2 = '';
+		$motivo = '000';
+		$obs = 'Reativação de orientação: <b>' . mst($obj['pr_descricao']) . '</b>';
+		$obs .= '<br>Justificativa:' . $obj['pr_justificativa'];
+		$us_id = $obj['prof_id'];
+
+		/*********************************/
+		/* Lancar historico              */
+		$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+
+		/*****************************************/
+		/* Cancelar iniciacao na tabela ic       */
+		/* Cancelar iniciacao na tabela ic_aluno */
+		$this -> ics -> reativar_protocolo($proto,$obj['pr_ica']);
+
+		/****************************************/
+		/* Enviar e-mail de cancelamento        */
+		$data = $this -> ics -> le_protocolo($proto);
+
+		$txt = $this -> load -> view('ic/plano-email', $data, true);
+		$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
+		enviaremail_usuario($us_id, 'Cancelamento de orientação', $txt, 2);
+
+		return (1);
 	}
 
 	function ativar_bolsa($id, $ida, $cracha, $d1, $d2, $d3, $d4, $tipo, $situacao) {
@@ -1075,6 +1183,49 @@ class ics extends CI_model {
 		$this -> db -> query($sql);
 		return (1);
 	}
+
+	function cp_protocolo() {
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$S8', '', 'Informe o ' . msg('protocolo'), True, True));
+		return ($cp);
+	}
+
+	function cp_alterar_titulo() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ic', '', False, True));
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$T80:5', 'ic_projeto_professor_titulo', 'Título Original', True, False));
+		array_push($cp, array('$T80:5', '', 'Título Novo', True, True));
+		array_push($cp, array('$T80:5', '', 'Justificativa', True, True));
+		array_push($cp, array('$B', '', 'Confirmar alteração >>>', False, True));
+		return ($cp);
+	}
+	
+	function cp_cancelar()
+		{
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ic', '', False, True));
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$T80:5', '', 'Justificativa para o cancelamento', True, True));
+		array_push($cp, array('$B', '', 'Confirmar cancelamento >>>', False, True));
+		return ($cp);
+		}	
+
+	function cp_reativar($id=0)
+		{
+		$cp = array();
+		$sql = "select * from (
+					select * from ic_aluno  
+					inner join us_usuario on aluno_id = id_us 
+					where ic_id = $id) as tabela ";
+		array_push($cp, array('$H8', 'id_ic', '', False, True));
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$T80:5', '', 'Justificativa para reativar', True, True));
+		array_push($cp, array('$QR id_ica:us_nome:'.$sql, '', 'Estudante para reativar', True, True));
+		array_push($cp, array('$B', '', 'Confirmar reativação >>>', False, True));
+		return ($cp);
+		}	
 
 	function cp_ativar() {
 		$cp = array();
@@ -1199,14 +1350,14 @@ class ics extends CI_model {
 		return ($dados);
 	}
 
-/*model do bolsa modalidae*/
+	/*model do bolsa modalidae*/
 	function row_ic_modal_bolsas($obj) {
 		$obj -> fd = array('id_mb', 'mb_descricao', 'mb_tipo', 'mb_ativo', 'mb_moeda', 'mb_valor', 'mb_fomento');
 		$obj -> lb = array('ID', msg('lb_mb_descricao'), msg('lb_mb_tipo'), msg('lb_mb_ativo'), msg('lb_mb_moeda'), msg('lb_mb_valor'), msg('lb_mb_fomento'));
-		$obj -> mk = array('', 'L', 'L', 'C', 'C','R','L','C');
+		$obj -> mk = array('', 'L', 'L', 'C', 'C', 'R', 'L', 'C');
 		return ($obj);
 	}
-	
+
 	function table_row_modal_bolsa() {
 		$tabela = "ic_modalidade_bolsa";
 		return ($tabela);
@@ -1224,24 +1375,24 @@ class ics extends CI_model {
 		array_push($cp, array('$S10', 'mb_valor', msg('lb_mb_valor'), True, True));
 		array_push($cp, array('$S8', 'mb_fomento', msg('lb_mb_fomento'), True, True));
 		array_push($cp, array('$}', '', '', False, True));
-		
+
 		return ($cp);
 	}
 
 	/* Formulario de acompanhamento de pré-avaliacao para estudantes   */
-	function cp_form_estudante(){
-		
+	function cp_form_estudante() {
+
 		$form = new form;
 		$cp = array();
-		
-		$op_pa2  = '';
+
+		$op_pa2 = '';
 		$op_pa2 .= ' 1:estudante de ensino médio';
 		$op_pa2 .= '&2:aluno(s) de mestrado';
 		$op_pa2 .= '&3:aluno(s) de doutorado';
 		$op_pa2 .= '&4:aluno(s) de graduação';
 		$op_pa2 .= '&5:outros professores';
-		 
-		$op_pa3  = '';
+
+		$op_pa3 = '';
 		$op_pa3 .= ' 1:1 vez por semana';
 		$op_pa3 .= '&2:2 vezes por semana';
 		$op_pa3 .= '&3:diariamente';
@@ -1249,13 +1400,13 @@ class ics extends CI_model {
 		$op_pa3 .= '&5:1 vez por mês';
 		$op_pa3 .= '&6:2 vezes por mês';
 		$op_pa3 .= '&7:nunca';
-		
-		$op_pa4  = '';
+
+		$op_pa4 = '';
 		$op_pa4 .= ' 1:por e-mail';
 		$op_pa4 .= '&2:presencial ';
 		$op_pa4 .= '&3:ambos';
-		
-		$op_pa5  = '';
+
+		$op_pa5 = '';
 		$op_pa5 .= ' 1:levantamento bibliográfico';
 		$op_pa5 .= '&2:leituras e fichamento';
 		$op_pa5 .= '&3:questionário a ser aplicado posteriormente';
@@ -1263,59 +1414,59 @@ class ics extends CI_model {
 		$op_pa5 .= '&5:coleta de dados';
 		$op_pa5 .= '&6:envio do projeto para CEP ou CEUA';
 		$op_pa5 .= '&7:outras atividades. Especificar: ';
-		
-		$op_pa6  = '';
+
+		$op_pa6 = '';
 		$op_pa6 .= ' 1:em dia';
 		$op_pa6 .= '&2:atrasado';
 		$op_pa6 .= '&3:adiantado';
-		
-		$op_pa7  = '';
+
+		$op_pa7 = '';
 		$op_pa7 .= ' 1:SIM';
 		$op_pa7 .= '&2:NÃO';
 		$op_pa7 .= '&3:vou fazer agora!';
-		
-		$op_pa8  = '';
+
+		$op_pa8 = '';
 		$op_pa8 .= ' 1:SIM';
 		$op_pa8 .= '&2:NÃO';
 		$op_pa8 .= '&3:vou fazer agora!';
-		
-		$op_pa9  = '';
+
+		$op_pa9 = '';
 		$op_pa9 .= ' 1:péssima';
 		$op_pa9 .= '&2:fraca';
 		$op_pa9 .= '&3:regular';
 		$op_pa9 .= '&4:boa';
-		$op_pa9 .= '&5:ótima';		
+		$op_pa9 .= '&5:ótima';
 
 		array_push($cp, array('$H8', 'id_pa', '', False, True));
 		array_push($cp, array('${', '', 'Estudante responder o questionário', False, True));
 		array_push($cp, array('$O 1:SIM&2:NÃO', 'pa_p01', msg('lb_form_aluno_pa1'), True, True));
-		array_push($cp, array('$CM'.$op_pa2, 'pa_p20', msg('lb_form_aluno_pa2'), True, True));
-		array_push($cp, array('$RM'.$op_pa3, 'pa_p21', msg('lb_form_aluno_pa3'), True, True));	
-		array_push($cp, array('$RM'.$op_pa4, 'pa_p22', msg('lb_form_aluno_pa4'), True, True));
-		array_push($cp, array('$CM'.$op_pa5, 'pa_p23', msg('lb_form_aluno_pa5'), True, True));
-		array_push($cp, array('$T80:5'      , 'pa_p28', msg('lb_form_aluno_pa10'), False, True));	
-		array_push($cp, array('$O'.$op_pa6, 'pa_p24', msg('lb_form_aluno_pa6'), True, True));
-		array_push($cp, array('$O'.$op_pa7, 'pa_p25', msg('lb_form_aluno_pa7'), True, True));
-		array_push($cp, array('$O'.$op_pa8, 'pa_p26', msg('lb_form_aluno_pa8'), True, True));
-		array_push($cp, array('$RM'.$op_pa9, 'pa_p27', msg('lb_form_aluno_pa9'), True, True));	
+		array_push($cp, array('$CM' . $op_pa2, 'pa_p20', msg('lb_form_aluno_pa2'), True, True));
+		array_push($cp, array('$RM' . $op_pa3, 'pa_p21', msg('lb_form_aluno_pa3'), True, True));
+		array_push($cp, array('$RM' . $op_pa4, 'pa_p22', msg('lb_form_aluno_pa4'), True, True));
+		array_push($cp, array('$CM' . $op_pa5, 'pa_p23', msg('lb_form_aluno_pa5'), True, True));
+		array_push($cp, array('$T80:5', 'pa_p28', msg('lb_form_aluno_pa10'), False, True));
+		array_push($cp, array('$O' . $op_pa6, 'pa_p24', msg('lb_form_aluno_pa6'), True, True));
+		array_push($cp, array('$O' . $op_pa7, 'pa_p25', msg('lb_form_aluno_pa7'), True, True));
+		array_push($cp, array('$O' . $op_pa8, 'pa_p26', msg('lb_form_aluno_pa8'), True, True));
+		array_push($cp, array('$RM' . $op_pa9, 'pa_p27', msg('lb_form_aluno_pa9'), True, True));
 		array_push($cp, array('$}', '', '', False, True));
-		
-		array_push($cp, array('$B', '', msg('bt_confirm'), False, True));	
+
+		array_push($cp, array('$B', '', msg('bt_confirm'), False, True));
 
 		$tela = $form -> editar($cp, 'pibic_acompanhamento');
-		
+
 		return $tela;
-		
+
 	}
-	
+
 	/* Formulario de acompanhamento de pré-avaliacao para professores   */
-	function cp_form_professor($id=''){
-		
+	function cp_form_professor($id = '') {
+
 		$form = new form;
-		$form->id = $id;
+		$form -> id = $id;
 		$cp = array();
-		
-		$op_pa2  = '';
+
+		$op_pa2 = '';
 		$op_pa2 .= ' 1:1 vez por semana';
 		$op_pa2 .= '&2:2 a 3 vezes por semana';
 		$op_pa2 .= '&3:diariamente';
@@ -1323,13 +1474,13 @@ class ics extends CI_model {
 		$op_pa2 .= '&5:1 vez por mês';
 		$op_pa2 .= '&6:2 vezes por mês';
 		$op_pa2 .= '&7:nunca';
-		
-		$op_pa3  = '';
+
+		$op_pa3 = '';
 		$op_pa3 .= ' 1:por e-mail';
 		$op_pa3 .= '&2:presencial';
 		$op_pa3 .= '&3:ambos';
 
-		$op_pa4  = '';
+		$op_pa4 = '';
 		$op_pa4 .= ' 1:em dia';
 		$op_pa4 .= '&2:atrasado ';
 		$op_pa4 .= '&3:adiantado';
@@ -1338,33 +1489,28 @@ class ics extends CI_model {
 		array_push($cp, array('$A', '', 'Formulário de acompanhamento IC/IT', False, True));
 		array_push($cp, array('$M', '', msg('lb_form_prof_inf'), False, True));
 		array_push($cp, array('$R 1:SIM&2:NÃO', 'pa_p01', msg('lb_form_prof_pa1'), True, True));
-		array_push($cp, array('$CM '.$op_pa2, 'pa_p20', msg('lb_form_prof_pa2'), True, True));
-		array_push($cp, array('$R '.$op_pa3, 'pa_p02', msg('lb_form_prof_pa3'), True, True));	
-		array_push($cp, array('$R '.$op_pa4, 'pa_p03', msg('lb_form_prof_pa4'), True, True));
+		array_push($cp, array('$CM ' . $op_pa2, 'pa_p20', msg('lb_form_prof_pa2'), True, True));
+		array_push($cp, array('$R ' . $op_pa3, 'pa_p02', msg('lb_form_prof_pa3'), True, True));
+		array_push($cp, array('$R ' . $op_pa4, 'pa_p03', msg('lb_form_prof_pa4'), True, True));
 		array_push($cp, array('$R 1:SIM&2:NÃO', 'pa_p04', msg('lb_form_prof_pa5'), True, True));
 		array_push($cp, array('$T80:5 ', 'pa_p22', msg('lb_form_prof_pa6'), False, True));
-		
+
 		/* Salvando dados adicionaios ocultos */
 		array_push($cp, array('$HV', 'pa_status', 'B', False, True));
 		array_push($cp, array('$HV', 'pa_data', date("Y-m-d"), False, True));
 		array_push($cp, array('$HV', 'pa_hora', date("H:i"), False, True));
 		array_push($cp, array('$HV', 'pa_usuario_id', $_SESSION['id_us'], False, True));
-		
-		array_push($cp, array('$B', '', msg('bt_confirm'), False, True));	
+
+		array_push($cp, array('$B', '', msg('bt_confirm'), False, True));
 
 		$tela = $form -> editar($cp, 'ic_acompanhamento');
-		if ($form->saved > 0)
-			{
-				$tela = 'SAVED';
-			}
-		
+		if ($form -> saved > 0) {
+			$tela = 'SAVED';
+		}
+
 		return $tela;
-		
+
 	}
-
-
-
-
 
 }
 ?>

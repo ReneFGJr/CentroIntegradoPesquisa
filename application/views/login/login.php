@@ -52,11 +52,14 @@
 			$data = array('name'=>'acao','class'=>'estilo-botao','id'=>'login_entrar','value'=>$login_entrar);
 			echo form_submit($data);			
 			?>
-			<BR>
+			<BR><BR>
+				<?php echo $login_error;?>
 			<BR>
 			<br><br><br><br>
 			
 			</form>
+			
+			
 			
 			<div style="width: 300px; height: 60px; border: 1px solid #333; padding: 10px;">
 			<form method="get" action="<?php echo base_url('index.php/central_declaracao/');?>">
@@ -66,7 +69,7 @@
 			<font class="lt0">Declarações para orientador, estudante e avaliadores.</font>
 			</div>
 
-			<?php echo $login_error;?>
+			
 			<div id="modo"><?php echo $modo;?></div>
 		<?php echo form_close(); ?>
 	</div>

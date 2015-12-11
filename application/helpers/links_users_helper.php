@@ -2,6 +2,9 @@
 function enviaremail_usuario($para, $assunto, $texto, $de)
 	{
 		global $server_type;
+		require("_server_type.php");
+		$ok = 0;
+
 		$CI = &get_instance();
 		$sql = "select usm_email from us_email 
 					where usuario_id_us = ".$para." and usm_ativo = 1 
@@ -20,7 +23,10 @@ function enviaremail_usuario($para, $assunto, $texto, $de)
 						array_push($email,$e);
 					}
 			}
-		$ok = enviaremail($email, $assunto, $texto, $de);
+		if ($server_type > 2)
+				{			
+					$ok = enviaremail($email, $assunto, $texto, $de);
+				}
 		return($ok);
 	}
 
