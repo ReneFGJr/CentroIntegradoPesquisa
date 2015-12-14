@@ -580,11 +580,12 @@ class eventos extends CI_model {
 		$sql = "select * from central_declaracao
 						inner join central_declaracao_evento on dc_tipo = id_cde 
 						left join us_usuario on id_us = dc_us_usuario_id_2
-						where dc_us_usuario_id = $us1 order by dc_data desc ";
+						where (dc_us_usuario_id = $us1	)	 order by dc_data desc ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="800" class="lt2" cellpadding=10 cellspacing=0 border=1 align="center">';
 		$sx .= '<tr><td class="lt4" colspan=2 >Declarações disponíveis</td></tr>';
+		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$url = base_url('index.php/central_declaracao/declaracao/' . $line['id_dc'] . '/' . checkpost_link($line['id_dc']));
@@ -606,6 +607,7 @@ class eventos extends CI_model {
 			$sx .= '</td>';
 			$sx .= '</tr>';
 		}
+		
 		$sx .= '</table>';
 		return ($sx);
 	}

@@ -56,7 +56,7 @@ $pdf->writeHTMLCell(0, 0, 6, 293, utf8_encode('DECLARAÇÃO EMITIDA DIGITALMENTE')
 
 
 /* Arquivo de saida */
-$nome_asc = UpperCaseSql($nome_aluno);
+$nome_asc = UpperCaseSql($nome_user_main);
 //$nome_asc = troca($nome_asc,' ','_');
 $pdf -> Output('declaracao-'.$nome_asc.'.pdf', 'I');
 ?>

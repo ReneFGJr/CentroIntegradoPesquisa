@@ -65,35 +65,35 @@ class central_declaracao extends CI_Controller {
 		$ano_12 = '2012';
 		/* Estudante IC 2012 */
 		$err1 = $this -> eventos -> emitir('IC', 'ESTUDANTE', $ano_12, $data);
-		/* Avaliador SEMIC 2012*/
-		$this -> eventos -> emitir('IC', 'AVALIADOR', $ano_12, $data);
-		/* Orientador IC 2012*/
-		$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano_12, $data);
+						/* Avaliador SEMIC 2012*/
+						$this -> eventos -> emitir('IC', 'AVALIADOR', $ano_12, $data);
+						/* Orientador IC 2012*/
+						$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano_12, $data);
 
 		/**###################################>> SEMIC 2013 <<############################################*/
 		$ano_13 = '2013';
 		/* Estudante IC 2013 */
 		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_13, $data);
-		/* Avaliador SEMIC 2013*/
-		$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_13, $data);
-		/* Orientador IC 2013*/
-		$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_13, $data);
+						/* Avaliador SEMIC 2013*/
+						$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_13, $data);
+						/* Orientador IC 2013*/
+						$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_13, $data);
 
 		/**###################################>> SEMIC 2014 <<############################################*/
 		$ano_14 = '2014';
 		/* Estudante IC 2014 */
 		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_14, $data);
-		/* Avaliador SEMIC 2014*/
-		$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_14, $data);
-		/* Orientador IC 2014*/
-		$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_14, $data);
+						/* Avaliador SEMIC 2014*/
+						$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_14, $data);
+						/* Orientador IC 2014*/
+						$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_14, $data);
 
 		/**###################################>> SEMIC 2015 <<############################################*/
 		$ano_15 = '2015';
-		/* Ouvinte SEMIC */
-		$this -> eventos -> emitir('SEMIC', 'OUVINTE', $ano_15, $data);
-		/* Avaliador SEMIC */
-		$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_15, $data);
+					/* Ouvinte SEMIC */
+					$this -> eventos -> emitir('SEMIC', 'OUVINTE', $ano_15, $data);
+					/* Avaliador SEMIC */
+					$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_15, $data);
 		/* Orientador IC */
 		$err2 = $this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_15, $data);
 		/* Estudante IC */
@@ -177,7 +177,7 @@ class central_declaracao extends CI_Controller {
 		$sql = "select * from central_declaracao
 					inner join central_declaracao_evento on id_cde = dc_tipo
 					inner join (select us_nome as nome_1, id_us as id_us_1, us_genero as us_g1 from us_usuario) as user_1 on id_us_1 = dc_us_usuario_id 
-					left join (select us_nome as nome_2, id_us as id_us_2, us_genero as us_g2 from us_usuario) as user_2 on id_us_2 = dc_us_usuario_id_2
+					 left join (select us_nome as nome_2, id_us as id_us_2, us_genero as us_g2 from us_usuario) as user_2 on id_us_2 = dc_us_usuario_id_2
 					left join ic on ic_plano_aluno_codigo = dc_texto_1 
 					inner join ic_aluno as pa on ic_id = id_ic
 					left join ic_modalidade_bolsa as mode on mb_id = id_mb
@@ -194,10 +194,10 @@ class central_declaracao extends CI_Controller {
 
 		/*Dados */
 		$tipo = $data['dc_tipo'];
-		$data['nome_prof'] = $data['nome_2'];
-		$data['nome_prof'] = UpperCase($data['nome_prof']);
-		$data['nome_aluno'] = $data['nome_1'];
-		$data['nome_aluno'] = UpperCase($data['nome_aluno']);
+		$data['nome_user_main'] = $data['nome_2'];
+		$data['nome_user_main'] = UpperCase($data['nome_user_main']);
+		$data['nome_user_second'] = $data['nome_1'];
+		$data['nome_user_second'] = UpperCase($data['nome_user_second']);
 		$data['prof'] = 'Prof.';
 		$data['titulacao'] = 'Dr.';
 		$data['titulo_projeto'] = $data['ic_projeto_professor_titulo'];
@@ -210,14 +210,14 @@ class central_declaracao extends CI_Controller {
 			/*#############################################################################################*/
 			/* Declaracao de Avaliador */
 			case '2':
-				$content = 'Declaramos para os devidos fins que ' . $data['prof'] . ' ' . $data['titulacao'] . ' <b>' . $data['nome_prof'] . '</b> atuou como avaliador de trabalhos científicos no XXIII Seminário de Iniciação Científica da PUCPR, durante os dias 06, 07 e 08 de outubro de 2015.';
+				$content = 'Declaramos para os devidos fins que ' . $data['prof'] . ' ' . $data['titulacao'] . ' <b>' . $data['nome_user_main'] . '</b> atuou como avaliador de trabalhos científicos no XXIII Seminário de Iniciação Científica da PUCPR, durante os dias 06, 07 e 08 de outubro de 2015.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 08 de outubro de 2015.</td></tr></table>';
 				break;
 			/* Declaracao de Ouvinte */
 			case '9':
-				$content = 'Declaro para os devidos fins que <b>' . $data['nome_aluno'] . '</b> participou do XXIII Congresso de Iniciação Cientifica da PUCPR na modalidade de ouvinte nos dias 06, 07 e 08 de outubro de 2015, cumprindo uma carga horária de 20horas.';
+				$content = 'Declaro para os devidos fins que <b>' . $data['nome_user_second'] . '</b> participou do XXIII Congresso de Iniciação Cientifica da PUCPR na modalidade de ouvinte nos dias 06, 07 e 08 de outubro de 2015, cumprindo uma carga horária de 20horas.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 08 de outubro de 2015.</td></tr></table>';
@@ -231,7 +231,7 @@ class central_declaracao extends CI_Controller {
 				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';
 				}
 
-				$content = 'Declaramos para os devidos fins que o ' . $artigo_professor . ' <b>' . $data['nome_prof'] . '</b> orientou ' . $artigo_estudante . ' alun' . $artigo_estudante . ' <b>' . $data['nome_aluno'] . '</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2014 a julho de 2015.';
+				$content = 'Declaramos para os devidos fins que o ' . $artigo_professor . ' <b>' . $data['nome_user_main'] . '</b> orientou ' . $artigo_estudante . ' alun' . $artigo_estudante . ' <b>' . $data['nome_user_second'] . '</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2014 a julho de 2015.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 08 de outubro de 2015.</td></tr></table>';
@@ -263,7 +263,7 @@ class central_declaracao extends CI_Controller {
 					echo 'Emissão bloqueada, consulte pibicpr@pucpr.br informando o código: #46/' . $id . '/' . $protocolo;
 					exit ;
 				}
-				$content = 'Certificamos que ' . $artigo_estudante . ' estudante, <b>' . $data['nome_aluno'] . '</b> participou do programa ' . $data['edital'] . ' nesta Universidade, com ' . $data['modalidade'] . ', com o projeto de pesquisa intitulado <b>"' . $data['titulo_projeto'] . '"</b> sob orientação d' . $artigo_prof_complemento . ' ' . $artigo_professor . ' <b>' . $data['nome_prof'] . '</b> , no período de agosto 2014 a julho 2015, com 20 horas semanais.';
+				$content = 'Certificamos que ' . $artigo_estudante . ' estudante, <b>' . $data['nome_user_second'] . '</b> participou do programa ' . $data['edital'] . ' nesta Universidade, com ' . $data['modalidade'] . ', com o projeto de pesquisa intitulado <b>"' . $data['titulo_projeto'] . '"</b> sob orientação d' . $artigo_prof_complemento . ' ' . $artigo_professor . ' <b>' . $data['nome_user_main'] . '</b> , no período de agosto 2014 a julho 2015, com 20 horas semanais.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 08 de outubro de 2015.</td></tr></table>';
@@ -276,7 +276,7 @@ class central_declaracao extends CI_Controller {
 
 				/* Consulta avaliacao */
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaramos que <b>' . $data['nome_aluno'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" nas modalidades <b>Oral e Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 06 a 8 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
+				$content = 'Declaramos que <b>' . $data['nome_user_second'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" nas modalidades <b>Oral e Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 06 a 8 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 08 de outubro de 2015.</td></tr></table>';
@@ -289,7 +289,7 @@ class central_declaracao extends CI_Controller {
 
 				/* Consulta avaliacao */
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaramos que <b>' . $data['nome_aluno'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" na modalidade <b>Oral</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 06 a 08 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
+				$content = 'Declaramos que <b>' . $data['nome_user_second'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" na modalidade <b>Oral</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 06 a 08 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 08 de outubro de 2015.</td></tr></table>';
@@ -302,7 +302,7 @@ class central_declaracao extends CI_Controller {
 
 				/* Consulta avaliacao */
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaramos que <b>' . $data['nome_aluno'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" na modalidade <b>Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 06 a 0 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
+				$content = 'Declaramos que <b>' . $data['nome_user_second'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" na modalidade <b>Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR, realizado no período de 06 a 0 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 08 de outubro de 2015.</td></tr></table>';
@@ -315,7 +315,7 @@ class central_declaracao extends CI_Controller {
 
 				/* Consulta avaliacao */
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaro para os devidos fins que <b>' . $data['nome_aluno'] . '</b> participou do 2nd Science without Borders na PUCPR no dia 11 de novembro de 2015 no período da tarde, cumprindo uma carga horária de 6horas.';
+				$content = 'Declaro para os devidos fins que <b>' . $data['nome_user_second'] . '</b> participou do 2nd Science without Borders na PUCPR no dia 11 de novembro de 2015 no período da tarde, cumprindo uma carga horária de 6horas.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 11 de novembro de 2015.</td></tr></table>';
@@ -328,7 +328,7 @@ class central_declaracao extends CI_Controller {
 
 				/* Consulta avaliacao */
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaramos que <b>' . $data['nome_aluno'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" nas modalidades <b>Oral e Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR em parceria com o SENAI, realizado no período de 06 a 08 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
+				$content = 'Declaramos que <b>' . $data['nome_user_second'] . '</b> apresentou o trabalho "<b>' . $data['titulo_projeto'] . '</b>" nas modalidades <b>Oral e Pôster</b> no XXIII Seminário de Iniciação Científica da PUCPR em parceria com o SENAI, realizado no período de 06 a 08 de outubro de 2015, na Pontifícia Universidade Católica do Paraná, Curitiba-PR.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 11 de novembro de 2015.</td></tr></table>';
@@ -357,10 +357,10 @@ class central_declaracao extends CI_Controller {
 						$artigo_dr_complemento = 'a';
 					}
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaro para os devidos fins que '. $artigo_estudante .' alun'. $artigo_estudante .' <b>' . $data['nome_aluno'] . '</b> 
+				$content = 'Declaro para os devidos fins que '. $artigo_estudante .' alun'. $artigo_estudante .' <b>' . $data['nome_user_second'] . '</b> 
 				participou do Programa Institucional de Bolsas de Iniciação Científica
 				(' . $data['edital'] . ') com Bolsa ' . $data['modalidade'] . ' no período de agosto de 2012 até julho de 2013, 
-				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>", orientad'. $artigo_estudante .'  pel'. $artigo_prof_complemento .'  ' . $artigo_professor . ' ' . $artigo_dr . ' <b>' . $data['nome_prof'] . '</b>"
+				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>", orientad'. $artigo_estudante .'  pel'. $artigo_prof_complemento .'  ' . $artigo_professor . ' ' . $artigo_dr . ' <b>' . $data['nome_user_main'] . '</b>"
 				e, com o mesmo trabalho, realizou	apresentação oralmente e em forma de pôster no XXI Seminário de Iniciação
 				Científica da PUCPR, realizado nos dias 22, 23 e 24 de novembro de 2013. 
 				';
@@ -371,22 +371,19 @@ class central_declaracao extends CI_Controller {
 
 			/* Declaracao de Avaliador */
 			case '26':
-				$artigo_estudante = 'o';
-					if ($data['us_g1'] == 'F') { 
-						$artigo_estudante = 'a';
-					}
-				$artigo_professor = 'prof.';
-				$artigo_prof_complemento = 'o';
-				$artigo_dr = 'Dr.';
-				$artigo_dr_complemento_2 = '';
-					if ($data['us_g2'] == 'F') {
-						$artigo_professor = 'profa.';
-						$artigo_dr = 'Dra.';
-						$artigo_prof_complemento = 'a';
-						$artigo_dr_complemento_2 = 'a';
-					}
+				$artigo_g1 = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_g1 = 'profa.';}
+				$artigo_g5 = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_g5 = 'a';}
+				$artigo_g6 = '';
+				if ($data['us_g1'] == 'F') { $artigo_g6 = 'a';}
+				
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaramos para os devidos fins que ' . $artigo_professor . ' ' . $artigo_dr . ' <b>' . $data['nome_prof'] . '</b> atuou como avaliador' . $artigo_prof_complemento_2 . ' de trabalhos científicos no XXI Seminário de Iniciação Científica da PUCPR, realizado nos dias 22, 23 e 24 de novembro de 2013.';
+				
+				$content = 'Declaramos para os devidos fins que '. 
+										$artigo_g5 .' ' . 
+										$artigo_g1 . ' ' .  ' <b>' . $data['nome_user_second'] . '</b> atuou como avaliador' . $artigo_g6 . ' de trabalhos científicos no XXI Seminário de Iniciação Científica, XX Mostra de Pesquisa, II PIBITI, realizado nos dias 22, 23 e 24 de novembro de 2013.';
+				
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 30 de novembro de 2013.</td></tr></table>';
@@ -394,13 +391,19 @@ class central_declaracao extends CI_Controller {
 
 			/* Declaracao de Orientador */
 			case '27':
-				$artigo_estudante = 'o';
-				if ($data['us_g2'] == 'F') { $artigo_estudante = 'a';
-				}
-				$artigo_professor = 'prof.';
-				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';
-				}
-				$content = 'Declaramos para os devidos fins que o ' . $artigo_professor . ' <b>' . $data['nome_prof'] . '</b> orientou ' . $artigo_estudante . ' alun' . $artigo_estudante . ' <b>' . $data['nome_aluno'] . '</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2012 até julho de 2013.';
+				$artigo_g2 = 'aluno';
+				if ($data['us_g2'] == 'F') { $artigo_g2 = 'aluna';}
+				$artigo_g1 = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_g1 = 'profa.';}
+				$artigo_g6 = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_g6 = 'a';}
+				$artigo_g5 = 'o';
+				if ($data['us_g2'] == 'F') { $artigo_g5 = 'a';}
+				$content = 'Declaramos para os devidos fins que ' . 
+										$artigo_g6 . ' ' .
+										$artigo_g1 . ' <b>' . $data['nome_user_second'] . '</b> orientou '. 
+										$artigo_g5 . ' ' .
+									 $artigo_g2 . ' <b>' . $data['nome_user_main'] .'</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2012 até julho de 2013.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 30 de novembro de 2013.</td></tr></table>';
@@ -412,32 +415,23 @@ class central_declaracao extends CI_Controller {
 
 			/* Declaracao de participacao estudante*/
 			case '28':
-				//Artigos complementos	
-				$artigo_estudante = 'o';
-					if ($data['us_g1'] == 'F') { 
-						$artigo_estudante = 'a';
-					}
-					
-				$artigo_professor = 'prof.';
-				$artigo_prof_complemento = 'o';
-				$artigo_dr = 'Dr.';
-				$artigo_dr_complemento = 'o';
-				
-					if ($data['us_g2'] == 'F') {
-						$artigo_professor = 'profa.';
-						$artigo_dr = 'Dra.';
-						$artigo_prof_complemento = 'a';
-						$artigo_dr_complemento = 'a';
-					}
-				
+				$artigo_g2 = 'aluno';
+				if ($data['us_g1'] == 'F') { $artigo_g2 = 'aluna';}
+				$artigo_g1 = 'prof.';
+				if ($data['us_g2'] == 'F') { $artigo_g1 = 'profa.';}
+				$artigo_g3 = 'o';
+				if ($data['us_g2'] == 'F') { $artigo_g3 = 'a';}
+				$artigo_g4 = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_g4 = 'a';}
+
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaro para os devidos fins que '. $artigo_estudante . ' alun'. $artigo_estudante . ' <b>' . $data['nome_aluno'] . '</b>
-				participou do Programa Institucional de Bolsas de Iniciação Científica (PIBIC)
-				com Bolsa (' . $data['edital'] . ') no período de agosto de 2013 até julho de 2014, 
-				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>" , orientad'. $artigo_estudante .' pel'. $artigo_prof_complemento .'
-				' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome_prof'] . '</b>" e,
-				realizou apresentação no 3º Congresso de Iniciação Científica e Pós-Graduação
-				e XXII Seminário de Iniciação Científica da PUCPR, realizado nos dias 04, 05 e 06 de Novembro de 2014.';
+				$content = 'Declaro para os devidos fins que '. 
+										$artigo_g4 .  ' '. $artigo_g2 . ' <b>' . $data['nome_user_second'] . '</b>
+										participou do Programa Institucional de Bolsas de Iniciação Científica (PIBIC) com Bolsa (' . 
+										$data['edital'] . ') no período de agosto de 2013 até julho de 2014, com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>", 
+										orientad'. $artigo_g4 .' pel'. $artigo_g3 .' ' . $artigo_g1 . ' <b>' . 
+										$data['nome_user_main'] . '</b>" e, realizou apresentação no 3º Congresso de Iniciação Científica e Pós-Graduação e 
+										XXII Seminário de Iniciação Científica da PUCPR, realizado nos dias 04, 05 e 06 de Novembro de 2014.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 21 de Novembro de 2014.</td></tr></table>';
@@ -445,17 +439,18 @@ class central_declaracao extends CI_Controller {
 
 			/* Declaracao de Avaliador */
 			case '29':
-				$artigo_professor = 'prof.';
-				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';
-				}
-				$artigo_doutor = 'Dr.';
-				if ($data['us_g1'] == 'F') { $artigo_doutor = 'Dra.';
-				}
-				$artigo_gen = '';
-				if ($data['us_g1'] == 'F') { $artigo_gen = 'a';
-				}
+				$artigo_g1 = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_g1 = 'profa.';}
+				$artigo_g5 = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_g5 = 'a';}
+				$artigo_g6 = '';
+				if ($data['us_g1'] == 'F') { $artigo_g6 = 'a';}
+				
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaramos para os devidos fins que ' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome_prof'] . '</b> atuou como avaliador' . $artigo_gen . ' de trabalhos científicos no XXI Seminário de Iniciação Científica da PUCPR, realizado nos dias 04, 05 e 06 de Novembro de 2014.';
+				$content = 'Declaramos para os devidos fins que '. 
+										$artigo_g5 .' ' . 
+										$artigo_g1 . ' ' . ' <b>' . $data['nome_user_second'] . 
+										'</b> atuou como avaliador' . $artigo_g6 . ' de trabalhos científicos no III Congresso Sul Brasileiro de Iniciação Científica e Pós-Graduação da PUCPR, realizado nos dias 04, 05 e 06 de Novembro de 2014.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 21 de Novembro de 2014.</td></tr></table>';
@@ -463,13 +458,21 @@ class central_declaracao extends CI_Controller {
 
 			/* Declaracao de Orientador */
 			case '30':
-				$artigo_estudante = 'o';
-				if ($data['us_g2'] == 'F') { $artigo_estudante = 'a';
-				}
-				$artigo_professor = 'prof.';
-				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';
-				}
-				$content = 'Declaramos para os devidos fins que o ' . $artigo_professor . ' <b>' . $data['nome_prof'] . '</b> orientou ' . $artigo_estudante . ' alun' . $artigo_estudante . ' <b>' . $data['nome_aluno'] . '</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2013 até julho de 2014.';
+				$artigo_g2 = 'aluno';
+				if ($data['us_g2'] == 'F') { $artigo_g2 = 'aluna';}
+				$artigo_g1 = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_g1 = 'profa.';}
+				$artigo_g6 = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_g6 = 'a';}
+				$artigo_g5 = 'o';
+				if ($data['us_g2'] == 'F') { $artigo_g5 = 'a';}
+				
+				$content = 'Declaramos para os devidos fins que  ' .
+									 	$artigo_g6  .' '.
+										$artigo_g1 . ' <b>' . $data['nome_user_second'] . '</b> orientou '.
+										$artigo_g5  .' '. 
+									  $artigo_g2 . ' <b>' . $data['nome_user_main'] .'</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2013 até julho de 2014.';
+
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 21 de Novembro de 2014.</td></tr></table>';
@@ -482,30 +485,25 @@ class central_declaracao extends CI_Controller {
 			/* Declaracao de participacao estudante*/
 			case '31':
 				//Artigos complementos	
-				$artigo_estudante = 'o';
-					if ($data['us_g1'] == 'F') { 
-						$artigo_estudante = 'a';
-					}
-					
-				$artigo_professor = 'prof.';
-				$artigo_prof_complemento = 'o';
-				$artigo_dr = 'Dr.';
-				$artigo_dr_complemento = 'o';
+				$artigo_g2 = 'aluno';
+				if ($data['us_g1'] == 'F') { $artigo_g2 = 'aluna';}
 				
-					if ($data['us_g2'] == 'F') {
-						$artigo_professor = 'profa.';
-						$artigo_dr = 'Dra.';
-						$artigo_prof_complemento = 'a';
-						$artigo_dr_complemento = 'a';
-					}
+				$artigo_g1 = 'prof.';
+				if ($data['us_g2'] == 'F') { $artigo_g1 = 'profa.';}
+				
+				$artigo_g3 = 'o';
+				if ($data['us_g2'] == 'F') { $artigo_g3 = 'a';}
+				
+				$artigo_g4 = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_g4 = 'a';}
 				
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaro para os devidos fins que '. $artigo_estudante . ' alun'. $artigo_estudante . ' <b>' . $data['nome_aluno'] . '</b>
+				$content = 'Declaro para os devidos fins que '. $artigo_g4 . ' alun'. $artigo_estudante . ' <b>' . $data['nome_user_second'] . '</b>
 				participou do Programa Institucional de Bolsas de Iniciação Científica (PIBIC)
 				com Bolsa (' . $data['edital'] . ') no período de agosto de 2011 até julho de 2012, 
 				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>" , orientad'. $artigo_estudante .' pel'. $artigo_prof_complemento .'
-				' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome_prof'] . '</b>" e,
-				realizou apresentação no XX Seminário de Iniciação Científica, XIV Mostra de Pesquisa e I PIBITI da PUCPR, realizado nos dias 06, 07 e 08 de Novembro de 2012.';
+				' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome_user_main'] . '</b>" e,
+				realizou apresentação no XX Seminário de Iniciação Científica, XIV Mostra de Pesquisa, I PIBITI, realizado nos dias 06, 07 e 08 de Novembro de 2012.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 12 de Novembro de 2012.</td></tr></table>';
@@ -513,17 +511,18 @@ class central_declaracao extends CI_Controller {
 
 			/* Declaracao de Avaliador */
 			case '32':
-				$artigo_professor = 'prof.';
-				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';
-				}
-				$artigo_doutor = 'Dr.';
-				if ($data['us_g1'] == 'F') { $artigo_doutor = 'Dra.';
-				}
-				$artigo_gen = '';
-				if ($data['us_g1'] == 'F') { $artigo_gen = 'a';
-				}
+				$artigo_g1 = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_g1 = 'profa.';}
+				$artigo_g5 = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_g5 = 'a';}
+				$artigo_g6 = '';
+				if ($data['us_g1'] == 'F') { $artigo_g6 = 'a';}
+				
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaramos para os devidos fins que ' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome_prof'] . '</b> atuou como <b>avaliador</b>' . $artigo_gen . ' de trabalhos científicos no XX Seminário de Iniciação Científica, XIV Mostra de Pesquisa e I PIBITI da PUCPR, realizado nos dias 06, 07 e 08 de Outubro de 2012.';
+				$content = 'Declaramos para os devidos fins que '. 
+										$artigo_g5 .' ' . 
+										$artigo_g1 . ' ' .  ' <b>' . $data['nome_user_second'] . '</b> atuou como avaliador' . $artigo_g6 . ' de trabalhos científicos no XX Seminário de Iniciação Científica, XIV Mostra de Pesquisa, I PIBITI da PUCPR, 06, 07 e 08 de Novembro de 2012.';
+						
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 12 de Novembro de 2012.</td></tr></table>';
@@ -531,13 +530,22 @@ class central_declaracao extends CI_Controller {
 				
 			/* Declaracao de Orientador */
 			case '33':
-				$artigo_estudante = 'o';
-				if ($data['us_g2'] == 'F') { $artigo_estudante = 'a';
+				$artigo_g2 = 'aluno';
+				if ($data['us_g2'] == 'F') { $artigo_g2 = 'aluna';
 				}
-				$artigo_professor = 'prof.';
-				if ($data['us_g1'] == 'F') { $artigo_professor = 'profa.';
+				$artigo_g1 = 'prof.';
+				if ($data['us_g1'] == 'F') { $artigo_g1 = 'profa.';
 				}
-				$content = 'Declaramos para os devidos fins que o ' . $artigo_professor . ' <b>' . $data['nome_prof'] . '</b> orientou ' . $artigo_estudante . ' alun' . $artigo_estudante . ' <b>' . $data['nome_aluno'] . '</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2011 até julho de 2012.';
+				$artigo_g6 = 'o';
+				if ($data['us_g1'] == 'F') { $artigo_g6 = 'a';}
+				$artigo_g5 = 'o';
+				if ($data['us_g2'] == 'F') { $artigo_g5 = 'a';}
+				$content = 'Declaramos para os devidos fins que  ' .
+									 	$artigo_g6  .' '.
+										$artigo_g1 . ' <b>' . $data['nome_user_second'] . '</b> orientou '.
+										$artigo_g5  .' '. 
+									  $artigo_g2 . ' <b>' . $data['nome_user_main'] .'</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2011 até julho de 2012.';
+
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 12 de Novembro de 2012.</td></tr></table>';

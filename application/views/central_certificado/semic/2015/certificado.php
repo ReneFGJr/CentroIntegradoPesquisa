@@ -67,7 +67,7 @@ $pdf -> SetFont('helvetica', '', 6);
 $pdf->Text(20, 137, utf8_encode('LINK DE VALIDAÇÂO'));
 
 /* Arquivo de saida */
-$nome_asc = UpperCaseSql($nome_aluno);
+$nome_asc = UpperCaseSql($nome_user_main);
 //$nome_asc = troca($nome_asc,' ','_');
 $pdf -> Output('certificado-'.$nome_asc.'.pdf', 'I');
 ?>
