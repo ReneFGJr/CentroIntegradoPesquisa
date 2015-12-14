@@ -49,29 +49,33 @@ class ics_acompanhamento extends CI_model {
 		/* Mostra atividades */
 		if (count($action) > 0)
 			{
-				$size = round(250 * count($action) + 60);
+				$size = round(250 + 60);
 				$sa = '';
 				$sb = '';
 				$sc = '';
+				$st = '';
 				foreach ($action as $key => $value) {
 					$form_bt = '<form action="'.base_url('index.php/pibic/entrega/'.$key).'" method="get">';
 					$form_bt .= '<input type="submit" value="'.msg('bt_entregar').'" class="botao3d back_green_shadown back_green" style="width: '.$size.'px; text-align: center;">';
 					$form_bt .= '</form>';
-					$sa .= '<td class="lt2 border1" align="center">'.msg($key).'</td>';
-					$sb .= '<td class="lt5 border1" align="center">'.$value.'</td>';
+					$sa .= '<td class="lt4" align="left"><b>'.msg($key).'</b></td>';
+					$sb .= '<td class="lt5" align="left">'.$value.' atividades.</td>';
 					$sc .= '<td class="lt3" align="center">'.$form_bt.'</td>';
+					$st .= '<td class="lt2" align="left">'.$this->periodo_atividade($key)."</td>'";
 				}
-				$sx = '<table width="'.$size.'" bgcolor="#ffecec" style="padding: 10px;">';
-				$label = '<td rowspan=4 width="50" >';
+				$sx = '<table width="100%" bgcolor="#ececec" style="padding: 10px;" class="border1">';
+				$label = '<td rowspan=5 width="50" >';
 				//$label .= '<img src="'.base_url('img/icon/icone_atividade.png').'" height="60">';
-				$label .= '<img src="'.base_url('img/icon/icone_exclamation.png').'" height="60">';
+				$label .= '<img src="'.base_url('img/icon/icone_post_form.png').'" height="90">';
 				$label .= '</td>';
 				
 				$sx .= $label;
-				$sx .= '<td class="lt5"><font class="red"><b>'.msg("ic_atividade_aberta").'</b></font></td>';
-				$sx .= '<tr>'.$sa.'</tr>';
-				$sx .= '<tr>'.$sb.'</tr>';
-				$sx .= '<tr>'.$sc.'</tr>';
+				$sx .= '<td class="lt5" width="'.$size.'" colspan=10><font class="red"><b>'.msg("ic_atividade_aberta").'</b></font></td>';
+				$sx .= '<td width="50%"></td>';
+				$sx .= '<tr><td align="right" class="lt1">Atividade:</td>'.$sa.'</tr>';
+				$sx .= '<tr><td align="right" class="lt1">Período:</td>'.$st.'</tr>';
+				$sx .= '<tr><td align="right" class="lt1">Para entregar:</td>'.$sb.'</tr>';
+				$sx .= '<tr><td></td>'.$sc.'</tr>';
 				$sx .= '</table>';
 				$sx .= '<br><br><br>';
 			} else {
@@ -79,6 +83,23 @@ class ics_acompanhamento extends CI_model {
 			}
 		return ($sx);
 	}
+
+	function periodo_atividade($n)
+		{
+			$ano = date("Y");
+			$sql = "select * from ic_atividade where at_atividade = '$n' and at_ano = '$ano' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = 'não informado';
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					$sx = stodbr($line['at_data_ini']);
+					$sx .= ' até ';
+					$sx .= stodbr($line['at_data_fim']);
+				}
+			return($sx);
+		}
 
 	/* Submissoes */
 	function submissao_questionarios_professor() {

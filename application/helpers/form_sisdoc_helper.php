@@ -130,7 +130,7 @@ function enviaremail($para, $assunto, $texto, $de) {
 		$CI -> email -> message($texto);
 
 		array_push($para, trim($line['m_email']));
-		array_push($para, 'renefgj@gmail.com');
+		//array_push($para, 'renefgj@gmail.com');
 		
 		/* e-mail com copias */
 		$bcc = array();

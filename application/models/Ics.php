@@ -1536,5 +1536,67 @@ class ics extends CI_model {
 
 	}
 
+	function orientadores_ic($ano1=0, $ano2=0)
+		{
+			if ($ano2 == 0) { $ano2 = $ano1; }
+			$sql = "select distinct us_nome, us_cracha, us_cpf, id_us, 
+							us_campus_vinculo, us_escola_vinculo, 
+							us_curso_vinculo, es_escola, us_ativo
+					from ic
+					left join us_usuario on ic_cracha_prof = us_cracha 
+					left join escola on id_es = us_escola_vinculo
+				    where ic_ano >= '$ano1' and ic_ano <= '$ano2'
+				    		and (s_id = 1 or s_id = 4 or s_id = 3) 
+				    order by us_nome ";
+
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<h2>Orientadores '.$ano1.'</h2>';
+			$sx .= '<table width="100%" class="lt1">';
+			$sx .= '<tr>
+						<th>Nome</th>
+						<th>Cracha</th>
+						<th>CPF</th>
+						<th>Campus</th>
+						<th>Escola</th>
+						<th>Curso</th>
+				</tr>';
+			$tot = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$tot++;
+					$sx .= '<tr>';
+					$sx .= '<td class="borderb1">';
+					$sx .= link_perfil($line['us_nome'],$line['id_us'],$line);
+					$sx .= '</td>';
+
+					$sx .= '<td class="borderb1" align="center">';
+					$sx .= $line['us_cracha'];
+					$sx .= '</td>';
+									
+					$sx .= '<td class="borderb1" align="center">';
+					$sx .= mask_cpf($line['us_cpf']);
+					$sx .= '</td>';
+
+					$sx .= '<td class="borderb1">';
+					$sx .= $line['us_campus_vinculo'];
+					$sx .= '</td>';
+
+					$sx .= '<td class="borderb1">';
+					$sx .= $line['es_escola'];
+					$sx .= '</td>';
+
+					$sx .= '<td class="borderb1">';
+					$sx .= $line['us_curso_vinculo'];
+					$sx .= '</td>';
+					$sx .= '</tr>';
+				}
+			$sx .= '<tr><td colspan=10>Total '.$tot.' orientadores</td></tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
+
 }
 ?>

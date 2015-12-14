@@ -122,6 +122,8 @@ class josso_login_pucpr extends CI_Model {
 			$josso = $this -> session -> userdata('nome');
 
 			if (strlen($josso) == 0) {
+				$erro = 999; /* sessão finalizada pelo servidor */
+				$this->historico_insere_erro('',$erro,0);
 				$link = base_url('index.php/login');
 				redirect($link);
 			} else {
@@ -212,10 +214,60 @@ class josso_login_pucpr extends CI_Model {
 			$this -> security();
 			return (1);
 		} else {
+			$this -> historico_insere_erro($login,'1');
 			return (-1);
 		}
 		return (-2);
 	}
+
+	function historico_insere_erro($login,$erro,$us=0)
+		{
+			if ((strlen($login)==0) and ($us==0))
+				{
+					return('');
+				}
+			$ip = ip();
+			$CI = &get_instance();
+			$data = date("Y-m-d");
+			$hora = date("H:i:s");			
+			$login = uppercase($login);
+			
+			if ($us == 0)
+				{
+					$sql = "select * from logins where us_login = '$login' ";
+					echo $sql;
+					$rlt = $CI->db->query($sql);
+					$rlt = $rlt->result_array();
+					if (count($rlt) > 0)
+						{
+							$line = $rlt[0];
+							$us = $line['id_us'];
+						}
+				}
+			if ((strlen($login)==0) and ($us > 0))
+				{
+					$sql = "select * from logins where  = '$us' ";
+					$rlt = $CI->db->query($sql);
+					$rlt = $rlt->result_array();
+					if (count($rlt) > 0)
+						{
+							$line = $rlt[0];
+							$login = UpperCase($line['us_login']);
+						}					
+				}
+				
+			$sql = "insert into logins_erros
+					(
+						ler_ip, ler_erro, ler_outros,
+						ler_user_id, ler_data, ler_hora
+					) values (
+						'$ip','$erro','$login',
+						$us, '$data', '$hora'
+					)
+			";
+			$rlt = $CI->db->query($sql);
+			return(0);
+		}
 
 	function ativa_usuario($login, $pass) {
 		$sql = "select * from logins where us_login = '$login' ";

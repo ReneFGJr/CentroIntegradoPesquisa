@@ -22,7 +22,7 @@ class ic extends CI_Controller {
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
-		$this -> security();
+		$this -> security();		
 	}
 
 	function security() {
@@ -53,10 +53,11 @@ class ic extends CI_Controller {
 
 		array_push($menus, array('Pessoas', 'index.php/ic/usuarios'));
 		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
-		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
+		array_push($menus, array('Acompanhamento', 'index.php/ic/acompanhamento'));
 		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
 		array_push($menus, array('Relatórios', 'index.php/ic/report'));
 		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
+		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
 		array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
 
 		$data['menu'] = 1;
@@ -94,7 +95,7 @@ class ic extends CI_Controller {
 			redirect(base_url('index.php/ic'));
 		}
 
-		$this -> load -> view('content', $data);
+		//$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -103,8 +104,7 @@ class ic extends CI_Controller {
 	function comunicacao_view($id = 0, $gr = 0, $tp = 0) {
 		/* Load Models */
 		$this -> load -> model('comunicacoes');
-		$this -> load -> model('email_local');
-
+		
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
 		$this -> load -> library('email', $config);
 
@@ -113,6 +113,19 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 		$data = $this -> comunicacoes -> le($id);
+		
+		if (strlen(get("dd1"))==0)
+			{
+				$id_gr = $data['mc_tipo'];
+				$_POST['dd1'] = $this->comunicacoes->le_email_grupo($id_gr);
+			}
+		
+		
+		$head = base_url($data['m_header']);
+		$foot = base_url($data['m_foot']);
+		
+		$msg_body = $data['mc_texto'];
+		if ($data['mc_formato'] == 'TEXT') { $msg_body = mst($msg_body); }		
 
 		$form = new form;
 		$cp = array();
@@ -124,46 +137,53 @@ class ic extends CI_Controller {
 		$data['tela'] = $tela;
 
 		if ($form -> saved > 0) {
-			$em = $this -> input -> post('dd1');
+			$em = get('dd1');
 			$em = troca($em, chr(13), ';');
 			$em = troca($em, chr(10), '');
 			$em = troca($em, chr(8), '');
 			$em = troca($em, chr(15), '');
 			$ems = splitx(';', $em . ';');
-
+	
 			for ($r = 0; $r < count($ems); $r++) {
-				$this -> email_local -> e_mail = $data['m_email'];
-				$this -> email_local -> e_nome = $data['m_descricao'];
-				$head = trim($data['m_header']);
-				$para = $ems[$r];
-
-				$this -> email -> from('dilmeire.vosgerau@pucpr.br', $this -> email_local -> e_nome);
-				$this -> email -> reply_to($this -> email_local -> e_mail, $this -> email_local -> e_nome);
-				$this -> email -> to($para);
-
+				$para = array($ems[$r]);
+				$de = $data['mc_own'];
+				$assunto = $data['mc_titulo'];
+				
+				/* texto */
 				$texto_o = $data['mc_texto'];
-				$texto = '<table width="700"><tr><td>';
+				if (trim($data['mc_formato']) == 'TEXT') { $texto_o = mst($texto_o); }
+				$texto = '<table width="700">';
 				if (strlen($head) > 0) {
-					$texto .= '<img src="' . $head . '" width="700">';
+					$texto .= '<tr><td><img src="' . $head . '" width="700"></td></tr>';
+					$texto .= '<tr><td><br></td></tr>';
 				}
 				$texto .= '<tr><td>';
-				$texto .= $texto_o;
+				$texto .= $texto_o.'<br><br></td></tr>';
+				
+				if (strlen($foot) > 0) {
+					$texto .= '<tr><td><img src="' . $foot . '" width="700"></td></tr>';
+				}				
 				$texto .= '</table>';
-
-				$this -> email -> subject($data['mc_titulo']);
-				$this -> email -> message($texto);
-
-				$this -> email -> send();
-				//$this -> email_local -> enviaremail($emailx, $data['mc_titulo'], $data['mc_texto']);
-				echo '<BR>--->' . $para;
+				
+				/* enviar e-mail */								
+				enviaremail($para, $assunto, $texto, $de);
 			}
 		}
 
 		$data['content'] = '<table width="100%">
+							
 							<tr valign="top">
-								<td>' . $data['mc_texto'] . '</td>
+								<td>
+								<table width="700" align="center" class="border1">
+								<tr><td><img src="'.$head.'" width="700"></td></tr>
+								<tr><td><br>' . $msg_body . '</td></tr>
+								<tr><td><br><br><br></td></tr>
+								<tr><td><img src="'.$foot.'" width="700"></td></tr>									
+								</table>
+								</td>
 								<td>' . $tela . '</td>
 							</tr>
+							
 							</table>';
 
 		$data['title'] = msg('visualizar_mensagem');
@@ -187,7 +207,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Gestão', 'Cancelar plano de estudante', 'ITE', '/ic/admin_cancelar'));
 		array_push($menu, array('Gestão', 'Reativar plano cancelado', 'ITE', '/ic/admin_reativar'));
 		array_push($menu, array('Gestão', 'Substituição de orientador', 'ITE', '/ic/admin_substituir_orientador'));
-		
+
 		array_push($menu, array('Entregas', 'Formulário de acompanhamento', 'ITE', '/ic/acompanhamento'));
 
 		/*View principal*/
@@ -223,25 +243,24 @@ class ic extends CI_Controller {
 			$tela = $form -> editar($cp, 'ic');
 			$data['title'] = $tit;
 			$data['content'] = $tela;
-			
-			if ($form->saved > 0)
-				{
-					/* Fase I - Cancela */
-					/*************************/
-					$data['volta'] = base_url('index.php/ic/admin_cancelar');
-					$this -> load -> view('sucesso', $data);
-					
-					/* Fase II - Tela de Fim */
-					/*************************/
-					$data['pr_justificativa'] = get("dd2");
-					$data['pr_protocolo_original'] = $proto;
-					$data['pr_descricao'] = $data['al_nome'];
-					$this->ics->protocolo_CAN($data);
-					
-					$data['content'] = '';
-				} else {
-					$this -> load -> view('content', $data);		
-				}
+
+			if ($form -> saved > 0) {
+				/* Fase I - Cancela */
+				/*************************/
+				$data['volta'] = base_url('index.php/ic/admin_cancelar');
+				$this -> load -> view('sucesso', $data);
+
+				/* Fase II - Tela de Fim */
+				/*************************/
+				$data['pr_justificativa'] = get("dd2");
+				$data['pr_protocolo_original'] = $proto;
+				$data['pr_descricao'] = $data['al_nome'];
+				$this -> ics -> protocolo_CAN($data);
+
+				$data['content'] = '';
+			} else {
+				$this -> load -> view('content', $data);
+			}
 		} else {
 			/****************************************************************
 			 ************************************ nao informado o protocolo *
@@ -301,33 +320,31 @@ class ic extends CI_Controller {
 			$proto = $data['ic_plano_aluno_codigo'];
 			$this -> load -> view('ic/plano.php', $data);
 			$status = $data['icas_id'];
-			
 
 			$form = new form;
 			$form -> id = $id;
 			$tela = $form -> editar($cp, 'ic');
 			$data['title'] = $tit;
 			$data['content'] = $tela;
-			
-			if ($form->saved > 0)
-				{
-					/* Fase I - Reativa */
-					/*************************/
-					$data['volta'] = $link;
-					$this -> load -> view('sucesso', $data);
-					
-					/* Fase II - Tela de Fim */
-					/*************************/
-					$data['pr_justificativa'] = get("dd2");
-					$data['pr_protocolo_original'] = $proto;
-					$data['pr_descricao'] = $data['al_nome'];
-					$data['pr_ica'] = get("dd3");
-					$this->ics->protocolo_RET($data);
-					
-					$data['content'] = '';
-				} else {
-					$this -> load -> view('content', $data);		
-				}
+
+			if ($form -> saved > 0) {
+				/* Fase I - Reativa */
+				/*************************/
+				$data['volta'] = $link;
+				$this -> load -> view('sucesso', $data);
+
+				/* Fase II - Tela de Fim */
+				/*************************/
+				$data['pr_justificativa'] = get("dd2");
+				$data['pr_protocolo_original'] = $proto;
+				$data['pr_descricao'] = $data['al_nome'];
+				$data['pr_ica'] = get("dd3");
+				$this -> ics -> protocolo_RET($data);
+
+				$data['content'] = '';
+			} else {
+				$this -> load -> view('content', $data);
+			}
 
 		} else {
 			/****************************************************************
@@ -504,13 +521,13 @@ class ic extends CI_Controller {
 					/******************************/
 					$prof1 = $data['pf_cracha'];
 					$nome1 = $data['pf_nome'];
-					
+
 					$prof2 = get("dd2");
-					$ln = $this->usuarios->le_cracha($prof2);
+					$ln = $this -> usuarios -> le_cracha($prof2);
 					$nome2 = $ln['us_nome'];
-					
-					$hist = 'Alteração do professor orientador de "<b>' . $nome1 . '</b>" para "<b>' . $nome2.'</b>'; 
-					$obs = 	mst('Justificativa: ' . get("dd3"));
+
+					$hist = 'Alteração do professor orientador de "<b>' . $nome1 . '</b>" para "<b>' . $nome2 . '</b>';
+					$obs = mst('Justificativa: ' . get("dd3"));
 					$motivo = '000';
 					$ac = '177';
 
@@ -587,6 +604,8 @@ class ic extends CI_Controller {
 		array_push($menu, array('Relatórios', 'Resumo de implementações', 'ITE', '/ic/report_resumo'));
 		array_push($menu, array('Relatórios', 'Guia do Estudante', 'ITE', '/ic/report_guia'));
 
+		array_push($menu, array('Orientadores', 'Dados dos orientadores', 'ITE', '/ic/report_orientadores'));
+
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
@@ -599,6 +618,31 @@ class ic extends CI_Controller {
 	}
 
 	/* Reports */
+
+	function report_orientadores($ano = 0) {
+		$this -> load -> model('ics');
+		
+		/* Ano de análise */
+		if ($ano == 0) {
+			if (date("m") < 8) {
+				$ano = (date("Y") - 1);
+			} else {
+				$ano = date("Y");
+			}
+		}
+		
+		
+		$this -> cab();
+		$data = array();
+
+		$data['content'] = $orientadores = $this -> ics -> orientadores_ic($ano);
+		$this->load->view('content',$data);
+
+		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function report_resumo($ano = 0, $tipo = 0) {
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -1164,6 +1208,68 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function entrega($tipo='')
+		{
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this -> ics -> cp_switch();
+		$data = array();
+
+		$this -> cab();
+		
+		switch ($tipo)
+			{
+			case 'FORM_PROF':
+				$fld = 'ic_pre_data';
+				$tit = 'Formulário do Professor';
+				$ano = date("Y");
+				break;
+			default:
+				$fld = '';
+				$tit = '';
+				break;
+			}
+			
+		$sx = '';
+		if (strlen($fld) > 0)
+			{
+				$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao from ic
+							where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
+						union
+						select 2 as ordem, count(*) as total, 'Não entregue' as descricao from ic
+							where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
+						order by ordem";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt -> result_array();
+				$sx .= '<table width="400" class="lt1 border1">';
+				$sx .= '<tr><td colspan=2 class="lt2"><b>'.$tit.'</b></td></tr>';
+				$sx .= '<tr><th>situação</th><th>total</th><th>percentual</th></tr>';
+				$tot = 0;
+				for ($r=0;$r < count($rlt);$r++)
+					{
+						$line  = $rlt[$r];
+						$tot = $tot + $line['total'];
+					}
+									
+				for ($r=0;$r < count($rlt);$r++)
+					{
+						$line  = $rlt[$r];
+						$sx .= '<tr><td align="right">'.$line['descricao'].'</td>';
+						$sx .= '<td align="center" class="lt4">'.$line['total'].'</td>';
+						$sx .= '<td align="center">'.number_format(100 * ($line['total'] / $tot),1,',','.').'%</td>';
+						$sx .= '</tr>';
+					} 
+				$sx .= '<tr><td align="right">Total</td>
+							<td align="center" class="lt5"><b>'.$tot.'</b></td></tr>';
+				$sx .= '</table>';
+			}
+		$data['content'] = $sx;
+		$this->load->view('content',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);			
+		}
+
 	function acompanhamento() {
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -1171,7 +1277,29 @@ class ic extends CI_Controller {
 		$data = array();
 
 		$this -> cab();
-		$this -> load -> view('header/content_open');
+		
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Acompanhamento', 'Abrir ou fechar sistemas', 'ITE', '/ic/acompanhamento_sw'));
+		array_push($menu, array('Formulário de acompanhamento', 'Entrega de formlários', 'ITE', '/ic/entrega/FORM_PROF'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu Administração';
+		$this -> load -> view('header/main_menu', $data);		
+
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function acompanhamento_sw() {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this -> ics -> cp_switch();
+		$data = array();
+
+		$this -> cab();
 
 		$form = new form;
 		$form -> id = 1;

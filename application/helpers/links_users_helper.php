@@ -65,9 +65,18 @@ function link_ic($id=0,$page='ic')
 		return($href);
 	}
 	
-function link_perfil($nome='',$id)
+function link_perfil($nome='',$id,$ln)
 	{
 		$id = round($id);
+		/* Inativo */
+		$cor = '<font>';
+		if (isset($ln['us_inativo']))
+			{
+				if ($ln['us_inativo'] == 0)
+					{
+						$cor='<font color="red">';
+					}
+			}
 		$href = '<a href="'.base_url('index.php/usuario/view/'.$id.'/'.checkpost_link($id)).'" target="_new" class="link">';
 		if ($id == 0)
 			{
@@ -80,7 +89,7 @@ function link_perfil($nome='',$id)
 						$line = db_read($rlt);
 						$nome = $line['us_nome'];
 					}
-				$href .= $nome.'</A>';		
+				$href .= $cor.$nome.'</font></A>';		
 			}
 		
 		return($href);

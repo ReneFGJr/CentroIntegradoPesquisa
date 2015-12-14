@@ -81,6 +81,34 @@ class comunicacoes extends CI_Model
 			
 			return($data);
 		}
+	function le_email_grupo($gr=0)
+		{
+			$email = '';
+			if ($gr == 7)
+				{
+					$ano = date("Y");
+					if (date("m") < 8) { $ano = ($ano -1); }
+					$sql = "select distinct usm_email from ( 
+							       select distinct id_us as id from ic inner 
+							       join ic_aluno on id_ic = ic_id 
+							       inner join ic_modalidade_bolsa on id_mb = mb_id 
+							       inner join us_usuario on ic_cracha_prof = us_cracha
+							       where ic_ano = '$ano'
+							       and us_ativo = 1 
+							       ) as tabela
+							inner join us_email on id = usuario_id_us
+							where usm_ativo = 1 ";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$email = '';
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$email .= $line['usm_email'].cr();
+						}
+				}
+			return($email);
+		}
 	function form_comunicacao_0()
 		{
 			$dd1 = $this->input->post('dd1');

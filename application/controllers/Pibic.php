@@ -300,6 +300,17 @@ class pibic extends CI_Controller {
 		/* Security */
 		$this -> load -> model('login/josso_login_pucpr');
 		$this -> josso_login_pucpr -> security();
+		
+		/* FALHA NO LOGIN */
+		$cracha = $_SESSION['cracha'];
+		if (strlen($cracha) == 0)
+			{
+				$us = $_SESSION['id_us'];
+				$erro = 999; /* sessão finalizada pelo servidor */
+				//$this->josso_login_pucpr->historico_insere_erro('',$erro,$us);
+				$link = base_url('index.php/login');
+				redirect($link);
+			}
 
 		/* Carrega classes adicionais */
 		$css = array();

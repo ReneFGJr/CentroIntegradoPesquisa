@@ -17,7 +17,7 @@ class login extends CI_Controller {
 		parent::__construct();
 
 		$this -> load -> library("nuSoap_lib");
-
+		$this -> load -> database();
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
 		$this -> load -> helper('form');
