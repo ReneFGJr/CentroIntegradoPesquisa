@@ -487,22 +487,19 @@ class central_declaracao extends CI_Controller {
 				//Artigos complementos	
 				$artigo_g2 = 'aluno';
 				if ($data['us_g1'] == 'F') { $artigo_g2 = 'aluna';}
-				
 				$artigo_g1 = 'prof.';
 				if ($data['us_g2'] == 'F') { $artigo_g1 = 'profa.';}
-				
 				$artigo_g3 = 'o';
 				if ($data['us_g2'] == 'F') { $artigo_g3 = 'a';}
-				
 				$artigo_g4 = 'o';
 				if ($data['us_g1'] == 'F') { $artigo_g4 = 'a';}
 				
 				$protocolo = trim($data['dc_texto_1']);
-				$content = 'Declaro para os devidos fins que '. $artigo_g4 . ' alun'. $artigo_estudante . ' <b>' . $data['nome_user_second'] . '</b>
+				
+				$content = 'Declaro para os devidos fins que '. $artigo_g4 . ' alun'. $artigo_g4 . ' <b>' . $data['nome_user_second'] . '</b>
 				participou do Programa Institucional de Bolsas de Iniciação Científica (PIBIC)
 				com Bolsa (' . $data['edital'] . ') no período de agosto de 2011 até julho de 2012, 
-				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>" , orientad'. $artigo_estudante .' pel'. $artigo_prof_complemento .'
-				' . $artigo_professor . ' ' . $artigo_doutor . ' <b>' . $data['nome_user_main'] . '</b>" e,
+				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>" , orientad'. $artigo_g4 .' pel'. $artigo_g3 .' '. $artigo_g1 . ' '.  '<b>' . $data['nome_user_main'] . '</b>" e,
 				realizou apresentação no XX Seminário de Iniciação Científica, XIV Mostra de Pesquisa, I PIBITI, realizado nos dias 06, 07 e 08 de Novembro de 2012.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;

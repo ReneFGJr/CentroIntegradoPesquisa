@@ -10,7 +10,7 @@ $ass_1_3 = utf8_encode('');
 */
  
 /* Background */
-$img_file = 'img/certificado/cicpg/certifica_cicpg.jpg';
+$img_file = 'img/certificado/modelo_declaracao_2014.jpg';
 
 /* Construção do PDF */
 tcpdf();

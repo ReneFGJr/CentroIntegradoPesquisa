@@ -10,7 +10,7 @@ $ass_1_3 = utf8_encode('');
 */
  
 /* Background */
-$img_file = 'img/certificado/img/semic-2013.jpg';
+$img_file = 'img/certificado/modelo_declaracao_2013.jpg';
 
 /* Construção do PDF */
 tcpdf();
