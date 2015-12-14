@@ -1,5 +1,7 @@
 <?php
 $us_nada = '<font color="blue">[em construção]</font>';
+
+$link_pre = ' <a href="#" onclick="newwindows(\''.base_url('index.php/ic/form/PROF_FORM/'.$ic_plano_aluno_codigo.'/'.checkpost_link($ic_plano_aluno_codigo)).'\',600,800);" class="link lt1">[F]</A>';
 ?>
 <fieldset class="fieldset01" >
 	<legend class="legend01">
@@ -39,6 +41,9 @@ $us_nada = '<font color="blue">[em construção]</font>';
 						</tr>
 						<tr>
 							<td class="lt0" align="right">Ativado</td><td class="lt1" ><B><?php echo $ic_dt_ativacao; ?></b></td>
+						</tr>
+						<tr>
+							<td class="lt0" align="right">Form. Acompanhamento</td><td class="lt1"><B><B><font color="a0a0a0"><?php echo $ic_pre_data . $link_pre; ?></B></b></td>
 						</tr>
 						<tr>
 							<td class="lt0" align="right">Data de entrega Rel. Parcial</td><td class="lt1"><B><B><font color="a0a0a0"><?php echo $ic_rp_data; ?></B></b></td>

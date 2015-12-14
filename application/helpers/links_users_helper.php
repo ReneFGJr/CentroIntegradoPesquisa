@@ -65,7 +65,7 @@ function link_ic($id=0,$page='ic')
 		return($href);
 	}
 	
-function link_perfil($nome='',$id,$ln)
+function link_perfil($nome='',$id,$ln=array())
 	{
 		$id = round($id);
 		/* Inativo */

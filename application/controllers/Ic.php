@@ -1212,9 +1212,10 @@ class ic extends CI_Controller {
 		{
 		/* Load Models */
 		$this -> load -> model('ics');
+		$this -> load -> model('ics_acompanhamento');
 		$cp = $this -> ics -> cp_switch();
 		$data = array();
-
+		$tela01 = '';
 		$this -> cab();
 		
 		switch ($tipo)
@@ -1223,6 +1224,8 @@ class ic extends CI_Controller {
 				$fld = 'ic_pre_data';
 				$tit = 'Formulário do Professor';
 				$ano = date("Y");
+				
+				$tela01 = $this->ics_acompanhamento->form_acompanhamento_prof($ano);
 				break;
 			default:
 				$fld = '';
@@ -1263,7 +1266,7 @@ class ic extends CI_Controller {
 							<td align="center" class="lt5"><b>'.$tot.'</b></td></tr>';
 				$sx .= '</table>';
 			}
-		$data['content'] = $sx;
+		$data['content'] = $sx . $tela01;
 		$this->load->view('content',$data);
 		
 		$this -> load -> view('header/content_close');

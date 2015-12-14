@@ -291,7 +291,7 @@ class protocolos_ic extends CI_Model {
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id
 						where (ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha')
-						$wh
+						$wh and id_s = 1
 						order by ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
 						";
 		
@@ -299,6 +299,8 @@ class protocolos_ic extends CI_Model {
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%">';
 		for ($r = 0; $r < count($rlt); $r++) {
+			$btm = $bt;
+			$tpm = $tp;
 			$line = $rlt[$r];
 			$edital = trim($line['mb_tipo']);
 			$CI = &get_instance();
@@ -306,12 +308,12 @@ class protocolos_ic extends CI_Model {
 			$line['page'] = 'pibic';
 			$st = $line['id_s'];
 			if (($st == '2') or ($st == '4')) {
-				$bt = '';
-				$tp = '';
+				$btm = '';
+				$tpm = '';
 			}
 
-			$line['botao'] = $bt;
-			$line['acao'] = $tp;
+			$line['botao'] = $btm;
+			$line['acao'] = $tpm;
 
 			$sx .= $this -> load -> view("ic/plano-lista", $line, true);
 			$sx .= '</td></tr>';
