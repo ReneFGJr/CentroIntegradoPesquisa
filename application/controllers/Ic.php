@@ -92,7 +92,7 @@ class ic extends CI_Controller {
 
 		/* Salva */
 		if ($form -> saved > 0) {
-			redirect(base_url('index.php/ic'));
+			redirect(base_url('index.php/ic/comunicacao'));
 		}
 
 		//$this -> load -> view('content', $data);
@@ -726,6 +726,7 @@ class ic extends CI_Controller {
 		$form -> see = true;
 		$form -> edit = true;
 		$form -> novo = true;
+		$form -> order = ' id_mc desc ';
 		$form = $this -> comunicacoes -> row($form);
 
 		$form -> row_edit = base_url('index.php/ic/comunicacao_edit');

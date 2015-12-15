@@ -20,8 +20,7 @@ class comunicacoes extends CI_Model
 			array_push($cp,array('$Q '.$sql_own,'mc_own','Enviador',False,True));
 			array_push($cp,array('$H8','mc_dt_envio','',False,True));
 			array_push($cp,array('$HV','mc_status_mgs_id',1,False,True));
-			array_push($cp,array('$B','',msg('enviar'),false,True));
-			
+			array_push($cp,array('$B','',msg('enviar'),false,True));			
 			return($cp);
 		}	
 	
@@ -47,7 +46,7 @@ class comunicacoes extends CI_Model
 	function row($obj) {
 		$obj -> fd = array('id_mc', 'mc_titulo','mc_dt','mgs_nome');
 		$obj -> lb = array('ID', 'Nome','Data','status');
-		$obj -> mk = array('', 'L');
+		$obj -> mk = array('', 'L','C','C');
 		return ($obj);
 	}	
 	
@@ -84,6 +83,7 @@ class comunicacoes extends CI_Model
 	function le_email_grupo($gr=0)
 		{
 			$email = '';
+			/* Professores orientadores IC com planos vigente */
 			if ($gr == 7)
 				{
 					$ano = date("Y");
@@ -107,6 +107,30 @@ class comunicacoes extends CI_Model
 							$email .= $line['usm_email'].cr();
 						}
 				}
+			/* Professores orientadores IC que não entregaram relatório de acompanhamento */
+			if ($gr == 9)
+				{
+					$ano = date("Y");
+					if (date("m") < 8) { $ano = ($ano -1); }
+					$sql = "select distinct usm_email from ( 
+							       select distinct id_us as id from ic inner 
+							       join ic_aluno on id_ic = ic_id 
+							       inner join ic_modalidade_bolsa on id_mb = mb_id 
+							       inner join us_usuario on ic_cracha_prof = us_cracha
+							       where ic_ano = '$ano'
+							       and us_ativo = 1 and ic_pre_data = '0000-00-00'
+							       ) as tabela
+							inner join us_email on id = usuario_id_us
+							where usm_ativo = 1 ";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$email = '';
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$email .= $line['usm_email'].cr();
+						}
+				}				
 			return($email);
 		}
 	function form_comunicacao_0()
