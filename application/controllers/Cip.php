@@ -38,7 +38,9 @@ class CIP extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('CIP', '/cip/'));
+		array_push($menus, array('home', 'index.php/cip/'));
+		array_push($menus, array(msg('captacao_recursos'), 'index.php/cip/captacao'));
+		array_push($menus, array(msg('artigos'), 'index.php/cip/artigos'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -46,20 +48,59 @@ class CIP extends CI_Controller {
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
+		$this -> load -> view('header/content_open');
 	}
 
 	function index($id = 0) {
 
 		/* Load Models */
 		$this -> load -> model('usuarios');
+		$this -> load -> model('cips');
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
+		
+
+		/* Formulario */
+		$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
+		$data['resumo'] = $this -> cips -> resumo();
+
+		/* Search */
+		$search_term = $this -> input -> post("dd89");
+		$search_acao = $this -> input -> post("acao");
+		if ((strlen($search_acao) > 0) and (strlen($search_term) > 0)) {
+			$search_term = troca($search_term, "'", '´');
+			if ((strlen(sonumero($search_term)) > 0) and (strlen(sonumero($search_term)) <= 8)) {
+				$mt = 1;
+				$data['search'] .= $this -> ics -> search($search_term);
+			} else {
+				$mt = 2;
+				$data['search'] .= $this -> ics -> search_term($search_term);
+			}
+			$data['search'] .= '<br>Metodo: ' . $mt;
+		}
+
+		/* Mostra tela principal */
+		$this -> load -> view('cip/home', $data);		
+		
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function captacao()
+		{
+		$this->load->model('captacoes');
+		$this -> cab();
+		
+		$capta_resumo = $this->captacoes->resumo_processos();
+		$data['content'] = $capta_resumo;
+		$this->load->view('content',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);	
+		}
 
 	function artigo($id = 0) {
 

@@ -1,6 +1,30 @@
 <?php
 class captacoes extends CI_Model
 	{
+	function resumo_processos()
+		{
+			$it = 6;
+			$sz = round(100/$it);
+			$ar = array(0,0,0,0,0,0,0,0,0,0);
+			$sx = '<table class="lt2 border1" width="100%">';
+			$sx .= '<tr class="lt1">';
+				$sx .= '<th width="'.$sz.'%">'.msg('cap_em_cadastro').'</th>';
+				$sx .= '<th width="'.$sz.'%">'.msg('cap_devolvido_correcoes').'</th>';
+				$sx .= '<th width="'.$sz.'%">'.msg('cap_validacao_coordenador').'</th>';
+				$sx .= '<th width="'.$sz.'%">'.msg('cap_validacao_diretoria').'</th>';
+				$sx .= '<th width="'.$sz.'%">'.msg('cap_comunicacao').'</th>';
+				$sx .= '<th width="'.$sz.'%">'.msg('cap_finalizado').'</th>';
+			$sx .= '</tr>';
+			$sx .= '<tr align="center" class="lt5">';
+			for ($r=0;$r < $it;$r++)
+				{
+					$link = '<a href="'.base_url('index.php/cip/captacoes/'.$r).'" class="link lt6">';
+					$sx .= '<td class="border1">'.$link.$ar[$r].'</a></td>';
+				}
+			$sx .= '</tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
 	function lista($cracha='')
 		{
 			$sql = "select * from captacao

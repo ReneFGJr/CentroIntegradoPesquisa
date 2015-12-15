@@ -12,6 +12,16 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+	
+/***************************************************************************************************/
+/************************************************************************************** C I P ******/
+$lang['cap_em_cadastro'] = 'Em cadastro';
+$lang['cap_devolvido_correcoes'] = 'Correção do professor';
+$lang['cap_validacao_coordenador'] = 'Validação do coordenador';
+$lang['cap_validacao_diretoria'] = 'Validação da diretoria';
+$lang['cap_comunicacao'] = 'Para comunicação';
+$lang['cap_finalizado'] = 'Finalizado';
+	
 /* pagina de usuarios */
 $lang['page_usuarios'] = 'Cadastro de pessoas';
 
