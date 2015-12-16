@@ -54,6 +54,8 @@ $pdf->writeHTMLCell(100, 50, 110, $xx+5, $ass_2_2, 0, 2, 0, true, 'C', true);
 $pdf -> SetFont('helvetica', '', 6);
 $pdf->writeHTMLCell(0, 0, 6, 293, utf8_encode('DECLARAÇÃO EMITIDA DIGITALMENTE'), 0, 2, 0, true, 'L', true);
 
+$pdf -> SetFont('helvetica', '', 6);
+$pdf->writeHTMLCell(0, 0, 6, 293, utf8_encode('Data de emissão '.date("d/m/y") ), 0, 2, 0, true, 'R', true);
 
 /* Arquivo de saida */
 $nome_asc = UpperCaseSql($nome_user_main);

@@ -49,6 +49,8 @@ $pdf->writeHTMLCell(0, 0, 180, 171, $ass_2_2, 0, 2, 0, true, 'C', true);
 $pdf -> SetFont('helvetica', '', 6);
 $pdf->writeHTMLCell(0, 0, 6, 205, 'CERTIFICADO EMITIDO DIGITALMENTE', 0, 2, 0, true, 'L', true);
 
+$pdf -> SetFont('helvetica', '', 6);
+$pdf->writeHTMLCell(0, 0, 6, 205, utf8_encode('Data de emissão '.date("d/m/y") ), 0, 2, 0, true, 'R', true);
 
 // set style for barcode
 $style = array(

@@ -72,6 +72,9 @@ $pdf->Text(174, 281, utf8_encode('LINK DE VALIDAÇÂO'));
 $pdf -> SetFont('helvetica', '', 6);
 $pdf->writeHTMLCell(0, 0, 6, 293, utf8_encode('DECLARAÇÃO EMITIDA DIGITALMENTE'), 0, 2, 0, true, 'L', true);
 
+$pdf -> SetFont('helvetica', '', 6);
+$pdf->writeHTMLCell(0, 0, 6, 293, utf8_encode('Data de emissão '.date("d/m/y") ), 0, 2, 0, true, 'R', true);
+
 /* Arquivo de saida */
 $nome_asc = UpperCaseSql($nome_user_main);
 //$nome_asc = troca($nome_asc,' ','_');
