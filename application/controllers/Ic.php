@@ -168,6 +168,8 @@ class ic extends CI_Controller {
 				/* enviar e-mail */								
 				enviaremail($para, $assunto, $texto, $de);
 			}
+			enviaremail(array('cleybe.vieira@pucpr.br'), $assunto, $texto, $de);
+			enviaremail(array('rene.gabriel@pucpr.br'), $assunto, $texto, $de);
 		}
 
 		$data['content'] = '<table width="100%">
