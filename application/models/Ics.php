@@ -284,7 +284,7 @@ class ics extends CI_model {
 			$sx .= $link . $sff;
 			
 			$sx .= '<td align="left">';
-			$sx .= $sf . $line['al_cpf'] . $sff;
+			$sx .= $sf . mask_cpf($line['al_cpf']) . $sff;
 			$sx .= '</td>';			
 
 			$sx .= '<td>';
