@@ -242,11 +242,12 @@ class ics extends CI_model {
 		$sx = '';
 		$sh = '<tr><th>protocolo</th>
 					<th>ano</th>
-					<th>nome_aluno</th>
-					<th>curso_aluno</th>
-					<th>nome_prof</th>
-					<th>curso_prof</th>
-					<th>status</th>
+					<th align="left">nome_aluno</th>
+					<th align="left">cpf_aluno</th>
+					<th align="left">curso_aluno</th>
+					<th align="left">nome_prof</th>
+					<th align="left">curso_prof</th>
+					<th align="right">status</th>
 					</tr>';
 		$to = 0;
 		$xmb = '';
@@ -281,6 +282,10 @@ class ics extends CI_model {
 			$sx .= '<td>';
 			$link = $sf . link_perfil($line['al_nome'], $line['aluno_id']);
 			$sx .= $link . $sff;
+			
+			$sx .= '<td align="left">';
+			$sx .= $sf . $line['al_cpf'] . $sff;
+			$sx .= '</td>';			
 
 			$sx .= '<td>';
 			$sx .= $sf . $line['al_curso'] . $sff;
@@ -295,7 +300,7 @@ class ics extends CI_model {
 			$sx .= $sf . $line['pf_curso'] . $sff;
 			$sx .= '</td>';
 
-			$sx .= '<td>';
+			$sx .= '<td align="right">';
 			$sx .= $sf . $line['s_situacao'] . $sff;
 			$sx .= '</td>';
 
