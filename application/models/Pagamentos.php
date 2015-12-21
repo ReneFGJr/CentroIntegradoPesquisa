@@ -1,6 +1,7 @@
 <?php
 class pagamentos extends CI_Model {
 	var $tabela = 'ic_pagamentos';
+	var $filename = '';
 	
 	function dir($dir) {
 		$ok = 0;
@@ -22,6 +23,14 @@ class pagamentos extends CI_Model {
 		{
 			$data = date("Y-m-d");
 			$file = date("Y-m-d.H-i-s").'-T'.$modalidade.'-A'.strzero($edital,3).'.seq';
+			$seq = 1;
+			$file = date("Ymd").'_'.$modalidade.'_'.$seq.'.SEQ';
+			while (file_exists($file))
+				{
+					$seq++;
+					$file = date("Ymd").'_'.$modalidade.'_'.$seq.'.SEQ';
+				}
+			$this->filename = $file;
 			$this->pagamentos->dir('_document');
 			$this->pagamentos->dir('_document/_pagamento/');
 			$this->pagamentos->dir('_document/_pagamento/'.date("Y"));
@@ -34,7 +43,8 @@ class pagamentos extends CI_Model {
 			fwrite($fl,$txt);
 			fclose($fl);
 			$user = round($_SESSION['id_us']);
-			
+			$venc = sonumero($venc);
+			$venc = substr($venc,0,4).'-'.substr($venc,4,2).'-'.substr($venc,6,2);
 			$sql = "insert into ic_pagamentos_arquivo
 						(
 							paa_arquivo, paa_data, paa_user,
@@ -45,7 +55,7 @@ class pagamentos extends CI_Model {
 						)
 					";
 			$this->db->query($sql);
-			return(1);
+			return($file);
 		}
 	function gerar_pagamento_bolsa_arquivo($modalidade, $edital, $venc) {
 		$fl = $this -> pagamentos -> header_rq();
@@ -77,7 +87,8 @@ class pagamentos extends CI_Model {
 		}
 		$fl .= $this -> pagamentos -> req_fim();
 		
-		$this->pagamentos->save_file($fl,$modalidade, $edital, $venc);
+		$file = $this->pagamentos->save_file($fl,$modalidade, $edital, $venc);
+		//$fl = '<a href="'.base_url($file).'">Download do Arquivo</a>';
 		return ($fl);
 	}
 
@@ -441,7 +452,7 @@ class pagamentos extends CI_Model {
 		}
 		if ($to1 > 0) {
 			$sa .= '<td width="80" class="nopr">';
-			$sa .= '<form method="get" action="' . base_url('index.php/ic/pagamento_planilha_hsbc/' . $bolsa . '/' . $ano . '/' . $venc) . '" target="_new">';
+			$sa .= '<form method="get" action="' . base_url('index.php/ic/pagamento_planilha_hsbc/' . $bolsa . '/' . $ano . '/' . $venc) . '">';
 			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="botao3d back_green_shadown back_green" >';
 			$sa .= '</form>';
 			$sa .= '</td>';

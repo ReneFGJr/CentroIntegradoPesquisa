@@ -816,40 +816,42 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function pagamento_planilha_hsbc($modalidade = '', $edital = '',$venc='') {
+	function pagamento_planilha_hsbc($modalidade = '', $edital = '', $venc = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
 		$this -> load -> model('bancos');
 		$this -> load -> model('ics');
 
-		$this -> cab();
 		$data = array();
-		
+
 		/* seta variavel de erro como nada*/
 		$err = '';
 		$tela = '';
-		
-		/* Data invalda */
-		if (strlen($venc) < 10)
-			{
-				$err = 'Data de pagamento inválida';
-			}
-			
-		if (strlen($err) > 0)
-			{
-				$tela = '<center><h1><font color="red">'.$err.'</font></h1></center>';
-			} else {
-				$fl = $this->pagamentos->gerar_pagamento_bolsa_arquivo($modalidade, $edital,$venc);
-				$tela = '<pre>'.$fl.'</pre>';
-			}
-		
-		$data['content'] = $tela;
-		$this -> load -> view('content', $data);
 
-		/*Fecha */ 		/*Gera rodapé*/
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
+		/* Data invalda */
+		if (strlen($venc) < 10) {
+			$err = 'Data de pagamento inválida';
+		}
+
+		if (strlen($err) > 0) {
+			$tela = '<center><h1><font color="red">' . $err . '</font></h1></center>';
+		} else {
+			$fl = $this -> pagamentos -> gerar_pagamento_bolsa_arquivo($modalidade, $edital, $venc);
+			$tela = '<pre>' . $fl . '</pre>';
+		}
+		$file = $this -> pagamentos -> filename;
+
+		//header("Content-Type: plain/pdf");
+		header('Content-Type: text/plain');
+		header("Content-type: application-download");
+		header("Content-disposition: attachment; filename=$file");
+		header("Content-Transfer-Encoding: binary");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		echo $tela;
+
 	}
+
 	function pagamentos($date = '', $action = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
@@ -1447,7 +1449,8 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO'; ;
+			$msg = 'REMOVIDO';
+			;
 		}
 
 		$data = array();
@@ -1617,16 +1620,15 @@ class ic extends CI_Controller {
 		$this -> geds -> file_delete($id);
 	}
 
-	function form($plano = 0, $check = ''){
-		
+	function form($plano = 0, $check = '') {
+
 		/* Load Models */
 		$this -> load -> model('ics');
 		$data = $this -> ics -> le_form_prof($plano);
 		$this -> cab();
-		
+
 		$this -> load -> view('ic/mostra_acompanhamento_prof', $data);
-		
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 
