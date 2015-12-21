@@ -1,4 +1,16 @@
 <?php
+function strz($vz,$tm)
+	{
+		$vz = trim($vz);
+		$vz = troca($vz,'-','');
+		$vz = troca($vz,'X','0');		
+		$vz = troca($vz,'.','');
+		while (strlen($vz) < $tm)
+			{
+				$vz = '0'.$vz;
+			}
+		return($vz);
+	}
 class bancos extends CI_model
 	{
 	function checadv($ag='',$cc='',$banco='',$ccmod='')

@@ -792,7 +792,7 @@ class ic extends CI_Controller {
 		array_push($cp, array('$H8', '', '', False, True));
 		array_push($cp, array('$[' . date("Y") . '-' . (date("Y") + 1) . ']', '', 'Edital', True, True));
 		array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_vigente = 1 and mb_valor > 0', '', 'Modalidade', True, True));
-
+		array_push($cp, array('$D8', '', msg('data vencimento'), True, True));
 		array_push($cp, array('$B8', '', msg('avancar') . ' >>', False, True));
 
 		$form = new form;
@@ -803,8 +803,9 @@ class ic extends CI_Controller {
 		if ($form -> saved > 0) {
 			$bolsa = get('dd2');
 			$ano = get('dd1');
+			$venc = brtos(get('dd3'));
 
-			$tela = $this -> pagamentos -> gerar_pagamento_bolsa($bolsa, $ano);
+			$tela = $this -> pagamentos -> gerar_pagamento_bolsa($bolsa, $ano, $venc);
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
 
@@ -816,6 +817,40 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function pagamento_planilha_hsbc($modalidade = '', $edital = '',$venc='') {
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		$this -> load -> model('bancos');
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+		
+		/* seta variavel de erro como nada*/
+		$err = '';
+		$tela = '';
+		
+		/* Data invalda */
+		if (strlen($venc) < 10)
+			{
+				$err = 'Data de pagamento inválida';
+			}
+			
+		if (strlen($err) > 0)
+			{
+				$tela = '<center><h1><font color="red">'.$err.'</font></h1></center>';
+			} else {
+				$fl = $this->pagamentos->gerar_pagamento_bolsa_arquivo($modalidade, $edital,$venc);
+				$tela = '<pre>'.$fl.'</pre>';
+			}
+		
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+		/*Fecha */ 		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 	function pagamentos($date = '', $action = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
