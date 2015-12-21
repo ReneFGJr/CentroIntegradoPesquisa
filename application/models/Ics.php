@@ -1614,6 +1614,21 @@ class ics extends CI_model {
 			$sx .= '</table>';
 			return($sx);
 		}
+		
+		
+		function form($plano = 0, $check = ''){
+		
+			/* Load Models */
+			$this -> load -> model('ics');
+			$data = $this -> ics -> le_form_prof($plano);
+			$this -> cab();
+			
+			$this -> load -> view('ic/mostra_acompanhamento_prof', $data);
+			
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+
+	}
 
 }
 ?>
