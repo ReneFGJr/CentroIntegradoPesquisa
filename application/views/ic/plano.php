@@ -5,7 +5,7 @@ if ($ic_pre_data != '0000-00-00') {
 	if (function_exists("perfil")) {
 		if (perfil('#DGP#CPS#COO#CPP#SPI#ADM') == 1) {
 			$link_pre = '<div class="nopr" style="z-index:999999; float: right;">
-					<a href="#" onclick="newwindows(\'' . base_url('index.php/ic/form/' . $ic_plano_aluno_codigo . '/' . checkpost_link($ic_plano_aluno_codigo)) . '\',1000,500);" class="link lt1" style="z-index: 1000;">
+					<a href="#" onclick="newwindows(\'' . base_url('index.php/ic/form/' . $ic_plano_aluno_codigo . '/' . checkpost_link($ic_plano_aluno_codigo)) . '\',600,500);" class="link lt1" style="z-index: 1000;">
 					<img src="' . base_url('img/icon/icone_post_form.png') . '" height="12">
 					</A></div>';
 		}

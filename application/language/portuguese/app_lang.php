@@ -120,10 +120,30 @@ $lang['lb_form_aluno_pa10'] = 'Descrever atividades';
  /** para professor */
 $lang['lb_form_prof_pa1'] = '1)	O estudante tem participado das discussões com seu grupo de pesquisa?';
 $lang['lb_form_prof_pa2'] = '2)	Com que frequência você tem encontrado com seu orientado? ';
-$lang['lb_form_prof_pa3'] = '3)	Seu contato com o estudante  é: ';
-$lang['lb_form_prof_pa4'] = '4)	O cronograma do plano de atividades está ';
+$lang['lb_form_prof_pa3'] = '3)	Seu contato com o estudante é: ';
+$lang['lb_form_prof_pa4'] = '4)	O cronograma do plano de atividades está: ';
 $lang['lb_form_prof_pa5'] = '5)	Há indícios de displicência do estudante com as atividades de pesquisa? ';
 $lang['lb_form_prof_pa6'] = '6)	Espaço livre para algum comentário';
+$lang['lb_form_prof_pa7'] = '6)	Comentários Gerais.';
+
+//Perguntas do formulário de acompanhamento do professor com o aluno
+//pergunta 01
+$lang['lb_form_prof_pa1_1'] = 'Sim';
+$lang['lb_form_prof_pa1_2'] = 'Não';
+//pergunta 02
+
+//pergunta 03
+$lang['lb_form_prof_pa3_1'] = 'Contato por e-mail';
+$lang['lb_form_prof_pa3_2'] = 'Presencial';
+$lang['lb_form_prof_pa3_3'] = 'Por e-mail e presencial';
+//pergunta 04
+$lang['lb_form_prof_pa4_1'] = 'Esta em dia';
+$lang['lb_form_prof_pa4_2'] = 'No momento atrasado';
+$lang['lb_form_prof_pa4_3'] = 'Adiantado';
+//pergunta 05
+$lang['lb_form_prof_pa5_1'] = 'Sim';
+$lang['lb_form_prof_pa5_2'] = 'Não';
+
 
 
 /****************************** AVALIADORES */
