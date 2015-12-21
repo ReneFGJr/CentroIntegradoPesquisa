@@ -22,7 +22,7 @@ class ic extends CI_Controller {
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
-		$this -> security();		
+		$this -> security();
 	}
 
 	function security() {
@@ -104,7 +104,7 @@ class ic extends CI_Controller {
 	function comunicacao_view($id = 0, $gr = 0, $tp = 0) {
 		/* Load Models */
 		$this -> load -> model('comunicacoes');
-		
+
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
 		$this -> load -> library('email', $config);
 
@@ -113,19 +113,18 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 		$data = $this -> comunicacoes -> le($id);
-		
-		if (strlen(get("dd1"))==0)
-			{
-				$id_gr = $data['mc_tipo'];
-				$_POST['dd1'] = $this->comunicacoes->le_email_grupo($id_gr);
-			}
-		
-		
+
+		if (strlen(get("dd1")) == 0) {
+			$id_gr = $data['mc_tipo'];
+			$_POST['dd1'] = $this -> comunicacoes -> le_email_grupo($id_gr);
+		}
+
 		$head = base_url($data['m_header']);
 		$foot = base_url($data['m_foot']);
-		
+
 		$msg_body = $data['mc_texto'];
-		if ($data['mc_formato'] == 'TEXT') { $msg_body = mst($msg_body); }		
+		if ($data['mc_formato'] == 'TEXT') { $msg_body = mst($msg_body);
+		}
 
 		$form = new form;
 		$cp = array();
@@ -143,29 +142,30 @@ class ic extends CI_Controller {
 			$em = troca($em, chr(8), '');
 			$em = troca($em, chr(15), '');
 			$ems = splitx(';', $em . ';');
-	
+
 			for ($r = 0; $r < count($ems); $r++) {
 				$para = array($ems[$r]);
 				$de = $data['mc_own'];
 				$assunto = $data['mc_titulo'];
-				
+
 				/* texto */
 				$texto_o = $data['mc_texto'];
-				if (trim($data['mc_formato']) == 'TEXT') { $texto_o = mst($texto_o); }
+				if (trim($data['mc_formato']) == 'TEXT') { $texto_o = mst($texto_o);
+				}
 				$texto = '<table width="700">';
 				if (strlen($head) > 0) {
 					$texto .= '<tr><td><img src="' . $head . '" width="700"></td></tr>';
 					$texto .= '<tr><td><br></td></tr>';
 				}
 				$texto .= '<tr><td>';
-				$texto .= $texto_o.'<br><br></td></tr>';
-				
+				$texto .= $texto_o . '<br><br></td></tr>';
+
 				if (strlen($foot) > 0) {
 					$texto .= '<tr><td><img src="' . $foot . '" width="700"></td></tr>';
-				}				
+				}
 				$texto .= '</table>';
-				
-				/* enviar e-mail */								
+
+				/* enviar e-mail */
 				enviaremail($para, $assunto, $texto, $de);
 			}
 			enviaremail(array('cleybe.vieira@pucpr.br'), $assunto, $texto, $de);
@@ -177,10 +177,10 @@ class ic extends CI_Controller {
 							<tr valign="top">
 								<td>
 								<table width="700" align="center" class="border1">
-								<tr><td><img src="'.$head.'" width="700"></td></tr>
+								<tr><td><img src="' . $head . '" width="700"></td></tr>
 								<tr><td><br>' . $msg_body . '</td></tr>
 								<tr><td><br><br><br></td></tr>
-								<tr><td><img src="'.$foot.'" width="700"></td></tr>									
+								<tr><td><img src="' . $foot . '" width="700"></td></tr>									
 								</table>
 								</td>
 								<td>' . $tela . '</td>
@@ -623,7 +623,7 @@ class ic extends CI_Controller {
 
 	function report_orientadores($ano = 0) {
 		$this -> load -> model('ics');
-		
+
 		/* Ano de análise */
 		if ($ano == 0) {
 			if (date("m") < 8) {
@@ -632,13 +632,12 @@ class ic extends CI_Controller {
 				$ano = date("Y");
 			}
 		}
-		
-		
+
 		$this -> cab();
 		$data = array();
 
 		$data['content'] = $orientadores = $this -> ics -> orientadores_ic($ano);
-		$this->load->view('content',$data);
+		$this -> load -> view('content', $data);
 
 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
@@ -1246,8 +1245,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function entrega($tipo='')
-		{
+	function entrega($tipo = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
 		$this -> load -> model('ics_acompanhamento');
@@ -1255,61 +1253,57 @@ class ic extends CI_Controller {
 		$data = array();
 		$tela01 = '';
 		$this -> cab();
-		
-		switch ($tipo)
-			{
-			case 'FORM_PROF':
+
+		switch ($tipo) {
+			case 'FORM_PROF' :
 				$fld = 'ic_pre_data';
 				$tit = 'Formulário do Professor';
 				$ano = date("Y");
-				
-				$tela01 = $this->ics_acompanhamento->form_acompanhamento_prof($ano);
+
+				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
-			default:
+			default :
 				$fld = '';
 				$tit = '';
 				break;
-			}
-			
+		}
+
 		$sx = '';
-		if (strlen($fld) > 0)
-			{
-				$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao from ic
+		if (strlen($fld) > 0) {
+			$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao from ic
 							where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
 						union
 						select 2 as ordem, count(*) as total, 'Não entregue' as descricao from ic
 							where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
 						order by ordem";
-				$rlt = $this->db->query($sql);
-				$rlt = $rlt -> result_array();
-				$sx .= '<table width="400" class="lt1 border1">';
-				$sx .= '<tr><td colspan=2 class="lt2"><b>'.$tit.'</b></td></tr>';
-				$sx .= '<tr><th>situação</th><th>total</th><th>percentual</th></tr>';
-				$tot = 0;
-				for ($r=0;$r < count($rlt);$r++)
-					{
-						$line  = $rlt[$r];
-						$tot = $tot + $line['total'];
-					}
-									
-				for ($r=0;$r < count($rlt);$r++)
-					{
-						$line  = $rlt[$r];
-						$sx .= '<tr><td align="right">'.$line['descricao'].'</td>';
-						$sx .= '<td align="center" class="lt4">'.$line['total'].'</td>';
-						$sx .= '<td align="center">'.number_format(100 * ($line['total'] / $tot),1,',','.').'%</td>';
-						$sx .= '</tr>';
-					} 
-				$sx .= '<tr><td align="right">Total</td>
-							<td align="center" class="lt5"><b>'.$tot.'</b></td></tr>';
-				$sx .= '</table>';
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$sx .= '<table width="400" class="lt1 border1">';
+			$sx .= '<tr><td colspan=2 class="lt2"><b>' . $tit . '</b></td></tr>';
+			$sx .= '<tr><th>situação</th><th>total</th><th>percentual</th></tr>';
+			$tot = 0;
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				$tot = $tot + $line['total'];
 			}
-		$data['content'] = $sx . $tela01;
-		$this->load->view('content',$data);
-		
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);			
+
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				$sx .= '<tr><td align="right">' . $line['descricao'] . '</td>';
+				$sx .= '<td align="center" class="lt4">' . $line['total'] . '</td>';
+				$sx .= '<td align="center">' . number_format(100 * ($line['total'] / $tot), 1, ',', '.') . '%</td>';
+				$sx .= '</tr>';
+			}
+			$sx .= '<tr><td align="right">Total</td>
+							<td align="center" class="lt5"><b>' . $tot . '</b></td></tr>';
+			$sx .= '</table>';
 		}
+		$data['content'] = $sx . $tela01;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function acompanhamento() {
 		/* Load Models */
@@ -1318,7 +1312,7 @@ class ic extends CI_Controller {
 		$data = array();
 
 		$this -> cab();
-		
+
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Acompanhamento', 'Abrir ou fechar sistemas', 'ITE', '/ic/acompanhamento_sw'));
@@ -1327,8 +1321,7 @@ class ic extends CI_Controller {
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
-		$this -> load -> view('header/main_menu', $data);		
-
+		$this -> load -> view('header/main_menu', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -1454,8 +1447,7 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();
@@ -1623,6 +1615,21 @@ class ic extends CI_Controller {
 		$this -> geds -> tabela = 'ic_ged_documento';
 		$this -> geds -> file_path = '_document/ic/';
 		$this -> geds -> file_delete($id);
+	}
+
+	function form($plano = 0, $check = ''){
+		
+		/* Load Models */
+		$this -> load -> model('ics');
+		$data = $this -> ics -> le_form_prof($plano);
+		$this -> cab();
+		
+		$this -> load -> view('ic/mostra_acompanhamento_prof', $data);
+		
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
 	}
 
 }

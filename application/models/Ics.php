@@ -982,7 +982,19 @@ class ics extends CI_model {
 			}
 			return ($line);
 		}
-	}	
+	}
+	
+	function le_form_prof($plano = 0){
+		$sql = "select * from ic_acompanhamento" . " 
+					where pa_protocolo = " . $plano;
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$data = $rlt[0];
+
+		return ($data);
+	}
+		
 
 	function lista_ic_professor($id) {
 		$wh = "prof_id = " . round($id);
