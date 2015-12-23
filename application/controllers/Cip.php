@@ -96,11 +96,26 @@ class CIP extends CI_Controller {
 		
 		$capta_resumo = $this->captacoes->resumo_processos();
 		$data['content'] = $capta_resumo;
+		$data['title'] = msg('captacacoes');
 		$this->load->view('content',$data);
 		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);	
 		}
+		
+	function artigos($id = '') {
+
+		$this->load->model('artigos');
+		$this -> cab();
+		
+		$capta_resumo = $this->artigos->resumo_processos($id);
+		$data['content'] = $capta_resumo;
+		$data['title'] = msg('artigos_bonificacoes');
+		$this->load->view('content',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);	
+	}		
 
 	function artigo($id = 0) {
 

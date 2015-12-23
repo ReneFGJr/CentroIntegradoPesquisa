@@ -1,21 +1,26 @@
 <?php
 class producoes extends CI_model {
 	var $qualis_ano = '2014';
-	
+
 	function producao_perfil_grafico($cpf, $area = 0) {
-		$qualis = $this->qualis_ano;
-		
+		$qualis = $this -> qualis_ano;
+		$cpf = strzero(sonumero($cpf),11);
+
 		$sql = "select * from area_avaliacao where id_area = $area";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
 		$line = $rlt[0];
-		$area_nome = $line['area_avaliacao_nome'];		
-		
+		$area_nome = $line['area_avaliacao_nome'];
+
 		$sql = "select * from us_usuario where us_cpf = '$cpf' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
+		if (count($rlt) == 0) {
+			/* CPF do usuário nao localizado */
+			return('CPF não relaciona com o professor '.$cpf);
+		}
 		$line = $rlt[0];
 		$nome = $line['us_nome'];
 		$nome_lattes = $line['us_nome_lattes'];
@@ -28,46 +33,43 @@ class producoes extends CI_model {
 							";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
-		$qualis  = array(0,0,0,0,0,0,0,0,0);
-		$q = array('A1'=>0,'A2'=>1,'B1'=>2,'B2'=>3,'B3'=>4,'B4'=>5,'B5'=>6,'C'=>7,''=>8);
-		$scimago = array(0,0,0,0);
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$line = $rlt[$r];
-				$qu = trim($line['estrato']);
-				$qu = $q[$qu];
-				$qualis[$qu] = $qualis[$qu] + 1; 
-			}
+
+		$qualis = array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+		$q = array('A1' => 0, 'A2' => 1, 'B1' => 2, 'B2' => 3, 'B3' => 4, 'B4' => 5, 'B5' => 6, 'C' => 7, '' => 8);
+		$scimago = array(0, 0, 0, 0);
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$qu = trim($line['estrato']);
+			$qu = $q[$qu];
+			$qualis[$qu] = $qualis[$qu] + 1;
+		}
 		$sx = '<table width="200" class="lt0 border1" >';
-		$sx .= '<tr><th colspan=10>'.$area_nome.'</th></tr>';
+		$sx .= '<tr><th colspan=10>' . $area_nome . '</th></tr>';
 		$sx .= '<tr valign="bottom" align="center">';
 		$sx .= '<td height="80" rowspan=2></td>';
-		for ($r=0;$r < count($qualis);$r++)
-			{
-				$qt = $qualis[$r];
-				if ($qt > 20)
-					{
-						$size = 20*3;
-					} else {
-						$size = $qt*3;		
-					}
-				
-				$sx .= '<td style="min-height: 100px;">';
-				$sx .= $qualis[$r].'<br>';
-				$sx .= '<img src="'.base_url('img/ss/gr_'.strzero($r,2).'.png').'" width="20" height="'.$size.'">';
-				$sx .= '</td>';
+		for ($r = 0; $r < count($qualis); $r++) {
+			$qt = $qualis[$r];
+			if ($qt > 20) {
+				$size = 20 * 3;
+			} else {
+				$size = $qt * 3;
 			}
+
+			$sx .= '<td style="min-height: 100px;">';
+			$sx .= $qualis[$r] . '<br>';
+			$sx .= '<img src="' . base_url('img/ss/gr_' . strzero($r, 2) . '.png') . '" width="20" height="' . $size . '">';
+			$sx .= '</td>';
+		}
 		$sx .= '<tr align="center">
 					<td height="5">A1</td><td>A2</td><td>B1</td><td>B2</td><td>B3</td><td>B4</td><td>B5</td>
 					<td>C</td><td>n.c.</td>
 				</tr>';
 		$sx .= '</table>';
-		return($sx);
+		return ($sx);
 	}
 
 	function producao_perfil($cpf, $area = 0) {
-		$qualis = $this->qualis_ano;
+		$qualis = $this -> qualis_ano;
 		$sql = "select * from us_usuario where us_cpf = '$cpf' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();

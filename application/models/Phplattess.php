@@ -1,58 +1,153 @@
 <?php
 class phpLattess extends CI_Model {
-	
+
+	function row_acpp($obj) {
+		global $cdf, $cdm, $masc;
+		$obj -> fd = array('	id_acpp', 'acpp_autor', 'acpp_ano', 'acpp_titulo', 'acpp_periodico', 'acpp_issn');
+		$obj -> lb = array('cod', msg('Autor'), msg('ano'), msg('titulo'), msg('periodico'), 'issn');
+		$obj -> mk = array('', '', '', '', '', '', '');
+		return ($obj);
+	}
+
 	/********************************
 	 * Relatórios */
-	function producao_artigos()
-		{
+	function producao_artigos() {
 		$sql = "select acpp_ano, count(*) as total 
 					from cnpq_acpp inner 
 					join us_usuario on acpp_autor = us_nome_lattes 
 					group by acpp_ano";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		return($rlt);
-		}
-		
-	function producao_bibliografica()
-		{
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		return ($rlt);
+	}
+
+	function producao_bibliografica() {
 		$sql = "select cc_ano, count(*) as total 
 					from cnpq_bibliografia inner 
 					join us_usuario on cc_nome = us_nome_lattes 
-					where cc_ano > 1980 and cc_ano <= '".date("Y")."'
+					where cc_ano > 1980 and cc_ano <= '" . date("Y") . "'
 					group by cc_ano";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		return($rlt);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		return ($rlt);
+	}
+
+	function docentes_sem_producao($tp=0) {
+		switch($tp)
+			{
+			/* SS sem produção */
+			case '1':
+				$wh = " and (total is null) and (us_professor_tipo = 2) ";
+				break;
+			/* Docentes sem produção */
+			case '2':
+				$wh = " and (total is null) ";
+				break;				
+			default:
+				$wh = '';
+				break;
+			}
+
+		$sql = "select * from us_usuario
+					left join (select count(*) as total, acpp_autor from cnpq_acpp group by acpp_autor ) as tabela on acpp_autor = us_nome_lattes
+					where ((usuario_tipo_ust_id = 2) or (us_professor_tipo = 2))
+					$wh 
+				order by us_nome ";
+				
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="lt1">';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot = $line['total'];
+			$cor = ''; $corf = '';
+			$sx .= '<tr>';
+			
+			$sx .= '<td align="center" class="lt1 borderb1" width="10">';
+			$sx .= ($r + 1) . '.';
+			$sx .= '</td>';
+			
+			if ($tot == 0)
+				{
+					$cor = '<font color="red">';
+					$corf = '</font>';
+					$sx .= '<td class="lt1 borderb1" align="center">';
+					$sx .= $cor;
+					$sx .= 'SP';
+					$sx .= $corf;
+					$sx .= '</td>';					
+				} else {
+					$sx .= '<td class="lt1 borderb1" align="center">';
+					$sx .= $cor;
+					$sx .= $line['total'];
+					$sx .= $corf;
+					$sx .= '</td>';					
+				}
+			
+			
+			$sx .= '<td class="lt1 borderb1">';
+			$sx .= $cor;
+			$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
+			$sx .= $corf;
+			$sx .= '</td>';
+			
+			if ($line['us_professor_tipo']=='2')
+				{
+					if ($tot == 0)
+						{
+							$sx .= '<td class="lt1 borderb1" align="center"><img src="'.base_url('img/icon/icone_exclamation.png').'" height="16"></td>';
+						} else {
+							$sx .= '<td class="lt1 borderb1" align="center">SS</td>';		
+						}
+					
+				} else {
+					$sx .= '<td class="lt1 borderb1" align="center">-</td>';
+				}		
+
+			$sx .= '<td class="lt1 borderb1">';
+			$sx .= $cor;
+			$sx .= mask_cpf($line['us_cpf']);
+			$sx .= $corf;
+			$sx .= '</td>';
+
+			$sx .= '<td class="lt1 borderb1">';
+			$sx .= $cor;
+			$sx .= $line['us_nome_lattes'];
+			$sx .= $corf;
+			$sx .= '</td>';
+
+
+
 		}
-		
-	function producao_orientacao()
-		{
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function producao_orientacao() {
 		$sql = "select or_ano, count(*) as total 
 					from cnpq_orientacao inner 
 					join us_usuario on or_nome = us_nome_lattes 
-					where or_ano > 1980 and or_ano <= '".date("Y")."'
+					where or_ano > 1980 and or_ano <= '" . date("Y") . "'
 					group by or_ano";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		return($rlt);
-		}	
-	function producao_patente()
-		{
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		return ($rlt);
+	}
+
+	function producao_patente() {
 		$sql = "select pt_ano, count(*) as total 
 					from cnpq_patente inner 
 					join us_usuario on pt_nome = us_nome_lattes 
-					where pt_ano > 1980 and pt_ano <= '".date("Y")."'
+					where pt_ano > 1980 and pt_ano <= '" . date("Y") . "'
 					group by pt_ano";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		return($rlt);
-		}			
-		
-	
-	function inport_lattes_orientacoes($tipo='TESE') {
-		$file = $this -> next_file_process($tipo.'_');
-		$sx = '<h3>Processando Arquivos Lattes - '.$tipo.'</h3>';
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		return ($rlt);
+	}
+
+	function inport_lattes_orientacoes($tipo = 'TESE') {
+		$file = $this -> next_file_process($tipo . '_');
+		$sx = '<h3>Processando Arquivos Lattes - ' . $tipo . '</h3>';
 
 		/* Processar */
 		if (strlen($file) > 0) {
@@ -84,15 +179,15 @@ class phpLattess extends CI_Model {
 					$orientado = trim(troca($l[3], '_', ''));
 					$instituicao = trim(troca($l[4], '_', ''));
 					$curso = trim(troca($l[5], '_', ''));
-										
+
 					$outros = '';
 					for ($t = 4; $t < 20; $t++) {
 						if (isset($l[$t])) {
 							$outros .= $l[$t] . ' ';
 						}
 					}
-					$outros = trim(troca($outros,'_',' '));
-					
+					$outros = trim(troca($outros, '_', ' '));
+
 					$sx .= '<br>' . $autor . ', <b>' . $titulo . '</b>';
 					$sx .= ', ' . $ano . ', ' . $orientado;
 
@@ -132,11 +227,11 @@ class phpLattess extends CI_Model {
 			$sx .= '<meta http-equiv="refresh" content="10">';
 		}
 		return ($sx);
-	}	
+	}
 
-	function inport_lattes_patente($tipo='PATEN') {
-		$file = $this -> next_file_process($tipo.'_');
-		$sx = '<h3>Processando Arquivos Lattes - '.$tipo.'</h3>';
+	function inport_lattes_patente($tipo = 'PATEN') {
+		$file = $this -> next_file_process($tipo . '_');
+		$sx = '<h3>Processando Arquivos Lattes - ' . $tipo . '</h3>';
 
 		/* Processar */
 		if (strlen($file) > 0) {
@@ -166,15 +261,15 @@ class phpLattess extends CI_Model {
 					$titulo = trim(troca($titulo, '\\', ''));
 					$ano = trim(troca($l[2], '_', ''));
 					$registro = trim(troca($l[3], '_', ''));
-										
+
 					$outros = '';
 					for ($t = 4; $t < 20; $t++) {
 						if (isset($l[$t])) {
 							$outros .= $l[$t] . ' ';
 						}
 					}
-					$outros = trim(troca($outros,'_',' '));
-					
+					$outros = trim(troca($outros, '_', ' '));
+
 					$sx .= '<br>' . $autor . ', <b>' . $titulo . '</b>';
 					$sx .= ', ' . $ano . ', ' . $registro;
 
@@ -212,10 +307,10 @@ class phpLattess extends CI_Model {
 		}
 		return ($sx);
 	}
-	
-	function inport_lattes_evento($tipo='EVENC') {
-		$file = $this -> next_file_process($tipo.'_');
-		$sx = '<h3>Processando Arquivos Lattes - '.$tipo.'</h3>';
+
+	function inport_lattes_evento($tipo = 'EVENC') {
+		$file = $this -> next_file_process($tipo . '_');
+		$sx = '<h3>Processando Arquivos Lattes - ' . $tipo . '</h3>';
 
 		/* Processar */
 		if (strlen($file) > 0) {
@@ -247,20 +342,20 @@ class phpLattess extends CI_Model {
 					$isbn = trim(troca($l[3], '_', ''));
 					$ano = trim(troca($l[4], '_', ''));
 					$vol = trim(troca($l[5], '_', ''));
-					$pagi = trim(troca($l[6],'_',''));
-					$pagf = trim(troca($l[7],'_',''));
-					$num = trim(troca($l[8],'_',''));
-					$ordem = trim(troca($l[9],'_',''));
-					$doi = trim(troca($l[10],'_',''));
-					
+					$pagi = trim(troca($l[6], '_', ''));
+					$pagf = trim(troca($l[7], '_', ''));
+					$num = trim(troca($l[8], '_', ''));
+					$ordem = trim(troca($l[9], '_', ''));
+					$doi = trim(troca($l[10], '_', ''));
+
 					$outros = '';
 					for ($t = 6; $t < 20; $t++) {
 						if (isset($l[$t])) {
 							$outros .= $l[$t] . ' ';
 						}
 					}
-					$outros = trim(troca($outros,'_',' '));
-					
+					$outros = trim(troca($outros, '_', ' '));
+
 					$sx .= '<br>' . $autor . ', <b>' . $titulo . '</b>';
 					$sx .= ', ' . $ano . ', ' . $isbn;
 
@@ -303,11 +398,11 @@ class phpLattess extends CI_Model {
 			$sx .= '<meta http-equiv="refresh" content="10">';
 		}
 		return ($sx);
-	}	
+	}
 
-	function inport_lattes_bibliografia($tipo='LIVRO') {
-		$file = $this -> next_file_process($tipo.'_');
-		$sx = '<h3>Processando Arquivos Lattes - '.$tipo.'</h3>';
+	function inport_lattes_bibliografia($tipo = 'LIVRO') {
+		$file = $this -> next_file_process($tipo . '_');
+		$sx = '<h3>Processando Arquivos Lattes - ' . $tipo . '</h3>';
 
 		/* Processar */
 		if (strlen($file) > 0) {
@@ -338,9 +433,9 @@ class phpLattess extends CI_Model {
 					$ano = trim(troca($l[3], '_', ''));
 					$idioma = trim(troca($l[4], '_', ''));
 					$vol = trim(troca($l[5], '_', ''));
-					$pagina = trim(troca($l[6],'_',''));
-					$doi = trim(troca($l[11],'_',''));
-					$editora = trim(troca($l[7],'_',' '));
+					$pagina = trim(troca($l[6], '_', ''));
+					$doi = trim(troca($l[11], '_', ''));
+					$editora = trim(troca($l[7], '_', ' '));
 
 					$outros = '';
 					for ($t = 6; $t < 20; $t++) {
@@ -348,8 +443,8 @@ class phpLattess extends CI_Model {
 							$outros .= $l[$t] . ' ';
 						}
 					}
-					$outros = trim(troca($outros,'_',' '));
-					
+					$outros = trim(troca($outros, '_', ' '));
+
 					$sx .= '<br>' . $autor . ', <b>' . $titulo . '</b>';
 					$sx .= ', ' . $ano . ', ' . $isbn;
 
@@ -543,7 +638,7 @@ class phpLattess extends CI_Model {
 		}
 
 		if ($file == 'PAT') { $tp = 'PATEN';
-		}		
+		}
 
 		if (strpos($ln, '"Título da Dissertação de Mestrado";"Ano";"Orientado";"Instituição";"Curso"') > 0) {
 			$tp = 'DISSE';
@@ -554,18 +649,18 @@ class phpLattess extends CI_Model {
 		/* Capitulos de livros */
 		if ($file == 'TCPE') {
 			$tp = 'EVENC';
-		}		
-		
+		}
+
 		/* Capitulos de livros */
 		if ($file == 'CLP') {
 			$tp = 'CAPIT';
-		}		
+		}
 
 		/* Obras organizadas */
 		if ($file == 'OOP') {
 			$tp = 'ORGAN';
-		}		
-		
+		}
+
 		/* Pós-Doc */
 		if ($file == 'OCSPD') {
 			$tp = 'POSDC';

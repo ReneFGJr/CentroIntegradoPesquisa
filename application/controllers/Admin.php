@@ -9,6 +9,7 @@ class admin extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 		$this -> load -> library("nuSoap_lib");
@@ -41,8 +42,11 @@ class admin extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Perfis', 'index.php/admin/logins/'));
+		array_push($menus, array('Home', 'index.php/admin/'));
+		
+		array_push($menus, array('Lattes', 'index.php/admin/lattes'));
 		array_push($menus, array('ISSN', 'index.php/issn'));
+		array_push($menus, array('Perfis', 'index.php/admin/logins/'));
 		
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
@@ -205,6 +209,31 @@ class admin extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
+	
+	function lattes() {
+		$this -> cab();
+		$data = array();
+
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		
+		array_push($menu, array('CNPq Lattes', 'Arquivos indexados', 'ITE', '/admin/cnpq_artigos'));
+		array_push($menu, array('CNPq Lattes', '___Docentes e produção', 'ITE', '/admin/docentes_sem_producao'));
+		array_push($menu, array('CNPq Lattes', '___Docentes sem produção (todos)', 'ITE', '/admin/docentes_sem_producao/2'));
+		array_push($menu, array('CNPq Lattes', '___Docentes sem produção (SS)', 'ITE', '/admin/docentes_sem_producao/1'));
+
+		
+		array_push($menu, array('Inportação', 'Inportação de Dados', 'ITE', '/inport'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu Administração';
+		$this -> load -> view('header/main_menu', $data);
+
+		/*Fecha */ 		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	function index() {
 		$this -> cab();
@@ -238,6 +267,8 @@ class admin extends CI_Controller {
 		array_push($menu, array('Iniciação Científica', 'Finalizar projetos do ano anterior', 'ITE', '/admin/finalizar_ic'));
 
 		array_push($menu, array('Iniciação Científica', 'Converter Pasta GED', 'ITE', '/admin/ged_ic'));
+		
+		array_push($menu, array('CNPq Lattes', 'Arquivos indexados', 'ITE', '/admin/lattes'));
 
 		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
 		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
@@ -255,6 +286,35 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function cnpq_artigos($id = 0, $pg = '')
+	{
+		/* Load Models */
+		$this -> load -> model('phplattess');
+
+		$this -> cab();
+		$data = array();
+
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = 'cnpq_acpp';
+		$form -> see = true;
+		$form -> edit = false;
+		$form -> novo = false;
+		$form = $this -> phplattess -> row_acpp($form);
+
+		$form -> row_edit = base_url('index.php/usuario/usuarios_edit');
+		$form -> row_view = base_url('index.php/usuario/view');
+		$form -> row = base_url('index.php/usuario/row/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('page_cnpq_acpp');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}		
+
 	function inporta_professor() {
 		$this -> load -> model('usuarios');
 		$this -> cab();
@@ -264,6 +324,29 @@ class admin extends CI_Controller {
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
 	}
+
+	function docentes_sem_producao($tp='') {
+		$this -> load -> model('phplattess');
+		$this -> cab();
+
+		$tela = $this -> phplattess -> docentes_sem_producao($tp);
+		switch ($tp)
+			{
+			case '1':
+				$data['title'] = 'Docentes SS sem produção registrada (Artigos)';
+				break;		
+			case '2':
+				$data['title'] = 'Docentes (todos) sem produção registrada (Artigos)';
+				break;
+			default:
+				$data['title'] = 'Docentes & Produção de artigos';
+				break;		
+			}
+		
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+	}
+
 
 	function ic($id = 0, $pg = '') {
 		$this -> load -> model('ics');

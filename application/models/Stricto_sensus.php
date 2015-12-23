@@ -28,6 +28,77 @@ class Stricto_sensus extends CI_model {
 			$sx .= '</table>';
 			return($sx);
 		}
+
+	function ativa_docentes_ss()
+		{
+			/* zera ativacoes */
+			$sql = "update us_usuario set us_professor_tipo = 0 where us_professor_tipo = 2 ";
+			$rlt = $this->db->query($sql);
+			
+			$sql = "select us_usuario_id_us from ss_professor_programa_linha where sspp_ativo = 1 ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$wh = '';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					if (strlen($wh) > 0) { $wh .= ' or '; }
+					$wh .= '(id_us = '.$line['us_usuario_id_us'].') ';
+				} 
+			if (strlen($wh) > 0)
+				{
+					$sql = "update us_usuario set us_professor_tipo = 2 where ".$wh;
+					$rlt = $this->db->query($sql);
+				}
+		}
+	function lista_docentes()
+		{
+			$this->ativa_docentes_ss();
+			$sql = "select * from us_usuario 
+						where us_professor_tipo = 2 
+						order by us_nome ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="lt1">';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$sx .= '<tr>';
+					$sx .= '<td align="center" class="lt1" width="10">';
+					$sx .= ($r+1).'.';
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= link_perfil($line['us_nome'],$line['id_us'],$line);
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['us_campus_vinculo'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['us_link_lattes'];
+					$sx .= '</td>';
+					
+					
+
+					$sx .= '<td>';
+					$sx .= $line['us_nome_lattes'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['us_curso_vinculo'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['us_genero'];
+					$sx .= '</td>';					
+					
+					
+
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
 	function calcula_linhas($prog)
 		{
 			$sql = "select distinct count(*) as total from ss_linha_pesquisa_programa where pp_id = $prog and sslpp_ativo = 1 ";
