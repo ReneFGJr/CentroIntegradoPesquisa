@@ -778,7 +778,40 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function pagamento_planilha_inport($date = '', $action = '') {
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		$this -> load -> model('bancos');
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+		$data['title'] = 'Inportação de arquivos de pagamento';
+		$this->load->view('form/form_file_upload',$data);
+		
+		/* Arquivo enviado */
+		if (isset($_FILES['arquivo']['tmp_name']))
+			{
+			    $nome = lowercasesql($_FILES['arquivo']['name']);
+    			$temp = $_FILES['arquivo']['tmp_name'];
+				$size = $_FILES['arquivo']['size'];
+				
+				$data['content'] = $this->pagamentos->processa_seq($temp);
+				$this->load->view('content',$data);
+			}
+
+		/*Fecha */ 		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function pagamento_planilha($date = '', $action = '') {
+		$ano1 = date("Y");
+		if (date("m") < 10)
+			{
+				$ano1--;
+			}
+		$ano2 = $ano1+2;
 		/* Load Models */
 		$this -> load -> model('pagamentos');
 		$this -> load -> model('bancos');
@@ -789,7 +822,7 @@ class ic extends CI_Controller {
 
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, True));
-		array_push($cp, array('$[' . date("Y") . '-' . (date("Y") + 1) . ']', '', 'Edital', True, True));
+		array_push($cp, array('$[' . $ano1 . '-' . $ano2 . ']', '', 'Edital', True, True));
 		array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_vigente = 1 and mb_valor > 0', '', 'Modalidade', True, True));
 		array_push($cp, array('$D8', '', msg('data vencimento'), True, True));
 		array_push($cp, array('$B8', '', msg('avancar') . ' >>', False, True));
@@ -835,9 +868,11 @@ class ic extends CI_Controller {
 
 		if (strlen($err) > 0) {
 			$tela = '<center><h1><font color="red">' . $err . '</font></h1></center>';
+			echo $tela;
+			exit;
 		} else {
 			$fl = $this -> pagamentos -> gerar_pagamento_bolsa_arquivo($modalidade, $edital, $venc);
-			$tela = '<pre>' . $fl . '</pre>';
+			$tela = $fl;
 		}
 		$file = $this -> pagamentos -> filename;
 
@@ -861,7 +896,8 @@ class ic extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
-		array_push($menu, array('Gerar Pagamentos', 'Gerar planilha de pagamento', 'ITE', '/ic/pagamento_planilha'));
+		array_push($menu, array('Pagamentos', 'Gerar planilha de pagamento', 'ITE', '/ic/pagamento_planilha'));
+		array_push($menu, array('Pagamentos', 'Importar arquivo de pagamento (.seq)', 'ITE', '/ic/pagamento_planilha_inport'));
 
 		/*View principal*/
 		$data['menu'] = $menu;

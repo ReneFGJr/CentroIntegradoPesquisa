@@ -22,13 +22,12 @@ class pagamentos extends CI_Model {
 	function save_file($txt,$modalidade, $edital, $venc)
 		{
 			$data = date("Y-m-d");
-			$file = date("Y-m-d.H-i-s").'-T'.$modalidade.'-A'.strzero($edital,3).'.seq';
 			$seq = 1;
-			$file = date("Ymd").'_'.$modalidade.'_'.$seq.'.SEQ';
+			$file = date("ym").strzero($modalidade,3).$seq.'.seq';
 			while (file_exists($file))
 				{
 					$seq++;
-					$file = date("Ymd").'_'.$modalidade.'_'.$seq.'.SEQ';
+					$file = date("ym").strzero($modalidade,3).$seq.'.seq';
 				}
 			$this->filename = $file;
 			$this->pagamentos->dir('_document');
@@ -57,6 +56,109 @@ class pagamentos extends CI_Model {
 			$this->db->query($sql);
 			return($file);
 		}
+
+		function processa_seq($file)
+			{
+				/* Verifica se arquivo não existe */
+				if (!(file_exists($file)))
+					{
+						return(0);
+					}
+					
+				$rd = load_file_local($file);
+			
+				$rd = troca($rd,chr(13),';');
+				$lns = splitx(';',$rd);
+				$sx = '<table width="100%" class="tabela01">';
+				$vlrt= 0;
+				$tot = 0;
+				for ($rn = 0;$rn < count($lns);$rn++)
+				{
+					$l = $lns[$rn];
+					$tp = substr($l,13,1);
+					
+					if ($tp == '0')
+						{
+							$cnpj = substr($l,18,14);
+							$ctr = substr($l,32,6);
+						}
+						
+					if ($tp == 'A')
+						{
+							$banco = substr($l,20,3);
+							$seq = substr($l,3,4);
+							$op = substr($l,7,1);
+							$nrdoc = trim(substr($l,73,18));
+							$venc = substr($l,93,8);
+							$vc = substr($venc,4,4).substr($venc,2,2).substr($venc,0,2);
+							$vlr = round(substr($l,121,13))/100;
+							$nome = substr($l,43,30);
+							$bco = $banco;
+					
+							$ccag = substr($l,23,5);
+							$ccc = substr($l,35,7);
+							$ccac = substr($l,30,12);
+							$id1 = $lns[$rn];
+							
+							$vlrt = $vlrt + $vlr;
+							$tot++;
+						}
+						
+					if ($tp == 'B')
+						{
+							$cpf = substr($l,21,14);
+							$tp = 'I';
+							$id2 = $lns[$rn];
+							
+						$sx .= '<tr>';
+						$sx .= '<td align="center">'.$tot.'</td>';
+						$sx .= '<td align="center">'.$bco.'</td>';
+						$sx .= '<td align="center">'.$ccag.'-'.$ccc.'</td>';
+						$sx .= '<td align="center">'.$seq.'-'.$op.'-'.$tp.'</td>';
+						$sx .= '<td align="right">'.number_format($vlr,2,',','.').'</td>';
+						$sx .= '<td align="left">'.$nome.'</td>';
+						$sx .= '<td align="center">'.$cpf.'</td>';
+						$sx .= '<td align="center">'.stodbr($vc).'</td>';
+						
+						$sql = "select * from ic_pagamentos 
+								where pg_nrdoc = '$nrdoc'
+								and pg_cpf = '$cpf' and pg_vencimento = $vc
+						";
+						$rlt2 = $this->db->query($sql);
+						$rlt2 = $rlt2->result_array();
+						
+						if (count($rlt2) == 0)
+							{						
+							$sql = "insert into ic_pagamentos
+							(pg_ctr, pg_cnpj, pg_nrdoc,
+								pg_valor, pg_vencimento, pg_cpf,
+								pg_tipo, pg_nome,pg_banco,
+								
+								pg_agencia,pg_conta,pg_cc
+								) values (
+								'$ctr','$cnpj','$nrdoc',
+								'$vlr','$vc','$cpf',
+								'$tp','$nome','$banco',
+						
+								'$ccag','$ccc','$ccac')
+								";	
+								$rlt2 = $this->db->query($sql);
+								$sx .= '<td align="center"><font color="green">Inserido</font></td>';
+							} else {
+								$sx .= '<td align="center"><font color="orange">Já registrado</font></td>';
+							}												
+						}
+				}
+				$sx .= '</table>';
+				
+				/* Resumo */
+				$sa = '<table width="100%" class="tabela01 border1">';
+				$sa .= '<tr><th>total de pagamentos</th><th>valor processado</th></tr>';
+				$sa .= '<tr class="lt6" align="center"><td>'.$tot.'</td><td>'.number_format($vlrt,2,',','.').'</th></td>';
+				$sa .= '</table></br></br>';
+				
+				return($sa.$sx);				
+			}
 	function gerar_pagamento_bolsa_arquivo($modalidade, $edital, $venc) {
 		$fl = $this -> pagamentos -> header_rq();
 		$fl .= $this -> pagamentos -> header_rq2();
@@ -817,7 +919,7 @@ class pagamentos extends CI_Model {
 		$sql .= " order by pg_vencimento desc ";
 		$rlt = db_query($sql);
 		$sx = '<table width="100%" class="tabela01">';
-
+		
 		$sx .= '<TR>';
 		$sx .= '<TD colspan=10>';
 		$sx .= '<H3>' . msg('pagamento') . '</h3>';
@@ -867,127 +969,6 @@ class pagamentos extends CI_Model {
 		$sx .= '</table>';
 
 		return ($sx);
-	}
-
-	function processa_seq() {
-		$sql = "select count(*) as total from ln where ln_status='A' ";
-		$rlt = db_query($sql);
-		$line = db_read($rlt);
-		echo '<H2>' . $line['total'] . '</h2>';
-		$sql = "select * from ln where ln_status='A' order by id_ln ";
-		$rlt = db_query($sql);
-		$id = 0;
-		while ($ln = db_read($rlt)) {
-			$id++;
-			$l = utf8_decode(trim($ln['ln_text']));
-			$tp = substr($l, 13, 1);
-
-			if ($tp == '0') {
-				$cnpj = substr($l, 18, 14);
-				$ctr = substr($l, 32, 6);
-			}
-
-			if ($tp == 'A') {
-				$banco = substr($l, 20, 3);
-				$seq = substr($l, 3, 4);
-				$op = substr($l, 7, 1);
-				$nrdoc = trim(substr($l, 73, 18));
-				$venc = substr($l, 93, 8);
-				$vc = substr($venc, 4, 4) . substr($venc, 2, 2) . substr($venc, 0, 2);
-				$vlr = round(substr($l, 121, 13)) / 100;
-				$nome = substr($l, 43, 30);
-				$bco = $banco;
-				echo '<TT>' . $l . '</tt>';
-				/*
-				 3990002300001A00070000100009 0000000610305
-				 */
-
-				$ccag = substr($l, 23, 5);
-				$ccc = substr($l, 35, 7);
-				$ccac = substr($l, 30, 12);
-				$id1 = $ln['id_ln'];
-			}
-
-			if ($tp == 'B') {
-				$cpf = substr($l, 21, 14);
-				$tp = 'I';
-				$id2 = $ln['id_ln'];
-
-				echo '<BR>banco->' . $bco . 'Ag. [' . $ccag . '-' . $ccc . ']';
-				echo '' . $seq . '-' . $op . '-' . $tp;
-				echo '->' . $vlr;
-				echo '->' . $nome;
-				echo '->' . $cpf;
-				echo '->' . $vc;
-
-				$sql = "select * from pibic_pagamentos 
-								where pg_nrdoc = '$nrdoc'
-								and pg_cpf = '$cpf' and pg_vencimento = $vc
-						";
-
-				$rlt2 = db_query($sql);
-				if (!(db_read($rlt2))) {
-					$sql = "insert into pibic_pagamentos
-							(pg_ctr, pg_cnpj, pg_nrdoc,
-								pg_valor, pg_vencimento, pg_cpf,
-								pg_tipo, pg_nome,pg_banco,
-								
-								pg_agencia,pg_conta,pg_cc
-								) values (
-								'$ctr','$cnpj','$nrdoc',
-								'$vlr','$vc','$cpf',
-								'$tp','$nome','$banco',
-						
-								'$ccag','$ccc','$ccac')
-								";
-					$rlt2 = db_query($sql);
-				}
-				$sql = "update ln set ln_status = 'B' where (id_ln = " . $id1 . " or id_ln = " . $id2 . " )";
-				$rlt3 = db_query($sql);
-
-			}
-		}
-		return ($id);
-	}
-
-	function inport_file($file) {
-		if (!(file_exists($file))) {
-			echo $file . '<BR>';
-			echo 'ERRO DE ABERTURA';
-			return (0);
-		}
-		$fld = fopen($file, 'r');
-		$sx = '';
-		while (!(feof($fld))) {
-			$sx .= fread($fld, 1024);
-		}
-		fclose($fld);
-
-		$ln = splitx(chr(13), $sx);
-		$sql = "create table ln (
-					id_ln serial NOT NULL,
-					ln_text text,
-					ln_status char(1)
-				)";
-		//$rlt = db_query($sql);
-		$sql = "delete from ln where 1=1 ";
-		$rlt = db_query($sql);
-
-		echo '===>' . count($ln);
-		for ($r = 0; $r < count($ln); $r++) {
-			if (round($r / 10) == ($r / 10)) { echo 'x';
-			} else { echo '.';
-			}
-			if (round($r / 100) == ($r / 100)) { echo '<BR>';
-			}
-			$lnx = UpperCaseSql($ln[$r]);
-			$lnx = troca($lnx, "'", '´');
-			$sql = "insert into ln (ln_text, ln_status) 
-						values
-						('" . $lnx . "','A')		
-					";
-			$rlt = db_query($sql);
-		}
 	}
 
 	function lista_pagamentos_total($dd1 = 19000101, $dd2 = 20990101, $cpf = '') {

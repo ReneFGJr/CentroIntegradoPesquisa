@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @category	Helpers
  * @author		Rene F. Gabriel Junior <renefgj@gmail.com>
  * @link		http://www.sisdoc.com.br/CodIgniter
- * @version		v0.15.48
+ * @version		v0.16.01
  */
 $dd = array();
 
@@ -47,6 +47,88 @@ function normalizarNome($nome) {
 	$nomeCompleto = implode(self::NN_ESPACO, $partesNome);
 	return addslashes($nomeCompleto);
 }
+/**
+ * CodeIgniter
+ * sisDOC Labs
+ *
+ * @package	PageCount
+ * @author	Rene F. Gabriel Junior <renefgj@gmail.com>
+ * @copyright Copyright (c) 2006 - 2015, sisDOC
+ * @version 0.16.01
+ */
+	function page_count()
+		{
+			if (isset($_SERVER['PATH_INFO']) and (strlen($_SERVER['PATH_INFO']) > 0))
+			{
+				$info = $_SERVER['PATH_INFO'].'/';
+			} else {
+				echo '<hr>';
+				$info = $_SERVER['PHP_SELF'].'/';
+				$scrp = $_SERVER['SCRIPT_FILENAME'];
+				$info = troca($info,$scrp,'');				
+			}
+			echo '-->'.$info;
+			/* limpa */
+			if (substr($info,0,1)=='/')
+				{
+					$info = substr($info,1,strlen($info));
+				}
+			$path = '';
+			for ($r=0;$r < 2;$r++)
+				{
+					$pos = strpos($info,'/');
+					if ($pos > 0)
+						{
+							$path .= substr($info,0,$pos).'/';
+							$info = substr($info,$pos+1,strlen($info));
+						}
+				}
+				echo '-->'.$path;
+			/* Info */
+			$pos = strpos($info,'/');
+			if ($pos > 0)
+				{
+					$info = substr($info,0,$pos);
+				} else {
+					$info = '';
+				}
+			$sx = $path.'--'.$info;
+			if ($info == 'index.php') { $info = ''; }
+			
+			/* resgata pagina */
+			$CI = &get_instance();
+			$sql = "select * from _webcount_page where wcp_page = '$path' ";
+			$rlt = $CI->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) == 0)
+				{
+					$sqlx = "insert into _webcount_page
+							( wcp_page ) values ('$path')
+					";
+					$rlt2 = $CI->db->query($sqlx);
+					
+					$rlt = $CI->db->query($sql);
+					$rlt = $rlt->result_array();
+				} else {
+					
+				}
+			if (count($rlt) > 0)
+				{
+					$page = $rlt[0]['id_wcp'];
+				} else {
+					$page = 1;
+				}
+			$ip = ip();
+			/* Incremente */
+			$sql = "insert into _webcount
+					( wc_ip, wc_page, wc_param )
+					value
+					( '$ip','$page','$info')
+			";
+			$rlt3 = $CI->db->query($sql);
+			$sx = '';	
+			return($sx);		
+		}	
 
 /**
  * CodeIgniter
@@ -1533,12 +1615,11 @@ if (!function_exists('form_edit')) {
 	}
 
 	/* Formulario */
-	function form_field($cp, $vlr) {
+	function form_field($cp, $vlr, $name='', $table=1) {
 		global $dd, $ddi;
 		/* Zera tela */
 		$tela = '';
 
-		$table = 1;
 		if (!(isset($dd))) { $dd = array();
 			$ddi = 0;
 		}
@@ -1571,7 +1652,13 @@ if (!function_exists('form_edit')) {
 		$max = 100;
 		$size = 100;
 		$dados = array();
-		$dn = 'dd' . $ddi;
+		
+		if (strlen($name)==0)
+			{
+				$dn = 'dd' . $ddi;
+			} else {
+				$dn = $name;
+			}
 
 		if ($table == 1) {
 			$td = '<td>';
@@ -1609,7 +1696,14 @@ if (!function_exists('form_edit')) {
 				$n1 = substr($ntype, 0, strpos($ntype, '-'));
 				$n2 = sonumero(substr($ntype, strpos($ntype, '-'), strlen($ntype)));
 				$n3 = substr($ntype, strlen($ntype) - 1, 1);
-				$options = array('' => msg('::select an option::'));
+				/* Sem option */
+				if (strpos($ntype,'U') > 0)
+					{
+						
+					} else {
+						$options = array('' => msg('::select an option::'));		
+					}
+				
 
 				if ($n3 != 'D') {
 					/* Crescente */
@@ -1634,7 +1728,7 @@ if (!function_exists('form_edit')) {
 				}
 				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
-				$tela .= '<TD>';
+				$tela .= $td;
 				$tela .= form_dropdown($dados, $options, $vlr);
 				break;
 
