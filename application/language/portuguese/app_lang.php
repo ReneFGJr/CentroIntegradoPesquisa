@@ -25,7 +25,7 @@ $lang['cap_finalizado'] = 'Finalizado';
 /* pagina de usuarios */
 $lang['page_usuarios'] = 'Cadastro de pessoas';
 
-$lang['versao'] = 'v0.15.25';
+$lang['versao'] = 'v0.16.01';
 /* Fundo de Pesquisa */
 $lang['page_fundo'] = 'Fundo de Pesquisa';
 

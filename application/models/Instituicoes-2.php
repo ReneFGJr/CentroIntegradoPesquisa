@@ -1,7 +1,8 @@
 <?php
+/* 2016 */
 class Instituicoes extends CI_model {
 	var $tabela = 'gp_instituicao_parceira';
-	
+		
 	function busca_instituicao($inst='')
 		{
 			$sql = "select * from " . $this -> tabela . " where gpip_nome = '$inst' ";

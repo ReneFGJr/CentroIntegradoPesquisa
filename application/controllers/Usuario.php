@@ -289,6 +289,7 @@ class usuario extends CI_Controller {
 				$data['content'] = $this -> usuarios -> mostra_formacao($cpf);
 				$this -> load -> view('content', $data);
 
+				/* Iniciacao cientifica */
 				$data['content'] = $this -> usuarios -> mostra_ic($cpf);
 				$this -> load -> view('content', $data);
 

@@ -74,6 +74,13 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 	}
 
+	function pagamento_cracha($cracha='',$chk='')
+		{
+			$this->load->model('ics');
+			$data['content'] = $this->ics->pagamentos_ic($cracha);
+			$this->load->view('content',$data);
+		}
+
 	function comunicacao_edit($id = 0, $gr = 0, $tp = 0) {
 		/* Load Models */
 		$this -> load -> model('comunicacoes');
@@ -849,6 +856,45 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function pagamento_planilha_compromisso($date = '', $action = '') {
+		$ano1 = date("Y");
+		if (date("m") < 10)
+			{
+				$ano1--;
+			}
+		$ano2 = $ano1+2;
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		$this -> load -> model('bancos');
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$S15', '', msg('informe_nr_compromisso'), True, True));
+
+		$form = new form;
+		$tela = $form -> editar($cp, '');
+		$data['content'] = '<div class="nopr">' . $tela . '</div>';
+		$this -> load -> view('content', $data);
+
+		if ($form -> saved > 0) {
+			$id = get('dd1');
+
+			$tela = $this -> pagamentos -> pagamento_compromisso_mostra($id);
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+
+			$this -> load -> view('ic/assinatura_ic');
+		}
+
+		/*Fecha */ 		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function pagamento_planilha_hsbc($modalidade = '', $edital = '', $venc = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
@@ -898,6 +944,7 @@ class ic extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Pagamentos', 'Gerar planilha de pagamento', 'ITE', '/ic/pagamento_planilha'));
 		array_push($menu, array('Pagamentos', 'Importar arquivo de pagamento (.seq)', 'ITE', '/ic/pagamento_planilha_inport'));
+		array_push($menu, array('Pagamentos', 'Identifica No. do compromisso', 'ITE', '/ic/pagamento_planilha_compromisso'));
 
 		/*View principal*/
 		$data['menu'] = $menu;

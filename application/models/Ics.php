@@ -53,7 +53,57 @@ class ics extends CI_model {
 			$rlt = $this -> db -> query($sql);
 			return(1);
 		}
-		
+
+	function pagamentos_ic($cracha)
+		{
+			$sql = "select * from us_usuario where us_cracha = '$cracha' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$cpf = strzero(sonumero($rlt[0]['us_cpf']),11);
+					$sql = "SELECT * 
+							FROM ic_pagamentos 
+							WHERE pg_cpf = '$cpf' 
+							";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$sx = '<table width="100%" class="tabela00 border1 lt1">';
+					$sx .= '<tr>
+								<th>pos</th>
+								<th>dt.pagamento</th>
+								<th>documento</th>
+								<th>beneficiário</th>
+								<th>cpf</th>
+								<th>valor</th>
+								<th>banco</th>
+								<th>agencia</th>
+								<th>conta</th>
+								<th>cc</th>
+							</tr>';
+					$tot = 0;
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$sx .= '<tr>';
+							$sx .= '<td align="center">'.($r+1).'</td>';
+							$sx .= '<td align="center">'.stodbr($line['pg_vencimento']).'</td>';
+							$sx .= '<td align="center">'.$line['pg_nrdoc'].'</td>';
+							$sx .= '<td align="left">'.$line['pg_nome'].'</td>';
+							$sx .= '<td align="center">'.mask_cpf($line['pg_cpf']).'</td>';
+							$sx .= '<td align="right">'.number_format($line['pg_valor'],2,',','.').'</td>';
+							$sx .= '<td align="center">'.$line['pg_banco'].'</td>';
+							$sx .= '<td align="center">'.$line['pg_agencia'].'</td>';
+							$sx .= '<td align="center">'.$line['pg_conta'].'</td>';
+							$sx .= '<td align="center">'.$line['pg_cc'].'</td>';
+							$tot = $tot + $line['pg_valor'];
+						}
+					$sx .= '<tr><td align="right" colspan=10"><b>Valor total '.number_format($tot,2,',','.').'</b></td></tr>';
+					$sx .= '</table>';
+					return($sx);
+				}
+			return('');
+		}
 	function resumo_implemendados($ano) {
 		$sql = "select * from 
 					(

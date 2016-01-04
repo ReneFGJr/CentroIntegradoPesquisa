@@ -501,7 +501,27 @@ class usuarios extends CI_model {
 			return ('');
 		}
 	}
-
+	/* pagamentos de iniciacao cientifica */
+	function pagamentos_cpf($cpf)
+		{
+					$sql = "SELECT count(*) as total, sum(pg_valor) as valor 
+							FROM ic_pagamentos 
+							WHERE pg_cpf = '$cpf' 
+							group by pg_cpf
+							";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					if (count($rlt) > 0)
+						{
+							return($rlt[0]);
+						} else {
+							$rs = array();
+							$rs['total'] = 0;
+							$rs['valor'] = 0;
+							return($rs);
+						}
+		}
+		
 	function le($id) {
 		$sql = "select * from
             us_usuario
@@ -538,6 +558,16 @@ class usuarios extends CI_model {
 		if (validaCPF($line['us_cpf']) == false)
 			{
 				$line['us_cpf'] = '<font color="red">inválido</font>';
+			}
+		
+		$vlr_ic_recebido = $this->pagamentos_cpf($line['us_cpf']);
+		if ($vlr_ic_recebido['total'] > 0)
+			{
+			$txt = 'Valores de Bolsas Recebidas IC/IT: '.number_format($vlr_ic_recebido['valor'],2,',','.');
+			$txt = '<a href="#pagamentos" class="link lt2" onclick="mostra_pagamentos_ic();">'.$txt.'</a>';
+			 $line['us_ic_pagamento'] = $txt;
+			} else {
+				$line['us_ic_pagamento'] = '';
 			}
 
 		$line['email'] = $this -> lista_email($id);

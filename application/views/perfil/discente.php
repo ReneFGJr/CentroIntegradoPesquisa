@@ -23,6 +23,7 @@ $us_nada = '<font color="grey">[em construção]</font>';
 				?>					
 				</li>
 				<li><?php echo $us_cc;?></li>
+				<li><?php echo $us_ic_pagamento;?></li>
 				
 			</div>
 			<TD width="300">
@@ -39,3 +40,20 @@ $us_nada = '<font color="grey">[em construção]</font>';
 				<li><strong><?php echo $editar;?></li>				
 			</div>	
 			</table>
+			
+<!-- Iniciacao cientifica -->
+<div id="pagamentos"></div>
+<script>
+	function mostra_pagamentos_ic()
+		{
+			var $url = "<?php echo base_url('index.php/ic/pagamento_cracha/' . $us_cracha.'/'.checkpost_link($us_cracha));?>";
+			var $div = "#pagamentos";
+			$.ajax($url)
+			 .done(function(data) {
+			 		$($div).html(data);
+				})
+			.fail(function() {
+					alert( "error" );
+			});
+		}
+</script>

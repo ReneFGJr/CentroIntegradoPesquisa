@@ -1,10 +1,10 @@
 <?php
 /**
- * LOGIN JOSSO CIP
+ * LOGIN JOSSO CIP (C) 2016
  *
  * @package	Login
  * @author	Rene F. Gabriel Junior <renefgj@gmail.com>
- * @copyright	Copyright (c) 2009 - 2015, PUCPR
+ * @copyright	Copyright (c) 2009 - 2016, PUCPR
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	http://cip.pucpr.br/about
  * @since	Version v0.15.23

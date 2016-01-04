@@ -57,6 +57,22 @@ class pagamentos extends CI_Model {
 			return($file);
 		}
 
+		function pagamento_compromisso_mostra($id)
+			{
+				$sql = "select * from ic_pagamentos
+						WHERE pg_nrdoc = '$id'
+				";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				$sx = '';
+				if (count($rlt) > 0)
+					{
+						$data = $rlt[0];
+						$sx = $this->load->view('ic/ic_pagamento',$data,true);
+					}
+				return($sx);
+			}
+
 		function processa_seq($file)
 			{
 				/* Verifica se arquivo não existe */
@@ -84,7 +100,9 @@ class pagamentos extends CI_Model {
 						}
 						
 					if ($tp == 'A')
-						{
+						{/*
+3990146300145A00070000102187 0000000013471 CHRISTOFER KOK                01401600010145      05012016R$                  0000000040000N                                                                                              0
+ * */          							
 							$banco = substr($l,20,3);
 							$seq = substr($l,3,4);
 							$op = substr($l,7,1);
@@ -102,8 +120,9 @@ class pagamentos extends CI_Model {
 							
 							$vlrt = $vlrt + $vlr;
 							$tot++;
+							echo '<br>'.$nrdoc;
 						}
-						
+					
 					if ($tp == 'B')
 						{
 							$cpf = substr($l,21,14);
