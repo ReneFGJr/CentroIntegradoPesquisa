@@ -667,6 +667,21 @@ class ics extends CI_model {
 		$obj -> mk = array('', 'L', 'L', 'L', 'C');
 		return ($obj);
 	}
+	
+	function row_atividade($obj) {
+
+		$obj -> fd = array('id_at', 'at_atividade', 'at_data_ini', 'at_data_fim', 'at_ano');
+		$obj -> lb = array('ID', msg('atividade'), msg('dt_inicio'), msg('dt_fim'), msg('ano'));
+		$obj -> mk = array('', '#', 'L', 'L', 'C');
+		return ($obj);
+	}
+
+	function set_area_semic($proto,$area)
+		{
+			$sql = "update ic set ic_semic_area = '$area' where ic_plano_aluno_codigo = '$proto' ";
+			$this->db->query($sql);
+			return(1);
+		}	
 
 	function resumo_autores_mostra($id) {
 		$funcao = array();
@@ -1373,6 +1388,22 @@ class ics extends CI_model {
 
 		return ($cp);
 	}
+	
+	function cp_atividades()
+		{
+		$cp = array();
+		$opA = 'IC_FORM_PROF:Formulário de acompanhamento do professor';
+		$opA .= '&IC_FORM_RP:Entrega do Relatório Parcial';
+		array_push($cp, array('$H8', 'id_at', '', False, True));
+		array_push($cp, array('$O '.$opA, 'at_atividade', msg('Atividade'), False, True));
+		array_push($cp, array('$D8', 'at_data_ini', msg('data_inicial'), True, True));
+		array_push($cp, array('$D8', 'at_data_fim', msg('data_final'), True, True));
+		array_push($cp, array('$[2014-'.date("Y").']', 'at_ano', msg('ic_edital_ano'), True, True));
+
+		//array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_ativo=1 order by mb_tipo, mb_descricao', 'ic_dt_ativacao', msg('Ativação'), True, True));
+
+		return ($cp);
+		}
 
 	function cp_switch() {
 		$cp = array();

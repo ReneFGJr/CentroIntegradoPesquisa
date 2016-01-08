@@ -119,6 +119,26 @@ class ics_acompanhamento extends CI_model {
 		}
 		return ($sx);
 	}
+	
+	function form_entregue($proto='',$tipo='')
+		{
+			$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' limit 1";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt -> result_array();
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					if ($line[$tipo] != '0000-00-00')
+					{
+						return(1);
+					} else {
+						return(0);
+					}
+				} else {
+					return(0);
+				}
+			print_r($rlt);
+		}
 
 	function form_acompanhamento_exist($proto = '', $tipo = '') {
 		$sql = "select * from ic_acompanhamento 
@@ -156,7 +176,11 @@ class ics_acompanhamento extends CI_model {
 			$f2 = $this -> submissao_questionarios_aluno();
 			$action = array_merge($f2, $action);
 		}
-
+		/* Entrega do Relatório Parcial */
+		if (trim($sis['sw_02']) == '1') {
+			$f1 = $this -> submissao_relatorio_parcial();
+			$action = array_merge($f1, $action);
+		}
 		/* Mostra atividades */
 		if (count($action) > 0) {
 			$size = round(250 + 60);
@@ -194,8 +218,11 @@ class ics_acompanhamento extends CI_model {
 		return ($sx);
 	}
 
-	function periodo_atividade($n) {
-		$ano = date("Y");
+	function periodo_atividade($n,$ano=0) {
+		if ($ano==0) {
+			$ano = date("Y");
+			if (date("m") < 7) { $ano--; } 
+		}
 		$sql = "select * from ic_atividade where at_atividade = '$n' and at_ano = '$ano' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -210,13 +237,57 @@ class ics_acompanhamento extends CI_model {
 	}
 
 	/* Submissoes */
+	
+
+	function submissao_relatorio_parcial() {
+		/* professor */
+		$ano = date("Y");
+		if (date("m") < 7)
+			{
+				$ano--;
+			}
+		/* reliza consulta */
+		$cracha = $_SESSION['cracha'];
+		$sql = "select * from ic
+					left join ic_acompanhamento on pa_protocolo = ic_plano_aluno_codigo 
+					where ic_cracha_prof = '$cracha' 
+						and ic_ano = '" . $ano . "'
+						and s_id = 1
+			 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$proto = trim($line['ic_plano_aluno_codigo']);
+			$data_pre = $line['ic_rp_data'];
+			if ($data_pre == '0000-00-00') {
+				$tot++;
+			}
+		}
+		if ($tot > 0) {
+			$it = array('IC_FORM_RP' => $tot);
+		} else {
+			$it = array();
+		}
+		return ($it);
+
+	}
+	
 	function submissao_questionarios_professor() {
+		/* professor */
+		$ano = date("Y");
+		if (date("m") < 7)
+			{
+				$ano--;
+			}		
 		/* professor */
 		$cracha = $_SESSION['cracha'];
 		$sql = "select * from ic
 					left join ic_acompanhamento on pa_protocolo = ic_plano_aluno_codigo 
 					where ic_cracha_prof = '$cracha' 
-						and ic_ano = '" . date("Y") . "'
+						and ic_ano = '" . $ano . "'
 						and s_id = 1
 			 ";
 		$rlt = $this -> db -> query($sql);

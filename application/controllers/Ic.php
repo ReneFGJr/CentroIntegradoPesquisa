@@ -1338,7 +1338,6 @@ class ic extends CI_Controller {
 		$data = array();
 		$tela01 = '';
 		$this -> cab();
-
 		switch ($tipo) {
 			case 'FORM_PROF' :
 				$fld = 'ic_pre_data';
@@ -1347,6 +1346,13 @@ class ic extends CI_Controller {
 
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
+			case 'IC_FORM_RP' :
+				$fld = 'ic_rp_data';
+				$tit = 'Relatório Parcial';
+				$ano = date("Y");
+				echo "OLA";
+				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
+				break;				
 			default :
 				$fld = '';
 				$tit = '';
@@ -1401,6 +1407,7 @@ class ic extends CI_Controller {
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Acompanhamento', 'Abrir ou fechar sistemas', 'ITE', '/ic/acompanhamento_sw'));
+		array_push($menu, array('Acompanhamento', 'Calendário de Entregas', 'ITE', '/ic/acompanhamento_data'));
 		array_push($menu, array('Formulário de acompanhamento', 'Entrega de formlários', 'ITE', '/ic/entrega/FORM_PROF'));
 
 		/*View principal*/
@@ -1432,12 +1439,67 @@ class ic extends CI_Controller {
 
 		/* Salva */
 		if ($form -> saved > 0) {
-			redirect(base_url('index.php/ic/'));
+			redirect(base_url('index.php/ic/acompanhamento'));
 		}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function acompanhamento_data($id=0) {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$this -> cab();
+		
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = 'ic_atividade';
+		$form -> see = false;
+		$form -> edit = true;
+		$form -> novo = true;
+		$form -> order = ' at_ano desc, at_data_ini desc ';
+		$form = $this -> ics -> row_atividade($form);
+
+		$form -> row_edit = base_url('index.php/ic/acompanhamento_data_ed');
+		$form -> row_view = '';
+		$form -> row = base_url('index.php/ic/acompanhamento_data/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('ic_entregas_do_sistema');
+
+		$this -> load -> view('content', $data);		
+		$data = array();		
+
+		$form = new form;
+
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+function acompanhamento_data_ed($id=0) {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$this -> cab();
+	
+		
+		/* IC */
+		$form = new form;
+		$form -> id = $id;
+		$form -> tabela = 'ic_atividade';
+		$cp = $this->ics->cp_atividades();
+		
+		$tela = $form -> editar($cp, $form -> tabela);
+
+		$data['title'] = msg('ic_acomanhamento_data');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/ic/acompanhamento'));
+		}
+}
 
 	function view($id = 0, $check = '') {
 		/* Load Models */

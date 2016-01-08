@@ -162,6 +162,7 @@ class producoes extends CI_model {
 					$sx .= '<td class="border1" width="30" align="center">';
 					$jcr = troca($line2['acpp_jcr'], ',', '.');
 					if (strlen($jcr) > 0) {
+						$jcr = round($jcr * 1000)/1000;
 						$jcr = number_format($jcr, 3, ',', '.');
 					}
 					$sx .= $jcr;

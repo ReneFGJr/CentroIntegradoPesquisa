@@ -36,6 +36,7 @@ $lang['lb_form_prof_inf'] = '<p class="lt3">Prezado orientador, este questionári
 
 /***************************** PIBIC */
 $lang['ic_atividade_aberta'] = 'Atividades para entrega';
+$lang['IC_FORM_RP'] = 'Entrega do Relatório Parcial (professor)';
 $lang['IC_FORM_PROF'] = 'Formulário de acompanhamento (professor)';
 $lang['IC_FORM_ESTU'] = 'Formulário de acompanhamento (estudante)';
 $lang['bt_entregar'] = 'Entregar Atividade';
