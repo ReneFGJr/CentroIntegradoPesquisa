@@ -501,27 +501,26 @@ class usuarios extends CI_model {
 			return ('');
 		}
 	}
+
 	/* pagamentos de iniciacao cientifica */
-	function pagamentos_cpf($cpf)
-		{
-					$sql = "SELECT count(*) as total, sum(pg_valor) as valor 
+	function pagamentos_cpf($cpf) {
+		$sql = "SELECT count(*) as total, sum(pg_valor) as valor 
 							FROM ic_pagamentos 
 							WHERE pg_cpf = '$cpf' 
 							group by pg_cpf
 							";
-					$rlt = $this->db->query($sql);
-					$rlt = $rlt->result_array();
-					if (count($rlt) > 0)
-						{
-							return($rlt[0]);
-						} else {
-							$rs = array();
-							$rs['total'] = 0;
-							$rs['valor'] = 0;
-							return($rs);
-						}
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return ($rlt[0]);
+		} else {
+			$rs = array();
+			$rs['total'] = 0;
+			$rs['valor'] = 0;
+			return ($rs);
 		}
-		
+	}
+
 	function le($id) {
 		$sql = "select * from
             us_usuario
@@ -554,21 +553,19 @@ class usuarios extends CI_model {
 		}
 		if ($line['us_genero'] == 'F') { $line['us_genero'] = msg('Feminino');
 		}
-		
-		if (validaCPF($line['us_cpf']) == false)
-			{
-				$line['us_cpf'] = '<font color="red">inválido</font>';
-			}
-		
-		$vlr_ic_recebido = $this->pagamentos_cpf($line['us_cpf']);
-		if ($vlr_ic_recebido['total'] > 0)
-			{
-			$txt = 'Valores de Bolsas Recebidas IC/IT: '.number_format($vlr_ic_recebido['valor'],2,',','.');
-			$txt = '<a href="#pagamentos" class="link lt2" onclick="mostra_pagamentos_ic();">'.$txt.'</a>';
-			 $line['us_ic_pagamento'] = $txt;
-			} else {
-				$line['us_ic_pagamento'] = '';
-			}
+
+		if (validaCPF($line['us_cpf']) == false) {
+			$line['us_cpf'] = '<font color="red">inválido</font>';
+		}
+
+		$vlr_ic_recebido = $this -> pagamentos_cpf($line['us_cpf']);
+		if ($vlr_ic_recebido['total'] > 0) {
+			$txt = 'Valores de Bolsas Recebidas IC/IT: ' . number_format($vlr_ic_recebido['valor'], 2, ',', '.');
+			$txt = '<a href="#pagamentos" class="link lt2" onclick="mostra_pagamentos_ic();">' . $txt . '</a>';
+			$line['us_ic_pagamento'] = $txt;
+		} else {
+			$line['us_ic_pagamento'] = '';
+		}
 
 		$line['email'] = $this -> lista_email($id);
 		return ($line);
@@ -953,12 +950,66 @@ class usuarios extends CI_model {
 		}
 	}
 
-}
+	function limpaCursos($c) {
+		$c = troca($c, '(Tarde)', '');
+		$c = troca($c, '(Diurno)', '');
+		$c = troca($c, '(Noturno)', '');
+		return ($c);
+	}
+	
+	function row_usuario_session($obj) {
+		$obj -> fd = array('id_us', 'us_nome', 'us_cracha', 'us_cpf');
+		$obj -> lb = array('id', msg('nome'), msg('cracha'), msg('cpf'));
+		$obj -> mk = array('', 'L', 'C', 'C');
+		return ($obj);
+	}
 
-function limpaCursos($c) {
-	$c = troca($c, '(Tarde)', '');
-	$c = troca($c, '(Diurno)', '');
-	$c = troca($c, '(Noturno)', '');
-	return ($c);
+	/*Atualiza dados do usuario */
+	function cp_usuario_session() {
+			
+		$cp = array();
+																																										
+		array_push($cp, array('$H8', 'id_us', '', False, True));
+		array_push($cp, array('${', '', 'Pessoais', True, False));
+		array_push($cp, array('$S100', 'us_nome', msg('lb_us_nome'), True, False));
+		array_push($cp, array('$S20', 'us_cracha', msg('lb_us_cracha'), True, False));
+		array_push($cp, array('$S20', 'us_cpf', msg('lb_us_cpf'), True, False));
+		array_push($cp, array('$D20', 'us_dt_nascimento',  msg('lb_us_dt_nascimento'), False, True));
+		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('feminino'), 'us_genero', msg('lb_us_genero'), True, True));
+		array_push($cp, array('$O 1:Não definido&2:Professor&3:Aluno&4:Colaborador&5:Externo', 'usuario_tipo_ust_id', msg('lb_usu_tipo'), True, True));
+		array_push($cp, array('$}', '', '', True, False));
+		
+		array_push($cp, array('${', '', 'Profissionais e Acadêmico', True, False));
+		array_push($cp, array('$S30', 'us_codigo_rh', msg('lb_us_codigo_rh'), False, True));
+		array_push($cp, array('$O 1:Não definido&2:Professor auxiliar de ensino&3:Professor assistente&4:Professor adjunto&8:Professor titular', 'usuario_funcao_usf_id', msg('lb_usu_funcao'), FALSE, True));
+		array_push($cp, array('$O 1:Não definido&2:Técnico&3:Graduação&4:Especialista&5:Mestre&6:Doutor&7:Pós-Doutorado&8:Residência Médica', 'usuario_titulacao_ust_id', msg('lb_usu_titulacao'), FALSE, True));
+		array_push($cp, array('$S100', 'us_nome_lattes', msg('lb_us_nome_lattes'), False, True));
+		array_push($cp, array('$S100', 'us_link_lattes', msg('lb_us_link_lattes'), False, True));
+		array_push($cp, array('$S100', 'us_curso_vinculo', msg('lb_us_curso_vinculo'), False, True));
+		array_push($cp, array('$S100', 'us_escola_vinculo', msg('lb_us_escola_vinculo'), False, True));
+		array_push($cp, array('$O 1:Não definido&2:PUCPR&3:Externo', 'us_origem', msg('lb_us_origem'), False, True));
+		array_push($cp, array('$O 1:Não definido&2:Stricto Sensu&3:Graduação', 'us_professor_tipo', msg('lb_us_professor_tipo'), False, True));
+		array_push($cp, array('$O 1:Não definido&2:Inativo&3:Graduação&4:Mestrado&5:Doutorado&6:Pós-Doutorado', 'us_usuario_cursando', msg('lb_us_usuario_cursando'), False, True));
+		array_push($cp, array('$O 1:Horista&2:TI&36:TP', 'us_regime', msg('lb_us_regime'), False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('lb_eq_ativo_2'), True, True));
+		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), True, True));
+		array_push($cp, array('$}', '', '', True, False));
+
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+	}
+
+	function le_usuario_session($id = 0)
+	{
+		$sql = "select * from us_usuario where id_us = ".$id;
+		
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array($rlt);
+		$data = $rlt[0];
+		
+		return($data);
+	}
+
 }
 ?>

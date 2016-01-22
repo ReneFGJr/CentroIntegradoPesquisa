@@ -1047,10 +1047,11 @@ class ic extends CI_Controller {
 		$form = new form;
 		$form -> tabela = $this -> usuarios -> tabela_view();
 		$form -> see = true;
-		$form -> edit = false;
+		//$form -> edit = true;
 		$form -> novo = false;
 		$form = $this -> usuarios -> row($form);
 
+		//$form -> row_edit = base_url('index.php/usuario/edit');
 		$form -> row_view = base_url('index.php/usuario/view');
 		$form -> row = base_url('index.php/ic/usuarios/');
 
@@ -1206,10 +1207,14 @@ class ic extends CI_Controller {
 		$form -> tabela = $tabela;
 		$form -> see = true;
 		$form -> novo = false;
-		$form -> edit = false;
+		
+		$form -> edit = TRUE;
+		
 		$form -> offset = 20;
 		$form -> order = 'id_pr desc';
+				$form -> row_edit = base_url('index.php/ic/edit');
 		$form -> row_view = base_url('index.php/ic/protocolo_view/');
+
 		$form -> row = base_url('index.php/ic/protocolo/' . $status . '/' . $chk);
 		$form = $this -> protocolos_ic -> row($form);
 

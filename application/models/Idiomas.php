@@ -11,7 +11,6 @@ class Idiomas extends CI_model {
 	
 function cp()
 		{
-				
 			$sql_idioma = 'select * from idioma where 1 = 1 order by nome';
 				
 			$cp = array();

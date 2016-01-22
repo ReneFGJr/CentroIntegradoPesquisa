@@ -2,6 +2,8 @@
 $nome_display = $this -> session -> userdata('nome_display');
 $nome = $this -> session -> userdata('nome');
 $cracha = $this -> session -> userdata('cracha');
+$id     = $this -> session -> userdata('id_us');
+
 
 $link = 'index.php/';
 ?>
@@ -15,7 +17,8 @@ $link = 'index.php/';
 		<a href="<?php echo base_url($link . 'login/logout');?>">
 		<li>
 			<i class="icon-remove"></i><?php echo $this -> lang -> line('cab_logout');?>
-		</li></a><a href="<?php echo base_url($link . 'login/myaccount');?>">
+			
+		</li></a><a href="<?php echo base_url($link . 'usuario/atualiza_dados_usu_session/' . $id);?>">
 		<li>
 			<i class="icon-refresh"></i>
 			<?php echo $this -> lang -> line('cab_update');?>
@@ -24,8 +27,7 @@ $link = 'index.php/';
 		if (perfil('#ADM')) {
 			echo '<a href="' . base_url($link . 'admin') . '">';
 			echo '
-				<li><i class="icon-wrench"></i>'.$this -> lang -> line('cab_admin').'</li></a>'.cr();
+<li><i class="icon-wrench"></i>' . $this -> lang -> line('cab_admin') . '</li></a>' . cr();
 		}
 		?>
-
 </div>
