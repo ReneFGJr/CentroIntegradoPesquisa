@@ -992,7 +992,7 @@ class usuarios extends CI_model {
 		array_push($cp, array('$O 1:Não definido&2:Inativo&3:Graduação&4:Mestrado&5:Doutorado&6:Pós-Doutorado', 'us_usuario_cursando', msg('lb_us_usuario_cursando'), False, True));
 		array_push($cp, array('$O 1:Horista&2:TI&36:TP', 'us_regime', msg('lb_us_regime'), False, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('lb_eq_ativo_2'), True, True));
-		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), True, True));
+		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), False, True));
 		array_push($cp, array('$}', '', '', True, False));
 
 		array_push($cp, array('$B', '', msg('enviar'), false, True));

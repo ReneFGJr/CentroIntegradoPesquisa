@@ -406,7 +406,7 @@ class usuario extends CI_Controller {
 
 		$form = new form;
 		$form -> tabela = $this -> usuarios -> tabela;
-		//$form -> see = true;
+		$form -> see = true;
 		$form -> novo = true;
 		$form -> edit = true;
 		$form = $this -> usuarios -> row_usuario_session($form);

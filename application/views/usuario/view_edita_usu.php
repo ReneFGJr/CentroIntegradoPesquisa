@@ -20,19 +20,16 @@ if (!isset($botao_editar)) { $botao_editar = '';
 	</tr>
 	
 	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('cpf');?>:</td><td class="lt2"><B><?php echo $us_cpf;?></B></td>
+		<td width="10%" align="right" class="lt1"><?php echo msg('cpf');?>:</td><td class="lt2"><?php echo $us_cpf;?></td>
 	</tr>
 	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('curso');?>:</td><td class="lt2"><B><?php echo $us_curso_vinculo;?></B></td>
+		<td width="10%" align="right" class="lt1"><?php echo msg('curso');?>:</td><td class="lt2"><?php echo $us_curso_vinculo;?></td>
 	</tr>
 	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('cracha');?>:</td><td class="lt2"><B><?php echo $us_cracha;?></B></td>
+		<td width="10%" align="right" class="lt1"><?php echo msg('cracha');?>:</td><td class="lt2"><?php echo $us_cracha;?></td>
 	</tr>
 	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('contatos');?>:</td><td class="lt2"><B><?php echo $us_contatos;?></B></td>
-	</tr>
-	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('link_lattes');?>:</td><td class="lt2"><B><?php echo $us_link_lattes;?></B></td>
+		<td width="10%" align="right" class="lt1"><?php echo msg('link_lattes');?>:</td><td class="lt2"><?php echo $us_link_lattes;?></td>
 	</tr>
 	<tr>
 		<td colspan=2><div style="min-height: 5px;"></div></td>

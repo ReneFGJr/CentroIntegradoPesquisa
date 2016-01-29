@@ -1,3 +1,4 @@
+
 <?php
 if (!function_exists(('msg')))
 	{
@@ -24,6 +25,29 @@ $lang['cap_finalizado'] = 'Finalizado';
 	
 /* pagina de usuarios */
 $lang['page_usuarios'] = 'Cadastro de pessoas';
+
+$lang['lb_us_nome'] 	= 'Nome';
+$lang['lb_us_cracha'] 	= 'Cracha';
+$lang['lb_us_cpf'] 	= 'CPF';
+$lang['lb_us_dt_nascimento'] 	= 'Data de Nascimento';
+$lang['lb_us_genero'] 	= 'Gênero';
+$lang['lb_usu_tipo'] 	= 'Tipo';
+$lang['lb_us_codigo_rh'] 	= 'Codigo RH';
+$lang['lb_usu_funcao'] 	= 'Função';
+$lang['lb_usu_titulacao'] 	= 'Titulação';
+$lang['lb_us_nome_lattes'] 	= 'Nome no Lattes';
+$lang['lb_us_link_lattes'] 	= 'Link Lattes';
+$lang['lb_us_regime'] 	= 'Regime';
+$lang['lb_eq_ativo_2'] 	= 'Ativo';
+$lang['lb_us_curso_vinculo'] 	= 'Curso Vínculo';
+$lang['lb_us_escola_vinculo'] 	= 'Escola Vínculo';
+$lang['user_teste'] 	= 'Teste';
+$lang['lb_us_origem'] 	= 'Origem';
+$lang['lb_us_professor_tipo'] 	= 'Professor Tipo';
+$lang['lb_us_usuario_cursando'] 	= 'Cursando';
+
+
+
 
 $lang['versao'] = 'v0.16.01';
 /* Fundo de Pesquisa */
