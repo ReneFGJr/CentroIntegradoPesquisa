@@ -300,6 +300,7 @@ class pibic extends CI_Controller {
 							$usid = $data['prof_id'];
 							$ms['nome'] = $data['pf_nome'];
 							$ms['ic_plano'] = $this->load->view('ic/plano-email.php',$data,true);
+							enviaremail_usuario(1,$ms['nw_titulo'],$ms['nw_texto'],'IC');
 							
 							$mss = $this->mensagens->busca($mss,$ms);
 							echo mst($mss['nw_texto']);
