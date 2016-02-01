@@ -209,6 +209,7 @@ class pibic extends CI_Controller {
 		$this -> load -> model('protocolos_ic');
 		$this -> load -> model('ics');
 		$this -> load -> model('ics_acompanhamento');
+		$this -> load -> model('mensagens');
 
 		$this -> cab();
 
@@ -221,8 +222,6 @@ class pibic extends CI_Controller {
 		/* FORM */
 		SWITCH($form) {
 			case 'form_pre' :
-				$this -> load -> model('ics');
-				$this -> load -> model('ics_acompanhamento');
 
 				/* valida entrada no ic_acompanhamento */
 				$rlt = $this -> ics_acompanhamento -> form_acompanhamento_exist($proto, 'PRO');
@@ -259,39 +258,63 @@ class pibic extends CI_Controller {
 				$data['content'] = $rest;
 				$this -> load -> view('content', $data);
 				Break;
-				
+
 			case 'form_ic_rp' :
 				$this -> load -> model('area_conhecimentos');
 				$this -> load -> model('ics');
 				$this -> load -> model('ics_acompanhamento');
-				
-				
+				$this -> load -> model('idiomas');
+				$this -> load -> model('geds');
 
 				/* valida entrada no ic_acompanhamento */
 				$entregue = $this -> ics_acompanhamento -> form_entregue($proto, 'ic_rp_data');
-				
 
 				$data = $this -> ics -> le_protocolo($proto);
 				$this -> load -> view('ic/plano', $data);
-				
+
 				/* envio de dados */
 				$acao = get("acao");
 				$act = get("dd2");
 				$vlr = get("dd3");
-				if (strlen($acao) > 0)
-					{
-						switch ($act)
-							{
-								case 'AREA': 
-									echo "OLA";
-									$this->ics->set_area_semic($proto,$vlr);
-									redirect(base_url("index.php/pibic/form/$form/$proto/$chk"));
-									break;
-							}
+				if (strlen($acao) > 0) {
+					switch ($act) {
+						case 'AREA' :
+							$this -> ics -> set_area_semic($proto, $vlr);
+							redirect(base_url("index.php/pibic/form/$form/$proto/$chk"));
+							break;
+						case 'IDIOMA' :
+							$this -> ics -> set_idioma_semic($proto, $vlr);
+							redirect(base_url("index.php/pibic/form/$form/$proto/$chk"));
+							break;
+						case 'FINISH' :
+							$date = date("Y-m-d");
+							$sql = "update ic set 
+										ic_rp_data = '$date',
+										ic_rp_nota = '0'
+										where ic_plano_aluno_codigo = '$proto' ";
+							echo $sql;
+							//$rlt = $this -> db -> query($sql);
+							
+							$mss = 'IC_RPAR_POSTED';
+							$ms = array();
+							$usid = $data['prof_id'];
+							$ms['nome'] = $data['pf_nome'];
+							$ms['ic_plano'] = $this->load->view('ic/plano-email.php',$data,true);
+							
+							$mss = $this->mensagens->busca($mss,$ms);
+							echo mst($mss['nw_texto']);
+							
+							$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_RP');
+							$rest = $this -> load -> view('ic/tarefa_finalizada', $data, True);
+							$data['content'] = $rest;
+							$this->load->view('content',$data);
+							return('');
+							break;
 					}
+				}
 
 				/* Formulário já finalizado */
-				if ($entregue==1) {
+				if ($entregue == 1) {
 					$rest = 'Este formulário já foi enviado';
 					$data['content'] = $rest;
 					$this -> load -> view('errors/erro_msg', $data);
@@ -300,30 +323,50 @@ class pibic extends CI_Controller {
 					$this -> load -> view('header/foot', $data);
 					return ('');
 				}
-				
-				/* Mostra formulario de area */
-				$data['mostra_area'] = $this->area_conhecimentos->form_areas('dd3',$data['ic_semic_area']);
 
-				$rest = $this -> load->view("ic/form_rp",$data,True);
-
-				/* salvo com sucesso */
-				if ($rest == 'SAVED') {
-					$date = date("Y-m-d");
-					$sql = "update ic set 
-							ic_rp_data = '$date'
-						where ic_plano_aluno_codigo = '$proto'
-						";
-					$rlt = $this -> db -> query($sql);
-					$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_RP');
-					$rest = $this -> load -> view('ic/tarefa_finalizada', $data, True);
+				/*  Validação da submissão */
+				$rest = '';
+				if (1 == 1) {
+					$this -> load -> view('ic/form_finish', $data);
 				}
+
+				/* Mostra formulario de area */
+				$data['mostra_area'] = $this -> area_conhecimentos -> form_areas('dd3', $data['ic_semic_area']);
+				$data['mostra_idioma'] = $this -> idiomas -> form_idioma('dd3', $data['ic_semic_idioma']);
+
+				$this -> geds -> tabela = 'ic_ged_documento';
+				$data['mostra_arquivo'] = $this -> geds -> list_files_table($proto, 'ic', 'RELAP');
+				$data['mostra_arquivo'] .= $this -> geds -> form_upload($proto, 'pibic/ged/RELAP/' . $proto);
+				$data['tot_rp_posted'] = $this -> geds -> total_files;
+
+				$rest = $this -> load -> view("ic/form_rp", $data, True);
 
 				$data['content'] = $rest;
 				$this -> load -> view('content', $data);
-				Break;				
+				Break;
 		}
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	function ged($doc_type = '', $proto = '', $tipo = '', $check = '') {
+		$data = array();
+		$this -> load -> view('header/header', $data);
+		$this -> load -> database();
+
+		$this -> load -> library('session');
+		$this -> load -> helper('url');
+		$this -> lang -> load("app", "portuguese");
+
+		$this -> load -> model('geds');
+
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> geds -> page = base_url('index.php/pibic/ged/' . $doc_type . '/' . $proto . '/null/' . checkpost_link($proto));
+		$this -> geds -> protocol = $proto;
+		$this -> geds -> user = $_SESSION['id_us'];
+
+		$data['content'] = $this -> geds -> form($proto, $doc_type, $tipo);
+		$this -> load -> view('content', $data);
 	}
 
 	function entrega($tipo = '') {

@@ -16,14 +16,32 @@ if (!function_exists(('msg')))
 	
 /***************************************************************************************************/
 /************************************************************************************** C I P ******/
+$lang['SELECIONA_IDIOMA'] = 'Selecionar Idioma >>';
+$lang['SELECIONA_AREA'] = 'Selecionar Área >>';
+$lang['bt_submit_confirm'] = 'Confirmar envio >>>';
+
 $lang['cap_em_cadastro'] = 'Em cadastro';
 $lang['cap_devolvido_correcoes'] = 'Correção do professor';
 $lang['cap_validacao_coordenador'] = 'Validação do coordenador';
 $lang['cap_validacao_diretoria'] = 'Validação da diretoria';
 $lang['cap_comunicacao'] = 'Para comunicação';
 $lang['cap_finalizado'] = 'Finalizado';
+
+/* GED */
+$lang['none_file_posted'] = 'Nenhum arquivo postado';
+$lang['file_tipo'] = 'Tipo de Arquivo';
+$lang['upload_submit'] = 'Enviar arquivo';
+$lang['file_req'] = 'Requisitos';
+$lang['not_defined'] = '::: Não selecionado :::';
+$lang['ged_upload'] = 'Enviar arquivo >>>';
+
+$lang['ic_semic_area'] = 'Área do Conhecimento';
+$lang['ic_semic_idioma'] = 'Idioma de Apresentação';
+$lang['ic_arquivos'] = 'Apresentação de Documentos';
 	
 /* pagina de usuarios */
+$lang['messagem_cadastradas'] = 'Mensagens / Comunicações';
+$lang['comunicacoes_cadastradas'] = 'Comunicações por e-mail';
 $lang['page_usuarios'] = 'Cadastro de pessoas';
 
 $lang['lb_us_nome'] 	= 'Nome';
@@ -196,6 +214,7 @@ $lang['Vigencia'] = 'Vigência';
 $lang['Orientador'] = 'Orientador';
 
 $lang['pt_BR'] = 'Português';
+$lang['us_EN'] = 'Inglês';
 $lang['en'] = 'Inglês';
 $lang['Orientador'] = 'Orientador';
 $lang['Areas'] = 'Áreas';

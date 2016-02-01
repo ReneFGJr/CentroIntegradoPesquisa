@@ -34,6 +34,39 @@ function cp()
 			
 			return($data);
 		}	
+	function form_idioma($v = '', $idioma = '')
+		{
+		$sql = "SELECT * from idioma
+						WHERE  i_ativo = 1
+						order by i_nome ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		//$sa = '<select size=15 name="' . $v . '" class="lt2" style="width: 100%">';
+		$sx = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			
+			$line = $rlt[$r];
+			$cod = trim($line['i_codificacao']);
+			$desc = trim($line['i_nome']);
+			$chk = '';
+			$ok = 1;
+
+			/* Estilos */
+			if (trim($cod) == '') { $ok = 0;
+			}
+			
+			if ($idioma == $cod)
+				{
+					$chk = 'checked';
+				}
+
+			if ($ok == 1) {
+				$sx .= '</br><input type="radio" name="'.$v.'" value="' . $cod . '" ' . $chk . '>' . $desc . ''.cr();
+			}
+		}
+		return ($sx);
+	}	
 	
 }
 ?>		

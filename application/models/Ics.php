@@ -682,6 +682,12 @@ class ics extends CI_model {
 			$this->db->query($sql);
 			return(1);
 		}	
+	function set_idioma_semic($proto,$idioma)
+		{
+			$sql = "update ic set ic_semic_idioma = '$idioma' where ic_plano_aluno_codigo = '$proto' ";
+			$this->db->query($sql);
+			return(1);
+		}		
 
 	function resumo_autores_mostra($id) {
 		$funcao = array();
@@ -1016,17 +1022,11 @@ class ics extends CI_model {
 		$rlt = db_query($sql);
 
 		if ($line = db_read($rlt)) {
-			$edital = trim($line['mb_tipo']);
-			$line['logo'] = $this -> logo_modalidade($edital);
-
-			$ida = $line['mb_id'];
-			if ($ida == 0) {
-				$link_a = '<A href="' . base_url('index.php/ic/ativar_plano/' . $id . '/' . checkpost_link($id)) . '">' . msg('ativar_plano') . '</a>';
-				$line['ic_ativar'] = $link_a;
-			} else {
-				$line['ic_ativar'] = '';
-			}
-			return ($line);
+			$id = $line['id_ic'];
+			$line = $this->le($id);
+			return($line);
+		} else {
+			return(array());
 		}
 	}
 	
@@ -1180,6 +1180,7 @@ class ics extends CI_model {
 						left join (select us_cpf as pf_cpf, us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha, us_curso_vinculo as pf_curso from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id
+						left join area_conhecimento on ic_semic_area = ac_cnpq
 						$wh
 						order by $orderby ic_ano desc, s_id, ic_plano_aluno_codigo, pf_nome, al_nome
 						limit $limit offset $offset

@@ -30,10 +30,17 @@ class Geds extends CI_Model {
 	 * 				//
 	 */
 
-	function list_files_table($protocolo = '', $frame = '') {
+	function list_files_table($protocolo = '', $frame = '',$tipo='') {
+		$wh = '';
+		if (strlen($tipo) > 0)
+			{
+				$wh = " AND doc_tipo = '$tipo' ";
+			}
 		$sql = "select * from " . $this -> tabela . " 
+					inner join " . $this -> tabela . "_tipo on doc_tipo = doct_codigo
 						where doc_dd0 = '$protocolo' 
 								and doc_ativo = 1 
+								$wh
 						";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -56,7 +63,7 @@ class Geds extends CI_Model {
 				$link = '<span onclick="ged_download(\'' . $line['id_doc'] . '\');" class="link lt2" style="cursor: pointer;">';
 				$sx .= '<tr">';
 				$sx .= '<td>';
-				$sx .= $link.$line['doc_tipo'].'</span>';
+				$sx .= $link . $line['doct_nome'] . '</span>';
 				$sx .= '</td>';
 				$sx .= '<td>';
 				$sx .= $link . $line['doc_filename'];
@@ -101,10 +108,11 @@ class Geds extends CI_Model {
 				</script>
 			';
 		}
+		$this->total_files = count($rlt); 
 		return ($sx);
 	}
 
-	function list_files($protocolo = '', $frame = '') {
+	function list_files($protocolo = '', $frame = '', $type = '') {
 		$sql = "select * from " . $this -> tabela . " 
 						where doc_dd0 = '$protocolo' 
 								and doc_ativo = 1 
@@ -174,7 +182,7 @@ class Geds extends CI_Model {
 		}
 		if ($this -> le($this -> id_file)) {
 			$arq = $this -> file_path;
-			
+
 			if (!(file_exists($arq))) {
 				$arq = substr($arq, strpos($arq, '/') + 1, strlen($arq));
 				if (!(file_exists($arq))) {
@@ -204,9 +212,8 @@ class Geds extends CI_Model {
 		$this -> total_files = count($rlt);
 
 		$sx = '';
+		$sx = '<table border=0 class="lt1">';
 		if (count($rlt) > 0) {
-
-			$sx = '<table border=0 class="lt1">';
 			for ($r = 0; $r < count($rlt); $r++) {
 				$line = $rlt[$r];
 				$link = '<span onclick="ged_download(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
@@ -230,15 +237,26 @@ class Geds extends CI_Model {
 				$sx .= '</td>';
 				$sx .= '</tr>';
 			}
-			$sx .= '</table>';
+
 		}
+		if (count($rlt) == 0) {
+			$sx .= '<tr><td colspan="10" class="error lt4" aling="center">';
+			$sx .= msg('none_file_posted');
+			$sx .= '</td></tr>';
+		}
+		$sx .= '</table>';
 		return ($sx);
 	}
 
 	function form($id = '', $tipo = '') {
 		$erro_tipo = '';
-		$options = '<option value="">' . msg('not_defined') . '</option>';
-		$options .= $this -> documents_type_form($id);
+		if (strlen($tipo) == 0)
+			{
+				$options = '<option value="">' . msg('not_defined') . '</option>';
+			} else {
+				$options = '';
+			}
+		$options .= $this -> documents_type_form($tipo,'lt3');
 		$path = '_document/';
 
 		if (isset($_FILES['arquivo']['tmp_name'])) {
@@ -296,7 +314,7 @@ class Geds extends CI_Model {
 		$dd = array();
 		$sx = '<form id="upload" action="' . $page . '" method="post" enctype="multipart/form-data">
 					<fieldset><legend>' . msg('file_tipo') . '</legend>
-    				<select name="dd2" size=1>' . $options . '</select>
+    				<select name="dd2" size=1 class="lt4" >' . $options . '</select>
     				' . $erro_tipo . '
     				</fieldset>
     				<BR>
@@ -305,10 +323,12 @@ class Geds extends CI_Model {
      				<input type="submit" value="enviar arquivo" name="acao" id="idbotao" />
     				</fieldset>  
     				<BR>
-    				<fieldset class="fieldset01"><legend class="legend01">' . msg('file_tipo') . '</legend>
+    				<fieldset class="fieldset01"><legend class="legend01">' . msg('file_req') . '</legend>
     				MaxSize: <B>' . number_format($this -> up_maxsize / (1024 * 1024), 0, ',', '.') . 'MByte</B>
     				&nbsp;&nbsp;&nbsp;
-					Extension Valid: <B>' . $this -> display_extension() . '</B>';
+					Extension Valid: <B>' . $this -> display_extension() . '</B>
+					&nbsp;&nbsp;&nbsp;
+					Protocolo: <b>'.$id.'</b>';
 		$sx .= '</fieldset></form>';
 		return ($sx);
 	}
@@ -338,8 +358,10 @@ class Geds extends CI_Model {
 
 	}
 
-	function documents_type_form($tipo) {
-		$sql = "select * from " . $this -> tabela . "_tipo where doct_ativo = 1 ";
+	function documents_type_form($tipo,$class='') {
+		$sql = "select * from " . $this -> tabela . "_tipo 
+				WHERE doct_ativo = 1 
+				AND doct_codigo = '$tipo' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$sx = '';
@@ -348,10 +370,10 @@ class Geds extends CI_Model {
 			$sel = '';
 			if (trim($tipo) == trim($line['doct_codigo'])) { $sel = 'selected';
 			}
-			$sx .= '<option value="' . $line['doct_codigo'] . '" ' . $sel . '>';
+			$sx .= '<option value="' . $line['doct_codigo'] . '" ' . $sel . ' class="'.$class.'">';
 			$sx .= msg(trim($line['doct_nome']));
 			$sx .= '</option>';
-			$sx .= chr(13);
+			$sx .= cr();
 		}
 		return ($sx);
 
@@ -578,7 +600,7 @@ class Geds extends CI_Model {
 				<script>
 						window.opener.location.reload();
 						close(); 
-				</script>';	
+				</script>';
 		return (1);
 	}
 

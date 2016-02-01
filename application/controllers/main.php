@@ -87,7 +87,7 @@ class main extends CI_Controller {
 		}
 
 		/* Libera Menus */
-		if (perfil('#DGP#CPS#COO#CPP#SPI#ADM') == 1) { array_push($menu, array('Docentes & Discentes', 'Cadastrao de docentes, discentes, avaliadores e usuarios do sistema', 'BTA', '/usuario/row'));
+		if (perfil('#DGP#CPS#COO#CPP#SPI#ADM#SEP') == 1) { array_push($menu, array('Docentes & Discentes', 'Cadastrao de docentes, discentes, avaliadores e usuarios do sistema', 'BTA', '/usuario/row'));
 		}
 
 		/* Libera Menus */

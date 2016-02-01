@@ -74,12 +74,11 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 	}
 
-	function pagamento_cracha($cracha='',$chk='')
-		{
-			$this->load->model('ics');
-			$data['content'] = $this->ics->pagamentos_ic($cracha);
-			$this->load->view('content',$data);
-		}
+	function pagamento_cracha($cracha = '', $chk = '') {
+		$this -> load -> model('ics');
+		$data['content'] = $this -> ics -> pagamentos_ic($cracha);
+		$this -> load -> view('content', $data);
+	}
 
 	function comunicacao_edit($id = 0, $gr = 0, $tp = 0) {
 		/* Load Models */
@@ -720,13 +719,86 @@ class ic extends CI_Controller {
 
 	}
 
-	function comunicacao($id = 0, $gr = 0, $tp = 0) {
+	function comunicacao() {
+		$this -> cab();
+		$data = array();
+
+		$menu = array();
+		array_push($menu, array('Mensagens', 'Mensagens padrão do sistema', 'ITE', '/ic/comunicacao_1'));
+		array_push($menu, array('Mensagens', 'Mensagens de comunicação', 'ITE', '/ic/comunicacao_2'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu de Mensagens';
+		$this -> load -> view('header/main_menu', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+	function mensagens_edit($id = 0, $chk = '') {
 		/* Load Models */
-		$this -> load -> model('comunicacoes');
+		$this -> load -> model('mensagens');
+		$cp = $this -> mensagens -> cp();
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> mensagens -> tabela);
+		$data['title'] = msg('mensagens_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/ic/comunicacao_1'));
+		}
+
+		//$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);	}
+
+	function comunicacao_1($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('comunicacoes');
+		$this -> load -> model('mensagens');
+
+		$this -> cab();
+		$data = array();
+
+		/* Lista de Mensagens do Sistema */
+		$form = new form;
+		$form -> tabela = $this -> mensagens -> tabela;
+		$form -> see = true;
+		$form -> edit = true;
+		$form -> novo = true;
+		$form -> order = ' nw_ref ';
+		$form = $this -> mensagens -> row($form);
+
+		$form -> row_edit = base_url('index.php/ic/mensagens_edit');
+		$form -> row_view = '';
+		$form -> row = base_url('index.php/ic/comunicacao_1/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('messagem_cadastradas');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function comunicacao_2($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('comunicacoes');
+		$this -> load -> model('mensagens');
+
+		$this -> cab();
+		$data = array();
 
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
@@ -739,10 +811,10 @@ class ic extends CI_Controller {
 
 		$form -> row_edit = base_url('index.php/ic/comunicacao_edit');
 		$form -> row_view = base_url('index.php/ic/comunicacao_view');
-		$form -> row = base_url('index.php/ic/comunicacao/');
+		$form -> row = base_url('index.php/ic/comunicacao_2/');
 
 		$data['content'] = row($form, $id);
-		$data['title'] = msg('messagem_cadastradas');
+		$data['title'] = msg('comunicacoes_cadastradas');
 
 		$this -> load -> view('content', $data);
 
@@ -794,18 +866,17 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['title'] = 'Inportação de arquivos de pagamento';
-		$this->load->view('form/form_file_upload',$data);
-		
+		$this -> load -> view('form/form_file_upload', $data);
+
 		/* Arquivo enviado */
-		if (isset($_FILES['arquivo']['tmp_name']))
-			{
-			    $nome = lowercasesql($_FILES['arquivo']['name']);
-    			$temp = $_FILES['arquivo']['tmp_name'];
-				$size = $_FILES['arquivo']['size'];
-				
-				$data['content'] = $this->pagamentos->processa_seq($temp);
-				$this->load->view('content',$data);
-			}
+		if (isset($_FILES['arquivo']['tmp_name'])) {
+			$nome = lowercasesql($_FILES['arquivo']['name']);
+			$temp = $_FILES['arquivo']['tmp_name'];
+			$size = $_FILES['arquivo']['size'];
+
+			$data['content'] = $this -> pagamentos -> processa_seq($temp);
+			$this -> load -> view('content', $data);
+		}
 
 		/*Fecha */ 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
@@ -814,11 +885,10 @@ class ic extends CI_Controller {
 
 	function pagamento_planilha($date = '', $action = '') {
 		$ano1 = date("Y");
-		if (date("m") < 10)
-			{
-				$ano1--;
-			}
-		$ano2 = $ano1+2;
+		if (date("m") < 10) {
+			$ano1--;
+		}
+		$ano2 = $ano1 + 2;
 		/* Load Models */
 		$this -> load -> model('pagamentos');
 		$this -> load -> model('bancos');
@@ -858,11 +928,10 @@ class ic extends CI_Controller {
 
 	function pagamento_planilha_compromisso($date = '', $action = '') {
 		$ano1 = date("Y");
-		if (date("m") < 10)
-			{
-				$ano1--;
-			}
-		$ano2 = $ano1+2;
+		if (date("m") < 10) {
+			$ano1--;
+		}
+		$ano2 = $ano1 + 2;
 		/* Load Models */
 		$this -> load -> model('pagamentos');
 		$this -> load -> model('bancos');
@@ -915,7 +984,7 @@ class ic extends CI_Controller {
 		if (strlen($err) > 0) {
 			$tela = '<center><h1><font color="red">' . $err . '</font></h1></center>';
 			echo $tela;
-			exit;
+			exit ;
 		} else {
 			$fl = $this -> pagamentos -> gerar_pagamento_bolsa_arquivo($modalidade, $edital, $venc);
 			$tela = $fl;
@@ -1207,12 +1276,12 @@ class ic extends CI_Controller {
 		$form -> tabela = $tabela;
 		$form -> see = true;
 		$form -> novo = false;
-		
+
 		$form -> edit = TRUE;
-		
+
 		$form -> offset = 20;
 		$form -> order = 'id_pr desc';
-				$form -> row_edit = base_url('index.php/ic/edit');
+		$form -> row_edit = base_url('index.php/ic/edit');
 		$form -> row_view = base_url('index.php/ic/protocolo_view/');
 
 		$form -> row = base_url('index.php/ic/protocolo/' . $status . '/' . $chk);
@@ -1357,7 +1426,7 @@ class ic extends CI_Controller {
 				$ano = date("Y");
 				echo "OLA";
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
-				break;				
+				break;
 			default :
 				$fld = '';
 				$tit = '';
@@ -1451,11 +1520,11 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function acompanhamento_data($id=0) {
+	function acompanhamento_data($id = 0) {
 		/* Load Models */
 		$this -> load -> model('ics');
 		$this -> cab();
-		
+
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
 		$form -> tabela = 'ic_atividade';
@@ -1472,28 +1541,26 @@ class ic extends CI_Controller {
 		$data['content'] = row($form, $id);
 		$data['title'] = msg('ic_entregas_do_sistema');
 
-		$this -> load -> view('content', $data);		
-		$data = array();		
+		$this -> load -> view('content', $data);
+		$data = array();
 
 		$form = new form;
-
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
-function acompanhamento_data_ed($id=0) {
+	function acompanhamento_data_ed($id = 0) {
 		/* Load Models */
 		$this -> load -> model('ics');
 		$this -> cab();
-	
-		
+
 		/* IC */
 		$form = new form;
 		$form -> id = $id;
 		$form -> tabela = 'ic_atividade';
-		$cp = $this->ics->cp_atividades();
-		
+		$cp = $this -> ics -> cp_atividades();
+
 		$tela = $form -> editar($cp, $form -> tabela);
 
 		$data['title'] = msg('ic_acomanhamento_data');
@@ -1504,7 +1571,7 @@ function acompanhamento_data_ed($id=0) {
 		if ($form -> saved > 0) {
 			redirect(base_url('index.php/ic/acompanhamento'));
 		}
-}
+	}
 
 	function view($id = 0, $check = '') {
 		/* Load Models */
@@ -1599,8 +1666,7 @@ function acompanhamento_data_ed($id=0) {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();
@@ -1776,9 +1842,8 @@ function acompanhamento_data_ed($id=0) {
 		$this -> load -> model('ics');
 		$data = $this -> ics -> le_form_prof($plano);
 		$this -> load -> view('header/header', $data);
-		
-		$this -> load -> view('ic/mostra_acompanhamento_prof', $data);
 
+		$this -> load -> view('ic/mostra_acompanhamento_prof', $data);
 
 	}
 
