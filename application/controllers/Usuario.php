@@ -284,7 +284,6 @@ class usuario extends CI_Controller {
 				$data['logo'] = base_url('img/logo/logo_discente.jpg');
 				$this -> load -> view('header/logo', $data);
 				$this -> load -> view('perfil/discente', $data);
-
 				$cpf = strzero(sonumero($data['us_cpf']), 11);
 				$data['content'] = $this -> usuarios -> mostra_formacao($cpf);
 				$this -> load -> view('content', $data);
@@ -395,77 +394,83 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-
-	/*edita conta bancaria do usuário */
-	function atualiza_dados_usu_session($id = 0) {
+	/*edita dados do usuário da sessão */
+	function atualiza_dados() {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 
 		$this -> cab();
 		$data = array();
 
+		$cracha = $_SESSION['cracha'];
+		$dados = $this -> usuarios -> le_cracha($cracha);
+		$id = $dados['id_us'];
+
+		if (strlen($cracha) < 8) {
+			redirect(base_url('index.php/main'));
+		}
+		
+		$this -> load -> view('usuario/view_simple', $dados);
+		$cp = $this -> usuarios -> cp_usuario_session();
+		
 		$form = new form;
-		$form -> tabela = $this -> usuarios -> tabela;
-		$form -> see = true;
-		$form -> novo = true;
-		$form -> edit = true;
-		$form = $this -> usuarios -> row_usuario_session($form);
+		$form -> id = $id;
+		$tela = $form -> editar($cp, $this -> usuarios -> tabela);
 
-		$form -> row_edit = base_url('index.php/usuario/edit_usuario_session');
-		$form -> row_view = base_url('index.php/usuario/view_usuario_session');
-		$form -> row = base_url('index.php/usuario');
+		$data['title'] = msg('Atualizar dados');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+		
+		/* Salva */
+		if ($form -> saved > 0) {
+		redirect(base_url('index.php/main'));
+		}
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 
-		$tela['tela'] = row($form, $id);
-		$tela['title'] = 'Seleciona Usuário';
-		$this -> load -> view('form/form', $tela);
+	}
 
+	function edit_usuario_session($id = 0, $check = '') {
+
+		/* Load Models */
+		$this -> load -> model('usuarios');
+
+		$cp = $this -> usuarios -> cp_usuario_session();
+		$data = array();
+
+		$this -> cab();
+		//$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> usuarios -> tabela);
+
+		$data['title'] = msg('Dados cadastrais do usuário');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/usuario'));
+		}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		
 	}
-		
-	function edit_usuario_session($id = 0, $check = '') {
-			
-			/* Load Models */
-			$this -> load -> model('usuarios');
-			
-			$cp = $this->usuarios->cp_usuario_session();
-			$data = array();
-	
-			$this -> cab();
-			//$this -> load -> view('header/content_open');
-			
-			$form = new form;
-			$form->id = $id;
-			
-			$tela = $form->editar($cp,$this->usuarios->tabela);
-			
-			$data['title'] = msg('Dados cadastrais do usuário');
-			$data['tela'] = $tela;
-			$this -> load -> view('form/form',$data);
-			
-			/* Salva */
-			if ($form->saved > 0)
-				{
-					redirect(base_url('index.php/usuario'));
-				}
-			
-			$this -> load -> view('header/content_close');
-			$this -> load -> view('header/foot', $data);
-		}		
-	
-		function view_usuario_session($id = 0, $check = '') {
+
+	function view_usuario_session($id = 0, $check = '') {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 
 		$this -> cab();
 		//$this -> load -> view('header/content_open');
-		
-		$data = $this->usuarios->le_usuario_session($id);
+
+		$data = $this -> usuarios -> le_usuario_session($id);
 
 		$this -> load -> view('usuario/view_edita_usu', $data);
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}

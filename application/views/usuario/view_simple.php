@@ -1,36 +1,53 @@
 <?php
-/* Foto do aluno */
-if (!(isset($img_foto))) {
-	$img_foto = base_url('img/img_noPhoto.jpg');
-} else {
-	if (strlen($img_foto) == 0) {
-		$img_foto = base_url('img/img_noPhoto.jpg');
-	}
-}
-if (!isset($botao_editar)) { $botao_editar = '';
-}
+$us_nada = '<font color="blue">[em construção]</font>';
 ?>
-<table width="100%" class="lt1" border=0 cellpadding="1">
-	<tr valign="top">
-		<td width="10%" align="right" class="lt1">nome:</td><td class="lt4"><B><?php echo $us_nome;?></B></td>
-		<td width="280" >email <div id="email_list" style="width: 280px;"></div></td>
-	</tr>
-	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('titulacao');?>:</td><td class="lt2"><B><?php echo $ust_titulacao;?></B></td>
-	</tr>
-	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('perfil');?>:</td><td class="lt2"><B><?php echo $ustp_nome;?></B></td>
-	</tr>
-	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('cpf');?>:</td><td class="lt2"><B><?php echo $us_cpf;?></B></td>
-	</tr>
-	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('curso');?>:</td><td class="lt2"><B><?php echo $us_curso_vinculo;?></B></td>
-	</tr>
-	<tr>
-		<td width="10%" align="right" class="lt1"><?php echo msg('cracha');?>:</td><td class="lt2"><B><?php echo $us_cracha;?></B></td>
-	</tr>
-	<tr>
-		<td colspan=2><div style="min-height: 5px;"></div></td>
-	</tr>
+<table id="cabecalho-user-perfil" class="info-pessoais" border=0>
+	<h1>Dados cadastrais do usuário</h1>
+	<hr size="10" width="50%" align="left" noshade>
+	<TR valign="top">
+		<TD width="80">
+			<div id="foto-perfil-2">
+				<IMG SRC="http://www2.pucpr.br/reol/cip/img/no_photo.jpg" border=0 width="80" class="foto-perfil">
+			</div>
+		</TD>
+		<TD>
+			<div id="nome-dados-perfil">
+				<li class="lt5">
+					<B><?php echo $us_nome;?>&nbsp;</B>
+				</li>
+				<li>
+					CPF: <?php echo mask_cpf($us_cpf);?>
+				</li>
+				<li>
+					<?php echo  $email;?>
+					<BR>
+				<li></li>
+				<?php
+				if (strlen($us_link_lattes) > 0) {
+					echo '<li><a href="' . $us_link_lattes . '" target="new"><img src="http://www2.pucpr.br/reol/img/icone_plataforma_lattes.png" height="35" border=0></li>';
+				}
+				?>
+			</div>
+		</TD>
+		<TD width="200" >
+			<div id="info-pesquisador" class="info-pesquisador lt1" style="border:1px #333 solid; border-radius: 10px;">
+				<span class="lt2 titulo-info-pesquisador">Informações do Usuario</span>
+				<br />
+				<br />
+				<li>
+					<strong>Crachá / EmployerID:</strong><?php echo $us_cracha;?>
+					/ <?php echo $us_emplid;?>
+				</li>
+				<li>
+					<strong>Genero: </strong><?php echo $us_genero;?>
+				</li>
+				<li>
+					<strong>Link Lattes: </strong><?php echo $us_link_lattes;?>
+				</li>
+				<li>
+					<strong>Data de Nasc.: </strong><?php echo stodbr($us_dt_nascimento);?>
+				</li>
+			</div>
+		</TD>
 </table>
+<hr size="10" width="100%" align="left" noshade>

@@ -18,7 +18,7 @@ $link = 'index.php/';
 		<li>
 			<i class="icon-remove"></i><?php echo $this -> lang -> line('cab_logout');?>
 			
-		</li></a><a href="<?php echo base_url($link . 'usuario/atualiza_dados_usu_session/' . $id);?>">
+		</li></a><a href="<?php echo base_url($link . 'usuario/atualiza_dados/');?>">
 		<li>
 			<i class="icon-refresh"></i>
 			<?php echo $this -> lang -> line('cab_update');?>
