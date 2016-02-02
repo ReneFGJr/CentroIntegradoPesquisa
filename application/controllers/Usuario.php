@@ -418,6 +418,7 @@ class usuario extends CI_Controller {
 		$tela = $form -> editar($cp, $this -> usuarios -> tabela);
 
 		$data['title'] = msg('Atualizar dados');
+		//$data['logo'] = base_url('img/icon/ico_engrenagem.png');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form', $data);
 		

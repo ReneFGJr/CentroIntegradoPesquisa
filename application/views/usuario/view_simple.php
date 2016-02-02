@@ -12,7 +12,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 		</TD>
 		<TD>
 			<div id="nome-dados-perfil">
-				<li class="lt5">
+				<li class="lt5"> 
 					<B><?php echo $us_nome;?>&nbsp;</B>
 				</li>
 				<li>
@@ -29,7 +29,7 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				?>
 			</div>
 		</TD>
-		<TD width="200" >
+		<TD width="400" >
 			<div id="info-pesquisador" class="info-pesquisador lt1" style="border:1px #333 solid; border-radius: 10px;">
 				<span class="lt2 titulo-info-pesquisador">Informações do Usuario</span>
 				<br />
@@ -41,9 +41,11 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<li>
 					<strong>Genero: </strong><?php echo $us_genero;?>
 				</li>
+				<!--
 				<li>
-					<strong>Link Lattes: </strong><?php echo $us_link_lattes;?>
+					<strong>Link Lattes: </strong> <a href="<?php echo $us_link_lattes;?>" target="new">Acessar <i>Lattes</i></a>
 				</li>
+				-->
 				<li>
 					<strong>Data de Nasc.: </strong><?php echo stodbr($us_dt_nascimento);?>
 				</li>
