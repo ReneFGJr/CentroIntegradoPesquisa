@@ -19,6 +19,9 @@ if (!function_exists(('msg')))
 $lang['SELECIONA_IDIOMA'] = 'Selecionar Idioma >>';
 $lang['SELECIONA_AREA'] = 'Selecionar Área >>';
 $lang['bt_submit_confirm'] = 'Confirmar envio >>>';
+$lang['protocolo_botao_form_ic_rp'] = 'Enviar relatório Parcial';
+$lang['sw_ic_rel_pacial'] = 'Submissão do Relatório Parcial';
+$lang['sw_ic_form_acompanhamento'] = 'Submissão do questionário de acompanhamento';
 
 $lang['cap_em_cadastro'] = 'Em cadastro';
 $lang['cap_devolvido_correcoes'] = 'Correção do professor';
@@ -43,6 +46,7 @@ $lang['ic_arquivos'] = 'Apresentação de Documentos';
 $lang['messagem_cadastradas'] = 'Mensagens / Comunicações';
 $lang['comunicacoes_cadastradas'] = 'Comunicações por e-mail';
 $lang['page_usuarios'] = 'Cadastro de pessoas';
+$lang['add_email'] = 'novo e-mail';
 
 $lang['lb_us_nome'] 	= 'Nome';
 $lang['lb_us_cracha'] 	= 'Cracha';

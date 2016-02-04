@@ -14,12 +14,20 @@ class mensagens extends CI_model {
 					$sx = $rlt[0];
 				}
 			$txt = $sx['nw_texto'];
+			if ($sx['nw_formato'] != 'HTML')
+				{
+					$txt = mst($txt);
+				} 			
+			/* Substituicoes */
 			if (isset($data['nome'])) 
 				{ $txt = troca($txt,'$nome',$data['nome']); }
 			if (isset($data['ic_plano']))
 				{ $txt = troca($txt,'$ic_plano',$data['ic_plano']); }
 				
+			$txt .= '<br><br><br><font style="fonte-size: 6px;">'.$ref.'</font>';
+				
 			$sx['nw_texto'] = $txt;
+			
 			return($sx);
 		}
 
@@ -34,6 +42,7 @@ class mensagens extends CI_model {
 
 		array_push($cp, array('$U8', 'nw_dt_cadastro', '', False, True));
 		array_push($cp, array('$O 1:Sim&0:Não', 'nw_ativo', msg('ativo'), True, True));
+		array_push($cp,array('$O HTML:HTML&TEXT:TEXT','nw_formato',msg('formato'),True,True));
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 		return ($cp);
 	}
@@ -51,7 +60,7 @@ class mensagens extends CI_model {
 	function row($obj) {
 		$obj -> fd = array('id_nw', 'nw_ref','nw_own','nw_titulo', 'nw_dt_cadastro', 'nw_ativo');
 		$obj -> lb = array('ID', 'Ref','Dono','Título', 'Cadastro', 'Ativo','','');
-		$obj -> mk = array('', 'L', 'L', 'C','C','SN');
+		$obj -> mk = array('', 'L', 'L', 'L','C','SN');
 		return ($obj);
 	}
 }

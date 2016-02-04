@@ -26,7 +26,9 @@ class producoes extends CI_model {
 		$nome_lattes = $line['us_nome_lattes'];
 
 		$sql = "select * from cnpq_acpp
-							left join webqualis on issn2 = acpp_issn and area_id = $area and ano = '$qualis'
+							left join 
+								(select distinct wq_issn_l, area_id, ano, estrato from webqualis ) as qualis 
+								on wq_issn_l = acpp_issn_link and area_id = $area and ano = '$qualis'
 							left join area_avaliacao on id_area = area_id
 							where acpp_autor = '$nome_lattes' 
 							order by acpp_ano desc
@@ -81,8 +83,10 @@ class producoes extends CI_model {
 				$nome_lattes = $line['us_nome_lattes'];
 
 				$sql = "select * from cnpq_acpp
-							left join webqualis on issn2 = acpp_issn and area_id = $area and ano = '$qualis'
+							left join (select distinct wq_issn_l, area_id, ano, estrato from webqualis ) as qualis
+							on wq_issn_l = acpp_issn_link and area_id = $area and ano = '$qualis'
 							left join area_avaliacao on id_area = area_id
+							left join (SELECT min(sjr_quartile) as quartil, issn_l as sc_issn_l FROM scimago WHERE 1 group by issn_l) as scimago on sc_issn_l = acpp_issn_link 
 							where acpp_autor = '$nome_lattes' 
 							order by acpp_ano desc
 							";
@@ -92,7 +96,6 @@ class producoes extends CI_model {
 				$sh = '<tr class="lt0">
 							<th></th>
 							<th>publicação</th>
-							<th>Qt.Autores</th>
 							<th><span title="Qualis Periódicos - CAPES">Qualis</span></th>
 							<th><span title="Scimago Journal & Country Rank">SJR</span></th>
 							<th><span title="Journal Citation Report">JCR</span></th>
@@ -145,18 +148,15 @@ class producoes extends CI_model {
 
 					if (strlen($line2['acpp_ano'])) {
 						$sx .= '. ISSN ' . substr($line2['acpp_issn'], 0, 4) . '-' . substr($line2['acpp_issn'], 4, 4);
+						$sx .= ' '.$line2['acpp_issn_link'];
 					}
-
-					$sx .= '<td class="border1" width="30" align="center">';
-					$sx .= $line2['acpp_qt_autores'];
-					$sx .= '</td>';
 
 					$sx .= '<td class="border1" width="30" align="center">';
 					$sx .= $line2['estrato'];
 					$sx .= '</td>';
 
 					$sx .= '<td class="border1" width="30" align="center">';
-					$sx .= '';
+					$sx .= '<img src="'.base_url('img/ss/icone_'.$line2['quartil'].'.gif').'"';
 					$sx .= '</td>';
 
 					$sx .= '<td class="border1" width="30" align="center">';

@@ -27,6 +27,7 @@ class programas_pos extends CI_model {
 						
 					WHERE us_usuario_id_us = $prof 
 							and sspp_ativo = 1";
+
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();	
 			return($rlt);

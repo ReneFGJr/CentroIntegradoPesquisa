@@ -432,7 +432,7 @@ class usuarios extends CI_model {
 		array_push($cp, array('$Q id_ustp:ustp_nome:select * from us_tipo order by ustp_nome', 'usuario_tipo_ust_id', msg('perfil'), True, True));
 
 		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
-
+		array_push($cp, array('$Q id_area:area_avaliacao_nome:select * from area_avaliacao order by area_avaliacao_nome', 'us_area_conhecimento', msg('area_avaliacao'), False, True));
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 
 		return ($cp);
@@ -529,8 +529,13 @@ class usuarios extends CI_model {
             left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
             left join us_avaliador_situacao on us_avaliador = id_as
             left join ies_instituicao on id_ies = ies_instituicao_ies_id
-            left join us_tipo on usuario_tipo_ust_id = id_ustp 
-						where id_us = " . $id;
+            left join us_tipo on usuario_tipo_ust_id = id_ustp
+            left join area_avaliacao on us_area_conhecimento = id_area
+            left join escola on us_escola_vinculo = id_es
+            left join us_bolsa_produtividade on id_us = us_bolsa_produtividade.us_id 
+            left join us_bolsa_prod_nome on bpn_id = us_bolsa_prod_nome.id_bpn
+            left join (select distinct 1 as ss, us_usuario_id_us as us_id_ss from ss_professor_programa_linha where sspp_ativo = 1) as ss on id_us = us_id_ss  
+			WHERE id_us = " . $id;
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();

@@ -125,6 +125,10 @@ class main extends CI_Controller {
 		}
 		/* Iniciação Científica */
 		array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
+		
+		if (perfil('#TST') == 1) {
+			array_push($menu, array('Stricto Sensu', 'Coordenadores e Professores do <i>stricto sensu</i>', 'BTN', '/ss'));
+		}		
 
 		if (perfil('#TST') == 1) {
 			array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));

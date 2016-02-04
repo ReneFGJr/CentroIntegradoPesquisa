@@ -1,5 +1,8 @@
 <?php
 class pibic extends CI_Controller {
+	
+	// Proprietário do e-mail
+	var $id_own_pibic = 2;
 
 	function __construct() {
 		global $dd, $acao;
@@ -290,20 +293,21 @@ class pibic extends CI_Controller {
 							$date = date("Y-m-d");
 							$sql = "update ic set 
 										ic_rp_data = '$date',
-										ic_rp_nota = '0'
+										ic_nota_rp = '0'
 										where ic_plano_aluno_codigo = '$proto' ";
-							echo $sql;
-							//$rlt = $this -> db -> query($sql);
+							//echo $sql;
+							$rlt = $this -> db -> query($sql);
 							
 							$mss = 'IC_RPAR_POSTED';
 							$ms = array();
 							$usid = $data['prof_id'];
 							$ms['nome'] = $data['pf_nome'];
 							$ms['ic_plano'] = $this->load->view('ic/plano-email.php',$data,true);
-							enviaremail_usuario(1,$ms['nw_titulo'],$ms['nw_texto'],'IC');
 							
 							$mss = $this->mensagens->busca($mss,$ms);
-							echo mst($mss['nw_texto']);
+
+							$id_own_pibic = $this-> id_own_pibic;
+							enviaremail_usuario(1,$mss['nw_titulo'].' - ['.$proto.'] - '.trim($data['pf_nome']),$mss['nw_texto'],$id_own_pibic);
 							
 							$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_RP');
 							$rest = $this -> load -> view('ic/tarefa_finalizada', $data, True);
@@ -327,7 +331,10 @@ class pibic extends CI_Controller {
 
 				/*  Validação da submissão */
 				$rest = '';
-				if (1 == 1) {
+				$check_1 = $this->ics->validar_area($data['ic_semic_area']);
+				$check_2 = $this->ics->validar_idioma($data['ic_semic_idioma']);
+				$check_3 = $this->ics->validar_arquivo($proto,'RELAP');
+				if (($check_1 == 1) and ($check_2 == 1) and ($check_3 == 1)) {
 					$this -> load -> view('ic/form_finish', $data);
 				}
 
@@ -339,6 +346,10 @@ class pibic extends CI_Controller {
 				$data['mostra_arquivo'] = $this -> geds -> list_files_table($proto, 'ic', 'RELAP');
 				$data['mostra_arquivo'] .= $this -> geds -> form_upload($proto, 'pibic/ged/RELAP/' . $proto);
 				$data['tot_rp_posted'] = $this -> geds -> total_files;
+				
+				$data['chk1'] = $check_1;
+				$data['chk2'] = $check_2;
+				$data['chk3'] = $check_3;
 
 				$rest = $this -> load -> view("ic/form_rp", $data, True);
 

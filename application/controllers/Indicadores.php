@@ -37,7 +37,7 @@ class indicadores extends CI_Controller {
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
-		
+
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Banco de Variáveis', '/index.php/indicadores/admin'));
@@ -48,6 +48,25 @@ class indicadores extends CI_Controller {
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
+		
+		$this -> load -> view('header/content_open');
+	}
+
+	function produtividade() {
+		$this -> load -> model('produtividades');
+		
+		$this -> cab();
+		$tela = $this->produtividades->resumo_produtividade();
+		$data['content'] = $tela;
+		$data['title'] = 'Bolsistas Produtividade';
+		$this->load->view('content',$data);
+		
+		$tela = $this->produtividades->lista_produtivade();
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 
 	function index($id = 0) {
@@ -55,20 +74,23 @@ class indicadores extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
+		
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
+		array_push($menu, array('Sobre o Corpo Docente', 'Bolsista Produtividade', 'ITE', '/indicadores/produtividade/'));
+
 		for ($r = 2012; $r <= date("Y"); $r++) {
 			array_push($menu, array('Iniciação Científica', 'Submissão - ' . $r, 'ITE', '/indicadores/ic/' . $r));
 		}
 
 		array_push($menu, array('Grupos de Pesquisa', 'Grupos', 'ITE', '/indicadores/gp/'));
-		
+
 		array_push($menu, array('Produção Científica e Técnica', 'Produção Bibliográfica', 'ITE', '/indicadores/bibliografica/'));
+
 		/*View principal*/
 		$data['menu'] = $menu;
-		
+
 		$data['title_menu'] = 'Menu Administração';
 		$this -> load -> view('header/main_menu', $data);
 
@@ -76,24 +98,22 @@ class indicadores extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function bibliografica()
-		{
+	function bibliografica() {
 		/* Load Models */
 		$this -> load -> model('phplattess');
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');	
-		
-		$data['title'] = 'Indicadores de Produção - PUCPR';
-		
-		/* Produção em artigos */
-		$art = $this->phplattess->producao_artigos();
-		$bil = $this->phplattess->producao_bibliografica();
-		$ori = $this->phplattess->producao_orientacao();
-		$pat = $this->phplattess->producao_patente();
+		$this -> load -> view('header/content_open');
 
-		
+		$data['title'] = 'Indicadores de Produção - PUCPR';
+
+		/* Produção em artigos */
+		$art = $this -> phplattess -> producao_artigos();
+		$bil = $this -> phplattess -> producao_bibliografica();
+		$ori = $this -> phplattess -> producao_orientacao();
+		$pat = $this -> phplattess -> producao_patente();
+
 		$sx = '<table width="600" class="border1">';
 		$sx .= '<tr><th>ano</th>
 					<th width="23%">Artigos</th>
@@ -102,65 +122,56 @@ class indicadores extends CI_Controller {
 					<th width="23%">Patente</th>
 				</tr>
 				';
-		for ($r=2005;$r <= date("Y");$r++)
-			{
-				$sx .= '<tr>';
-				$sx .= '<td align="center">';
-				$sx .= $r;
-				$sx .= '</td>';
-				
-				/* Artigos */
-				$sa = '<td></td>';
-				for ($a=0;$a < count($art);$a++)
-					{
-						if ($art[$a]['acpp_ano'] == $r)
-							{
-								$sa = '<td align="center" class="border1">'.$art[$a]['total'].'</td>';
-							} 
-					}
-				$sx .= $sa;
-				
-				/* Artigos */
-				$sa = '<td></td>';
-				for ($a=0;$a < count($bil);$a++)
-					{
-						if ($bil[$a]['cc_ano'] == $r)
-							{
-								$sa = '<td align="center" class="border1">'.$bil[$a]['total'].'</td>';
-							} 
-					}
-				$sx .= $sa;	
-				
-				/* Orientacoes */
-				$sa = '<td></td>';
-				for ($a=0;$a < count($ori);$a++)
-					{
-						if ($ori[$a]['or_ano'] == $r)
-							{
-								$sa = '<td align="center" class="border1">'.$ori[$a]['total'].'</td>';
-							} 
-					}
-				$sx .= $sa;	
-				
-				/* Patente */
-				$sa = '<td></td>';
-				for ($a=0;$a < count($pat);$a++)
-					{
-						if ($pat[$a]['pt_ano'] == $r)
-							{
-								$sa = '<td align="center" class="border1">'.$pat[$a]['total'].'</td>';
-							} 
-					}
-				$sx .= $sa;												
+		for ($r = 2005; $r <= date("Y"); $r++) {
+			$sx .= '<tr>';
+			$sx .= '<td align="center">';
+			$sx .= $r;
+			$sx .= '</td>';
+
+			/* Artigos */
+			$sa = '<td></td>';
+			for ($a = 0; $a < count($art); $a++) {
+				if ($art[$a]['acpp_ano'] == $r) {
+					$sa = '<td align="center" class="border1">' . $art[$a]['total'] . '</td>';
+				}
 			}
-		$sx .= '</table>';
-		
-		$data['content'] = $sx;
-		$this->load->view('content',$data);
-		
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);		
+			$sx .= $sa;
+
+			/* Artigos */
+			$sa = '<td></td>';
+			for ($a = 0; $a < count($bil); $a++) {
+				if ($bil[$a]['cc_ano'] == $r) {
+					$sa = '<td align="center" class="border1">' . $bil[$a]['total'] . '</td>';
+				}
+			}
+			$sx .= $sa;
+
+			/* Orientacoes */
+			$sa = '<td></td>';
+			for ($a = 0; $a < count($ori); $a++) {
+				if ($ori[$a]['or_ano'] == $r) {
+					$sa = '<td align="center" class="border1">' . $ori[$a]['total'] . '</td>';
+				}
+			}
+			$sx .= $sa;
+
+			/* Patente */
+			$sa = '<td></td>';
+			for ($a = 0; $a < count($pat); $a++) {
+				if ($pat[$a]['pt_ano'] == $r) {
+					$sa = '<td align="center" class="border1">' . $pat[$a]['total'] . '</td>';
+				}
+			}
+			$sx .= $sa;
 		}
+		$sx .= '</table>';
+
+		$data['content'] = $sx;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function admin($id = 0) {
 		/* Load Models */

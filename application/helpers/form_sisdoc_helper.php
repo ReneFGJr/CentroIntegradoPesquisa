@@ -241,7 +241,7 @@ function enviaremail($para, $assunto, $texto, $de) {
 		$CI -> email -> send();
 		return ('ok');
 	} else {
-		echo ('Proprietário do e-mail não configurado (veja mensagem_own)');
+		echo ('<font color="red">Proprietário do e-mail ('.$de.') não configurado (veja mensagem_own)</font>');
 		exit;
 	}
 }

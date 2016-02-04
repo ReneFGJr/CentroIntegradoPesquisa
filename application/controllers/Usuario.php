@@ -255,21 +255,23 @@ class usuario extends CI_Controller {
 				$cpf = strzero(sonumero($data['us_cpf']), 11);
 				$data['content'] = $this -> usuarios -> mostra_carga_horaria($cpf);
 				$this -> load -> view('content', $data);
+				$area_avaliacao = $data['us_area_conhecimento'];
 
 				/* Area de avaliacao */
 				$area = 41;
 
 				/* SS */
 				$pos = $this -> programas_pos -> professor_ss_area($id);
-
+				$areas = array();
 				for ($r = 0; $r < count($pos); $r++) {
 					$area = $pos[$r]['pp_area'];
 					/* Producao */
 					$data['content'] = $this -> producoes -> producao_perfil_grafico($cpf, $area);
 					$this -> load -> view('content', $data);
+					array_push($areas,$area);
 				}
 
-				$data['content'] = $this -> producoes -> producao_perfil($cpf, $area);
+				$data['content'] = $this -> producoes -> producao_perfil($cpf, $area_avaliacao);
 				$this -> load -> view('content', $data);
 
 				break;
@@ -354,6 +356,33 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function produtividade_ed($id=0,$chk='')
+		{
+		global $dd;
+		$this -> load -> model('produtividades');
+
+		$this -> cab();
+		$data = array();
+
+		/* Form */
+		$form = new form;
+		$form -> tabela = 'us_bolsa_produtividade';
+		$form -> id = $id;
+		$cp = $this -> produtividades -> cp_produtividade();
+		$data['content'] = $form -> editar($cp, $form -> tabela);
+
+		/* salved */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/indicadores/produtividade'));
+		}
+
+		$data['title'] = 'Produtividade';
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}
 
 	/*edita conta bancaria do usuário */
 	function edit_conta_cc($id = 0) {

@@ -1,6 +1,58 @@
 <?php
 class artigos extends CI_Model
 	{
+	function cp_01()
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_ar','',False,True));
+			array_push($cp,array('${','','Sobre a Publicação',False,True));
+			array_push($cp,array('$S9','ar_issn','ISSN (0000-0000)',True,True));
+			array_push($cp,array('$S100','ar_doi','DOI',False,True));
+			array_push($cp,array('$T80:3','ar_doi','Título da Revista',True,True));
+			array_push($cp,array('$}','','Sobre a Publicação',False,True));
+			
+			array_push($cp,array('${','','Dados do Artigo',False,True));
+			array_push($cp,array('$T80:5','ar','Título do Artigo Original',True,True));
+			array_push($cp,array('$[2010-'.(date("Y")+1).']','id_ar','Ano do Fascículo',True,True));			
+			array_push($cp,array('$S5','ar','Vol.',False,True));
+			array_push($cp,array('$S5','ar','Num.',False,True));
+			array_push($cp,array('$H8','Paginação (início - final)','',False,True));
+			array_push($cp,array('$}','','Dados do Artigo',False,True));
+			return($cp);
+		}
+		
+	function cp_02()
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_ar','',True,True));
+			
+			/* WEB QUALIS */
+			array_push($cp,array('${','','Estrato WebQualis',False,True));
+			array_push($cp,array('$O A1:A1&A2:A2&-:Outros Qualis','ar_qualis','Qualis da publicação',True,True));
+			array_push($cp,array('$M','','Necessário anexar um PDF com o PrintScreen da tela do Qualis, no próximo passo (3)',False,True));
+			array_push($cp,array('$}','','',False,True));
+
+			/* SCImago */
+			array_push($cp,array('${','','Classificação SCImago',False,True));
+			array_push($cp,array('$O Q1:Q1&Q2:Q2&Q3:Q4&Q4:Q4&-:Não indexado','ar_qualis','Classificação SCImago',True,True));
+			array_push($cp,array('$M','','Necessário anexar um PDF com o PrintScreen da tela do Periódico com o Q1 na área específica, no próximo passo (3)',False,True));
+			array_push($cp,array('$}','','',False,True));
+			
+			/* SCImago */
+			array_push($cp,array('${','','Excellence Rate Report - SCImago',False,True));
+			array_push($cp,array('$O ER:Excellence Rate (ExR)&--:Não é ExR no SCImago','ar_qualis','Excellence Rate Report',True,True));
+			array_push($cp,array('$M','','O Excellence Rate corresponde a 10% de um conjunto de periódicos mais citados em suas respecticas áreas científicas. É uma medida de alta qualidade de produção de instituições de pesquisa.',False,True));
+			array_push($cp,array('$M','','Necessário anexar um PDF do SCIMago com a área do Excellence Rate, no próximo passo (3)',False,True));
+			array_push($cp,array('$}','','',False,True));	
+			
+			/* SCImago */
+			array_push($cp,array('${','','Colaboração com outras instituições',False,True));
+			array_push($cp,array('$O Q1:Q1&Q2:Q2&Q3:Q4&Q4:Q4&-:Não indexado','ar_qualis','Classificação SCImago',True,True));
+			array_push($cp,array('$M','','Necessário anexar um PDF com o PrintScreen da tela do Periódico com o Q1 na área específica, no próximo passo (3)',False,True));
+			array_push($cp,array('$}','','',False,True));					
+
+			return($cp);
+		}		
 	function resumo_processos($id='')
 		{
 			$it = 6;

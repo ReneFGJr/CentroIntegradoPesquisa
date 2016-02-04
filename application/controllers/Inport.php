@@ -121,6 +121,66 @@ class inport extends CI_Controller {
 
 	}
 
+
+	function issn_ajuste($id = '', $off = '') {
+		/* Load Models */
+		$this -> load -> model('issns');
+		$this -> load -> model('phplattess');
+
+		$this -> cab();
+		$data = array();
+		$data['content'] = '';
+		$this -> load -> view('header/content_open');
+
+		$data = array();
+		$data['content'] = $this->issns->issn_ajuste();
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function issn($id = '', $off = '') {
+		/* Load Models */
+		$this -> load -> model('issns');
+		$this -> load -> model('phplattess');
+
+		$this -> cab();
+		$data = array();
+		$data['content'] = '';
+		$this -> load -> view('header/content_open');
+
+		$data = array();
+		$data['content'] = $id;
+
+		switch ($id) {
+			case 'arquivo' :
+				$txt = array('Arquivo ISSN to ISSN-L');
+				$sx = '<h1>Tipos de documentos compatíveis</h1>
+				<ul>';
+				for ($r = 0; $r < count($txt); $r++) {
+					$sx .= '<li>' . $txt[$r] . '</li>' . cr();
+				}
+				$sx .= '</ul>';
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+
+				$data['content'] = $this -> issns -> inport_file($off);
+				break;
+			case 'processar' :
+				/* Artigos do professor */
+				//$data['content'] .= $this -> phplattess -> inport_lattes_professar($off);
+				/* Capítulo de Livro */
+				break;
+		}
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
 	function ro8($id = '', $off = '', $ano = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -203,9 +263,13 @@ class inport extends CI_Controller {
 		array_push($menu, array('RO8-PostGress', 'SEMIC - Resumos', 'ITE', '/inport/ro8/semic-trabalho'));
 
 		array_push($menu, array('CNPq', 'Importar arquivo CNPq', 'ITE', '/inport/lattes/arquivo'));
+		
 
 		$fl = $this -> exist_files_to_import();
 		array_push($menu, array('CNPq', 'Processar Lattes - ' . ($fl) . ' arquivos', 'ITE', '/inport/lattes/processar'));
+
+		array_push($menu, array('ISSN', 'ISSN-L', 'ITE', '/inport/issn/arquivo'));
+		array_push($menu, array('ISSN', 'ISSN (Ajuste)', 'ITE', '/inport/issn_ajuste'));
 
 		/*View principal*/
 		$data['menu'] = $menu;

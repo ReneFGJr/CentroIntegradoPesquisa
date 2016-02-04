@@ -5,6 +5,33 @@ class ics_acompanhamento extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
 	var $tabela_2 = "ic_modalidade_bolsa";
+	
+	function relatorio_parcial_entregue($ano = 0)
+		{
+			$wh = " (ic_ano = '$ano') ";
+			$wh .= " and (ic_rp_data > '2000-01-01')";
+			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'al_nome');
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="tabela00">';
+			$sx .= '<tr>
+						<th>protocolo</th>
+						<th>situação</th>
+						<th>ano</th>
+						<th>Título do plano</th>
+						<th>Orientador</th>
+						<th>Estudante</th>
+						<th>Modalidade</th>
+					</tr>';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$line['page'] = 'ic';
+					$sx .= $this->load->view('ic/plano-row.php',$line,true);
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
 
 	function form_acompanhamento_prof($ano = 0) {
 		$ano = date("Y");

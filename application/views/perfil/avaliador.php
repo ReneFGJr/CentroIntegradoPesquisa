@@ -47,9 +47,11 @@ $us_nada = '<font color="grey">[em construção]</font>';
 			<li>
 				<strong>Maior titulação:</strong> <?php echo $ust_titulacao_sigla;?>
 			</li>
-			<li>
-				<strong>Bolsa produtividade:</strong> <?php echo $us_nada;?>
-			</li>
+			<?php if (strlen($bpn_bolsa_descricao) > 0)
+				echo '<li>
+						<strong>Bolsa produtividade:</strong> '.$bpn_bolsa_descricao.'
+					 </li>';
+			?>
 			<li>
 				<strong>Carga horária:</strong> <?php echo $ush_total;?>
 				horas

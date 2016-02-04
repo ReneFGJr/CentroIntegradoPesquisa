@@ -1,9 +1,11 @@
 <?php
 $area_div = ' style="border: 0px solid #ff3030; width: 100%; min-height: 450px;" ';
-
+$icon = 'img/icon/icone_exclamation.png';
 if (strlen(trim($ac_nome_area)) > 0) {
 	$area_div_show = ' style="border: 0px solid #ff3030; width: 100%; display: block;" ';
-	$icon = 'img/icon/icone_valided.png';
+	if ($chk1 > 0) {
+		$icon = 'img/icon/icone_valided.png';
+	}
 	$area_div = ' style="display: none;" ';
 } else {
 	$area_div = ' style="display: block;" ';
@@ -17,17 +19,16 @@ $idioma_div_show = ' style="width: 300px; " ';
 $icon_idioma = 'img/icon/icone_exclamation.png';
 $ic_semic_idioma_icon = base_url('img/icon/icone_flag_' . $ic_semic_idioma . '.png');
 
-if (strlen($ic_semic_idioma) > 0) {
+if ($chk2 > 0) {
 	$icon_idioma = 'img/icon/icone_valided.png';
 	$idioma_div = ' style="border: 0px solid #ff3030; width: 100%; display: none;" ';
 }
 /* ARQUIVOS */
 $file_div = ' style="border: 0px solid #ff3030; width: 100%; min-height: 450px;" ';
 $icon_file = 'img/icon/icone_exclamation.png';
-if ($tot_rp_posted > 0)
-	{
-		$icon_file = 'img/icon/icone_valided.png';	
-	}
+if ($chk3 > 0) {
+	$icon_file = 'img/icon/icone_valided.png';
+}
 ?>
 <table width="100%" class="tabela01">
 	<tr class="lt6">

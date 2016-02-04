@@ -16,7 +16,7 @@
 			<a HREF="<?php echo base_url('index.php/main/contact');?>" class="link_foot"><?php echo msg('contact_sistem');?></A></td>
 			<td width="33%"><b>Minha conta</b>
 			<BR>
-			<a HREF="<?php echo base_url('/index.php/login/myaccount');?>" class="link_foot"><?php echo msg('cab_update');?></A></td>
+			<a HREF="<?php echo base_url('/index.php/usuario/atualiza_dados');?>" class="link_foot"><?php echo msg('cab_update');?></A></td>
 			<td width="33%"><b><?php echo msg('cab_expediente_01');?></b>
 			<BR>
 			<a HREF="<?php echo base_url('/index.php/main/expediente#1');?>" class="link_foot"><?php echo msg('cab_expediente_01');?></A>

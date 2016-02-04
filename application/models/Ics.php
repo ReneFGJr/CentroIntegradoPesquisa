@@ -396,6 +396,31 @@ class ics extends CI_model {
 		}
 
 	}
+	
+	function finaliza_protocolo($protocolo) {
+		$sql = "SELECT * FROM ic_aluno
+					inner join ic on id_ic = ic_id
+						WHERE ic_plano_aluno_codigo = '$protocolo'
+						and (icas_id = 1 or icas_id = 3 or icas_id = 2)
+					";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$data = date("Y-m-d");
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$idc = $line['id_ica'];
+			$sql = "update ic_aluno set
+								icas_id_char = 'F',
+								icas_id = 4,
+								aic_dt_saida = '$data',
+								aic_dt_fim_bolsa = '$data'								
+							where id_ica = " . $idc . ';' . cr();
+
+			$this -> db -> query($sql);
+		}
+		return (1);
+	}	
 
 	function cancelar_protocolo($protocolo) {
 		$sql = "SELECT * FROM ic_aluno
@@ -1221,6 +1246,58 @@ class ics extends CI_model {
 
 		return (1);
 	}	
+	
+	function protocolo_alterar_bolsa($obj) {
+		/*  Acoes ******************************************************************************
+		 ***************************************************************************************
+		 */
+		$sql = "select * from ic_modalidade_bolsa where id_mb = ".$obj['pr_ica'];
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		$line = $rlt[0];
+		
+		$proto = $obj['pr_protocolo_original'];
+		$ac = '999';
+		$hist = 'Troca da modalidade de bolsa';
+		$aluno1 = '';
+		$aluno2 = '';
+		$motivo = '980';
+		$obs = 'Troca da modalidade da bolsa: <b>' . mst($obj['mb_descricao']) . '</b>';
+		$obs .= '<br>Para: <b>' . mst($line['mb_descricao']) . '</b>';
+		$obs .= '<br>Justificativa:' . $obj['pr_justificativa'];
+		$us_id = $obj['prof_id'];
+
+		/*********************************/
+		/* Lancar historico              */
+		$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+
+		/*****************************************/
+		/* Cancelar iniciacao na tabela ic       */
+		/* Cancelar iniciacao na tabela ic_aluno */
+		$this -> ics -> finaliza_protocolo($proto);
+		//$this -> ics -> alterar_modalidade_protocolo($proto,$obj['pr_ica']);
+		$id = $obj['ic_id'];
+		$ida = $obj['aluno_id'];
+		$cracha = $obj['ic_aluno_cracha'];
+		$d1 = date("Y-m-d");
+		$d2 = '0000-00-00';
+		$d3 = date("Y-m-d");
+		$d4 = '0000-00-00';
+		$tipo = $obj['pr_ica'];
+		$situacao = 1;
+		$this -> ics -> ativar_bolsa($id, $ida, $cracha, $d1, $d2, $d3, $d4, $tipo, $situacao);
+	
+
+		/****************************************/
+		/* Enviar e-mail de cancelamento        */
+		$data = $this -> ics -> le_protocolo($proto);
+
+		$txt = $this -> load -> view('ic/plano-email', $data, true);
+		$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
+		enviaremail_usuario($us_id, 'Troca de Modalidade de Bolsa', $txt, 2);
+
+		return (1);
+	}	
 
 	function protocolo_RET($obj) {
 		/*  Acoes ******************************************************************************
@@ -1315,6 +1392,18 @@ class ics extends CI_model {
 		array_push($cp, array('$B', '', 'Confirmar cancelamento >>>', False, True));
 		return ($cp);
 		}	
+
+	function cp_troca_bolsa($id=0)
+		{
+		$cp = array();
+		$sql = "select * from ic_modalidade_bolsa where mb_ativo = 1 and mb_vigente = 1 order by mb_descricao ";
+		array_push($cp, array('$H8', 'id_ic', '', False, True));
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$T80:5', '', 'Justificativa para troca', True, True));
+		array_push($cp, array('$Q id_mb:mb_descricao:'.$sql, '', 'Nova modalidade', True, True));
+		array_push($cp, array('$B', '', 'Confirmar alteração >>>', False, True));
+		return ($cp);
+		}
 
 	function cp_reativar($id=0)
 		{
@@ -1698,7 +1787,49 @@ class ics extends CI_model {
 		}
 		
 		
-
+		function validar_area($area)
+			{
+				$ok = 0;
+				$sql = "select * from area_conhecimento where ac_cnpq = '$area' ";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				if (count($rlt) > 0)
+					{
+						$line = $rlt[0];
+						$ok = $line['ac_semic'];
+					}
+				return($ok);
+			}
+		function validar_idioma($idioma)
+			{
+				$ok = 0;
+				$sql = "select * from idioma where i_codificacao = '$idioma' ";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				if (count($rlt) > 0)
+					{
+						$line = $rlt[0];
+						$ok = $line['i_ativo'];
+					}
+				return($ok);
+			}
+		function validar_arquivo($proto,$tipo)
+			{
+				
+				$ok = 0;
+				$sql = "select count(*) as total from ic_ged_documento where doc_dd0 = '$proto' and doc_tipo = '$tipo' ";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				if (count($rlt) > 0)
+					{
+						$line = $rlt[0];
+						if ($line['total'] > 0)
+							{
+								$ok = 1;
+							}
+					}
+				return($ok);
+			}
 
 }
 ?>

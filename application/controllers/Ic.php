@@ -215,6 +215,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Gestão', 'Cancelar plano de estudante', 'ITE', '/ic/admin_cancelar'));
 		array_push($menu, array('Gestão', 'Reativar plano cancelado', 'ITE', '/ic/admin_reativar'));
 		array_push($menu, array('Gestão', 'Substituição de orientador', 'ITE', '/ic/admin_substituir_orientador'));
+		array_push($menu, array('Gestão', 'Substituição de bolsa', 'ITE', '/ic/admin_substituir_bolsa'));
 
 		array_push($menu, array('Entregas', 'Formulário de acompanhamento', 'ITE', '/ic/acompanhamento'));
 
@@ -395,6 +396,89 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	/***************************************************************************************** ALTERAR TITULO */
+	function admin_substituir_bolsa($id = 0, $chk = '') {
+		$tit = 'Alterar tipo de Bolsa';
+		$this -> load -> model('ics');
+		$link = base_url('index.php/ic/admin_substituir_bolsa');
+		$this -> cab();
+		$data = array();
+
+		if ($id > 0) {
+			/****************************************************************
+			 ************************************ ID do protocolo informado *
+			 ****************************************************************/
+			$cp = $this -> ics -> cp_troca_bolsa($id);
+			$data = $this -> ics -> le($id);
+			$proto = $data['ic_plano_aluno_codigo'];
+			$this -> load -> view('ic/plano.php', $data);
+			$status = $data['icas_id'];
+
+			$form = new form;
+			$form -> id = $id;
+			$tela = $form -> editar($cp, 'ic');
+			$data['title'] = $tit;
+			$data['content'] = $tela;
+
+			if ($form -> saved > 0) {
+				/* Fase I - Reativa */
+				/*************************/
+				$data['volta'] = $link;
+				$this -> load -> view('sucesso', $data);
+
+				/* Fase II - Tela de Fim */
+				/*************************/
+				$data['pr_justificativa'] = get("dd2");
+				$data['pr_protocolo_original'] = $proto;
+				$data['pr_descricao'] = $data['al_nome'];
+				$data['pr_ica'] = get("dd3");
+				$this -> ics -> protocolo_alterar_bolsa($data);
+
+				$data['content'] = '';
+			} else {
+				$this -> load -> view('content', $data);
+			}
+
+		} else {
+			/****************************************************************
+			 ************************************ nao informado o protocolo *
+			 ****************************************************************/
+			$proto = get("dd1");
+			if (strlen($proto) == 0) {
+				$cp = $this -> ics -> cp_protocolo();
+				$form = new form;
+				$tela = $form -> editar($cp, '');
+				$data['title'] = $tit;
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			} else {
+				$ic = $this -> ics -> le_protocolo($proto);
+				if (count($ic) == 0) {
+					$data['title'] = $tit;
+					$data['content'] = 'Procolo não localizado ('.$proto.')';
+					$data['volta'] = $link;
+					$this -> load -> view('errors/erro_msg', $data);
+				} else {
+					$status = $ic['s_id'];
+					$id = $ic['id_ic'];
+					/* Protocolo Finalizado, Cancelado ou Suspenso */
+					if ($status != '1') {
+						$data['title'] = $tit;
+						$data['content'] = 'Procolo inativo!';
+						$data['volta'] = $link;
+						$this -> load -> view('errors/erro_msg', $data);
+					} else {
+						/********************/
+						redirect(base_url('index.php/ic/admin_substituir_bolsa/' . $id . '/' . checkpost_link($id)));
+					}
+				}
+			}
+		}
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 	/***************************************************************************************** ALTERAR TITULO */
 	function admin_alterar_titulo($id = 0, $chk = '') {
 		$this -> load -> model('ics');
@@ -1417,6 +1501,7 @@ class ic extends CI_Controller {
 				$fld = 'ic_pre_data';
 				$tit = 'Formulário do Professor';
 				$ano = date("Y");
+				if (date("m") < 8) { $ano = $ano - 1; }
 
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
@@ -1424,8 +1509,9 @@ class ic extends CI_Controller {
 				$fld = 'ic_rp_data';
 				$tit = 'Relatório Parcial';
 				$ano = date("Y");
-				echo "OLA";
-				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
+				if (date("m") < 8) { $ano = $ano - 1; }
+				
+				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano);
 				break;
 			default :
 				$fld = '';
@@ -1482,7 +1568,9 @@ class ic extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Acompanhamento', 'Abrir ou fechar sistemas', 'ITE', '/ic/acompanhamento_sw'));
 		array_push($menu, array('Acompanhamento', 'Calendário de Entregas', 'ITE', '/ic/acompanhamento_data'));
+		
 		array_push($menu, array('Formulário de acompanhamento', 'Entrega de formlários', 'ITE', '/ic/entrega/FORM_PROF'));
+		array_push($menu, array('Relatório Parcial', 'Entregas do relatório Parcial', 'ITE', '/ic/entrega/IC_FORM_RP'));
 
 		/*View principal*/
 		$data['menu'] = $menu;

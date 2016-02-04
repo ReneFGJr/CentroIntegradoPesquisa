@@ -278,10 +278,18 @@ class protocolos_ic extends CI_Model {
 			$wh = ' and (s_id = 1) ';
 		}
 		/* Pré-relatorio parcial */
-		if ($tp == 'form_pre')
-		{
-			$wh = ' and ((s_id = 1) and (ic_pre_data = \'0000-00-00\'))';
-		}
+		switch ($tp)
+			{
+			case 'form_pre':
+				$wh = ' and ((s_id = 1) and (ic_pre_data = \'0000-00-00\'))';
+				break;
+			case 'form_ic_rp':
+				$wh = ' and ((s_id = 1) and (ic_rp_data = \'0000-00-00\'))';
+				break;				
+			}
+		
+		/* Relatorio parcial */
+
 		$sql = "select * from ic 
 						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha' ";
 		$sql = "select * from ic
