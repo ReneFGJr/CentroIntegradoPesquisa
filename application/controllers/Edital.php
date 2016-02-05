@@ -36,14 +36,21 @@ class edital extends CI_Controller {
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
-		
+
 		/* Menu */
 		$menus = array();
-		array_push($menus,array('Bolsas / Recursos Humanos','#'));
-		array_push($menus,array('Auxílio Pesquisa','#'));
-		array_push($menus,array('Cooperação Internacional','#'));
-		array_push($menus,array('Prêmios','#'));
-		array_push($menus,array('Eventos','#'));
+		array_push($menus, array('Editais', 'index.php/edital/abertos'));
+		array_push($menus, array('Bolsas / Recursos Humanos', '#'));
+		array_push($menus, array('Auxílio Pesquisa', '#'));
+		array_push($menus, array('Cooperação Internacional', '#'));
+		array_push($menus, array('Prêmios', '#'));
+		array_push($menus, array('Eventos', '#'));
+		
+		#OBS
+		if (perfil('#OBS#ADM') == 1) {
+			array_push($menus, array('Administrar', 'index.php/edital/row'));
+			array_push($menus, array('Agências', 'index.php/edital/agencia_row'));
+		}
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -84,18 +91,70 @@ class edital extends CI_Controller {
 
 		$form -> row_edit = base_url('index.php/edital/edit/');
 		$form -> row_view = base_url('index.php/edital/view/');
-		$form -> row      = base_url('index.php/edital/row/');
+		$form -> row = base_url('index.php/edital/row/');
 
-		$tela['tela'] = row($form, $id);
+		$tela['content'] = row($form, $id);
 		$url = base_url('author');
 
 		$tela['title'] = msg('title_fomento_editais');
 
-		$this -> load -> view('form/form', $tela);
+		$this -> load -> view('content', $tela);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function agencia_row($id = 0) {
+		$this -> cab();
+		$data = array();
+		$this -> load -> model('fomento_editais');
+
+		$form = new form;
+		$form -> tabela = $this -> fomento_editais -> tabela_agencia;
+		$form -> see = false;
+		$form -> edit = true;
+		$form -> novo = true;
+		$form = $this -> fomento_editais -> row_ag($form);
+
+		$form -> row_edit = base_url('index.php/edital/agencia_ed/');
+		$form -> row_view = base_url('index.php/edital/agencia_row/');
+		$form -> row = base_url('index.php/edital/agencia_row/');
+
+		$tela['content'] = row($form, $id);
+		$url = base_url('author');
+
+		$tela['title'] = msg('title_fomento_editais');
+
+		$this -> load -> view('content', $tela);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+	function agencia_ed($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('fomento_editais');
+		$cp = $this -> fomento_editais -> cp_ag();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> fomento_editais -> tabela_agencia);
+		$data['title'] = msg('fm_titulo');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/edital/agencia_row'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	function view($id = 0, $chk = '') {
 		$this -> cab();
@@ -115,6 +174,38 @@ class edital extends CI_Controller {
 		$data['id'] = $id;
 
 		$this -> load -> view('fomento/resumo', $data);
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function ver($id = 0, $chk = '') {
+		$this -> cab();
+		$this -> load -> model('fomento_editais');
+
+		$tela = '<table width="100%" border=0>';
+		$tela .= '<tr valign="top">';
+
+		$tela .= '<td>';
+		$tela .= $this -> fomento_editais -> show_edital($id);
+
+		$tela .= '</table>';
+
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function abertos($tipo = 0) {
+		$this -> cab();
+		$this -> load -> model('fomento_editais');
+
+		$tela = $this->fomento_editais->mostra_abertos($tipo);
+		$data['content'] = $tela;
+		
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');

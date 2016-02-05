@@ -16,6 +16,7 @@ if (!function_exists(('msg')))
 
 
 $lang['save_next'] = 'Salvar e continuar >>';	
+$lang['continuous_flow'] = 'Fluxo contínuo';
 /***************************************************************************************************/
 /************************************************************************************** C I P ******/
 $lang['SELECIONA_IDIOMA'] = 'Selecionar Idioma >>';

@@ -168,7 +168,7 @@ class csfs extends CI_Model {
 						left join us_usuario on id_us = csf_aluno
 						left join csf_status on csf_status = id_cs
 					    left join pais on csf_pais = iso3
-					    left join fomento_edital on csf_chamada = id_ed
+					    left join fomento_editais on csf_chamada = id_ed
 					    left join csf_parceiro on csf_parceiro = id_cp
 					    left join gp_instituicao_parceira on csf_universidade = id_gpip
 					    /*
@@ -491,7 +491,7 @@ class csfs extends CI_Model {
 		array_push($cp, array('$H8', '', '', False, False));
 		array_push($cp, array('$S8', '', msg('cracha'), True, True));
 
-		$sql = "id_ed:ed_titulo:select * from fomento_edital where ed_local = '3' and ed_status = '1' order by ed_titulo";
+		$sql = "id_ed:ed_titulo:select * from fomento_editais where ed_local = '3' and ed_status = '1' order by ed_titulo";
 		array_push($cp, array('$Q ' . $sql, '', 'Edital', True, True));
 
 		array_push($cp, array('$MES', '', 'Previsão de saída', True, True));

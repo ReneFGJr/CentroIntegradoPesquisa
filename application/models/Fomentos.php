@@ -1,7 +1,7 @@
 <?php
 class Fomentos extends CI_model {
 	/*tabelas*/
-	var $tabela  = 'fomento_edital';
+	var $tabela  = 'fomento_editais';
 	var $tabela1 = 'idioma';
 	var $tabela2 = 'fomento_status';
 	var $tabela3 = 'fomento_disseminador';

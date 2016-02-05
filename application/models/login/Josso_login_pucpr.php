@@ -68,12 +68,12 @@ class josso_login_pucpr extends CI_Model {
 			$login_b = uppercase($login);
 
 			/* Recupera dados */
-			$this -> cpf = $line['cpf'];
-			if (strlen(trim($line['cpf'])) == 0) {
+
+			$this -> cpf =  trim( $line['cpf']);
+			if (strlen(trim($this -> cpf)) == 0) {
 				echo 'CPF NÃO IDENTIFICADO - ERRO DE LOGIN #4334';
 				return (0);
 			}
-
 			$this -> email = $line['emailLogin'];
 			$this -> josso = $line['jossoSession'];
 			$this -> nome = $line['nome'];
@@ -81,9 +81,10 @@ class josso_login_pucpr extends CI_Model {
 			$this -> nomeEmpresa = $line['nomeEmpresa'];
 			$this -> nomeFilial = $line['nomeFilial'];
 			$this -> loged = 1;
-			$this -> ativa_usuario($login, $pass, $line);
-			$this -> historico_insere($this -> cpf, 'LOGIN');
-			$this -> security();
+			$id = $this -> usuarios->ativa_usuario($login, $pass, $line);
+			$this -> usuarios->historico_insere($this -> cpf, 'LOGIN');
+			$this -> usuarios->security_set($id);
+			
 			return (1);
 		} else {
 			$this -> historico_insere_erro($login, '1');

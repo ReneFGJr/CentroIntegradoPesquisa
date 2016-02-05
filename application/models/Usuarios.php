@@ -22,8 +22,7 @@ class usuarios extends CI_model {
 	var $nome = '';
 	var $ss = '';
 	var $cracha = '';
-	
-	
+
 	function is_ss($id) {
 		/* Strict Sensu */
 		$ss = '0';
@@ -38,7 +37,7 @@ class usuarios extends CI_model {
 			return (0);
 		}
 	}
-	
+
 	function historico_insere_erro($login, $erro, $us = 0) {
 		if ((strlen($login) == 0) and ($us == 0)) {
 			return ('');
@@ -62,13 +61,11 @@ class usuarios extends CI_model {
 		return (0);
 	}
 
-
 	/* Registra historico de acesso
 	 *
 	 */
-	function historico_insere($login, $proto) {
+	function historico_insere($cpf, $proto) {
 		$ip = ip();
-		$cpf = $this -> cpf;
 		$data = date("Ymd");
 		$hora = date("H:i:s");
 		$sql = "insert into logins_log 
@@ -79,8 +76,7 @@ class usuarios extends CI_model {
 		$this -> db -> query($sql);
 		return (1);
 	}
-	
-	
+
 	/* Logout
 	 *
 	 */
@@ -89,8 +85,7 @@ class usuarios extends CI_model {
 		$this -> session -> set_userdata($dados);
 		return (1);
 	}
-	
-	
+
 	function security() {
 		$data = date("Y-m-d");
 		$hora = date("H:i:s");
@@ -108,49 +103,47 @@ class usuarios extends CI_model {
 			$this -> session -> set_userdata($dados);
 			return (1);
 		}
-	}	
-	
-	function security_set($id, $ghost = 0)
-		{
-			$id = round($id);
-			$sql = "select * from us_usuario where id_us = $id ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-			{
+	}
+
+	function security_set($id, $ghost = 0) {
+		$id = round($id);
+		$sql = "select * from us_usuario where id_us = $id ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
 			$line = $rlt[0];
 			$id_us = $line['id_us'];
 			$perfil = $line['us_perfil'];
 			$cracha = $line['us_cracha'];
 			$cpf = $line['us_cpf'];
 			$nome = $line['us_nome'];
-			$ss = $this->is_ss($id);
-			if (strlen($perfil) == 0)
-				{ $prefil = '#FRE'; }
-			
+			$ss = $this -> is_ss($id);
+			if (strlen($perfil) == 0) { $prefil = '#FRE';
+			}
+
 			/* reduz nome do ususario */
 			$n = trim($nome);
 			$n = troca($n, ' ', ';') . ';';
 			$n = splitx(';', $n);
-			$nome_display = $n[0] . ' ' . $n[1];			
-			
-			$dados = array('us_id' => $id_us, 'perfil' => $perfil, 
-							'ghost' => $ghost, 'id_us' => $id_us, 
-							'cracha' => $cracha, 'cpf' => $cpf, 
-							'josso' => md5(date("YmdHis")), 
-							'nome' => $nome, 
-							'nome_display' => $nome_display, 
-							'ss' => $ss);
+			$nome_display = $n[0] . ' ' . $n[1];
+
+			$dados = array('us_id' => $id_us, 'perfil' => $perfil, 'ghost' => $ghost, 'id_us' => $id_us, 'cracha' => $cracha, 'cpf' => $cpf, 'josso' => md5(date("YmdHis")), 'nome' => $nome, 'nome_display' => $nome_display, 'ss' => $ss);
 			$this -> session -> set_userdata($dados);
-			}
-			return(1);			
+			
+			$sql = "update us_usuario set us_lastupdate = '".date("Y-m-d")."', 
+							us_lastupdate_hora = '".date("H:i:s")."' 
+						WHERE id_us = ".$id_us;
+			$rlt = $this -> db -> query($sql);	
 		}
-	
+		return (1);
+	}
+
 	/* Entrada do login
 	 * CHECKED
 	 *
 	 */
 	function consulta_login($login, $pass, $debug = 0) {
+		$this -> load -> model('login/josso_login_pucpr');
 		/* Verifica se foi locado recentemente */
 		if ($this -> valida_senha_anterior($login, $pass) == 1) {
 			return (2);
@@ -173,31 +166,29 @@ class usuarios extends CI_model {
 		if (count($qr) > 0) {
 			$line = $qr[0];
 			$senha = trim($line['us_senha']);
-			
+
 			/* Senha em branco */
-			if (strlen($senha) == 0)
-				{
-					/* Falha */
-					return(0);
-				}
-			
+			if (strlen($senha) == 0) {
+				/* Falha */
+				return (0);
+			}
+
 			/* Senha OK */
 			$pass_crypt = md5($pass . date("Ym"));
-			if ($pass_crypt == $senha)
-				{
-					$this->id = $line['id_us'];
-					$this->nome = $line['us_nome'];
-					$this->cracha = $line['us_cracha'];
-					$this->prefil = $line['us_perfil'];
-					return(1);
-					exit;
-				}
-			return(0);
+			if ($pass_crypt == $senha) {
+				$this -> id = $line['id_us'];
+				$this -> nome = $line['us_nome'];
+				$this -> cracha = $line['us_cracha'];
+				$this -> prefil = $line['us_perfil'];
+				return (1);
+				exit ;
+			}
+			return (0);
 
 		} else {
 			return (0);
 		}
-	}	
+	}
 
 	/* Ativa usuario */
 	/* CHECKED */
@@ -211,10 +202,27 @@ class usuarios extends CI_model {
 		}
 		/************************ VALIDACAO */
 		$sql_login = "select * from us_usuario 
-					WHERE us_login = '$login' 
+						WHERE us_login = '$login' 
 						AND us_ativo = 1 ";
 		$qr = $this -> db -> query($sql_login);
 		$qr = $qr -> result_array();
+
+		/* Login não localizado */
+		if (count($qr) == 0) {
+			$sql_login = "select * from us_usuario 
+							WHERE us_cpf = '$cpf' 
+							AND us_ativo = 1
+							ORDER BY usuario_tipo_ust_id ";
+			$qr = $this -> db -> query($sql_login);
+			$qr = $qr -> result_array();
+			if (count($qr) > 0) {
+				$line = $qr[0];
+				if ($line['id_us'] > 0) {
+					$sql = "update us_usuario set us_login = '$login' where id_us = " . $line['id_us'];
+					$qr2 = $this -> db -> query($sql);
+				}
+			}
+		}
 
 		if (count($qr) == 0) {
 			$nome = $this -> nome;
@@ -247,6 +255,17 @@ class usuarios extends CI_model {
 				";
 			$this -> db -> query($sql);
 		}
+		
+		$qr = $this -> db -> query($sql_login);
+		$qr = $qr -> result_array();
+		if (count($qr) > 0)
+			{
+				$line = $qr[0];
+				$id = $line['id_us'];		
+			} else {
+				$id = 0;
+			}
+		return($id);
 	}
 
 	function ghost_link($id = 0) {
@@ -1070,7 +1089,7 @@ class usuarios extends CI_model {
 		/* Busca dados do cadastro */
 		$sql = "select * from " . $this -> tabela . " as t1
 					left join us_titulacao as t2 on t1.usuario_titulacao_ust_id = t2.ust_id				 
-					where us_cpf = '" . $cpf . "' ";
+					where us_cpf = '" . $cpf . "' order by usuario_tipo_ust_id desc ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 
@@ -1187,7 +1206,7 @@ class usuarios extends CI_model {
 					";
 			$this -> db -> query($sql);
 
-			$sql = "select * from " . $this -> tabela . " where us_cpf = '$cpf' ";
+			$sql = "select * from " . $this -> tabela . " where us_cpf = '$cpf' order by usuario_tipo_ust_id";
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array($rlt);
 			$line = $rlt[0];

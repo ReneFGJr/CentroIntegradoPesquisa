@@ -228,7 +228,9 @@ class inport extends CI_Controller {
 			case 'semic-notas' :
 				$data['content'] = $this -> ro8s -> inport_semic_notas($off);
 				break;
-		}
+			case 'editais' :
+				$data['content'] = $this -> ro8s -> inport_editais($off);
+				break;		}
 		$this -> load -> view('content', $data);
 		// http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=ic_noticia&limit=100
 
@@ -259,6 +261,7 @@ class inport extends CI_Controller {
 		array_push($menu, array('RO8-PostGress', 'Professor', 'ITE', '/inport/ro8/professor'));
 		array_push($menu, array('RO8-PostGress', 'CsF', 'ITE', '/inport/ro8/csf'));
 		array_push($menu, array('RO8-PostGress', 'CIP - Artigos', 'ITE', '/inport/ro8/cip-artigos'));
+		array_push($menu, array('RO8-PostGress', 'Observatório - Editais', 'ITE', '/inport/ro8/editais'));
 		array_push($menu, array('RO8-PostGress', 'SEMIC - Notas', 'ITE', '/inport/ro8/semic-notas'));
 		array_push($menu, array('RO8-PostGress', 'SEMIC - Resumos', 'ITE', '/inport/ro8/semic-trabalho'));
 

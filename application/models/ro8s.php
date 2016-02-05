@@ -1134,7 +1134,12 @@ class ro8s extends CI_Model {
 		$sx .= '</table>';
 		return ($sx);
 	}
-
+	function inport_editais($id = 0) {
+		$sql = "update fomento_editais set 
+				ed_dt_deadline_elet = concat(substr(ed_data_1,1,4),'-',substr(ed_data_1,5,2),',',substr(ed_data_1,7,2))
+				WHERE 1=1
+		";
+	}
 	function inport_estudante($id = 0) {
 		return('');
 		$site = 'http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=pibic_aluno&limit=100&offset=' . $id;

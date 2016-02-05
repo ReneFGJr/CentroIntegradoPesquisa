@@ -6,5 +6,5 @@
 		<LI>Chamada 2</LI>
 		<LI>Chamada 3</LI>
 	</ul>
-	<a href="<?php echo base_url('index.php/'.'observatorio/ver/1');?>">ver todos</a>
+	<a href="<?php echo base_url('index.php/'.'edital/abertos');?>">ver todos</a>
 </div>
