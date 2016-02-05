@@ -1,6 +1,47 @@
 <?php
 class artigos extends CI_Model
 	{
+	function resumo_artigos($cracha = '')
+		{
+			$art = array('-','-','-');
+			$sql = "select ar_status, count(*) as total from cip_artigo 
+					WHERE ar_professor = '$cracha'
+					GROUP BY ar_status";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			for ($r=0;$r < count($r); $r++)
+				{
+					$line = $rlt[$r];
+					$sta = $line['ar_status'];
+					$tot = $line['total'];
+					switch($sta)
+						{
+						case '0':
+							$art[0] = $art[0] + $tot;
+							break;
+						case '25':
+							$art[2] = $art[2] + $tot;
+							break;	
+						default:
+							echo $sta.'...';
+							break;						
+						}
+					print_r($line);
+				}
+			
+			
+			$sx = '<table width="300" class="tabela00 border1 lt3">';
+			$sx .= '<tr><th align="center" class="lt3">Artigos Cadastrados</th></tr>';
+			$sx .= '<tr><td></td></tr>';
+			$sx .= '<tr><td align="center" class="lt0">Em cadastro</td></tr>';
+			$sx .= '<tr><td align="center" class="lt6">'.$art[0].'</td></tr>';
+			$sx .= '<tr><td align="center" class="lt0">Em análise</td></tr>';
+			$sx .= '<tr><td align="center" class="lt6">'.$art[1].'</td></tr>';
+			$sx .= '<tr><td align="center" class="lt0">Finalizado</td></tr>';
+			$sx .= '<tr><td align="center" class="lt6">'.$art[2].'</td></tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
 	function cp_01()
 		{
 			$cp = array();
@@ -16,8 +57,10 @@ class artigos extends CI_Model
 			array_push($cp,array('$[2010-'.(date("Y")+1).']','id_ar','Ano do Fascículo',True,True));			
 			array_push($cp,array('$S5','ar','Vol.',False,True));
 			array_push($cp,array('$S5','ar','Num.',False,True));
-			array_push($cp,array('$H8','Paginação (início - final)','',False,True));
+			array_push($cp,array('$S10','ar','Paginação Ex: (192-208)',False,True));
 			array_push($cp,array('$}','','Dados do Artigo',False,True));
+			
+			array_push($cp,array('$B','',msg('save_next'),False,True));
 			return($cp);
 		}
 		
@@ -49,8 +92,37 @@ class artigos extends CI_Model
 			array_push($cp,array('${','','Colaboração com outras instituições',False,True));
 			array_push($cp,array('$O Q1:Q1&Q2:Q2&Q3:Q4&Q4:Q4&-:Não indexado','ar_qualis','Classificação SCImago',True,True));
 			array_push($cp,array('$M','','Necessário anexar um PDF com o PrintScreen da tela do Periódico com o Q1 na área específica, no próximo passo (3)',False,True));
-			array_push($cp,array('$}','','',False,True));					
+			array_push($cp,array('$}','','',False,True));
+			
+			array_push($cp,array('$B','',msg('save_next'),False,True));					
 
+			return($cp);
+		}
+
+	function cp_03()
+		{
+			$proto = '000000';
+			$cp = array();
+			array_push($cp,array('$H8','id_ar','',False,True));
+			array_push($cp,array('${','','Sobre a Publicação',False,True));
+			array_push($cp,array('$SFILE','',$proto,True,True));
+			array_push($cp,array('$}','','Sobre a Publicação',False,True));
+			
+			array_push($cp,array('$B','',msg('save_next'),False,True));
+			
+			return($cp);
+		}
+	function cp_04()
+		{
+			$proto = '000000';
+			$cp = array();
+			array_push($cp,array('$H8','id_ar','',False,True));
+			array_push($cp,array('${','','Checklist',False,True));
+			array_push($cp,array('$M','',$proto,True,True));
+			array_push($cp,array('$}','','Checklist',False,True));
+			
+			array_push($cp,array('$C','','Confirmo a submissão',True,True));
+			array_push($cp,array('$B','','Enviar cadastro',False,True));
 			return($cp);
 		}		
 	function resumo_processos($id='')

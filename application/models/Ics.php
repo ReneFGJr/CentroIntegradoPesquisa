@@ -65,6 +65,7 @@ class ics extends CI_model {
 					$sql = "SELECT * 
 							FROM ic_pagamentos 
 							WHERE pg_cpf = '$cpf' 
+							ORDER BY pg_vencimento
 							";
 					$rlt = $this->db->query($sql);
 					$rlt = $rlt->result_array();
@@ -1043,7 +1044,7 @@ class ics extends CI_model {
 	}
 
 	function le_protocolo($id = 0) {
-		$sql = $this -> table_view("ic.ic_plano_aluno_codigo = '" . $id . "' and s_id = 1", $offset = 0, $limit = 9999999);
+		$sql = $this -> table_view("ic.ic_plano_aluno_codigo = '" . $id . "'", $offset = 0, $limit = 9999999);
 		$rlt = db_query($sql);
 
 		if ($line = db_read($rlt)) {

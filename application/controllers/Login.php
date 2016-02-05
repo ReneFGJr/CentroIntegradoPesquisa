@@ -52,7 +52,7 @@ class login extends CI_Controller {
 			$line = $rlt[0];
 
 			/* Model */
-			$this -> load -> model('login/josso_login_pucpr');
+			$this -> load -> model('usuarios');
 
 			if (count($rlt) > 0) {
 				/* Recupera dados */
@@ -65,7 +65,8 @@ class login extends CI_Controller {
 				$this -> josso_login_pucpr -> nomeEmpresa = '';
 				$this -> josso_login_pucpr -> nomeFilial = '';
 				$this -> josso_login_pucpr -> cracha = $line['us_cracha'];
-				$this -> josso_login_pucpr -> id_us = $line['id_us'];
+				$this -> josso_login_pucpr -> us_id = $line['us_id'];
+				$this -> josso_login_pucpr -> us_id = $line['us_id'];
 				$this -> josso_login_pucpr -> loged = 1;
 				$this -> josso_login_pucpr -> josso = date("YmfHis");
 				$this -> josso_login_pucpr -> security_ac();
@@ -90,27 +91,19 @@ class login extends CI_Controller {
 
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
+			if (count($rlt) == 0)
+				{
+					$link = base_url('index.php/login');	
+				}
 			$line = $rlt[0];
 
 			/* Model */
-			$this -> load -> model('login/josso_login_pucpr');
+			$this -> load -> model('usuarios');
 
 			if (count($rlt) > 0) {
 				/* Recupera dados */
-				$this -> josso_login_pucpr -> cpf = $line['us_cpf'];
-				//$this -> josso_login_pucpr -> josso = $line['jossoSession'];
-				$this -> josso_login_pucpr -> nome = $line['us_nome'];
-				//$this -> josso_login_pucpr -> perfil = $line['us_perfil'];
-				$this -> josso_login_pucpr -> id = $line['id_us'];
-				$this -> josso_login_pucpr -> cracha = '';
-				$this -> josso_login_pucpr -> nomeEmpresa = '';
-				$this -> josso_login_pucpr -> nomeFilial = '';
-				$this -> josso_login_pucpr -> cracha = $line['us_cracha'];
-				$this -> josso_login_pucpr -> id_us = $line['id_us'];
-				$this -> josso_login_pucpr -> loged = 1;
-				$this -> josso_login_pucpr -> josso = date("YmfHis");
-				$this -> josso_login_pucpr -> security_ac();
-				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'], 'ACR');
+				$this->usuarios->security_set($id);
+				$this -> usuarios -> historico_insere($line['us_cpf'], 'ACR');
 				$link = base_url('index.php/main');
 				redirect($link);
 			}
@@ -134,25 +127,12 @@ class login extends CI_Controller {
 			$line = $rlt[0];
 
 			/* Model */
-			$this -> load -> model('login/josso_login_pucpr');
+			$this -> load -> model('usuarios');
 
 			if (count($rlt) > 0) {
 				/* Recupera dados */
-				$this -> josso_login_pucpr -> cpf = $line['us_cpf'];
-				//$this -> josso_login_pucpr -> josso = $line['jossoSession'];
-				$this -> josso_login_pucpr -> nome = $line['us_nome'];
-				//$this -> josso_login_pucpr -> perfil = $line['us_perfil'];
-				$this -> josso_login_pucpr -> id = $line['id_us'];
-				$this -> josso_login_pucpr -> cracha = '';
-				$this -> josso_login_pucpr -> nomeEmpresa = '';
-				$this -> josso_login_pucpr -> nomeFilial = '';
-				$this -> josso_login_pucpr -> cracha = $line['us_cracha'];
-				$this -> josso_login_pucpr -> id_us = $line['id_us'];
-				$this -> josso_login_pucpr -> loged = 1;
-				$this -> josso_login_pucpr -> ghost = 1;
-				$this -> josso_login_pucpr -> josso = date("YmfHis");
-				$this -> josso_login_pucpr -> security_ac();
-				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'], 'ACP');
+				$this -> usuarios -> security_set($line['id_us']);
+				$this -> usuarios -> historico_insere($line['us_cpf'], 'ACP');
 				$link = base_url('index.php/main');
 				redirect($link);
 			}
@@ -176,7 +156,7 @@ class login extends CI_Controller {
 			$line = $rlt[0];
 
 			/* Model */
-			$this -> load -> model('login/josso_login_pucpr');
+			$this -> load -> model('usuarios');
 
 			if (count($rlt) > 0) {
 				/* Recupera dados */
@@ -221,7 +201,7 @@ class login extends CI_Controller {
 			$line = $rlt[0];
 
 			/* Model */
-			$this -> load -> model('login/josso_login_pucpr');
+			$this -> load -> model('usuarios');
 
 			if (count($rlt) > 0) {
 				/* Recupera dados */
@@ -237,7 +217,7 @@ class login extends CI_Controller {
 				$this -> josso_login_pucpr -> nomeEmpresa = '';
 				$this -> josso_login_pucpr -> nomeFilial = '';
 				$this -> josso_login_pucpr -> loged = 1;
-				$rs = $this -> josso_login_pucpr -> security();
+				$rs = $this -> usuarios -> security();
 				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'], 'ADR');
 
 				/*
@@ -257,8 +237,8 @@ class login extends CI_Controller {
 
 	function logout() {
 		/* Model */
-		$this -> load -> model('login/josso_login_pucpr');
-		$this -> josso_login_pucpr -> logout();
+		$this -> load -> model('usuarios');
+		$this -> usuarios -> logout();
 
 		/* Redireciona */
 		$link = index_page();
@@ -274,7 +254,7 @@ class login extends CI_Controller {
 		$data['login_error'] = '';
 
 		/* Carrega modelo */
-		$err = $this -> load -> model('login/josso_login_pucpr');
+		$err = $this -> load -> model('usuarios');
 		$login = '';
 		$password = '';
 
@@ -350,17 +330,66 @@ class login extends CI_Controller {
 
 	}
 
-	function index() {
-		global $dd, $acao;
-		//form_sisdoc_getpost();
-		$data['login_error'] = '';
+	function cracha($id = 0, $chk = '') {
+		$this -> load -> model("usuarios");
+
+		$data = array();
+		$this -> load -> view("header/header", $data);
+		$this -> load -> view("errors/cli/cracha_not_found", $data);
+
+		$data = $this -> usuarios -> le($id);
+		$us_nome = $data['us_nome'];
 
 		/* Carrega modelo */
 		$this -> load -> model('usuarios');
-		$err = $this -> load -> model('login/josso_login_pucpr');
+		$form = new form;
+		$form -> id = $id;
+		$cp = array();
+		$cracha = get('dd5');
+		$cracha = $this -> usuarios -> limpa_cracha($cracha);
+		if (strlen($cracha) > 0) { $cracha_valid = 1;
+		} else { $cracha_valid = 0;
+		}
+
+		array_push($cp, array('$H8', 'id_us', '', false, True));
+		array_push($cp, array('${', '', 'Nome do usuário', False, True));
+		array_push($cp, array('$M', '', $us_nome, False, False));
+		array_push($cp, array('$}', '', '', False, True));
+		array_push($cp, array('${', '', 'Informe seu Cracha', False, True));
+		array_push($cp, array('$S12', 'us_cracha', msg('us_cracha'), True, True));
+		array_push($cp, array('$}', '', '', False, True));
+
+		array_push($cp, array('$M', '', '=>' . $cracha, False, True));
+
+		array_push($cp, array('$HV', '', $cracha_valid, True, True));
+		if ($cracha_valid == 0) {
+			array_push($cp, array('$A', '', '<font color="red">' . msg('cracha_invalido') . '</font>', false, false));
+		}
+		$tela = $form -> editar($cp, 'us_usuario');
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+		if ($form -> saved > 0) {
+			$line = $data;
+			$idu = $line['id_us'];
+			$sql = "update us_usuario set 
+								us_cracha = '$cracha' 
+							where id_us = $id";
+			$rltx = $this -> db -> query($sql);
+			redirect(base_url('index.php/login'));
+		}
+
+	}
+
+	function index() {
+		$this -> load -> model('usuarios');
+		$this -> load -> model('usuarios');
+
+		$data['login_error'] = '';
+
+		/* Carrega modelo */
 		$login = '';
 		$password = '';
-
 		$acao = get('acao');
 
 		if (isset($acao) and (strlen($acao) > 0)) {
@@ -370,43 +399,44 @@ class login extends CI_Controller {
 
 			$login = get('dd1');
 			$password = get('dd2');
-			$ok = $this -> josso_login_pucpr -> consulta_login($login, $password);
+			$ok = $this -> usuarios -> consulta_login($login, $password);
 
 			switch($ok) {
 				case (1) :
 				/* Associar login com user */
-					$sql = "select * from logins where us_login = '$login' ";
+					$sql = "select * from us_usuario where us_login = '$login' ";
 					$rlo = $this -> db -> query($sql);
 					$rlo = $rlo -> result_array();
 					$line = $rlo[0];
-					$idu = trim($line['us_id']);
+					$id_us = trim($line['id_us']);
 					$cracha = trim($line['us_cracha']);
 
 					/* Sem identificacao (LOGINS) registrado*/
-					if ((strlen($idu) == 0) or (strlen($cracha) == 0)) {
+					if ((strlen($cracha) == 0) or (strlen($cpf) == 0)) {
 						$cpf = $line['us_cpf'];
 
-						if (strlen($cpf) == 0) {
-							redirect(base_url('index.php/login/id/' . $line['id_us'] . '/' . checkpost_link($line['id_us'] . date("Ymdhi"))));
+						if (strlen($cracha) == 0) {
+							redirect(base_url('index.php/login/cracha/' . $line['id_us'] . '/' . checkpost_link($line['id_us'] . date("Ymdhi"))));
 							return ('');
 						}
-						$usr = $this -> usuarios -> readByCPF($cpf);
 
-						if (isset($usr['id_us'])) {
-							$idu = $usr['id_us'];
-							$cracha = $usr['us_cracha'];
-
-							$sql = "update logins set 
-											us_id = " . $idu . ",
-											us_cracha = '$cracha'							 
-											where us_login = '$login' ";
-							$rly = $this -> db -> query($sql);
+						if (strlen($cpf) == 0) {
+							redirect(base_url('index.php/login/cpf/' . $line['id_us'] . '/' . checkpost_link($line['id_us'] . date("Ymdhi"))));
+							return ('');
 						}
-
 					}
+					
+					/* Seta Security */
+					
 					redirect(base_url('index.php/main'));
-					exit;
+					exit ;
 					break;
+				case (2):
+						/* validado_por_senha_anterior */
+						$this->usuarios->security_set($this->usuarios->id);
+						redirect(base_url('index.php/main'));
+						exit;
+						break;
 				case (-1) :
 					$data['login_error'] = '<div id="login_erro">' . $this -> lang -> line('login_erro_01') . '</div>';
 					break;

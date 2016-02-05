@@ -435,8 +435,8 @@ class pibic extends CI_Controller {
 	public function cab() {
 
 		/* Security */
-		$this -> load -> model('login/josso_login_pucpr');
-		$this -> josso_login_pucpr -> security();
+		$this -> load -> model('usuarios');
+		$this -> usuarios -> security();
 
 		/* FALHA NO LOGIN */
 		$cracha = $_SESSION['cracha'];

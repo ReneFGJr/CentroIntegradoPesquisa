@@ -1,6 +1,253 @@
 <?php
+function perfil($p, $trava = 0) {
+	$ac = 0;
+	if (isset($_SESSION['perfil'])) {
+		$perf = $_SESSION['perfil'];
+		for ($r = 0; $r < strlen($p); $r = $r + 4) {
+			$pc = substr($p, $r, 4);
+			//echo '<BR>'.$pc.'='.$perf.'=='.$ac;
+			if (strpos(' ' . $perf, $pc) > 0) { $ac = 1;
+			}
+		}
+	} else {
+		$ac = 0;
+	}
+	return ($ac);
+}
+
 class usuarios extends CI_model {
 	var $tabela = 'us_usuario';
+	var $id = 0;
+	var $id_us = 0;
+	var $nome = '';
+	var $ss = '';
+	var $cracha = '';
+	
+	
+	function is_ss($id) {
+		/* Strict Sensu */
+		$ss = '0';
+		$sql = "select * from ss_professor_programa_linha
+					WHERE us_usuario_id_us = " . $id . "
+					AND sspp_ativo=1";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
+		}
+	}
+	
+	function historico_insere_erro($login, $erro, $us = 0) {
+		if ((strlen($login) == 0) and ($us == 0)) {
+			return ('');
+		}
+		$ip = ip();
+		$CI = &get_instance();
+		$data = date("Y-m-d");
+		$hora = date("H:i:s");
+		$login = uppercase($login);
+
+		$sql = "insert into logins_erros
+					(
+						ler_ip, ler_erro, 
+						ler_user_id, ler_data, ler_hora
+					) values (
+						'$ip','$erro',
+						'$login', '$data', '$hora'
+					)
+			";
+		$rlt = $CI -> db -> query($sql);
+		return (0);
+	}
+
+
+	/* Registra historico de acesso
+	 *
+	 */
+	function historico_insere($login, $proto) {
+		$ip = ip();
+		$cpf = $this -> cpf;
+		$data = date("Ymd");
+		$hora = date("H:i:s");
+		$sql = "insert into logins_log 
+				(ul_data, ul_hora, ul_ip, ul_proto, ul_cpf)
+				values
+				($data,'$hora','$ip','$proto','$cpf')		
+		";
+		$this -> db -> query($sql);
+		return (1);
+	}
+	
+	
+	/* Logout
+	 *
+	 */
+	function logout() {
+		$dados = array('cracha' => '', 'cpf' => '', 'josso' => '', 'nome' => '', 'nome_display' => '', 'us_id' => '', 'id_us' => '', 'cracha' => '');
+		$this -> session -> set_userdata($dados);
+		return (1);
+	}
+	
+	
+	function security() {
+		$data = date("Y-m-d");
+		$hora = date("H:i:s");
+
+		$dados = $this -> session -> userdata();
+		$josso = $this -> session -> userdata('nome');
+
+		if (strlen($josso) == 0) {
+			$erro = 999;
+			/* sessão finalizada pelo servidor */
+			$this -> historico_insere_erro('', $erro, 0);
+			$link = base_url('index.php/login');
+			redirect($link);
+		} else {
+			$this -> session -> set_userdata($dados);
+			return (1);
+		}
+	}	
+	
+	function security_set($id, $ghost = 0)
+		{
+			$id = round($id);
+			$sql = "select * from us_usuario where id_us = $id ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+			{
+			$line = $rlt[0];
+			$id_us = $line['id_us'];
+			$perfil = $line['us_perfil'];
+			$cracha = $line['us_cracha'];
+			$cpf = $line['us_cpf'];
+			$nome = $line['us_nome'];
+			$ss = $this->is_ss($id);
+			if (strlen($perfil) == 0)
+				{ $prefil = '#FRE'; }
+			
+			/* reduz nome do ususario */
+			$n = trim($nome);
+			$n = troca($n, ' ', ';') . ';';
+			$n = splitx(';', $n);
+			$nome_display = $n[0] . ' ' . $n[1];			
+			
+			$dados = array('us_id' => $id_us, 'perfil' => $perfil, 
+							'ghost' => $ghost, 'id_us' => $id_us, 
+							'cracha' => $cracha, 'cpf' => $cpf, 
+							'josso' => md5(date("YmdHis")), 
+							'nome' => $nome, 
+							'nome_display' => $nome_display, 
+							'ss' => $ss);
+			$this -> session -> set_userdata($dados);
+			}
+			return(1);			
+		}
+	
+	/* Entrada do login
+	 * CHECKED
+	 *
+	 */
+	function consulta_login($login, $pass, $debug = 0) {
+		/* Verifica se foi locado recentemente */
+		if ($this -> valida_senha_anterior($login, $pass) == 1) {
+			return (2);
+		} else {
+			$ok = $this -> josso_login_pucpr -> nusoap_consulta($login, $pass, $debug);
+			return ($ok);
+		}
+	}
+
+	/* Valida ultimo login
+	 *
+	 */
+	function valida_senha_anterior($login, $pass) {
+		$login = troca($login, "'", "");
+		$login = UpperCaseSql($login);
+		$sql = "select * from us_usuario where us_login = '$login' ";
+		$qr = $this -> db -> query($sql);
+		$qr = $qr -> result_array();
+
+		if (count($qr) > 0) {
+			$line = $qr[0];
+			$senha = trim($line['us_senha']);
+			
+			/* Senha em branco */
+			if (strlen($senha) == 0)
+				{
+					/* Falha */
+					return(0);
+				}
+			
+			/* Senha OK */
+			$pass_crypt = md5($pass . date("Ym"));
+			if ($pass_crypt == $senha)
+				{
+					$this->id = $line['id_us'];
+					$this->nome = $line['us_nome'];
+					$this->cracha = $line['us_cracha'];
+					$this->prefil = $line['us_perfil'];
+					return(1);
+					exit;
+				}
+			return(0);
+
+		} else {
+			return (0);
+		}
+	}	
+
+	/* Ativa usuario */
+	/* CHECKED */
+	function ativa_usuario($login, $pass, $dados) {
+		/* Dados */
+		$cpf = $dados['cpf'];
+		$cracha = '';
+		if (strlen($cpf) == 0) {
+			echo 'ERRO #32# CPF Não cadastrado';
+			exit ;
+		}
+		/************************ VALIDACAO */
+		$sql_login = "select * from us_usuario 
+					WHERE us_login = '$login' 
+						AND us_ativo = 1 ";
+		$qr = $this -> db -> query($sql_login);
+		$qr = $qr -> result_array();
+
+		if (count($qr) == 0) {
+			$nome = $this -> nome;
+			$data = date("Y-m-d");
+			$hora = date("H:i:s");
+			$cpf = $this -> cpf;
+			$pass_crypt = md5($pass . date("Ym"));
+			$login = UpperCase($login);
+			$cracha = '';
+
+			$sql = "insert into us_usuario 
+						(
+						us_nome, us_login, us_senha,
+						us_lastupdate, us_lastupdate_hora,
+						us_cpf, us_dt_update_cs,
+						us_cracha, us_perfil,
+						us_ativo, us_teste, 
+						us_professor_tipo, us_usuario_cursando,
+						usuario_tipo_ust_id 
+						) 
+						values
+						('$nome','$login','$pass_crypt',
+						$data,'$hora',
+						'$cpf','$data',
+						'$cracha','',
+						1,0,
+						1,1,
+						1						
+						)				
+				";
+			$this -> db -> query($sql);
+		}
+	}
 
 	function ghost_link($id = 0) {
 		if (function_exists("perfil")) {
@@ -563,13 +810,16 @@ class usuarios extends CI_model {
 			$line['us_cpf'] = '<font color="red">inválido</font>';
 		}
 
+		$line['us_ic_pagamento'] = '';
+
+		/* */
 		$vlr_ic_recebido = $this -> pagamentos_cpf($line['us_cpf']);
 		if ($vlr_ic_recebido['total'] > 0) {
 			$txt = 'Valores de Bolsas Recebidas IC/IT: ' . number_format($vlr_ic_recebido['valor'], 2, ',', '.');
 			$txt = '<a href="#pagamentos" class="link lt2" onclick="mostra_pagamentos_ic();">' . $txt . '</a>';
 			$line['us_ic_pagamento'] = $txt;
 		} else {
-			$line['us_ic_pagamento'] = '';
+
 		}
 
 		$line['email'] = $this -> lista_email($id);
@@ -961,7 +1211,7 @@ class usuarios extends CI_model {
 		$c = troca($c, '(Noturno)', '');
 		return ($c);
 	}
-	
+
 	function row_usuario_session($obj) {
 		$obj -> fd = array('id_us', 'us_nome', 'us_cracha', 'us_cpf');
 		$obj -> lb = array('id', msg('nome'), msg('cracha'), msg('cpf'));
@@ -971,20 +1221,20 @@ class usuarios extends CI_model {
 
 	/*Atualiza dados do usuario */
 	function cp_usuario_session() {
-		
+
 		$cp = array();
-																																										
+
 		array_push($cp, array('$H8', 'id_us', '', False, True));
 		array_push($cp, array('${', '', 'Pessoais', True, False));
 		array_push($cp, array('$S100', 'us_nome', msg('lb_us_nome'), True, False));
 		array_push($cp, array('$S20', 'us_cracha', msg('lb_us_cracha'), True, False));
 		array_push($cp, array('$S20', 'us_cpf', msg('lb_us_cpf'), True, False));
-		array_push($cp, array('$D20', 'us_dt_nascimento',  msg('lb_us_dt_nascimento'), False, True));
+		array_push($cp, array('$D20', 'us_dt_nascimento', msg('lb_us_dt_nascimento'), False, True));
 		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('feminino'), 'us_genero', msg('lb_us_genero'), True, True));
 		array_push($cp, array('$O 1:Não definido&2:Professor&3:Aluno&4:Colaborador&5:Externo', 'usuario_tipo_ust_id', msg('lb_usu_tipo'), True, True));
-		
+
 		array_push($cp, array('$}', '', '', True, False));
-		
+
 		array_push($cp, array('${', '', 'Profissionais e Acadêmico', True, False));
 		//array_push($cp, array('$S30', 'us_codigo_rh', msg('lb_us_codigo_rh'), False, True));
 		//array_push($cp, array('$O 1:Não definido&2:Professor auxiliar de ensino&3:Professor assistente&4:Professor adjunto&8:Professor titular', 'usuario_funcao_usf_id', msg('lb_usu_funcao'), FALSE, True));
@@ -1006,15 +1256,14 @@ class usuarios extends CI_model {
 		return ($cp);
 	}
 
-	function le_usuario_session($id = 0)
-	{
-		$sql = "select * from us_usuario where id_us = ".$id;
-		
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array($rlt);
+	function le_usuario_session($id = 0) {
+		$sql = "select * from us_usuario where id_us = " . $id;
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
 		$data = $rlt[0];
-		
-		return($data);
+
+		return ($data);
 	}
 
 }

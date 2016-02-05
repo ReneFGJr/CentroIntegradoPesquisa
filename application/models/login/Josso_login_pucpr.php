@@ -1,26 +1,11 @@
 <?php
-function perfil($p, $trava = 0) {
-	$ac = 0;
-	if (isset($_SESSION['perfil'])) {
-		$perf = $_SESSION['perfil'];
-		for ($r = 0; $r < strlen($p); $r = $r + 4) {
-			$pc = substr($p, $r, 4);
-			//echo '<BR>'.$pc.'='.$perf.'=='.$ac;
-			if (strpos(' ' . $perf, $pc) > 0) { $ac = 1;
-			}
-		}
-	} else {
-		$ac = 0;
-	}
-	return ($ac);
-}
-
 class josso_login_pucpr extends CI_Model {
 	var $producao = 'https://sarch.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
 	var $homologacao = 'https://haiti.cwb.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
 	var $desenvolvimento = 'https://rhea.cwb.pucpr.br:8100/services/AutenticacaoSOA?wsdl';
 
 	var $id = 0;
+	var $id_us = 0;
 	var $cpf = '';
 	var $email = '';
 	var $josso = '';
@@ -31,118 +16,13 @@ class josso_login_pucpr extends CI_Model {
 	var $loged = 0;
 	var $ghost = 0;
 	var $perfil = '';
+	var $us_id = '';
 
 	/* SESSAO
 	 *
 	 */
-	function security_ac() {
-		$data = date("Y-m-d");
-		$hora = date("H:i:s");
-		if ($this -> loged > 0) {
-			$sql = "select * from logins where us_cpf = '" . $this -> cpf . "'";
-			$rlt = $this -> db -> query($sql);
-			$rlt = $rlt -> result_array();
-			if (count($rlt) == 0) {
-				/* Sem perfil */
-				$this -> perfil = '';
-				
-			} else {
-				$line = $rlt[0];
-				$this -> perfil = trim($line['us_perfil']);
-				$this -> cracha = trim($line['us_cracha']);
-				$this -> id = trim($line['id_us']);
 
-				$sql = "update logins set 
-							us_lastupdate = '" . $data . "',
-							us_lastupdate_hora = '" . $hora . "' 
-						where us_cpf = '" . $this -> cpf . "'";
-				$rlt = $this -> db -> query($sql);
-			}
-			/* reduz nome do ususario */
-			$n = trim($this -> nome);
-			$n = troca($n,' ',';').';';
-			$n = splitx(';',$n);
-			$nome_display = $n[0].' '.$n[1];
-			
-			/* Grava dados na Session */
-			$dados = array('perfil' => $this -> perfil, 'ghost'=> $this->ghost, 'id_us' => $this -> id, 
-							'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 
-							'nome' => $this -> nome, 'nome_display' => $nome_display);
-			$this -> session -> set_userdata($dados);
-		} else {
 
-			$dados = $this -> session -> userdata();
-			$josso = $this -> session -> userdata('nome');
-
-			if (strlen($josso) == 0) {
-				$link = base_url('index.php/login');
-				redirect($link);
-			} else {
-				$this -> session -> set_userdata($dados);
-				return (1);
-			}
-			return (0);
-		}
-	}	
-	function security() {
-		$data = date("Y-m-d");
-		$hora = date("H:i:s");
-		if ($this -> loged > 0) {
-			$sql = "select * from logins where us_cpf = '" . $this -> cpf . "'";
-			$rlt = $this -> db -> query($sql);
-			$rlt = $rlt -> result_array();
-			if (count($rlt) == 0) {
-				return (0);
-			} else {
-				$line = $rlt[0];
-				$this -> perfil = trim($line['us_perfil']);
-				$this -> cracha = trim($line['us_cracha']);
-				$this -> id = trim($line['id_us']);
-
-				$sql = "update logins set 
-							us_lastupdate = '" . $data . "',
-							us_lastupdate_hora = '" . $hora . "' 
-						where us_cpf = '" . $this -> cpf . "'";
-				$rlt = $this -> db -> query($sql);
-			}
-			/* reduz nome do ususario */
-			$n = trim($this -> nome);
-			$n = troca($n,' ',';').';';
-			$n = splitx(';',$n);
-			$nome_display = $n[0].' '.$n[1];
-						
-			/* Grava dados na Session */
-			$dados = array('perfil' => $this -> perfil, 'ghost'=> $this->ghost, 'id_us' => $this -> id, 
-							'cracha' => $this -> cracha, 'cpf' => $this -> cpf, 'josso' => $this -> josso, 
-							'nome' => $this -> nome, 'nome_display' => $nome_display);
-			$this -> session -> set_userdata($dados);
-		} else {
-
-			$dados = $this -> session -> userdata();
-			$josso = $this -> session -> userdata('nome');
-
-			if (strlen($josso) == 0) {
-				$erro = 999; /* sessão finalizada pelo servidor */
-				$this->historico_insere_erro('',$erro,0);
-				$link = base_url('index.php/login');
-				redirect($link);
-			} else {
-				$this -> session -> set_userdata($dados);
-				return (1);
-			}
-			return (0);
-		}
-	}
-
-	/* Logout
-	 *
-	 */
-	function logout() {
-		$dados = array('cracha' => '', 'cpf' => '', 'josso' => '', 
-		'nome' => '', 'nome_display' => '', 'us_id'=>'', 'id_us'=>'', 'cracha'=>'');
-		$this -> session -> set_userdata($dados);
-		return (1);
-	}
 
 	/* Consulta no servidor SOAP
 	 *
@@ -181,27 +61,19 @@ class josso_login_pucpr extends CI_Model {
 			exit ;
 		}
 
+		/****************** RESPONSTA DO SOAP */
 		if (count($response['return']) > 0) {
 			/* Analisa conteudo */
 			$line = $response['return'];
+			$login_b = uppercase($login);
 
 			/* Recupera dados */
 			$this -> cpf = $line['cpf'];
-			if (strlen(trim($line['cpf']))==0)
-			{
-				$login_b = uppercase($login);
-				$sql = "select * from logins where us_login = '$login_b' ";
-				$rlt = $this->db->query($sql);
-				$rlt = $rlt->result_array();
-				if (count($rlt) > 0)
-					{
-						$ln = $rlt[0];
-						$this -> cpf = $ln['us_cpf'];
-					} else {
-						echo 'ERRO DE LOGIN #4334';
-						return(0);
-					}
+			if (strlen(trim($line['cpf'])) == 0) {
+				echo 'CPF NÃO IDENTIFICADO - ERRO DE LOGIN #4334';
+				return (0);
 			}
+
 			$this -> email = $line['emailLogin'];
 			$this -> josso = $line['jossoSession'];
 			$this -> nome = $line['nome'];
@@ -209,94 +81,40 @@ class josso_login_pucpr extends CI_Model {
 			$this -> nomeEmpresa = $line['nomeEmpresa'];
 			$this -> nomeFilial = $line['nomeFilial'];
 			$this -> loged = 1;
-			$this -> ativa_usuario($login, $pass);
+			$this -> ativa_usuario($login, $pass, $line);
 			$this -> historico_insere($this -> cpf, 'LOGIN');
 			$this -> security();
 			return (1);
 		} else {
-			$this -> historico_insere_erro($login,'1');
+			$this -> historico_insere_erro($login, '1');
 			return (-1);
 		}
 		return (-2);
 	}
 
-	function historico_insere_erro($login,$erro,$us=0)
-		{
-			if ((strlen($login)==0) and ($us==0))
-				{
-					return('');
-				}
-			$ip = ip();
-			$CI = &get_instance();
-			$data = date("Y-m-d");
-			$hora = date("H:i:s");			
-			$login = uppercase($login);
-			
-			if ($us == 0)
-				{
-					$sql = "select * from logins where us_login = '$login' ";
-					echo $sql;
-					$rlt = $CI->db->query($sql);
-					$rlt = $rlt->result_array();
-					if (count($rlt) > 0)
-						{
-							$line = $rlt[0];
-							$us = $line['id_us'];
-						}
-				}
-			if ((strlen($login)==0) and ($us > 0))
-				{
-					$sql = "select * from logins where  = '$us' ";
-					$rlt = $CI->db->query($sql);
-					$rlt = $rlt->result_array();
-					if (count($rlt) > 0)
-						{
-							$line = $rlt[0];
-							$login = UpperCase($line['us_login']);
-						}					
-				}
-				
-			$sql = "insert into logins_erros
+	function historico_insere_erro($login, $erro, $us = 0) {
+		if ((strlen($login) == 0) and ($us == 0)) {
+			return ('');
+		}
+		$ip = ip();
+		$CI = &get_instance();
+		$data = date("Y-m-d");
+		$hora = date("H:i:s");
+		$login = uppercase($login);
+
+		$sql = "insert into logins_erros
 					(
-						ler_ip, ler_erro, ler_outros,
+						ler_ip, ler_erro, 
 						ler_user_id, ler_data, ler_hora
 					) values (
-						'$ip','$erro','$login',
-						$us, '$data', '$hora'
+						'$ip','$erro',
+						'$login', '$data', '$hora'
 					)
 			";
-			$rlt = $CI->db->query($sql);
-			return(0);
-		}
-
-	function ativa_usuario($login, $pass) {
-		$sql = "select * from logins where us_login = '$login' ";
-		$qr = $this -> db -> query($sql);
-		$qr = $qr -> result_array();
-
-		if (count($qr) == 0) {
-			$nome = $this -> nome;
-			$data = date("Ymd");
-			$cpf = $this -> cpf;
-			$pass_crypt = md5($pass . date("Ym"));
-			$login = UpperCase($login);
-
-			$sql = "insert into logins 
-						(
-						us_nome, us_login, us_senha,
-						us_lastupdate, us_cpf, us_dt_admissao,
-						us_cracha, us_id
-						) 
-						value
-						('$nome','$login','$pass_crypt',
-						$data,'$cpf','$data',
-						'','')				
-				";
-			$this -> db -> query($sql);
-		} else {
-
-		}
+		$rlt = $CI -> db -> query($sql);
+		return (0);
 	}
+
 
 	/* Registra historico de acesso
 	 *
@@ -315,36 +133,7 @@ class josso_login_pucpr extends CI_Model {
 		return (1);
 	}
 
-	/* Entrada do login
-	 *
-	 *
-	 */
-	function consulta_login($login, $pass, $debug = 0) {
-		/* Verifica se foi locado recentemente */
-		if ($this -> valida_senha_anterior($login, $pass)) {
-			return (1);
-		} else {
-			$ok = $this -> nusoap_consulta($login, $pass, $debug);
-			return ($ok);
-		}
-	}
 
-	/* Valida ultimo login
-	 *
-	 */
-	function valida_senha_anterior($login, $pass) {
-		$login = troca($login, "'", "");
-		$login = UpperCaseSql($login);
-		$sql = "select * from logins where us_login = '$login' ";
-		$qr = $this -> db -> query($sql);
-		$qr = $qr -> result_array();
-
-		if (count($qr) > 0) {
-
-		} else {
-			return (0);
-		}
-	}
 
 }
 ?>

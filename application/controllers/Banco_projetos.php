@@ -21,8 +21,8 @@ class banco_projetos extends CI_Controller {
 	function security() {
 
 		/* Segurança */
-		$this -> load -> model('login/josso_login_pucpr');
-		$this -> josso_login_pucpr -> security();
+		$this -> load -> model('usuarios');
+		$this -> usuarios -> security();
 	}
 
 	function cab() {

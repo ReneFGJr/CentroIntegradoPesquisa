@@ -25,8 +25,8 @@ class main extends CI_Controller {
 	function security() {
 
 		/* Seguranca */
-		$this -> load -> model('login/josso_login_pucpr');
-		$this -> josso_login_pucpr -> security();
+		$this -> load -> model('usuarios');
+		$this -> usuarios -> security();
 	}
 
 	function cab() {
@@ -50,7 +50,7 @@ class main extends CI_Controller {
 		$data['menu'] = 0;
 		//$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
-	}
+			}
 
 	function index() {
 
@@ -72,6 +72,9 @@ class main extends CI_Controller {
 
 		/* Chamadas editais */
 		$this -> load -> view('fomento/chamadas_resumo', $data);
+		
+		/* Stricto Sensu */
+		$ss = $_SESSION['ss'];
 
 		/* Menu */
 		$menu = array();
@@ -82,7 +85,7 @@ class main extends CI_Controller {
 			$idu = '';
 		}
 
-		if (strlen($idu) > 0) {
+		if (strlen($ss) > 0) {
 			array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
 		}
 
@@ -126,7 +129,8 @@ class main extends CI_Controller {
 		/* Iniciação Científica */
 		array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
 		
-		if (perfil('#TST') == 1) {
+		
+		if ((perfil('#TST') == 1) or ($ss == 1)) {
 			array_push($menu, array('Stricto Sensu', 'Coordenadores e Professores do <i>stricto sensu</i>', 'BTN', '/ss'));
 		}		
 

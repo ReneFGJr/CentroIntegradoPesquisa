@@ -16,8 +16,8 @@ class comunicacoes extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 
 		/* Security */
-		$this -> load -> model('login/josso_login_pucpr');
-		$this -> josso_login_pucpr -> security();
+		$this -> load -> model('usuarios');
+		$this -> usuarios -> security();
 
 		//$this -> lang -> load("app", "english");
 	}

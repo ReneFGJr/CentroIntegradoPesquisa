@@ -1,6 +1,6 @@
 <?php
 class logins extends CI_Model {
-	var $tabela = 'logins';
+	var $tabela = 'us_usuario';
 	function row($obj) {
 		$obj -> fd = array('id_us', 'us_nome', 'us_login');
 		$obj -> lb = array('ID', 'Nome', 'Login');
@@ -21,7 +21,7 @@ class logins extends CI_Model {
 					$line = $rlt[$r];
 					$perf .= trim($line['usp_codigo']);
 				}
-			$sql = "update logins set us_perfil = '$perf' where id_us = ".$id;
+			$sql = "update " . $this -> tabela . " set us_perfil = '$perf' where id_us = ".$id;
 			$this->db->query($sql);
 			return($perf);			
 		}

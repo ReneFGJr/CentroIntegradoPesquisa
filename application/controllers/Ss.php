@@ -24,8 +24,8 @@ class ss extends CI_Controller {
 	public function cab() {
 
 		/* Security */
-		$this -> load -> model('login/josso_login_pucpr');
-		$this -> josso_login_pucpr -> security();
+		$this -> load -> model('usuarios');
+		$this -> usuarios -> security();
 
 		/* FALHA NO LOGIN */
 		$cracha = $_SESSION['cracha'];
@@ -64,11 +64,17 @@ class ss extends CI_Controller {
 	}	
 
 	public function index($id = 0) {
-
+		$this->load->model('artigos');
 		$cracha = $_SESSION['cracha'];
 
 		$this -> cab();
 		$data = array();
+		
+		$cracha = $_SESSION['cracha'];
+		
+		$resumo_artigos = $this->artigos->resumo_artigos($cracha);
+		$data['content'] = $resumo_artigos;
+		$this->load->view('content',$data);
 
 		$this -> load -> view('header/content_close');
 	}
@@ -83,6 +89,7 @@ class ss extends CI_Controller {
 		array_push($bp,'DADOS');
 		array_push($bp,'ESTRATOS');
 		array_push($bp,'ARQUIVOS');
+		array_push($bp,'FINALIZAÇÂO');
 		$data['bp'] = $bp;
 		$data['bp_atual'] = ($pag-1);
 		$data['bp_link'] = base_url('index.php/ss/artigo/'.$id.'/'.checkpost_link($id).'/');
@@ -92,7 +99,7 @@ class ss extends CI_Controller {
 		$form = new form;
 		$form -> tabela = 'cip_artigo';
 		$form -> id = $id;
-		switch (pag)
+		switch ($pag)
 			{
 			case '1':
 				$cp = $this -> artigos -> cp_01();
@@ -103,6 +110,9 @@ class ss extends CI_Controller {
 			case '3':
 				$cp = $this -> artigos -> cp_03();
 				break;
+			case '4':
+				$cp = $this -> artigos -> cp_04();
+				break;				
 			default:
 				$cp = array();
 				break;
@@ -119,6 +129,7 @@ class ss extends CI_Controller {
 		$this -> load -> view('content', $data);		
 
 		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}	
 
 }
