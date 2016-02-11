@@ -40,11 +40,11 @@ class edital extends CI_Controller {
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Editais', 'index.php/edital/abertos'));
-		array_push($menus, array('Bolsas / Recursos Humanos', '#'));
-		array_push($menus, array('Auxílio Pesquisa', '#'));
-		array_push($menus, array('Cooperação Internacional', '#'));
-		array_push($menus, array('Prêmios', '#'));
-		array_push($menus, array('Eventos', '#'));
+		array_push($menus, array('Bolsas / Recursos Humanos', 'index.php/edital/abertos#sct1'));
+		array_push($menus, array('Auxílio Pesquisa', 'index.php/edital/abertos#sct2'));
+		array_push($menus, array('Cooperação Internacional', 'index.php/edital/abertos#sct3'));
+		array_push($menus, array('Prêmios', 'index.php/edital/abertos#sct4'));
+		array_push($menus, array('Eventos', 'index.php/edital/abertos#sct5'));
 		
 		#OBS
 		if (perfil('#OBS#ADM') == 1) {

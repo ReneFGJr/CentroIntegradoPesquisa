@@ -66,38 +66,66 @@ class fomento_editais extends CI_model {
 		}
 		$sx = '';
 		$sx .= '<h1>Editais Abertos</h1>';
-		$sx .= '<table width="100%" class="tabela01 lt1">';
-		$sh = '<tr>
-					<th width="30">Ag</th>
-					<th width="15%">Fomento</th>
-					<th width="15%">Edital</th>					
-					<th width="70%">Nome do Edital</th>
-					<th width="5%"><i>Deadline</i></th>
-				  </tr>';
+		$sx .= '';
 		$xsec = 'START';
+		$nsc = 1;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$sec = $line['ed_edital_tipo'];
+			
+			/* Nova Sessão */
 			if ($sec != $xsec) {
-				$sx .= '<tr><td colspan=5><br><br><br></td></tr>';
-				$sx .= '<tr><td colspan=5 class="lt5">' . $line['ftp_nome'] . '</td></tr>';
-				$sx .= $sh;
+				if ($r > 0)
+					{
+						$sx .= '</div>';
+					}
+				$sx .= '<a name="sct'.($nsc).'"></a>';
+				$nsc++;
+				$sx .= '<div style="float: clear;">
+						</div>
+						<h1>' . $line['ftp_nome'] . '</h1>
+						<div id="editais" style="display: table;">';
 				$xsec = $sec;
 			}
-			$link = '<a href="' . base_url('index.php/edital/ver/' . $line['id_ed']) . '" class="link lt2">';
+			$link = '<a href="' . base_url('index.php/edital/ver/' . $line['id_ed']) . '" class="edital_link">';
+			
+			$sx .= $link;
+			$sx .= '<div class="edital">';
+			
+			$sx .= '<table width="100%" border=0 style="height: 200px;">';
 			$sx .= '<tr valign="top">';
-			$sx .= '<td class="borderb1" align="center"><img src="' . $line['agf_imagem'] . '" height="36"></td>';
-			$sx .= '<td class="borderb1">' . $link . $line['agf_nome'] . '</a>' . '</td>';
-			$sx .= '<td class="borderb1">' . $link . $line['ed_chamada'] . '</a>' . '</td>';
-			$sx .= '<td class="borderb1">' . $link . $line['ed_titulo'] . '</a>' . '</td>';
+			
+			/* Título */
+			$titulo = $line['ed_titulo'];
+			$titulo = troca($titulo,'<br>','');
+			$titulo = troca($titulo,'<BR>','');
+			$titulo = troca($titulo,'</BR>','');
+			$sx .= '<td>';
+			/* Logo */
+			$sx .= '<img src="' . $line['agf_imagem'] . '" width="140" align="right">';
+			
+			/* Numero do Edital */
+			$sx .= '<span class="edital_chamada">Edital / Chamada: <b>' . $line['ed_chamada'] . '</b></span>';
+			$sx .= '</br></br>';
+
+			/* Nome do Edital */			
+			$sx .= '<span class="edital_titulo">' . $link . $titulo . '</a>' . '</span>';
+			
 			if ($line['ed_fluxo_continuo'] == 1) {
-				$sx .= '<td class="borderb1" align="center">' . $link . msg('continuous_flow') . '</a>' . '</td>';
+				$sx .= '<tr><td class="edital_deadline">' . msg('continuous_flow') . '</td></tr>';
 			} else {
-				$sx .= '<td class="borderb1" align="center">' . $link . stodbr($line['ed_dt_deadline_elet']) . '</a>' . '</td>';
-			}
+				$sx .= '<tr><td class="edital_deadline">' . stodbr($line['ed_dt_deadline_elet']) . '</td></tr>';
+			}			
+
+			$sx .= '</table>';
+			
+			//$sx .= '<div class="">' . $link . $line['agf_nome'] . '</a>' . '</div>';
+
+			$sx .= '</div>';
+			$sx .= '</a>';
 
 		}
-		$sx .= '</table>';
+		$sx .= '</div>';
 		return ($sx);
 	}
 
@@ -108,16 +136,35 @@ class fomento_editais extends CI_model {
 		 *
 		 * Mostra área já seleciondas
 		 */
-		print_r($_POST);
-
-		$sql = "SELECT c.id_ct as id_ct, m.ct_descricao as master,
-					c.ct_descricao as slave, fec_ativo
-				FROM fomento_categoria as m
-					left join fomento_categoria as c on c.ct_ordem = m.id_ct
-				    left join fomento_edital_categoria on c.id_ct = fe_id and fc_id = $id
-				WHERE c.ct_ativo = 1
-					and c.id_ct <> m.id_ct
-				order by m.id_ct";
+		$acao = get("acao");
+		if (strlen($acao) > 0)
+			{
+				$sets = $_POST;
+				$sqli = "";
+				foreach ($sets as $key => $value) {
+					$key = sonumero($key);
+					if ($key > 0)
+						{
+						if (strlen($sqli) > 0) { $sqli .=' ,'; }
+						$sqli .= "('$key','$id',1)";
+						}					
+				}
+				$sql = "delete from fomento_edital_categoria 
+						WHERE fc_id = ".round($id);
+				$this->db->query($sql);
+				
+				$sqli = "insert into fomento_edital_categoria (fe_id, fc_id, fec_ativo) values ".$sqli;
+				$this->db->query($sqli);		
+			}
+				
+		$sql = "
+				SELECT s.id_ct as id_ct, m.ct_descricao as master,
+					s.ct_descricao as slave, fec_ativo
+					FROM fomento_categoria as m
+					LEFT JOIN fomento_categoria as s on s.ct_auto_ref = m.id_ct
+					LEFT JOIN fomento_edital_categoria on s.id_ct = fe_id and fc_id = $id
+				WHERE m.ct_main = 1 and s.ct_ativo = 1
+				ORDER BY m.id_ct, s.ct_descricao";				
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -141,7 +188,7 @@ class fomento_editais extends CI_model {
 				$checked = 'checked';
 			}
 			$sx .= '<tr><td class="lt1">';
-			$sx .= '<input type="checkbox" name="dd" value="1" '.$checked.' > ';
+			$sx .= '<input type="checkbox" name="da'.$idr.'" value="1" '.$checked.' > ';
 			$sx .= $line['slave'];
 			$sx .= '</td></tr>';
 		}
