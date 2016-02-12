@@ -10,6 +10,7 @@ class usuario extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
 		$this -> load -> library("nuSoap_lib");
 		$this -> load -> library('session');
@@ -133,7 +134,7 @@ class usuario extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Usuarios', 'index.php/usuario/row'));
+		array_push($menus, array('Docentes & Discentes', 'index.php/usuario/row'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -234,16 +235,37 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function profile($id = 0,$chk='') {
+		/* Models */
+		$this -> load -> model('usuarios');
+
+		
+		/* Carrega classes adicionais */
+		$this -> cab();
+		$data = array();
+
+		if ($id == 0) {
+			redirect(base_url('index.php/main'));
+			exit ;
+		}
+		
+		$tela = $this->usuarios->view_prefil($id);
+		$data['content'] = $tela;
+		$this->load->view('content',$data);		
+
+		$this -> load -> view('header/content_close.php');
+		$this -> load -> view('header/foot');
+	}
 	function view($id = 0) {
 		$this -> load -> model('usuarios');
 		$this -> load -> model('ics');
 		$this -> load -> model('producoes');
-		$this -> load -> model('programas_pos');
 
 		$this -> cab();
 		$data = array();
 
 		$data = $this -> usuarios -> le($id);
+		$data['ver_perfil'] = 1;
 
 		$tipo = $data['usuario_tipo_ust_id'];
 		switch ($tipo) {
@@ -253,26 +275,6 @@ class usuario extends CI_Controller {
 				$this -> load -> view('header/logo', $data);
 				$this -> load -> view('perfil/docente', $data);
 				$cpf = strzero(sonumero($data['us_cpf']), 11);
-				$data['content'] = $this -> usuarios -> mostra_carga_horaria($cpf);
-				$this -> load -> view('content', $data);
-				$area_avaliacao = $data['us_area_conhecimento'];
-
-				/* Area de avaliacao */
-				$area = 41;
-
-				/* SS */
-				$pos = $this -> programas_pos -> professor_ss_area($id);
-				$areas = array();
-				for ($r = 0; $r < count($pos); $r++) {
-					$area = $pos[$r]['pp_area'];
-					/* Producao */
-					$data['content'] = $this -> producoes -> producao_perfil_grafico($cpf, $area);
-					$this -> load -> view('content', $data);
-					array_push($areas,$area);
-				}
-
-				$data['content'] = $this -> producoes -> producao_perfil($cpf, $area_avaliacao);
-				$this -> load -> view('content', $data);
 
 				break;
 			/* Colaborador */

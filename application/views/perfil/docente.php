@@ -1,5 +1,15 @@
 <?php
 $us_nada = '<font color="grey">[em construção]</font>';
+$perfil_completo_ver = '';
+if (isset($ver_perfil)) {
+	if ($ver_perfil == 1) {
+		$perfil_completo_ver = '
+			<li class="nopr">
+				<a href="' . base_url('index.php/usuario/profile/' . $id_us . '/' . checkpost_link($id_us)) . '" class="btn">ver perfil completo</a>
+			</li>';
+	}
+}
+
 if (!isset($area_avaliacao_nome)) { $area_avaliacao_nome = 'não definida';
 }
 ?>
@@ -39,6 +49,7 @@ if (!isset($area_avaliacao_nome)) { $area_avaliacao_nome = 'não definida';
 				}
 				?>
 			</li>
+			<?php echo $perfil_completo_ver;?>
 		</div><TD width="300">
 		<div id="info-pesquisador" class="info-pesquisador lt1">
 			<span class="lt2 titulo-info-pesquisador">Informaçães do Pesquisador</span>

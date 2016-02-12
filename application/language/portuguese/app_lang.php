@@ -14,7 +14,10 @@ if (!function_exists(('msg')))
 			}
 	}
 
-
+$lang['CAPT'] = 'Captacação de Recursos';
+$lang['IC'] = 'Iniciação Científica';
+$lang['ic_ativa'] = 'Orientações ativas';
+$lang['ic_finalizados'] = 'Orientações concluídas';
 $lang['save_next'] = 'Salvar e continuar >>';	
 $lang['continuous_flow'] = 'Fluxo contínuo';
 /***************************************************************************************************/

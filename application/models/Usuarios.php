@@ -22,6 +22,144 @@ class usuarios extends CI_model {
 	var $nome = '';
 	var $ss = '';
 	var $cracha = '';
+	
+	function view_prefil($id)
+		{
+		$this -> load -> model('programas_pos');
+		$this -> load -> model('producoes');
+		$this -> load -> model('captacoes');
+		$this -> load -> model('ics');
+		
+		/* Visualizações */
+		$captacoes_ativo = 0;
+		$ic_ativo = 0;
+		$carga_horaria_ativo = 0;
+		$pos_ativo = 0;
+		$producao_ativo = 0;
+
+		//* Dados */
+		$data = $this -> usuarios -> le($id);
+		$cpf = strzero(sonumero($data['us_cpf']), 11);
+		$cracha = $data['us_cracha'];
+		$id_us = $data['id_us'];
+		$area_avaliacao = $data['us_area_conhecimento'];
+
+		/* Monta telas */
+		$tipo = $data['usuario_tipo_ust_id'];
+		$abas = array();
+
+		switch ($tipo) {
+			/* Docente */
+			case '2' :
+				$data['logo'] = base_url('img/logo/logo_docentes.jpg');
+				$this -> load -> view('header/logo', $data);
+				$this -> load -> view('perfil/docente', $data);
+
+				/* Captacoes */
+				$captacoes_ativo = 1;
+				/* Producao */
+				$producao_ativo = 1;
+				/* Carga Horaria */
+				$carga_horaria_ativo = 1;
+				/* Iniciacao científica */
+				$ic_ativo = $this -> ics -> is_ic($cracha);
+
+				break;
+			/* Colaborador */
+			case '4' :
+				$data['logo'] = base_url('img/logo/logo_colaborador.jpg');
+				$this -> load -> view('header/logo', $data);
+				$this -> load -> view('perfil/colaborador', $data);
+				break;
+			/* Discente */
+			case '3' :
+				$data['logo'] = base_url('img/logo/logo_discente.jpg');
+				$this -> load -> view('header/logo', $data);
+				$this -> load -> view('perfil/discente', $data);
+				$cpf = strzero(sonumero($data['us_cpf']), 11);
+				$abas[3]['title'] = 'Iniciação Científica';
+				$abas[3]['content'] = $this -> usuarios -> mostra_formacao($cpf);
+
+				/* Iniciacao cientifica */
+				$data['content'] = $this -> usuarios -> mostra_ic($cpf);
+				$this -> load -> view('content', $data);
+
+				/* habilida captacoes */
+				$captacoes_ativo = 1;
+				/* Iniciacao cientifica */
+				$ic_ativo = $this -> ics -> is_ic($id_us);
+				break;
+			default :
+				$data['logo'] = base_url('img/logo/logo_discente.jpg');
+				$this -> load -> view('header/logo', $data);
+				$this -> load -> view('perfil/discente', $data);
+				break;
+		}
+
+		/* Montagens das telas */
+
+		/* Aba 1 - RESUMO */
+		$abas[0]['title'] = 'Resumo';
+		$abas[0]['content'] = '';
+		
+		/* Aba - Producao Científica */
+		if ($producao_ativo == 1) {
+			/* SS */
+			$pos = $this -> programas_pos -> professor_ss_area($id);
+			$areas = array();
+			$sa = '<table width="100%">';
+			$sa .= '<tr>';
+			for ($r = 0; $r < count($pos); $r++) {
+				$area = $pos[$r]['pp_area'];
+				/* Producao */
+				$sa .= '<td align="center">' . $this -> producoes -> producao_perfil_grafico($cpf, $area) . '</td>';
+				//$sa .= $this -> load -> view('content', $data, true);
+				//array_push($areas, $area);
+			}
+			$sa .= '</table>';
+
+			$abas[1]['title'] = 'Produção Científica';
+			$abas[1]['content'] = $sa . $this -> producoes -> producao_perfil($cpf, $area_avaliacao);
+		}
+		
+		/* Aba - Stricto Sensu */
+		if ($_SESSION['ss'] == '1') {
+			$abas[2]['title'] = 'Mestrado/Doutorado';
+			$abas[2]['content'] = '';
+		}
+
+		/* captacoes */
+		if ($captacoes_ativo == 1) {
+			$capt = $this -> captacoes -> resumo_projetos($data['us_cracha']);
+			$data = array_merge($data, $capt);
+			
+			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_captacao', $data, True);
+
+			$abas[3]['title'] = 'Captações';
+			$abas[3]['content'] = $capt['captacoes'];
+		}
+
+
+		/* Aba - Iniciacao Cientifica */
+		if ($ic_ativo == 1) {
+			$data['perfil'] = $this->ics->resumo;
+			$abas[4]['title'] = 'Iniciação Científica';
+			$tela = $this -> ics -> orientacoes();
+			$abas[4]['content'] = $tela;			
+			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_ic', $data, True);
+			
+		}
+
+		/* Aba - Carga horaria */
+		if ($carga_horaria_ativo == 1) {
+			$abas[9]['title'] = 'Carga Horária';
+			$abas[9]['content'] = $this -> usuarios -> mostra_carga_horaria($cpf);
+		}
+
+		$data['abas'] = $abas;
+		$tela = $this -> load -> view('content_foldes', $data,true);
+		return($tela);		
+		}
 
 	function is_ss($id) {
 		/* Strict Sensu */
@@ -1159,7 +1297,7 @@ class usuarios extends CI_model {
 		$dtnasc = sonumero($DadosUsuario['dataNascimento']);
 		$dtnasc = substr($dtnasc, 4, 4) . '-' . substr($dtnasc, 2, 2) . '-' . substr($dtnasc, 0, 2);
 		$cracha = $DadosUsuario['pessoa'];
-		$curso = trim(limpaCursos($DadosUsuario['nomeCurso']));
+		$curso = trim($this->limpaCursos($DadosUsuario['nomeCurso']));
 		$emplid = '';
 		$tipo = $DadosUsuario['tipo'];
 

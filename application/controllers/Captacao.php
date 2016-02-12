@@ -46,6 +46,7 @@ class Captacao extends CI_Controller {
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
+		$this -> load -> view('header/content_open');
 	}
 
 	function index($id = 0) {
@@ -56,45 +57,64 @@ class Captacao extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-			
+
 		$menu = array();
 		$data['title_menu'] = 'Captacação de Recursos & Bonificação de Artigos';
-		array_push($menu,array('Captação de Recursos','Meus projetos cadastrados','ITE','/captacao/grants'));
-		array_push($menu,array('Captação de Recursos','Cadastrar novo projeto','ITE','/captacao/grants_new'));
-		
-		array_push($menu,array('Isenções','Minhas Isenções','ITE','/captacao/isencoes'));
-		array_push($menu,array('Isenções','Indicar Isenções','ITE','/captacao/isencao_indicar'));
+		array_push($menu, array('Captação de Recursos', 'Meus projetos cadastrados', 'ITE', '/captacao/grants'));
+		array_push($menu, array('Captação de Recursos', 'Cadastrar novo projeto', 'ITE', '/captacao/grants_new'));
 
-		array_push($menu,array('Artigos Científicos (A1, A2, Q1 e ExR)','Meus artigos cadastrados','ITE','/captacao/articles'));
-		array_push($menu,array('Artigos Científicos (A1, A2, Q1 e ExR)','Cadastrar novo artigos','ITE','/captacao/article_new'));
+		array_push($menu, array('Isenções', 'Minhas Isenções', 'ITE', '/captacao/isencoes'));
+		array_push($menu, array('Isenções', 'Indicar Isenções', 'ITE', '/captacao/isencao_indicar'));
+
+		array_push($menu, array('Artigos Científicos (A1, A2, Q1 e ExR)', 'Meus artigos cadastrados', 'ITE', '/captacao/articles'));
+		array_push($menu, array('Artigos Científicos (A1, A2, Q1 e ExR)', 'Cadastrar novo artigos', 'ITE', '/captacao/article_new'));
 
 		$data['menu'] = $menu;
-		
-		
-		$this->load->view('header/main_menu',$data);
+
+		$this -> load -> view('header/main_menu', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function view($id = 0, $chk = '') {
+		$this -> load -> model('usuarios');
+		$this -> load -> model('captacoes');
+
+		$chk2 = checkpost_link($id);
+		if ($chk2 != $chk) {
+			redirect(base_url('index.php/main'));
+		}
+		/* Load Models */
+
+		$this -> cab();
+		$data = $this -> captacoes -> le($id);
+		print_r($data);
+		$this -> load -> view('captacao/detalhe', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', null);
+	}
+
 	function grants($id = 0) {
 
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('captacoes');
-		
+
 		$id = $_SESSION['id_us'];
-		$us = $this->usuarios->le($id);
+		$us = $this -> usuarios -> le($id);
 		$cracha = $us['us_cracha'];
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		
+
 		$data = array();
 		$data['title'] = 'Captacação de Recursos';
-		$data['content'] = $this->captacoes->lista($cracha);
-		$this->load->view('content',$data);
-		
+		$data['content'] = $this -> captacoes -> lista($cracha);
+		$this -> load -> view('content', $data);
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
