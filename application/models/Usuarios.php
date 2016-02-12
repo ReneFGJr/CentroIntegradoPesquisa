@@ -144,7 +144,7 @@ class usuarios extends CI_model {
 		if ($ic_ativo == 1) {
 			$data['perfil'] = $this->ics->resumo;
 			$abas[4]['title'] = 'Iniciação Científica';
-			$tela = $this -> ics -> orientacoes();
+			$tela = $this -> ics -> orientacoes($cracha);
 			$abas[4]['content'] = $tela;			
 			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_ic', $data, True);
 			

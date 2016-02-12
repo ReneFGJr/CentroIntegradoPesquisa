@@ -89,7 +89,7 @@ class Captacao extends CI_Controller {
 
 		$this -> cab();
 		$data = $this -> captacoes -> le($id);
-		print_r($data);
+		
 		$this -> load -> view('captacao/detalhe', $data);
 
 		$this -> load -> view('header/content_close');

@@ -571,8 +571,11 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-	function orientacoes() {
-		$cracha = $_SESSION['cracha'];
+	function orientacoes($cracha='') {
+		if (strlen($cracha) == 0)
+			{
+				$cracha = $_SESSION['cracha'];
+			}
 		$sql = "select * from ic 
 						where ic_cracha_prof = '$cracha' or ic_cracha_aluno = '$cracha' ";
 		$sql = "select * from ic
