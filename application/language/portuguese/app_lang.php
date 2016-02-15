@@ -14,6 +14,7 @@ if (!function_exists(('msg')))
 			}
 	}
 
+$lang['ARTI'] = 'Bonificação de Artigos';
 $lang['CAPT'] = 'Captacação de Recursos';
 $lang['IC'] = 'Iniciação Científica';
 $lang['ic_ativa'] = 'Orientações ativas';
@@ -28,6 +29,13 @@ $lang['bt_submit_confirm'] = 'Confirmar envio >>>';
 $lang['protocolo_botao_form_ic_rp'] = 'Enviar relatório Parcial';
 $lang['sw_ic_rel_pacial'] = 'Submissão do Relatório Parcial';
 $lang['sw_ic_form_acompanhamento'] = 'Submissão do questionário de acompanhamento';
+
+/* Artigos */
+
+$lang['artigos_cadastrados'] = 'Artigos cadastrados';
+$lang['artigo_ver_cadastro'] = 'ver e cadastrar artigos';
+$lang['captacao_ver_cadastro'] = 'ver e cadastrar projetos';
+$lang['captacaoes_cadastrados'] = 'Captações cadastradas';
 
 $lang['cap_em_cadastro'] = 'Em cadastro';
 $lang['cap_devolvido_correcoes'] = 'Correção do professor';

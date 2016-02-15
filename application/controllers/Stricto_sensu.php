@@ -51,14 +51,17 @@ class stricto_sensu extends CI_Controller {
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
+		$this -> load -> view('header/content_open');
+		
+		$this -> load -> view('ss/index', $data);
 	}
 
 	function index() {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
-		$this -> load -> view('ss/index', $data);
+		
+		
 
 		$data['content'] = $this -> stricto_sensus -> lista_programas();
 		$this -> load -> view('content', $data);

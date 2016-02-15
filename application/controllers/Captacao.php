@@ -77,6 +77,94 @@ class Captacao extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function nova()
+		{
+		$this->load->model('captacoes');
+		$cracha = $_SESSION['cracha'];
+		
+		$id = $this->captacoes->nova_captacao($cracha);
+		$link = base_url('index.php/captacao/editar/'.$id.'/'.checkpost_link($id));
+		redirect($link);			
+		}
+
+	function editar($id=0,$chk='',$pag=1)
+		{
+			$this->load->model('captacoes');
+			$this -> cab();
+			
+			$data = array();
+			$data[1] = msg('captacao_dados');
+			$data[2] = msg('captacao_recursos');
+			$data[3] = msg('captacao_arquivos');
+			$data['bp_atual'] = ($pag);
+			$data['bp_link'] = base_url('index.php/captacao/editar/'.$id.'/'.checkpost_link($id));
+			$data['bp'] = $data;
+			$this->load->view('gadget/progessbar_horizontal.php',$data);
+			
+			$form = new form;
+			$form->id = $id;
+			
+			switch ($pag)
+				{
+				case '1':
+					$cp = $this->captacoes->cp_01($id);
+					break;
+				case '2':
+					$cp = $this->captacoes->cp_02($id);
+					break;
+				case '3':
+					$cp = $this->captacoes->cp_03($id);
+					break;										
+				default:
+					$cp = array('$H','id_ca','',true,true);
+					break;
+				}
+			
+			$tela = $form->editar($cp,'captacao');
+			$data['content'] = $tela;
+			
+			$this->load->view('content',$data);
+			
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', null);		
+		}
+	public function grants()
+		{
+		$this->load->model('captacoes');
+		
+		$cracha = $_SESSION['cracha'];
+
+		$this -> cab('Projetos de Pesquisa cadastrados');
+		$data = array();
+		
+		/* Recupera cracha */
+		$cracha = $_SESSION['cracha'];
+		$editar = 1;	
+		
+		/* Resumo das Captacoes */
+		$texto = '<a href="'.base_url('index.php/ss/captacoes/').'" class="lt2 link">'.msg('captacao_ver_cadastro').'</a>'; /* Texto para visualizar todas as captacoes */
+		$capt = $this -> captacoes -> resumo_projetos($cracha,$editar);
+		$data = array_merge($data, $capt);
+		$data['captacao_texto'] = $texto;
+		
+		$data['content'] = $data['captacoes'];
+		
+		/* Botao de novo ou editar */
+		$nova_captacao = $this->captacoes->captacao_em_cadastro($cracha);
+		if ($nova_captacao == 0)
+			{
+				$bt = '<a href="'.base_url('index.php/captacao/nova/').'" class="botao3d back_green_shadown back_green">Cadastrar nova captacão >>></a>';
+			} else {
+				$bt = '<a href="'.base_url('index.php/captacao/editar/'.$nova_captacao.'/'.checkpost_link($nova_captacao)).'" class="botao3d back_green_shadown back_green">Editar captacão em cadastro>>></a>';
+			}
+
+		$data['content'] .= '<br><br>'.$bt;
+		$this->load->view('content',$data);		
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', null);
+		}
+
 	function view($id = 0, $chk = '') {
 		$this -> load -> model('usuarios');
 		$this -> load -> model('captacoes');
@@ -96,7 +184,7 @@ class Captacao extends CI_Controller {
 		$this -> load -> view('header/foot', null);
 	}
 
-	function grants($id = 0) {
+	function grants_olds($id = 0) {
 
 		/* Load Models */
 		$this -> load -> model('usuarios');

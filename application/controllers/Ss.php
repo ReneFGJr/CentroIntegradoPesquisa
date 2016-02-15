@@ -21,7 +21,7 @@ class ss extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 	}
 	
-	public function cab() {
+	public function cab($title = '') {
 
 		/* Security */
 		$this -> load -> model('usuarios');
@@ -47,6 +47,7 @@ class ss extends CI_Controller {
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
+		$data['cabtitle'] = $title;
 
 		/* Menu */
 		$menus = array();
@@ -60,20 +61,45 @@ class ss extends CI_Controller {
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
-		$this -> load -> view('header/content_open');
+		$this -> load -> view('header/content_open');		
+		$this -> load -> view('ss/index', $data);
 	}	
+
+
 
 	public function index($id = 0) {
 		$this->load->model('artigos');
+		$this->load->model('captacoes');
+		
 		$cracha = $_SESSION['cracha'];
 
-		$this -> cab();
+		$this -> cab('Programas de Pós-Graduação <i>stricto sensu</i>');
 		$data = array();
 		
+		/* Recupera cracha */
 		$cracha = $_SESSION['cracha'];
 		
-		$resumo_artigos = $this->artigos->resumo_artigos($cracha);
-		$data['content'] = $resumo_artigos;
+		/* Resumo das Captacoes */
+		$texto = '<a href="'.base_url('index.php/captacao/grants/').'" class="lt2 link">'.msg('captacao_ver_cadastro').'</a>'; /* Texto para visualizar todas as captacoes */
+		$capt = $this -> captacoes -> resumo_projetos($cracha);
+		$data = array_merge($data, $capt);
+		$data['captacao_texto'] = $texto;
+			
+		/* Carrega Views */
+		$capt_resumo = $this -> load -> view('perfil/perfil_captacoes', $data, True);
+		$capt_lista = $capt['captacoes'];	
+		
+		/* Resumo de Artigos */
+		$texto = '<a href="'.base_url('index.php/ss/artigos/').'" class="lt2 link">'.msg('artigo_ver_cadastro').'</a>'; /* Texto para visualizar todos os artigos */	
+		$arti = $this->artigos->resumo_artigos($cracha);
+		$data = array_merge($data, $arti);
+		$data['artigo_texto'] = $texto;
+		
+		/* Carrega Views */
+		$resumo_artigos = $this -> load -> view('perfil/perfil_artigos', $data, True);
+		
+		$data['content'] = $capt_resumo;
+		$data['content'] .= $resumo_artigos;
 		$this->load->view('content',$data);
 
 		$this -> load -> view('header/content_close');

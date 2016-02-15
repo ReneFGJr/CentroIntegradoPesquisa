@@ -1735,7 +1735,9 @@ if (!function_exists('form_edit')) {
 			/* Caption - Header*/
 			case 'A' :
 				if (strlen($label) > 0) {
-
+					/* TR da tabela */
+					$tela .= $tr;
+					
 					if (substr($tdl, 0, 3) == '<td') {
 						$tdd = '<td colspan=2 align="left">';
 						$tela .= $tdd . '<h1>' . $label . '</h1> ';

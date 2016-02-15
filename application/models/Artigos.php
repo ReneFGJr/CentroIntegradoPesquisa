@@ -1,14 +1,15 @@
 <?php
 class artigos extends CI_Model
 	{
-	function resumo_artigos($cracha = '')
+	function resumo_artigos($cracha = '',$texto='')
 		{
-			$art = array('-','-','-');
+			$art = array('-','-','-','-');
 			$sql = "select ar_status, count(*) as total from cip_artigo 
 					WHERE ar_professor = '$cracha'
 					GROUP BY ar_status";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
+				
 			for ($r=0;$r < count($r); $r++)
 				{
 					$line = $rlt[$r];
@@ -26,21 +27,18 @@ class artigos extends CI_Model
 							echo $sta.'...';
 							break;						
 						}
-					print_r($line);
 				}
 			
+			$data = array();
+			$data['artigos_em_cadastrados'] = $art[0];
+			$data['artigos_em_analise'] = $art[1];
+			$data['artigos_finalizado'] = $art[2];
+			$data['artigos_para_correcao'] = $art[3];
+			$data['artigo_texto'] = $texto;
 			
-			$sx = '<table width="300" class="tabela00 border1 lt3">';
-			$sx .= '<tr><th align="center" class="lt3">Artigos Cadastrados</th></tr>';
-			$sx .= '<tr><td></td></tr>';
-			$sx .= '<tr><td align="center" class="lt0">Em cadastro</td></tr>';
-			$sx .= '<tr><td align="center" class="lt6">'.$art[0].'</td></tr>';
-			$sx .= '<tr><td align="center" class="lt0">Em análise</td></tr>';
-			$sx .= '<tr><td align="center" class="lt6">'.$art[1].'</td></tr>';
-			$sx .= '<tr><td align="center" class="lt0">Finalizado</td></tr>';
-			$sx .= '<tr><td align="center" class="lt6">'.$art[2].'</td></tr>';
-			$sx .= '</table>';
-			return($sx);
+			//$sx = $this->load->view("perfil/perfil_artigos",$data,true);
+
+			return($data);
 		}
 	function cp_01()
 		{
