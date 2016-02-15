@@ -22,6 +22,7 @@ class login extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users_helper');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 		$this -> lang -> load("app", "portuguese");
@@ -29,6 +30,27 @@ class login extends CI_Controller {
 
 		//$this -> lang -> load("app", "english");
 	}
+	
+	function cab() {
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'style_cab.css');
+		array_push($css, 'form_sisdoc.css');
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Menu */
+		$menus = array();
+		array_push($menus, array('CIP', '/cip/'));
+
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+	}	
 
 	function ab($id = 0, $chk = '') {
 		/* Remover */
@@ -69,8 +91,8 @@ class login extends CI_Controller {
 				$this -> josso_login_pucpr -> us_id = $line['us_id'];
 				$this -> josso_login_pucpr -> loged = 1;
 				$this -> josso_login_pucpr -> josso = date("YmfHis");
-				$this -> josso_login_pucpr -> security_ac();
-				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'], 'ACB');
+				$this -> usuarios -> security_set($line['id_us']);
+				$this -> usuarios -> historico_insere($line['us_cpf'], 'ACB');
 				$link = base_url('index.php/main');
 				redirect($link);
 			}
@@ -78,6 +100,31 @@ class login extends CI_Controller {
 		echo 'ERRO DE ACESSO!';
 		exit ;
 	}
+
+	function email($id,$chk='')
+		{
+			$this->cab();
+			$this->load->model('usuarios');
+			$this->load->model('mensagens');
+			$dados = $this->usuarios->le($id);
+			$data = array();
+			$data['nome'] = $dados['us_nome'];
+			$nw = $this->mensagens->busca('email_password',$data);
+			$txt = $nw['nw_texto'];
+			$assunto = $nw['nw_titulo'];
+			$fmt = $nw['nw_formato'];
+			$link = base_url('index.php/login/a/'.$id.'/'.checkpost_link($id . 'acesso_professor'));
+			$link = '<a href="'.$link.'">link de acesso</a><br>ou '.$link;
+			$txt = troca($txt,'$link',$link);
+			
+			$this->load->view('usuario/view',$dados);
+			
+			$para = 1;
+			enviaremail_usuario($id, $assunto, $txt, 2);
+			$tela = '<font color="green">e-mail enviado com sucesso!</font>';
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+		}
 
 	function ac($id = 0, $chk = '') {
 		/* Remover */
@@ -142,6 +189,8 @@ class login extends CI_Controller {
 	}
 
 	function a($id = 0, $chk = '') {
+		$this->load->model('usuarios');
+		$this->load->model('login/josso_login_pucpr');
 		/* Remover */
 		$chk2 = checkpost_link($id . 'acesso_professor');
 
@@ -173,8 +222,8 @@ class login extends CI_Controller {
 				$this -> josso_login_pucpr -> loged = 1;
 				$this -> josso_login_pucpr -> ghost = 1;
 				$this -> josso_login_pucpr -> josso = date("YmfHis");
-				$this -> josso_login_pucpr -> security_ac();
-				$this -> josso_login_pucpr -> historico_insere($line['us_cpf'], 'ACP');
+				$this -> usuarios -> security_set($line['id_us']);
+				$this -> usuarios -> historico_insere($line['us_cpf'], 'ACP');
 				$link = base_url('index.php/main');
 				redirect($link);
 			}
@@ -267,7 +316,7 @@ class login extends CI_Controller {
 
 			$login = $this -> input -> get_post('dd1');
 			$password = $this -> input -> get_post('dd2');
-			$ok = $this -> josso_login_pucpr -> consulta_login($login, $password, 1);
+			$ok = $this -> usuarios -> consulta_login($login, $password, 1);
 			exit ;
 		}
 

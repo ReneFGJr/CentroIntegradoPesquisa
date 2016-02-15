@@ -45,33 +45,42 @@ class captacoes extends CI_Model {
 				}	
 			
 			$ops = 'cp_cod:cp_descricao:select * from captacao_participacao where cp_ativo = 1';
+			$opa = 'agf_codigo:agf_nome:select * from fomento_agencia where agf_ativo = 1 order by agf_nome';
 			$cp = array();
 			array_push($cp,array('$HV','id_ca',$id,true,true));
 			array_push($cp,array('${','',msg('Participacao'),false,true));
 			
-			array_push($cp,array('${','',msg('captacao_perfil'),false,true));
-			array_push($cp,array('$Q '.$ops,'','Sua participação neste projeto de pesquisa, perante a instituição é de:',True,true));
+			
+			array_push($cp,array('${','',msg('captacao_edital'),false,true));
+			array_push($cp,array('$Q '.$ops,'ca_participacao','Sua participação neste projeto de pesquisa, perante a instituição é de:',True,true));
+			array_push($cp,array('$Q '.$opa,'ca_agencia',msg('fomente_agencia'),false,true));
+			array_push($cp,array('$S20','ca_edital_nr',msg('fomento_edital'),true,true));
+			array_push($cp,array('$S20','ca_processo',msg('fomento_processo'),true,true));
+			array_push($cp,array('$[2010-'.date("Y").']','ca_edital_ano',msg('fomento_ed_ano'),True,true));
+			array_push($cp,array('$}','',msg('captacao_edital'),false,true));
 			
 			array_push($cp,array('${','',msg('captacao_perfil'),false,true));
 			array_push($cp,array('$C','ca_academico','Projeto Acadêmico (Projeto de pesquisa, eventos, entre outros)',false,true));
-			array_push($cp,array('$C','','Projeto de Coordenação Institucional (Recursos para infraestrutura, entre outros)',false,true));
-			array_push($cp,array('$C','','Desmembramento de Projeto de Coordenação Institucional (Recursos para infraestrutura, entre outros)',false,true));
+			array_push($cp,array('$C','ca_insticional','Projeto de Coordenação Institucional (Recursos para infraestrutura, entre outros)',false,true));
+			array_push($cp,array('$C','ca_desmembramento','Desmembramento de Projeto de Coordenação Institucional (Recursos para infraestrutura, entre outros)',false,true));
 			array_push($cp,array('$}','',msg('captacao_perfil'),false,true));
 			
 			array_push($cp,array('${','',msg('captacao_dados'),false,true));
 			array_push($cp,array('$A','',msg('captacao_descricao'),false,true));
 			array_push($cp,array('$T80:3','ca_descricao',msg('captacao_titulo'),true,true));
-			array_push($cp,array('$Q id_pp:pp_nome:'.$sql_pos,'',msg('captacao_programa'),false,true));
+			array_push($cp,array('$Q id_pp:pp_nome:'.$sql_pos,'ca_programa',msg('captacao_programa'),false,true));
 			array_push($cp,array('$}','',msg('captacao_dados'),false,true));
 			
 			array_push($cp,array('${','',msg('captacao_vigencia'),false,true));
-			array_push($cp,array('$O '.$vg,'',msg('captacao_vigencia_inicio'),true,true));
-			array_push($cp,array('$O '.$dr,'',msg('captacao_duracao'),true,true));
-			array_push($cp,array('$O '.$dr,'',msg('captacao_prorrogacao'),true,true));
+			array_push($cp,array('$O '.$vg,'ca_vigencia_final_ano',msg('captacao_vigencia_inicio'),true,true));
+			array_push($cp,array('$O '.$dr,'ca_duracao',msg('captacao_duracao'),true,true));
+			array_push($cp,array('$O '.$dr,'ca_duracao',msg('captacao_prorrogacao'),true,true));
 			array_push($cp,array('$}','',msg('captacao_vigencia'),false,true));
 			
 			
-			array_push($cp,array('$}','',msg('Participacao'),false,true));	
+			array_push($cp,array('$}','',msg('Participacao'),false,true));
+			
+			array_push($cp,array('$B8','',msg('save_next'),false,true));	
 			return($cp);
 			
 		}
@@ -81,11 +90,12 @@ class captacoes extends CI_Model {
 			array_push($cp,array('$HV','id_ca',$id,true,true));
 			array_push($cp,array('${','',msg('Recusos captados'),false,true));
 			
-			array_push($cp,array('$N8','ca_vlr_total',msg('ca_vlr_total'),true,true));
 			array_push($cp,array('$N8','ca_vlr_capital',msg('ca_vlr_capital'),true,true));
 			array_push($cp,array('$N8','ca_vlr_custeio',msg('ca_vlr_custeio'),true,true));
 			array_push($cp,array('$N8','ca_vlr_bolsa',msg('ca_vlr_bolsa'),true,true));
 			array_push($cp,array('$N8','ca_vlr_outros',msg('ca_vlr_outros'),true,true));
+			/* ca_vlr_total */			
+			array_push($cp,array('$L','',msg('ca_vlr_total'),false,false));
 			
 			
 			$text = 'O valor aplicado refere-se a quantidade de recursos que serão aplicados na PUCPR, podendo ser qualquer uma das modalidades, capital, custeio ou bolsas, informando qual o valor total.';
@@ -95,8 +105,42 @@ class captacoes extends CI_Model {
 			array_push($cp,array('$}','','',false,true));
 			
 			array_push($cp,array('$}','',msg('Recusos captados'),false,true));
+			
+			array_push($cp,array('$T80:6','ca_contexto',msg('ca_contexto'),false,false));
+			
+			array_push($cp,array('$B8','',msg('save_next'),false,true));
 			return($cp);
 		}
+
+	function cp_03($id='')
+		{
+			$cp = array();
+			array_push($cp,array('$HV','id_ca',$id,true,true));
+			array_push($cp,array('${','',msg('Recusos captados'),false,true));
+			
+			array_push($cp,array('$FILE:captacao_ged_documento:captacao','',$id,false,true));
+			array_push($cp,array('$}','','',false,true));
+			
+			array_push($cp,array('$}','',msg('Recusos captados'),false,true));
+			
+			array_push($cp,array('$B8','',msg('save_next'),false,true));
+			return($cp);
+		}
+		
+	function validacao_cp($id='')
+		{
+			$data = $this->le($id);
+			$cp = array();
+			array_push($cp,array('$HV','id_ca',$id,true,true));
+			$sx = '<table width="100%">';
+			$sx .= '<tr><td class="lt4">'.msg('validacao').'</td></tr>';
+			$sx .= '<tr><td>'.$this->load->view('captacao/detalhe',$data,true);
+			$sx .= '</table>';
+			
+			array_push($cp,array('$A','',$sx,false,true));
+			array_push($cp,array('$B8','',msg('send'),false,true));
+			return($cp);
+		}	
 	function le($id=0)
 		{
 		$sql = "select * from captacao 

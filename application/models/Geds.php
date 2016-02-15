@@ -359,9 +359,17 @@ class Geds extends CI_Model {
 	}
 
 	function documents_type_form($tipo,$class='') {
+		if (strlen($tipo) > 0)
+			{
+				$wh = " AND doct_codigo = '$tipo' ";
+			} else {
+				$wh = '';
+			}
+		
 		$sql = "select * from " . $this -> tabela . "_tipo 
 				WHERE doct_ativo = 1 
-				AND doct_codigo = '$tipo' ";
+				$wh ";
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$sx = '';

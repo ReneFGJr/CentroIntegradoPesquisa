@@ -77,6 +77,50 @@ class Captacao extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	/**** GEDS */
+	function ged($id = 0, $proto = '', $tipo = '', $check = '') {
+		$this -> load -> database();
+
+		$this -> load -> library('session');
+		$this -> load -> helper('url');
+		$this -> lang -> load("app", "portuguese");
+
+		$this -> load -> model('geds');
+
+		$this -> geds -> tabela = 'captacao_ged_documento';
+		$this -> geds -> page = base_url('index.php/captacao/ged/' . $id);
+
+		$data['content'] = $this -> geds -> form($id, $proto, $tipo);
+		$this -> load -> view('content', $data);
+	}
+
+	function ged_download($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'captacao_ged_documento';
+		$this -> geds -> file_path = '';
+		$this -> geds -> download($id);
+	}
+
+	function ged_lock($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'captacao_ged_documento';
+		$this -> geds -> file_path = '_document/captacao/';
+		$this -> geds -> file_lock($id);
+	}
+
+	function ged_excluir($id = 0, $chk = '') {
+		$this -> load -> database();
+
+		$this -> load -> model('geds');
+		$this -> geds -> tabela = 'captacao_ged_documento';
+		$this -> geds -> file_path = '_document/captacao/';
+		$this -> geds -> file_delete($id);
+	}
+
 	function nova()
 		{
 		$this->load->model('captacoes');
@@ -96,6 +140,7 @@ class Captacao extends CI_Controller {
 			$data[1] = msg('captacao_dados');
 			$data[2] = msg('captacao_recursos');
 			$data[3] = msg('captacao_arquivos');
+			$data[4] = msg('captacao_confirmacao');
 			$data['bp_atual'] = ($pag);
 			$data['bp_link'] = base_url('index.php/captacao/editar/'.$id.'/'.checkpost_link($id));
 			$data['bp'] = $data;
@@ -114,13 +159,27 @@ class Captacao extends CI_Controller {
 					break;
 				case '3':
 					$cp = $this->captacoes->cp_03($id);
-					break;										
+					break;	
+				case '4':
+					$cp = $this->captacoes->validacao_cp($id);
+					break;	
+				case '5':
+					/* Finaliza processo */
+					echo 'FIM';
+					return('');								
 				default:
 					$cp = array('$H','id_ca','',true,true);
 					break;
 				}
 			
 			$tela = $form->editar($cp,'captacao');
+			
+			/* Salvo */
+			if ($form->saved > 0)
+				{
+					$link = base_url('index.php/captacao/editar/'.$id.'/'.checkpost_link($id).'/'.($pag+1));
+					redirect($link);
+				}
 			$data['content'] = $tela;
 			
 			$this->load->view('content',$data);

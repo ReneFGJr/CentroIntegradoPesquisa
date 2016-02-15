@@ -894,6 +894,10 @@ class form {
 	var $row = '';
 	var $offset = 30;
 	var $order = '';
+	
+	var $ged_tabela = '';
+	var $ged_upload = '';
+	var $ged_download = '';
 
 	function editar($cp, $tabela) {
 		$ed = new form;
@@ -1647,6 +1651,8 @@ if (!function_exists('form_edit')) {
 		}
 		if (substr($type, 0, 3) == '$CM') { $tt = 'CM';
 		}
+		if (substr($type, 0, 5) == '$FILE') { $tt = 'FILE';
+		}
 
 		/* form */
 		$max = 100;
@@ -1859,6 +1865,25 @@ if (!function_exists('form_edit')) {
 				}
 				$tela .= '<br>';
 				break;
+			/* File */
+			case 'FILE':
+				$tela .= $tr;
+				$CI = &get_instance();
+				$CI->load->model('geds');
+				$CI -> geds -> tabela = $vlr;
+				
+				$tbl = $cp[0];
+				
+
+				$tbl = substr($tbl,strpos($tbl,':')+1,strlen($tbl));
+				$pag = substr($tbl,strpos($tbl,':')+1,strlen($tbl));
+				$tbl = substr($tbl,0,strpos($tbl,':'));
+				$idp = strzero($cp[2],7);
+				
+				$CI -> geds -> tabela = $tbl;
+				$tela = $CI -> geds -> list_files_table($idp, $pag);
+				
+				$tela .= $CI->geds->form_upload($idp,$pag);
 
 			/* Oculto */
 			case 'H' :

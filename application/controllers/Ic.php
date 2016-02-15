@@ -51,7 +51,7 @@ class ic extends CI_Controller {
 		$menus = array();
 		array_push($menus, array('Home', 'index.php/ic/'));
 
-		array_push($menus, array('Pessoas', 'index.php/ic/usuarios'));
+		array_push($menus, array('Professores & Alunos', 'index.php/ic/usuarios'));
 		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
 		array_push($menus, array('Acompanhamento', 'index.php/ic/acompanhamento'));
 		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));

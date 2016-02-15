@@ -12,6 +12,9 @@ class mensagens extends CI_model {
 			if (count($rlt) > 0)
 				{
 					$sx = $rlt[0];
+				} else {
+					echo 'Mensagem: "'.$ref.'" não foi localizada!';
+					return('');
 				}
 			$txt = $sx['nw_texto'];
 			if ($sx['nw_formato'] != 'HTML')

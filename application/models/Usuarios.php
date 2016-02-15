@@ -22,14 +22,13 @@ class usuarios extends CI_model {
 	var $nome = '';
 	var $ss = '';
 	var $cracha = '';
-	
-	function view_prefil($id)
-		{
+
+	function view_prefil($id) {
 		$this -> load -> model('programas_pos');
 		$this -> load -> model('producoes');
 		$this -> load -> model('captacoes');
 		$this -> load -> model('ics');
-		
+
 		/* Visualizações */
 		$captacoes_ativo = 0;
 		$ic_ativo = 0;
@@ -101,7 +100,7 @@ class usuarios extends CI_model {
 		/* Aba 1 - RESUMO */
 		$abas[0]['title'] = 'Resumo';
 		$abas[0]['content'] = '';
-		
+
 		/* Aba - Producao Científica */
 		if ($producao_ativo == 1) {
 			/* SS */
@@ -121,7 +120,7 @@ class usuarios extends CI_model {
 			$abas[1]['title'] = 'Produção Científica';
 			$abas[1]['content'] = $sa . $this -> producoes -> producao_perfil($cpf, $area_avaliacao);
 		}
-		
+
 		/* Aba - Stricto Sensu */
 		if ($_SESSION['ss'] == '1') {
 			$abas[2]['title'] = 'Mestrado/Doutorado';
@@ -132,22 +131,21 @@ class usuarios extends CI_model {
 		if ($captacoes_ativo == 1) {
 			$capt = $this -> captacoes -> resumo_projetos($data['us_cracha']);
 			$data = array_merge($data, $capt);
-			
+
 			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_captacao', $data, True);
 
 			$abas[3]['title'] = 'Captações';
 			$abas[3]['content'] = $capt['captacoes'];
 		}
 
-
 		/* Aba - Iniciacao Cientifica */
 		if ($ic_ativo == 1) {
-			$data['perfil'] = $this->ics->resumo;
+			$data['perfil'] = $this -> ics -> resumo;
 			$abas[4]['title'] = 'Iniciação Científica';
 			$tela = $this -> ics -> orientacoes($cracha);
-			$abas[4]['content'] = $tela;			
+			$abas[4]['content'] = $tela;
 			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_ic', $data, True);
-			
+
 		}
 
 		/* Aba - Carga horaria */
@@ -157,9 +155,9 @@ class usuarios extends CI_model {
 		}
 
 		$data['abas'] = $abas;
-		$tela = $this -> load -> view('content_foldes', $data,true);
-		return($tela);		
-		}
+		$tela = $this -> load -> view('content_foldes', $data, true);
+		return ($tela);
+	}
 
 	function is_ss($id) {
 		/* Strict Sensu */
@@ -267,11 +265,11 @@ class usuarios extends CI_model {
 
 			$dados = array('us_id' => $id_us, 'perfil' => $perfil, 'ghost' => $ghost, 'id_us' => $id_us, 'cracha' => $cracha, 'cpf' => $cpf, 'josso' => md5(date("YmdHis")), 'nome' => $nome, 'nome_display' => $nome_display, 'ss' => $ss);
 			$this -> session -> set_userdata($dados);
-			
-			$sql = "update us_usuario set us_lastupdate = '".date("Y-m-d")."', 
-							us_lastupdate_hora = '".date("H:i:s")."' 
-						WHERE id_us = ".$id_us;
-			$rlt = $this -> db -> query($sql);	
+
+			$sql = "update us_usuario set us_lastupdate = '" . date("Y-m-d") . "', 
+							us_lastupdate_hora = '" . date("H:i:s") . "' 
+						WHERE id_us = " . $id_us;
+			$rlt = $this -> db -> query($sql);
 		}
 		return (1);
 	}
@@ -349,7 +347,6 @@ class usuarios extends CI_model {
 		if (count($qr) == 0) {
 			$sql_login = "select * from us_usuario 
 							WHERE us_cpf = '$cpf' 
-							AND us_ativo = 1
 							ORDER BY usuario_tipo_ust_id ";
 			$qr = $this -> db -> query($sql_login);
 			$qr = $qr -> result_array();
@@ -393,17 +390,101 @@ class usuarios extends CI_model {
 				";
 			$this -> db -> query($sql);
 		}
-		
+
 		$qr = $this -> db -> query($sql_login);
 		$qr = $qr -> result_array();
-		if (count($qr) > 0)
-			{
-				$line = $qr[0];
-				$id = $line['id_us'];		
-			} else {
-				$id = 0;
-			}
-		return($id);
+		if (count($qr) > 0) {
+			$line = $qr[0];
+			$id = $line['id_us'];
+		} else {
+			$id = 0;
+		}
+		return ($id);
+	}
+
+	function lista_ultimos_erros_acessos($data = '') {
+		if (strlen($data) == 0) {
+			$data = date("Ymd");
+		}
+
+		$sql = "select * from logins_erros where ler_data = '$data' order by id_ler desc limit 50";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00 lt2">';
+		$sx .= '<tr><td class="lt4" colspan=10>'.stodbr($data).' - Últimos Erros de Acesso'.'</td></tr>';
+		$sx .= '<tr><th>login</th><th>ip</th><th>data</th><th>hora</th><th>Erro</th></tr>' . cr();
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<tr>';
+			$sx .= '<td>';
+			$sx .= $line['ler_user_id'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['ler_ip'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['ler_data'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['ler_hora'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['ler_erro'];
+			$sx .= '</td>';
+		}
+		$sx .= '</table>';
+
+		return ($sx);
+	}
+
+	function lista_ultimos_acessos($data = '') {
+		if (strlen($data) == 0) {
+			$data = date("Ymd");
+		}
+		$sql = "select * from logins_log
+					LEFT JOIN us_usuario on us_cpf = ul_cpf 
+					WHERE ul_data = '$data' order by id_ul desc limit 50";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00 lt2">';
+		$sx .= '<tr><td class="lt4" colspan=10>'.stodbr($data).' - Últimos Acessos Bem sucedidos'.'</td></tr>';
+		$sx .= '<tr><th>nome</th><th>login</th><th>ip</th><th>data</th><th>hora</th><th>Erro</th></tr>' . cr();
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<tr>';
+			$sx .= '<td>';
+			$sx .= $line['us_nome'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['us_login'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['ul_ip'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= stodbr($line['ul_data']);
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['ul_hora'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['ul_proto'];
+			$sx .= '</td>';
+		}
+		$sx .= '</table>';
+
+		return ($sx);
 	}
 
 	function ghost_link($id = 0) {
@@ -411,6 +492,10 @@ class usuarios extends CI_model {
 			if (perfil('#SPI#ADM#CPP#CPI') == 1) {
 				$link = '<a href="' . base_url('index.php/login/ap/' . $id . '/' . checkpost_link($id . date("Ymdhi"))) . '">';
 				$link .= '<img src="' . base_url('img/icon/icone_ghost.png') . '" border=0 height="16" title="' . msg("ghost_access") . '"></a>';
+
+				$link .= '<a href="#" onclick="newwin2(\'' . base_url('index.php/login/email/' . $id . '/' . checkpost_link($id . '')) . '\',600,400);">';
+				$link .= '<img src="' . base_url('img/icon/icone_email.png') . '" border=0 height="16" title="enviar acesso ao usuários"></a>';
+
 				return ($link);
 			} else {
 				return ("");
@@ -1297,7 +1382,7 @@ class usuarios extends CI_model {
 		$dtnasc = sonumero($DadosUsuario['dataNascimento']);
 		$dtnasc = substr($dtnasc, 4, 4) . '-' . substr($dtnasc, 2, 2) . '-' . substr($dtnasc, 0, 2);
 		$cracha = $DadosUsuario['pessoa'];
-		$curso = trim($this->limpaCursos($DadosUsuario['nomeCurso']));
+		$curso = trim($this -> limpaCursos($DadosUsuario['nomeCurso']));
 		$emplid = '';
 		$tipo = $DadosUsuario['tipo'];
 

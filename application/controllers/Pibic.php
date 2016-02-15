@@ -273,6 +273,9 @@ class pibic extends CI_Controller {
 				$entregue = $this -> ics_acompanhamento -> form_entregue($proto, 'ic_rp_data');
 
 				$data = $this -> ics -> le_protocolo($proto);
+				$professor = $data['prof_id'];
+				$aluno = $data['aluno_id'];
+				
 				$this -> load -> view('ic/plano', $data);
 
 				/* envio de dados */
@@ -307,7 +310,9 @@ class pibic extends CI_Controller {
 							$mss = $this->mensagens->busca($mss,$ms);
 
 							$id_own_pibic = $this-> id_own_pibic;
-							enviaremail_usuario(1,$mss['nw_titulo'].' - ['.$proto.'] - '.trim($data['pf_nome']),$mss['nw_texto'],$id_own_pibic);
+							enviaremail_usuario($professor,$mss['nw_titulo'].' - ['.$proto.'] - '.trim($data['pf_nome']),$mss['nw_texto'],$id_own_pibic);
+							
+							//enviaremail_usuario($aluno,$mss['nw_titulo'].' - ['.$proto.'] - '.trim($data['pf_nome']),$mss['nw_texto'],$id_own_pibic);
 							
 							$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_RP');
 							$rest = $this -> load -> view('ic/tarefa_finalizada', $data, True);

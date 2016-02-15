@@ -71,6 +71,24 @@ class admin extends CI_Controller {
 		}
 	}
 
+	function ultimos_acessos()
+		{
+		$this -> load -> model('usuarios');
+		$this -> cab();
+		
+		$data = date("Ymd");		
+		$tela = $this->usuarios->lista_ultimos_acessos($data);
+		$data = array();
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+		
+		$data = date("Y-m-d");		
+		$tela = $this->usuarios->lista_ultimos_erros_acessos($data);
+		$data = array();
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);		
+		}
+
 	function checar_cpf($pg = 0) {
 		$this -> load -> model('usuarios');
 		$this -> cab();
@@ -255,6 +273,8 @@ class admin extends CI_Controller {
 		array_push($menu, array('Usuários', 'Ajustar/Validar CPF', 'ITE', '/admin/checar_cpf'));
 		array_push($menu, array('Usuários', 'Crachas duplicados', 'ITE', '/admin/cracha_duplicados'));
 		array_push($menu, array('Usuários', 'Sem escolas', 'ITE', '/admin/nome_sem_escola'));
+		
+		array_push($menu, array('Acessos de Usuários', 'Ultimos acessos', 'ITE', '/admin/ultimos_acessos'));
 
 		array_push($menu, array('Unidades', 'Unidades da PUCPR', 'ITE', '/unidade'));
 

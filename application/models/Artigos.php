@@ -10,7 +10,7 @@ class artigos extends CI_Model
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 				
-			for ($r=0;$r < count($r); $r++)
+			for ($r=0;$r < count($rlt); $r++)
 				{
 					$line = $rlt[$r];
 					$sta = $line['ar_status'];
