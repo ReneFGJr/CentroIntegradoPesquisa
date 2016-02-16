@@ -58,6 +58,7 @@ class ic extends CI_Controller {
 		array_push($menus, array('Relatórios', 'index.php/ic/report'));
 		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
 		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
+		array_push($menus, array('Contratos', 'index.php/ic_contrato/contratos/'));
 		array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
 
 		$data['menu'] = 1;
