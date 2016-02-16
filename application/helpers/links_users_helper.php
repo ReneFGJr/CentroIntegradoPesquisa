@@ -80,7 +80,7 @@ function link_perfil($nome='',$id,$ln=array())
 		$href = '<a href="'.base_url('index.php/usuario/view/'.$id.'/'.checkpost_link($id)).'" target="_new" class="link">';
 		if ($id == 0)
 			{
-				$href = '<font color="blue">-sem indicação-</A>';
+				$href = '<font color="#c0c0c0">-sem indicação-</A>';
 			} else {
 				if (strlen($nome) == '')
 					{

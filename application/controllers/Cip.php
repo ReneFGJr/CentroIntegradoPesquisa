@@ -8,6 +8,7 @@ class CIP extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users_helper');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 
@@ -56,11 +57,15 @@ class CIP extends CI_Controller {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('cips');
+		$this -> load -> model('isencoes');
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
 		
+		/* Isencoes */
+		$tela = $this->isencoes->lista_status();
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
 
 		/* Formulario */
 		$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);

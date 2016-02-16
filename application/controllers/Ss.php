@@ -52,7 +52,8 @@ class ss extends CI_Controller {
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Home', 'index.php/ss'));
-		array_push($menus, array('Captações', 'index.php/captacao/grants'));
+		array_push($menus, array('Meus Artigos', 'index.php/artigo/grants'));		
+		array_push($menus, array('Minhas Captações', 'index.php/captacao/grants'));		
 
 
 		/* Monta telas */
