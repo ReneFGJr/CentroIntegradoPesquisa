@@ -51,8 +51,8 @@ class ss extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Home', 'index.php/pibic'));
-		array_push($menus, array('Protocolos', 'index.php/pibic/protocolo'));
+		array_push($menus, array('Home', 'index.php/ss'));
+		array_push($menus, array('Captações', 'index.php/captacao/grants'));
 
 
 		/* Monta telas */
@@ -90,7 +90,7 @@ class ss extends CI_Controller {
 		$capt_lista = $capt['captacoes'];	
 		
 		/* Resumo de Artigos */
-		$texto = '<a href="'.base_url('index.php/ss/artigos/').'" class="lt2 link">'.msg('artigo_ver_cadastro').'</a>'; /* Texto para visualizar todos os artigos */	
+		$texto = '<a href="'.base_url('index.php/artigo/grants/').'" class="lt2 link">'.msg('artigo_ver_cadastro').'</a>'; /* Texto para visualizar todos os artigos */	
 		$arti = $this->artigos->resumo_artigos($cracha);
 		$data = array_merge($data, $arti);
 		$data['artigo_texto'] = $texto;

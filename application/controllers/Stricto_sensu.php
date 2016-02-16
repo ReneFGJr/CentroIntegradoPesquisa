@@ -69,14 +69,19 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function docentes() {
+	function docentes($tipo='') {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
-		$this -> load -> view('ss/index', $data);
 
-		$data['content'] = $this -> stricto_sensus -> lista_docentes();
+		if ($tipo == '')
+			{
+				$data['content'] = $this -> stricto_sensus -> lista_docentes();		
+			} else {
+				$data['content'] = $this -> stricto_sensus -> lista_docentes_por_programa();		
+			}
+		
+		
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

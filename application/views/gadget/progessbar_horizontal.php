@@ -1,4 +1,4 @@
-<table cellpadding="0" cellspacing="0" width="180" style="padding-right: 10px;" >
+<table cellpadding="0" cellspacing="0" style="padding-right: 10px;" >
 	<tr >
 		<?php
 		$pos = 0;

@@ -38,7 +38,9 @@ class Captacao extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('CIP', '/cip/'));
+		array_push($menus, array('Meus Artigos', 'index.php/artigo/grants'));		
+		array_push($menus, array('Minhas Captações', 'index.php/captacao/grants'));		
+
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -165,7 +167,10 @@ class Captacao extends CI_Controller {
 					break;	
 				case '5':
 					/* Finaliza processo */
-					echo 'FIM';
+					/* 10 - Enviado para o coordenador */
+					$this->captacoes->alterar_status($id,10);
+					$link = base_url('index.php/captacao/view/'.$id.'/'.checkpost_link($id));
+					redirect($link);
 					return('');								
 				default:
 					$cp = array('$H','id_ca','',true,true);
@@ -218,6 +223,7 @@ class Captacao extends CI_Controller {
 			}
 
 		$data['content'] .= '<br><br>'.$bt;
+		$data['title'] = msg('CAPT');
 		$this->load->view('content',$data);		
 		
 		$this -> load -> view('header/content_close');
@@ -238,6 +244,9 @@ class Captacao extends CI_Controller {
 		$data = $this -> captacoes -> le($id);
 		
 		$this -> load -> view('captacao/detalhe', $data);
+		
+		$data['content'] = '<fieldset><legend>'.msg('captacao_historico').'</legend>'.$this->captacoes->mostra_historico($id).'</fieldset>';
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', null);

@@ -13,6 +13,56 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+/* Genero */
+$lang['genero_M'] = 'Masculino';
+$lang['genero_F'] = 'Feminino';
+
+/* Artigos */
+$lang['artigo_dados'] = 'Dados do Artigo';
+$lang['artigo_recursos'] = 'Estratificação';
+$lang['artigo_arquivos'] = 'Arquivos comprobatórios';
+$lang['artigo_confirmacao'] = 'Confirmação';
+$lang['artigo_historico'] = 'Histórico de tramitação';
+
+$lang['artigo_dados'] = 'Dados do Artigo';
+$lang['artigo_dados'] = 'Dados do Artigo';
+$lang['artigo_dados'] = 'Dados do Artigo';
+	
+/* Captacao */
+$lang['captacao_dados'] = 'Informações sobre a captação';
+$lang['captacao_recursos'] = 'Recursos captados';
+$lang['captacao_arquivos'] = 'Arquivos comprobatórios';
+$lang['captacao_confirmacao'] = 'Validação e Finalização';
+$lang['captacao_edital'] = 'Informações sobre o edital';
+$lang['captacao_perfil'] = 'Perfil do projeto de captação';
+$lang['captacao_descricao'] = 'Vinculo da captação com projeto de pesquisa';
+$lang['captacao_titulo'] = 'Título do projeto de pesquisa';
+$lang['captacao_programa'] = 'Projeto vinculado ao programa';
+$lang['captacao_vigencia_inicio '] = 'Início da vigência da captação';
+$lang['captacao_duracao'] = 'Duração do recurso';
+$lang['captacao_prorrogacao'] = 'Prorrogação';
+$lang['captacao_vigencia'] = 'Sobre a vigência dos recursos captados';
+$lang['ca_vlr_capital'] = 'Valor em capital';
+$lang['ca_vlr_custeio'] = 'Valor em custeio';
+$lang['ca_vlr_bolsa'] = 'Valor em bolsas';
+$lang['ca_vlr_outros'] = 'Outras rúbricas (serviços)';
+$lang['ca_proponente_vlr'] = 'Valor aplicado na proponente';
+$lang['ca_proponente'] = 'Proponente da captação';
+$lang['ca_contexto'] = 'Informe o contexto<br>da captação (informativo)';
+$lang['capt_file_texto'] = 'Deve ser anexado os documentos comprobatórios e de aprovação dos recursos.';
+$lang['send'] = 'Confirmar e finalizar o cadastro >>>';
+$lang['fomente_agencia'] = 'Agência de fomento / Financiador';
+$lang['fomento_edital'] = 'Nr. do Edital (fomento)';
+$lang['fomento_processo'] = 'Nr. Processor / Convênia';
+$lang['fomento_ed_ano'] = 'Ano do Edital';
+$lang['validation'] = 'Validação';
+$lang['validataion_ok'] = 'Todos os campos obrigatório foram validados';
+$lang['validataion_error'] = 'Existem campos não preenchido ou faltando informações';
+$lang['rule'] = 'Regra';
+$lang['chk'] = 'Validação';
+$lang['file_posted'] = 'Arquivo(s) postado';
+$lang['nao_aplicado'] = 'Não aplicado';
+$lang['captacao_historico'] = 'Histórico de tramitação';
 
 $lang['ARTI'] = 'Bonificação de Artigos';
 $lang['CAPT'] = 'Captacação de Recursos';

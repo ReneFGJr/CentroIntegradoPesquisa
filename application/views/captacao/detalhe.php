@@ -20,7 +20,7 @@ if ($ca_vigencia_prorrogacao > 0)
 		<td class="lt0" colspan=2><?php echo msg('participacao');?></td>
 		<td class="lt0" colspan=2><?php echo msg('contexto');?></td>
 		<td width="350" rowspan=10>
-		<table width="350" class="captacao_folha border1 black">
+		<table width="350" class="captacao_folha black border1">
 			<tr>
 				<td align="right">Vlr. Total da Captação</td><td class="lt3" align="right"><b><?php echo number_format($ca_vlr_total, 2, ',', '.');?></b></td>
 			</tr>
@@ -42,8 +42,8 @@ if ($ca_vigencia_prorrogacao > 0)
 		</table></td>
 	</tr>
 	<tr>
-		<td colspan=2 class="lt2 border1"><?php echo $ca_participacao;?></td>
-		<td colspan=2 class="lt2 border1"><?php echo $ca_contexto;?></td>
+		<td colspan=2 class="lt2"><?php echo $cp_descricao;?></td>
+		<td colspan=2 class="lt2"><?php echo $ca_contexto;?></td>
 	</tr>
 	<tr>
 		<td class="lt0" colspan=2><?php echo msg('agencia');?></td>
@@ -52,9 +52,9 @@ if ($ca_vigencia_prorrogacao > 0)
 		
 	</tr>
 	<tr>
-		<td class="lt4 border1" colspan=2><?php echo $agf_nome . ' (' . $ca_agencia . ')';?></td>
-		<td class="lt4 border1"><?php echo $ca_processo;?></td>
-		<td class="lt4 border1"><?php echo $ca_edital_nr;?></td>
+		<td class="lt4" colspan=2><?php echo $agf_nome;?></td>
+		<td class="lt4"><?php echo $ca_processo;?></td>
+		<td class="lt4"><?php echo $ca_edital_nr;?></td>
 	</tr>
 	
 	<tr>
@@ -64,17 +64,17 @@ if ($ca_vigencia_prorrogacao > 0)
 		<td class="lt0"><?php echo msg('prorrogacao');?></td>
 	</tr>
 	<tr>
-		<td class="lt4 border1"><?php echo $ca_edital_ano;?></td>
-		<td class="lt4 border1"><?php echo substr($ca_vigencia_final_ano,4,2).'/'.substr($ca_vigencia_final_ano,0,4);?></td>
-		<td class="lt4 border1"><?php echo $ca_duracao . ' '.msg('meses');?></td>
-		<td class="lt4 border1"><?php echo $ca_vigencia_prorrogacao;?></td>
+		<td class="lt4"><?php echo $ca_edital_ano;?></td>
+		<td class="lt4"><?php echo substr($ca_vigencia_final_ano,4,2).'/'.substr($ca_vigencia_final_ano,0,4);?></td>
+		<td class="lt4"><?php echo $ca_duracao . ' '.msg('meses');?></td>
+		<td class="lt4"><?php echo $ca_vigencia_prorrogacao;?></td>
 	</tr>
 	
 	<tr>
 		<td class="lt0" colspan=4><?php echo msg('vinculo');?></td>		
 	</tr>
 	<tr>
-		<td class="lt4 border1" colspan=4><?php echo $pp_nome.' ('.$pp_sigla.')';?></td>
+		<td class="lt4" colspan=4><?php echo $pp_nome.' '.$pp_sigla.'';?>&nbsp;</td>
 	</tr>
 	
 	<tr>
@@ -82,7 +82,7 @@ if ($ca_vigencia_prorrogacao > 0)
 		<td class="lt0" colspan=1><?php echo msg('dt_atualizacao');?></td>		
 	</tr>
 	<tr>
-		<td class="lt4 border1" colspan=3><?php echo $cs_situacao;?></td>
-		<td class="lt4 border1" colspan=1><?php echo stodbr($ca_update);?></td>
+		<td class="lt4" colspan=3><?php echo $cs_situacao;?></td>
+		<td class="lt4" colspan=1><?php echo stodbr($ca_update);?></td>
 	</tr>			
 </table>

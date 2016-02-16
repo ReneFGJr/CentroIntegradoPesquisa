@@ -47,6 +47,7 @@ function normalizarNome($nome) {
 	$nomeCompleto = implode(self::NN_ESPACO, $partesNome);
 	return addslashes($nomeCompleto);
 }
+
 /**
  * CodeIgniter
  * sisDOC Labs
@@ -56,79 +57,72 @@ function normalizarNome($nome) {
  * @copyright Copyright (c) 2006 - 2015, sisDOC
  * @version 0.16.01
  */
-	function page_count()
-		{
-			if (isset($_SERVER['PATH_INFO']) and (strlen($_SERVER['PATH_INFO']) > 0))
-			{
-				$info = $_SERVER['PATH_INFO'].'/';
-			} else {
-				echo '<hr>';
-				$info = $_SERVER['PHP_SELF'].'/';
-				$scrp = $_SERVER['SCRIPT_FILENAME'];
-				$info = troca($info,$scrp,'');				
-			}
-			echo '-->'.$info;
-			/* limpa */
-			if (substr($info,0,1)=='/')
-				{
-					$info = substr($info,1,strlen($info));
-				}
-			$path = '';
-			for ($r=0;$r < 2;$r++)
-				{
-					$pos = strpos($info,'/');
-					if ($pos > 0)
-						{
-							$path .= substr($info,0,$pos).'/';
-							$info = substr($info,$pos+1,strlen($info));
-						}
-				}
-				echo '-->'.$path;
-			/* Info */
-			$pos = strpos($info,'/');
-			if ($pos > 0)
-				{
-					$info = substr($info,0,$pos);
-				} else {
-					$info = '';
-				}
-			$sx = $path.'--'.$info;
-			if ($info == 'index.php') { $info = ''; }
-			
-			/* resgata pagina */
-			$CI = &get_instance();
-			$sql = "select * from _webcount_page where wcp_page = '$path' ";
-			$rlt = $CI->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) == 0)
-				{
-					$sqlx = "insert into _webcount_page
+function page_count() {
+	if (isset($_SERVER['PATH_INFO']) and (strlen($_SERVER['PATH_INFO']) > 0)) {
+		$info = $_SERVER['PATH_INFO'] . '/';
+	} else {
+		echo '<hr>';
+		$info = $_SERVER['PHP_SELF'] . '/';
+		$scrp = $_SERVER['SCRIPT_FILENAME'];
+		$info = troca($info, $scrp, '');
+	}
+	echo '-->' . $info;
+	/* limpa */
+	if (substr($info, 0, 1) == '/') {
+		$info = substr($info, 1, strlen($info));
+	}
+	$path = '';
+	for ($r = 0; $r < 2; $r++) {
+		$pos = strpos($info, '/');
+		if ($pos > 0) {
+			$path .= substr($info, 0, $pos) . '/';
+			$info = substr($info, $pos + 1, strlen($info));
+		}
+	}
+	echo '-->' . $path;
+	/* Info */
+	$pos = strpos($info, '/');
+	if ($pos > 0) {
+		$info = substr($info, 0, $pos);
+	} else {
+		$info = '';
+	}
+	$sx = $path . '--' . $info;
+	if ($info == 'index.php') { $info = '';
+	}
+
+	/* resgata pagina */
+	$CI = &get_instance();
+	$sql = "select * from _webcount_page where wcp_page = '$path' ";
+	$rlt = $CI -> db -> query($sql);
+	$rlt = $rlt -> result_array();
+	if (count($rlt) == 0) {
+		$sqlx = "insert into _webcount_page
 							( wcp_page ) values ('$path')
 					";
-					$rlt2 = $CI->db->query($sqlx);
-					
-					$rlt = $CI->db->query($sql);
-					$rlt = $rlt->result_array();
-				} else {
-					
-				}
-			if (count($rlt) > 0)
-				{
-					$page = $rlt[0]['id_wcp'];
-				} else {
-					$page = 1;
-				}
-			$ip = ip();
-			/* Incremente */
-			$sql = "insert into _webcount
+		$rlt2 = $CI -> db -> query($sqlx);
+
+		$rlt = $CI -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+	} else {
+
+	}
+	if (count($rlt) > 0) {
+		$page = $rlt[0]['id_wcp'];
+	} else {
+		$page = 1;
+	}
+	$ip = ip();
+	/* Incremente */
+	$sql = "insert into _webcount
 					( wc_ip, wc_page, wc_param )
 					value
 					( '$ip','$page','$info')
 			";
-			$rlt3 = $CI->db->query($sql);
-			$sx = '';	
-			return($sx);		
-		}	
+	$rlt3 = $CI -> db -> query($sql);
+	$sx = '';
+	return ($sx);
+}
 
 /**
  * CodeIgniter
@@ -186,16 +180,15 @@ function meses_short() {
 }
 
 function enviaremail($para, $assunto, $texto, $de) {
-	if (!is_array($para))
-	{
+	if (!is_array($para)) {
 		$para = array($para);
 	}
 	$CI = &get_instance();
-	
+
 	$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
 	$CI -> load -> library('email', $config);
 	$CI -> email -> subject($assunto);
-	$CI -> email -> message($texto);	
+	$CI -> email -> message($texto);
 
 	/* de */
 	$sql = "select * from mensagem_own where id_m = " . round($de);
@@ -205,7 +198,7 @@ function enviaremail($para, $assunto, $texto, $de) {
 		$line = $rlt[0];
 		$e_mail = trim($line['m_email']);
 		$e_nome = trim($line['m_descricao']);
-		
+
 		$CI -> email -> from($e_mail, $e_nome);
 		$CI -> email -> to($para[0]);
 		$CI -> email -> subject($assunto);
@@ -213,7 +206,7 @@ function enviaremail($para, $assunto, $texto, $de) {
 
 		array_push($para, trim($line['m_email']));
 		//array_push($para, 'renefgj@gmail.com');
-		
+
 		/* e-mail com copias */
 		$bcc = array();
 		for ($r = 1; $r < count($para); $r++) {
@@ -241,8 +234,8 @@ function enviaremail($para, $assunto, $texto, $de) {
 		$CI -> email -> send();
 		return ('ok');
 	} else {
-		echo ('<font color="red">Proprietário do e-mail ('.$de.') não configurado (veja mensagem_own)</font>');
-		exit;
+		echo('<font color="red">Proprietário do e-mail (' . $de . ') não configurado (veja mensagem_own)</font>');
+		exit ;
 	}
 }
 
@@ -321,7 +314,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,   // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,    // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -894,7 +887,7 @@ class form {
 	var $row = '';
 	var $offset = 30;
 	var $order = '';
-	
+
 	var $ged_tabela = '';
 	var $ged_upload = '';
 	var $ged_download = '';
@@ -1232,13 +1225,12 @@ if (!function_exists('form_edit')) {
 		}
 
 		$sql = "select $fld from " . $tabela . ' ' . $wh;
-		if (strlen($obj ->order) > 0)
-			{
-				$sql .= " order by " . $obj ->order;
-			} else {
-				$sql .= " order by " . $fd[1];		
-			}
-		
+		if (strlen($obj -> order) > 0) {
+			$sql .= " order by " . $obj -> order;
+		} else {
+			$sql .= " order by " . $fd[1];
+		}
+
 		$sql .= " limit " . $start_c . " , " . $offset;
 		$query = $CI -> db -> query($sql);
 		$data = '';
@@ -1350,11 +1342,10 @@ if (!function_exists('form_edit')) {
 				/* Excessoes */
 				if (isset($vlr)) {
 					/* Array */
-					if (is_array($vlr))
-						{
-							$vlr = serialize($vlr);
-						}
-					
+					if (is_array($vlr)) {
+						$vlr = serialize($vlr);
+					}
+
 					/* verefica se o campo na gravavel */
 					if (strlen($cp[$r][1]) > 0) {
 						if ($sv > 0) { $sql .= ', ';
@@ -1401,10 +1392,9 @@ if (!function_exists('form_edit')) {
 						$sq2 .= ', ';
 					}
 					$sq1 .= $cp[$r][1];
-					if (is_array($vlr))
-						{
-							$vlr = implode(';', $vlr);
-						}
+					if (is_array($vlr)) {
+						$vlr = implode(';', $vlr);
+					}
 					$sq2 .= "'" . $vlr . "'";
 					$sv++;
 				}
@@ -1518,19 +1508,24 @@ if (!function_exists('form_edit')) {
 		$post = $CI -> input -> post();
 		/* define como default */
 		$saved = 1;
+		$sx = '';
 		for ($r = 0; $r < count($cp); $r++) {
 			$requer = $cp[$r][3];
 			if ($requer == true) {
 				$vlr = $CI -> input -> post('dd' . $r);
 				if (is_array($vlr)) {
-					if (count($vlr)==0) { $saved = 0; }
+					if (count($vlr) == 0) {
+						$saved = 0;
+						$sx .= '<br>Erro: ' . $cp[$r][2].'-'.$r;
+					}
 				} else {
 					if (strlen($vlr) == 0) { $saved = 0;
+						$sx .= '<br>Erro: ' . $cp[$r][2].'-'.$r;
 					}
-
 				}
 			}
 		}
+		echo $sx;
 		return ($saved);
 	}
 
@@ -1619,7 +1614,7 @@ if (!function_exists('form_edit')) {
 	}
 
 	/* Formulario */
-	function form_field($cp, $vlr, $name='', $table=1) {
+	function form_field($cp, $vlr, $name = '', $table = 1) {
 		global $dd, $ddi;
 		/* Zera tela */
 		$tela = '';
@@ -1638,7 +1633,7 @@ if (!function_exists('form_edit')) {
 
 		/* exessoes */
 		if (substr($type, 0, 3) == '$QR') { $tt = 'QR';
-		}				
+		}
 		if (substr($type, 0, 4) == '$MES') { $tt = 'MES';
 		}
 		if (substr($type, 0, 3) == '$SW') { $tt = 'SW';
@@ -1658,17 +1653,16 @@ if (!function_exists('form_edit')) {
 		$max = 100;
 		$size = 100;
 		$dados = array();
-		
-		if (strlen($name)==0)
-			{
-				$dn = 'dd' . $ddi;
-			} else {
-				$dn = $name;
-			}
+
+		if (strlen($name) == 0) {
+			$dn = 'dd' . $ddi;
+		} else {
+			$dn = $name;
+		}
 
 		if ($table == 1) {
 			$td = '<td>';
-			$tdl = '<td align="right">';
+			$tdl = '<td align="right" width="15%">';
 			$tdn = '</td>';
 
 			$tr = '<tr valign="top">';
@@ -1688,6 +1682,7 @@ if (!function_exists('form_edit')) {
 				$tela .= '<td colspan=2>';
 				$tela .= '<fieldset class="border1"><legend class="lt3 bold">' . $label . '</legend>';
 				$tela .= '<table width="100%" class="tabela00">';
+				$tela .= '<tr><td width="15%"></td><td width="85%"></td></tr>';
 				break;
 			case '}' :
 				$tela .= '</table>';
@@ -1703,13 +1698,11 @@ if (!function_exists('form_edit')) {
 				$n2 = sonumero(substr($ntype, strpos($ntype, '-'), strlen($ntype)));
 				$n3 = substr($ntype, strlen($ntype) - 1, 1);
 				/* Sem option */
-				if (strpos($ntype,'U') > 0)
-					{
-						
-					} else {
-						$options = array('' => msg('::select an option::'));		
-					}
-				
+				if (strpos($ntype, 'U') > 0) {
+
+				} else {
+					$options = array('' => msg('::select an option::'));
+				}
 
 				if ($n3 != 'D') {
 					/* Crescente */
@@ -1743,7 +1736,7 @@ if (!function_exists('form_edit')) {
 				if (strlen($label) > 0) {
 					/* TR da tabela */
 					$tela .= $tr;
-					
+
 					if (substr($tdl, 0, 3) == '<td') {
 						$tdd = '<td colspan=2 align="left">';
 						$tela .= $tdd . '<h1>' . $label . '</h1> ';
@@ -1815,7 +1808,8 @@ if (!function_exists('form_edit')) {
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr); ;
+				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr);
+				;
 
 				/* label */
 				if (strlen($label) > 0) {
@@ -1840,50 +1834,48 @@ if (!function_exists('form_edit')) {
 				}
 				if ($required == 1) { $tela .= ' <font color="red">*</font> ';
 				}
-				
+
 				/* TR da tabela */
 				$tela .= '<td align="left">';
 				//echo implode(';',$vlr);
-				if (is_array($vlr))
-					{
+				if (is_array($vlr)) {
 
-					} else {
-						$vlr = array();
-					}
+				} else {
+					$vlr = array();
+				}
 				for ($r = 0; $r < count($param); $r++) {
 					if (count(trim($param[$r])) > 0) {
 						$nterm = splitx(':', $param[$r] . ':');
 						$key = $nterm[0];
 						$valor = $nterm[1];
 						$check = '';
-						for ($rx=0;$rx < count($vlr);$rx++)
-							{
-								if ($vlr[$rx] == $key) { $check = 'checked'; }
+						for ($rx = 0; $rx < count($vlr); $rx++) {
+							if ($vlr[$rx] == $key) { $check = 'checked';
 							}
-						$tela .= '<input type="checkbox" name="'.$dn.'[]" id="'.$dn.'" value="' . $key . '" '.$check.'>' . $valor . '<br>';
+						}
+						$tela .= '<input type="checkbox" name="' . $dn . '[]" id="' . $dn . '" value="' . $key . '" ' . $check . '>' . $valor . '<br>';
 					}
 				}
 				$tela .= '<br>';
 				break;
 			/* File */
-			case 'FILE':
+			case 'FILE' :
 				$tela .= $tr;
 				$CI = &get_instance();
-				$CI->load->model('geds');
+				$CI -> load -> model('geds');
 				$CI -> geds -> tabela = $vlr;
-				
-				$tbl = $cp[0];
-				
 
-				$tbl = substr($tbl,strpos($tbl,':')+1,strlen($tbl));
-				$pag = substr($tbl,strpos($tbl,':')+1,strlen($tbl));
-				$tbl = substr($tbl,0,strpos($tbl,':'));
-				$idp = strzero($cp[2],7);
-				
+				$tbl = $cp[0];
+
+				$tbl = substr($tbl, strpos($tbl, ':') + 1, strlen($tbl));
+				$pag = substr($tbl, strpos($tbl, ':') + 1, strlen($tbl));
+				$tbl = substr($tbl, 0, strpos($tbl, ':'));
+				$idp = strzero($cp[2], 7);
+
 				$CI -> geds -> tabela = $tbl;
 				$tela = $CI -> geds -> list_files_table($idp, $pag);
-				
-				$tela .= $CI->geds->form_upload($idp,$pag);
+
+				$tela .= $CI -> geds -> form_upload($idp, $pag);
 
 			/* Oculto */
 			case 'H' :
@@ -1999,7 +1991,7 @@ if (!function_exists('form_edit')) {
 				break;
 
 			/* String */
-			
+
 			/* Select Box */
 			case 'QR' :
 				$ntype = trim(substr($type, 3, strlen($type)));
@@ -2021,7 +2013,7 @@ if (!function_exists('form_edit')) {
 					$options[$flds] = $vlrs;
 					$checked = '';
 					$dados = array('name' => $dn, 'id' => $dn, 'value' => $flds, 'class' => 'form_select', 'checked' => $checked);
-					$form .= form_radio($dados).' '.$vlrs.'<br>';					
+					$form .= form_radio($dados) . ' ' . $vlrs . '<br>';
 				}
 
 				$tela .= $tr;
@@ -2036,7 +2028,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $form;
 				break;
 
-			/* String */			
+			/* String */
 			case 'R' :
 				$ntype = trim(substr($type, 2, strlen($type)));
 				$ntype = troca($ntype, '&', ';') . ';';
@@ -2148,6 +2140,14 @@ if (!function_exists('form_edit')) {
 				$tela .= $td . form_input($dados);
 				$tela .= $tdn . $trn;
 				break;
+			/* Password */
+			case 'P' :
+				if (strlen($label) > 0) {
+					$tela .= $label . ' ';
+				}
+				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => $max, 'size' => $size);
+				$tela .= form_password($dados);
+				break;
 
 			/* String */
 			case 'S' :
@@ -2224,12 +2224,24 @@ if (!function_exists('form_edit')) {
 				$tela .= $tdn . $trn;
 				break;
 			/* Password */
-			case 'P' :
-				if (strlen($label) > 0) {
-					$tela .= $label . ' ';
+			case 'V' :
+			/* TR da tabela */
+				$tela .= $tr;
+				$tela .= $td . msg('validation');
+				$tela .= '<td>';
+				$CI = &get_instance();
+				$cmd = '$rs = ' . $cp[2];
+				$tela .= '</td>';
+				$tela .= '</tr>';
+				eval($cmd);
+				/* retorno */
+				$tela .= $rs[1];
+				$validate = $rs[0];
+				if ($validate == 0) { $validate = '';
 				}
-				$dados = array('name' => $dn, 'id' => $dn, 'value' => $vlr, 'maxlenght' => $max, 'size' => $size);
-				$tela .= form_password($dados);
+				$dados = array($dn => $validate);
+				$tela .= form_hidden($dados);
+
 				break;
 		}
 		$ddi++;

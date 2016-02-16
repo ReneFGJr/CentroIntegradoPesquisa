@@ -54,12 +54,27 @@ class Stricto_sensus extends CI_model {
 	function lista_docentes()
 		{
 			$this->ativa_docentes_ss();
-			$sql = "select * from us_usuario 
-						where us_professor_tipo = 2 
-						order by us_nome ";
+			$sql = "select distinct us_nome, us_campus_vinculo,
+						us_link_lattes, es_escola, id_us, pp_nome,
+						us_genero
+					 FROM ss_professor_programa_linha 
+						LEFT JOIN us_usuario ON us_usuario_id_us = id_us
+						LEFT JOIN escola on us_escola_vinculo = id_es
+						LEFT JOIN ss_programa_pos on id_pp = programa_pos_id_pp
+						where  sspp_ativo = 1 and sspp_tipo = 'Permanente'
+						order by us_nome, es_escola, pp_nome ";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			$sx = '<table width="100%" class="lt1">';
+			$sx .= '<tr>
+						<th>#</th>
+						<th>Nome</th>
+						<th>Campus</th>
+						<th>Lattes</th>
+						<th>Escola</th>
+						<th>Programa Mestrado / Doutorado</th>
+						<th>Genero</th>
+					</tr>';
 			for ($r=0;$r < count($rlt);$r++)
 				{
 					$line = $rlt[$r];
@@ -82,15 +97,76 @@ class Stricto_sensus extends CI_model {
 					
 
 					$sx .= '<td>';
-					$sx .= $line['us_nome_lattes'];
+					$sx .= $line['es_escola'];
 					$sx .= '</td>';
 					
 					$sx .= '<td>';
-					$sx .= $line['us_curso_vinculo'];
+					$sx .= $line['pp_nome'];
+					$sx .= '</td>';
+					
+					$sx .= '<td align="center">';
+					$sx .= msg('genero_'.$line['us_genero']);
+					$sx .= '</td>';					
+					
+					
+
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
+	function lista_docentes_por_programa()
+		{
+			$this->ativa_docentes_ss();
+			$sql = "select distinct us_nome, us_campus_vinculo,
+						us_link_lattes, es_escola, id_us, pp_nome,
+						us_genero
+					 FROM ss_professor_programa_linha 
+						LEFT JOIN us_usuario ON us_usuario_id_us = id_us
+						LEFT JOIN escola on us_escola_vinculo = id_es
+						LEFT JOIN ss_programa_pos on id_pp = programa_pos_id_pp
+						where  sspp_ativo = 1 and sspp_tipo = 'Permanente'
+						order by pp_nome, us_nome ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="lt1">';
+			$sx .= '<tr>
+						<th>#</th>
+						<th>Nome</th>
+						<th>Campus</th>
+						<th>Lattes</th>
+						<th>Programa Mestrado / Doutorado</th>
+						<th>Escola de vínculo do professor</th>						
+						<th>Genero</th>
+					</tr>';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$sx .= '<tr>';
+					$sx .= '<td align="center" class="lt1" width="10">';
+					$sx .= ($r+1).'.';
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= link_perfil($line['us_nome'],$line['id_us'],$line);
 					$sx .= '</td>';
 					
 					$sx .= '<td>';
-					$sx .= $line['us_genero'];
+					$sx .= $line['us_campus_vinculo'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['us_link_lattes'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['pp_nome'];
+					$sx .= '</td>';
+
+					$sx .= '<td>';
+					$sx .= $line['es_escola'];
+					$sx .= '</td>';
+
+					$sx .= '<td align="center">';
+					$sx .= msg('genero_'.$line['us_genero']);
 					$sx .= '</td>';					
 					
 					
