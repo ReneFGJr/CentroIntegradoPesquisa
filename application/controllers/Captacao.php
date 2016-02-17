@@ -231,8 +231,10 @@ class Captacao extends CI_Controller {
 		}
 
 	function view($id = 0, $chk = '') {
+		$this -> load -> model('geds');
 		$this -> load -> model('usuarios');
 		$this -> load -> model('captacoes');
+		$this -> load -> model('bonificacoes');
 
 		$chk2 = checkpost_link($id);
 		if ($chk2 != $chk) {
@@ -242,11 +244,32 @@ class Captacao extends CI_Controller {
 
 		$this -> cab();
 		$data = $this -> captacoes -> le($id);
+		$proto = $data['ca_protocolo'];
+		
+		/* Dados do professor */
+		$cracha = $data['ca_professor'];
+		$prof = $this->usuarios->le_cracha($cracha);
+		$tela['content'] = $this->usuarios->perfil($prof['id_us']);
+		$this->load->view('content',$tela);
+		
+		
 		
 		$this -> load -> view('captacao/detalhe', $data);
 		
-		$data['content'] = '<fieldset><legend>'.msg('captacao_historico').'</legend>'.$this->captacoes->mostra_historico($id).'</fieldset>';
+		/* Arquivos */
+		$this -> geds -> tabela = 'captacao_ged_documento';
+		$data['title'] = '';
+		$data['content'] = $this->geds->list_files_table($proto,'captacao');
+		$this -> load -> view('content', $data);		
+		
+		/* Bonificações */
+		$data['content'] = '<fieldset><legend>'.msg('captacao_bonificacoes').'</legend>'.$this->bonificacoes->mostra_bonificacoes($proto).'</fieldset>';
+		$this -> load -> view('content', $data);		
+
+		/* Histórico */
+		$data['content'] = '<fieldset><legend>'.msg('captacao_historico').'</legend>'.$this->captacoes->mostra_historico($proto).'</fieldset>';
 		$this -> load -> view('content', $data);
+
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', null);

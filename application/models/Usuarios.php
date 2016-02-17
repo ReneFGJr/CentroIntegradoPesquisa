@@ -773,6 +773,37 @@ class usuarios extends CI_model {
 		return ($sx);
 	}
 
+	function perfil($id)
+		{
+			$data = $this->usuarios->le($id);
+			$tipo = $data['usuario_tipo_ust_id'];
+			$sx = '';
+			switch($tipo)
+				{
+				case '1': 
+					/* Não Definido */
+					$sx = $this->load->view('perfil/docente.php',$data,true);
+					break;					
+				case '2': 
+					/* Docente */
+					$sx = $this->load->view('perfil/docente.php',$data,true);
+					break;
+				case '3': 
+					/* Discente */
+					$sx = $this->load->view('perfil/discente.php',$data,true);
+					break;
+				case '4': 
+					/* Colaborador */
+					$sx = $this->load->view('perfil/docente.php',$data,true);
+					break;
+				case '5': 
+					/* Externo */
+					$sx = $this->load->view('perfil/docente.php',$data,true);
+					break;					
+				}			
+			return($sx);
+		}
+
 	function insere_conta_corrente_vazia($id) {
 		$sql = "insert into us_conta 
 					(us_usuario_id_us) values ($id)

@@ -94,7 +94,7 @@ class CIP extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function captacao()
+	function captacao($id = '')
 		{
 		$this->load->model('captacoes');
 		$this -> cab();
@@ -103,6 +103,14 @@ class CIP extends CI_Controller {
 		$data['content'] = $capta_resumo;
 		$data['title'] = msg('captacacoes');
 		$this->load->view('content',$data);
+		
+		if (strlen($id) > 0)
+			{
+				$tela = $this->captacoes->lista_resumo_processos($id);
+				$data['content'] = $tela;
+				$data['title'] = msg('captacacoes');
+				$this->load->view('content',$data);
+			}
 		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);	

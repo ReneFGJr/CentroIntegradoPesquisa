@@ -1,66 +1,62 @@
 <?php
 class captacoes extends CI_Model {
-	function mostra_historico($id)
-		{
-			$proto = strzero($id,7);
-			
-			$sql = "select * from captacao_historico 
+	function mostra_historico($id) {
+		$proto = strzero($id, 7);
+
+		$sql = "select * from captacao_historico 
 						LEFT JOIN us_usuario ON bnh_log = id_us
 						WHERE bnh_protocolo = '$proto'
 						ORDER BY bnh_data desc, bnh_hora desc ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			$sx = '<table width="100%" class="tabela00 lt1">';
-			$sx .= '<tr><th>data e hora</th>
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<table width="100%" class="tabela00 lt1">';
+		$sx .= '<tr><th>data e hora</th>
 						<th></th>
 					</tr>';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$sx .= '<tr>';
-					$sx .= '<td align="center">';
-					$sx .= stodbr($line['bnh_data']);
-					$sx .= '&nbsp';
-					$sx .= substr($line['bnh_hora'],0,5);
-					$sx .= '</td>';
-					
-					$sx .= '<td>'.$line['bnh_historico'].'</td>';
-					
-					$sx .= '<td>'.$line['us_nome'].'</td>';
-					
-					$sx .= '<td align="center">';
-					$sx .= '</tr>';
-				}
-			$sx .= '</table>';
-			return($sx);
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<tr>';
+			$sx .= '<td align="center">';
+			$sx .= stodbr($line['bnh_data']);
+			$sx .= '&nbsp';
+			$sx .= substr($line['bnh_hora'], 0, 5);
+			$sx .= '</td>';
+
+			$sx .= '<td>' . $line['bnh_historico'] . '</td>';
+
+			$sx .= '<td>' . $line['us_nome'] . '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= '</tr>';
 		}
-	function alterar_status($id,$ope)
-		{
-			$historico = '??';
-			$sql = "select * from captacao_situacao where ca_status_old = ".$id;
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					$historico = trim($line['cs_situacao_acao']);
-				}
-			
-			$data = date("Ymd");
-			$hora= date("H:i:s");
-			$proto = strzero($id,7);
-			$us_id = $_SESSION['id_us'];
-			
-			$sql = "select * from captacao_historico 
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function alterar_status($id, $ope) {
+		$historico = '??';
+		$sql = "select * from captacao_situacao where ca_status_old = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$historico = trim($line['cs_situacao_acao']);
+		}
+
+		$data = date("Ymd");
+		$hora = date("H:i:s");
+		$proto = strzero($id, 7);
+		$us_id = $_SESSION['id_us'];
+
+		$sql = "select * from captacao_historico 
 						WHERE bnh_ope = '$ope' and bnh_log = $us_id 
 						AND bnh_data = '$data' AND bnh_protocolo = '$proto' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) == 0)
-				{
-					/* Insere histórico */
-					$sql = "insert into captacao_historico
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) == 0) {
+			/* Insere histórico */
+			$sql = "insert into captacao_historico
 							(bnh_protocolo, bnh_data, bnh_hora,
 							bnh_historico, bnh_ope, bnh_log,
 							bnh_descricao
@@ -68,17 +64,17 @@ class captacoes extends CI_Model {
 							'$proto', '$data', '$hora',
 							'$historico', '$ope', $us_id,
 							'')";
-					$rlt = $this->db->query($sql);
-					
-					/* Atualiza status */
-					$sql = "update captacao set
+			$rlt = $this -> db -> query($sql);
+
+			/* Atualiza status */
+			$sql = "update captacao set
 								ca_status = $ope,
 								ca_lastupdate = $data
-							where id_ca = ".round($id);
-					$rlt = $this->db->query($sql);								
-				}
+							where id_ca = " . round($id);
+			$rlt = $this -> db -> query($sql);
 		}
-	
+	}
+
 	function atualiza_valor_total($id) {
 		$sql = "update captacao set 
 						ca_vlr_total = (ca_vlr_capital + ca_vlr_custeio + ca_vlr_bolsa + ca_vlr_outros)
@@ -141,7 +137,7 @@ class captacoes extends CI_Model {
 		array_push($cp, array('$S20', 'ca_edital_nr', msg('fomento_edital'), true, true));
 		array_push($cp, array('$[2010-' . date("Y") . ']', 'ca_edital_ano', msg('fomento_ed_ano'), True, true));
 		array_push($cp, array('$S20', 'ca_processo', msg('fomento_processo'), false, true));
-		
+
 		array_push($cp, array('$}', '', msg('captacao_edital'), false, true));
 
 		array_push($cp, array('${', '', msg('captacao_perfil'), false, true));
@@ -184,7 +180,7 @@ class captacoes extends CI_Model {
 
 		$text = 'O valor aplicado refere-se a quantidade de recursos que serão aplicados na PUCPR, podendo ser qualquer uma das modalidades, capital, custeio ou bolsas, informando qual o valor total.';
 		array_push($cp, array('${', '', 'Valores para proponente', false, true));
-		
+
 		array_push($cp, array('$N8', 'ca_proponente', msg('ca_proponente'), true, true));
 		array_push($cp, array('$}', '', '', false, true));
 
@@ -236,51 +232,65 @@ class captacoes extends CI_Model {
 		if ($data['ca_edital_ano'] > 2000) {
 			$vd[2] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('fomento_ed_ano') . ' ('.$data['ca_edital_ano'].') </td>
+		$sx .= '<tr><td class="border1">' . msg('fomento_ed_ano') . ' (' . $data['ca_edital_ano'] . ') </td>
 						<td class="border1" align="center">' . $vd[2] . '</tr>';
-						
+
 		/* REGRA - ano do edital */
 		if ($data['ca_agencia_id'] > 0) {
 			$vd[3] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('fomente_agencia') .'</td>
+		$sx .= '<tr><td class="border1">' . msg('fomente_agencia') . '</td>
 						<td class="border1" align="center">' . $vd[3] . '</tr>';
-						
+
 		/* REGRA - valor na proponente */
 		if ($data['ca_proponente_vlr'] > 0) {
 			$vd[4] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('ca_proponente_vlr') .'</td>
-						<td class="border1" align="center">' . $vd[4] . '</tr>';						
-		
+		$sx .= '<tr><td class="border1">' . msg('ca_proponente_vlr') . '</td>
+						<td class="border1" align="center">' . $vd[4] . '</tr>';
+
 		/* REGRA - arquivos postados */
 		$sql = "select 1 as total from captacao_ged_documento 
-					WHERE doc_dd0 = '".strzero($id,7)."' and doc_status <> 'X' ";
-		$rrr = $this->db->query($sql);
-		$rrr = $rrr->result_array();
-		
+					WHERE doc_dd0 = '" . strzero($id, 7) . "' and doc_status <> 'X' ";
+		$rrr = $this -> db -> query($sql);
+		$rrr = $rrr -> result_array();
+
 		if (count($rrr) > 0) {
 			$vd[5] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('captacao_arquivos') .' - '.count($rrr).' '.msg('file_posted').''.'</td>
-						<td class="border1" align="center">' . $vd[5] . '</tr>';		
-		
+		$sx .= '<tr><td class="border1">' . msg('captacao_arquivos') . ' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+						<td class="border1" align="center">' . $vd[5] . '</tr>';
+
+		/* REGRA - vigência */
+		if ($data['ca_duracao'] > 0) {
+			$vd[6] = $ok;
+		}
+		$sx .= '<tr><td class="border1">' . msg('ca_duracao') . '</td>
+						<td class="border1" align="center">' . $vd[6] . '</tr>';
+
+		/* REGRA - programa */
+		if ($data['ca_programa'] > 0) {
+			$vd[6] = $ok;
+		}
+		$sx .= '<tr><td class="border1">' . msg('ca_programa') . '</td>
+						<td class="border1" align="center">' . $vd[6] . '</tr>';
+
 		/* valicacao */
 		$ok = 1;
-		$cps = 5; /* Campos para validacao */
-		
-		for ($r=0;$r <= $cps;$r++)
-			{
-				if ($vd[$r]==$erro) { $ok = 0; }
+		$cps = 7;
+		/* Campos para validacao */
+
+		for ($r = 0; $r <= $cps; $r++) {
+			if ($vd[$r] == $erro) { $ok = 0;
 			}
-		if ($ok == 1)
-			{
-				$sx .= '<tr><td><B><font color="green">'.msg('validataion_ok').'</font></b></td></tr>';
-			} else {
-				$sx .= '<tr><td><B><font color="red">'.msg('validataion_error').'</font></b></td></tr>';
-			}
+		}
+		if ($ok == 1) {
+			$sx .= '<tr><td><B><font color="green">' . msg('validataion_ok') . '</font></b></td></tr>';
+		} else {
+			$sx .= '<tr><td><B><font color="red">' . msg('validataion_error') . '</font></b></td></tr>';
+		}
 		$sx .= '</table>';
-		return (array($ok,$sx));
+		return ( array($ok, $sx));
 	}
 
 	function validacao_cp($id = '') {
@@ -305,7 +315,7 @@ class captacoes extends CI_Model {
 					LEFT JOIN us_usuario ON ca_professor = us_cracha
 					LEFT JOIN fomento_agencia on ((agf_sigla = ca_agencia) or (id_agf = ca_agencia_id))
 					LEFT JOIN captacao_participacao on cp_cod = ca_participacao
-					LEFT JOIN ss_programa_pos ON ca_programa = id_pp_char 
+					LEFT JOIN ss_programa_pos ON ((ca_programa = id_pp_char) or (ca_programa = id_pp)) 
 					where id_ca = $id 
 					";
 		$rlt = $this -> db -> query($sql);
@@ -345,7 +355,7 @@ class captacoes extends CI_Model {
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
 			if (count($rlt) > 0) {
-				$cod = ($rlt[0]['id']+1);
+				$cod = ($rlt[0]['id'] + 1);
 			} else {
 				$cod = 1;
 			}
@@ -359,10 +369,11 @@ class captacoes extends CI_Model {
 							) values (
 								'$cracha','1','$data_D2',
 								$data,1,'em cadastro', 
-								'$proto',1,
+								'NOVO',1,
 								$inip, $dura, $vigencia
-								
 							)";
+			$this -> db -> query($sql);
+			$sql = "update captacao set ca_protocolo = lpad(id_ca,7,0) where ca_protocolo = 'NOVO'";
 			$this -> db -> query($sql);
 			$id = $this -> captacao_em_cadastro($cracha);
 		}
@@ -410,9 +421,7 @@ class captacoes extends CI_Model {
 
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-
-			/* LINKS */
-			$link = '<a href="' . base_url('index.php/captacao/view/' . $line['id_ca'] . '/' . checkpost_link($line['id_ca'])) . '" class="link lt2">';
+			$line['editar'] = $editar;
 			$ano = $line['ca_edital_ano'];
 
 			if ($xano != $ano) {
@@ -421,45 +430,16 @@ class captacoes extends CI_Model {
 				$sx .= $sh;
 				$xano = $ano;
 			}
-			$sx .= '<tr valign="top">';
-			$sx .= '<td class="border1"align="center">' . $link . $line['ca_protocolo'] . '</a>' . '</td>';
-			$sx .= '<td class="border1"align="center">' . $line['ca_agencia'] . '</td>';
-			$sx .= '<td class="border1" align="center">' . $line['ca_processo'] . '</td>';
-			$sx .= '<td class="border1">' . $line['ca_descricao'] . '</td>';
-
-			$sx .= '<td class="border1" align="center">' . $line['ca_lastupdate'] . '</td>';
-
-			$vg = $line['ca_vigencia_final_ano'];
-			$vg_ini = substr($vg, 5, 2) . '/' . substr($vg, 0, 4);
-			$sx .= '<td class="border1"align="center">' . $vg_ini . '</td>';
-
-			$sx .= '<td class="border1" align="center">' . $line['ca_duracao'] . '</td>';
-
-			$sx .= '<td class="border1" align="center">&nbsp;' . $line['ca_vigencia_prorrogacao'] . '&nbsp;</td>';
-
-			$sx .= '<td class="border1">' . $line['cp_descricao'] . '</td>';
-
-			$sx .= '<td align="right" class="border1">' . number_format($line['ca_vlr_total'], 2, ',', '.') . '</td>';
-			$sx .= '<td align="right" class="border1">' . number_format($line['ca_proponente_vlr'], 2, ',', '.') . '</td>';
 
 			if ($line['ca_insticional'] == '1') {
-				$sx .= '<td class="border1" align="center">SIM</td>';
 				$tot3++;
 				$tot4 = $tot4 + $line['ca_proponente_vlr'];
 			} else {
 				$tot1++;
 				$tot2 = $tot2 + $line['ca_proponente_vlr'];
-				$sx .= '<td class="border1">&nbsp;</td>';
-			}
-			$cor = '<font>';
-			$situacao = trim($line['cs_situacao']);
-			if (strlen($line['cs_cor']) > 0) {
-				$cor = '<font color="' . $line['cs_cor'] . '">';
-			}
-			if (strlen($situacao) == 0) {
-				$situacao = $line['ca_status'];
 			}
 
+			$sx .= $this -> load -> view('captacao/captacao_row', $line, true);
 			/********************* resumo */
 			switch ($line['cs_resumo']) {
 				case '2' :
@@ -469,22 +449,6 @@ class captacoes extends CI_Model {
 					$cap[1] = $cap[1] + 1;
 					break;
 			}
-			$sx .= '<td class="border1" align="center">' . $cor . $situacao . '</font>' . '</td>';
-
-			/* Modo editar */
-			if ($editar == 1) {
-				$sx .= '<td align="center" class="border1">';
-				if ($line['ca_status'] == 1)
-					{
-						$sx .= '<a href="'.base_url('index.php/captacao/editar/' . $line['id_ca'] . '/' . checkpost_link($line['id_ca'])) . '" class="link lt2">';
-						$sx .= 'editar';
-						$sx .= '</a>';
-					} else {
-						$sx .= '&nbsp';
-					}
-				$sx .= '</td>';
-			}
-			$sx .= '</tr>';
 		}
 		$sx .= '</table>';
 		$sx .= '<font class="lt0">* projetos institucionais envolvendo mais de um programa, escola ou coordenação.';
@@ -503,10 +467,63 @@ class captacoes extends CI_Model {
 		return ($sr);
 	}
 
+	function lista_resumo_processos($id = 0) {
+		$id = round($id);
+
+		$sql = "select * from captacao 
+					LEFT JOIN captacao_situacao ON ca_status_old = ca_status
+					LEFT JOIN captacao_participacao ON cp_cod = ca_participacao
+					WHERE cs_resumo = $id
+					ORDER BY ca_lastupdate desc, ca_protocolo
+					";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<table class="tabela00 lt1" width="100%">';
+		$sx .= '<tr>
+				<th width="5%">protocolo</th>
+				<th width="5%">fomento</th>
+				<th width="5%">Edital</th>
+				<th>Descrição do Edital</th>
+				<th width="5%">Atualizado</th>
+				<th width="5%">Início da Vigência</th>
+				<th width="5%">Duração</th>
+				<th width="5%">Prorrogação</th>
+				<th>Participação</th>
+				<th width="10%">Vlr. Projeto</th>
+				<th width="10%">Vlr. Proponente</th>
+				<th>Inst.*</th>
+				<th>Situação</th>				
+			  </tr>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= $this -> load -> view('captacao/captacao_row', $line, true);
+		}
+		$sx .= '</table>';
+		$data['content'] = $sx;
+		$this -> load -> view('content', $data);
+
+	}
+
 	function resumo_processos() {
-		$it = 6;
+		$it = 7;
 		$sz = round(100 / $it);
 		$ar = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+		$sql = "select count(*) as total, ca_status, cs_resumo 
+				FROM captacao
+				INNER JOIN captacao_situacao ON ca_status_old = ca_status
+				group by ca_status, cs_resumo ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$id = $line['cs_resumo'];
+			$ar[$id] = $ar[$id] + $line['total'];
+		}
+
 		$sx = '<table class="lt2 border1" width="100%">';
 		$sx .= '<tr class="lt1">';
 		$sx .= '<th width="' . $sz . '%">' . msg('cap_em_cadastro') . '</th>';
@@ -515,10 +532,11 @@ class captacoes extends CI_Model {
 		$sx .= '<th width="' . $sz . '%">' . msg('cap_validacao_diretoria') . '</th>';
 		$sx .= '<th width="' . $sz . '%">' . msg('cap_comunicacao') . '</th>';
 		$sx .= '<th width="' . $sz . '%">' . msg('cap_finalizado') . '</th>';
+		$sx .= '<th width="' . $sz . '%">' . msg('cap_cancelado') . '</th>';
 		$sx .= '</tr>';
 		$sx .= '<tr align="center" class="lt5">';
 		for ($r = 0; $r < $it; $r++) {
-			$link = '<a href="' . base_url('index.php/cip/captacoes/' . $r) . '" class="link lt6">';
+			$link = '<a href="' . base_url('index.php/cip/captacao/' . $r) . '" class="link lt6">';
 			$sx .= '<td class="border1">' . $link . $ar[$r] . '</a></td>';
 		}
 		$sx .= '</tr>';

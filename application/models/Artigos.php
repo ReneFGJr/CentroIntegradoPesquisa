@@ -28,9 +28,13 @@ class artigos extends CI_Model {
 							) values (
 								'$cracha','1','$data_D2',
 								$data,'em cadastro', 
-								'$proto'							
+								'NOVO'							
 							)";
 			$this -> db -> query($sql);
+
+			$sql = "update cip_artigo set ar_protocolo = lpad(id_ar,7,0) where ar_protocolo = 'NOVO'";
+			$this -> db -> query($sql);			
+			
 			$id = $this -> artigos_em_cadastro($cracha);
 		}
 		return ($id);
