@@ -186,7 +186,7 @@ class ic_contrato extends CI_Controller {
 		$form = $this -> ic_contratos -> row($form);
 
 		$form -> row_edit = base_url('index.php/ic_contrato/edit');
-		$form -> row_view = base_url('index.php/ic_contrato/view');
+		$form -> row_view = base_url('index.php/ic_contrato/imprimir');
 		$form -> row = base_url('index.php/ic');
 
 		$tela['tela'] = row($form, $id);
@@ -205,13 +205,20 @@ class ic_contrato extends CI_Controller {
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
 
-		
-		$id_ic = $id;
-		
-		$ic = $this -> ics -> le($id_ic);
-		$data = $this -> ic_contratos -> le($id);
+		if ($this -> ic_contratos -> existe_contrato($id) == 0){
+			echo "orientação não localizada!";
+			exit;	
+		}
+	
+		//$id_ic = $id;
+	
+		$ic = $this -> ics -> le($id);
+		$id_mb = $ic['id_mb'];
+		$data = $this -> ic_contratos -> le_modelo($id_mb);
 		$ic_us = $this -> usuarios -> le($ic['aluno_id']);
-		$ic = array_merge($ic,$ic_us);
+		
+		
+		$ic = array_merge($ic,$data,$ic_us);
 		
 		//print_r($ic);
 		//exit;
@@ -234,6 +241,8 @@ class ic_contrato extends CI_Controller {
 		$txt = troca($txt,'$valor_bolsa_ext', trim(extenso($ic['mb_valor'])));	
 		$txt = troca($txt,'$valor_bolsa', $ic['mb_valor']);
 		
+		$txt = troca($txt,'$nome_coordenadora', 'Profa. Dra. Cleybe Vieira');
+		$txt = troca($txt,'$cargo', 'Coordenadora da Iniciação Científica');
 		
 		$txt = troca($txt,'$mb_bolsa_tipo', $ic['mb_tipo']);
 		$txt = troca($txt,'$mb_bolsa_desc', $ic['mb_descricao']);
@@ -246,21 +255,11 @@ class ic_contrato extends CI_Controller {
 		
 		$txt = troca($txt,'$data_ativa_bolsa', $date);
 		
-		
 		$data['contrato'] = $txt;
-		//echo $data['contrato'];
 		//exit;
-		
-		
-		
 		$this -> load -> view('ic_contrato/contrato', $data);
-
-		
 		
 	}
-
-
-
 
 }
 ?>

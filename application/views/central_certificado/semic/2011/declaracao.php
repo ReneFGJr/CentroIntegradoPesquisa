@@ -28,7 +28,6 @@ $pdf -> SetFont('helvetica', '', 22); //fonte e tamanho do texto
 $pdf->SetTextColor(68,68,68); //cor do texto
 
 /* Posição de impressão */
-
 $pdf -> SetFont('helvetica', '', 26);
 $pdf->writeHTMLCell(150, 50, 30, 70, utf8_encode('<b>D E C L A R A Ç Ã O</b>'), 0, 2, 0, true, 'C', true);
 
