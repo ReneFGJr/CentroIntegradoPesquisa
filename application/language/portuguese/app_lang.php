@@ -132,8 +132,13 @@ $lang['lb_us_origem'] 	= 'Origem';
 $lang['lb_us_professor_tipo'] 	= 'Professor Tipo';
 $lang['lb_us_usuario_cursando'] 	= 'Cursando';
 
-
-
+/* Contratos IC */
+$lang['lb_icc_modelo_contrato'] = 'Modelo de Contrato';
+$lang['lb_icc_ano_contrato'] = 'Ano';
+$lang['lb_icc_modalidade_bolsa'] = 'Modalidade da bolsa';
+$lang['lb_icc_tit_model_contrato'] = 'Modelo de contrato';
+$lang['lb_icc_texto_contrato'] = 'Texto do Contrato)';
+$lang['lb_mensagens_title'] = 'Construção do Modelo de Contrato';
 
 $lang['versao'] = 'v0.16.01';
 /* Fundo de Pesquisa */

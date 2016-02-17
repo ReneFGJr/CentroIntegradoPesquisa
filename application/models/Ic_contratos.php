@@ -7,8 +7,8 @@ class ic_contratos extends CI_model {
 		$cp = array();
 
 		array_push($cp, array('$H8', 'id_icc', '', False, True));
-		array_push($cp, array('$Q	 id_mb:mb_descricao: select * from ic_modalidade_bolsa order by mb_descricao', 'icc_id_mb', msg('lb_icc_condigo_contrato'), False, True));
-		array_push($cp, array('$S80', 'icc_tit_contrato', msg('lb_icc_tit_contrato'), False, True));
+		array_push($cp, array('$Q	 id_mb:mb_descricao: select * from ic_modalidade_bolsa order by mb_descricao', 'icc_id_mb', msg('lb_icc_modalidade_bolsa'), False, True));
+		array_push($cp, array('$S80', 'icc_tit_contrato', msg('lb_icc_tit_model_contrato'), False, True));
 		array_push($cp, array('$T80:13', 'icc_text_contrato', msg('lb_icc_texto_contrato'), False, True));
 		array_push($cp, array('$[2010-'.date('Y').']', 'icc_ano_contrato', msg('lb_icc_ano_contrato'), False, True));
 
@@ -44,8 +44,8 @@ class ic_contratos extends CI_model {
 	
 
 	function row($obj) {
-		$obj -> fd = array('id_icc', 'icc_ano_contrato', 'icc_tit_contrato');
-		$obj -> lb = array('ID', msg('lb_icc_ano_contrato'), msg('lb_icc_tit_contrato'));
+		$obj -> fd = array('id_icc', 'icc_tit_contrato', 'icc_ano_contrato');
+		$obj -> lb = array('ID', msg('lb_icc_modelo_contrato'), msg('lb_icc_ano_contrato'));
 		$obj -> mk = array('', 'L', 'C');
 		return ($obj);
 	}
