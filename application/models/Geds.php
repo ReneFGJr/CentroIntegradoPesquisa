@@ -77,11 +77,11 @@ class Geds extends CI_Model {
 				$sx .= number_format(($line['doc_size'] / 1024), 1, ',', '.') . 'k Byte';
 				$sx .= '<td align="center">';
 				if ($line['doc_status'] == '@') {
-					$linkd = '<span onclick="ged_excluir(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
+					$linkd = '<span onclick="ged_excluir(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;" title="Confirmando, o arquivo não poderá mais ser excluído!">';
 					$sx .= $linkd . '<font color="red">excluir</font>' . '</span>';
 					$linkd = '<span onclick="ged_lock(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
 					$sx .= ' | ';
-					$sx .= $linkd . '<font color="blue">travar</font>' . '</span>';
+					$sx .= $linkd . '<font color="blue">confirmar</font>' . '</span>';
 				}
 				$sx .= '</td>';
 				$sx .= '</tr>';
@@ -144,9 +144,9 @@ class Geds extends CI_Model {
 					$linkd = '<span onclick="ged_excluir(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
 					$sx .= ' | ';
 					$sx .= $linkd . '<font color="red">excluir</font>' . '</span>';
-					$linkd = '<span onclick="ged_lock(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
+					$linkd = '<span onclick="ged_lock(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;"  title="Confirmando, o arquivo não poderá mais ser excluído!">';
 					$sx .= ' | ';
-					$sx .= $linkd . '<font color="blue">travar</font>' . '</span>';
+					$sx .= $linkd . '<font color="blue">confirmar</font>' . '</span>';
 				}
 				$sx .= '</td>';
 				$sx .= '</tr>';

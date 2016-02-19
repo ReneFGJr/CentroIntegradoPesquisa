@@ -21,10 +21,34 @@ class ss extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 	}
 	
+	function coordenador()
+		{
+		$this->load->model('artigos');
+		$this->load->model('captacoes');
+		$this->load->model('stricto_sensus');
+		
+		$cracha = $_SESSION['cracha'];
+
+		$this -> cab('Coordenador de programa');
+		$data = array();
+		
+		$id_us = $_SESSION['id_us'];
+		if ($this->stricto_sensus->is_coordenador($id_us) == 0)
+			{
+				redirect(base_url('index.php/main'));
+			}
+		$tela['content'] = $this->stricto_sensus->lista_atividades_coordenador($id_us);
+		$this->load->view('content',$tela);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}
+	
 	public function cab($title = '') {
 
 		/* Security */
 		$this -> load -> model('usuarios');
+		$this -> load -> model('stricto_sensus');
 		$this -> usuarios -> security();
 
 		/* FALHA NO LOGIN */
@@ -51,7 +75,15 @@ class ss extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Home', 'index.php/ss'));
+		//array_push($menus, array('Home', 'index.php/ss'));
+		
+		/* COORDENADOR DE PROGRAMA */
+		$id_us = $_SESSION['id_us'];
+		if ($this->stricto_sensus->is_coordenador($id_us))
+			{				
+				array_push($menus, array('Validações', 'index.php/ss/coordenador'));		
+			}
+		
 		array_push($menus, array('Meus Artigos', 'index.php/artigo/grants'));		
 		array_push($menus, array('Minhas Captações', 'index.php/captacao/grants'));		
 
@@ -67,10 +99,23 @@ class ss extends CI_Controller {
 	}	
 
 
+	function isencoes()
+		{
+		$this->load->model('artigos');
+		$this->load->model('isencoes');
+		$this->load->model('captacoes');		
+		$this->load->model('stricto_sensus');
+		
+		$cracha = $_SESSION['cracha'];
 
+		$this -> cab('Isenções <i>stricto sensu</i>');
+			
+		}
 	public function index($id = 0) {
 		$this->load->model('artigos');
-		$this->load->model('captacoes');
+		$this->load->model('isencoes');
+		$this->load->model('captacoes');		
+		$this->load->model('stricto_sensus');
 		
 		$cracha = $_SESSION['cracha'];
 
@@ -79,6 +124,10 @@ class ss extends CI_Controller {
 		
 		/* Recupera cracha */
 		$cracha = $_SESSION['cracha'];
+		$id_us = $_SESSION['id_us'];
+		
+		$txr = '';
+		$txl = '';
 		
 		/* Resumo das Captacoes */
 		$texto = '<a href="'.base_url('index.php/captacao/grants/').'" class="lt2 link">'.msg('captacao_ver_cadastro').'</a>'; /* Texto para visualizar todas as captacoes */
@@ -101,9 +150,32 @@ class ss extends CI_Controller {
 		
 		$data['content'] = $capt_resumo;
 		$data['content'] .= $resumo_artigos;
-		$this->load->view('content',$data);
+		$txr .= $this->load->view('content',$data, true);
+		
+		/* Atividades do coordenador */
+		if ($this->stricto_sensus->is_coordenador($id_us)==1)
+			{	
+			$atividade = $this->stricto_sensus->atividades_coordenador($id_us);
+			$data['content'] = $atividade;
+			$txl .= $this->load->view('content',$data, True);
+			}
+			
+		
+		/* Minhas isenções */
+		$txr .= $this->isencoes->minhas_isencoes($cracha);
+		
+		$tela = '<table width="100%" border=0>';
+		$tela .= '<tr valign="top">';
+		$tela .= '<td>'.$txl.'</td>';
+		$tela .= '<td width="300">'.$txr.'</td>';
+		$tela .= '</tr>';
+		$tela .= '</table>';
+		
+		$data['content'] = $tela;
+		$this->load->view('content',$data);		
 
 		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 	
 	public function artigo($id = 0,$chk='',$pag=1) {

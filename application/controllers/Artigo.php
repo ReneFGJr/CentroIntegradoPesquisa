@@ -60,7 +60,7 @@ class Artigo extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 		$menu = array();
-		$data['title_menu'] = 'Captacação de Recursos & Bonificação de Artigos';
+		$data['title_menu'] = 'Captação de Recursos & Bonificação de Artigos';
 		array_push($menu, array('Captação de Recursos', 'Meus projetos cadastrados', 'ITE', '/captacao/grants'));
 		array_push($menu, array('Captação de Recursos', 'Cadastrar novo projeto', 'ITE', '/captacao/grants_new'));
 

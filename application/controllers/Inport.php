@@ -66,7 +66,64 @@ class inport extends CI_Controller {
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
+		$this -> load -> view('header/content_open');
 	}
+	
+	function ged()
+		{
+		$this -> cab();
+		$st = '/pucpr/httpd/htdocs/www2.pucpr.br/reol/cip/../cip/document/';
+		$sql = "select * from captacao_ged_documento where doc_arquivo like '$st%'
+					limit 100;";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		$sx = '';
+		$tot = 0;
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$tot++;
+				$line = $rlt[$r];
+				$id = $line['id_doc'];
+				$arq = trim($line['doc_arquivo']);
+				$arq = troca($arq,$st,'_document/');
+				
+				$sql = "update captacao_ged_documento set doc_arquivo = '$arq' where id_doc = $id";
+				$rltx = $this->db->query($sql);
+				$sx .= '<br>'.$sql;
+			}	
+
+		/* Artigos */
+		$st = '';
+		$st = '_document/artigo/';
+		$sql = "select * from cip_artigo_ged_documento where doc_arquivo like '$st%'
+					limit 100;";
+
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		$sx = '';
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$tot++;
+				$line = $rlt[$r];
+				$id = $line['id_doc'];
+				$arq = trim($line['doc_arquivo']);
+				$arq = troca($arq,$st,'_document/');
+				
+				$sql = "update cip_artigo_ged_documento set doc_arquivo = '$arq' where id_doc = $id";
+				$rltx = $this->db->query($sql);
+				$sx .= '<br>'.$sql;
+			}	
+			if ($tot > 0)
+				{
+					$sx .= '<meta http-equiv="refresh" content="10">';
+				}
+		
+			
+
+			$tela['content'] = $sx;
+			$this->load->view('content',$tela);
+			
+		}
 
 	function lattes($id = '', $off = '') {
 		/* Load Models */
@@ -75,7 +132,7 @@ class inport extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['content'] = '';
-		$this -> load -> view('header/content_open');
+		
 
 		$data = array();
 		$data['content'] = $id;

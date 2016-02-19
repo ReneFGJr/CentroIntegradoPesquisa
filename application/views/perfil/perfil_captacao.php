@@ -3,7 +3,7 @@ if (!(isset($captacao_texto))) {
 	$captacao_texto = '';
 }
 ?>
-<table class="captacao_folha border1" width="300" align="right" style="margin-left: 20px;">
+<table class="captacao_folha border1" width="300" align="right" style="margin: 20px;">
 <tr>
 <td class="lt5 black" align="center"><?php echo msg("CAPT");
 ?></td>

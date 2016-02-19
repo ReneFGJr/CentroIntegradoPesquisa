@@ -1110,7 +1110,7 @@ class ics extends CI_model {
 
 	function le_form_prof($plano = 0) {
 		$sql = "select * from ic_acompanhamento" . " 
-					where pa_protocolo = " . $plano;
+					where pa_protocolo = '" . $plano."'";
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);

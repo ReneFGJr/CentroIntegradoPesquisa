@@ -252,6 +252,9 @@ class artigos extends CI_Model {
 				case '10' :
 					$art[1] = $art[1] + $tot;
 					break;
+				case '11' :
+					$art[1] = $art[1] + $tot;
+					break;					
 				case '25' :
 					$art[2] = $art[2] + $tot;
 					break;
@@ -294,6 +297,10 @@ class artigos extends CI_Model {
 		array_push($cp, array('$S5', 'ar_vol', 'Vol.', False, True));
 		array_push($cp, array('$S5', 'ar_num', 'Num.', False, True));
 		array_push($cp, array('$S10', 'ar_pags', 'Paginação Ex: (192-208)', False, True));
+		array_push($cp, array('$}', '', 'Dados do Artigo', False, True));
+		
+		array_push($cp, array('${', '', 'Sobre o estado da publicação', False, True));
+		array_push($cp, array('$Q id_cap:cap_descricao:select * from cip_artigo_publica order by cap_descricao', 'ar_publicado', 'O artigo está', True, True));
 		array_push($cp, array('$}', '', 'Dados do Artigo', False, True));
 
 		array_push($cp, array('$B', '', msg('save_next'), False, True));

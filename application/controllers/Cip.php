@@ -63,14 +63,15 @@ class CIP extends CI_Controller {
 		$data = array();
 		
 		/* Isencoes */
-		$tela = $this->isencoes->lista_status();
-		$data['content'] = $tela;
-		$this->load->view('content',$data);
+		//$tela = $this->isencoes->lista_status();
+		//$data['content'] = $tela;
+		//$this->load->view('content',$data);
 
 		/* Formulario */
-		$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
+		//$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
 		$data['resumo'] = $this -> cips -> resumo();
-
+		$data['search'] = '';
+		
 		/* Search */
 		$search_term = $this -> input -> post("dd89");
 		$search_acao = $this -> input -> post("acao");
@@ -101,14 +102,14 @@ class CIP extends CI_Controller {
 		
 		$capta_resumo = $this->captacoes->resumo_processos();
 		$data['content'] = $capta_resumo;
-		$data['title'] = msg('captacacoes');
+		$data['title'] = msg('captacoes');
 		$this->load->view('content',$data);
 		
 		if (strlen($id) > 0)
 			{
 				$tela = $this->captacoes->lista_resumo_processos($id);
 				$data['content'] = $tela;
-				$data['title'] = msg('captacacoes');
+				$data['title'] = msg('captacoes');
 				$this->load->view('content',$data);
 			}
 		
