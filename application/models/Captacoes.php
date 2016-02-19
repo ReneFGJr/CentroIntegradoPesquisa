@@ -1,6 +1,13 @@
 <?php
 class captacoes extends CI_Model {
 
+	function le_protocolo($proto) {
+		$sql = "select * from captacao where ca_protocolo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		return ($rlt[0]);
+	}
+
 	/************** acaoes */
 	function acao_captacao($proto, $tp) {
 		$data = date("Y-m-d");
@@ -16,7 +23,7 @@ class captacoes extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Indicado <b>com isenção</b> e com <b>bonificação</b><br>' . get("dd2");
 				$this -> captacoes -> insere_historico($proto, '80', $desc);
-				return(1);
+				return (1);
 				break;
 			case '1' :
 			// Com isenção e com bonificação pelo  COORDENADOR //
@@ -29,7 +36,7 @@ class captacoes extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Indicado <b>com isenção</b> e <font color=red><b>sem bonificação</b></font><br>' . get("dd2");
 				$this -> captacoes -> insere_historico($proto, '80', $desc);
-				return(1);
+				return (1);
 				break;
 			case '2' :
 			// Com isenção e com bonificação pelo  COORDENADOR //
@@ -42,7 +49,7 @@ class captacoes extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Indicado <font color=red><b>sem isenção</b></font> e <b>com bonificação</b><br>' . get("dd2");
 				$this -> captacoes -> insere_historico($proto, '80', $desc);
-				return(1);
+				return (1);
 				break;
 			case '3' :
 			// Com isenção e com bonificação pelo  COORDENADOR //
@@ -55,7 +62,7 @@ class captacoes extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Indicado <font color=red><b>sem isenção</b> e <b>sem bonificação</b></font><br>' . get("dd2");
 				$this -> captacoes -> insere_historico($proto, '80', $desc);
-				return(1);
+				return (1);
 				break;
 
 			case '4' :
@@ -69,7 +76,7 @@ class captacoes extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Motivo:' . get("dd2");
 				$this -> captacoes -> insere_historico($proto, '8', $desc);
-				return(1);
+				return (1);
 				break;
 			case '5' :
 			// Cancelar o protocolo  COORDENADOR  //
@@ -82,9 +89,9 @@ class captacoes extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Justificativa: ' . get("dd2");
 				$this -> captacoes -> insere_historico($proto, '12', $desc);
-				return(1);
-				break;		
-			}
+				return (1);
+				break;
+		}
 
 	}
 
@@ -95,7 +102,7 @@ class captacoes extends CI_Model {
 						LEFT JOIN us_usuario ON bnh_log = id_us
 						WHERE bnh_protocolo = '$proto'
 						ORDER BY bnh_data desc, bnh_hora desc ";
-		
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -118,30 +125,27 @@ class captacoes extends CI_Model {
 
 			$sx .= '<td>' . $line['us_nome'] . '</td>';
 			$sx .= '</tr>';
-			if (strlen($desc) > 0)
-				{
-					$sx .= '<tr><td>&nbsp;</td>';
-					$sx .= '<td colspan=2>'.mst($desc).'</td></tr>';
-				}
+			if (strlen($desc) > 0) {
+				$sx .= '<tr><td>&nbsp;</td>';
+				$sx .= '<td colspan=2>' . mst($desc) . '</td></tr>';
+			}
 		}
 		$sx .= '</table>';
 		return ($sx);
 	}
-	
-	function is_autor($id,$cracha)
-		{
-			$sql = "select * from captacao 
+
+	function is_autor($id, $cracha) {
+		$sql = "select * from captacao 
 						WHERE ca_professor = '$cracha' 
-						AND id_ca = ".$id;
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					return(1);
-				} else {
-					return(0);
-				}
+						AND id_ca = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
 		}
+	}
 
 	function alterar_status($id, $ope) {
 		$this -> captacoes -> insere_historico($id, $ope);
@@ -285,11 +289,11 @@ class captacoes extends CI_Model {
 		array_push($cp, array('${', '', msg('Recusos captados'), false, true));
 
 		array_push($cp, array('$HV', 'ca_proponente', '0', true, true));
-		
+
 		array_push($cp, array('${', '', 'Valores para proponente', false, true));
 		array_push($cp, array('$N8', 'ca_proponente_vlr', msg('ca_proponente_vlr'), true, true));
 		//array_push($cp, array('$}', '', '', false, true));
-		
+
 		array_push($cp, array('$N8', 'ca_vlr_capital', msg('ca_vlr_capital'), true, true));
 		array_push($cp, array('$N8', 'ca_vlr_custeio', msg('ca_vlr_custeio'), true, true));
 		array_push($cp, array('$N8', 'ca_vlr_bolsa', msg('ca_vlr_bolsa'), true, true));
@@ -562,7 +566,7 @@ class captacoes extends CI_Model {
 			switch ($line['cs_resumo']) {
 				case '6' :
 					$cap[2] = $cap[2] + 1;
-					break;				
+					break;
 				case '5' :
 					$cap[2] = $cap[2] + 1;
 					break;
@@ -571,7 +575,7 @@ class captacoes extends CI_Model {
 					break;
 				case '0' :
 					$cap[0] = $cap[0] + 1;
-					break;											
+					break;
 				default :
 					$cap[1] = $cap[1] + 1;
 					break;

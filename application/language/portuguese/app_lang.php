@@ -17,6 +17,11 @@ if (!function_exists(('msg')))
 $lang['genero_M'] = 'Masculino';
 $lang['genero_F'] = 'Feminino';
 
+$lang['conversao_bolsa_cip_para_capes'] = 'Conversão de Bolsa CIP para CAPES';
+$lang['isencao_reabirir'] = 'Reabrir isençao do professor?';
+$lang['isencao_confirmar'] = 'Confirmar liberação da bolsa?';
+$lang['submit'] = 'Confirmar operação';
+
 /* Artigos */
 $lang['artigo_dados'] = 'Dados do Artigo';
 $lang['artigo_recursos'] = 'Estratificação';
@@ -207,6 +212,7 @@ $lang['protocol_successful'] = 'Protocolo aberto com sucesso!';
 $lang['guidelines_ic'] = 'Orientações IC/IT';
 $lang['codigo_aluno_novo'] = 'Informe o código do novo estudante';
 $lang['pr_descricao_sbs'] = 'Motivo da substituição';
+$lang['successful'] = 'Operação realizada com sucesso!';
 
 $lang['lb_mb_descricao'] = 'Descrição';
 $lang['lb_mb_tipo'] = 'Tipo';

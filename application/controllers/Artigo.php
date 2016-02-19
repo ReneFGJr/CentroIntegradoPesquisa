@@ -211,7 +211,7 @@ class Artigo extends CI_Controller {
 		/* Botao de novo ou editar */
 		$novo_artigo = $this -> artigos -> artigos_em_cadastro($cracha);
 		if ($novo_artigo == 0) {
-			$bt = '<a href="' . base_url('index.php/artigo/nova/') . '" class="botao3d back_green_shadown back_green">Cadastrar nova captacão >>></a>';
+			$bt = '<a href="' . base_url('index.php/artigo/nova/') . '" class="botao3d back_green_shadown back_green">Cadastrar novo artigo >>></a>';
 		} else {
 			$bt = '<a href="' . base_url('index.php/artigo/editar/' . $novo_artigo . '/' . checkpost_link($novo_artigo)) . '" class="botao3d back_green_shadown back_green">Editar artigo em cadastro>>></a>';
 		}

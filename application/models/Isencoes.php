@@ -1,6 +1,81 @@
 <?php
 class isencoes extends CI_model {
 	
+
+	function transfere_para_outra_modalidade($mod='',$proto='')
+		{
+			
+			$sql = "update bonificacao set 
+						bn_original_tipo =  '$mod' 
+					where bn_codigo = '$proto' and
+						bn_original_tipo = 'IPR' ";
+			$rlt = $this->db->query($sql);			
+			return(1);			
+		}
+	function habilita_isencao($mod,$user,$proto_original)
+		{
+			$data = date("Ymd");
+			$hora = date("H:i:s");
+			$ano = date("Y");
+			$us_cracha = $user['us_cracha'];
+			$us_nome = $user['us_nome'];
+			$sql = "insert into bonificacao
+					(
+					bn_codigo, bn_ano, bn_professor, 
+					bn_professor_nome, bn_professor_cracha, bn_data,
+					bn_hora, bn_status, bn_original_protocolo, 
+					bn_original_tipo
+					) values (
+					'','$ano','$us_cracha',
+					'$us_nome','','$data',
+					'$hora','!','$proto_original',
+					'IPR'
+					)";
+			$rlt = $this->db->query($sql);
+			$sql = "update bonificacao set bn_codigo = lpad(id_bn,5,0) 
+						where bn_codigo = '' ";
+			$rlt = $this->db->query($sql);
+		}
+		
+	function is_insencao_cip($proto)
+		{
+			$sql = "select * from bonificacao where 
+						bn_codigo = '$proto' and 
+						bn_original_tipo = 'IPR' and 
+						bn_status = 'H' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return(1);
+				} else {
+					return(0);
+				}
+		}
+	function le($proto)
+		{
+			$sql = "select * from bonificacao where 
+						bn_codigo = '$proto'";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return($rlt[0]);
+				} else {
+					return(array());
+				}
+		}		
+	function cp_isencao_cip_capes()
+		{
+			$cp = array();
+			array_push($cp,array('$H8','','',False,False));
+			array_push($cp,array('$S6','',msg('fomento_processo'),True,True));
+			array_push($cp,array('$O 1:SIM&0:NÃO','',msg('isencao_reabirir'),True,True));
+			array_push($cp,array('$C6','',msg('isencao_confirmar'),True,True));
+			array_push($cp,array('$B6','',msg('submit'),false,True));
+			return($cp);
+		}
+	
 	function minhas_isencoes($cracha)
 		{
 		$sql = "select count(*) as total, bn_status, bns_descricao

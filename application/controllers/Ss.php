@@ -107,6 +107,7 @@ class ss extends CI_Controller {
 		$this->load->model('stricto_sensus');
 		
 		$cracha = $_SESSION['cracha'];
+		$this->isencoes->lista_minhas_isencoes($cracha);
 
 		$this -> cab('Isenções <i>stricto sensu</i>');
 			
