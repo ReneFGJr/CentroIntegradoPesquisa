@@ -11,11 +11,60 @@ class evento extends CI_controller {
 		$this -> load -> helper('url');
 		$this -> load -> helper('links_users');
 		$this -> load -> library('session');
+		$this -> load -> library("nuSoap_lib");
 		$this -> load -> helper('email');
 
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 	}
+	
+	function inscricao_cracha($ev=0)
+		{
+			$this->load->model('evento/eventos');
+			$this->load->model('usuarios');
+			
+			$data = $this->eventos->le($ev);
+				
+			$this->load->view('header/header',$data);
+
+			$form = new form;
+			$form-> id = '';
+			
+			/* Validação */
+			$dd1 = get("dd1");
+			$acao = get("acao");
+			$ok = 0;
+			if ((strlen($dd1) > 0) and (strlen($acao) > 0))
+				{
+					$data = $this->usuarios->le_cracha($dd1);
+					if (count($data) > 0)
+						{
+							$ok = 1;
+						} else {
+							$data = $this->usuarios->consulta_cracha($dd1);
+							$data = $this->usuarios->le_cracha($dd1);		
+						}
+					$data['form'] = '';
+					if ($ok == 1)
+						{
+							$id_us = $data['id_us'];
+							$data['form'] = $this->load->view('evento/user_view',$data, true);
+							$data['form'] .= '<h2>Inscrição confirmada!</h2>';
+							$this->eventos->insere_inscricao($ev,$id_us);
+						}
+					
+				}
+			
+			if ($ok == 0)
+				{	
+					$cp = $this->eventos->cp_inscricao_cracha();
+					$data['form'] = $form->editar($cp,'');
+				}
+			
+			
+			$this->load->view('evento/inscricao_abstract',$data);
+			
+		}
 
 	/* Eventos Redirecionados */
 	function spsr() {
@@ -52,6 +101,7 @@ class evento extends CI_controller {
 		if (isset($_SESSION['evento'])) {
 			array_push($menus, array('Inscrições', 'index.php/evento/inscricoes'));
 			array_push($menus, array('Lista de presença', 'index.php/evento/lista_presenca'));
+			array_push($menus, array('Peças marketing', 'index.php/evento/pecas'));
 		}
 
 		/* Monta telas */
@@ -60,6 +110,10 @@ class evento extends CI_controller {
 		$data['title_page'] = 'Módulo de Eventos';
 		$this -> load -> view('header/header', $data);
 		$this -> load -> view('header/cab', $data);
+		
+		if (perfil('#CPP#SPI#ADM#EVE') != 1) {
+			redirect('index.php/main');
+		}
 	}
 
 	function index() {
@@ -76,6 +130,46 @@ class evento extends CI_controller {
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Eventos', 'Lista dos Eventos', 'ITE', '/evento/row'));
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu de Eventos';
+		$this -> load -> view('header/main_menu', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function pecas($tipo='') {
+		/* Load Models */
+		$this -> load -> model('evento/eventos');		
+		if (!isset($_SESSION['evento'])) {
+			echo 'Evento não selecionado';
+		}
+		$ev = $_SESSION['evento'];		
+		/* Load Models */
+		//$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$tela['title'] = $this -> lang -> line('title_ic');
+		$tela['tela'] = '';
+
+		switch ($tipo)
+			{
+			case 'botao':
+				$sx = $this->eventos->botao_inscricao($ev);
+				$sx .= '<textarea rows="10" cols="40" style="width: 100%;">'.$sx.'</textarea>';
+				$tela['content'] = '<table width="600" align="right"><tr><td>'.$sx.'</td></TR></TABLE>';
+				$this->load->view('content',$tela);
+				break;
+				
+			}
+		
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Inscrições', 'Botão de Inscrição', 'ITE', '/evento/pecas/botao'));
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu de Eventos';

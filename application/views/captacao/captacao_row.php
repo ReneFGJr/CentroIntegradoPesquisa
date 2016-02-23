@@ -46,12 +46,18 @@ $sx .= '<td class="border1" align="center">' . $cor . $situacao . '</font>' . '<
 /* Modo editar */
 if ($editar == 1) {
 	$sx .= '<td align="center" class="border1">';
-	if ($ca_status == 1) {
-		$sx .= '<a href="' . base_url('index.php/captacao/editar/' . $id_ca . '/' . checkpost_link($id_ca)) . '" class="link lt2">';
-		$sx .= 'editar';
-		$sx .= '</a>';
-	} else {
-		$sx .= '&nbsp';
+	switch($ca_status) {
+		case '1' :
+			$sx .= '<a href="' . base_url('index.php/captacao/editar/' . $id_ca . '/' . checkpost_link($id_ca)) . '" class="link lt2">';
+			$sx .= 'editar';
+			$sx .= '</a>';
+			break;
+
+		case '8' :
+			$sx .= '<a href="' . base_url('index.php/captacao/corrigir/' . $id_ca . '/' . checkpost_link($id_ca)) . '" class="link lt2">';
+			$sx .= 'corrigir';
+			$sx .= '</a>';
+			break;
 	}
 	$sx .= '</td>';
 }

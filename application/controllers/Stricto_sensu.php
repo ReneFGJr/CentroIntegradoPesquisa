@@ -91,9 +91,7 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
-		$this -> load -> view('ss/index', $data);
-
+		
 		$data = $this -> stricto_sensus -> le($id);
 		$this -> load -> view('ss/show', $data);
 		
@@ -118,8 +116,7 @@ class stricto_sensu extends CI_Controller {
 			$this -> load -> model('stricto_sensus');
 			$this -> cab();
 			$data = array();
-			$this -> load -> view('header/content_open');
-			$this -> load -> view('ss/index', $data);
+
 
 			$form = new form;
 			$form -> id = $id;

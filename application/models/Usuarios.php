@@ -988,6 +988,7 @@ class usuarios extends CI_model {
 	}
 
 	function le_cracha($cracha) {
+		$cracha = $this->limpa_cracha($cracha);
 		$rs = $this -> readByCracha($cracha);
 
 		if (count($rs) == 0) {

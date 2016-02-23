@@ -5,7 +5,7 @@ if (!(isset($captacao_texto))) {
 
 $cor_correcao = 'bg_bordo'; 
 ?>
-<table class="captacao_folha border1" width="350" align="right" style="margin-left: 20px;">
+<table class="captacao_folha border1" width="350" align="right" style="margin: 20px; display: table;">
 	<tr>
 		<td class="lt5 black" align="center"><?php echo msg("CAPT");?></td>
 	</tr>

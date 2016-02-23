@@ -56,8 +56,9 @@ if (!isset($area_avaliacao_nome)) { $area_avaliacao_nome = 'não definida';
 			<br />
 			<br />
 			<li>
-				<strong>Crachá / EmployerID:</strong><?php echo $us_cracha;?>
-				/ <?php echo $us_emplid;?>
+				<strong>Crachá / EmployerID </strong><?php echo $us_cracha;?>
+				/ <?php echo $us_emplid;?> <br> 
+				<strong>Cod. RH: </strong> <?php echo $us_rh_id; ?> 
 			</li>
 			<li>
 				<strong>Genero:</strong><?php echo $us_genero;?>

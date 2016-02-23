@@ -17,6 +17,11 @@ if (!function_exists(('msg')))
 $lang['genero_M'] = 'Masculino';
 $lang['genero_F'] = 'Feminino';
 
+$lang['conversao_bolsa_cip_para_capes'] = 'Conversão de Bolsa CIP para CAPES';
+$lang['isencao_reabirir'] = 'Reabrir isençao do professor?';
+$lang['isencao_confirmar'] = 'Confirmar liberação da bolsa?';
+$lang['submit'] = 'Confirmar operação';
+
 /* Artigos */
 $lang['artigo_dados'] = 'Dados do Artigo';
 $lang['artigo_recursos'] = 'Estratificação';
@@ -27,6 +32,7 @@ $lang['artigo_historico'] = 'Histórico de tramitação';
 $lang['artigo_dados'] = 'Dados do Artigo';
 $lang['artigo_dados'] = 'Dados do Artigo';
 $lang['artigo_dados'] = 'Dados do Artigo';
+$lang['ver_isencoes'] = 'Ver, indicar e acompanhar isenções';
 	
 /* Captacao */
 $lang['captacao_dados'] = 'Informações sobre a captação';
@@ -46,14 +52,14 @@ $lang['ca_vlr_capital'] = 'Valor em capital';
 $lang['ca_vlr_custeio'] = 'Valor em custeio';
 $lang['ca_vlr_bolsa'] = 'Valor em bolsas';
 $lang['ca_vlr_outros'] = 'Outras rúbricas (serviços)';
-$lang['ca_proponente_vlr'] = 'Valor aplicado na proponente';
+$lang['ca_proponente_vlr'] = 'Valor total aplicado na PUCPR';
 $lang['ca_proponente'] = 'Proponente da captação';
 $lang['ca_contexto'] = 'Informe o contexto<br>da captação (informativo)';
 $lang['capt_file_texto'] = 'Deve ser anexado os documentos comprobatórios e de aprovação dos recursos.';
 $lang['send'] = 'Confirmar e finalizar o cadastro >>>';
 $lang['fomente_agencia'] = 'Agência de fomento / Financiador';
 $lang['fomento_edital'] = 'Nr. do Edital (fomento)';
-$lang['fomento_processo'] = 'Nr. Processor / Convênia';
+$lang['fomento_processo'] = 'Nr. Processo / Convênio';
 $lang['fomento_ed_ano'] = 'Ano do Edital';
 $lang['validation'] = 'Validação';
 $lang['validataion_ok'] = 'Todos os campos obrigatório foram validados';
@@ -63,14 +69,21 @@ $lang['chk'] = 'Validação';
 $lang['file_posted'] = 'Arquivo(s) postado';
 $lang['nao_aplicado'] = 'Não aplicado';
 $lang['captacao_historico'] = 'Histórico de tramitação';
-
+$lang['validacao_coordenador'] = 'Validação do Coordenador';
 $lang['ARTI'] = 'Bonificação de Artigos';
-$lang['CAPT'] = 'Captacação de Recursos';
+$lang['CAPT'] = 'Captação de Recursos';
 $lang['IC'] = 'Iniciação Científica';
 $lang['ic_ativa'] = 'Orientações ativas';
 $lang['ic_finalizados'] = 'Orientações concluídas';
 $lang['save_next'] = 'Salvar e continuar >>';	
 $lang['continuous_flow'] = 'Fluxo contínuo';
+$lang['validacao_coordenador_link'] = 'ver validações necessárias';
+$lang['captacoes'] = 'captações';
+$lang['artigos'] = 'artigos';
+$lang['captacao_liberacao_coordeador'] = 'Análise e deliberação do Coordenador do Programa';
+$lang['captacao_vigencia_inicio'] = 'Início da vigência';
+$lang['ca_duracao'] = 'Duração da captação';
+$lang['ca_programa'] = 'Vinculo com o programa de Pós-Graduação';
 /***************************************************************************************************/
 /************************************************************************************** C I P ******/
 $lang['SELECIONA_IDIOMA'] = 'Selecionar Idioma >>';
@@ -199,6 +212,7 @@ $lang['protocol_successful'] = 'Protocolo aberto com sucesso!';
 $lang['guidelines_ic'] = 'Orientações IC/IT';
 $lang['codigo_aluno_novo'] = 'Informe o código do novo estudante';
 $lang['pr_descricao_sbs'] = 'Motivo da substituição';
+$lang['successful'] = 'Operação realizada com sucesso!';
 
 $lang['lb_mb_descricao'] = 'Descrição';
 $lang['lb_mb_tipo'] = 'Tipo';

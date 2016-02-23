@@ -24,6 +24,8 @@ class Captacao extends CI_Controller {
 	}
 
 	function cab() {
+		$this -> load -> model('stricto_sensus');
+		
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
@@ -38,6 +40,13 @@ class Captacao extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
+		
+		/* COORDENADOR DE PROGRAMA */
+		$id_us = $_SESSION['id_us'];
+		if ($this->stricto_sensus->is_coordenador($id_us))
+			{				
+				array_push($menus, array('Validações', 'index.php/ss/coordenador'));		
+			}
 		array_push($menus, array('Meus Artigos', 'index.php/artigo/grants'));		
 		array_push($menus, array('Minhas Captações', 'index.php/captacao/grants'));		
 
@@ -78,6 +87,22 @@ class Captacao extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function corrigir($id=0,$chk='')
+		{
+			$this->load->model('captacoes');
+			$cracha = $_SESSION['cracha'];
+			if ($this->captacoes->is_autor($id,$cracha)==1)
+				{
+					$data = $this->captacoes->le($id);
+					$proto = $data['ca_protocolo'];
+					$this->captacoes->alterar_status($proto, '1');
+					redirect(base_url('index.php/captacao/editar/'.$id.'/'.checkpost_link($id)));
+				} else {
+					redirect(base_url('index.php/main'));
+				}
+			return('');				
+		}
 
 	/**** GEDS */
 	function ged($id = 0, $proto = '', $tipo = '', $check = '') {
@@ -229,12 +254,16 @@ class Captacao extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', null);
 		}
+		
+
 
 	function view($id = 0, $chk = '') {
 		$this -> load -> model('geds');
 		$this -> load -> model('usuarios');
 		$this -> load -> model('captacoes');
 		$this -> load -> model('bonificacoes');
+		$this -> load -> model('stricto_sensus');
+		
 
 		$chk2 = checkpost_link($id);
 		if ($chk2 != $chk) {
@@ -245,12 +274,34 @@ class Captacao extends CI_Controller {
 		$this -> cab();
 		$data = $this -> captacoes -> le($id);
 		$proto = $data['ca_protocolo'];
+
+		/******************** acao */
+		$acao = get("xacao");
+		$tp = get("dd1");
+		
+		if ((strlen($acao) > 0) and (strlen($tp) > 0))
+		{
+			$ok = 0;
+			$acao = get("xacao");
+			switch ($acao)
+				{
+				case 'LIBERACAO_COORDENADOR':
+					$ok = $this->captacoes->acao_captacao($proto,$tp);
+					break;
+				}
+			if ($ok == 1)
+				{
+					redirect(base_url('index.php/captacao/view/'.$id.'/'.$chk));
+				}
+		}
+
 		
 		/* Dados do professor */
 		$cracha = $data['ca_professor'];
 		$prof = $this->usuarios->le_cracha($cracha);
 		$tela['content'] = $this->usuarios->perfil($prof['id_us']);
 		$this->load->view('content',$tela);
+
 		
 		
 		
@@ -259,16 +310,40 @@ class Captacao extends CI_Controller {
 		/* Arquivos */
 		$this -> geds -> tabela = 'captacao_ged_documento';
 		$data['title'] = '';
-		$data['content'] = $this->geds->list_files_table($proto,'captacao');
+		$tela = '<fieldset class="captacao_folha black border1" width="100%"><legend>'.msg("ic_arquivos").'</legend>';
+		$tela .= $this->geds->list_files_table($proto,'captacao');
+		$tela .= '</fieldset>';
+		$data['content'] = $tela; 
+		
 		$this -> load -> view('content', $data);		
 		
 		/* Bonificações */
-		$data['content'] = '<fieldset><legend>'.msg('captacao_bonificacoes').'</legend>'.$this->bonificacoes->mostra_bonificacoes($proto).'</fieldset>';
-		$this -> load -> view('content', $data);		
+		
+		$tela = $this->bonificacoes->mostra_bonificacoes($proto);
+		if (strlen($tela) > 0)
+			{
+			$cont = '<fieldset class="captacao_folha black border1"><legend>'.msg('captacao_bonificacoes').'</legend>';
+			$cont .= $tela;		
+			$cont .= '</fieldset>';
+			$data['content'] = $cont;
+			$this -> load -> view('content', $data);		
+			}
 
 		/* Histórico */
-		$data['content'] = '<fieldset><legend>'.msg('captacao_historico').'</legend>'.$this->captacoes->mostra_historico($proto).'</fieldset>';
+		$data['content'] = '<fieldset class="captacao_folha black border1"><legend>'.msg('captacao_historico').'</legend>'.$this->captacoes->mostra_historico($proto).'</fieldset>';
 		$this -> load -> view('content', $data);
+		
+		/* ACOES */
+		$id_us = $_SESSION['id_us'];
+		
+		/* Validação do coordenador */
+		if ($data['ca_status'] == 10)
+			{
+				if ($this->stricto_sensus->is_coordenador($id_us,$data['ca_programa']))
+					{
+						$this->load->view('captacao/form_coordenador',$data);
+					}
+			}
 
 
 		$this -> load -> view('header/content_close');
@@ -280,6 +355,7 @@ class Captacao extends CI_Controller {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('captacoes');
+		
 
 		$id = $_SESSION['id_us'];
 		$us = $this -> usuarios -> le($id);

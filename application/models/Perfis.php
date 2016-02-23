@@ -17,7 +17,7 @@ function cp()
 			$cp = array();
 			array_push($cp,array('$H8','id_usp','',False,True));
 			array_push($cp,array('$S4','usp_codigo',msg('Label_perfil_codigo'),True,True));
-			array_push($cp,array('$S10','usp_descricao',msg('Label_perfil_descricao'),false,True));
+			array_push($cp,array('$S50','usp_descricao',msg('Label_perfil_descricao'),false,True));
 			array_push($cp,array('$O 1:SIM&0:NÃO','usp_ativo',msg('Label_perfil_status'),false,True));
 			array_push($cp,array('$B','',msg('enviar'),false,True));
 			

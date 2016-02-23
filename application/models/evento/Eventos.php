@@ -5,6 +5,90 @@ class eventos extends CI_model {
 	var $tabela_usuario = 'us_usuario';
 	var $tano_evento = '2014';
 
+	function insere_inscricao($evento,$us_id)
+		{
+			$sql = "select * from evento_inscricao
+						WHERE ei_us_usuario_id = $us_id
+						AND ei_evento_id = $evento ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return(0);
+				}
+			$sql = "insert into evento_inscricao 
+					(ei_us_usuario_id, ei_evento_id, ei_status,
+					ei_evento_confirmar
+					)
+					values
+					($us_id, $evento, 1, 0)";
+			$rlt = $this->db->query($sql);
+			return(1);
+			
+		}
+		
+	function botao_inscricao($ev)
+		{
+			$sx = '';
+			$sx .= '<!---- Form para inscrição pelo cracha ----->'.cr();
+			$sx .= '<center>'.cr();
+			$sx .= '<form method="post" action="'.base_url('index.php/evento/inscricao_cracha/'.$ev.'/'.checkpost_link($ev)).'">'.cr();
+			$sx .= '<table width="300" align="center"  style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">'.cr();
+			$sx .= '<tr align="center"><td style="font-size: 10px;">Informe o código seu crachá:</td></tr>'.cr();
+			$sx .= '<tr>'.cr();
+			$sx .= '<td><input type="text" name="dd1" class="evento_form_cracha" title="Informe seu Cracha" placeholder="Informe seu Crachá"></td>'.cr();
+			$sx .= '<td><input type="submit" name="acao" class="evento_submit" value="inscreva-se"></td>'.cr();
+			$sx .= '</tr>'.cr();
+			$sx .= '<tr align="center"><td style="font-size: 10px;">Exemplo: 88118747</td></tr>'.cr();
+			$sx .= '</table>'.cr();
+			$sx .= '</center>'.cr();
+			$sx .= '</form>'.cr();
+			
+			$sx .= '<style>
+						.evento_form_cracha {
+							background-color:#fefefe;
+							-moz-border-radius:28px;
+							-webkit-border-radius:28px;
+							border-radius:28px;
+							border:1px solid #333333;
+							display:inline-block;
+							cursor:pointer;
+							color:#111111;
+							font-family:Arial;
+							font-size:17px;
+							padding:16px 31px;
+							text-decoration:none;
+							text-shadow:0px 1px 0px #888888;
+						}
+									
+						.evento_submit {
+							background-color:#f29e0c;
+							-moz-border-radius:28px;
+							-webkit-border-radius:28px;
+							border-radius:28px;
+							border:1px solid #333333;
+							display:inline-block;
+							cursor:pointer;
+							color:#ffffff;
+							font-family:Arial;
+							font-size:17px;
+							padding:16px 31px;
+							text-decoration:none;
+							text-shadow:0px 1px 0px #2f6627;
+						}
+						.evento_submit:hover {
+							background-color:#f7A31c;
+						}
+						.evento_submit:active {
+							position:relative;
+							top:1px;
+						}
+			
+				</style>'.cr();
+			$sx .= '<!---- Fim do formulário ----->'.cr();
+			return($sx);
+		}
+
 	function resumo_presenca() {
 		if (!isset($_SESSION['evento'])) {
 			echo 'Evento não selecionado';
@@ -782,6 +866,15 @@ class eventos extends CI_model {
 		enviaremail_usuario($idu, $ass, $texto, 2);
 	}
 
+	function cp_inscricao_cracha() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ev', '', False, True));
+		array_push($cp, array('$S15', '', msg('us_cracha'), True, True));
+		array_push($cp, array('$B', '', msg('inscrever'), false, True));
+
+		return ($cp);
+	}
+
 	function cp() {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_ev', '', False, True));
@@ -820,7 +913,7 @@ class eventos extends CI_model {
 		array_push($cp, array('$S20', 'ei_us_usuario_id', msg('Nº da inscrição'), false, false));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'ei_status', msg('Inscrito'), false, True));
 		array_push($cp, array('$S30', 'ei_data_inscricao', msg('Data da Inscrição'), false, false));
-		array_push($cp, array('$O 0:NÃO&1:SIM', 'ei_evento_confirmar', msg('Presente_no_evento'), True, True));
+		array_push($cp, array('$O 0:NÃO&1:SIM&2:Inscrito', 'ei_evento_confirmar', msg('Presente_no_evento'), True, True));
 
 		array_push($cp, array('$}', '', '', false, false));
 		array_push($cp, array('$B', '', msg('enviar'), false, True));

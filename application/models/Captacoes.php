@@ -1,5 +1,100 @@
 <?php
 class captacoes extends CI_Model {
+
+	function le_protocolo($proto) {
+		$sql = "select * from captacao where ca_protocolo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		return ($rlt[0]);
+	}
+
+	/************** acaoes */
+	function acao_captacao($proto, $tp) {
+		$data = date("Y-m-d");
+		switch ($tp) {
+			case '0' :
+			// Com isenção e com bonificação pelo COORDENADOR //
+				$sql = "update captacao set 
+								ca_isencao = 1,
+								ca_bonificacao = 1,
+								ca_status = 80,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <b>com isenção</b> e com <b>bonificação</b><br>' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '80', $desc);
+				return (1);
+				break;
+			case '1' :
+			// Com isenção e com bonificação pelo  COORDENADOR //
+				$sql = "update captacao set 
+								ca_isencao = 1,
+								ca_bonificacao = 0,
+								ca_status = 80,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <b>com isenção</b> e <font color=red><b>sem bonificação</b></font><br>' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '80', $desc);
+				return (1);
+				break;
+			case '2' :
+			// Com isenção e com bonificação pelo  COORDENADOR //
+				$sql = "update captacao set 
+								ca_isencao = 0,
+								ca_bonificacao = 1,
+								ca_status = 80,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <font color=red><b>sem isenção</b></font> e <b>com bonificação</b><br>' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '80', $desc);
+				return (1);
+				break;
+			case '3' :
+			// Com isenção e com bonificação pelo  COORDENADOR //
+				$sql = "update captacao set 
+								ca_isencao = 0,
+								ca_bonificacao = 0,
+								ca_status = 80,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <font color=red><b>sem isenção</b> e <b>sem bonificação</b></font><br>' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '80', $desc);
+				return (1);
+				break;
+
+			case '4' :
+			// Devolver ao professor para correção  COORDENADOR  //
+				$sql = "update captacao set 
+								ca_isencao = 0,
+								ca_bonificacao = 0,
+								ca_status = 8,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Motivo:' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '8', $desc);
+				return (1);
+				break;
+			case '5' :
+			// Cancelar o protocolo  COORDENADOR  //
+				$sql = "update captacao set 
+								ca_isencao = 0,
+								ca_bonificacao = 0,
+								ca_status = 12,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Justificativa: ' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '12', $desc);
+				return (1);
+				break;
+		}
+
+	}
+
 	function mostra_historico($id) {
 		$proto = strzero($id, 7);
 
@@ -7,15 +102,18 @@ class captacoes extends CI_Model {
 						LEFT JOIN us_usuario ON bnh_log = id_us
 						WHERE bnh_protocolo = '$proto'
 						ORDER BY bnh_data desc, bnh_hora desc ";
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
 		$sx = '<table width="100%" class="tabela00 lt1">';
-		$sx .= '<tr><th>data e hora</th>
-						<th></th>
+		$sx .= '<tr><th width="10%">data e hora</th>
+						<th width="60%">Descrição</th>
+						<th width="30%">Responsável</th>
 					</tr>';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			$desc = trim($line['bnh_descricao']);
 			$sx .= '<tr>';
 			$sx .= '<td align="center">';
 			$sx .= stodbr($line['bnh_data']);
@@ -26,32 +124,59 @@ class captacoes extends CI_Model {
 			$sx .= '<td>' . $line['bnh_historico'] . '</td>';
 
 			$sx .= '<td>' . $line['us_nome'] . '</td>';
-
-			$sx .= '<td align="center">';
 			$sx .= '</tr>';
+			if (strlen($desc) > 0) {
+				$sx .= '<tr><td>&nbsp;</td>';
+				$sx .= '<td colspan=2>' . mst($desc) . '</td></tr>';
+			}
 		}
 		$sx .= '</table>';
 		return ($sx);
 	}
 
+	function is_autor($id, $cracha) {
+		$sql = "select * from captacao 
+						WHERE ca_professor = '$cracha' 
+						AND id_ca = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
+		}
+	}
+
 	function alterar_status($id, $ope) {
+		$this -> captacoes -> insere_historico($id, $ope);
+		$data = date("Y-m-d");
+		/* Atualiza status */
+		$sql = "update captacao set
+								ca_status = $ope,
+								ca_lastupdate = $data
+							where id_ca = " . round($id);
+		$rlt = $this -> db -> query($sql);
+	}
+
+	function insere_historico($id, $ope, $desc = '') {
 		$historico = '??';
-		$sql = "select * from captacao_situacao where ca_status_old = " . $id;
+		$sql = "select * from captacao_situacao where ca_status_old = " . $ope;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) > 0) {
 			$line = $rlt[0];
 			$historico = trim($line['cs_situacao_acao']);
 		}
-
 		$data = date("Ymd");
 		$hora = date("H:i:s");
+		$hora2 = date("H:i:s");
 		$proto = strzero($id, 7);
 		$us_id = $_SESSION['id_us'];
 
 		$sql = "select * from captacao_historico 
 						WHERE bnh_ope = '$ope' and bnh_log = $us_id 
-						AND bnh_data = '$data' AND bnh_protocolo = '$proto' ";
+						AND bnh_data = '$data' AND bnh_protocolo = '$proto' 
+						AND bnh_hora like '$hora2%'";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) == 0) {
@@ -63,14 +188,7 @@ class captacoes extends CI_Model {
 							) values (
 							'$proto', '$data', '$hora',
 							'$historico', '$ope', $us_id,
-							'')";
-			$rlt = $this -> db -> query($sql);
-
-			/* Atualiza status */
-			$sql = "update captacao set
-								ca_status = $ope,
-								ca_lastupdate = $data
-							where id_ca = " . round($id);
+							'$desc')";
 			$rlt = $this -> db -> query($sql);
 		}
 	}
@@ -102,7 +220,7 @@ class captacoes extends CI_Model {
 		}
 		/* Duracao */
 		$dr = '';
-		for ($r = 0; $r <= 72; $r++) {
+		for ($r = 1; $r <= 72; $r++) {
 			$dt = $r;
 			/* regras */
 			if ($dt == 1) { $dt = '1 ' . msg('mes');
@@ -170,7 +288,12 @@ class captacoes extends CI_Model {
 		array_push($cp, array('$HV', 'id_ca', $id, true, true));
 		array_push($cp, array('${', '', msg('Recusos captados'), false, true));
 
+		array_push($cp, array('$HV', 'ca_proponente', '0', true, true));
+
+		array_push($cp, array('${', '', 'Valores para proponente', false, true));
 		array_push($cp, array('$N8', 'ca_proponente_vlr', msg('ca_proponente_vlr'), true, true));
+		//array_push($cp, array('$}', '', '', false, true));
+
 		array_push($cp, array('$N8', 'ca_vlr_capital', msg('ca_vlr_capital'), true, true));
 		array_push($cp, array('$N8', 'ca_vlr_custeio', msg('ca_vlr_custeio'), true, true));
 		array_push($cp, array('$N8', 'ca_vlr_bolsa', msg('ca_vlr_bolsa'), true, true));
@@ -179,10 +302,9 @@ class captacoes extends CI_Model {
 		array_push($cp, array('$L', '', msg('ca_vlr_total'), false, false));
 
 		$text = 'O valor aplicado refere-se a quantidade de recursos que serão aplicados na PUCPR, podendo ser qualquer uma das modalidades, capital, custeio ou bolsas, informando qual o valor total.';
-		array_push($cp, array('${', '', 'Valores para proponente', false, true));
-
-		array_push($cp, array('$N8', 'ca_proponente', msg('ca_proponente'), true, true));
-		array_push($cp, array('$}', '', '', false, true));
+		//array_push($cp, array('${', '', 'Valores para proponente', false, true));
+		//array_push($cp, array('$Q ', 'ca_proponente', msg('ca_proponente'), true, true));
+		//array_push($cp, array('$}', '', '', false, true));
 
 		array_push($cp, array('$}', '', msg('Recusos captados'), false, true));
 
@@ -270,10 +392,10 @@ class captacoes extends CI_Model {
 
 		/* REGRA - programa */
 		if ($data['ca_programa'] > 0) {
-			$vd[6] = $ok;
+			$vd[7] = $ok;
 		}
 		$sx .= '<tr><td class="border1">' . msg('ca_programa') . '</td>
-						<td class="border1" align="center">' . $vd[6] . '</tr>';
+						<td class="border1" align="center">' . $vd[7] . '</tr>';
 
 		/* valicacao */
 		$ok = 1;
@@ -313,7 +435,7 @@ class captacoes extends CI_Model {
 		$sql = "select * from captacao 
 					LEFT JOIN captacao_situacao ON ca_status_old = ca_status
 					LEFT JOIN us_usuario ON ca_professor = us_cracha
-					LEFT JOIN fomento_agencia on ((agf_sigla = ca_agencia) or (id_agf = ca_agencia_id))
+					LEFT JOIN fomento_agencia on (((agf_sigla = ca_agencia) and (ca_agencia_id = 0)) or (id_agf = ca_agencia_id))
 					LEFT JOIN captacao_participacao on cp_cod = ca_participacao
 					LEFT JOIN ss_programa_pos ON ((ca_programa = id_pp_char) or (ca_programa = id_pp)) 
 					where id_ca = $id 
@@ -442,8 +564,17 @@ class captacoes extends CI_Model {
 			$sx .= $this -> load -> view('captacao/captacao_row', $line, true);
 			/********************* resumo */
 			switch ($line['cs_resumo']) {
-				case '2' :
+				case '6' :
 					$cap[2] = $cap[2] + 1;
+					break;
+				case '5' :
+					$cap[2] = $cap[2] + 1;
+					break;
+				case '1' :
+					$cap[3] = $cap[3] + 1;
+					break;
+				case '0' :
+					$cap[0] = $cap[0] + 1;
 					break;
 				default :
 					$cap[1] = $cap[1] + 1;

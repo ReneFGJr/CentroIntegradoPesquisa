@@ -105,9 +105,8 @@ class main extends CI_Controller {
 		if (perfil('#ADM') == 1) {
 		array_push($menu, array('CNPq', 'Administração', 'BTN', '/cnpq'));
 		}
-		
-		
-		if (perfil('#CPP#SPI#ADM') == 1) {
+
+		if (perfil('#CPP#SPI#ADM#EVE') == 1) {
 			array_push($menu, array('Eventos', 'Sistema de Gestão de Eventos', 'BTA', '/evento'));
 		}
 		if (perfil('#CPS#COO#ADM#OBS') == 1) { array_push($menu, array('Fomento', 'Observatório de Pesquisa', 'BTA', '/edital'));

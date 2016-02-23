@@ -11,6 +11,16 @@ if ($ic_pre_data != '0000-00-00') {
 		}
 	}
 }
+
+$link_contrato = '';
+if (function_exists("perfil")) {
+		if (perfil('#SPI#ADM') == 1) {
+			$link_contrato = '
+					<a href="#" onclick="newwindows(\'' . base_url('index.php/ic_contrato/imprimir/' . $id_ic . '/' . checkpost_link($id_ic)) . '\',600,500);" class="link lt1" style="z-index: 1001;">
+					<img src="' . base_url('img/icon/icone_post_form.png') . '" height="12">
+					</A>';
+	}
+}
 ?>
 <fieldset class="fieldset01" >
 	<legend class="legend01">
@@ -92,7 +102,7 @@ if ($ic_pre_data != '0000-00-00') {
 			<tr class="lt0">
 				<td colspan=3>Nome do estudante
 				<br>
-				<font class="lt1"> <B><?php echo $al_nome . ' (' . $al_cracha . ')'; ?></td>
+				<font class="lt1"> <B><?php echo $al_nome . ' (' . $al_cracha . ')'; ?><?php echo $link_contrato; ?></td>
 			</tr>
 			<tr class="lt0">
 				<td colspan=2>Curso professor / aluno<font class="lt1">
