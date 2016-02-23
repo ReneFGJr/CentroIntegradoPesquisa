@@ -101,6 +101,12 @@ class main extends CI_Controller {
 		if (perfil('#ADM') == 1) {
 			array_push($menu, array('Stricto Sensu', 'Secretaria e Coordenação do <i>stricto sensu</i>', 'BTA', '/stricto_sensu'));
 		}
+		
+		if (perfil('#ADM') == 1) {
+		array_push($menu, array('CNPq', 'Administração', 'BTN', '/cnpq'));
+		}
+		
+		
 		if (perfil('#CPP#SPI#ADM') == 1) {
 			array_push($menu, array('Eventos', 'Sistema de Gestão de Eventos', 'BTA', '/evento'));
 		}

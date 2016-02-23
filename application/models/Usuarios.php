@@ -966,7 +966,7 @@ class usuarios extends CI_model {
 		array_push($cp_conta, array('$Q id_banco:banco_nome:select * from banco where banco_preferencial = 1 order by banco_nome', 'usc_banco', msg('lb_usc_banco'), False, True));
 		array_push($cp_conta, array('$S15', 'usc_agencia', msg('lb_usc_agencia'), False, True));
 		array_push($cp_conta, array('$S20', 'usc_conta_corrente', msg('lb_usc_conta'), False, True));
-		array_push($cp_conta, array('$HV', 'usc_tipo', 'CC', FALSE, FALSE));
+		array_push($cp_conta, array('$HV', 'usc_tipo', 'CC', FALSE, TRUE));
 		array_push($cp_conta, array('$S10', 'usc_modo', msg('lb_usc_modo'), False, True));
 		array_push($cp_conta, array('$}', '', '', False, True));
 

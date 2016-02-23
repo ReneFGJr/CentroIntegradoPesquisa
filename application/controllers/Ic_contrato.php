@@ -219,7 +219,7 @@ class ic_contrato extends CI_Controller {
 		
 		
 		$ic = array_merge($ic,$data,$ic_us);
-		
+		/* le array */
 		//print_r($ic);
 		//exit;
 		

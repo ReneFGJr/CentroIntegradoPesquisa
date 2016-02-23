@@ -50,6 +50,7 @@ class ic_contratos extends CI_model {
 		return ($obj);
 	}
 	
+	/* Verifica se existe o contrato */
 	function existe_contrato($id = 0){
 
 		$sql = "select * from ic_contrato_emitido 

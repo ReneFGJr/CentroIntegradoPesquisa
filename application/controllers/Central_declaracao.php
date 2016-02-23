@@ -54,7 +54,7 @@ class central_declaracao extends CI_Controller {
 			redirect(base_url('index.php/central_declaracao'));
 		}
 		$data = $this -> usuarios -> le($id);
-
+		
 		/**#############################################################################################*/
 		/**############################																							   ###################
 		/**############################    G E R A   D E C L A R A C O E S             ###################
@@ -103,11 +103,13 @@ class central_declaracao extends CI_Controller {
 					$this -> eventos -> emitir('SEMIC', 'OUVINTE', $ano_15, $data);
 					/* Avaliador SEMIC */
 					$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_15, $data);
+					
 		/* Orientador IC */
 		$err2 = $this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_15, $data);
 		/* Estudante IC */
 		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_15, $data);
 		/* Estudante Apresentação */
+
 		$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', $ano_15, $data);
 		/* SwB2 - Participação */
 		$err1 = $this -> eventos -> emitir('SWB', 'SWB2', $ano_15, $data);
@@ -414,7 +416,7 @@ class central_declaracao extends CI_Controller {
 				break;
 
 			/*#############################################################################################*/
-			/*#######################             CICPG DE 2014             ###############################*/
+			/*#######################             CICPG DE 2013             ###############################*/
 			/*#############################################################################################*/
 
 			/* Declaracao de participacao estudante*/
