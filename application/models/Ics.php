@@ -1521,6 +1521,29 @@ class ics extends CI_model {
 
 		return ($cp);
 	}
+	
+	function submissoes_abertas()
+		{
+			$sql = "select * from switch where sw_01 = '1' order by id_sw ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array($rlt);
+			return($rlt);
+		}
+	
+	function cp_switch_ic_master()
+		{
+		$cp = array();
+		array_push($cp, array('$H8', 'id_sw', '', False, True));
+		array_push($cp, array('$SW', 'sw_01', msg('sw_ic_mst_submissao'), False, True));
+		array_push($cp, array('$SW', 'sw_02', msg('sw_ic_mst_rel_pacial'), False, True));
+		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_mst_form_acompanhamento'), False, True));
+		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_mst_rel_final'), False, True));
+		array_push($cp, array('$SW', 'sw_05', msg('sw_ic_mst_resumo'), False, True));
+		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_rel_final'), False, True));
+		array_push($cp, array('$B', '', msg('update'), False, True));
+		return ($cp);			
+		}
+		
 
 	function cp_switch() {
 		$cp = array();

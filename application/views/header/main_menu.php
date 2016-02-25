@@ -7,6 +7,18 @@
 		$tipo = $menu[$r][2];
 
 		switch ($tipo) {
+			case 'BTS' :
+				echo '
+				<a href="' . base_url('index.php' . $menu[$r][3]) . '" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     
+					<div id="icone-cip-2" class="icone-submit icone-cip">
+						<h2 class="icone-submit-cor">' . $menu[$r][0] . '</h2>
+						<p>
+							' . $menu[$r][1] . '
+						</p>						
+					</div>
+				</a>
+			';		
+			break;	
 			case 'BTN' :
 				echo '
 				<a href="' . base_url('index.php' . $menu[$r][3]) . '" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="no-undeline">     

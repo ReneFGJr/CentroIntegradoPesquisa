@@ -8,7 +8,7 @@ class main extends CI_Controller {
 		$this -> load -> library("nuSoap_lib");
 		$this -> lang -> load("app", "portuguese");
 		$this -> load -> library('form_validation');
-		//$this -> load -> database();
+		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('url');
@@ -50,7 +50,7 @@ class main extends CI_Controller {
 		$data['menu'] = 0;
 		//$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
-			}
+	}
 
 	function index() {
 
@@ -72,7 +72,7 @@ class main extends CI_Controller {
 
 		/* Chamadas editais */
 		$this -> load -> view('fomento/chamadas_resumo', $data);
-		
+
 		/* Stricto Sensu */
 		$ss = $_SESSION['ss'];
 
@@ -85,7 +85,27 @@ class main extends CI_Controller {
 			$idu = '';
 		}
 
+		/* Submissões IC */
+		$this -> load -> model("ics");
+		$subm = $this -> ics -> submissoes_abertas();
+		for ($r = 0; $r < count($subm); $r++) {
+			$ok = 1;
+			if ($subm[$r]['id_sw'] == '2') {
+				$ok = 0;
+			}
+			
+			/* Se for SS habilita SS */
+			if ((strlen($ss) > 0) or (perfil("#CPI#SPI#ADM") > 0)) { $ok = 1;
+			}
+
+			if ($ok == 1) {
+				$mod = $subm[$r]['sw_tipo'];
+				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit_'.$mod));
+			}
+		}
+
 		if (strlen($ss) > 0) {
+
 			array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
 		}
 
@@ -133,11 +153,10 @@ class main extends CI_Controller {
 		}
 		/* Iniciação Científica */
 		array_push($menu, array('Inciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
-		
-		
+
 		if ((perfil('#TST') == 1) or ($ss == 1)) {
 			array_push($menu, array('Stricto Sensu', 'Coordenadores e Professores do <i>stricto sensu</i>', 'BTN', '/ss'));
-		}		
+		}
 
 		if (perfil('#TST') == 1) {
 			array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));

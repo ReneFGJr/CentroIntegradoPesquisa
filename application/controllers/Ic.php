@@ -14,6 +14,8 @@ class ic extends CI_Controller {
 		$this -> load -> library('form_validation');
 		$this -> load -> database();
 		$this -> lang -> load("app", "portuguese");
+		$this -> lang -> load("ic", "portuguese");
+		
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
 		$this -> load -> helper('links_users');
@@ -203,6 +205,95 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+
+	/*************************************************************************************************
+	 *************************************************************************** SUBMISSAO MASTER ****
+	 *************************************************************************************************/
+	function submit_new()
+		{
+			$this->load->model('ics_master');
+			$cracha = $_SESSION['cracha'];
+			$this->ics_master->projeto_novo($cracha);
+		} 
+	
+	function submit_edit($tipo='',$id='',$chk='',$pag='')
+		{
+		$this->load->model('ics_master');
+		
+		$this -> cab();
+		$data = array();
+		
+		$bp = array();
+		if (strlen($pag) == 0) { $pag = 1; }
+		$data['bp_atual'] = $pag;
+		
+		switch ($tipo)
+			{
+			case 'ICMST':
+				$bp[1] = 'Identificação do projeto';
+				$bp[2] = 'Submissão de Arquivos';
+				$bp[3] = 'Confirmação';
+				$data['bp'] = $bp;
+				$data['bp_link'] = base_url('index.php/ic/submit_edit/'.$tipo.'/'.$id.'/'.$chk.'/');
+				$this->load->view('gadget/progessbar_horizontal.php',$data);
+				
+				
+				switch ($pag)
+					{
+					case '1':
+						$cp = $this->ics_master->cp_subm_01();
+						$form = new form;
+						$form-> id = $id;
+						$tela = $form->editar($cp,'ic_submissao_projetos');
+						
+						$data['content'] = $tela;
+						$this->load->view('content',$data);
+					case '2':
+						$cp = $this->ics_master->cp_subm_02();
+						$this->geds->tabela = 'ic_ged_documento';
+						$this->geds->id = strzero('1'.$id,6);
+						$form = new form;
+						$form-> id = $id;
+						$tela = $form->editar($cp,'ic_submissao_projetos');
+						
+						$data['content'] = $tela;
+						$this->load->view('content',$data);						
+					}
+				break;
+			}
+			
+		}
+	
+	function submit_ICMST()
+		{
+		$this->load->model('ics_master');
+		$this -> cab();
+		
+		$id_us = $_SESSION['id_us'];
+		$cracha = $_SESSION['cracha'];
+		$ano = date("Y");
+		$tela = $this->ics_master->resumo_submit($cracha,$ano);
+		
+		/* Habilita botão de submissão */
+		$prj = $this->ics_master->exist_submit($cracha,$ano);
+		/* se 0, não existe projeto cadastrado */ 
+		if ($prj > 0)
+			{
+				$botao = '<a href="'.base_url('index.php/ic/submit_pj/'.$prj.'/'.checkpost_link($prj)).'" class="botao3d back_green_shadown back_green">';
+				$botao .= msg('ic_submit_edit_project');
+				$botao .= '</a>';
+			} else {
+				$botao = '<a href="'.base_url('index.php/ic/submit_new/ICMST').'" class="botao3d back_green_shadown back_green">';
+				$botao .= msg('ic_submit_new_project');
+				$botao .= '</a>';		
+			}
+		$tela .= '<br>'.$botao;
+		 
+		
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
+					
+		}
 	/*************************************************************************************************
 	 *************************************************************************** ADMINISTRATIVO ******
 	 *************************************************************************************************/
@@ -1567,7 +1658,8 @@ class ic extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
-		array_push($menu, array('Acompanhamento', 'Abrir ou fechar sistemas', 'ITE', '/ic/acompanhamento_sw'));
+		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (IC)', 'ITE', '/ic/acompanhamento_sw'));
+		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (PIBIC MASTER)', 'ITE', '/ic/acompanhamento_ic_master_sw'));
 		array_push($menu, array('Acompanhamento', 'Calendário de Entregas', 'ITE', '/ic/acompanhamento_data'));
 		
 		array_push($menu, array('Formulário de acompanhamento', 'Entrega de formlários', 'ITE', '/ic/entrega/FORM_PROF'));
@@ -1592,6 +1684,33 @@ class ic extends CI_Controller {
 
 		$form = new form;
 		$form -> id = 1;
+		/* IC */
+
+		$tela = $form -> editar($cp, $this -> ics -> tabela_acompanhamento);
+
+		$data['title'] = msg('ic_acomanhamento_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/ic/acompanhamento'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+		function acompanhamento_ic_master_sw() {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this -> ics -> cp_switch_ic_master();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = 2;
 		/* IC */
 
 		$tela = $form -> editar($cp, $this -> ics -> tabela_acompanhamento);

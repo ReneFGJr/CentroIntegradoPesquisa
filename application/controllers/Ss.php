@@ -106,11 +106,65 @@ class ss extends CI_Controller {
 		$this->load->model('captacoes');		
 		$this->load->model('stricto_sensus');
 		
-		$cracha = $_SESSION['cracha'];
-		$this->isencoes->lista_minhas_isencoes($cracha);
-
 		$this -> cab('Isenções <i>stricto sensu</i>');
-			
+		
+		$cracha = $_SESSION['cracha'];
+		$tela = $this->isencoes->lista_minhas_isencoes($cracha);
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
+		}
+		
+	function indicar_isencao($id=0,$check='',$pag=1)
+		{
+		if ($pag < 1) { $pag = 1; }
+		$this->load->model('artigos');
+		$this->load->model('isencoes');
+		$this->load->model('captacoes');
+		$this->load->model('usuarios');			
+		$this->load->model('stricto_sensus');
+		
+		$this -> cab('Indicar Isenção');
+		$data = array();
+		$bp = array();
+		$bp[1] = 'Indicação do Aluno';
+		$bp[2] = 'Confirmação do Aluno';
+		$bp[3] = 'Impressão da Isenção';
+		$bp[4] = 'Upload da Isenção';
+		$bp[5] = 'Finalização';
+		
+		$data['bp_atual'] = round($pag);
+		$data['bp_link'] = base_url('index.php/ss/indicar_isencao/' . $id . '/' . $check ). '/';	
+		$data['bp'] = $bp;
+		
+
+
+		$form = new form;
+		$form -> id = $id;
+		
+		$this->load->view('gadget/progessbar_horizontal.php',$data);
+		
+		switch ($pag)
+			{
+			case '1':
+				$cp = $this->isencoes->cp_isencoes_01();
+				$data['cracha'] = '';
+				$tela = $form->editar($cp,'bonificacao');
+				$data['content'] = $tela;
+				$this->load->view('content',$data);
+				break;
+			case '2':
+				$cp = $this->isencoes->cp_isencoes_02($id);
+				$data['cracha'] = '';
+				$tela = $form->editar($cp,'bonificacao');
+				$data['content'] = $tela;
+				$this->load->view('content',$data);
+				break;			}
+		
+		if ($form->saved > 0)
+			{
+				$pag++;
+				redirect(base_url('index.php/ss/indicar_isencao/'.$id.'/'.checkpost_link($id).'/'.$pag));
+			}						
 		}
 	public function index($id = 0) {
 		$this->load->model('artigos');

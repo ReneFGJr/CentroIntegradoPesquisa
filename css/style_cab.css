@@ -182,6 +182,15 @@ fieldset
 	color: #b82955;
 	border-bottom: solid 10px #b82955;
 }
+
+.icone-submit-cor {
+	color: #ff0000;
+}
+.icone-submit {
+	color: #ff0000;
+	border-bottom: solid 10px #ff0000;
+}
+
 .icone-green {
 	color: #29b855;
 	border-bottom: solid 10px #29b855;

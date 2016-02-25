@@ -2,6 +2,44 @@
 class isencoes extends CI_model {
 	
 
+	/* Isenções */
+	function cp_isencoes_01()
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_bn','',False,True));
+			$txt = '<font class="lt3">';
+			$txt .= 'Informar o código do estudante que ira receber a isenção, conforme ato normativo.';
+			$txt .= '<br><br>';
+			$txt .= 'Ex:101<b>88112233</b>1 (informe somente os 8 digitos) ';
+			$txt .= '<br><br>';
+			$txt .= '</font>';
+			array_push($cp,array('$M','',$txt,false,True));
+			array_push($cp,array('$S8','bn_beneficiario',msg('código do aluno'),True,True));
+			array_push($cp,array('$M','','<br><br>',false,True));
+			array_push($cp,array('$B8','','Prosseguir >>>',False,True));
+			return($cp);
+		}
+	function cp_isencoes_02($id=0)
+		{
+			$cp = array();
+			$data = $this->le_id($id);
+			$idb = $data['bn_beneficiario'];
+			$data = $this->usuarios->le_cracha($idb);
+			$tela = $this->load->view('perfil/discente',$data,true);
+			
+			array_push($cp,array('$H8','id_bn','',False,True));
+			$txt = $tela;
+			array_push($cp,array('$M','',$txt,false,True));
+			$op = 'M:Mestrado&D:Doutorado';
+			array_push($cp,array('$['.(date("Y")-3).'-'.date("Y").']','bn_ano',msg('entrada_no_programa'),True,True));
+			array_push($cp,array('$O '.$op,'bn_modalide',msg('modalidade'),True,True));
+			$sql = "select * from ss_programa_pos where pp_ativo = 1 order by pp_nome";
+			array_push($cp,array('$Q id_pp:pp_nome:'.$sql,'bn_modalide',msg('programa'),True,True));
+			array_push($cp,array('$M','','<br><br>',false,True));
+			array_push($cp,array('$B8','','Prosseguir >>>',False,True));
+			return($cp);
+		}		
+
 	function transfere_para_outra_modalidade($mod='',$proto='')
 		{
 			
@@ -65,6 +103,21 @@ class isencoes extends CI_model {
 					return(array());
 				}
 		}		
+
+	function le_id($id)
+		{
+			$sql = "select * from bonificacao where 
+						id_bn = '$id'";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return($rlt[0]);
+				} else {
+					return(array());
+				}
+		}		
+		
 	function cp_isencao_cip_capes()
 		{
 			$cp = array();
@@ -111,22 +164,47 @@ class isencoes extends CI_model {
 
 	function lista_minhas_isencoes($cracha)
 		{
+		$sx = '';
 		$sql = "select *
 					FROM bonificacao
 					LEFT JOIN bonificacao_situacao on bns_codigo = bn_status 
+					LEFT JOIN captacao on ca_protocolo = bn_original_protocolo
 							WHERE bn_original_tipo = 'IPR' and bn_professor = '$cracha'
+							and bn_status = '!'
 				group by bn_status, bns_descricao  ";
+				
 		$rlt = $this->db->query($sql);
 		$rlt = $rlt->result_array();
-		
+		$sx = '<table class="tabela01 lt3" width="100%" border=0 cellpadding=5>';
+		$sx .= '<tr>
+					<th width="5%">Protocolo</th>
+					<th>Título Projeto</th>
+					<th width="5%">Agência</th>
+					<th width="5%">Edital</th>
+					<th>Edital descrição</th>
+					<th width="15%">Situação</th>
+					<th width="12%">Situação</th>
+				</tr>';		
 		if (count($rlt) > 0)
 			{
+			$tot = 0;
 			for ($r=0;$r < count($rlt);$r++)
 				{
+					$tot++;
 					$line = $rlt[$r];
-
+					$link = base_url('index.php/ss/indicar_isencao/'.$line['id_bn'].'/'.checkpost_link($line['id_bn'])); 
+					$acao = '<a href="'.$link.'" class="botao3d back_green_shadown back_green">Inidicar isenção</a>';
+					$line['acao'] = $acao;
+					$sx .= $this->load->view('isencoes/simple_row',$line,true);
+				}
+			if ($tot > 0)
+				{
+					$sx .= '<tr><td colspan=10>Total de '.$tot.' isenções disponíveis(is)</td></tr>';
+				} else {
+					$sx .= '<tr><td colspan=10 class="lt3">'.msg('nenhum insenção disponível').'</td></tr>';
 				}
 			}
+		$sx .= '</table>';
 		return($sx);
 		}
 

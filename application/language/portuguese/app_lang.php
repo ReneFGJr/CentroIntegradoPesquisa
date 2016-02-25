@@ -13,6 +13,12 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+	
+/* Menu Princicpal */
+$lang['submit_ICMST'] = 'PIBIC MASTER';
+$lang['submit_ICMST_text'] = 'Submissão para o Edital do PIBIC Master';
+
+$lang['update'] = 'Atualizar';
 /* Genero */
 $lang['genero_M'] = 'Masculino';
 $lang['genero_F'] = 'Feminino';
