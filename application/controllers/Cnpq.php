@@ -99,8 +99,8 @@ class cnpq extends CI_Controller {
 				$this -> load -> view('header/foot', $data);
 			break;
 			
-			case 'semic_premiacao':
-				$this -> load -> view('cnpq/semic_premiacao');
+			case 'cnpq_experiencia_institucional_ic_2015':
+				$this -> load -> view('cnpq/cnpq_experiencia_institucional_ic_2015');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
