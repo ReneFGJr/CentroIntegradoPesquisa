@@ -112,8 +112,20 @@ class cnpq extends CI_Controller {
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
-
-
+			
+			case 'cnpq_relato_do_processo_de_selecao_2015':
+				$this -> load -> view('cnpq/cnpq_relato_do_processo_de_selecao_2015');
+				
+				$this -> load -> view('header/content_close');
+				$this -> load -> view('header/foot', $data);
+			break;
+			
+			case 'cnpq_membros_do_comite_gestor_2015':
+				$this -> load -> view('cnpq/cnpq_membros_do_comite_gestor_2015');
+				
+				$this -> load -> view('header/content_close');
+				$this -> load -> view('header/foot', $data);
+			break;
 
 
 					
