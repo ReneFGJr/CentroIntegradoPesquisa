@@ -21,7 +21,7 @@
 				<h4>Iniciação Científica</h4>
 				<ul>
 					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq_experiencia_institucional_ic_2015');?>">Experiência Institucional na IC</a></li>
-					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/index');?>">Experiência Institucional na IC Jr</a></li>
+					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq_experiencia_institucional_ic_2015_jr');?>">Experiência Institucional na IC Jr</a></li>
 					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/index');?>">Relato do processo de seleção</a></li>
 					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/index');?>">Membros do Comitê Gestor</a></li>
 					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/index');?>">Seminário de Iniciação Científica (SEMIC)</a</li>

@@ -106,6 +106,17 @@ class cnpq extends CI_Controller {
 				$this -> load -> view('header/foot', $data);
 			break;
 
+			case 'cnpq_experiencia_institucional_ic_2015_jr':
+				$this -> load -> view('cnpq/cnpq_experiencia_institucional_ic_2015_jr');
+				
+				$this -> load -> view('header/content_close');
+				$this -> load -> view('header/foot', $data);
+			break;
+
+
+
+
+					
 
 			default:
 			$this -> load -> view('cnpq/view_welcome');
