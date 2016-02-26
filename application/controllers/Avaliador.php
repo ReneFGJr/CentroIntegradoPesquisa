@@ -129,6 +129,7 @@ class avaliador extends CI_Controller {
 		$this -> load -> model('ics');
 		$this -> load -> model('avaliadores');
 		$this -> load -> model('semic/semic_trabalhos');
+		$this -> load -> model('ic_pareceres');
 
 		$this -> cab();
 		$data = array();
@@ -138,20 +139,17 @@ class avaliador extends CI_Controller {
 
 		$data['areas'] = $this -> avaliadores -> avaliador_area($id);
 		$data['areas_inclusao'] = $this -> load -> view('avaliador/form_area_associar', $data, True);
+		$data['resumo_avaliacao'] = $this -> ic_pareceres -> avaliacoes_avaliador($id);
+
 		$this -> load -> view('avaliador/perfil_resumo', $data);
 		$this -> load -> view('avaliador/perfil_ativo', $data);
 		$this -> load -> view('avaliador/perfil_ativo_js', $data);
-		
-		if ($data['us_avaliador'] > 0)
-			{
-				$this -> load -> view('avaliador/perfil_areas', $data);
-			}
 
-		$data['content'] = $this -> ics -> lista_ic_professor($id);
-		$this -> load -> view('content', $data);
+		if ($data['us_avaliador'] > 0) {
+			$this -> load -> view('avaliador/perfil_areas', $data);
+		}
 
-		/* Dados de apresentacao */
-		$data['semic'] = $this -> semic_trabalhos -> lista_trabalhos($data['us_cracha']);
+		$data['content'] = '<table width="100%"><tr><td>&nbsp</td></tr></table>';
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');

@@ -202,6 +202,17 @@ function get($key) {
 
 }
 
+function xls($arquivo = '') {
+	// Configurações header para forçar o download
+	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+	header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+	header("Cache-Control: no-cache, must-revalidate");
+	header("Pragma: no-cache");
+	header("Content-type: application/x-msexcel");
+	header("Content-Disposition: attachment; filename=\"{$arquivo}\"");
+	header("Content-Description: CIP - Export file ".$arquivo);
+}
+
 function validaemail($email) {
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 		list($alias, $domain) = explode("@", $email);
@@ -366,7 +377,7 @@ function load_page($url) {
 	CURLOPT_AUTOREFERER => true, // set referer on redirect
 	CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
 	CURLOPT_TIMEOUT => 120, // timeout on response
-	CURLOPT_MAXREDIRS => 10,      // stop after 10 redirects
+	CURLOPT_MAXREDIRS => 10,       // stop after 10 redirects
 	);
 
 	$ch = curl_init($url);
@@ -1857,11 +1868,10 @@ if (!function_exists('form_edit')) {
 			/* TR da tabela */
 				$tela .= $tr;
 
-				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'onoffswitch-checkbox');
+				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'fomr_checkbox');
 				if ($readonly == false) { $dados['readonly'] = 'readonly';
 				}
-				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr);
-				;
+				$tela .= '<td align="right">' . form_checkbox($dados, 'accept', $vlr); ;
 
 				/* label */
 				if (strlen($label) > 0) {

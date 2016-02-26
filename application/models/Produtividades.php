@@ -57,7 +57,7 @@ class produtividades extends CI_model {
 		return ($sx);
 	}
 
-	function lista_produtivade() {
+	function lista_produtivade($editar=1) {
 		$sql = "SELECT * FROM us_bolsa_produtividade
 					INNER JOIN us_usuario on id_us = us_id 
 					INNER JOIN us_bolsa_prod_nome on bpn_id = us_bolsa_prod_nome.id_bpn
@@ -106,7 +106,7 @@ class produtividades extends CI_model {
 			} else {
 				$sx .= '<td class="lt2">&nbsp;</td>';
 			}
-			if (perfil('#COO#CPP#SPI#ADM') == 1) {
+			if ((perfil('#COO#CPP#SPI#ADM') == 1) and ($editar == 1)) {
 				$sx .= '<td class="nopr" align="center">' . $link . '</td>';
 			}
 			$sx .= '</tr>';

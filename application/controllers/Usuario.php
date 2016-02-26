@@ -69,10 +69,16 @@ class usuario extends CI_Controller {
 			$this -> load -> model('usuarios');
 			$this -> load -> model('webservice/ws_sga');
 			$rs = $this -> ws_sga -> findStudentByCracha($cracha);
-
-			$cracha = $rs['pessoa'];
-			$data = $this -> usuarios -> le_cracha($cracha);
-			$this -> load -> view('usuario/view', $data);
+			
+			if (isset($rs['pessoa'])) {
+				$cracha = $rs['pessoa'];
+				$data = $this -> usuarios -> le_cracha($cracha);
+				$this -> load -> view('usuario/view', $data);
+			} else {
+				$tela = '<h1><font color="red">Erro de consulta</font></h1>';
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			}
 
 			$this -> load -> view('usuario/form_cracha');
 
@@ -235,11 +241,10 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function profile($id = 0,$chk='') {
+	function profile($id = 0, $chk = '') {
 		/* Models */
 		$this -> load -> model('usuarios');
 
-		
 		/* Carrega classes adicionais */
 		$this -> cab();
 		$data = array();
@@ -248,14 +253,15 @@ class usuario extends CI_Controller {
 			redirect(base_url('index.php/main'));
 			exit ;
 		}
-		
-		$tela = $this->usuarios->view_prefil($id);
+
+		$tela = $this -> usuarios -> view_prefil($id);
 		$data['content'] = $tela;
-		$this->load->view('content',$data);		
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close.php');
 		$this -> load -> view('header/foot');
 	}
+
 	function view($id = 0) {
 		$this -> load -> model('usuarios');
 		$this -> load -> model('ics');
@@ -359,8 +365,7 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function produtividade_ed($id=0,$chk='')
-		{
+	function produtividade_ed($id = 0, $chk = '') {
 		global $dd;
 		$this -> load -> model('produtividades');
 
@@ -384,7 +389,7 @@ class usuario extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}
+	}
 
 	/*edita conta bancaria do usuário */
 	function edit_conta_cc($id = 0) {
@@ -440,10 +445,10 @@ class usuario extends CI_Controller {
 		if (strlen($cracha) < 8) {
 			redirect(base_url('index.php/main'));
 		}
-		
+
 		$this -> load -> view('usuario/view_simple', $dados);
 		$cp = $this -> usuarios -> cp_usuario_session();
-		
+
 		$form = new form;
 		$form -> id = $id;
 		$tela = $form -> editar($cp, $this -> usuarios -> tabela);
@@ -452,12 +457,12 @@ class usuario extends CI_Controller {
 		//$data['logo'] = base_url('img/icon/ico_engrenagem.png');
 		$data['tela'] = $tela;
 		$this -> load -> view('form/form', $data);
-		
+
 		/* Salva */
 		if ($form -> saved > 0) {
-		redirect(base_url('index.php/main'));
+			redirect(base_url('index.php/main'));
 		}
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 

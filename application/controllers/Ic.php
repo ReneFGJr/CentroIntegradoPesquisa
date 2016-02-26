@@ -214,12 +214,44 @@ class ic extends CI_Controller {
 		$this -> ics_master -> projeto_novo($cracha);
 	}
 
-	function submit_edit($tipo = '', $id = '', $chk = '', $pag = '') {
+	function submit_finished() {
+		$this -> load -> model('ics');
 		$this -> load -> model('ics_master');
 		$this -> load -> model('geds');
 
 		$this -> cab();
 		$data = array();
+
+		$data['content'] = '<center><h1><font color="green"><b>Submissão concluída com Sucesso!</b></font></h1></center>';
+		$this -> load -> view('content', $data);
+	}
+
+	function submit_view() {
+		$this -> load -> model('ics');
+		$this -> load -> model('ics_master');
+		$this -> load -> model('geds');
+
+		$this -> cab();
+		$data = array();
+
+		$data['content'] = '<center><h1><font color="green"><b>Submissão concluída com Sucesso!</b></font></h1></center>';
+		$this -> load -> view('content', $data);
+	}
+
+	function submit_edit($tipo = '', $id = '', $chk = '', $pag = '') {
+		$this -> load -> model('ics');
+		$this -> load -> model('ics_master');
+		$this -> load -> model('geds');
+
+		$this -> cab();
+		$data = array();
+
+		$prj_data = $this -> ics_master -> le($id);
+		$sta = $prj_data['pj_status'];
+		if ($sta != '@') {
+			redirect(base_url('index.php/ic/submit_view/' . $id . '/' . checkpost_link($id)));
+			exit ;
+		}
 
 		$bp = array();
 		if (strlen($pag) == 0) { $pag = 1;
@@ -255,18 +287,18 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '3' :
-						$cp = $this -> ics_master -> valida_submit($id);
+						$cp = $this -> ics_master -> valida_entrada($id);
+
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
 						$data['content'] = $tela;
 						$this -> load -> view('content', $data);
 						break;
 					case '4' :
-						$this->ics_master->altera_status($id,'A');
-						redirect(base_url('index.php/ic/submit_view/'.$id));
+						$this -> ics_master -> altera_status($id, 'A');
+						redirect(base_url('index.php/ic/submit_finished/' . $id));
 						break;
 				}
-				
 
 				if ($form -> saved > 0) {
 					redirect(base_url('index.php/ic/submit_edit/ICMST/' . $id . '/' . $chk . '/' . ($pag + 1)));
@@ -323,6 +355,9 @@ class ic extends CI_Controller {
 
 		array_push($menu, array('Entregas', 'Formulário de acompanhamento', 'ITE', '/ic/acompanhamento'));
 
+		array_push($menu, array('Discentes (seguro) ', 'Relatório de discentes ativos IC Capital (Seguro)', 'ITE', '/ic/seguro/1'));
+		array_push($menu, array('Discentes (seguro) ', 'Relatório de discentes ativos IC Interior (Seguro)', 'ITE', '/ic/seguro/2'));
+
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
@@ -331,6 +366,31 @@ class ic extends CI_Controller {
 		/*Fecha */	/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	/***************************************************************************************** SEGURO */
+	function seguro($id = 1, $fmt = '') {
+		$data = array();
+		$this -> load -> model('ics');
+		if (strlen($fmt) > 0) {
+			/* Exporta no formato excel */
+			xls('segurado-'.date("Y-m").'.xls');
+		} else {
+			$this -> cab();
+			$data['title'] = 'Relatório de Seguro';
+			$data['submenu'] = '<A href="'.base_url('index.php/ic/seguro/'.$id.'/xls').'" class="link lt0">'.msg('export_to_excel').'</a>';
+		}		
+		$tit = 'Seguro';
+
+		$sx = $this -> ics -> ic_seguro($id, '2016-02-01');
+		$data['content'] = $sx;
+		$this -> load -> view('content', $data);
+
+		if (strlen($fmt) == 0) {
+			/*Fecha */	/*Gera rodapé*/
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
 	}
 
 	/***************************************************************************************** ALTERAR TITULO */
@@ -1023,6 +1083,15 @@ class ic extends CI_Controller {
 
 		/* Formulario */
 		$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
+
+		/* */
+		$ano = date("Y");
+		if (date("m") < 7) { $ano = $ano - 1;
+		}
+		$tit = 'Entrega do Relatório Parcial';
+		$fld = 'ic_rp_data';
+		$data['search'] .= $this -> resumo_entrega($fld, $ano, $tit);
+
 		$data['resumo'] = $this -> protocolos_ic -> resumo();
 		$data['resumo'] .= $this -> ics -> resumo();
 
@@ -1357,10 +1426,10 @@ class ic extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
 
 		$menu = array();
 		array_push($menu, array('novo_avaliador', 'ic/avaliador_ativar'));
+		array_push($menu, array('zera_avaliador', 'avaliador/zera_convite_avaliador'));
 		$data['menu'] = $menu;
 		$this -> load -> view('header/menu_mini', $data);
 
@@ -1630,39 +1699,90 @@ class ic extends CI_Controller {
 
 		$sx = '';
 		if (strlen($fld) > 0) {
-			$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao from ic
-							where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
-						union
-						select 2 as ordem, count(*) as total, 'Não entregue' as descricao from ic
-							where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
-						order by ordem";
-			$rlt = $this -> db -> query($sql);
-			$rlt = $rlt -> result_array();
-			$sx .= '<table width="400" class="lt1 border1">';
-			$sx .= '<tr><td colspan=2 class="lt2"><b>' . $tit . '</b></td></tr>';
-			$sx .= '<tr><th>situação</th><th>total</th><th>percentual</th></tr>';
-			$tot = 0;
-			for ($r = 0; $r < count($rlt); $r++) {
-				$line = $rlt[$r];
-				$tot = $tot + $line['total'];
-			}
-
-			for ($r = 0; $r < count($rlt); $r++) {
-				$line = $rlt[$r];
-				$sx .= '<tr><td align="right">' . $line['descricao'] . '</td>';
-				$sx .= '<td align="center" class="lt4">' . $line['total'] . '</td>';
-				$sx .= '<td align="center">' . number_format(100 * ($line['total'] / $tot), 1, ',', '.') . '%</td>';
-				$sx .= '</tr>';
-			}
-			$sx .= '<tr><td align="right">Total</td>
-							<td align="center" class="lt5"><b>' . $tot . '</b></td></tr>';
-			$sx .= '</table>';
+			/* Resumo de Entrega */
+			$sx .= $this -> resumo_entrega($fld, $ano, $tit);
 		}
 		$data['content'] = $sx . $tela01;
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	function resumo_entrega_2($fld, $ano, $tit, $tp = 0) {
+		$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao, mb_tipo from ic
+							INNER JOIN ic_aluno on ic_id = id_ic
+							INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
+							where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
+							and icas_id = 1 group by mb_tipo
+						union
+						select 2 as ordem, count(*) as total, 'Não entregue' as descricao, mb_tipo from ic
+							INNER JOIN ic_aluno on ic_id = id_ic
+							INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
+							where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
+							and icas_id = 1 group by mb_tipo
+						order by ordem";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="400" class="lt1 border1">';
+		$sx .= '<tr><td colspan=2 class="lt2"><b>' . $tit . '</b></td></tr>';
+		$sx .= '<tr><th>situação</th><th>total</th><th>percentual</th></tr>';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot = $tot + $line['total'];
+		}
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			print_r($line);
+			echo '<hr>';
+			$sx .= '<tr><td align="right">' . $line['descricao'] . ' ' . $line['mb_tipo'] . '</td>';
+			$sx .= '<td align="center" class="lt4">' . $line['total'] . '</td>';
+			$sx .= '<td align="center">' . number_format(100 * ($line['total'] / $tot), 1, ',', '.') . '%</td>';
+			$sx .= '</tr>';
+		}
+		$sx .= '<tr><td align="right">Total</td>
+							<td align="center" class="lt5"><b>' . $tot . '</b></td></tr>';
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function resumo_entrega($fld, $ano, $tit) {
+		$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao from ic
+							INNER JOIN ic_aluno on ic_id = id_ic
+							INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
+							where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
+							and icas_id = 1
+						union
+						select 2 as ordem, count(*) as total, 'Não entregue' as descricao from ic
+							INNER JOIN ic_aluno on ic_id = id_ic
+							INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
+							where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
+							and icas_id = 1
+						order by ordem";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="400" class="lt1 border1">';
+		$sx .= '<tr><td colspan=2 class="lt2"><b>' . $tit . '</b></td></tr>';
+		$sx .= '<tr><th>situação</th><th>total</th><th>percentual</th></tr>';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot = $tot + $line['total'];
+		}
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<tr><td align="right">' . $line['descricao'] . '</td>';
+			$sx .= '<td align="center" class="lt4">' . $line['total'] . '</td>';
+			$sx .= '<td align="center">' . number_format(100 * ($line['total'] / $tot), 1, ',', '.') . '%</td>';
+			$sx .= '</tr>';
+		}
+		$sx .= '<tr><td align="right">Total</td>
+							<td align="center" class="lt5"><b>' . $tot . '</b></td></tr>';
+		$sx .= '</table>';
+		return ($sx);
 	}
 
 	function acompanhamento() {
@@ -1891,8 +2011,7 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();

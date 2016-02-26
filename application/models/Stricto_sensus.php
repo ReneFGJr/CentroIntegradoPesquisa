@@ -207,7 +207,7 @@ class Stricto_sensus extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="lt1">';
-		$sx .= '<tr>
+		$th = '<tr>
 						<th>#</th>
 						<th>Nome</th>
 						<th>Campus</th>
@@ -216,11 +216,23 @@ class Stricto_sensus extends CI_model {
 						<th>Escola de vínculo do professor</th>						
 						<th>Genero</th>
 					</tr>';
+		$xprog = '';
+		$pos = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			
+			$prog = $line['pp_nome'];
+			if ($prog != $xprog)
+				{
+					$sx .= '<tr><td colspan="6" class="lt4"><b>'.$prog.'</b></td></tr>';
+					$sx .= $th;
+					$xprog = $prog;
+					$pos = 0;
+				}
+						 
 			$sx .= '<tr>';
 			$sx .= '<td align="center" class="lt1" width="10">';
-			$sx .= ($r + 1) . '.';
+			$sx .= ($pos + 1) . '.';
 			$sx .= '</td>';
 			$sx .= '<td>';
 			$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
@@ -234,9 +246,6 @@ class Stricto_sensus extends CI_model {
 			$sx .= $line['us_link_lattes'];
 			$sx .= '</td>';
 
-			$sx .= '<td>';
-			$sx .= $line['pp_nome'];
-			$sx .= '</td>';
 
 			$sx .= '<td>';
 			$sx .= $line['es_escola'];
@@ -245,6 +254,8 @@ class Stricto_sensus extends CI_model {
 			$sx .= '<td align="center">';
 			$sx .= msg('genero_' . $line['us_genero']);
 			$sx .= '</td>';
+			
+			$pos++;
 
 		}
 		$sx .= '</table>';
@@ -428,6 +439,7 @@ class Stricto_sensus extends CI_model {
 		array_push($cp, array('$Q id_area:area_avaliacao_nome:' . $sql, 'pp_area', 'Área de avaliação', False, True));
 
 		array_push($cp, array('$[2-7]', 'pp_conceito', 'Nota do programa', True, True));
+		array_push($cp, array('$S15', 'pp_codigo_capes', 'Código CAPES', False, True));
 
 		array_push($cp, array('${', '', 'Modalidades disponíveis', False, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_mestrado', 'Mestrado', True, True));

@@ -38,11 +38,12 @@ class stricto_sensu extends CI_Controller {
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
-		
+
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Home', 'index.php/stricto_sensu'));
 		array_push($menus, array('Docentes', 'index.php/stricto_sensu/docentes'));
+		array_push($menus, array('Produção Científica', 'index.php/stricto_sensu/relatorio'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -52,7 +53,7 @@ class stricto_sensu extends CI_Controller {
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
-		
+
 		$this -> load -> view('ss/index', $data);
 	}
 
@@ -60,8 +61,6 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
-		
-		
 
 		$data['content'] = $this -> stricto_sensus -> lista_programas();
 		$this -> load -> view('content', $data);
@@ -69,41 +68,133 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function docentes($tipo='') {
+	function relatorio() {
 		$this -> load -> model('stricto_sensus');
+		$this -> load -> model('programas_pos');
+		$this -> load -> model('producoes');
+		$q = '';
 		$this -> cab();
 		$data = array();
 
-		if ($tipo == '')
-			{
-				$data['content'] = $this -> stricto_sensus -> lista_docentes();		
-			} else {
-				$data['content'] = $this -> stricto_sensus -> lista_docentes_por_programa();		
-			}
-		
-		
+		$sql = "select * from ss_programa_pos where pp_ativo = 1";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$id = $rlt[$r]['id_pp'];
+			$tela = $this -> producoes -> producao_programa($id);
+			$qua = $tela[1];
+			$est = $tela[0];
+
+			$q .= '<tr>';
+			$q .= '<td>' . $line['pp_nome'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $qua['Q1'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $qua['Q2'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $qua['Q3'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $qua['Q4'] . '</td>';
+
+			$q .= '<td class="border1" align="center">&nbsp;&nbsp;</td>';
+
+			$q .= '<td class="border1" align="center">' . $est['A1'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $est['A2'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $est['B1'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $est['B2'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $est['B3'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $est['B4'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $est['B5'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $est['C'] . '</td>';
+			$q .= '<td class="border1" align="center">' . $est[''] . '<td>';
+			$q .= '</tr>';
+		}
+
+		$th = '<tr><th>Programa</th>
+						<th>Q1</th>
+						<th>Q2</th>
+						<th>Q3</th>
+						<th>Q4</th>
+						<th>&nbsp;</th>
+						<th>A1</th>
+						<th>A2</th>
+						<th>B1</th>
+						<th>B2</th>
+						<th>B3</th>
+						<th>B4</th>
+						<th>B5</th>
+						<th>C</th>
+						<th>nv</th>
+						</tr>
+						';
+
+		$data['content'] = '<TABLE width="100%">' . $th . $q . '</table>';
 		$this -> load -> view('content', $data);
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	function docentes() {
+		$this -> cab();
+		$data = array();
+
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Docentes SS', 'Ordem alfabética', 'ITE', '/stricto_sensu/docente/doce'));
+		array_push($menu, array('Docentes SS', 'Ordem dos programas', 'ITE', '/stricto_sensu/docente/prog'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu Administração';
+		$this -> load -> view('header/main_menu', $data);
+
+		/*Fecha */ 		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function docente($tipo = '', $fmt = '') {
+		$fmt = trim($fmt);
+		$this -> load -> model('stricto_sensus');
+		$data = array();
+
+		if (strlen($fmt) == 0) {
+			$this -> cab();
+			$data['title'] = 'Docentes <i>stricto sensu</i>';
+			$data['submenu'] = '<A href="'.base_url('index.php/stricto_sensu/docente/'.$tipo.'/xls').'" class="link lt0">'.msg('export_to_excel').'</a>';			
+		} else {
+			xls('docentes-ss-' . date("Y-m-d") . '.xls');
+		}
+
+		if ($tipo == 'doce') {
+			$data['content'] = $this -> stricto_sensus -> lista_docentes();
+		} else {
+			$data['content'] = $this -> stricto_sensus -> lista_docentes_por_programa();
+		}
+
+		$this -> load -> view('content', $data);
+
+		if (strlen($fmt) == 0) {
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
 	}
 
 	function ver($id = 0, $chk = '') {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
-		
+
 		$data = $this -> stricto_sensus -> le($id);
 		$this -> load -> view('ss/show', $data);
-		
-		$data['content'] = $this->stricto_sensus->resumo_programa($id);
-		$this->load->view('content',$data);
-		
-		
-		$data['content'] = $this->stricto_sensus->professores_do_programa($id);
-		$this->load->view('content',$data);
 
-		$data['content'] = $this->stricto_sensus->linhas_do_programa($id);
-		$this->load->view('content',$data);
+		$data['content'] = $this -> stricto_sensus -> resumo_programa($id);
+		$this -> load -> view('content', $data);
+
+		$data['content'] = $this -> stricto_sensus -> professores_do_programa($id);
+		$this -> load -> view('content', $data);
+
+		$data['content'] = $this -> stricto_sensus -> linhas_do_programa($id);
+		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -116,7 +207,6 @@ class stricto_sensu extends CI_Controller {
 			$this -> load -> model('stricto_sensus');
 			$this -> cab();
 			$data = array();
-
 
 			$form = new form;
 			$form -> id = $id;

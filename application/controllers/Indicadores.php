@@ -48,25 +48,95 @@ class indicadores extends CI_Controller {
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 		$this -> load -> view('header/cab', $data);
-		
+
 		$this -> load -> view('header/content_open');
 	}
 
-	function produtividade() {
+	function docente($tipo = '', $fmt = '') {
 		$this -> load -> model('produtividades');
-		
-		$this -> cab();
-		$tela = $this->produtividades->resumo_produtividade();
-		$data['content'] = $tela;
-		$data['title'] = 'Bolsistas Produtividade';
-		$this->load->view('content',$data);
-		
-		$tela = $this->produtividades->lista_produtivade();
-		$data['content'] = $tela;
-		$this->load->view('content',$data);
+		$this -> load -> model('ics');
+		$editar = 1;
 
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
+		if (strlen($fmt) > 0) {
+			/* Exporta no formato excel */
+			$editar = 0;
+			xls('docente-' . $tipo . '-' . date("Y-m") . '.xls');
+		} else {
+			$this -> cab();
+			$data['title'] = 'Relatório de Seguro';
+			$data['submenu'] = '<A href="' . base_url('index.php/ic/seguro/' . $tipo . '/xls') . '" class="link lt0">' . msg('export_to_excel') . '</a>';
+		}
+
+		switch($tipo) {
+			case 'produtividade' :
+				$tela = $this -> produtividades -> resumo_produtividade();
+				$data['content'] = $tela;
+				$data['title'] = 'Bolsistas Produtividade';
+				if (strlen($fmt) == 0) {
+					$data['submenu'] = '<a href="' . base_url('index.php/indicadores/docente/produtividade/xls') . '" class="lt0 link">' . msg('export_to_excel') . '</a>';
+				}
+				$this -> load -> view('content', $data);
+
+				$tela = $this -> produtividades -> lista_produtivade($editar);
+				$data['content'] = $tela;
+				$data['submenu'] = '';
+				$data['title'] = '';
+				$this -> load -> view('content', $data);
+				break;
+			case 'pesquisa' :
+				$ano = date("Y");
+				if (date("m") < 7) { $ano = $ano - 1;
+				}
+
+				$tela = $this -> ics -> docentes_em_pesquisa($ano);
+				$data['title'] = 'Docentes atuantes em pesquisa - ' . $ano;
+				if (strlen($fmt) == 0) {
+					$data['submenu'] = '<a href="' . base_url('index.php/indicadores/docente/pesquisa/xls') . '" class="lt0 link">' . msg('export_to_excel') . '</a>';
+				}
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+				break;
+		}
+		if ($fmt == '') {
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
+	}
+
+	function estudante($tipo = '', $fmt = '') {
+		$this -> load -> model('produtividades');
+		$this -> load -> model('ics');
+		$editar = 1;
+
+		if (strlen($fmt) > 0) {
+			/* Exporta no formato excel */
+			$editar = 0;
+			xls('docente-' . $tipo . '-' . date("Y-m") . '.xls');
+		} else {
+			$this -> cab();
+			$data['title'] = 'Relatório de Seguro';
+			$data['submenu'] = '<A href="' . base_url('index.php/ic/seguro/' . $tipo . '/xls') . '" class="link lt0">' . msg('export_to_excel') . '</a>';
+		}
+
+		switch($tipo) {
+			case 'pesquisa' :
+				$ano = date("Y");
+				if (date("m") < 7) { $ano = $ano - 1;
+				}
+
+				$tela = $this -> ics -> estudante_em_pesquisa($ano);
+				$data['title'] = 'Estudantes atuantes em pesquisa - ' . $ano;
+				if (strlen($fmt) == 0) {
+					$data['submenu'] = '<a href="' . base_url('index.php/indicadores/estudante/pesquisa/xls') . '" class="lt0 link">' . msg('export_to_excel') . '</a>';
+				}
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+				break;
+		}
+		if ($fmt == '') {
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
 	}
 
 	function index($id = 0) {
@@ -74,11 +144,11 @@ class indicadores extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
-		array_push($menu, array('Sobre o Corpo Docente', 'Bolsista Produtividade', 'ITE', '/indicadores/produtividade/'));
+		array_push($menu, array('Docentes', 'Bolsista Produtividade, Professores stricto sensu, Orientadores PIBIC, ...', 'BOX', '/indicadores/docentes/'));
+		array_push($menu, array('Discentes', 'Estudantes de Iniciação Científica, ', 'BOX', '/indicadores/estudantes/'));
 
 		for ($r = 2012; $r <= date("Y"); $r++) {
 			array_push($menu, array('Iniciação Científica', 'Submissão - ' . $r, 'ITE', '/indicadores/ic/' . $r));
@@ -91,7 +161,48 @@ class indicadores extends CI_Controller {
 		/*View principal*/
 		$data['menu'] = $menu;
 
-		$data['title_menu'] = 'Menu Administração';
+		$data['title_menu'] = 'Indicadores';
+		$this -> load -> view('header/main_menu', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function docentes($id = 0) {
+		/* Load Models */
+
+		$this -> cab();
+		$data = array();
+
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Pesquisa', 'Docentes atuantes em Pesquisa', 'ITE', '/indicadores/docente/pesquisa/'));
+		array_push($menu, array('Pesquisa', 'Bolsista Produtividade', 'ITE', '/indicadores/docente/produtividade/'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+
+		$data['title_menu'] = 'Menu Docentes';
+		$this -> load -> view('header/main_menu', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function estudantes($id = 0) {
+		/* Load Models */
+
+		$this -> cab();
+		$data = array();
+
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Pesquisa', 'Atuação Discente em Pesquisa', 'ITE', '/indicadores/estudante/pesquisa/'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+
+		$data['title_menu'] = 'Menu Docentes';
 		$this -> load -> view('header/main_menu', $data);
 
 		$this -> load -> view('header/content_close');

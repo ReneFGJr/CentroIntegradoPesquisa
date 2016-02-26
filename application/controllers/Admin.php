@@ -113,20 +113,33 @@ class admin extends CI_Controller {
 
 		$sql = "SELECT distinct ic_aluno_cracha FROM ic_aluno 
 						left join us_usuario on us_cracha = ic_aluno_cracha 
-					where us_nome is null and ic_aluno_cracha <> ''";
+					where ((us_centro_academico = 0) or (us_genero = ''))
+					and (us_dt_update_cs <> '" . date("Y-m-d") . "')
+					
+					limit 20 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
-		$sx = '';
-
+		$sx = '<table width="100%" class="lt1 tabela00">';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$cracha = $line['ic_aluno_cracha'];
-
-			$sx .= '<br>->' . $cracha;
+			
+			/****************/
+			$sql = "update us_usuario set us_dt_update_cs = '".date("Y-m-d")."' where us_cracha = '$cracha' ";
+			$ttt = $this->db->query($sql);
+			
+			
+			$sx .= '<tr><td>' . $cracha;
 			$this -> ws_sga -> findStudentByCracha($cracha, 1);
-			$sx .= 'ok';
+			$sx .= '<td align="center">ok</td>';
 		}
+		$sx .= '</table>';
+		
+		if (count($rlt) > 0)
+			{
+				$sx .= '<meta http-equiv="refresh" content="2">';
+			}
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
 

@@ -130,7 +130,7 @@ class central_declaracao extends CI_Controller {
 
 		/* Load Models */
 		$this -> cab();
-
+		
 		/* Dados do Usuario */
 		$dd1 = $this -> input -> post("dd1");
 		if (strlen($dd1) > 0) {
@@ -556,10 +556,11 @@ class central_declaracao extends CI_Controller {
 
 				
 			/*#############################################################################################*/
-			/*#######################     INICIACAO CIENTIFICA DE 2011      ###############################*/
+			/*#######################     INICIACAO CIENTIFICA DE 2010/11    ##############################*/
 			/*#############################################################################################*/
 
-			/* Declaracao de participacao estudante*/
+			/* Declaracao de participacao estudante */
+			/* VALIDADE POR RENE EM 26/02/2016 ******/
 			case '34':
 				//Artigos complementos	
 				$artigo_g2 = 'aluno';

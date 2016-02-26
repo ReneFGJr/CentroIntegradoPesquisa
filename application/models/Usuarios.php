@@ -930,30 +930,32 @@ class usuarios extends CI_model {
 		//		array_push($cp, array('$S20', 'us_cpf', msg('cpf'), False, True));
 		//		array_push($cp, array('$S20', 'us_emplid', msg('employID'), False, True));
 
+		array_push($cp, array('${', '', 'Dados de Pesquisa', False, True));
 		array_push($cp, array('$S100', 'us_link_lattes', msg('link_lattes'), False, True));
 		array_push($cp, array('$S100', 'us_nome_lattes', msg('link_nome'), False, True));
-
+		array_push($cp, array('$Q id_area:area_avaliacao_nome:select * from area_avaliacao order by area_avaliacao_nome', 'us_area_conhecimento', msg('area_avaliacao'), False, True));
+		array_push($cp, array('$}', '', 'Dados de Pesquisa', False, True));
+		
+		array_push($cp, array('${', '', 'Vinculo institucional', False, True));
 		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
+		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
+		array_push($cp, array('$S8', 'us_codigo_rh', 'Código do RH', False, True));
+		array_push($cp, array('$}', '', '', False, True));
 
-		//$sql = "select * from us_tipo order by ust_id ";
-		//array_push($cp, array('$Q ust_id:ust_nome:' . $sql, 'usuario_tipo_ust_id', msg('us_tipo'), False, True));
-
-		//$sql = "select * from us_funcao where usf_ativo = 1 order by usf_id ";
-		//array_push($cp, array('$Q usf_id:usf_nome:' . $sql, 'usuario_funcao_usf_id', msg('us_funcao'), False, True));
-
+		array_push($cp, array('${', '', 'Dados Pessoais', False, True));
 		$sql = "select * from us_titulacao where ust_ativo = 1 order by ust_id ";
 		array_push($cp, array('$Q ust_id:ust_titulacao_sigla:' . $sql, 'usuario_titulacao_ust_id', msg('us_titulacao'), False, True));
-
+		array_push($cp, array('$D8', 'us_dt_nascimento', msg('lb_us_dt_nascimento'), True, True));
 		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('Feminino'), 'us_genero', msg('us_genero'), True, True));
+		array_push($cp, array('$}', '', '', False, True));
 
-		array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('eq_ativo_2'), True, True));
-		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), True, True));
-
+		array_push($cp, array('${', '', 'Dados no CIP', False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('lb_us_ativo'), True, True));
+		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('lb_user_teste'), True, True));
 		array_push($cp, array('$Q id_ustp:ustp_nome:select * from us_tipo order by ustp_nome', 'usuario_tipo_ust_id', msg('perfil'), True, True));
-
-		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
-		array_push($cp, array('$Q id_area:area_avaliacao_nome:select * from area_avaliacao order by area_avaliacao_nome', 'us_area_conhecimento', msg('area_avaliacao'), False, True));
-		array_push($cp, array('$B', '', msg('enviar'), false, True));
+		array_push($cp, array('$}', '', '', False, True));
+	
+		array_push($cp, array('$B', '', msg('save'), false, True));
 
 		return ($cp);
 	}
@@ -1396,6 +1398,25 @@ class usuarios extends CI_model {
 		}
 		return ($cracha);
 	}
+	
+	function buscaCentro($centro)
+		{
+			$sql = "select * from centro_academico 
+						INNER JOIN campus on da_campus = id_c
+					WHERE da_nome = '$centro' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					
+					$rt = array($line['id_da'],$line['c_campus']);
+					return($rt);
+				} else {
+					echo 'OPS '.$centro;
+					exit;
+				}
+		}
 
 	function insere_usuario($DadosUsuario) {
 
@@ -1409,12 +1430,25 @@ class usuarios extends CI_model {
 
 		$tel1 = trim($DadosUsuario['tel1']);
 		$tel2 = trim($DadosUsuario['tel2']);
+		$curso = trim($DadosUsuario['nomeCurso']);
 
 		$genero = $DadosUsuario['sexo'];
 		$dtnasc = sonumero($DadosUsuario['dataNascimento']);
 		$dtnasc = substr($dtnasc, 4, 4) . '-' . substr($dtnasc, 2, 2) . '-' . substr($dtnasc, 0, 2);
 		$cracha = $DadosUsuario['pessoa'];
-		$curso = trim($this -> limpaCursos($DadosUsuario['nomeCurso']));
+				
+		if (isset($DadosUsuario['nomeCurso']))
+			{
+				$data = $DadosUsuario['nomeCurso'];
+				$curso = trim($this -> limpaCursos($curso));		
+			} else {
+				$data = array();
+				$curso = '';
+			}
+
+		$rs = $this -> buscaCentro($DadosUsuario['centroAcademico']);
+		$centro = $rs[0];
+		$campus = $rs[1];
 		$emplid = '';
 		$tipo = $DadosUsuario['tipo'];
 
@@ -1442,9 +1476,13 @@ class usuarios extends CI_model {
 						us_cpf = '$cpf',
 						us_dt_update_cs = '" . date("Y-m-d") . "',
 						usuario_tipo_ust_id = $tipo,						
-						us_genero = '$genero'
+						us_genero = '$genero',
+						us_centro_academico = '$centro',
+						us_campus_vinculo = '$campus',
+						us_dt_nascimento = '$dtnasc'
 						$up
-					where id_us = $idu ";
+					where us_cracha = '$cracha'";
+					
 			$this -> db -> query($sql);
 		} else {
 			/* Novo registro */
@@ -1452,11 +1490,13 @@ class usuarios extends CI_model {
 							(
 							us_nome, us_cpf, us_cracha,
 							us_emplid, usuario_tipo_ust_id, us_dt_nascimento,
-							us_curso_vinculo, us_dt_update_cs
+							us_curso_vinculo, us_dt_update_cs,
+							us_campus_vinculo, us_centro_academico
 							) values (
 							'$nome','$cpf','$cracha',
 							'$emplid','$tipo','$dtnasc',
-							'$curso', '" . date("Y-m-d") . "'
+							'$curso', '" . date("Y-m-d") . "',
+							'$campus','$centro'
 							)					
 					";
 			$this -> db -> query($sql);

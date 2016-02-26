@@ -38,7 +38,7 @@ class main extends CI_Controller {
 		array_push($css, 'form_sisdoc.css');
 
 		array_push($js, 'js_cab.js');
-		array_push($js, 'unslider.min.js');
+		array_push($js, 'unslider.js');
 
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
@@ -118,7 +118,7 @@ class main extends CI_Controller {
 		}
 		if (perfil('#CPS#COO#ADM') == 1) { array_push($menu, array('CIP', 'Administração do Centro Integrado de Pesquisa, Administração', 'BTA', '/cip'));
 		}
-		if (perfil('#ADM') == 1) {
+		if (perfil('#ADM#SEP') == 1) {
 			array_push($menu, array('Stricto Sensu', 'Secretaria e Coordenação do <i>stricto sensu</i>', 'BTA', '/stricto_sensu'));
 		}
 		

@@ -13,6 +13,15 @@ class Ic_pareceres extends CI_model {
 
 		}
 	}
+	
+	function avaliacoes_avaliador($id)
+		{
+			echo '<HR>OLA';
+			for ($r=date("Y");$r < (date("Y")-4);$r--)
+				{
+					echo "++";			
+				}
+		}
 
 }
 ?>

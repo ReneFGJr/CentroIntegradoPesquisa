@@ -78,8 +78,8 @@ class ws_sga extends CI_model {
 		if (count($DadoAluno) == 0) {
 			/* Retorna vazio */
 			return ('');
-		}		
-
+		}	
+		
 		/* Modelo 1 - Somente um curso */
 		if (isset($DadoAluno['pessoa'])) {
 			$DadoAluno['tipo'] = '3';

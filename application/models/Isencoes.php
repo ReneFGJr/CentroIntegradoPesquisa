@@ -34,12 +34,75 @@ class isencoes extends CI_model {
 			array_push($cp,array('$['.(date("Y")-3).'-'.date("Y").']','bn_ano',msg('entrada_no_programa'),True,True));
 			array_push($cp,array('$O '.$op,'bn_modalide',msg('modalidade'),True,True));
 			$sql = "select * from ss_programa_pos where pp_ativo = 1 order by pp_nome";
-			array_push($cp,array('$Q id_pp:pp_nome:'.$sql,'bn_modalide',msg('programa'),True,True));
+			array_push($cp,array('$Q id_pp:pp_nome:'.$sql,'bn_programa',msg('programa'),True,True));
 			array_push($cp,array('$M','','<br><br>',false,True));
 			array_push($cp,array('$B8','','Prosseguir >>>',False,True));
 			return($cp);
-		}		
+		}
+	function cp_isencoes_03($id=0)
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_bn','',False,True));
+			
+			$link = base_url('index.php/ss/termo_gerar/'.$id.'/'.checkpost_link($id));
+			
+			$cap = 'Geração e impressão do Termo de Isenção.';
+			array_push($cp,array('${','',$cap,false,True));
+			$txt = '<font class="lt3">';
+			$txt .= 'Clique no botão "Gerar" para gerar o termo de isenção, solicitando a assinatura do estudante, coordenador do programa e do professor orietador.';
+			$txt .= '<br><br>';			
+			$txt .= '<input type="button" value="gerar termo de isenção" onclick="newwin(\''.$link.'\',800,600);">';
+			array_push($cp,array('$M','',$txt,false,True));
+			array_push($cp,array('$}','',$cap,false,True));
+			$txt .= '</font>';
 
+			array_push($cp,array('$M','','<br><br>',false,True));
+			array_push($cp,array('$B8','','Prosseguir >>>',False,True));
+			return($cp);
+		}				
+
+	function altera_status($id=0,$sta='')
+		{
+			$sql = "update bonificacao set bn_status = '$sta' where id_bn = ".$id;
+			$this->db->query($sql);
+			return(1);
+		}
+	
+	function cp_isencoes_04($id=0)
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_bn','',False,True));
+			
+			$cap = 'Envio do termo assinado.';
+			array_push($cp,array('${','',$cap,false,True));
+			$txt = '<font class="lt3">';
+			$txt .= 'O termo deve ser digitaliza com as assinaturas e enviado ao sistema';
+			$txt .= '<br><br>';			
+			array_push($cp,array('$M','',$txt,false,True));
+			array_push($cp,array('$FILE:bonificacao_ged_documento:isencao','',strzero($id,7),false,True));
+			array_push($cp,array('$}','',$cap,false,True));
+			$txt .= '</font>';
+
+			array_push($cp,array('$M','','<br><br>',false,True));
+			array_push($cp,array('$B8','','Prosseguir >>>',False,True));
+			return($cp);
+		}
+	function cp_isencoes_05($id=0)
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_bn','',False,True));
+			
+			$cap = 'Finalização.';
+			array_push($cp,array('${','',$cap,false,True));
+			$txt = '<font class="lt3">';
+			$txt .= 'O termo em papel deve ser encaminhado a secretaria do programa para finalização do processo';
+			$txt .= '<br><br>';			
+			$txt .= '</font>';
+			array_push($cp,array('$M','',$txt.'<br><br>',false,True));
+			array_push($cp,array('$}','',$cap,false,True));
+			array_push($cp,array('$B8','','Finalizar >>>',False,True));
+			return($cp);
+		}		
 	function transfere_para_outra_modalidade($mod='',$proto='')
 		{
 			
@@ -90,14 +153,26 @@ class isencoes extends CI_model {
 					return(0);
 				}
 		}
-	function le($proto)
+	function le($id)
 		{
-			$sql = "select * from bonificacao where 
-						bn_codigo = '$proto'";
+			$sql = "select prof.us_nome as pr_nome, prof.us_cpf as pr_cpf,
+						   alun.us_nome as al_nome, alun.us_cpf as al_cpf,
+						   coor.us_nome as co_nome, coor.us_cpf as co_cpf,
+						   bn_codigo, bn_modalide, bn_programa, pp_nome,
+						   bn_original_protocolo, ca_titulo_projeto, bn_status
+					 from bonificacao 
+					INNER JOIN us_usuario as alun on bn_beneficiario = alun.us_cracha
+					INNER JOIN us_usuario as prof on bn_professor = prof.us_cracha
+					LEFT JOIN ss_programa_pos on bn_programa = id_pp
+					INNER JOIN us_usuario as coor on id_us_coordenador = coor.id_us
+					INNER JOIN captacao on bn_original_protocolo = ca_protocolo				
+					where id_bn = $id ";
+					echo $sql;
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			if (count($rlt) > 0)
 				{
+					$line = $rlt[0];
 					return($rlt[0]);
 				} else {
 					return(array());

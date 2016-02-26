@@ -17,7 +17,9 @@ if (!function_exists(('msg')))
 /* Menu Princicpal */
 $lang['submit_ICMST'] = 'PIBIC MASTER';
 $lang['submit_ICMST_text'] = 'Submissão para o Edital do PIBIC Master';
+$lang['pj_aluno'] = 'Estudante';
 
+$lang['export_to_excel'] = 'Exportar para o Excel';
 $lang['update'] = 'Atualizar';
 /* Genero */
 $lang['genero_M'] = 'Masculino';
@@ -81,7 +83,8 @@ $lang['CAPT'] = 'Captação de Recursos';
 $lang['IC'] = 'Iniciação Científica';
 $lang['ic_ativa'] = 'Orientações ativas';
 $lang['ic_finalizados'] = 'Orientações concluídas';
-$lang['save_next'] = 'Salvar e continuar >>';	
+$lang['save_next'] = 'Salvar e continuar >>';
+$lang['save'] = 'Salvar >>';	
 $lang['continuous_flow'] = 'Fluxo contínuo';
 $lang['validacao_coordenador_link'] = 'ver validações necessárias';
 $lang['captacoes'] = 'captações';
@@ -146,8 +149,12 @@ $lang['lb_us_regime'] 	= 'Regime';
 $lang['lb_eq_ativo_2'] 	= 'Ativo';
 $lang['lb_us_curso_vinculo'] 	= 'Curso Vínculo';
 $lang['lb_us_escola_vinculo'] 	= 'Escola Vínculo';
-$lang['user_teste'] 	= 'Teste';
+$lang['lb_user_teste'] 	= 'Usuário teste';
+$lang['us_genero'] = 'Gênero';
+$lang['lb_us_ativo'] = 'Usuário ativo'; 
+$lang['us_titulacao'] = 'Titulação';
 $lang['lb_us_origem'] 	= 'Origem';
+$lang['instituicao'] = 'Instituição';
 $lang['lb_us_professor_tipo'] 	= 'Professor Tipo';
 $lang['lb_us_usuario_cursando'] 	= 'Cursando';
 

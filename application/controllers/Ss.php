@@ -98,7 +98,19 @@ class ss extends CI_Controller {
 		$this -> load -> view('ss/index', $data);
 	}	
 
-
+	function le($id)
+		{
+			$sql = "select * from bonificacao where id_bn = ".round($id);
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result($rlt);
+			if (count($rlt) > 0)
+				{
+					$rlt = $rlt[0];
+				} else {
+					$rlt = array();
+				}
+			return($rlt);
+		}
 	function isencoes()
 		{
 		$this->load->model('artigos');
@@ -114,6 +126,23 @@ class ss extends CI_Controller {
 		$this->load->view('content',$data);
 		}
 		
+	function termo_gerar($id=0,$chk='')
+		{
+		$this -> load -> helper('tcpdf');
+					
+		$this->load->model('artigos');
+		$this->load->model('isencoes');
+		$this->load->model('captacoes');
+		$this->load->model('usuarios');			
+		$this->load->model('bonificacoes');
+		
+		$data = $this->isencoes->le($id);
+				
+		$data['txt'] = $this->load->view('isencoes/termo_modelo',$data, true);
+		$this->load->view('isencoes/termo_pdf',$data);			
+			
+		}
+		
 	function indicar_isencao($id=0,$check='',$pag=1)
 		{
 		if ($pag < 1) { $pag = 1; }
@@ -122,6 +151,12 @@ class ss extends CI_Controller {
 		$this->load->model('captacoes');
 		$this->load->model('usuarios');			
 		$this->load->model('stricto_sensus');
+		
+		$this->isencoes->le($id);
+		if ($data['bn_status'] != '!')
+			{
+				redirect(base_url('index.php/ss'));
+			}
 		
 		$this -> cab('Indicar Isenção');
 		$data = array();
@@ -158,7 +193,34 @@ class ss extends CI_Controller {
 				$tela = $form->editar($cp,'bonificacao');
 				$data['content'] = $tela;
 				$this->load->view('content',$data);
-				break;			}
+				break;
+			case '3':
+				$cp = $this->isencoes->cp_isencoes_03($id);
+				$data['cracha'] = '';
+				$tela = $form->editar($cp,'bonificacao');
+				$data['content'] = $tela;
+				$this->load->view('content',$data);
+				break;
+			case '4':
+				$cp = $this->isencoes->cp_isencoes_04($id);
+				$data['cracha'] = '';
+				$tela = $form->editar($cp,'bonificacao');
+				$data['content'] = $tela;
+				$this->load->view('content',$data);
+				break;	
+			case '5':
+				$cp = $this->isencoes->cp_isencoes_05($id);
+				$data['cracha'] = '';
+				$tela = $form->editar($cp,'bonificacao');
+				$data['content'] = $tela;
+				$this->load->view('content',$data);
+				break;	
+			case '6':
+				$cp = $this->isencoes->altera_status($id,'A');
+				$data['content'] = '<h1><font color="green">'.msg('successful').'</font></h1>';
+				$this->load->view('content',$data);
+				break;	
+			}
 		
 		if ($form->saved > 0)
 			{
