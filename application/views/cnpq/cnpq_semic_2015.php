@@ -14,7 +14,14 @@
 				<?php
 
 			/* PIBIC */
-			$dado = array('1993' => 20, '1994' => 23, '1995' => 27, '1996' => 35, '1997' => 35, '1998' => 37, '1999' => 49, '2000' => 58, '2001' => 64, '2002' => 106, '2003' => 224, '2004' => 220, '2005' => 172, '2006' => 166, '2007' => 184, '2008' => 231, '2009' => 265, '2010' => 466, '2011' => 515, '2013' => 892, '2014' => 974, '2015*' => 1114);
+			$dado = array('1993' => 20, '1994' => 23, '1995' => 27, 
+										'1996' => 35, '1997' => 35, '1998' => 37, 
+										'1999' => 49, '2000' => 58, '2001' => 64, 
+										'2002' => 106, '2003' => 224, '2004' => 220, 
+										'2005' => 172, '2006' => 166, '2007' => 184, 
+										'2008' => 231, '2009' => 265, '2010' => 466, 
+										'2011' => 515, '2013' => 892, '2014' => 974, 
+										'2015*' => 1114 );
 			$title = 'Histórico de trabalhos no SEMIC';
 			$title2 = '1993-2015';
 			$ybar = 'Total de trabalhos';
@@ -75,14 +82,15 @@
 		data: [ <?php echo "$dados";?> ],
 	dataLabels: {
 		enabled: true,
-		rotation: -45,
+		rotation: -90,
 		color: '#222222',
 		align: 'center',
 		format: '{point.y:.0f}', // one decimal
-		y: 5, // 10 pixels down from the top
+		y: -15, // 10 pixels down from the top
 		style: {
-			fontSize: '11px',
-			fontFamily: 'Verdana, sans-serif'
+			fontSize: '10px',
+			fontFamily: 'Verdana, sans-serif',
+			fontcollor: 'red'
 			}
 	}
 	}]
@@ -91,10 +99,13 @@
 </head>
 <div id="<?php echo $div_name;?>" style="width: auto; margin: 0 auto"></div>
 			
+			<br />
+			<font class="lt0">
+					<?php echo '* 2015 - Valor estimado de apresentações, os relatórios estão em submissão e avaliação.';?>
+			</font>
 			
-			echo '<font class="lt0">* 2015 - Valor estimado de apresentações, os relatórios estão em submissão e avaliação.';
-			echo '<td width="60%" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 12px;">';
-			?>
+			<td width="60%" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 12px;">
+			
 			Novidades no evento:
 			<uL>
 				<li>
@@ -136,7 +147,8 @@
 				<li>
 					Em 2014 foram premiados com menção honrosa os trabalhos nas modalidades Pôster e Oral, os trabalhos melhor avaliados por categorias foram premiados em dinheiro. Neste ano os estudantes da Pós-Graduação foram integrados com os da graduação, tanto na apresentação oral como pôster.
 				</li>
-			</ul> Em 2014 a PUCPR sediou o 3ª Congresso Sul Brasileiro de Iniciação Científica e Pós-Graduação, com representantes de Universidades do Paraná, Santa Catarina e Rio Grande do Sul. </td>
+			</ul> Em 2014 a PUCPR sediou o 3ª Congresso Sul Brasileiro de Iniciação Científica e Pós-Graduação, com representantes de Universidades do Paraná, Santa Catarina e Rio Grande do Sul. 
+			</td>
 		</tr>
 		<tr>
 			<td colspan=2>
@@ -155,49 +167,51 @@
 				<tr align="center" valign="top">
 				<td width="25%">
 					<img src="<?php echo base_url('img/cnpq/semic_2014.jpg');?>" width="150"; /> <br>
-					<a title="CICPG" href="http://www2.pucpr.br/reol/eventos/cicpg/" target="_blank">Evento 2014 + CICPG (Congresso Sul Brasileiro de Iniciação Científica e Pós-Graduação)</a>
+					<a title="CICPG" href="http://www2.pucpr.br/reol/eventos/cicpg/" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2014 + CICPG (Congresso Sul Brasileiro de Iniciação Científica e Pós-Graduação)</a>
 				</td>
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2013.jpg" width="150"><br>
-					<a href="http://www2.pucpr.br/reol/semic2013/" target="_blank">Evento 2013</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2013.jpg');?>" width="150"; /> <br>
+					<a href="http://www2.pucpr.br/reol/semic2013/" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2013</a>
 				</td>
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2012.jpg" width="150"><br>
-					<a title="XX SEMIC" href="http://www2.pucpr.br/reol/semic2012/">Evento 2012</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2012.jpg');?>" width="150"; /> <br>
+					<a title="XX SEMIC" href="http://www2.pucpr.br/reol/semic2012/" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2012</a>
 				</td>
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2011.jpg" width="150"><br>
-					<a href="http://www2.pucpr.br/reol/index.php/SEMIC19?dd99=contact" target="_blank">Evento 2011</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2011.jpg');?>" width="150"; /> <br>
+					<a href="http://www2.pucpr.br/reol/index.php/SEMIC19?dd99=contact" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2011</a>
 				</td>
+				</tr>
 				<tr align="center" valign="top">
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2010.jpg" width="150"><br>
-					<a href="http://www2.pucpr.br/reol/index.php/semic18">Evento 2010</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2010.jpg');?>" width="150"; /> <br>
+					<a href="http://www2.pucpr.br/reol/index.php/semic18" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2010</a>
 				</td>
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2009.jpg" width="150"><br>
-					<a href="http://www2.pucpr.br/reol/index.php/semic17" target="_blank">Evento 2009</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2009.jpg');?>" width="150"; /> <br>
+					<a href="http://www2.pucpr.br/reol/index.php/semic17" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2009</a>
 				</td>
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2008.jpg" width="150"><br>
-					<a href="http://www2.pucpr.br/reol/index.php/PIBIC2008?dd99=" target="_blank">Evento 2008</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2008.jpg');?>" width="150"; /> <br>
+					<a href="http://www2.pucpr.br/reol/index.php/PIBIC2008?dd99=" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2008</a>
 				</td>
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2007.jpg" width="150"><br>
-					<a href="http://www2.pucpr.br/reol/index.php/PIBIC2007?dd99=" target="_blank">Evento 2007</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2007.jpg');?>" width="150"; /> <br>
+					<a href="http://www2.pucpr.br/reol/index.php/PIBIC2007?dd99=" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2007</a>
 				</td>
+				</tr>
 				<tr align="center" valign="top">
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2006.jpg" width="150"><br>
-					<a href="http://www2.pucpr.br/reol/index.php/PIBIC2006" target="_blank">Evento 2006</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2006.jpg');?>" width="150"; /> <br>
+					<a href="http://www2.pucpr.br/reol/index.php/PIBIC2006" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2006</a>
 				</td>
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2005.jpg" width="150"><br>
-					<a href="http://www.pucpr.br/pesquisa_cientifica/iniciacao_pibic/pibic/eventos/evento2005/index.html" target="_blank">Evento 2005</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2005.jpg');?>" width="150"; /> <br>
+					<a href="http://www.pucpr.br/pesquisa_cientifica/iniciacao_pibic/pibic/eventos/evento2005/index.html" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2005</a>
 				</td>
 				<td width="25%">
-					<img src="../pibicpr/img/semic_2004.jpg" width="150"><br>
-					<a href="http://www.pucpr.br/pesquisa_cientifica/iniciacao_pibic/pibic/eventos/evento2004/index.html" target="_blank">Evento 2004</a>
+					<img src="<?php echo base_url('img/cnpq/semic_2004.jpg');?>" width="150"; /> <br>
+					<a href="http://www.pucpr.br/pesquisa_cientifica/iniciacao_pibic/pibic/eventos/evento2004/index.html" target="_blank" style="padding: 5px; font-family: Roboto, CICPG, Arial; font-size: 13px;">Evento 2004</a>
 				</td>
 				</table>
 			</td>

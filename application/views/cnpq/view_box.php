@@ -25,8 +25,8 @@
 					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq_relato_do_processo_de_selecao_2015');?>">Relato do processo de seleção</a></li>
 					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq_membros_do_comite_gestor_2015');?>">Membros do Comitê Gestor</a></li>
 					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq_semic_2015');?>">Seminário de Iniciação Científica (SEMIC)</a</li>
-					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/index');?>">Novos programas IC</a></li>
-					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/index');?>">Edital IC 003/2015</a></li>
+					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq_mobilidade_2015');?>">Novos programas IC</a></li>
+					<li><a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq_editais_2015');?>">Editais e Normas da IC</a></li>
 				</ul>
 			</td>
 		</tr>
