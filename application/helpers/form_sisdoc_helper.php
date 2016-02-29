@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @category	Helpers
  * @author		Rene F. Gabriel Junior <renefgj@gmail.com>
  * @link		http://www.sisdoc.com.br/CodIgniter
- * @version		v0.16.01
+ * @version		v0.16.10
  */
 $dd = array();
 
@@ -827,8 +827,30 @@ function db_read($rlt) {
 }
 
 function page() {
-	$page = base_url();
-
+	$pg = $_SERVER['REQUEST_URI'];
+	
+	$pos = strpos($pg,'.php');
+	$pg = substr($pg,$pos+5,strlen($pg));
+	//$pg = troca($pg,'/','-');
+	if (strpos($pg,'?') > 0)
+		{
+			$pos = strpos($pg,'?');
+			$pg = substr($pg,0,$pos);		
+		}
+	$pg = troca($pg,'1','');
+	$pg = troca($pg,'2','');
+	$pg = troca($pg,'3','');
+	$pg = troca($pg,'4','');
+	$pg = troca($pg,'5','');
+	$pg = troca($pg,'6','');
+	$pg = troca($pg,'7','');
+	$pg = troca($pg,'8','');
+	$pg = troca($pg,'9','');
+	$pg = troca($pg,'0','');
+	$pg = troca($pg,'/','');
+	
+	
+	$page = $pg;
 	return ($page);
 }
 
@@ -1028,9 +1050,14 @@ class form {
 }
 
 /* Paginacao */
-function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
+function npag($obj, $blank=1, $tot = 10, $offset = 20) {
 	$page = uri_string();
 	$pagm = $tot;
+	$term = $obj->term;
+	$npage = $obj->npag;
+	$field = $obj->field;
+	
+	
 
 	/* Campos para busca */
 	$fd = $obj -> lb;
@@ -1049,7 +1076,10 @@ function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 		$pagi = 1;
 	}
 
-	$sx = '<ul id="npag" class="npag">';
+
+	$sx = '<table class="tabela00 lt2" border=1 width="100%">';
+	$sx .= '<tr><td width="50%">';
+	$sx .= '<ul id="npag" class="npag">';	
 	if ($pagi > 1) {
 		$linka = '<A HREF="' . $link . '/' . ($pagi - 1) . '">';
 		$sx .= $linka . '<li><<</li></A> ';
@@ -1059,8 +1089,8 @@ function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 	if ($pagf > $tot) { $pagf = $tot;
 	}
 	for ($r = $pagi; $r < ($pagf + 1); $r++) {
-		$linka = '<A HREF="' . $link . '/' . $r . '">';
-		$sx .= $linka . '<li>' . $r . '</li></a>' . chr(10) . chr(13);
+		$linka = '<A HREF="' . $link . '/' . $r . '" class="link lt1">';
+		$sx .= $linka . '<li class="lt1">' . $r . '</li></a>' . chr(10) . chr(13);
 	}
 	/* */
 	if ($pagf < $pagm) {
@@ -1068,8 +1098,8 @@ function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 		$sx .= $linka . '<li>>></li></A>';
 	}
 	/* */
-	$sx .= '<li style="width: 100px; border: 0px solid #FFFFFF; background-color: #ffffff;">';
-	$sx .= 'Page:';
+	//$sx .= '</td><td>';
+	$sx .= ' Page:';
 	$linka = $link . '/';
 	$sx .= '<select onChange="location=\'' . $linka . '\'+this.options[this.selectedIndex].value;">';
 	for ($r = 1; $r <= $pagm; $r++) {
@@ -1079,29 +1109,42 @@ function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 		$sx .= '<option value="' . $r . '" ' . $chk . '>' . $r . '</option>';
 	}
 	$sx .= '</select>';
-	$sx .= '</li>';
 
 	/* Busca */
-	$sx .= '<li style="width: 50px; border: 0px solid #FFFFFF; background-color: #ffffff;"><nobr>';
-	$sx .= 'Filtro:';
-	$sx .= '</li>';
-	$sx .= '<li style="width: 220px; border: 0px solid #FFFFFF; background-color: #ffffff;"><nobr>';
-
-	if (isset($_POST['dd1'])) {
-		$vlr = $_POST['dd1'];
+	
+	/************************* form */
+	$sx .= '</td><td width="10%">';
+	$attribute['method'] = 'get';
+	$sx .= form_open($link,$attribute);
+		
+	/* ************************** filtro ************************/
+	$sx .= '</td><td align="right" width="20%"><nobr>';
+	$sx .= msg('filtro').':';
+	if (strlen(get('dd1')) > 0) {
+		$vlr = get('dd1');
 	} else {
-		$vlr = '';
+		$vlr = $term;
 	}
-	$sx .= form_open();
+	
+	
 	$data = array('name' => 'dd1', 'id' => 'dd1', 'value' => $vlr, 'maxlength' => '100', 'size' => '100', 'style' => 'width:150px', );
 	$sx .= form_input($data);
+	$sx .= form_submit('acao', msg('bt_search'));
+	
+	if (strlen($term) > 0)
+		{
+		$sx .= form_submit('acao', msg('bt_clear'));
+		}
+	$sx .= '</nobr>';
+	
 
-	if (isset($_POST['dd5'])) {
-		$dd5 = sonumero($_POST['dd5']);
+	/* ************************** field ************************/
+	if (strlen(get('dd5')) > 0) {
+		$dd5 = sonumero(get('dd5'));
 	} else {
 		$dd5 = 1;
-	}
-
+	}	
+	$sx .= '</td><td>';
 	$sx .= 'em: <select name="dd5" id="dd5">' . cr();
 	for ($rt = 1; $rt < count($fd); $rt++) {
 		$sel = '';
@@ -1112,17 +1155,17 @@ function npag($obj, $npage = 1, $tot = 10, $offset = 20) {
 	$sx .= '</select>' . cr();
 
 	$sx .= form_hidden('dd2', 'search');
-
-	$sx .= form_submit('acao', 'busca');
-	$sx .= form_submit('acao', 'limpa filtro');
+	/* ************************** action ************************/
+	$sx .= '</td><td align="right">';
 	if ($obj -> novo == true) {
-		$sx .= form_submit('acao', 'novo');
+		$sx .= form_submit('acao', msg('bt_new'));
 	}
 	$sx .= form_close();
 	$sx .= '
 	</li>
 	';
 	$sx .= '</ul>';
+	$sx .= '</td></tr></table>';
 	return ($sx);
 }
 
@@ -1162,46 +1205,55 @@ if (!function_exists('form_edit')) {
 	 */
 
 	function row($obj, $pag = 1) {
-		$field_search = 1;
+		$page = page();
+		$npag = $pag;
+		$field = 1;
+
+		
+		$acao = trim(get('acao'));
+		/* Zera paginacao em nova consulta */
+		if (get('acao') == msg('bt_search')) {
+			$pag = 1;
+			$npag = 1;
+		}			
 		$start = round($pag);
 		$offset = $obj -> offset;
 		$start = $pag * $offset;
-		$CI = &get_instance();
+		$CI = &get_instance();		
 
 		/* Dados do objeto */
 		$fd = $obj -> fd;
 		$mk = $obj -> mk;
 		$lb = $obj -> lb;
 
-		/* POST */
-		$post = $CI -> input -> post();
-		$dd = $post;
-		$acao = $CI -> input -> post("acao");
-
-		if ($acao == 'novo') {
+		/* BOTA NOVO */
+		if ($acao == mst('bt_new')) {
 			redirect($obj -> row_edit . '/0/0');
 			exit ;
 		}
-		if ($acao == 'limpa filtro') {
-			$CI -> session -> userdata['row_termo'] = '';
-			$CI -> session -> userdata['row_field'] = '';
-			$CI -> session -> userdata['row_page'] = '';
+		
+		/* FILTRO */
+		if ($acao == msg('bt_clear')) {
+			$CI -> session -> userdata['rt_'.$page] = '';
+			$CI -> session -> userdata['rf_'.$page] = '';
+			$CI -> session -> userdata['rp_'.$page] = '';
 		}
-		$acao = '';
 		$term = '';
-		if (isset($post)) {
-			if (isset($post['dd2'])) { $acao = $post['dd2'];
+		
+		/* se postado recupera termos */
+		if (strlen(get('dd1'))) {
+			if (strlen(get('dd2')) > 0) { $acao = get('dd2');
 			}
-			if (isset($post['dd1'])) { $term = $post['dd1'];
+			if (strlen(get('dd1')) > 0) { $term = get('dd1');
 			}
 			$term = troca($term, "'", "´");
 		}
-		if (isset($post['dd5'])) {
-			$field_search = round($post['dd5']);
+		if (strlen(get('dd5'))) {
+			$field = round(get('dd5'));
 		}
-		if ($field_search < 1) { $field_search = 1;
+		if ($field < 1) { $field = 1;
 		}
-		if ($field_search >= count($fd)) { $field_search = count($fd) - 1;
+		if ($field >= count($fd)) { $field = count($fd) - 1;
 		}
 
 		/* parametros */
@@ -1220,7 +1272,7 @@ if (!function_exists('form_edit')) {
 			$fld .= ', ' . $fd[$r];
 		}
 		if ($obj -> edit == True) {
-			$sh .= '<th>action</th>';
+			$sh .= '<th>'.msg('action').'</th>';
 		}
 		$sh .= '</tr></thead>';
 
@@ -1229,34 +1281,46 @@ if (!function_exists('form_edit')) {
 
 		$CI = &get_instance();
 
-		/* */
+		/* SEM ACAO REGISTRADA */
 		if (strlen($acao) == 0) {
-			if (isset($_SESSION['row_termo'])) {
-				$term = $_SESSION['row_termo'];
-				$field_search = round($_SESSION['row_field']);
+			/* recupera dados da memoria */
+			if (isset($_SESSION['rt_'.$page])) {
+				$term = $_SESSION['rt_'.$page];
+				$npage = round($_SESSION['rp_'.$page]);
+				$field = round($_SESSION['rf_'.$page]);
 			} else {
 				$term = '';
 			}
 		}
-		if (isset($_POST['dd9'])) {
-			if ($_POST['dd9'] == 'clean') {
+		if (strlen(get('acao')) > 0) {			
+			if (get('acao') == msg('bt_clear')) {
 				$term = '';
-				$CI -> session -> userdata['row_termo'] = '';
-				$CI -> session -> userdata['row_field'] = '';
-				$CI -> session -> userdata['row_pag'] = '';
+				$CI -> session -> userdata['rt_'.$page] = '';
+				$CI -> session -> userdata['rp_'.$page] = '';
+				$CI -> session -> userdata['rf_'.$page] = '';
+				redirect($obj -> row);
 			}
 		}
-
+		/* Memoria */
+		$termo = $term;
+		/*
+		echo '<br>page: '.$page;
+		echo '<br>text: '.$termo;
+		echo '<br>field: '.$field;
+		echo '<br>pag: '.$npag;
+		echo '<hr>';
+		print_r($_SESSION);
+		 */
 		/* Where */
 		if (strlen($term) > 0) {
-			if (isset($_POST['dd5'])) {
-				$field_search = $_POST['dd5'];
+			if (strlen(get('dd5')) > 0) {
+				$field = get('dd5');
 			} else {
-				$field_search = round($_SESSION['row_field']);
-				if ($field_search <= 1) { $field_search = 1;
+				$field = round($_SESSION['rf_'.$page]);
+				if ($field <= 1) { $field = 1;
 				}
 			}
-			$newdata = array('row_termo' => $term, 'row_field' => $field_search, 'row_page' => '1');
+			$newdata = array('rt_'.$page => $termo, 'rf_'.$page => $field, 'rp_'.$page => $npag);
 			$CI -> session -> set_userdata($newdata);
 
 			$term = troca($term, ' ', ';');
@@ -1266,9 +1330,14 @@ if (!function_exists('form_edit')) {
 			for ($rt = 0; $rt < count($term); $rt++) {
 				if (strlen($wh) > 0) { $wh .= ' and ';
 				}
-				$wh .= ' (' . $fd[$field_search] . " like '%" . $term[$rt] . "%') ";
+				$wh .= ' (' . $fd[$field] . " like '%" . $term[$rt] . "%') ";
 			}
 			$wh = ' where ' . $wh;
+			/* PRE WHERE */
+			if ((isset($obj->pre_where)) and (strlen($obj->pre_where) > 0))
+				{
+					$wh .= ' AND ('.$obj->pre_where.')';
+				}			
 		} else {
 			$wh = '';
 		}
@@ -1288,6 +1357,12 @@ if (!function_exists('form_edit')) {
 		}
 
 		$sql = "select $fld from " . $tabela . ' ' . $wh;
+		
+		/* PRE WHERE */
+		if ((isset($obj->pre_where)) and (strlen($obj->pre_where) > 0))
+			{
+				$wh .= ' AND ('.$obj->pre_where.')';
+			}
 		if (strlen($obj -> order) > 0) {
 			$sql .= " order by " . $obj -> order;
 		} else {
@@ -1357,7 +1432,10 @@ if (!function_exists('form_edit')) {
 		$tela .= '</table>';
 
 		$total_page = (int)($total / $offset) + 1;
-
+		$obj->term = $termo;
+		$obj->npag = $npag;
+		$obj->field = $field;
+		
 		$pags = npag($obj, $pag, $total_page, $offset);
 
 		return ($pags . $tela);
