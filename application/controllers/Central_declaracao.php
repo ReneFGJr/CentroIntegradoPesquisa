@@ -419,7 +419,7 @@ class central_declaracao extends CI_Controller {
 				
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
-				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 30 de novembro de 2015.</td></tr></table>';
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 30 de novembro de 2014.</td></tr></table>';
 				break;
 
 			/* Declaracao de Orientador */
@@ -439,14 +439,14 @@ class central_declaracao extends CI_Controller {
 										$artigo_g5 . ' ' .
 									 	$artigo_g2 . ' <b>' . $data['nome_user_main'] .'</b> no projeto de pesquisa intitulado "<b>' . 
 	                  $data['titulo_projeto'] . '</b>", com ' . $data['modalidade'] . ', no programa ' . 
-	                  $data['edital'] . ', no período de agosto de 2014 até julho de 2015.';
+	                  $data['edital'] . ', no período de agosto de 2013 até julho de 2014.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
-				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 30 de novembro de 2015.</td></tr></table>';
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 30 de novembro de 2014.</td></tr></table>';
 				break;
 
 			/*#############################################################################################*/
-			/*#######################     INICIACAO CIENTIFICA DE 2013 à 2014    ##############################*/
+			/*#######################     INICIACAO CIENTIFICA DE 2012 à 201    ##############################*/
 			/*#############################################################################################*/
 
 			/* Declaracao de participacao estudante*/
