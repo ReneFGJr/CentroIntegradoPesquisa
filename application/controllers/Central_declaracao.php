@@ -43,6 +43,10 @@ class central_declaracao extends CI_Controller {
 	}
 
 	function perfil() {
+		
+		echo '<h1>EM MANUTENÇÃO</h1>';
+	}
+	function perfil2() {
 		/* load model */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('evento/eventos');
@@ -62,59 +66,74 @@ class central_declaracao extends CI_Controller {
 		/**##############################################################################################*/
 		
 		/**###################################>> SEMIC 2011 <<############################################*/
-		$ano_11 = '2011';
+		$ano = '2011';
 		/* Estudante IC 2011 */
-		$err1 = $this -> eventos -> emitir('IC', 'ESTUDANTE', $ano_11, $data);
+		$err1 = $this -> eventos -> emitir('IC', 'ESTUDANTE', $ano, $data);
 						/* Avaliador SEMIC 2011*/
-						$this -> eventos -> emitir('IC', 'AVALIADOR', $ano_11, $data);
+						$this -> eventos -> emitir('IC', 'AVALIADOR', $ano, $data);
 						/* Orientador IC 2011*/
-						$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano_11, $data);
+						$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano, $data);
 		
 		/**###################################>> SEMIC 2012 <<############################################*/
-		$ano_12 = '2012';
+		$ano = '2012';
 		/* Estudante IC 2012 */
-		$err1 = $this -> eventos -> emitir('IC', 'ESTUDANTE', $ano_12, $data);
+		$err1 = $this -> eventos -> emitir('IC', 'ESTUDANTE', $ano, $data);
 						/* Avaliador SEMIC 2012*/
-						$this -> eventos -> emitir('IC', 'AVALIADOR', $ano_12, $data);
+						$this -> eventos -> emitir('IC', 'AVALIADOR', $ano, $data);
 						/* Orientador IC 2012*/
-						$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano_12, $data);
+						$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano, $data);
 
 		/**###################################>> SEMIC 2013 <<############################################*/
-		$ano_13 = '2013';
+		$ano = '2013';
 		/* Estudante IC 2013 */
-		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_13, $data);
+		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano, $data);
 						/* Avaliador SEMIC 2013*/
-						$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_13, $data);
+						$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano, $data);
 						/* Orientador IC 2013*/
-						$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_13, $data);
+						$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano, $data);
 
 		/**###################################>> SEMIC 2014 <<############################################*/
-		$ano_14 = '2014';
+		$ano = '2014';
 		/* Estudante IC 2014 */
-		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_14, $data);
+		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano, $data);
 						/* Avaliador SEMIC 2014*/
-						$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_14, $data);
+						$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano, $data);
 						/* Orientador IC 2014*/
-						$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_14, $data);
+						$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano, $data);
 
 		/**###################################>> SEMIC 2015 <<############################################*/
-		$ano_15 = '2015';
+		$ano = '2015';
 					/* Ouvinte SEMIC */
-					$this -> eventos -> emitir('SEMIC', 'OUVINTE', $ano_15, $data);
+					$this -> eventos -> emitir('SEMIC', 'OUVINTE', $ano, $data);
 					/* Avaliador SEMIC */
-					$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano_15, $data);
-					
-		/* Orientador IC */
-		$err2 = $this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano_15, $data);
-		/* Estudante IC */
-		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano_15, $data);
-		/* Estudante Apresentação */
-
-		$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', $ano_15, $data);
-		/* SwB2 - Participação */
-		$err1 = $this -> eventos -> emitir('SWB', 'SWB2', $ano_15, $data);
-		/* SwB2 - Participação */
-		$err1 = $this -> eventos -> emitir('SENAI', 'APRESENTACAO', $ano_15, $data);
+					$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano, $data);		
+					/* Orientador IC */
+					$err2 = $this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano, $data);
+					/* Estudante IC */
+					$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano, $data);
+					/* Estudante Apresentação */
+					$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', $ano, $data);
+					/* SwB2 - Participação */
+					$err1 = $this -> eventos -> emitir('SWB', 'SWB2', $ano, $data);
+					/* SwB2 - Participação */
+					$err1 = $this -> eventos -> emitir('SENAI', 'APRESENTACAO', $ano, $data);
+		
+		/**###################################>> SEMIC 2015 <<############################################*/
+		$ano = '2016';
+					/* Ouvinte SEMIC */
+					$this -> eventos -> emitir('SEMIC', 'OUVINTE', $ano, $data);
+					/* Avaliador SEMIC */
+					$this -> eventos -> emitir('SEMIC', 'AVALIADOR', $ano, $data);
+					/* Orientador IC */
+					$err2 = $this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano, $data);
+					/* Estudante IC */
+					$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano, $data);
+					/* Estudante Apresentação */
+					$err1 = $this -> eventos -> emitir('SEMIC', 'APRESENTACAO', $ano, $data);
+					/* SwB2 - Participação */
+					$err1 = $this -> eventos -> emitir('SWB', 'SWB2', $ano, $data);
+					/* SwB2 - Participação */
+					$err1 = $this -> eventos -> emitir('SENAI', 'APRESENTACAO', $ano, $data);		
 		/*********************************************************************************************/
 		/*********************************************************************************************/
 		$this -> load -> view("perfil/user", $data);

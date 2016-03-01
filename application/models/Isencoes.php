@@ -161,13 +161,12 @@ class isencoes extends CI_model {
 						   bn_codigo, bn_modalide, bn_programa, pp_nome,
 						   bn_original_protocolo, ca_titulo_projeto, bn_status
 					 from bonificacao 
-					INNER JOIN us_usuario as alun on bn_beneficiario = alun.us_cracha
-					INNER JOIN us_usuario as prof on bn_professor = prof.us_cracha
+					LEFT JOIN us_usuario as alun on bn_beneficiario = alun.us_cracha
+					LEFT JOIN us_usuario as prof on bn_professor = prof.us_cracha
 					LEFT JOIN ss_programa_pos on bn_programa = id_pp
-					INNER JOIN us_usuario as coor on id_us_coordenador = coor.id_us
-					INNER JOIN captacao on bn_original_protocolo = ca_protocolo				
+					LEFT JOIN us_usuario as coor on id_us_coordenador = coor.id_us
+					LEFT JOIN captacao on bn_original_protocolo = ca_protocolo				
 					where id_bn = $id ";
-					echo $sql;
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			if (count($rlt) > 0)
@@ -177,8 +176,55 @@ class isencoes extends CI_model {
 				} else {
 					return(array());
 				}
-		}		
+		}
+		
+	function gerar_isencao($proto='',$dt=array())
+		{
+			if ($this->isencoes->tem_isencao($proto) == 0)
+				{
+					$data = date("Ymd");
+					$hora = date("H:i:s");
+					$ano = date("Y");
+					$pf_cracha = $dt['us_cracha'];
+					$pf_nome = $dt['us_nome'];
+					$desc = 'Isenção de Discente-Projeto de Pesquisa-Captação';
+					
+					$sql = "insert into bonificacao
+							(
+							bn_codigo, bn_ano, bn_professor,
+							bn_professor_nome, bn_professor_cracha,
+							bn_data, bn_hora, bn_status,
+							bn_descricao, bn_cr, bn_valor,
+							bn_liberacao, bn_previsao, bn_original_tipo,
+							bn_original_protocolo
+							) values (
+							'','$ano','$pf_cracha',
+							'$pf_nome','$pf_cracha',
+							'$data','$hora','!',
+							'$desc','',0,
+							'$data',0,'IPR',
+							'$proto')
+							";
+					$rlt = $this->db->query($sql);
+					
+					$sql = "update bonificacao set bn_codigo = lpad(id_bn,5,0) where bn_codigo = '' ";
+					$rlt = $this->db->query($sql);
+				}
+		}
 
+	function tem_isencao($proto='')
+		{
+			$sql = "select * from bonificacao where bn_original_protocolo = '$proto' and bn_original_tipo = 'IPR' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return(1);
+				} else {
+					return(0);
+				}
+						
+		}
 	function le_id($id)
 		{
 			$sql = "select * from bonificacao where 
@@ -206,6 +252,7 @@ class isencoes extends CI_model {
 	
 	function minhas_isencoes($cracha)
 		{
+		$sx = '';
 		$sql = "select count(*) as total, bn_status, bns_descricao
 					FROM bonificacao
 					LEFT JOIN bonificacao_situacao on bns_codigo = bn_status 
@@ -246,7 +293,7 @@ class isencoes extends CI_model {
 					LEFT JOIN captacao on ca_protocolo = bn_original_protocolo
 							WHERE bn_original_tipo = 'IPR' and bn_professor = '$cracha'
 							and bn_status = '!'
-				group by bn_status, bns_descricao  ";
+				order by bn_status, bns_descricao  ";
 				
 		$rlt = $this->db->query($sql);
 		$rlt = $rlt->result_array();
@@ -268,7 +315,7 @@ class isencoes extends CI_model {
 					$tot++;
 					$line = $rlt[$r];
 					$link = base_url('index.php/ss/indicar_isencao/'.$line['id_bn'].'/'.checkpost_link($line['id_bn'])); 
-					$acao = '<a href="'.$link.'" class="botao3d back_green_shadown back_green">Inidicar isenção</a>';
+					$acao = '<a href="'.$link.'" class="botao3d back_green_shadown back_green">Indicar isenção</a>';
 					$line['acao'] = $acao;
 					$sx .= $this->load->view('isencoes/simple_row',$line,true);
 				}

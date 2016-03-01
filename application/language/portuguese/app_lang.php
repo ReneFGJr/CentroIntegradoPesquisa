@@ -13,6 +13,20 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+
+$lang['bt_search'] = 'Busca';
+$lang['bt_clear'] = 'Limpa filtro';
+$lang['bt_new'] = 'Novo registro';
+$lang['situacao'] = 'situação';
+$lang['vinculo'] = 'vínculo';
+$lang['dt_atualizacao'] = 'Última atualização';
+$lang['edital_ano'] = 'ano do edital';
+$lang['inicio_vigencia'] = 'início da vigência';
+$lang['duracao'] = 'duração';
+$lang['prorrogacao'] = 'prorrogação';
+$lang['agencia'] = 'agência';
+$lang['participacao'] = 'participação';
+
 	
 /* Menu Princicpal */
 $lang['submit_ICMST'] = 'PIBIC MASTER';
@@ -115,6 +129,10 @@ $lang['cap_validacao_coordenador'] = 'Validação do coordenador';
 $lang['cap_validacao_diretoria'] = 'Validação da diretoria';
 $lang['cap_comunicacao'] = 'Para comunicação';
 $lang['cap_finalizado'] = 'Finalizado';
+$lang['cap_validacao_secretaria'] = 'Validação Documental';
+$lang['cap_acao_coordenador'] = 'ação do coordenador';
+$lang['cap_acao_secretaria'] = 'ação da secretaria';
+$lang['cap_acao_diretoria'] = 'ação da diretoria';
 
 /* GED */
 $lang['none_file_posted'] = 'Nenhum arquivo postado';

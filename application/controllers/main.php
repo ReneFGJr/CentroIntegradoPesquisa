@@ -1,5 +1,6 @@
 <?php
 
+
 class main extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;

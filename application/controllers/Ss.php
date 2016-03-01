@@ -152,8 +152,8 @@ class ss extends CI_Controller {
 		$this->load->model('usuarios');			
 		$this->load->model('stricto_sensus');
 		
-		$this->isencoes->le($id);
-		if ($data['bn_status'] != '!')
+		$data = $this->isencoes->le($id);
+		if ((count($data) == 0) or ($data['bn_status'] != '!'))
 			{
 				redirect(base_url('index.php/ss'));
 			}

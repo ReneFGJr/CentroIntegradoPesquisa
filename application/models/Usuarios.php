@@ -1539,17 +1539,17 @@ class usuarios extends CI_model {
 		$cp = array();
 
 		array_push($cp, array('$H8', 'id_us', '', False, True));
-		array_push($cp, array('${', '', 'Pessoais', True, False));
-		array_push($cp, array('$S100', 'us_nome', msg('lb_us_nome'), True, False));
-		array_push($cp, array('$S20', 'us_cracha', msg('lb_us_cracha'), True, False));
-		array_push($cp, array('$S20', 'us_cpf', msg('lb_us_cpf'), True, False));
+		array_push($cp, array('${', '', 'Pessoais', False, False));
+		array_push($cp, array('$S100', 'us_nome', msg('lb_us_nome'), False, False));
+		array_push($cp, array('$S20', 'us_cracha', msg('lb_us_cracha'), False, False));
+		array_push($cp, array('$S20', 'us_cpf', msg('lb_us_cpf'), False, False));
 		array_push($cp, array('$D20', 'us_dt_nascimento', msg('lb_us_dt_nascimento'), False, True));
 		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('feminino'), 'us_genero', msg('lb_us_genero'), True, True));
 		array_push($cp, array('$O 1:Não definido&2:Professor&3:Aluno&4:Colaborador&5:Externo', 'usuario_tipo_ust_id', msg('lb_usu_tipo'), True, True));
 
-		array_push($cp, array('$}', '', '', True, False));
+		array_push($cp, array('$}', '', '', False, False));
 
-		array_push($cp, array('${', '', 'Profissionais e Acadêmico', True, False));
+		array_push($cp, array('${', '', 'Profissionais e Acadêmico', False, False));
 		//array_push($cp, array('$S30', 'us_codigo_rh', msg('lb_us_codigo_rh'), False, True));
 		//array_push($cp, array('$O 1:Não definido&2:Professor auxiliar de ensino&3:Professor assistente&4:Professor adjunto&8:Professor titular', 'usuario_funcao_usf_id', msg('lb_usu_funcao'), FALSE, True));
 		//array_push($cp, array('$O 1:Não definido&2:Técnico&3:Graduação&4:Especialista&5:Mestre&6:Doutor&7:Pós-Doutorado&8:Residência Médica', 'usuario_titulacao_ust_id', msg('lb_usu_titulacao'), FALSE, True));
@@ -1561,9 +1561,9 @@ class usuarios extends CI_model {
 		//array_push($cp, array('$O 1:Não definido&2:Stricto Sensu&3:Graduação', 'us_professor_tipo', msg('lb_us_professor_tipo'), False, True));
 		//array_push($cp, array('$O 1:Não definido&2:Inativo&3:Graduação&4:Mestrado&5:Doutorado&6:Pós-Doutorado', 'us_usuario_cursando', msg('lb_us_usuario_cursando'), False, True));
 		//array_push($cp, array('$O 1:Horista&2:TI&36:TP', 'us_regime', msg('lb_us_regime'), False, True));
-		array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('lb_eq_ativo_2'), True, True));
+		//array_push($cp, array('$O 1:SIM&0:NÃO', 'us_ativo', msg('lb_eq_ativo_2'), True, True));
 		//array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('user_teste'), False, True));
-		array_push($cp, array('$}', '', '', True, False));
+		array_push($cp, array('$}', '', '', False, False));
 
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 

@@ -12,7 +12,7 @@ $sx .= '<td class="border1"align="center">' . $ca_agencia . '</td>';
 $sx .= '<td class="border1" align="center">' . $ca_processo . '</td>';
 $sx .= '<td class="border1">' . $ca_descricao . '</td>';
 
-$sx .= '<td class="border1" align="center"><nobr>' . stodbr($ca_lastupdate) . '</nobr></td>';
+$sx .= '<td class="border1" align="center"><nobr>' . stodbr($ca_update) . '</nobr></td>';
 
 $vg = $ca_vigencia_final_ano;
 $vg_ini = substr($vg, 5, 2) . '/' . substr($vg, 0, 4);
@@ -22,7 +22,7 @@ $sx .= '<td class="border1" align="center">' . $ca_duracao . '</td>';
 
 $sx .= '<td class="border1" align="center">&nbsp;' . $ca_vigencia_prorrogacao . '&nbsp;</td>';
 
-$sx .= '<td class="border1">' . $cp_descricao . '</td>';
+$sx .= '<td class="border1">' . $ca_descricao . '</td>';
 
 $sx .= '<td align="right" class="border1">' . number_format($ca_vlr_total, 2, ',', '.') . '</td>';
 $sx .= '<td align="right" class="border1">' . number_format($ca_proponente_vlr, 2, ',', '.') . '</td>';
@@ -42,7 +42,7 @@ if (strlen($situacao) == 0) {
 }
 
 $sx .= '<td class="border1" align="center">' . $cor . $situacao . '</font>' . '</td>';
-
+$sx .= '<td class="border1" align="center">&nbsp;' . $us_nome . '&nbsp;</td>';
 /* Modo editar */
 if ($editar == 1) {
 	$sx .= '<td align="center" class="border1">';

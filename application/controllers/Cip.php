@@ -43,11 +43,10 @@ class CIP extends CI_Controller {
 		array_push($menus, array(msg('captacao_recursos'), 'index.php/cip/captacao'));
 		array_push($menus, array(msg('artigos'), 'index.php/cip/artigos'));
 
-		if (perfil('#CPS#ADM#TST')==1)
-			{
-				array_push($menus, array(msg('isencoes'), 'index.php/cip/isencoes'));
-				array_push($menus, array(msg('administrativo'), 'index.php/cip/administrativo'));						
-			}
+		if (perfil('#CPS#ADM#TST') == 1) {
+			array_push($menus, array(msg('isencoes'), 'index.php/cip/isencoes'));
+			array_push($menus, array(msg('administrativo'), 'index.php/cip/administrativo'));
+		}
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -64,10 +63,11 @@ class CIP extends CI_Controller {
 		$this -> load -> model('usuarios');
 		$this -> load -> model('cips');
 		$this -> load -> model('isencoes');
+		$this -> load -> model('captacoes');
 
 		$this -> cab();
 		$data = array();
-		
+
 		/* Isencoes */
 		//$tela = $this->isencoes->lista_status();
 		//$data['content'] = $tela;
@@ -76,8 +76,12 @@ class CIP extends CI_Controller {
 		/* Formulario */
 		//$data['search'] = $this -> load -> view('form/form_busca.php', $data, True);
 		$data['resumo'] = $this -> cips -> resumo();
+
+		/* Resumo de validação Captação */
+		$data['resumo'] .= $this -> captacoes -> resumo_acoes();
+
 		$data['search'] = '';
-		
+
 		/* Search */
 		$search_term = $this -> input -> post("dd89");
 		$search_acao = $this -> input -> post("acao");
@@ -94,120 +98,120 @@ class CIP extends CI_Controller {
 		}
 
 		/* Mostra tela principal */
-		$this -> load -> view('cip/home', $data);		
-		
+		$this -> load -> view('cip/home', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function administrativo()
-		{
+	function administrativo() {
 		$this -> cab();
 		$data = array();
-		$menu = array();		
+		$menu = array();
 		array_push($menu, array('Isenção', 'Substituir Isenção CIP por CAPES', 'ITE', '/cip/insencao_substituir'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
-		$this -> load -> view('header/main_menu', $data);			
-		}
-		
-	function insencao_substituir()
-		{
-		$this->load->model('isencoes');
-		$this->load->model('usuarios');
-		$this->load->model('captacoes');
+		$this -> load -> view('header/main_menu', $data);
+	}
+
+	function insencao_substituir() {
+		$this -> load -> model('isencoes');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('captacoes');
 		$this -> cab();
-		
-		$cp = $this->isencoes->cp_isencao_cip_capes();
+
+		$cp = $this -> isencoes -> cp_isencao_cip_capes();
 		$form = new form;
-		$tela = $form->editar($cp,'');
+		$tela = $form -> editar($cp, '');
 
-		
-		
-		if ($form->saved > 0)
-			{
-				$reabrir = get("dd2");
-				$proto = get("dd1");
-				
-				/* validacoes */
-				$dd1 = strzero(get("dd1"),5);
-				$ok = $this->isencoes->is_insencao_cip($dd1);
-				if ($ok == 1)
-					{
-						/* Le Isencao */
-						$data = $this->isencoes->le($dd1);
-						$proto_proj = $data['bn_original_protocolo'];
-						$line = $this->captacoes->le_protocolo($proto_proj);
-						$id = $line['ca_protocolo'];
+		if ($form -> saved > 0) {
+			$reabrir = get("dd2");
+			$proto = get("dd1");
 
-						/* Historico */
-						$ope = '19'; // ISENÇÂO CAPES
-						$desc = 'Substituição de bolsa CIP para bolsa CAPES';
-						$this->captacoes->insere_historico($id, $ope, $desc = ''); 						
+			/* validacoes */
+			$dd1 = strzero(get("dd1"), 5);
+			$ok = $this -> isencoes -> is_insencao_cip($dd1);
+			if ($ok == 1) {
+				/* Le Isencao */
+				$data = $this -> isencoes -> le($dd1);
+				$proto_proj = $data['bn_original_protocolo'];
+				$line = $this -> captacoes -> le_protocolo($proto_proj);
+				$id = $line['ca_protocolo'];
 
-						
-						$cracha = $data['bn_professor'];
-						$us = $this->usuarios->le_cracha($cracha);
-						$proto_orig = $data['bn_original_protocolo'];
-						
-						/* Habilita nova isencao */
-						$mod = 'IPR';
-						$this->isencoes->habilita_isencao($mod,$us,$proto_orig);
-						/* Tranfere isencao */
-						$this->isencoes->transfere_para_outra_modalidade('ICP',$proto);
-						$tela = '<h1><font color="green">'.msg('successful').'</font></h1>';		
-					} else {
-						$tela .= '<font color="red">Isenção não localizada</font>';
-					}
-				
-				
+				/* Historico */
+				$ope = '19';
+				// ISENÇÂO CAPES
+				$desc = 'Substituição de bolsa CIP para bolsa CAPES';
+				$this -> captacoes -> insere_historico($id, $ope, $desc = '');
+
+				$cracha = $data['bn_professor'];
+				$us = $this -> usuarios -> le_cracha($cracha);
+				$proto_orig = $data['bn_original_protocolo'];
+
+				/* Habilita nova isencao */
+				$mod = 'IPR';
+				$this -> isencoes -> habilita_isencao($mod, $us, $proto_orig);
+				/* Tranfere isencao */
+				$this -> isencoes -> transfere_para_outra_modalidade('ICP', $proto);
+				$tela = '<h1><font color="green">' . msg('successful') . '</font></h1>';
+			} else {
+				$tela .= '<font color="red">Isenção não localizada</font>';
 			}
+
+		}
 
 		$data['content'] = $tela;
 		$data['title'] = msg('conversao_bolsa_cip_para_capes');
-		$this->load->view('content',$data);
+		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}		
+	}
 
-	function captacao($id = '')
-		{
-		$this->load->model('captacoes');
+	function captacao_status($id = '') {
+		$this -> load -> model('captacoes');
 		$this -> cab();
 		
-		$capta_resumo = $this->captacoes->resumo_processos();
+		$capta_resumo = $this -> captacoes -> resumo_acoes_perfil($id);
 		$data['content'] = $capta_resumo;
 		$data['title'] = msg('captacoes');
-		$this->load->view('content',$data);
-		
-		if (strlen($id) > 0)
-			{
-				$tela = $this->captacoes->lista_resumo_processos($id);
-				$data['content'] = $tela;
-				$data['title'] = msg('captacoes');
-				$this->load->view('content',$data);
-			}
-		
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);	
+		$this -> load -> view('content', $data);		
+	}
+
+	function captacao($id = '') {
+		$this -> load -> model('captacoes');
+		$this -> cab();
+
+		$capta_resumo = $this -> captacoes -> resumo_processos();
+		$data['content'] = $capta_resumo;
+		$data['title'] = msg('captacoes');
+		$this -> load -> view('content', $data);
+
+		if (strlen($id) > 0) {
+			$tela = $this -> captacoes -> lista_resumo_processos($id);
+			$data['content'] = $tela;
+			$data['title'] = msg('captacoes');
+			$this -> load -> view('content', $data);
 		}
-		
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function artigos($id = '') {
 
-		$this->load->model('artigos');
+		$this -> load -> model('artigos');
 		$this -> cab();
-		
-		$capta_resumo = $this->artigos->resumo_processos($id);
+
+		$capta_resumo = $this -> artigos -> resumo_processos($id);
 		$data['content'] = $capta_resumo;
 		$data['title'] = msg('artigos_bonificacoes');
-		$this->load->view('content',$data);
-		
+		$this -> load -> view('content', $data);
+
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);	
-	}		
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function artigo($id = 0) {
 
@@ -244,24 +248,24 @@ class CIP extends CI_Controller {
 		/* Load Models */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('cip/bonificacao_artigos');
-		
+
 		$this -> bonificacao_artigos -> create_view();
 
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		
-		$data = $this->bonificacao_artigos->le($id);
-		
+
+		$data = $this -> bonificacao_artigos -> le($id);
+
 		$user_cracha = $data['ar_professor'];
-		$user_id = $this->usuarios->readByCracha($user_cracha);
+		$user_id = $this -> usuarios -> readByCracha($user_cracha);
 
 		$data['bp'] = $this -> bonificacao_artigos -> bar_menu();
 		$data['bp_atual'] = $data['ar_situacao'];
-		
+
 		/* dados do autor */
 		$data['data'] = $user_id;
-		
+
 		$bp = array();
 		$bp['titulo'] = '1';
 		$data['bp'] = $bp;

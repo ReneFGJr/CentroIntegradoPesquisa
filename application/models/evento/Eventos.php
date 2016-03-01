@@ -5,46 +5,43 @@ class eventos extends CI_model {
 	var $tabela_usuario = 'us_usuario';
 	var $tano_evento = '2014';
 
-	function insere_inscricao($evento,$us_id)
-		{
-			$sql = "select * from evento_inscricao
+	function insere_inscricao($evento, $us_id) {
+		$sql = "select * from evento_inscricao
 						WHERE ei_us_usuario_id = $us_id
 						AND ei_evento_id = $evento ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					return(0);
-				}
-			$sql = "insert into evento_inscricao 
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (0);
+		}
+		$sql = "insert into evento_inscricao 
 					(ei_us_usuario_id, ei_evento_id, ei_status,
 					ei_evento_confirmar
 					)
 					values
 					($us_id, $evento, 1, 0)";
-			$rlt = $this->db->query($sql);
-			return(1);
-			
-		}
-		
-	function botao_inscricao($ev)
-		{
-			$sx = '';
-			$sx .= '<!---- Form para inscrição pelo cracha ----->'.cr();
-			$sx .= '<center>'.cr();
-			$sx .= '<form method="post" action="'.base_url('index.php/evento/inscricao_cracha/'.$ev.'/'.checkpost_link($ev)).'">'.cr();
-			$sx .= '<table width="300" align="center"  style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">'.cr();
-			$sx .= '<tr align="center"><td style="font-size: 10px;">Informe o código seu crachá:</td></tr>'.cr();
-			$sx .= '<tr>'.cr();
-			$sx .= '<td><input type="text" name="dd1" class="evento_form_cracha" title="Informe seu Cracha" placeholder="Informe seu Crachá"></td>'.cr();
-			$sx .= '<td><input type="submit" name="acao" class="evento_submit" value="inscreva-se"></td>'.cr();
-			$sx .= '</tr>'.cr();
-			$sx .= '<tr align="center"><td style="font-size: 10px;">Exemplo: 88118747</td></tr>'.cr();
-			$sx .= '</table>'.cr();
-			$sx .= '</center>'.cr();
-			$sx .= '</form>'.cr();
-			
-			$sx .= '<style>
+		$rlt = $this -> db -> query($sql);
+		return (1);
+
+	}
+
+	function botao_inscricao($ev) {
+		$sx = '';
+		$sx .= '<!---- Form para inscrição pelo cracha ----->' . cr();
+		$sx .= '<center>' . cr();
+		$sx .= '<form method="post" action="' . base_url('index.php/evento/inscricao_cracha/' . $ev . '/' . checkpost_link($ev)) . '">' . cr();
+		$sx .= '<table width="300" align="center"  style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">' . cr();
+		$sx .= '<tr align="center"><td style="font-size: 10px;">Informe o código seu crachá:</td></tr>' . cr();
+		$sx .= '<tr>' . cr();
+		$sx .= '<td><input type="text" name="dd1" class="evento_form_cracha" title="Informe seu Cracha" placeholder="Informe seu Crachá"></td>' . cr();
+		$sx .= '<td><input type="submit" name="acao" class="evento_submit" value="inscreva-se"></td>' . cr();
+		$sx .= '</tr>' . cr();
+		$sx .= '<tr align="center"><td style="font-size: 10px;">Exemplo: 88118747</td></tr>' . cr();
+		$sx .= '</table>' . cr();
+		$sx .= '</center>' . cr();
+		$sx .= '</form>' . cr();
+
+		$sx .= '<style>
 						.evento_form_cracha {
 							background-color:#fefefe;
 							-moz-border-radius:28px;
@@ -84,10 +81,10 @@ class eventos extends CI_model {
 							top:1px;
 						}
 			
-				</style>'.cr();
-			$sx .= '<!---- Fim do formulário ----->'.cr();
-			return($sx);
-		}
+				</style>' . cr();
+		$sx .= '<!---- Fim do formulário ----->' . cr();
+		return ($sx);
+	}
 
 	function resumo_presenca() {
 		if (!isset($_SESSION['evento'])) {
@@ -128,18 +125,177 @@ class eventos extends CI_model {
 		return ($sx);
 	}
 
-	/*################>> EMITIR DECLARACOES E CERTIFICADOS DE IC <<###########################*/	
-	function emitir($evento, $tipo, $ano, $us) {
+	/*################>> EMITIR DECLARACOES E CERTIFICADOS DE IC <<###########################*/
+	function emitir($evento, $tipo, $ano, $us=array()) {
 		$cracha = $us['us_cracha'];
-		$id = $us['id_us'];
+		$id_us = round($us['id_us']);
 		$err = '';
+		$id_declaracao = 0;
 
+		/************************************************** TIPO DO EVENTO */
+		switch ($tipo) {
+			case 'AVALIADOR' :
+				switch($evento) {
+					/*******************************************************************
+					 * *****************************************************************
+					 * ********************************************avaliador no SEMIC */
+					case 'SEMIC' :
+					/* Tabela de consulta */
+						$tabela = 'pibic_parecer_' . $ano;
+						switch($ano) {
+							case '2016' :
+								break;
+							case '2015' :
+								$id_declaracao = 0;
+								break;
+							case '2014' :
+							/* CICPG */
+								$id_declaracao = 0;
+								break;
+							case '2013' :
+								break;
+							case '2012' :
+								break;
+							case '2011' :
+								break;
+							case '2010' :
+								break;
+						}
+				}
+		}
+
+		/*************************** MODS *********************************************************************/
+
+		/**********************************************************************
+		 * Declaracao de AVALIADOR
+		 *********************************************************************/
+		if ($tipo == 'AVALIADOR') {
+			
+			$sql = "select * from central_declaracao_evento where cde_tipo = '$tipo' and cde_ano = '$ano' ";
+			
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+
+			if (count($rlt) > 0) {
+				$line = $rlt[0];
+				$wh = '';
+				$whi = '';
+				if ($ano >= '2015')
+					{
+						$wh = " and (pp_tipo = 'SEMIC' )";
+					}
+				if ($id_us > 0)
+					{
+						$whi = " or pp_avaliador_id = $id_us ";
+					}
+				$tabela = "pibic_parecer_".$ano;	
+				$id_declaracao = $line['id_cde'];			
+				/* Declaracao de Avaliador */
+				$cracha = strzero($cracha, 8);
+				$sql = "select count(*) as total, pp_avaliador 
+							from " . $tabela . " 
+							WHERE (pp_status = 'A' or pp_status = 'B')
+								and (pp_avaliador = '$cracha' $whi)
+								$wh
+							group by pp_avaliador ";
+				
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				
+				if (count($rlt) > 0) {
+					$line = $rlt[0];
+					$total = $line['total'];
+					if ($total > 0) {
+						/* ID da declaracao de avaliador */
+						$this -> insere_declaracao($id_us, 0, $id_declaracao);
+					}
+				}
+			}
+		}
+
+
+		/**********************************************************************
+		 * Declaracao de ORIENTADOR
+		 *********************************************************************/
+		if ($tipo == 'ORIENTADOR') {
+			
+			$sql = "select * from central_declaracao_evento where cde_tipo = '$tipo' and cde_ano = '$ano' ";
+			
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+
+			if (count($rlt) > 0) {
+				$line = $rlt[0];
+				$wh = '';
+				$tabela = "pibic_parecer_".$ano;	
+				$id_declaracao = $line['id_cde'];			
+				/* Declaracao de Avaliador */
+				$cracha = strzero($cracha, 8);
+				$sql = "select * from ic 
+									inner join ic_aluno on id_ic = ic_id
+									where ic_cracha_prof = '$cracha' 
+										and ic_ano = '$ano' 
+										and s_id = 4 
+										and icas_id = 4";
+				
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				
+				for ($rx=0;$rx < count($rlt);$rx++) {
+					$line = $rlt[$rx];
+					$protocolo = $line['ic_plano_aluno_codigo'];
+					$id2 = $line['aluno_id'];
+					
+					/* ID da declaracao de avaliador */
+					$this -> insere_declaracao($id_us, $id2, $id_declaracao);
+					}
+				}			
+		}
+
+		/**********************************************************************
+		 * Declaracao de ORIENTADOR
+		 *********************************************************************/
+		if ($tipo == 'ESTUDANTE') {
+			
+			$sql = "select * from central_declaracao_evento where cde_tipo = '$tipo' and cde_ano = '$ano' ";
+			
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+
+			if (count($rlt) > 0) {
+				$line = $rlt[0];
+				$wh = '';
+				$tabela = "pibic_parecer_".$ano;	
+				$id_declaracao = $line['id_cde'];			
+				/* Declaracao de Avaliador */
+				$cracha = strzero($cracha, 8);
+				$sql = "select * from ic 
+									inner join ic_aluno on id_ic = ic_id
+									where  ic_cracha_aluno = '$cracha' 
+										and ic_ano = '$ano' 
+										and s_id = 4 
+										and icas_id = 4";
+				
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				
+				for ($rx=0;$rx < count($rlt);$rx++) {
+					$line = $rlt[$rx];
+					$protocolo = $line['ic_plano_aluno_codigo'];
+					$id2 = $line['ic_cracha_prof'];
+					
+					/* ID da declaracao de avaliador */
+					$this -> insere_declaracao($id_us, $id2, $id_declaracao);
+					}
+				}			
+		}
+		return (0);
 		/*#############################################################################################*/
 		/*#######################     SEMIC DE 2011                     ###############################*/
 		/*#############################################################################################*/
 		/****************************
-		** Declaracao de Estudante **
-		****************************/
+		 ** Declaracao de Estudante **
+		 ****************************/
 		if (($evento == 'IC') and ($ano == '2011')) {
 			/* Estudante */
 			if ($tipo == 'ESTUDANTE') {
@@ -164,34 +320,9 @@ class eventos extends CI_model {
 				}
 			}
 
-		/*****************************
-		* Declaracao de AVALIADOR
-		*****************************/
-			if ($tipo == 'AVALIADOR') {
-				/* Declaracao de Avaliador */
-				$cracha = strzero($cracha, 8);
-				$sql = "select count(*) as total, pp_avaliador 
-								from pibic_parecer_2011 
-								WHERE (pp_status = 'A' or pp_status = 'B')
-									and pp_avaliador = '$cracha' 
-								group by pp_avaliador ";
-									
-				$rlt = $this -> db -> query($sql);
-				$rlt = $rlt -> result_array();
-				if (count($rlt) > 0) {
-					$line = $rlt[0];
-					$total = $line['total'];
-					if ($total > 0) {
-						/* ID da declaracao de avaliador */
-						$this -> insere_declaracao($id, 0, 35);
-
-					}
-				}
-			}
-
-		/*****************************
-		* Declaracao de ORIENTADOR
-		*****************************/
+			/*****************************
+			 * Declaracao de ORIENTADOR
+			 *****************************/
 			if ($tipo == 'ORIENTADOR') {
 				/* Declaracao de Estudante SEMIC */
 				$cracha = strzero($cracha, 8);
@@ -219,13 +350,12 @@ class eventos extends CI_model {
 			}
 		}
 
-
 		/*#############################################################################################*/
 		/*#######################     SEMIC DE 2012                     ###############################*/
 		/*#############################################################################################*/
 		/****************************
-		** Declaracao de Estudante **
-		****************************/
+		 ** Declaracao de Estudante **
+		 ****************************/
 		if (($evento == 'IC') and ($ano == '2012')) {
 			/* Estudante */
 			if ($tipo == 'ESTUDANTE') {
@@ -250,9 +380,9 @@ class eventos extends CI_model {
 				}
 			}
 
-		/*****************************
-		* Declaracao de AVALIADOR
-		*****************************/
+			/*****************************
+			 * Declaracao de AVALIADOR
+			 *****************************/
 			if ($tipo == 'AVALIADOR') {
 				/* Declaracao de Avaliador */
 				$cracha = strzero($cracha, 8);
@@ -261,7 +391,7 @@ class eventos extends CI_model {
 								WHERE (pp_status = 'A' or pp_status = 'B')
 									and pp_avaliador = '$cracha' 
 								group by pp_avaliador ";
-									
+
 				$rlt = $this -> db -> query($sql);
 				$rlt = $rlt -> result_array();
 				if (count($rlt) > 0) {
@@ -275,9 +405,9 @@ class eventos extends CI_model {
 				}
 			}
 
-		/*****************************
-		* Declaracao de ORIENTADOR
-		*****************************/
+			/*****************************
+			 * Declaracao de ORIENTADOR
+			 *****************************/
 			if ($tipo == 'ORIENTADOR') {
 				/* Declaracao de Estudante SEMIC */
 				$cracha = strzero($cracha, 8);
@@ -309,8 +439,8 @@ class eventos extends CI_model {
 		/*#######################     INICIACAO CIENTIFICA DE 2013      ###############################*/
 		/*#############################################################################################*/
 		/****************************
-		** Declaracao de Estudante **
-		****************************/
+		 ** Declaracao de Estudante **
+		 ****************************/
 		if (($evento == 'SEMIC') and ($ano == '2013')) {
 			/* Estudante */
 			if ($tipo == 'ESTUDANTE') {
@@ -335,9 +465,9 @@ class eventos extends CI_model {
 				}
 			}
 
-		/*****************************
-		** Declaracao de avaliador  **
-		*****************************/
+			/*****************************
+			 ** Declaracao de avaliador  **
+			 *****************************/
 			if ($tipo == 'AVALIADOR') {
 				/* Declaracao de Avaliador */
 				$cracha = strzero($cracha, 8);
@@ -359,9 +489,9 @@ class eventos extends CI_model {
 				}
 			}
 
-		/*****************************
-		** Declaracao de orientador **
-		*****************************/
+			/*****************************
+			 ** Declaracao de orientador **
+			 *****************************/
 			if ($tipo == 'ORIENTADOR') {
 				/* Declaracao de Estudante SEMIC */
 				$cracha = strzero($cracha, 8);
@@ -389,13 +519,12 @@ class eventos extends CI_model {
 			}
 		}
 
-
 		/*#############################################################################################*/
 		/*#######################             CICPG DE 2014             ###############################*/
 		/*#############################################################################################*/
 		/****************************
-		** Declaracao de Estudante **
-		****************************/
+		 ** Declaracao de Estudante **
+		 ****************************/
 		if (($evento == 'SEMIC') and ($ano == '2014')) {
 			/* Estudante */
 			if ($tipo == 'ESTUDANTE') {
@@ -420,9 +549,9 @@ class eventos extends CI_model {
 				}
 			}
 
-		/*****************************
-		* Declaracao de AVALIADOR
-		*****************************/
+			/*****************************
+			 * Declaracao de AVALIADOR
+			 *****************************/
 			if ($tipo == 'AVALIADOR') {
 				/* Declaracao de Avaliador */
 				$cracha = strzero($cracha, 8);
@@ -444,9 +573,9 @@ class eventos extends CI_model {
 				}
 			}
 
-		/*****************************
-		* Declaracao de ORIENTADOR
-		*****************************/
+			/*****************************
+			 * Declaracao de ORIENTADOR
+			 *****************************/
 			if ($tipo == 'ORIENTADOR') {
 				/* Declaracao de Estudante SEMIC */
 				$cracha = strzero($cracha, 8);
@@ -473,7 +602,6 @@ class eventos extends CI_model {
 				}
 			}
 		}
-
 
 		/*#############################################################################################*/
 		/*#######################     SWB 2015                          ###############################*/
@@ -620,8 +748,8 @@ class eventos extends CI_model {
 				/* ESTUDANTE */
 				if ($tipo == 'ESTUDANTE') {
 					/****************************
-					** Declaracao de Estudante **
-					****************************/
+					 ** Declaracao de Estudante **
+					 ****************************/
 					$cracha = strzero($cracha, 8);
 					$sql = "select * from semic_nota_trabalhos
 							left join us_usuario on st_professor = us_cracha
@@ -755,7 +883,7 @@ class eventos extends CI_model {
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="800" class="lt2" cellpadding=10 cellspacing=0 border=1 align="center">';
 		$sx .= '<tr><td class="lt4" colspan=2 >Declarações disponíveis</td></tr>';
-		
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$url = base_url('index.php/central_declaracao/declaracao/' . $line['id_dc'] . '/' . checkpost_link($line['id_dc']));
@@ -766,7 +894,7 @@ class eventos extends CI_model {
 			$sx .= $line['cde_nome'];
 			$sx .= '</a>';
 			$sx .= '</td>';
-			
+
 			$sx .= '<td width="50%">';
 			/* Nome do aluno ou orientador */
 			$nome = trim($line['us_nome']);
@@ -777,7 +905,7 @@ class eventos extends CI_model {
 			$sx .= '</td>';
 			$sx .= '</tr>';
 		}
-		
+
 		$sx .= '</table>';
 		return ($sx);
 	}
@@ -785,8 +913,9 @@ class eventos extends CI_model {
 	function insere_declaracao($us1, $us2, $tipo, $protocolo = '') {
 		$data = date("Y-m-d");
 		$hora = date("H:i:s");
-		if (strlen($us2) == 0) { $us2 = 0;}
-		
+		if (strlen($us2) == 0) { $us2 = 0;
+		}
+
 		$sql = "select * from central_declaracao 
 						where dc_us_usuario_id = $us1
 						and dc_us_usuario_id_2 = $us2

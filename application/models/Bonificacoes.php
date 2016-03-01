@@ -3,11 +3,13 @@ class bonificacoes extends CI_Model {
 	function mostra_bonificacoes($proto) {
 		$sql = "select * from bonificacao
 						LEFT JOIN bonificacao_situacao ON bn_status = bns_codigo 
-						LEFT JOIN us_usuario on bn_beneficiario = us_cracha
+						LEFT JOIN us_usuario on bn_beneficiario = us_cracha and us_cracha <> ''
 						where bn_original_protocolo = '$proto' ";
+						
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '';
+		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 
@@ -18,7 +20,10 @@ class bonificacoes extends CI_Model {
 					break;
 				case 'ICP' :
 					$sx .= $this -> load -> view('bonificacao/bnf_ICP', $line, true);
-					break;					
+					break;	
+				case 'IPQ' :
+					$sx .= $this -> load -> view('bonificacao/bnf_IPQ', $line, true);
+					break;										
 				case 'PRJ' :
 					$sx .= $this -> mostra_PRJ($line);
 					break;

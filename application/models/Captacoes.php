@@ -25,8 +25,8 @@ class captacoes extends CI_Model {
 				$this -> captacoes -> insere_historico($proto, '80', $desc);
 				return (1);
 				break;
-			case '1' :
-			// Com isenção e com bonificação pelo  COORDENADOR //
+			case '2' :
+			// Com isenção e sem bonificação pelo  COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 1,
 								ca_bonificacao = 0,
@@ -38,8 +38,8 @@ class captacoes extends CI_Model {
 				$this -> captacoes -> insere_historico($proto, '80', $desc);
 				return (1);
 				break;
-			case '2' :
-			// Com isenção e com bonificação pelo  COORDENADOR //
+			case '1' :
+			// Sem isenção e com bonificação pelo  COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 1,
@@ -66,7 +66,7 @@ class captacoes extends CI_Model {
 				break;
 
 			case '4' :
-			// Devolver ao professor para correção  COORDENADOR  //
+			// Devolver ao professor para correção  COORDENADOR OU SECRETARIA//
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 0,
@@ -74,12 +74,17 @@ class captacoes extends CI_Model {
 								ca_lastupdate = $data
 							where ca_protocolo = '" . $proto . "'";
 				$this -> db -> query($sql);
-				$desc = 'Motivo:' . get("dd2");
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Motivo: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+
 				$this -> captacoes -> insere_historico($proto, '8', $desc);
 				return (1);
 				break;
 			case '5' :
-			// Cancelar o protocolo  COORDENADOR  //
+			// Cancelar o protocolo  COORDENADOR OU SECRETARIA //
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 0,
@@ -87,8 +92,136 @@ class captacoes extends CI_Model {
 								ca_lastupdate = $data
 							where ca_protocolo = '" . $proto . "'";
 				$this -> db -> query($sql);
-				$desc = 'Justificativa: ' . get("dd2");
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Justificativa: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
 				$this -> captacoes -> insere_historico($proto, '12', $desc);
+				return (1);
+				break;
+			case '6' :
+			// validar a documentação pela SECRETARIA //
+				$sql = "update captacao set 
+								ca_status = 11,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Justificativa: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+
+				$this -> captacoes -> insere_historico($proto, '11', $desc);
+				return (1);
+				break;
+			case '7' :
+			// Cancelar o protocolo  COORDENADOR OU SECRETARIA //
+				$sql = "update captacao set 
+								ca_status = 14,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Justificativa: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+
+				$this -> captacoes -> insere_historico($proto, '14', $desc);
+				return (1);
+				break;
+
+			/**************** secretaria */
+			/*********************************************** DIRETORIA DE PESQUISA **************/
+			case '10' :
+			// Com isenção e com bonificação pelo COORDENADOR //
+				$sql = "update captacao set 
+								ca_isencao = 1,
+								ca_bonificacao = 1,
+								ca_status = 81,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <b>com isenção</b> e com <b>bonificação</b><br>' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+			case '12' :
+			// Com isenção e sem bonificação pelo  COORDENADOR //
+				$sql = "update captacao set 
+								ca_isencao = 1,
+								ca_bonificacao = 0,
+								ca_status = 81,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <b>com isenção</b> e <font color=red><b>sem bonificação</b></font><br>' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+			case '11' :
+			// Sem isenção e com bonificação pelo  COORDENADOR //
+				$sql = "update captacao set 
+								ca_isencao = 0,
+								ca_bonificacao = 1,
+								ca_status = 81,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <font color=red><b>sem isenção</b></font> e <b>com bonificação</b><br>' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+			case '13' :
+			// Com isenção e com bonificação pelo  COORDENADOR //
+				$sql = "update captacao set 
+								ca_isencao = 0,
+								ca_bonificacao = 0,
+								ca_status = 81,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <font color=red><b>sem isenção</b> e <b>sem bonificação</b></font><br>' . get("dd2");
+				$this -> captacoes -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+			case '19' :
+			// validar a documentação pela SECRETARIA //
+				$sql = "update captacao set 
+								ca_status = 11,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Justificativa: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+
+				$this -> captacoes -> insere_historico($proto, '11', $desc);
+				return (1);
+				break;
+			case '20' :
+			// GERAR ISENÇÂO PELA SECRETARIA //
+				$isencao = $this -> isencoes -> tem_isencao($proto);
+				if ($isencao == 0) {
+					$dt = $this->captacoes->le($proto);
+					$this->isencoes->gerar_isencao($proto,$dt);
+					
+					$sql = "update captacao set 
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+					$this -> db -> query($sql);
+					if (strlen(get("dd2")) > 0) {
+						$desc = 'Justificativa: ' . get("dd2");
+					} else {
+						$desc = '';
+					}
+
+					$this -> captacoes -> insere_historico($proto, '20', $desc);
+				}
 				return (1);
 				break;
 		}
@@ -273,7 +406,7 @@ class captacoes extends CI_Model {
 		array_push($cp, array('${', '', msg('captacao_vigencia'), false, true));
 		array_push($cp, array('$O ' . $vg, 'ca_vigencia_final_ano', msg('captacao_vigencia_inicio'), true, true));
 		array_push($cp, array('$O ' . $dr, 'ca_duracao', msg('captacao_duracao'), true, true));
-		array_push($cp, array('$O ' . $dr, 'ca_duracao', msg('captacao_prorrogacao'), true, true));
+		array_push($cp, array('$O ' . $dr, 'ca_vigencia_prorrogacao', msg('captacao_prorrogacao'), false, true));
 		array_push($cp, array('$}', '', msg('captacao_vigencia'), false, true));
 
 		array_push($cp, array('$}', '', msg('Participacao'), false, true));
@@ -512,6 +645,7 @@ class captacoes extends CI_Model {
 		$sql = "select * from captacao 
 					LEFT JOIN captacao_situacao ON ca_status_old = ca_status
 					LEFT JOIN captacao_participacao ON cp_cod = ca_participacao
+					LEFT JOIN us_usuario on us_cracha = ca_professor
 					where ca_professor = '$cracha' 
 					and ca_status > 0
 					ORDER BY ca_edital_ano desc
@@ -604,6 +738,7 @@ class captacoes extends CI_Model {
 		$sql = "select * from captacao 
 					LEFT JOIN captacao_situacao ON ca_status_old = ca_status
 					LEFT JOIN captacao_participacao ON cp_cod = ca_participacao
+					LEFT JOIN us_usuario on us_cracha = ca_professor
 					WHERE cs_resumo = $id
 					ORDER BY ca_lastupdate desc, ca_protocolo
 					";
@@ -635,6 +770,102 @@ class captacoes extends CI_Model {
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
 
+	}
+
+	function resumo_acoes_perfil($id = '') {
+		$sql = "select * 
+				FROM captacao
+				INNER JOIN captacao_situacao ON ca_status_old = ca_status
+				LEFT JOIN us_usuario on us_cracha = ca_professor
+				WHERE cs_perfil = '#$id' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00 lt1">';
+		$sx .= '<tr>
+					<th>Protocolo</th>
+					<th>Fomento</th>
+					<th>Edital</th>
+					<th>Descrição do edital</th>
+					<th>Atualização</th>
+					<th>Início da vigência</th>
+					<th>Duração<th>
+					<th>Participação</th>
+					<th>Valor Total</th>
+					<th>Vlr. Proponente</th>
+					<th>Inst.</th>
+					<th>Situação</th>
+					<th>Professor</th>
+				</tr>';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$sx .= $this -> load -> view('captacao/captacao_row', $line, true);
+		}
+		$sx .= '<tr><td colspan="10">Total ' . $tot . '</td></tr>';
+		$sx .= '</table>';
+		return ($sx);
+
+	}
+
+	function resumo_acoes() {
+		$it = 3;
+		$sz = round(100 / $it);
+		$ar = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+		$sql = "select count(*) as total, cs_perfil 
+				FROM captacao
+				INNER JOIN captacao_situacao ON ca_status_old = ca_status
+				group by cs_perfil ";
+		$rlt = $this -> db -> query($sql);
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$fl = array(0, 0, 0, 0, 0, 0);
+		$ca = array('COP', 'CPS', 'DIP');
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$perf = $line['cs_perfil'];
+			switch ($perf) {
+				case '#COP' :
+					$id = 0;
+					break;
+				case '#CPS' :
+					$id = 1;
+					break;
+				case '#DIP' :
+					$id = 0;
+					break;
+				default :
+					$id = 5;
+					break;
+			}
+
+			$fl[$id] = $fl[$id] + $line['total'];
+		}
+
+		/* Format o número */
+		for ($r = 0; $r < count($ca); $r++) {
+			if ($fl[$r] > 0) {
+				$link = '<a href="' . base_url('index.php/cip/captacao_status/' . $ca[$r]) . '" class="link lt6">';
+				$fl[$r] = $link . '<br><font class="lt6">' . $fl[$r] . '</font></a>';
+			} else {
+				$link = '<a href="#" class="link lt6">';
+				$fl[$r] = $link . '<br><font class="lt6">-</font></a>';
+			}
+		}
+		$sx = '<table class="lt2" width="100%">';
+		$sx .= '<tr class="lt1" valign="bottom">';
+		$sx .= '<th colspan=4 class="lt2">' . msg('captacoes') . '</th></tr>';
+		$sx .= '<tr class="lt1" valign="bottom">';
+		$sx .= '<td width="' . $sz . '%" class="captacao_folha border1 black lt0">' . msg('cap_acao_coordenador') . $fl[0] . '</td>';
+		$sx .= '<td width="' . $sz . '%" class="captacao_folha border1 black lt0">' . msg('cap_acao_secretaria') . $fl[1] . '</td>';
+		$sx .= '<td width="' . $sz . '%" class="captacao_folha border1 black lt0">' . msg('cap_acao_diretoria') . $fl[2] . '</td>';
+		$sx .= '</tr>';
+		$sx .= '</table>';
+		return ($sx);
 	}
 
 	function resumo_processos() {

@@ -253,6 +253,7 @@ class admin extends CI_Controller {
 		array_push($menu, array('CNPq Lattes', '___Docentes sem produção (todos)', 'ITE', '/admin/docentes_sem_producao/2'));
 		array_push($menu, array('CNPq Lattes', '___Docentes sem produção (SS)', 'ITE', '/admin/docentes_sem_producao/1'));
 
+		array_push($menu, array('CNPq WebServices', '___WebServices (CNPq)', 'ITE', '/cnpq_ws'));
 		
 		array_push($menu, array('Inportação', 'Inportação de Dados', 'ITE', '/inport'));
 

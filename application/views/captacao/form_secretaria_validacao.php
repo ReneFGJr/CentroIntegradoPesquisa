@@ -5,20 +5,18 @@ if (strlen(get("dd1") > 0)) {
 	$dd1 = round(get("dd1"));
 	$chk[$dd1] = 'checked';
 }
-$ops[0] = 'Indicar para bonificação do projeto com isenção';
-$ops[1] = 'Indicar somente para bonificação do projeto e sem isenção';
-$ops[2] = 'Indicar somente para isenção sem bonificação do projeto';
-$ops[3] = 'Não bonificar o projeto, nem habilidar a isenção';
 $ops[4] = 'Devolver para o professor para correções';
 $ops[5] = 'Cancelar protocolo, justificando o motivo';
+$ops[6] = 'Validar documentação enviada';
+$ops[7] = 'Finalizar processo';
 
 $acao = 'Finalizar avaliação';
-$xacao = 'LIBERACAO_COORDENADOR';
+$xacao = 'VALIDACAO_DOCUMENTAL';
 $erro = '';
 ?>
 <table width="100%" class="captacao_folha black border1">
 	<tr>
-		<td colspan=10 class="lt4"><?php echo msg('captacao_liberacao_coordeador');?></td>
+		<td colspan=10 class="lt4"><?php echo msg('captacao_liberacao_secretaria');?></td>
 	</tr>
 	<tr>
 		<td><form method="post"></td>
@@ -30,15 +28,10 @@ $erro = '';
 	</tr>
 	<tr class="lt2" align="left" valign="top">
 		<td>
-		<input type="radio" name="dd1" value="0" <?php echo $chk[0];?> >
-		<?php echo $ops[0];?><br>
-		<input type="radio" name="dd1" value="1" <?php echo $chk[1];?> >
-		<?php echo $ops[1];?><br>
-		<input type="radio" name="dd1" value="2" <?php echo $chk[2];?> >
-		<?php echo $ops[2];?><br>
-		<input type="radio" name="dd1" value="3" <?php echo $chk[3];?> >
-		<?php echo $ops[3];?><br>
-		<hr>
+		<input type="radio" name="dd1" value="6" <?php echo $chk[0];?> >
+		<?php echo $ops[6];?><br>
+		<input type="radio" name="dd1" value="7" <?php echo $chk[0];?> >
+		<?php echo $ops[7];?><br>
 		<input type="radio" name="dd1" value="4" <?php echo $chk[4];?> >
 		<?php echo $ops[4];?><br>
 		<input type="radio" name="dd1" value="5" <?php echo $chk[5];?> >
