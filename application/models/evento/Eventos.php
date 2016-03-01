@@ -235,7 +235,7 @@ class eventos extends CI_model {
 									inner join ic_aluno on id_ic = ic_id
 									where ic_cracha_prof = '$cracha' 
 										and ic_ano = '$ano' 
-										and s_id = 4 
+										and s_id = 4
 										and icas_id = 4";
 				
 				$rlt = $this -> db -> query($sql);
