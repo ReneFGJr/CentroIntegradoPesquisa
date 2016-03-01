@@ -1,5 +1,70 @@
 <?php
 class Stricto_sensus extends CI_model {
+	var $resumo = array();	
+	function orientacoes($cracha='')
+		{
+			$sql = "select * from ss_docente_orientacao 
+					left join us_usuario on us_cracha = od_aluno
+					left join ss_docente_orientacao_situacao on sss_cod = od_status
+						WHERE od_professor = '$cracha' 
+						ORDER BY od_ano_ingresso desc, od_modalidade, us_nome
+					";
+					
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$dr = array(0,0,0,0,0,0);
+			$ms = array(0,0,0,0,0,0);
+			$mp = array(0,0,0,0,0,0);
+			
+			$sx = '<table width="100%" class="tabela00 lt1">';
+			$sx .= '<tr>
+						<th width="2%">#</th>
+						<th width="35%">Estudante</th>
+						<th width="5%">Ingresso</th>
+						<th width="5%">Diplimação</th>
+						<th width="10%">Modalidade</th>
+						<th width="35%">Título da pesquisa mestrado/doutado</th>
+						<th width="8%">Situação</th>
+					</tr>';
+			
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$sx .= '<tr>';
+					$sx .= '<td align="center" class="border1">'.($r+1).'</td>';
+					$sx .= '<td class="border1">'.$line['us_nome'].'</td>';
+					$sx .= '<td align="center" class="border1">'.$line['od_ano_ingresso'].'</td>';
+					$sx .= '<td align="center" class="border1">'.substr($line['od_ano_diplomacao'],0,4).'</td>';
+					$sx .= '<td align="center" class="border1">'.msg('modalidade_'.$line['od_modalidade']).'</td>';
+					$sx .= '<td class="border1">';
+					$sx .= $line['od_titulo_projeto'];
+					$sx .= '</td>';
+					$sx .= '<td align="center" class="border1">'.$line['sss_descricao'].'</td>';
+					$sx .= '</tr>';
+					
+					/* Tipo */
+					$sss = round($line['sss_grupo']);
+					if ($line['od_modalidade'] == 'D')
+					{
+						$dr[$sss] = $dr[$sss] + 1;
+					}
+					if ($line['od_modalidade'] == 'M')
+					{
+						$ms[$sss] = $ms[$sss] + 1;
+					}
+					if ($line['od_modalidade'] == 'P')
+					{
+						$mp[$sss] = $mp[$sss] + 1;
+					}
+				}
+			$sx .= '</table>';
+			
+			$rs = array($dr,$ms,$mp);
+			$this->resumo = $rs;
+			return($sx);
+			
+		}
 
 	function is_coordenador($id_us, $programa='') {
 		$wh = '';

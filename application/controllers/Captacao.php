@@ -251,7 +251,7 @@ class Captacao extends CI_Controller {
 		$this -> load -> model('geds');
 		$this -> load -> model('isencoes');
 		$this -> load -> model('usuarios');
-		$this -> load -> model('captacoes');		
+		$this -> load -> model('captacoes');
 		$this -> load -> model('bonificacoes');
 		$this -> load -> model('stricto_sensus');
 
@@ -276,19 +276,18 @@ class Captacao extends CI_Controller {
 				case 'LIBERACAO_COORDENADOR' :
 					$ok = $this -> captacoes -> acao_captacao($proto, $tp);
 					break;
-				case 'VALIDACAO_DOCUMENTAL':
+				case 'VALIDACAO_DOCUMENTAL' :
 					$ok = $this -> captacoes -> acao_captacao($proto, $tp);
 					break;
-				case 'LIBERACAO_DIRETORIA':
+				case 'LIBERACAO_DIRETORIA' :
 					$ok = $this -> captacoes -> acao_captacao($proto, $tp);
 					break;
-				case 'LIBERACAO_PROCESSO':
+				case 'LIBERACAO_PROCESSO' :
 					$ok = $this -> captacoes -> acao_captacao($proto, $tp);
-					break;	
-				case 'LIBERACAO_PROCESSO':			
+					break;
+				case 'LIBERACAO_PROCESSO' :
 					$ok = $this -> captacoes -> acao_captacao($proto, $tp);
-					break;	
-					
+					break;
 			}
 			if ($ok == 1) {
 				redirect(base_url('index.php/captacao/view/' . $id . '/' . $chk));
@@ -308,6 +307,10 @@ class Captacao extends CI_Controller {
 		$data['title'] = '';
 		$tela = '<fieldset class="captacao_folha black border1" width="100%"><legend>' . msg("ic_arquivos") . '</legend>';
 		$tela .= $this -> geds -> list_files_table($proto, 'captacao');
+		if (perfil('#ADM#CPS#SPI') == 1)
+			{
+				$tela .= $this -> geds -> form_upload($proto, 'captacao');
+			}
 		$tela .= '</fieldset>';
 		$data['content'] = $tela;
 
@@ -337,31 +340,27 @@ class Captacao extends CI_Controller {
 				$this -> load -> view('captacao/form_coordenador', $data);
 			}
 		}
-		if (perfil($data['cs_perfil'].'#ADM') == 1) {
+		if (perfil($data['cs_perfil'] . '#ADM') == 1) {
 			/* Validacao da secretaria */
-			if ($data['ca_status'] == 80)
-				{
-					$this -> load -> view('captacao/form_secretaria_validacao', $data);
-				}
+			if ($data['ca_status'] == 80) {
+				$this -> load -> view('captacao/form_secretaria_validacao', $data);
+			}
 			/* Gerar bonificaçoes e isenções pela secretaria */
-			if ($data['ca_status'] == 81)
-				{
-					$data['isencao'] = 0;
-					if (($this->isencoes->tem_isencao($proto) == 0) and ($data['ca_isencao'] == 1))
-						{
-							$data['isencao'] = 1;
-							$this->load->view('captacao/form_isencao_gerar',$data);		
-						} else {
-							$this -> load -> view('captacao/form_secretaria_liberacao', $data);		
-						}					
+			if ($data['ca_status'] == 81) {
+				$data['isencao'] = 0;
+				if (($this -> isencoes -> tem_isencao($proto) == 0) and ($data['ca_isencao'] == 1)) {
+					$data['isencao'] = 1;
+					$this -> load -> view('captacao/form_isencao_gerar', $data);
+				} else {
+					$this -> load -> view('captacao/form_secretaria_liberacao', $data);
 				}
-				
+			}
+
 			/* Validação da diretoria de pesquisa */
-			if ($data['ca_status'] == 11)
-				{
-					$this -> load -> view('captacao/form_diretoria', $data);
-				}
-		}		
+			if ($data['ca_status'] == 11) {
+				$this -> load -> view('captacao/form_diretoria', $data);
+			}
+		}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', null);

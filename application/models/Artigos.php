@@ -505,10 +505,15 @@ class artigos extends CI_Model {
 		$sx = '<table width="100%" class="lt1">';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			$id = $line['id_ar'];
+			$link = '<a href="'.base_url('index.php/artigo/detalhe/'.$id.'/'.checkpost_link($id)).'" class="link lt1">';
+						
 			$sx .= '<tr>';
 			$sx .= '<td align="center" width="10" class="borderb1">';
 			$sx .= ($r + 1) . '.';
 			$sx .= '</td>';
+			
+			$sx .= '<td align="center" class="borderb1">'.$link.$line['ar_protocolo'].'</a></td>';
 			$sx .= '<td class="borderb1">';
 			$sx .= $line['ar_issn'];
 			$sx .= '</td>';
@@ -523,7 +528,6 @@ class artigos extends CI_Model {
 
 		}
 		$sx .= '</table>';
-		print_r($line);
 		return ($sx);
 	}
 

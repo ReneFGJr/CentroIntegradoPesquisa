@@ -27,6 +27,10 @@ $lang['prorrogacao'] = 'prorrogação';
 $lang['agencia'] = 'agência';
 $lang['participacao'] = 'participação';
 
+$lang['modalidade_M'] = 'Mestrado';
+$lang['modalidade_D'] = 'Doutorado';
+$lang['modalidade_P'] = 'Mst. Profissional';
+
 	
 /* Menu Princicpal */
 $lang['submit_ICMST'] = 'PIBIC MASTER';

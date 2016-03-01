@@ -940,7 +940,7 @@ class eventos extends CI_model {
 	}
 
 	function enviar_email($id = 0, $msg = '') {
-		global $email_own;
+
 		/* Perfil do usuário */
 		$this -> load -> model('email_local');
 		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
@@ -964,35 +964,20 @@ class eventos extends CI_model {
 	}
 
 	function enviar_email_test($id = 0) {
-		global $email_own;
+
 		/* Perfil do usuário */
-		$this -> load -> model('email_local');
-		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
-		$this -> load -> library('email', $config);
+		$us_id = $_SESSION['id_us'];
 		$t = $this -> show_mailing($id);
+		$evento = $t['ml_ev'];
 		$texto = $t['ml_html'];
 		$ass = $t['ml_subject'];
 		$sql = $t['ml_query'];
-		$email_own = 2;
-		$idu = $_SESSION['id_us'];
+		
+		/* Recupera evento */
+		$ev = $this->le($evento);
+		$enviador = $ev['ev_own'];
 		/* Recupera Dados */
-		$sql = "select * from logins where id_us = " . round($idu);
-		$rlt = $this -> db -> query($sql);
-		$rlt = $rlt -> result_array();
-		$line = $rlt[0];
-		$cpf = $line['us_cpf'];
-
-		/* Recupera Dados */
-		$sql = "select * from us_usuario where us_cpf = '$cpf'";
-		$rlt = $this -> db -> query($sql);
-		$rlt = $rlt -> result_array();
-		$idu = 0;
-		if (count($rlt) > 0) {
-			$line = $rlt[0];
-			$idu = $line['id_us'];
-		}
-
-		enviaremail_usuario($idu, $ass, $texto, 2);
+		enviaremail_usuario($us_id, $ass, $texto, $enviador);
 	}
 
 	function cp_inscricao_cracha() {
@@ -1013,6 +998,8 @@ class eventos extends CI_model {
 		array_push($cp, array('$S100', 'ev_logo', msg('ev_logo'), False, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'ev_ativo', msg('ev_ativo'), True, True));
 		array_push($cp, array('$T80:4', 'ev_query', msg('ev_lista'), False, True));
+		array_push($cp, array('$Q id_m:m_descricao:select * from mensagem_own where m_ativo = 1', 'ev_own', msg('ev_responsavel'), True, True));
+		
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 
 		return ($cp);

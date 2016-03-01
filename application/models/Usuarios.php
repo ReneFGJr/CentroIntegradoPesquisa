@@ -27,6 +27,7 @@ class usuarios extends CI_model {
 		$this -> load -> model('programas_pos');
 		$this -> load -> model('producoes');
 		$this -> load -> model('captacoes');
+		$this -> load -> model('stricto_sensus');
 		$this -> load -> model('ics');
 
 		/* Visualizações */
@@ -62,6 +63,8 @@ class usuarios extends CI_model {
 				$carga_horaria_ativo = 1;
 				/* Iniciacao científica */
 				$ic_ativo = $this -> ics -> is_ic($cracha);
+				/* Stricto sensu */
+				$stricto_sensu = $this -> is_ss($id_us);
 
 				break;
 			/* Colaborador */
@@ -122,9 +125,11 @@ class usuarios extends CI_model {
 		}
 
 		/* Aba - Stricto Sensu */
-		if ($_SESSION['ss'] == '1') {
+		if ($stricto_sensu == '1') {
 			$abas[2]['title'] = 'Mestrado/Doutorado';
-			$abas[2]['content'] = '';
+			$abas[2]['content'] = $this->stricto_sensus->orientacoes($cracha);
+			$data['orientacoes'] = $this->stricto_sensus->resumo;
+			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_ss', $data, True);
 		}
 
 		/* captacoes */
@@ -145,7 +150,6 @@ class usuarios extends CI_model {
 			$tela = $this -> ics -> orientacoes($cracha);
 			$abas[4]['content'] = $tela;
 			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_ic', $data, True);
-
 		}
 
 		/* Aba - Carga horaria */
@@ -411,7 +415,7 @@ class usuarios extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="tabela00 lt2">';
-		$sx .= '<tr><td class="lt4" colspan=10>'.stodbr($data).' - Últimos Erros de Acesso'.'</td></tr>';
+		$sx .= '<tr><td class="lt4" colspan=10>' . stodbr($data) . ' - Últimos Erros de Acesso' . '</td></tr>';
 		$sx .= '<tr><th>login</th><th>ip</th><th>data</th><th>hora</th><th>Erro</th></tr>' . cr();
 
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -452,7 +456,7 @@ class usuarios extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="tabela00 lt2">';
-		$sx .= '<tr><td class="lt4" colspan=10>'.stodbr($data).' - Últimos Acessos Bem sucedidos'.'</td></tr>';
+		$sx .= '<tr><td class="lt4" colspan=10>' . stodbr($data) . ' - Últimos Acessos Bem sucedidos' . '</td></tr>';
 		$sx .= '<tr><th>nome</th><th>login</th><th>ip</th><th>data</th><th>hora</th><th>Erro</th></tr>' . cr();
 
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -773,36 +777,34 @@ class usuarios extends CI_model {
 		return ($sx);
 	}
 
-	function perfil($id)
-		{
-			$data = $this->usuarios->le($id);
-			$tipo = $data['usuario_tipo_ust_id'];
-			$sx = '';
-			switch($tipo)
-				{
-				case '1': 
-					/* Não Definido */
-					$sx = $this->load->view('perfil/docente.php',$data,true);
-					break;					
-				case '2': 
-					/* Docente */
-					$sx = $this->load->view('perfil/docente.php',$data,true);
-					break;
-				case '3': 
-					/* Discente */
-					$sx = $this->load->view('perfil/discente.php',$data,true);
-					break;
-				case '4': 
-					/* Colaborador */
-					$sx = $this->load->view('perfil/docente.php',$data,true);
-					break;
-				case '5': 
-					/* Externo */
-					$sx = $this->load->view('perfil/docente.php',$data,true);
-					break;					
-				}			
-			return($sx);
+	function perfil($id) {
+		$data = $this -> usuarios -> le($id);
+		$tipo = $data['usuario_tipo_ust_id'];
+		$sx = '';
+		switch($tipo) {
+			case '1' :
+			/* Não Definido */
+				$sx = $this -> load -> view('perfil/docente.php', $data, true);
+				break;
+			case '2' :
+			/* Docente */
+				$sx = $this -> load -> view('perfil/docente.php', $data, true);
+				break;
+			case '3' :
+			/* Discente */
+				$sx = $this -> load -> view('perfil/discente.php', $data, true);
+				break;
+			case '4' :
+			/* Colaborador */
+				$sx = $this -> load -> view('perfil/docente.php', $data, true);
+				break;
+			case '5' :
+			/* Externo */
+				$sx = $this -> load -> view('perfil/docente.php', $data, true);
+				break;
 		}
+		return ($sx);
+	}
 
 	function insere_conta_corrente_vazia($id) {
 		$sql = "insert into us_conta 
@@ -935,7 +937,7 @@ class usuarios extends CI_model {
 		array_push($cp, array('$S100', 'us_nome_lattes', msg('link_nome'), False, True));
 		array_push($cp, array('$Q id_area:area_avaliacao_nome:select * from area_avaliacao order by area_avaliacao_nome', 'us_area_conhecimento', msg('area_avaliacao'), False, True));
 		array_push($cp, array('$}', '', 'Dados de Pesquisa', False, True));
-		
+
 		array_push($cp, array('${', '', 'Vinculo institucional', False, True));
 		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
 		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
@@ -954,7 +956,7 @@ class usuarios extends CI_model {
 		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_teste', msg('lb_user_teste'), True, True));
 		array_push($cp, array('$Q id_ustp:ustp_nome:select * from us_tipo order by ustp_nome', 'usuario_tipo_ust_id', msg('perfil'), True, True));
 		array_push($cp, array('$}', '', '', False, True));
-	
+
 		array_push($cp, array('$B', '', msg('save'), false, True));
 
 		return ($cp);
@@ -990,7 +992,7 @@ class usuarios extends CI_model {
 	}
 
 	function le_cracha($cracha) {
-		$cracha = $this->limpa_cracha($cracha);
+		$cracha = $this -> limpa_cracha($cracha);
 		$rs = $this -> readByCracha($cracha);
 
 		if (count($rs) == 0) {
@@ -1398,25 +1400,23 @@ class usuarios extends CI_model {
 		}
 		return ($cracha);
 	}
-	
-	function buscaCentro($centro)
-		{
-			$sql = "select * from centro_academico 
+
+	function buscaCentro($centro) {
+		$sql = "select * from centro_academico 
 						INNER JOIN campus on da_campus = id_c
 					WHERE da_nome = '$centro' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					
-					$rt = array($line['id_da'],$line['c_campus']);
-					return($rt);
-				} else {
-					echo 'OPS '.$centro;
-					exit;
-				}
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+
+			$rt = array($line['id_da'], $line['c_campus']);
+			return ($rt);
+		} else {
+			echo 'OPS ' . $centro;
+			exit ;
 		}
+	}
 
 	function insere_usuario($DadosUsuario) {
 
@@ -1436,15 +1436,14 @@ class usuarios extends CI_model {
 		$dtnasc = sonumero($DadosUsuario['dataNascimento']);
 		$dtnasc = substr($dtnasc, 4, 4) . '-' . substr($dtnasc, 2, 2) . '-' . substr($dtnasc, 0, 2);
 		$cracha = $DadosUsuario['pessoa'];
-				
-		if (isset($DadosUsuario['nomeCurso']))
-			{
-				$data = $DadosUsuario['nomeCurso'];
-				$curso = trim($this -> limpaCursos($curso));		
-			} else {
-				$data = array();
-				$curso = '';
-			}
+
+		if (isset($DadosUsuario['nomeCurso'])) {
+			$data = $DadosUsuario['nomeCurso'];
+			$curso = trim($this -> limpaCursos($curso));
+		} else {
+			$data = array();
+			$curso = '';
+		}
 
 		$rs = $this -> buscaCentro($DadosUsuario['centroAcademico']);
 		$centro = $rs[0];
@@ -1482,7 +1481,7 @@ class usuarios extends CI_model {
 						us_dt_nascimento = '$dtnasc'
 						$up
 					where us_cracha = '$cracha'";
-					
+
 			$this -> db -> query($sql);
 		} else {
 			/* Novo registro */

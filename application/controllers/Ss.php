@@ -123,7 +123,14 @@ class ss extends CI_Controller {
 		$cracha = $_SESSION['cracha'];
 		$tela = $this->isencoes->lista_minhas_isencoes($cracha);
 		$data['content'] = $tela;
+		$data['title'] = msg('isencoes_para_indicar');
 		$this->load->view('content',$data);
+		
+		$tela = $this->isencoes->lista_minhas_isencoes_indicadas($cracha);
+		$data['title'] = msg('isencoes_ativas');
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
+		
 		}
 		
 	function termo_gerar($id=0,$chk='')

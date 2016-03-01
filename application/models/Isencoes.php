@@ -330,6 +330,50 @@ class isencoes extends CI_model {
 		return($sx);
 		}
 
+	function lista_minhas_isencoes_indicadas($cracha)
+		{
+		$sx = '';
+		$sql = "select *
+					FROM bonificacao
+					LEFT JOIN bonificacao_situacao on bns_codigo = bn_status 
+					LEFT JOIN captacao on ca_protocolo = bn_original_protocolo 
+					LEFT JOIN us_usuario on bn_beneficiario = us_cracha and bn_beneficiario <> ''
+							WHERE bn_original_tipo = 'IPR' and bn_professor = '$cracha'
+							and bn_status != '!'
+				order by bn_status, bns_descricao  ";
+				
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		$sx = '<table class="tabela01 lt2" width="100%" border=0 cellpadding=5>';
+		$sx .= '<tr>
+					<th width="5%">Protocolo</th>
+					<th width="5%">Agência</th>
+					<th width="30%">Título Projeto</th>					
+					<th width="25%">Edital descrição</th>
+					<th>Edital</th>
+					<th width="30%">Estudante</th>
+					<th width="12%">Situação</th>
+				</tr>';		
+		if (count($rlt) > 0)
+			{
+			$tot = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$tot++;
+					$line = $rlt[$r];
+					$line['acao'] = '';
+					$sx .= $this->load->view('isencoes/simple_row_2',$line,true);
+				}
+			if ($tot > 0)
+				{
+					$sx .= '<tr><td colspan=10>Total de '.$tot.' isenções</td></tr>';
+				} else {
+					$sx .= '<tr><td colspan=10 class="lt3">'.msg('nenhum insenção disponível').'</td></tr>';
+				}
+			}
+		$sx .= '</table>';
+		return($sx);
+		}
 		
 	function lista_status($st = '') {
 		if (strlen($st) > 0)

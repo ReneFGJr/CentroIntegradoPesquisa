@@ -243,7 +243,8 @@ class Artigo extends CI_Controller {
 		$data['content'] = '<fieldset><legend>' . msg('artigo_historico') . '</legend>' . $this -> artigos -> mostra_historico($id) . '</fieldset>';
 		
 		$this->geds->tabela = 'cip_artigo_ged_documento';
-		$data['content'] .= $this->geds->list_files($proto, 'artigo');
+		$data['content'] .= $this->geds->list_files_table($proto, 'artigo');
+		$data['content'] .= $this->geds->form_upload($proto, 'artigo');
 		
 		$this -> load -> view('content', $data);
 
