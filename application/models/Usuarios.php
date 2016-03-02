@@ -124,13 +124,7 @@ class usuarios extends CI_model {
 			$abas[1]['content'] = $sa . $this -> producoes -> producao_perfil($cpf, $area_avaliacao);
 		}
 
-		/* Aba - Stricto Sensu */
-		if ($stricto_sensu == '1') {
-			$abas[2]['title'] = 'Mestrado/Doutorado';
-			$abas[2]['content'] = $this->stricto_sensus->orientacoes($cracha);
-			$data['orientacoes'] = $this->stricto_sensus->resumo;
-			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_ss', $data, True);
-		}
+
 
 		/* captacoes */
 		if ($captacoes_ativo == 1) {
@@ -142,6 +136,14 @@ class usuarios extends CI_model {
 			$abas[3]['title'] = 'Captações';
 			$abas[3]['content'] = $capt['captacoes'];
 		}
+		
+		/* Aba - Stricto Sensu */
+		if ($stricto_sensu == '1') {
+			$abas[2]['title'] = 'Mestrado/Doutorado';
+			$abas[2]['content'] = $this->stricto_sensus->orientacoes($cracha);
+			$data['orientacoes'] = $this->stricto_sensus->resumo;
+			$abas[0]['content'] .= $this -> load -> view('perfil/perfil_ss', $data, True);
+		}		
 
 		/* Aba - Iniciacao Cientifica */
 		if ($ic_ativo == 1) {
@@ -153,7 +155,7 @@ class usuarios extends CI_model {
 		}
 
 		/* Aba - Carga horaria */
-		if ($carga_horaria_ativo == 1) {
+		if ($carga_horaria_ativo == 31) {
 			$abas[9]['title'] = 'Carga Horária';
 			$abas[9]['content'] = $this -> usuarios -> mostra_carga_horaria($cpf);
 		}

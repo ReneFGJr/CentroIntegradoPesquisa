@@ -21,6 +21,7 @@ class Stricto_sensus extends CI_model {
 			$sx .= '<tr>
 						<th width="2%">#</th>
 						<th width="35%">Estudante</th>
+						<th width="5%">Crachá</th>
 						<th width="5%">Ingresso</th>
 						<th width="5%">Diplimação</th>
 						<th width="10%">Modalidade</th>
@@ -34,6 +35,7 @@ class Stricto_sensus extends CI_model {
 					$sx .= '<tr>';
 					$sx .= '<td align="center" class="border1">'.($r+1).'</td>';
 					$sx .= '<td class="border1">'.$line['us_nome'].'</td>';
+					$sx .= '<td class="border1">'.$line['od_aluno'].'</td>';
 					$sx .= '<td align="center" class="border1">'.$line['od_ano_ingresso'].'</td>';
 					$sx .= '<td align="center" class="border1">'.substr($line['od_ano_diplomacao'],0,4).'</td>';
 					$sx .= '<td align="center" class="border1">'.msg('modalidade_'.$line['od_modalidade']).'</td>';

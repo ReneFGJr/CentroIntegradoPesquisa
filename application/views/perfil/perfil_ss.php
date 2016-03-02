@@ -3,23 +3,49 @@ $total_ic_ativo = 0;
 $total_ic_finalizado = 0;
 $boneco = array();
 $boneco_finalizado = array();
-print_r($orientacoes);
-for ($r=0;$r < count($orientacoes[0]);$r++)
+
+for ($r=0;$r < $orientacoes[0][0];$r++)
 	{
-		array_push($boneco,'DR');
+		array_push($boneco,'D');
+		$total_ic_ativo++;
 	}
-for ($r=0;$r < count($orientacoes[1]);$r++)
+for ($r=0;$r < $orientacoes[1][0];$r++)
 	{
-		array_push($boneco_finalizado,'PIBIC');
-	}	
+		array_push($boneco,'M');
+		$total_ic_ativo++;
+	}
+for ($r=0;$r < $orientacoes[2][0];$r++)
+	{
+		array_push($boneco,'P');
+		$total_ic_ativo++;
+	}
+	
+	
+for ($r=0;$r < $orientacoes[0][1];$r++)
+	{
+		array_push($boneco_finalizado,'D');
+		$total_ic_finalizado++;
+	}
+for ($r=0;$r < $orientacoes[1][1];$r++)
+	{
+		array_push($boneco_finalizado,'M');
+		$total_ic_finalizado++;
+	}
+for ($r=0;$r < $orientacoes[2][1];$r++)
+	{
+		array_push($boneco_finalizado,'P');
+		$total_ic_finalizado++;
+	}
+
+
 /* Bonecos */
 $bnc = '';
 for ($r = 0; $r < count($boneco); $r++) {
-	$bnc .= ' <img src="' . base_url('img/icon/img_icone_boneco_' . $boneco[$r] . '.png') . '" style="margin-right: 10px;" title="' . $boneco[$r] . '">';
+	$bnc .= ' <img src="' . base_url('img/icon/img_icone_boneco_' . $boneco[$r] . '.png') . '" style="margin-right: 10px;" title="' . msg('modalidade_'.$boneco[$r]) . '">';
 }
 $bnf = '';
 for ($r = 0; $r < count($boneco_finalizado); $r++) {
-	$bnf .= ' <img src="' . base_url('img/icon/img_icone_boneco_' . $boneco_finalizado[$r] . '.png') . '" style="margin-right: 5px;" height="30" title="' . $boneco_finalizado[$r] . '">';
+	$bnf .= ' <img src="' . base_url('img/icon/img_icone_boneco_' . $boneco_finalizado[$r] . '.png') . '" style="margin-right: 5px;" height="30" title="' . msg('modalidade_'.$boneco_finalizado[$r]) . '">';
 }
 ?>
 <table class="captacao_folha border1" width="400" style="width: 400px;">

@@ -42,11 +42,11 @@ class central_declaracao extends CI_Controller {
 		$this -> load -> view('header/header', $data);
 	}
 
-	function perfil() {
+	function perfil2() {
 		
 		echo '<h1>EM MANUTENÇÃO</h1>';
 	}
-	function perfil2() {
+	function perfil() {
 		/* load model */
 		$this -> load -> model('usuarios');
 		$this -> load -> model('evento/eventos');
@@ -206,12 +206,32 @@ class central_declaracao extends CI_Controller {
 	function declaracao($id = '', $check = '') {
 		$sql = "select * from central_declaracao
 					inner join central_declaracao_evento on id_cde = dc_tipo
+						where id_dc = ".round($id);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$line = $rlt[0];
+		$cde_ano = $line['cde_ano'];
+		
+		if ($cde_ano >= '2015')
+			{		
+			$sql = "select * from central_declaracao
+					inner join central_declaracao_evento on id_cde = dc_tipo
 					inner join (select us_nome as nome_1, id_us as id_us_1, us_genero as us_g1 from us_usuario) as user_1 on id_us_1 = dc_us_usuario_id 
 					 left join (select us_nome as nome_2, id_us as id_us_2, us_genero as us_g2 from us_usuario) as user_2 on id_us_2 = dc_us_usuario_id_2
 					left join ic on ic_plano_aluno_codigo = dc_texto_1 
 					inner join ic_aluno as pa on ic_id = id_ic
 					left join ic_modalidade_bolsa as mode on mb_id = id_mb
 					where id_dc = " . round($id);
+			} else {
+			$sql = "select * from central_declaracao
+					inner join central_declaracao_evento on id_cde = dc_tipo
+					inner join (select us_nome as nome_1, id_us as id_us_1, us_genero as us_g1 from us_usuario) as user_1 on id_us_1 = dc_us_usuario_id 
+					left join (select us_nome as nome_2, id_us as id_us_2, us_genero as us_g2 from us_usuario) as user_2 on id_us_2 = dc_us_usuario_id_2
+					left join ic on ic_plano_aluno_codigo = dc_texto_1 
+					inner join ic_aluno as pa on ic_id = id_ic
+					left join ic_modalidade_bolsa as mode on mb_id = id_mb
+					where id_dc = " . round($id);
+			}
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -237,6 +257,8 @@ class central_declaracao extends CI_Controller {
 		$data['titulo_projeto'] = $data['ic_projeto_professor_titulo'];
 		$data['modalidade'] = $data['mb_descricao'];
 		$data['edital'] = $data['mb_tipo'];
+
+		
 
 		switch ($tipo) {
 			/*#############################################################################################*/
@@ -395,7 +417,7 @@ class central_declaracao extends CI_Controller {
 				participou do Programa Institucional de Bolsas de Iniciação Científica
 				(' . $data['edital'] . ') com Bolsa ' . $data['modalidade'] . ' no período de agosto de 2013 até julho de 2014, 
 				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>", orientad'. $artigo_estudante .'  pel'. $artigo_prof_complemento .'  ' . $artigo_professor . '  <b>' . $data['nome_user_main'] . '</b>
-				e, com o mesmo trabalho, realizou	apresentação oralmente e em forma de pôster no XXI Seminário de Iniciação Científica da PUCPR e XV Mostra de Pesquisa da pós-graduação, realizado nos dias 22, 23 e 24 de novembro de 2013. 
+				e, com o mesmo trabalho, realizou	apresentação oralmente e em forma de pôster no XXII Seminário de Iniciação Científica da PUCPR, realizado nos dias 4,5 e 6 de novembro de 2014. 
 				';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
@@ -424,6 +446,10 @@ class central_declaracao extends CI_Controller {
 
 			/* Declaracao de Orientador */
 			case '27':
+			/*#############################################################################################*/
+			/*#######################     INICIACAO CIENTIFICA DE 2013 à 2014    ##############################*/
+			/*#############################################################################################*/				
+				/*** ORIENTADOR - 2013 */
 				$artigo_g2 = 'aluno';
 				if ($data['us_g2'] == 'F') { $artigo_g2 = 'aluna';}
 				$artigo_g1 = 'prof.';
@@ -438,11 +464,11 @@ class central_declaracao extends CI_Controller {
 										$artigo_g1 . ' <b>' . $data['nome_user_second'] . '</b> orientou '. 
 										$artigo_g5 . ' ' .
 									 	$artigo_g2 . ' <b>' . $data['nome_user_main'] .'</b> no projeto de pesquisa intitulado "<b>' . 
-	                  $data['titulo_projeto'] . '</b>", com ' . $data['modalidade'] . ', no programa ' . 
-	                  $data['edital'] . ', no período de agosto de 2014 até julho de 2015.';
+	                  $data['ic_projeto_professor_titulo'] . '</b>", com ' . $data['modalidade'] . ', no programa ' . 
+	                  $data['edital'] . ', no período de agosto de 2013 até julho de 2014.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
-				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 30 de novembro de 2015.</td></tr></table>';
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 30 de novembro de 2014.</td></tr></table>';
 				break;
 
 			/*#############################################################################################*/
@@ -466,8 +492,8 @@ class central_declaracao extends CI_Controller {
 										participou do Programa Institucional de Bolsas de Iniciação Científica (PIBIC) com Bolsa (' . 
 										$data['edital'] . ') no período de agosto de 2013 até julho de 2014, com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>", 
 										orientad'. $artigo_g4 .' pel'. $artigo_g3 .' ' . $artigo_g1 . ' <b>' . 
-										$data['nome_user_main'] . '</b>" e, realizou apresentação no III Congresso Sul Brasileiro de de Iniciação Científica e Pós-Graduação e 
-										XXII Seminário de Iniciação Científica da PUCPR, realizado nos dias 04, 05 e 06 de Novembro de 2014.';
+										$data['nome_user_main'] . '</b>" e, realizou apresentação no 
+										XXIII Seminário de Iniciação Científica da PUCPR, realizado nos dias 6, 7 e 8 de Outubro de 2015.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 21 de Novembro de 2014.</td></tr></table>';
@@ -494,6 +520,7 @@ class central_declaracao extends CI_Controller {
 
 			/* Declaracao de Orientador */
 			case '30':
+				/******************************* ORIENTADOR 2014 *********************************/				
 				$artigo_g2 = 'aluno';
 				if ($data['us_g2'] == 'F') { $artigo_g2 = 'aluna';}
 				$artigo_g1 = 'prof.';
@@ -507,11 +534,11 @@ class central_declaracao extends CI_Controller {
 									 	$artigo_g6  .' '.
 										$artigo_g1 . ' <b>' . $data['nome_user_second'] . '</b> orientou '.
 										$artigo_g5  .' '. 
-									  $artigo_g2 . ' <b>' . $data['nome_user_main'] .'</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2013 até julho de 2014.';
+									  $artigo_g2 . ' <b>' . $data['nome_user_main'] .'</b> no projeto de pesquisa intitulado "<b>' . $data['titulo_projeto'] . '"</b>, com ' . $data['modalidade'] . ', no programa ' . $data['edital'] . ', no período de agosto de 2014 até julho de 2015.';
 
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
-				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 21 de Novembro de 2014.</td></tr></table>';
+				$data['content'] .= '<br><br><table width="100%"><tr><td align="right">' . 'Curitiba, 21 de Novembro de 2015.</td></tr></table>';
 				break;
 				
 			/*#############################################################################################*/
@@ -607,7 +634,7 @@ class central_declaracao extends CI_Controller {
 				participou do Programa Institucional de Bolsas de Iniciação Científica (PIBIC)
 				com Bolsa (' . $data['edital'] . ') no período de agosto de 2011 até julho de 2012, 
 				com o projeto de pesquisa "<b>' . $data['titulo_projeto'] . '</b>" , orientad'. $artigo_g4 .' pel'. $artigo_g3 .' '. $artigo_g1 . ' '.  '<b>' . $data['nome_user_main'] . '</b>" e,
-				realizou apresentação no XIX Seminário de Iniciação Científica da PUCPR, XIII Mostra de Pesquisa da pós-graduação, realizado nos dias 25, 26 e 27 de outubro de 2011.';
+				realizou apresentação no XX Seminário de Iniciação Científica da PUCPR, realizado nos dias 6,7 e 8 de novembro de 2012.';
 				$content = utf8_encode($content);
 				$data['content'] = '<font style="line-height: 150%">' . $content;
 				$data['content'] .= '<br><br><table width="100%"><tr><td align="left">' . 'Curitiba, 31 de Outubro de 2012.</td></tr></table>';

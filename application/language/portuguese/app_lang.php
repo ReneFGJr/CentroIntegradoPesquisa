@@ -29,7 +29,9 @@ $lang['participacao'] = 'participação';
 
 $lang['modalidade_M'] = 'Mestrado';
 $lang['modalidade_D'] = 'Doutorado';
-$lang['modalidade_P'] = 'Mst. Profissional';
+$lang['modalidade_P'] = 'Pós-Doutorado';
+$lang['modalidade_O'] = 'Mst. Profissional';
+$lang['SS'] = 'stricto sensu';
 
 	
 /* Menu Princicpal */
