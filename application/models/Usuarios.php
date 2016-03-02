@@ -495,7 +495,7 @@ class usuarios extends CI_model {
 
 	function ghost_link($id = 0) {
 		if (function_exists("perfil")) {
-			if (perfil('#SPI#ADM#CPP#CPI') == 1) {
+			if (perfil('#SPI#ADM#CPP#CPI#GST') == 1) {
 				$link = '<a href="' . base_url('index.php/login/ap/' . $id . '/' . checkpost_link($id . date("Ymdhi"))) . '">';
 				$link .= '<img src="' . base_url('img/icon/icone_ghost.png') . '" border=0 height="16" title="' . msg("ghost_access") . '"></a>';
 
