@@ -144,7 +144,6 @@ class ss extends CI_Controller {
 		$this->load->model('bonificacoes');
 		
 		$data = $this->isencoes->le($id);
-				
 		$data['txt'] = $this->load->view('isencoes/termo_modelo',$data, true);
 		$this->load->view('isencoes/termo_pdf',$data);			
 			

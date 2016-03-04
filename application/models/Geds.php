@@ -42,6 +42,7 @@ class Geds extends CI_Model {
 								and doc_ativo = 1 
 								$wh
 						";
+						
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$this -> total_files = count($rlt);

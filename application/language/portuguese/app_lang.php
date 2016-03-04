@@ -14,6 +14,7 @@ if (!function_exists(('msg')))
 			}
 	}
 
+$lang['shortcuts'] = 'Acesso rápido';
 $lang['bt_search'] = 'Busca';
 $lang['bt_clear'] = 'Limpa filtro';
 $lang['bt_new'] = 'Novo registro';
@@ -32,6 +33,11 @@ $lang['modalidade_D'] = 'Doutorado';
 $lang['modalidade_P'] = 'Pós-Doutorado';
 $lang['modalidade_O'] = 'Mst. Profissional';
 $lang['SS'] = 'stricto sensu';
+$lang['lancar_valor_isencao'] = 'Lançar Valores da Renúncia';
+$lang['captacao_bonificacoes'] = 'Bonificações e Isenções';
+
+$lang['lb_bn_rf_valor'] = 'Valor da parcela de isenção';
+$lang['lb_bn_rf_parcela'] = 'Número de parcelas a isentar';
 
 	
 /* Menu Princicpal */
@@ -190,7 +196,7 @@ $lang['lb_icc_tit_model_contrato'] = 'Modelo de contrato';
 $lang['lb_icc_texto_contrato'] = 'Texto do Contrato)';
 $lang['lb_mensagens_title'] = 'Construção do Modelo de Contrato';
 
-$lang['versao'] = 'v0.16.01';
+$lang['versao'] = 'v0.16.10';
 /* Fundo de Pesquisa */
 $lang['page_fundo'] = 'Fundo de Pesquisa';
 

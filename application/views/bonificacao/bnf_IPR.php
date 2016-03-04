@@ -1,5 +1,6 @@
 <?php
 $img = base_url('img/icon/icone_label_isencao.png');
+$botao = '';
 $benef = '-';
 if ( $bn_rf_valor > 0)
 	{
@@ -14,8 +15,16 @@ if ($bn_status == 'Z')
 	{
 		$fundo = 'bg_lred';
 	}	
+if (($bn_status == 'A') and (perfil("#ADM#SCR#CPS") == 1))
+	{
+		$link = base_url('index.php/isencao/lanca/'.$id_bn.'/'.checkpost_link($id_bn));
+		$botao = '<A href="#" onclick="newwin(\''.$link.'\',800,600);" class="botao3d back_green_shadown back_green">';
+		$botao .= msg('lancar_valor_isencao');
+		$botao .= '</a>';
+		$botao = '<td rowspan=10">'.$botao.'</td>';
+	}
 ?>
-<table width="100%"  class="captacao_folha black border1 <?php echo $fundo;?>">
+<table width="100%"  class="captacao_folha black border1 <?php echo $fundo;?>" border=0>
 	<tr>
 		<th width="80"></th>
 		<th width="5%"></th>
@@ -26,6 +35,7 @@ if ($bn_status == 'Z')
 	<tr valign="top">
 		<td rowspan=10 width="20"><img src="<?php echo $img;?>" width="100"></td>
 		<td colspan=3 class="lt4" align="left">Isenção PUCPR</td>
+		<?php echo $botao;?>
 		<td rowspan=5>
 		<table width="300" class="captacao_folha black border1 bg_lgrey">
 			<tr>
@@ -59,5 +69,6 @@ if ($bn_status == 'Z')
 		<td class="lt0" align="right">Situação:</td>
 		<td class="lt2" colspan=4 align="left"><?php echo $bns_descricao . '('.$bn_status.')';?></td>
 	</tr>
+	<tr><td colspan=3><?php echo $files;?></td></tr>
 </table>
 <BR><BR>

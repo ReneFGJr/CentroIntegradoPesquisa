@@ -30,7 +30,7 @@ class login extends CI_Controller {
 
 		//$this -> lang -> load("app", "english");
 	}
-	
+
 	function cab() {
 		/* Carrega classes adicionais */
 		$css = array();
@@ -50,7 +50,7 @@ class login extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-	}	
+	}
 
 	function ab($id = 0, $chk = '') {
 		/* Remover */
@@ -101,30 +101,29 @@ class login extends CI_Controller {
 		exit ;
 	}
 
-	function email($id,$chk='')
-		{
-			$this->cab();
-			$this->load->model('usuarios');
-			$this->load->model('mensagens');
-			$dados = $this->usuarios->le($id);
-			$data = array();
-			$data['nome'] = $dados['us_nome'];
-			$nw = $this->mensagens->busca('email_password',$data);
-			$txt = $nw['nw_texto'];
-			$assunto = $nw['nw_titulo'];
-			$fmt = $nw['nw_formato'];
-			$link = base_url('index.php/login/a/'.$id.'/'.checkpost_link($id . 'acesso_professor'));
-			$link = '<a href="'.$link.'">link de acesso</a><br>ou '.$link;
-			$txt = troca($txt,'$link',$link);
-			
-			$this->load->view('usuario/view',$dados);
-			
-			$para = 1;
-			enviaremail_usuario($id, $assunto, $txt, 2);
-			$tela = '<font color="green">e-mail enviado com sucesso!</font>';
-			$data['content'] = $tela;
-			$this->load->view('content',$data);
-		}
+	function email($id, $chk = '') {
+		$this -> cab();
+		$this -> load -> model('usuarios');
+		$this -> load -> model('mensagens');
+		$dados = $this -> usuarios -> le($id);
+		$data = array();
+		$data['nome'] = $dados['us_nome'];
+		$nw = $this -> mensagens -> busca('email_password', $data);
+		$txt = $nw['nw_texto'];
+		$assunto = $nw['nw_titulo'];
+		$fmt = $nw['nw_formato'];
+		$link = base_url('index.php/login/a/' . $id . '/' . checkpost_link($id . 'acesso_professor'));
+		$link = '<a href="' . $link . '">link de acesso</a><br>ou ' . $link;
+		$txt = troca($txt, '$link', $link);
+
+		$this -> load -> view('usuario/view', $dados);
+
+		$para = 1;
+		enviaremail_usuario($id, $assunto, $txt, 2);
+		$tela = '<font color="green">e-mail enviado com sucesso!</font>';
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+	}
 
 	function ac($id = 0, $chk = '') {
 		/* Remover */
@@ -138,10 +137,9 @@ class login extends CI_Controller {
 
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
-			if (count($rlt) == 0)
-				{
-					$link = base_url('index.php/login');	
-				}
+			if (count($rlt) == 0) {
+				$link = base_url('index.php/login');
+			}
 			$line = $rlt[0];
 
 			/* Model */
@@ -149,7 +147,7 @@ class login extends CI_Controller {
 
 			if (count($rlt) > 0) {
 				/* Recupera dados */
-				$this->usuarios->security_set($id);
+				$this -> usuarios -> security_set($id);
 				$this -> usuarios -> historico_insere($line['us_cpf'], 'ACR');
 				$link = base_url('index.php/main');
 				redirect($link);
@@ -189,8 +187,8 @@ class login extends CI_Controller {
 	}
 
 	function a($id = 0, $chk = '') {
-		$this->load->model('usuarios');
-		$this->load->model('login/josso_login_pucpr');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('login/josso_login_pucpr');
 		/* Remover */
 		$chk2 = checkpost_link($id . 'acesso_professor');
 
@@ -430,8 +428,93 @@ class login extends CI_Controller {
 
 	}
 
-	function index() {
+	function link() {
 		$this -> load -> model('usuarios');
+		$this -> load -> model('mensagens');
+
+		$data['login_error'] = '';
+
+		/* Carrega modelo */
+		$login = '';
+		$password = '';
+		$acao = get('acao');
+
+		if (isset($acao) and (strlen($acao) > 0)) {
+			/* ZERA ERROS
+			 */
+
+			$ok = 0;
+			$cracha = get('dd1');
+			$password = get('dd2');
+			$data = $this -> usuarios -> le_cracha($login);
+			$data['login_error'] = '';
+			if (count($data) > 0) {
+				$ok = 1;
+			} else {
+				$ok = -1;
+			}
+			switch($ok) {
+				case (1) :
+				/* Associar login com user */
+					$cracha = $this -> usuarios -> limpa_cracha($cracha);
+					$sql = "select * from us_usuario where us_cracha = '$cracha' ";
+					$rlo = $this -> db -> query($sql);
+					$rlo = $rlo -> result_array();
+					if (count($rlo) > 0) {
+						$dados = $rlo[0];
+						$id = trim($dados['id_us']);
+						$cracha = trim($dados['us_cracha']);
+
+						$data = array();
+						$data['nome'] = $dados['us_nome'];
+						$nw = $this -> mensagens -> busca('email_password', $data);
+						$txt = $nw['nw_texto'];
+						$assunto = $nw['nw_titulo'];
+						$fmt = $nw['nw_formato'];
+						$link = base_url('index.php/login/a/' . $id . '/' . checkpost_link($id . 'acesso_professor'));
+						$link = '<a href="' . $link . '">link de acesso</a><br>ou ' . $link;
+						$txt = troca($txt, '$link', $link);
+
+						$para = 1;
+						enviaremail_usuario($id, $assunto, $txt, 2);
+						$tela = '<font color="green">e-mail enviado com sucesso!</font>';
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+					} else {
+						$data['login_error'] = 'Crachá não localizado';
+					}
+
+				//$this->
+				case (-1) :
+					$data['login_error'] = '<div id="login_erro">' . $this -> lang -> line('login_erro_01') . '</div>';
+					$link = '<a href="' . base_url('index.php/login/link') . '" class="link lt1">';
+					$data['login_error'] .= '<BR>' . $link . '<div id="login_erro">Dificuldades no acesso? Clique aqui e receba um link de acesso em seu e-mail cadastrado</div></a>';
+
+					break;
+				default :
+					$data['login_error'] = 'Error - Empty ' . $ok;
+					break;
+			}
+		}
+
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'style_login.css');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		$data['lg_name'] = $login;
+		$data['lg_password'] = $this -> input -> get_post('dd2'); ;
+
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+		$this -> load -> view('login/send_password');
+	}
+
+	function index() {
 		$this -> load -> model('usuarios');
 
 		$data['login_error'] = '';
@@ -474,20 +557,23 @@ class login extends CI_Controller {
 							return ('');
 						}
 					}
-					
+
 					/* Seta Security */
-					
+
 					redirect(base_url('index.php/main'));
 					exit ;
 					break;
-				case (2):
-						/* validado_por_senha_anterior */
-						$this->usuarios->security_set($this->usuarios->id);
-						redirect(base_url('index.php/main'));
-						exit;
-						break;
+				case (2) :
+				/* validado_por_senha_anterior */
+					$this -> usuarios -> security_set($this -> usuarios -> id);
+					redirect(base_url('index.php/main'));
+					exit ;
+					break;
 				case (-1) :
 					$data['login_error'] = '<div id="login_erro">' . $this -> lang -> line('login_erro_01') . '</div>';
+					$link = '<a href="' . base_url('index.php/login/link') . '" class="link lt1">';
+					$data['login_error'] .= '<BR>' . $link . '<div id="login_erro">Dificuldades no acesso? Clique aqui e receba um link de acesso em seu e-mail cadastrado</div></a>';
+
 					break;
 				default :
 					$data['login_error'] = 'Error - Empty ' . $ok;
@@ -513,8 +599,7 @@ class login extends CI_Controller {
 		$data['link_debug'] = '';
 
 		$data['lg_name'] = $login;
-		$data['lg_password'] = $this -> input -> get_post('dd2');
-		;
+		$data['lg_password'] = $this -> input -> get_post('dd2'); ;
 
 		require ("_server_type.php");
 		switch ($server_type) {

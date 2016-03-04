@@ -1,6 +1,7 @@
 <?php
 class bonificacoes extends CI_Model {
 	function mostra_bonificacoes($proto) {
+		$this->load->model('geds');
 		$sql = "select * from bonificacao
 						LEFT JOIN bonificacao_situacao ON bn_status = bns_codigo 
 						LEFT JOIN us_usuario on bn_beneficiario = us_cracha and us_cracha <> ''
@@ -12,6 +13,10 @@ class bonificacoes extends CI_Model {
 		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			$this->geds->tabela = 'bonificacao_ged_documento';
+			$proto_file = strzero($line['id_bn'],7);
+			
+			$line['files'] = $this->geds->list_files_table($proto_file,'isencao');
 
 			$tipo = $line['bn_original_tipo'];
 			switch ($tipo) {

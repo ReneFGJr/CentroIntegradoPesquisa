@@ -23,7 +23,7 @@ class Stricto_sensus extends CI_model {
 						<th width="35%">Estudante</th>
 						<th width="5%">Crachá</th>
 						<th width="5%">Ingresso</th>
-						<th width="5%">Diplimação</th>
+						<th width="5%">Diplomação</th>
 						<th width="10%">Modalidade</th>
 						<th width="35%">Título da pesquisa mestrado/doutado</th>
 						<th width="8%">Situação</th>

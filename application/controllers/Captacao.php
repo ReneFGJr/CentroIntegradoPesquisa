@@ -8,6 +8,7 @@ class Captacao extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users_helper');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 
@@ -248,6 +249,7 @@ class Captacao extends CI_Controller {
 	}
 
 	function view($id = 0, $chk = '') {
+		
 		$this -> load -> model('geds');
 		$this -> load -> model('isencoes');
 		$this -> load -> model('usuarios');
@@ -307,6 +309,7 @@ class Captacao extends CI_Controller {
 		$data['title'] = '';
 		$tela = '<fieldset class="captacao_folha black border1" width="100%"><legend>' . msg("ic_arquivos") . '</legend>';
 		$tela .= $this -> geds -> list_files_table($proto, 'captacao');
+		
 		if (perfil('#ADM#CPS#SPI') == 1)
 			{
 				$tela .= $this -> geds -> form_upload($proto, 'captacao');

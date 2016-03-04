@@ -114,6 +114,20 @@ class CIP extends CI_Controller {
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
 		$this -> load -> view('header/main_menu', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function isencoes() {
+		$this -> cab();
+		$data = array();
+		
+		$tela = $this->isencoes->resumo();
+		$data['content'] = $tela;
+		$this->load->view('content',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 
 	function insencao_substituir() {

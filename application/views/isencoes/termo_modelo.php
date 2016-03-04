@@ -7,6 +7,11 @@ switch ($bn_modalide)
 		$modalidade = 'Não informada';
 		break;
 	}
+$agencia = '';
+if (strlen($agf_nome) > 0)
+	{
+		$agencia = ', financiado por <B>'.$agf_nome.'</B>';	
+	}
 ?>
 <table width="100%">
 	<tr><td align="center">
@@ -42,16 +47,14 @@ switch ($bn_modalide)
 <font style="font-size: 11px"><b>Condições Gerais</b></font><br>
 
 <font style="font-size: 10px"><br>
-Ao aceitar a concessão, que ora lhe é feita, compromete-se o(a) bolsista a dedicar-se às atividades<br>
-pertinentes à bolsa concedida, de acordo com o ato normativo 01/2012 da PRPPG.<br><br>
-Compromete-se, ainda, o(a) bolsista a:<br>
+Ao aceitar a concessão, que ora lhe é feita, compromete-se o(a) bolsista a:<br><br>
 a) Dedicar-se no mínimo 20 horas semanais ao programa;<br>
-b) Manter um bom desempenho acadêmico que será atestado pelo(a) orientador(a);<br>
-c) Observar as determinações do(a) orientador(a) alusivas ao bom desenvolvimento da pesquisa.<br>
+b) Manter um bom desempenho acadêmico que será atestado pela Comissão de Bolsas do PPG;<br>
+c) Observar as determinações do(a) orientador(a) alusivas ao bom desenvolvimento da do seu projeto pesquisa.<br>
 <br>
 <br>
 Protocolo de isenção <b><?php echo $bn_codigo;?></b> referente ao protocolo de captação <?php echo $bn_original_protocolo;?>
- - "<b><?php echo $ca_titulo_projeto;?></b>".
+ - "<b><?php echo $ca_titulo_projeto;?></b>" <?php echo $agencia;?>.
 <br>
 <br>
 <br>

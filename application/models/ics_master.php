@@ -1,6 +1,92 @@
 <?php
 class ics_master extends CI_model {
 	var $tabela = "ic_submissao_projetos";
+	
+	function mostra_protetos($st,$ano='')
+		{
+			$ano = date("Y");
+			switch ($st)
+				{
+				case '1':
+					$wh = " (pj_status = 'A' or pj_status = 'B')";
+					break;
+				case '0':
+					$wh = " pj_status = '@' ";
+					break;					
+				case '2':
+					$wh = " pj_status = 'F' ";
+					break;	
+				default:
+					$wh = " (1 = 1) "; 
+					break;									
+				}
+			$sql = "select *
+						FROM ".$this->tabela." 
+						INNER JOIN us_usuario on pj_professor = us_cracha
+						WHERE pj_edital = 'ICMST' and pj_ano = '$ano' 
+						AND $wh ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$t = array(0,0,0);
+			
+			$sx = '<table width="100%" class="captacao_folha border1 lt1 black">';
+			$sx .= '<tr><th width="5%">protocolo</th>
+						<th width="55%">Título do projeto</th>
+						<th width="5%">ano</th>
+						<th width="30%">autor</th>
+						<th width="5%">postado</th>
+						</tr>';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$link = '<a href="'.base_url('index.php/ic_master/view/'.$line['id_pj'].'/'.checkpost_link($line['id_pj'])).'" class="lt1 link">';
+					$sx .= '<tr valign="top">';
+					$sx .= '<td align="center" class="border1">'.$link.$line['pj_codigo'].'</A>'.'</td>';
+					$sx .= '<td align="left" class="border1">'.$line['pj_titulo'].'</td>';
+					$sx .= '<td align="center" class="border1">'.$line['pj_ano'].'</td>';
+					$sx .= '<td align="left" class="border1">'.link_perfil($line['us_nome'],$line['id_us'],$line)	.'</td>';
+					$sx .= '<td align="left" class="border1">'.stodbr($line['pj_dt_update']).'</td>';
+				}
+			$sx .= '</table>';
+			return($sx);	
+		}
+	
+	function resumo($ano = '')
+		{
+			$ano = date("Y");
+			$sql = "select count(*) as total, pj_status from ".$this->tabela." 
+						WHERE pj_edital = 'ICMST' and pj_ano = '$ano' 
+						GROUP BY pj_status";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$t = array(0,0,0);
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$sta = $line['pj_status'];
+					switch ($sta)
+						{
+						case '@':
+							$t[0] = $t[0] + $line['total'];
+							break;							
+						case 'A':
+							$t[1] = $t[1] + $line['total'];
+							break;							
+						}
+				}
+			$link0 = '<a href="'.base_url('index.php/ic_master/resumo/0').'" class="link lt6">';
+			$link1 = '<a href="'.base_url('index.php/ic_master/resumo/1').'" class="link lt6">';
+			$link2 = '<a href="'.base_url('index.php/ic_master/resumo/2').'" class="link lt6">';
+			
+			$sx = '<table width="100%" class="captacao_folha border1 lt0 black">';
+			$sx .= '<tr>';
+			$sx .= '<td width="33%">'.msg('em_cadastro').'</br><font class="lt6">'.$link0.$t[0].'</a>'.'</font></td>';
+			$sx .= '<td width="33%">'.msg('analisando').'</br><font class="lt6">'.$link1.$t[1].'</a>'.'</font></td>';
+			$sx .= '<td width="33%">'.msg('em_pesquisa').'</br><font class="lt6">'.$link2.$t[2].'</a>'.'</font></td>';
+			$sx .= '</tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
 
 	function cp_subm_01() {
 		$cp = array();
@@ -49,7 +135,15 @@ class ics_master extends CI_model {
 	}
 
 	function le($id) {
-		$sql = "select * from " . $this -> tabela . " where id_pj = " . $id;
+		$sql = "select *, 
+					aluno.us_nome as al_nome, aluno.id_us as id_al,
+					prof.us_nome as pf_nome, prof.id_us as id_pf
+				FROM " . $this -> tabela . "
+					LEFT JOIN us_usuario as prof  on prof.us_cracha = pj_professor
+					LEFT JOIN us_usuario as aluno on aluno.us_cracha = pj_aluno
+					LEFT JOIN area_conhecimento ON pj_area = ac_cnpq
+					LEFT JOIN ic_submissao_situacao on pj_status = ssi_status  
+				where id_pj = " . $id;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) > 0) {

@@ -490,6 +490,11 @@ class protocolos_ic extends CI_Model {
 	}
 
 	function acoes_abertas() {
+		$sx = '';
+		$id_us = $_SESSION['id_us'];
+		$data = $this->usuarios->le($id_us);
+		if ($data['usuario_tipo_ust_id'] == 2)
+		{		
 		$sx = '<h3>' . msg('request') . ':</h3>';
 		$sx .= '<ul>';
 		/* */
@@ -512,6 +517,7 @@ class protocolos_ic extends CI_Model {
 		//$sx .= '<li>'.$linka.'Impressão do Convite Horas Eventuais IC'.'</a>'.'</li>';
 
 		$sx .= '</ul>';
+		}
 		return ($sx);
 	}
 

@@ -5,7 +5,7 @@ class ics extends CI_model {
 	var $tabela_2 = "ic_modalidade_bolsa";
 	var $tabela_3 = "pibic_acompanhamento";
 	var $resumo = array();
-	
+
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
 			$wh = 'where (' . $wh . ') ';
@@ -35,19 +35,73 @@ class ics extends CI_model {
 						limit $limit offset $offset
 						";
 		return ($tabela);
-	}	
+	}
+
+	function orientaoes_ativas($ano = '') {
+		$sx = '';
+		$mod = '';
+		$ano = '2015';
+		$ano1 = $ano;
+		$ano2 = ($ano+1);
+		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
+		$wh .= ' and (s_id = 1)';
+		if (strlen($mod) > 0) {
+			$wh .= ' and id_mb = ' . $mod;
+		}
+		
+		$sql = "select * from ic
+            			left join ic_aluno as pa on ic_id = id_ic
+						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
+						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
+						left join ic_situacao on id_s = icas_id
+						where $wh
+						";
+		
+		$sql = "select pf_cracha, pf_nome, count(*) as total 
+					FROM ($sql) as resultado
+					GROUP BY pf_nome, pf_cracha ";		
+		
+		//$sql .= " order by al_nome ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$tot = 0;
+		$totp = 0;
+		$sx .= '<table width="100%">';
+		$sx .= '<tr><th width="5%">Cod.Crachá</th>
+					<th width="85%">Nome</th>
+					<th width="5%">Orien- tações</th>
+					<th width="5%">Horas</th>
+				</tr>';
+			$class = ' style="border-bottom: 1px #000000 solid" ';
+			$class = '';
+		for ($r=0;$r < count($rlt);$r++)
+		{
+			$line = $rlt[$r];
+			$tot = $tot + $line['total'];
+			$totp++;
+			$sx .= '<tr>';
+			$sx .= '<td '.$class.' align="center" >'.$line['pf_cracha'].'</td>';
+			$sx .= '<td '.$class.'>'.$line['pf_nome'].'</td>';
+			$sx .= '<td '.$class.' align="center" >'.$line['total'].'</td>';
+			$totx = ($line['total'] + 0.02) / 2;			
+			$sx .= '<td '.$class.' align="center" >'.number_format($totx,0).'</td>';
+		}
+		$sx .= '<tr><td colspan="3">Total de '.$totp.' orientadores, com '.$tot.' orientações.</td></tr>';
+		$sx .= '</table>';
+		return($sx);
+	}
 
 	function docentes_em_pesquisa($ano) {
-		
+
 		$wh = '((icas_id = 1) and (pf_tipo < 4))';
 		$sql = $this -> table_view($wh, 0, 9999999, 'pf_nome');
-		
+
 		$table = ' left join us_bolsa_produtividade on prof_id = us_bolsa_produtividade.us_id ';
 		$table .= 'left join us_bolsa_prod_nome on bpn_id = us_bolsa_prod_nome.id_bpn ';
 		$table .= 'left join (select ca_professor from captacao where (round(ca_vigencia_final_ano/100) + round(ca_duracao/12)) >= 2015 ) as captacao on ca_professor = pf_cracha ';
-		
-		$sql = troca($sql,'where',$table . ' WHERE ');
-		
+
+		$sql = troca($sql, 'where', $table . ' WHERE ');
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -68,7 +122,7 @@ class ics extends CI_model {
 				$id++;
 				$xcracha = $cracha;
 				$sx .= '<tr>';
-				$sx .= '<td align="center">'.$id.'</td>';
+				$sx .= '<td align="center">' . $id . '</td>';
 				$sx .= '<td align="center">';
 				$sx .= $line['pf_cracha'];
 				$sx .= '</td>';
@@ -76,33 +130,33 @@ class ics extends CI_model {
 				$sx .= '<td>';
 				$sx .= $line['pf_nome'];
 				$sx .= '</td>';
-				
-				$mod = trim($line['bpn_bolsa_descricao']).trim($line['ca_professor']);
-				if (strlen($mod) > 0)
-					{
-						$mod = 'SIM';
-					} else {
-						$mod = '-';
-					}
+
+				$mod = trim($line['bpn_bolsa_descricao']) . trim($line['ca_professor']);
+				if (strlen($mod) > 0) {
+					$mod = 'SIM';
+				} else {
+					$mod = '-';
+				}
 
 				$sx .= '<td align="center">';
 				$sx .= $mod;
-				$sx .= '</td>';				
-				
+				$sx .= '</td>';
+
 				$sx .= '<td>';
 				$sx .= $line['pf_lattes'];
-				$sx .= '<td>';				
+				$sx .= '<td>';
 				$sx .= '</tr>';
 			}
 		}
 		$sx .= '</table>';
 		return ($sx);
 	}
+
 	function estudante_em_pesquisa($ano) {
-		
+
 		$wh = '(icas_id = 1)';
 		$sql = $this -> table_view($wh, 0, 9999999, 'al_nome');
-		
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -124,7 +178,7 @@ class ics extends CI_model {
 
 				$xcracha = $cracha;
 				$sx .= '<tr>';
-				$sx .= '<td align="center">'.$id.'</td>';
+				$sx .= '<td align="center">' . $id . '</td>';
 				$sx .= '<td align="center">';
 				$sx .= $line['al_cracha'];
 				$sx .= '</td>';
@@ -132,28 +186,28 @@ class ics extends CI_model {
 				$sx .= '<td>';
 				$sx .= $line['al_nome'];
 				$sx .= '</td>';
-				
+
 				$mod = trim($line['mb_valor']);
-				if (($mod) > 0)
-					{
-						$mod = 'SIM';
-					} else {
-						$mod = '-';
-					}
+				if (($mod) > 0) {
+					$mod = 'SIM';
+				} else {
+					$mod = '-';
+				}
 
 				$sx .= '<td align="center">';
 				$sx .= $mod;
-				$sx .= '</td>';				
-				
+				$sx .= '</td>';
+
 				$sx .= '<td>';
 				$sx .= $line['pf_lattes'];
-				$sx .= '<td>';				
+				$sx .= '<td>';
 				$sx .= '</tr>';
 			}
 		}
 		$sx .= '</table>';
 		return ($sx);
 	}
+
 	function ic_seguro($tipo = 1) {
 		$vlr = 10000;
 		$custo = '0.0662';
@@ -847,8 +901,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -913,8 +966,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}

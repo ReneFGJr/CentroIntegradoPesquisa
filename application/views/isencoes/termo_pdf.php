@@ -19,7 +19,7 @@ $pdf->AddPage();
 $pdf->SetAutoPageBreak(false, 0);
 
 /* Background */
-$pdf->Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
+$pdf->Image($image_file, 0, 0, 220, 50, 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
 $pdf -> setxy(25,55);
 // Texto do certificado
 $pdf -> SetFont('helvetica', '', 16);

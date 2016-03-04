@@ -13,7 +13,7 @@ class cips extends CI_Model {
 		$rlt = $rlt -> result_array($rlt);
 		if (count($rlt) > 0) {
 			$cp[0] = $rlt[0]['total'];
-			$cp[0] = '<a href="'.base_url('index.php/cip/isencoes_liberar/').'" class="lt6 link">'.$cp[0].'</A>';
+			$cp[0] = '<a href="'.base_url('index.php/isencao/lista_liberar/').'" class="lt6 link">'.$cp[0].'</A>';
 		}
 			$sx = '<table width="100%" class="captacao_folha border1 black">';
 			$sx .= '<tr>

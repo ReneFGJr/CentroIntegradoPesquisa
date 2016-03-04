@@ -860,6 +860,8 @@ class ic extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Relatórios', 'Resumo de implementações', 'ITE', '/ic/report_resumo'));
 		array_push($menu, array('Relatórios', 'Guia do Estudante', 'ITE', '/ic/report_guia'));
+		
+		array_push($menu, array('Relatórios', 'Número de orientações por professor (Excel)', 'ITE', '/ic/report_drh'));
 
 		array_push($menu, array('Orientadores', 'Dados dos orientadores', 'ITE', '/ic/report_orientadores'));
 
@@ -873,6 +875,16 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 
 	}
+	
+	function report_drh()
+		{
+			$ano = '';
+			$this->load->model('ics');
+			$tela = $this->ics->orientaoes_ativas($ano);
+			xls('orientacoes-ic-'.date("Y-m").'.xls');
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+		}
 
 	/* Reports */
 
@@ -1090,7 +1102,6 @@ class ic extends CI_Controller {
 		}
 		$tit = 'Entrega do Relatório Parcial';
 		$fld = 'ic_rp_data';
-		$data['search'] .= $this -> resumo_entrega($fld, $ano, $tit);
 
 		$data['resumo'] = $this -> protocolos_ic -> resumo();
 		$data['resumo'] .= $this -> ics -> resumo();
@@ -1108,6 +1119,10 @@ class ic extends CI_Controller {
 				$data['search'] .= $this -> ics -> search_term($search_term);
 			}
 			$data['search'] .= '<br>Metodo: ' . $mt;
+		} else {
+			$data['search'] .= '<center>'.$this -> resumo_entrega($fld, $ano, $tit).'</center>';
+			
+			$data['search'] .= $this->load->view('ic/_short_url',null,true);
 		}
 
 		/* Mostra tela principal */
