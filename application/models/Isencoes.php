@@ -181,24 +181,38 @@ class isencoes extends CI_model {
 		$data = date("Ymd");
 		$hora = date("H:i:s");
 		$ano = date("Y");
+		
 		$us_cracha = $user['us_cracha'];
 		$us_nome = $user['us_nome'];
-		$sql = "insert into bonificacao
-					(
-					bn_codigo, bn_ano, bn_professor, 
-					bn_professor_nome, bn_professor_cracha, bn_data,
-					bn_hora, bn_status, bn_original_protocolo, 
-					bn_original_tipo
-					) values (
-					'','$ano','$us_cracha',
-					'$us_nome','','$data',
-					'$hora','!','$proto_original',
-					'IPR'
-					)";
-		$rlt = $this -> db -> query($sql);
-		$sql = "update bonificacao set bn_codigo = lpad(id_bn,5,0) 
-						where bn_codigo = '' ";
-		$rlt = $this -> db -> query($sql);
+		
+		$sql = "select * from bonificacao 
+					WHERE bn_original_protocolo = '$proto_original' 
+						AND bn_professor = '$us_cracha'
+						AND bn_original_tipo = 'IPR' ";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		if (count($rlt)==0)
+		{				
+			$sql = "insert into bonificacao
+						(
+						bn_codigo, bn_ano, bn_professor, 
+						bn_professor_nome, bn_professor_cracha, bn_data,
+						bn_hora, bn_status, bn_original_protocolo, 
+						bn_original_tipo
+						) values (
+						'','$ano','$us_cracha',
+						'$us_nome','','$data',
+						'$hora','!','$proto_original',
+						'IPR'
+						)";
+			$rlt = $this -> db -> query($sql);
+			$sql = "update bonificacao set bn_codigo = lpad(id_bn,5,0) 
+							where bn_codigo = '' ";
+			$rlt = $this -> db -> query($sql);
+		} else {
+			print_r($rlt);
+			echo 'OPS, já existe uma isenção para este projeto';
+		}
 	}
 
 	function is_insencao_cip($proto) {
@@ -230,6 +244,31 @@ class isencoes extends CI_model {
 					LEFT JOIN captacao on bn_original_protocolo = ca_protocolo		
 					LEFT JOIN fomento_agencia ON ((ca_agencia_id = id_agf) and (ca_agencia_id > 0)) or ((ca_agencia = agf_codigo) and (ca_agencia <> ''))		
 					where id_bn = $id ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			return ($rlt[0]);
+		} else {
+			return ( array());
+		}
+	}
+
+	function le_protocolo($id) {
+		$sql = "select prof.us_nome as pr_nome, prof.us_cpf as pr_cpf,
+						   alun.us_nome as al_nome, alun.us_cpf as al_cpf,
+						   coor.us_nome as co_nome, coor.us_cpf as co_cpf,
+						   bn_codigo, bn_modalide, bn_programa, pp_nome,
+						   bn_original_protocolo, ca_titulo_projeto, bn_status,
+						   agf_nome, agf_sigla, bn_professor, prof.us_cracha as us_cracha
+					 from bonificacao 
+					LEFT JOIN us_usuario as alun on bn_beneficiario = alun.us_cracha
+					LEFT JOIN us_usuario as prof on bn_professor = prof.us_cracha
+					LEFT JOIN ss_programa_pos on bn_programa = id_pp
+					LEFT JOIN us_usuario as coor on id_us_coordenador = coor.id_us
+					LEFT JOIN captacao on bn_original_protocolo = ca_protocolo		
+					LEFT JOIN fomento_agencia ON ((ca_agencia_id = id_agf) and (ca_agencia_id > 0)) or ((ca_agencia = agf_codigo) and (ca_agencia <> ''))		
+					where bn_codigo = '$id' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) > 0) {
@@ -401,25 +440,31 @@ class isencoes extends CI_model {
 							WHERE bn_original_tipo = 'IPR' and bn_professor = '$cracha'
 							and bn_status != '!'
 				order by bn_status, bns_descricao  ";
+				
+		$sql = "select prof.us_nome as pf_nome, prof.id_us as id_pf,
+					aluno.us_nome as al_nome, aluno.id_us as id_al,
+					id_ca, bn_status, bn_original_protocolo, ca_agencia,
+					ca_titulo_projeto, ca_descricao, ca_edital_nr, bns_descricao					
+					FROM bonificacao
+					LEFT JOIN bonificacao_situacao on bns_codigo = bn_status 
+					LEFT JOIN captacao on ca_protocolo = bn_original_protocolo
+					LEFT JOIN us_usuario as aluno on bn_beneficiario = aluno.us_cracha and bn_beneficiario <> '' 
+					LEFT JOIN us_usuario as prof on bn_professor = prof.us_cracha
+				WHERE bn_original_tipo = 'IPR' and bn_professor = '$cracha'
+							and bn_status != '!'
+				order by bn_status, bns_descricao  ";
+										
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table class="tabela01 lt2" width="100%" border=0 cellpadding=5>';
-		$sx .= '<tr>
-					<th width="5%">Protocolo</th>
-					<th width="5%">Agência</th>
-					<th width="30%">Título Projeto</th>					
-					<th width="25%">Edital descrição</th>
-					<th>Edital</th>
-					<th width="30%">Estudante</th>
-					<th width="12%">Situação</th>
-				</tr>';
 		if (count($rlt) > 0) {
 			$tot = 0;
 			for ($r = 0; $r < count($rlt); $r++) {
 				$tot++;
 				$line = $rlt[$r];
 				$line['acao'] = '';
+				$line['pos'] = $tot;
 				$sx .= $this -> load -> view('isencoes/simple_row_2', $line, true);
 			}
 			if ($tot > 0) {

@@ -164,12 +164,19 @@ class evento extends CI_controller {
 				$tela['content'] = '<table width="600" align="right"><tr><td>'.$sx.'</td></TR></TABLE>';
 				$this->load->view('content',$tela);
 				break;
+			case 'email_contato':
+				$sx = $this->eventos->email_contato($ev);
+				$sx .= '<textarea rows="10" cols="40" style="width: 100%;">'.$sx.'</textarea>';
+				$tela['content'] = '<table width="600" align="right"><tr><td>'.$sx.'</td></TR></TABLE>';
+				$this->load->view('content',$tela);
+				break;				
 				
 			}
 		
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Inscrições', 'Botão de Inscrição', 'ITE', '/evento/pecas/botao'));
+		array_push($menu, array('Inscrições', 'Formulário de Contato', 'ITE', '/evento/pecas/email_contato'));
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu de Eventos';

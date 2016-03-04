@@ -28,11 +28,16 @@ $lang['prorrogacao'] = 'prorrogação';
 $lang['agencia'] = 'agência';
 $lang['participacao'] = 'participação';
 $lang['Isencoes'] = 'Isenções';
+$lang['isencoes'] = 'isenções';
+$lang['artigos'] = 'Artigos';
 $lang['Isencoes_!'] = 'Isenções para indicar';
 $lang['Isencoes_A'] = 'Isenções em processo de liberação';
 $lang['Isencoes_H'] = 'Isenções concedidas';
 $lang['Isencoes_X'] = 'Isenção com processo cancelado';
 $lang['Isencoes_Z'] = 'Isenções com vigência expirada';
+$lang['isencoes_para_indicar'] = 'Isenções para indicar';
+$lang['isencoes_ativas'] = 'Isenções ativas';
+$lang['comunicacao'] = 'Comunicação';
 
 $lang['modalidade_M'] = 'Mestrado';
 $lang['modalidade_D'] = 'Doutorado';

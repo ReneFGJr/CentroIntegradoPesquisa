@@ -1,13 +1,6 @@
 <?php
 class captacoes extends CI_Model {
 
-	function le_protocolo($proto) {
-		$sql = "select * from captacao where ca_protocolo = '$proto' ";
-		$rlt = $this -> db -> query($sql);
-		$rlt = $rlt -> result_array();
-		return ($rlt[0]);
-	}
-
 	/************** acaoes */
 	function acao_captacao($proto, $tp) {
 		$data = date("Y-m-d");
@@ -207,7 +200,7 @@ class captacoes extends CI_Model {
 			// GERAR ISENÇÂO PELA SECRETARIA //
 				$isencao = $this -> isencoes -> tem_isencao($proto);
 				if ($isencao == 0) {
-					$dt = $this->captacoes->le($proto);
+					$dt = $this->captacoes->le_protocolo($proto);
 					$this->isencoes->gerar_isencao($proto,$dt);
 					
 					$sql = "update captacao set 
@@ -572,6 +565,24 @@ class captacoes extends CI_Model {
 					LEFT JOIN captacao_participacao on cp_cod = ca_participacao
 					LEFT JOIN ss_programa_pos ON ((ca_programa = id_pp_char) or (ca_programa = id_pp)) 
 					where id_ca = $id 
+					";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+		} else {
+			$line = array();
+		}
+		return ($line);
+	}
+	function le_protocolo($proto = '') {
+		$sql = "select * from captacao 
+					LEFT JOIN captacao_situacao ON ca_status_old = ca_status
+					LEFT JOIN us_usuario ON ca_professor = us_cracha
+					LEFT JOIN fomento_agencia on (((agf_sigla = ca_agencia) and (ca_agencia_id = 0)) or (id_agf = ca_agencia_id))
+					LEFT JOIN captacao_participacao on cp_cod = ca_participacao
+					LEFT JOIN ss_programa_pos ON ((ca_programa = id_pp_char) or (ca_programa = id_pp)) 
+					where ca_protocolo = '$proto' 
 					";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();

@@ -1077,8 +1077,8 @@ function npag($obj, $blank=1, $tot = 10, $offset = 20) {
 	}
 
 
-	$sx = '<table class="tabela00 lt2" border=1 width="100%">';
-	$sx .= '<tr><td width="50%">';
+	$sx = '<table class="tabela01 border1 lt2 bg_lgrey" border=0 width="100%">';
+	$sx .= '<tr valign="middle"><td width="50%">';
 	$sx .= '<ul id="npag" class="npag">';	
 	if ($pagi > 1) {
 		$linka = '<A HREF="' . $link . '/' . ($pagi - 1) . '">';
@@ -1156,6 +1156,10 @@ function npag($obj, $blank=1, $tot = 10, $offset = 20) {
 
 	$sx .= form_hidden('dd2', 'search');
 	/* ************************** action ************************/
+	$sx .= form_close();
+	$sx .= '</td><td align="right">';
+	$link = $obj->row_edit;
+	$sx .= form_open($link.'/0/0');
 	$sx .= '</td><td align="right">';
 	if ($obj -> novo == true) {
 		$sx .= form_submit('acao', msg('bt_new'));
@@ -1333,18 +1337,27 @@ if (!function_exists('form_edit')) {
 				$wh .= ' (' . $fd[$field] . " like '%" . $term[$rt] . "%') ";
 			}
 			$wh = ' where ' . $wh;
-			/* PRE WHERE */
-			if ((isset($obj->pre_where)) and (strlen($obj->pre_where) > 0))
-				{
-					$wh .= ' AND ('.$obj->pre_where.')';
-				}			
+			
 		} else {
 			$wh = '';
 		}
+		
+		/* PRE WHERE */
+		if ((isset($obj->pre_where)) and (strlen($obj->pre_where) > 0))
+			{
+				if (strlen($wh) == 0)
+					{
+						$wh .= ' where ' . $wh;
+					} else {
+						$wh .= ' AND ';
+					}
+				$wh .= ' ('.$obj->pre_where.')';
+			}		
+			
 		if (strlen($acao) > 0) {
 			$pag = 1;
 		}
-
+		
 		/* total de registros */
 		$sql = "select count(*) as total from " . $tabela . " $wh ";
 		$query = $CI -> db -> query($sql);

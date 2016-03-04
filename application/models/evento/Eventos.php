@@ -86,6 +86,46 @@ class eventos extends CI_model {
 		return ($sx);
 	}
 
+	function email_contato($ev) {
+		$sx = '';
+		$sx .= '<!---- Form para contato ----->' . cr();
+		$sx .= '<form method="post" action="' . base_url('index.php/evento/entre_em_contato/' . $ev . '/' . checkpost_link($ev)) . '">' . cr();
+		
+		$sx .= '<!-- Text input-->
+                               <div class="form-group">
+                                   <div class="col-md-12">
+                                       <input id="Nome" name="Nome" type="text" placeholder="Nome" class="form-control input-md">
+
+                                   </div>
+                               </div>
+
+                               <!-- Text input-->
+                               <div class="form-group">
+                                    <label class="col-md-4 control-label" for="email"></label>  
+                                    <div class="col-md-12">
+                                        <input id="email" name="email" type="text" placeholder="E-mail" class="form-control input-md">
+
+                                    </div>
+                               </div>
+
+                               <!-- Textarea -->
+                               <div class="form-group">
+                                    <label class="col-md-4 control-label" for="mensagem"></label>
+                                        <div class="col-md-12">                     
+                                            <textarea class="form-control" id="mensagem" name="mensagem">Mensagem</textarea>
+                                        </div>
+                               </div>
+                            <div class="" style="float:left;">
+                               <button class="edit-button-4" type="submit" value="Enviar">
+                               Enviar
+                               </button>
+                            </div>
+                           </fieldset>
+                           
+                        </form>' . cr();
+		$sx .= '<!---- Fim do formulário ----->' . cr();
+		return ($sx);
+	}
 	function resumo_presenca() {
 		if (!isset($_SESSION['evento'])) {
 			echo 'Evento não selecionado';

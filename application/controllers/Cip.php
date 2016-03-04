@@ -47,6 +47,8 @@ class CIP extends CI_Controller {
 			array_push($menus, array(msg('isencoes'), 'index.php/cip/isencoes'));
 			array_push($menus, array(msg('administrativo'), 'index.php/cip/administrativo'));
 		}
+		
+		array_push($menus, array(msg('comunicacao'), 'index.php/cip/comunicacao'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -104,6 +106,242 @@ class CIP extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+/************************************************************************************
+ * **********************************************************************************
+ * ************************************************************** COMUNICACAO ******/
+	function comunicacao() {
+		$this -> cab();
+		$data = array();
+
+		$menu = array();
+		array_push($menu, array('Mensagens', 'Mensagens padrão do sistema', 'ITE', '/cip/comunicacao_1'));
+		array_push($menu, array('Mensagens', 'Mensagens de comunicação', 'ITE', '/cip/comunicacao_2'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Menu de Mensagens';
+		$this -> load -> view('header/main_menu', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+ 
+	function comunicacao_1($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('comunicacoes');
+		$this -> load -> model('mensagens');
+
+		$this -> cab();
+		$data = array();
+
+		/* Lista de Mensagens do Sistema */
+		$form = new form;
+		$form -> tabela = $this -> mensagens -> tabela;
+		$form -> see = true;
+		$form -> edit = true;
+		$form -> novo = true;
+		$form -> pre_where = " nw_own = 9 ";
+		$form -> order = ' nw_ref ';
+		$form = $this -> mensagens -> row($form);
+
+		$form -> row_edit = base_url('index.php/cip/mensagens_edit');
+		$form -> row_view = base_url('index.php/cip/mensagens_view');
+		$form -> row = base_url('index.php/cip/comunicacao_1/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('messagem_cadastradas');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+	function comunicacao_edit($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('comunicacoes');
+		$cp = $this -> comunicacoes -> cp();
+
+		$this -> cab();
+		$data = array();
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> comunicacoes -> tabela);
+		$data['title'] = msg('eq_equipamento_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/cip/comunicacao'));
+		}
+
+		//$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function mensagens_view($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('mensagens');
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$data = $this -> mensagens -> le($id);
+
+		$head = base_url($data['m_header']);
+		$foot = base_url($data['m_foot']);
+
+		$msg_body = $data['nw_texto'];
+		if ($data['nw_formato'] == 'TEXT') { $msg_body = mst($msg_body);
+		}
+
+		$data['title'] = msg('visualizar_mensagem');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+
+	function comunicacao_view($id = 0, $gr = 0, $tp = 0) {
+		/* Load Models */
+		$this -> load -> model('comunicacoes');
+
+		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
+		$this -> load -> library('email', $config);
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$data = $this -> comunicacoes -> le($id);
+
+		if (strlen(get("dd1")) == 0) {
+			$id_gr = $data['mc_tipo'];
+			$_POST['dd1'] = $this -> comunicacoes -> le_email_grupo($id_gr);
+		}
+
+		$head = base_url($data['m_header']);
+		$foot = base_url($data['m_foot']);
+
+		$msg_body = $data['mc_texto'];
+		if ($data['mc_formato'] == 'TEXT') { $msg_body = mst($msg_body);
+		}
+
+		$form = new form;
+		$cp = array();
+		array_push($cp, array('$h', '', '', False, False));
+		array_push($cp, array('$T40:50', '', 'emails', True, False));
+		array_push($cp, array('$B8', '', 'Enviar >>>', False, False));
+		$tela = $form -> editar($cp, '');
+		$data['title'] = msg('visualizar_mensagem');
+		$data['tela'] = $tela;
+
+		if ($form -> saved > 0) {
+			$em = get('dd1');
+			$em = troca($em, chr(13), ';');
+			$em = troca($em, chr(10), '');
+			$em = troca($em, chr(8), '');
+			$em = troca($em, chr(15), '');
+			$ems = splitx(';', $em . ';');
+
+			for ($r = 0; $r < count($ems); $r++) {
+				$para = array($ems[$r]);
+				$de = $data['mc_own'];
+				$assunto = $data['mc_titulo'];
+
+				/* texto */
+				$texto_o = $data['mc_texto'];
+				if (trim($data['mc_formato']) == 'TEXT') { $texto_o = mst($texto_o);
+				}
+				$texto = '<table width="700">';
+				if (strlen($head) > 0) {
+					$texto .= '<tr><td><img src="' . $head . '" width="700"></td></tr>';
+					$texto .= '<tr><td><br></td></tr>';
+				}
+				$texto .= '<tr><td>';
+				$texto .= $texto_o . '<br><br></td></tr>';
+
+				if (strlen($foot) > 0) {
+					$texto .= '<tr><td><img src="' . $foot . '" width="700"></td></tr>';
+				}
+				$texto .= '</table>';
+
+				/* enviar e-mail */
+				enviaremail($para, $assunto, $texto, $de);
+			}
+			enviaremail(array('cleybe.vieira@pucpr.br'), $assunto, $texto, $de);
+			enviaremail(array('rene.gabriel@pucpr.br'), $assunto, $texto, $de);
+		}
+
+		$data['content'] = '<table width="100%">
+							
+							<tr valign="top">
+								<td>
+								<table width="700" align="center" class="border1">
+								<tr><td><img src="' . $head . '" width="700"></td></tr>
+								<tr><td><br>' . $msg_body . '</td></tr>
+								<tr><td><br><br><br></td></tr>
+								<tr><td><img src="' . $foot . '" width="700"></td></tr>									
+								</table>
+								</td>
+								<td>' . $tela . '</td>
+							</tr>
+							
+							</table>';
+
+		$data['title'] = msg('visualizar_mensagem');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function mensagens_ver($id=0,$chk='')
+		{
+			
+		}
+	function mensagens_edit($id = 0, $chk = '') {
+		/* Load Models */
+		$this -> load -> model('mensagens');
+		$cp = $this -> mensagens -> cp();
+
+		$this -> cab();
+		$data = array();
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> mensagens -> tabela);
+		$data['title'] = msg('mensagens_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/cip/comunicacao_1'));
+		}
+
+		//$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+
+/************************************************************************************
+ * **********************************************************************************
+ * ************************************************************** ADMINISTRATIVO ****/
+
 	function administrativo() {
 		$this -> cab();
 		$data = array();
@@ -158,9 +396,11 @@ class CIP extends CI_Controller {
 			/* validacoes */
 			$dd1 = strzero(get("dd1"), 5);
 			$ok = $this -> isencoes -> is_insencao_cip($dd1);
+
 			if ($ok == 1) {
 				/* Le Isencao */
-				$data = $this -> isencoes -> le($dd1);
+				$data = $this -> isencoes -> le_protocolo($dd1);
+				
 				$proto_proj = $data['bn_original_protocolo'];
 				$line = $this -> captacoes -> le_protocolo($proto_proj);
 				$id = $line['ca_protocolo'];
@@ -175,11 +415,12 @@ class CIP extends CI_Controller {
 				$us = $this -> usuarios -> le_cracha($cracha);
 				$proto_orig = $data['bn_original_protocolo'];
 
+				/* Tranfere isencao */
+				$this -> isencoes -> transfere_para_outra_modalidade('ICP', $proto);
 				/* Habilita nova isencao */
 				$mod = 'IPR';
 				$this -> isencoes -> habilita_isencao($mod, $us, $proto_orig);
-				/* Tranfere isencao */
-				$this -> isencoes -> transfere_para_outra_modalidade('ICP', $proto);
+				
 				$tela = '<h1><font color="green">' . msg('successful') . '</font></h1>';
 			} else {
 				$tela .= '<font color="red">Isenção não localizada</font>';
