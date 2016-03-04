@@ -12,7 +12,7 @@ $ops = array();
 $ops[0] = 'professor orientador presente';
 $ops[1] = 'professor ausente, enviou representante e justificativa por escrito';
 $ops[2] = 'professor ausente, enviou representante sem justificativa por escrito';
-$ops[3] = ' professor ausente e estudante justificou que o professor está atuando como avaliador';
+$ops[3] = 'professor ausente e estudante justificou que o professor está atuando como avaliador';
 $ops[4] = 'professor ausente sem justificativa';
 $ops[9] = '';
 $op1 = '0:' . $ops[0];
@@ -28,7 +28,7 @@ $ope[1] = 'estudante ausente, trabalho apresentado pelo professor';
 $ope[2] = 'pôster afixado e estudante ausente';
 $ope[3] = 'estudante ausente e pôster não afixado';
 $ope[9] = '';
-$op2 = '0:' . $ope[0];
+$op2  = '0:'  . $ope[0];
 $op2 .= '&1:' . $ope[1];
 $op2 .= '&2:' . $ope[2];
 $op2 .= '&2:' . $ope[3];
@@ -69,7 +69,7 @@ $m5 = '<br><font class="lt1">Soube apresentar as informações relevantes da pesqu
 array_push($cp, array('$O ' . $nota, 'pp_p06', 'Desempenho do Aluno' . $m5, True, True));
 array_push($cp, array('$M', '', '&nbsp;', false, false));
 
-array_push($cp, array('$R ' . $op1, 'pp_p07', 'Sobre a presença do professor orientador', True, True));
+array_push($cp, array('$R ' . $op1, ' ', 'Sobre a presença do professor orientador', True, True));
 array_push($cp, array('$M', '', '&nbsp;', false, false));
 array_push($cp, array('$HV', 'pp_abe_02', $ope[$ido], false, True));
 array_push($cp, array('$HV', 'pp_p19', 'POSTE', false, True));

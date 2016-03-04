@@ -1,5 +1,442 @@
 <?php
 class semic_avaliacoes extends CI_Model {
+	 
+	
+	function alunos_ausentes(){
+		
+		$ano_semic = (date("Y")-1);
+		
+		$sql = "
+						select distinct
+						pp_protocolo as proto,
+						aluno.us_cracha as al_cracha,
+						aluno.id_us as al_id,
+						aluno.us_nome as al_nome,
+						prof.us_cracha as pof_cracha,
+						prof.id_us as prof_id,  
+						prof.us_nome  as pf_nome, 
+						aval.us_cracha as aval_cracha,
+						aval.id_us as aval_id,  
+						aval.us_nome  as aval_nome,
+						pp_p05 as p05, pp_p07 as p07,
+						pp_tipo,CASE
+						         WHEN pp_p05 = 0 THEN 'estudante presente'
+						         WHEN pp_p05 = 1 THEN 'estudante ausente, trabalho apresentado pelo professor'
+						         WHEN pp_p05 = 2 THEN 'pôster afixado e estudante ausente'
+						         WHEN pp_p05 = 3 THEN 'estudante ausente e pôster não afixado'
+						       else pp_p05          
+						       END as pres_aluno,
+						       CASE
+						         WHEN pp_p07 = 0 THEN 'professor orientador presente'
+						         WHEN pp_p07 = 1 THEN 'professor ausente, enviou representante e justificativa por escrito'
+						         WHEN pp_p07 = 2 THEN 'professor ausente, enviou representante sem justificativa por escrito'
+						         WHEN pp_p07 = 3 THEN 'professor ausente e estudante justificou que o professor está atuando como avaliador'
+						         WHEN pp_p07 = 4 THEN 'professor ausente sem justificativa'
+						       else pp_p07          
+						       END as pres_prof,
+						pp_p19 as apresentacao
+						from  pibic_parecer_". $ano_semic . "
+						inner join semic_trabalho on sm_codigo = pp_protocolo 
+						inner join us_usuario as aluno on sm_discente = aluno.us_cracha
+						inner join us_usuario as prof on sm_docente = prof.us_cracha
+						inner join us_usuario as aval on pp_avaliador_id = aval.id_us
+						where pp_p19 not in('JI', 'JE')
+						and ( pp_p05 = 1 or pp_p05 = 2 or pp_p05 = 3 ) 
+						order by proto, al_nome		
+       ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<table width="100%" class="tabela01>';
+			$sx .= '<tr><td class="lt6" colspan=5> Alunos ausentes no SEMIC '. (date("Y")-1) .'</tr>'; 
+			$sx .= '<tr><th align="left">Id</th>
+									<th align="left">Protocolo</th>
+									<th align="left">Crachá aluno</th>
+									<th align="left">Aluno</th>
+									<th align="left">Crachá professor</th>
+									<th align="left">Professor</th>
+									<th align="left">Evento</th>
+									<th align="left">Pres_aluno</th>
+									<th align="left">Pres_prof</th>
+									<th align="left">Apresentação</th>
+									<th align="left">Avaliador</th>
+						</tr>';
+							
+			$tot = 0;			
+			for ($r=0;$r < count($rlt);$r++){
+					
+					$line = $rlt[$r];
+				
+					$tot++;
+					
+					$sx .= '<tr align="left">';
+					$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';				
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['proto'];
+					$sx .= '</td>';
+					
+					$sx .= '<td class="lt1">'.$line['al_cracha'].'</td>';
+					
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['al_nome'], $line['al_id']);
+					$sx .= '</td>';	
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['pof_cracha'];
+					$sx .= '</td>';				
+					
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['pf_nome'], $line['prof_id']);
+					$sx .= '</td>';	
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['pp_tipo'];
+					$sx .= '</td>';
+					
+$st = $line['p05'];
+$sf = '';
+$sff = '';
+if ($st > '0' ) {
+	$sf = '<font color="red">';
+	$sff = '</font>';
+} else {
+	$sf = '<font color="green">';
+	$sff = '</font>';
+	$tot++;
+}
+
+					$sx .= '<td class="lt1">';
+					$sx .= $sf .$line['pres_aluno']. $sff;
+					$sx .= '</td>';
+					
+$st = $line['p07'];
+$sf = '';
+$sff = '';
+if ( $st > '0' ) {
+	$sf = '<font color="red">';
+	$sff = '</font>';
+} else {
+	$sf = '<font color="green">';
+	$sff = '</font>';
+	$tot++;
+}
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $sf .$line['pres_prof']. $sff;
+					$sx .= '</td>';
+					
+					
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['apresentacao'];
+					$sx .= '</td>';	
+					
+					//$sx .= '<td class="lt2">';
+					//$sx .= $line['aval_nome'];
+					//$sx .= '</td>';	
+					
+					$sx .= '<td class="lt0">';
+					$sx .= link_perfil($line['aval_nome'], $line['aval_id']);
+					$sx .= '</td>';				
+					
+				}
+				
+				$sx .= '</table>';
+				$sx .= '<br>'.$tot.' aluno ';
+			
+			return($sx);
+		
+	}
+
+function professores_ausentes(){
+		
+		$ano_semic = (date("Y")-1);
+		
+		$sql = "
+						select distinct
+						pp_protocolo as proto,
+						aluno.us_cracha as al_cracha,
+						aluno.id_us as al_id,
+						aluno.us_nome as al_nome,
+						prof.us_cracha as pof_cracha,
+						prof.id_us as prof_id,  
+						prof.us_nome  as pf_nome, 
+						aval.us_cracha as aval_cracha,
+						aval.id_us as aval_id,  
+						aval.us_nome  as aval_nome,
+						pp_p05 as p05, pp_p07 as p07,
+						pp_tipo,CASE
+						         WHEN pp_p05 = 0 THEN 'estudante presente'
+						         WHEN pp_p05 = 1 THEN 'estudante ausente, trabalho apresentado pelo professor'
+						         WHEN pp_p05 = 2 THEN 'pôster afixado e estudante ausente'
+						         WHEN pp_p05 = 3 THEN 'estudante ausente e pôster não afixado'
+						       else pp_p05          
+						       END as pres_aluno,
+						       CASE
+						         WHEN pp_p07 = 0 THEN 'professor orientador presente'
+						         WHEN pp_p07 = 1 THEN 'professor ausente, enviou representante e justificativa por escrito'
+						         WHEN pp_p07 = 2 THEN 'professor ausente, enviou representante sem justificativa por escrito'
+						         WHEN pp_p07 = 3 THEN 'professor ausente e estudante justificou que o professor está atuando como avaliador'
+						         WHEN pp_p07 = 4 THEN 'professor ausente sem justificativa'
+						       else pp_p07          
+						       END as pres_prof,
+						pp_p19 as apresentacao
+						from  pibic_parecer_". $ano_semic . "
+						inner join semic_trabalho on sm_codigo = pp_protocolo 
+						inner join us_usuario as aluno on sm_discente = aluno.us_cracha
+						inner join us_usuario as prof on sm_docente = prof.us_cracha
+						inner join us_usuario as aval on pp_avaliador_id = aval.id_us
+						where pp_p19 not in('JI', 'JE')
+						and ( pp_p07 = 1 or pp_p07 = 2 or pp_p07 = 3 or pp_p07 = 4 ) 
+						order by proto, al_nome		
+       ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<table width="100%" class="tabela01>';
+			$sx .= '<tr><td class="lt6" colspan=5> Alunos ausentes no SEMIC '. (date("Y")-1) .'</tr>'; 
+			$sx .= '<tr><th align="left">Id</th>
+									<th align="left">Protocolo</th>
+									<th align="left">Crachá aluno</th>
+									<th align="left">Aluno</th>
+									<th align="left">Crachá professor</th>
+									<th align="left">Professor</th>
+									<th align="left">Evento</th>
+									<th align="left">Pres_aluno</th>
+									<th align="left">Pres_prof</th>
+									<th align="left">Apresentação</th>
+									<th align="left">Avaliador</th>
+						</tr>';
+							
+			$tot = 0;			
+			for ($r=0;$r < count($rlt);$r++){
+					
+					$line = $rlt[$r];
+				
+					$tot++;
+					
+					$sx .= '<tr align="left">';
+					$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';				
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['proto'];
+					$sx .= '</td>';
+					
+					$sx .= '<td class="lt1">'.$line['al_cracha'].'</td>';
+					
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['al_nome'], $line['al_id']);
+					$sx .= '</td>';	
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['pof_cracha'];
+					$sx .= '</td>';				
+					
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['pf_nome'], $line['prof_id']);
+					$sx .= '</td>';	
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['pp_tipo'];
+					$sx .= '</td>';
+					
+$st = $line['p05'];
+$sf = '';
+$sff = '';
+if ($st > '0' ) {
+	$sf = '<font color="red">';
+	$sff = '</font>';
+} else {
+	$sf = '<font color="green">';
+	$sff = '</font>';
+	$tot++;
+}
+
+					$sx .= '<td class="lt1">';
+					$sx .= $sf .$line['pres_aluno']. $sff;
+					$sx .= '</td>';
+					
+$st = $line['p07'];
+$sf = '';
+$sff = '';
+if ( $st > '0' ) {
+	$sf = '<font color="red">';
+	$sff = '</font>';
+} else {
+	$sf = '<font color="green">';
+	$sff = '</font>';
+	$tot++;
+}
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $sf .$line['pres_prof']. $sff;
+					$sx .= '</td>';
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['apresentacao'];
+					$sx .= '</td>';	
+					
+					$sx .= '<td class="lt0">';
+					$sx .= link_perfil($line['aval_nome'], $line['aval_id']);
+					$sx .= '</td>';				
+					
+				}
+				
+				$sx .= '</table>';
+				$sx .= '<br>'.$tot.' aluno ';
+			
+			return($sx);
+		
+	}
+	
+	
+	function presenca_geral(){
+		
+		$ano_semic = (date("Y")-1);
+		
+		$sql = "
+						select distinct
+						pp_protocolo as proto,
+						aluno.us_cracha as al_cracha,
+						aluno.id_us as al_id,
+						aluno.us_nome as al_nome,
+						prof.us_cracha as pof_cracha,
+						prof.id_us as prof_id,  
+						prof.us_nome  as pf_nome, 
+						aval.us_cracha as aval_cracha,
+						aval.id_us as aval_id,  
+						aval.us_nome  as aval_nome,
+						pp_p05 as p05, pp_p07 as p07,       
+						pp_tipo,CASE
+						         WHEN pp_p05 = 0 THEN 'estudante presente'
+						         WHEN pp_p05 = 1 THEN 'estudante ausente, trabalho apresentado pelo professor'
+						         WHEN pp_p05 = 2 THEN 'pôster afixado e estudante ausente'
+						         WHEN pp_p05 = 3 THEN 'estudante ausente e pôster não afixado'
+						       else pp_p05          
+						       END as pres_aluno,
+						       CASE
+						         WHEN pp_p07 = 0 THEN 'professor orientador presente'
+						         WHEN pp_p07 = 1 THEN 'professor ausente, enviou representante e justificativa por escrito'
+						         WHEN pp_p07 = 2 THEN 'professor ausente, enviou representante sem justificativa por escrito'
+						         WHEN pp_p07 = 3 THEN 'professor ausente e estudante justificou que o professor está atuando como avaliador'
+						         WHEN pp_p07 = 4 THEN 'professor ausente sem justificativa'
+						       else pp_p07          
+						       END as pres_prof,
+						pp_p19 as apresentacao
+						from  pibic_parecer_". $ano_semic . "
+						inner join semic_trabalho on sm_codigo = pp_protocolo 
+						inner join us_usuario as aluno on sm_discente = aluno.us_cracha
+						inner join us_usuario as prof on sm_docente = prof.us_cracha
+						inner join us_usuario as aval on pp_avaliador_id = aval.id_us
+						where pp_p19 not in('JI', 'JE')
+						order by proto, al_nome		
+       ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<table width="100%" class="tabela01>';
+			$sx .= '<tr><td class="lt6" colspan=5> Alunos ausentes no SEMIC '. (date("Y")-1) .'</tr>'; 
+			$sx .= '<tr><th align="left">Id</th>
+									<th align="left">Protocolo</th>
+									<th align="left">Crachá aluno</th>
+									<th align="left">Aluno</th>
+									<th align="left">Crachá professor</th>
+									<th align="left">Professor</th>
+									<th align="left">Evento</th>
+									<th align="left">Pres_aluno</th>
+									<th align="left">Pres_prof</th>
+									<th align="left">Apresentação</th>
+									<th align="left">Avaliador</th>
+						</tr>';
+							
+			$tot = 0;			
+			for ($r=0;$r < count($rlt);$r++){
+					
+					$line = $rlt[$r];
+				
+					$tot++;
+					
+					$sx .= '<tr align="left">';
+					$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';				
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['proto'];
+					$sx .= '</td>';
+					
+					$sx .= '<td class="lt1">'.$line['al_cracha'].'</td>';
+					
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['al_nome'], $line['al_id']);
+					$sx .= '</td>';	
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['pof_cracha'];
+					$sx .= '</td>';				
+					
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['pf_nome'], $line['prof_id']);
+					$sx .= '</td>';	
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['pp_tipo'];
+					$sx .= '</td>';
+
+$st = $line['p05'];
+$sf = '';
+$sff = '';
+if ($st > '0' ) {
+	$sf = '<font color="red">';
+	$sff = '</font>';
+} else {
+	$sf = '<font color="green">';
+	$sff = '</font>';
+	$tot++;
+}
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $sf .$line['pres_aluno']. $sff;
+					$sx .= '</td>';
+					
+					
+$st = $line['p07'];
+$sf = '';
+$sff = '';
+if ( $st > '0' ) {
+	$sf = '<font color="red">';
+	$sff = '</font>';
+} else {
+	$sf = '<font color="green">';
+	$sff = '</font>';
+	$tot++;
+}
+	
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $sf .$line['pres_prof']. $sff;
+					$sx .= '</td>'; 
+					
+					$sx .= '<td class="lt1">';
+					$sx .= $line['apresentacao'];
+					$sx .= '</td>';	
+					
+					//$sx .= '<td class="lt2">';
+					//$sx .= $line['aval_nome'];
+					//$sx .= '</td>';	
+					
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['aval_nome'], $line['aval_id']);
+					$sx .= '</td>';				
+					
+				}
+				
+				$sx .= '</table>';
+				$sx .= '<br>'.$tot.' aluno ';
+			
+			return($sx);
+		
+	}
+	
 	
 	function resultado_semic($area, $edital='PIBIC', $mod= 'POSTER')
 		{
@@ -556,6 +993,7 @@ class semic_avaliacoes extends CI_Model {
 		for ($r=0;$r < count($rlt); $r++)
 			{
 				$line = $rlt[$r];
+				
 				$sit = trim($line['pp_avaliador_id']);
 				if (strlen($sit) == 0)
 					{
@@ -698,6 +1136,7 @@ class semic_avaliacoes extends CI_Model {
 	
 	function lista_trabalhos_avaliador_poster($av,$bl)
 		{
+			
 		$sql = "select * from semic_nota_trabalhos 
 						left join semic_bloco on id_sb = st_bloco
 						left join semic_trabalho on st_codigo = sm_codigo

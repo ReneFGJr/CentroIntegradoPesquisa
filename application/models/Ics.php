@@ -535,6 +535,7 @@ class ics extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 
 			$line = $rlt[$r];
+			
 			$st = $line['icas_id'];
 			$sf = '';
 			$sff = '';

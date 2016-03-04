@@ -25,6 +25,84 @@ class semic extends CI_Controller {
 		}
 	}
 
+	function ausencia_no_evento($xls='') {
+		$this -> load -> model('semic/semic_avaliacoes');
+		$ano_semic = (date("Y")-1);
+		if ($xls == '')
+			{
+				$this -> cab();
+				$data = array();
+				$this -> load -> view('header/content_open');
+				$data['submenu'] = '<a href="'.base_url('index.php/semic/ausencia_no_evento/xls').'" class="lt0 link">exportar para excel</a>';
+			} else {
+				xls('lista-Geral-ausentes-apresentacoes-semic_'. $ano_semic .'.xls');
+			}
+		
+		$data['content'] = $this -> semic_avaliacoes -> presenca_geral();
+		$data['title'] = 'Panorama do evento';
+		
+		$this -> load -> view('content', $data);
+
+		if ($xls == '')
+			{
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+			}
+
+	}
+	
+	function ausencia_alunos($xls='') {
+		$this -> load -> model('semic/semic_avaliacoes');
+		
+		if ($xls == '')
+			{
+				$this -> cab();
+				$data = array();
+				$this -> load -> view('header/content_open');
+				$data['submenu'] = '<a href="'.base_url('index.php/semic/ausencia_alunos/xls').'" class="lt0 link">exportar para excel</a>';
+			} else {
+				xls('lista-alunos-ausentes-apresentacoes-semic_'. $ano_semic .'.xls');
+			}
+		
+		$data['content'] = $this -> semic_avaliacoes -> alunos_ausentes();
+		$data['title'] = 'Estudantes ausentes';
+		
+		$this -> load -> view('content', $data);
+
+		if ($xls == '')
+			{
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+			}
+
+	}
+	
+	function ausencia_professores($xls='') {
+		$this -> load -> model('semic/semic_avaliacoes');
+		
+		if ($xls == '')
+			{
+				$this -> cab();
+				$data = array();
+				$this -> load -> view('header/content_open');
+				$data['submenu'] = '<a href="'.base_url('index.php/semic/professores_ausentes/xls').'" class="lt0 link">exportar para excel</a>';
+			} else {
+				xls('lista-professores-ausentes-apresentacoes-semic_'. $ano_semic .'.xls');
+			} 
+		
+		$data['content'] = $this -> semic_avaliacoes -> professores_ausentes();
+		$data['title'] = 'Estudantes ausentes';
+		
+		$this -> load -> view('content', $data);
+
+		if ($xls == '')
+			{
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+			}
+
+	}
+
 	function cab_avaliador() {
 		/* Carrega classes adicionais */
 		$css = array();
@@ -61,7 +139,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 	}
-	
+
 	function premiacao_gerar($id = 0, $ref = '') {
 		/* Carrega classes adicionais */
 		$this -> load -> model('semic/semic_avaliacoes');
@@ -74,8 +152,7 @@ class semic extends CI_Controller {
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 	}
-		
-	
+
 	function premiacao_ed($id = 0, $ref = '') {
 		/* Load Models */
 		$this -> load -> model('semic/semic_avaliacoes');
@@ -100,13 +177,11 @@ class semic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
-	
 
 	function premiacao($id = '') {
 		/* Load Models */
 		$this -> load -> model('semic/semic_avaliacoes');
-				
+
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
@@ -130,7 +205,7 @@ class semic extends CI_Controller {
 		if (strlen($id) == 0) {
 			$this -> load -> view('semic/premiacao/capa');
 		} else {
-			$data = $this->semic_avaliacoes->premiacoes_lista($id);
+			$data = $this -> semic_avaliacoes -> premiacoes_lista($id);
 			$data['id'] = $id;
 			$this -> load -> view('semic/premiacao/premios', $data);
 		}
@@ -336,7 +411,7 @@ class semic extends CI_Controller {
 
 		/* Sumario */
 		$this -> semic_anais -> gerar_paginas_trabalho($ano);
-		
+
 		$data['content'] = '<br>FIM';
 		$this -> load -> view('content', $data);
 
@@ -510,11 +585,13 @@ class semic extends CI_Controller {
 		array_push($menu, array('Resultado PIBIC_EM', 'Pôster', 'ITE', '/semic/resultado_semic/1/PIBIC_EM/POSTER'));
 		array_push($menu, array('Resultado PIBIC_EM', 'Oral', 'ITE', '/semic/resultado_semic/2/PIBIC_EM/ORAL'));
 
-
-
 		array_push($menu, array('Resultado JI', 'Resultado', 'ITE', '/semic/resultado_semic/12/JI/JI'));
 		array_push($menu, array('Resultado PE', 'Resultado', 'ITE', '/semic/resultado_semic/11/PE/PE'));
 		array_push($menu, array('Resultado PEjr', 'Resultado', 'ITE', '/semic/resultado_semic/13/PEjr/PEjr'));
+
+		array_push($menu, array('Relatórios do evento', 'Alunos ausentes', 'ITE', '/semic/ausencia_alunos'));
+		array_push($menu, array('Relatórios do evento', 'Professores ausentes', 'ITE', '/semic/ausencia_professores'));
+		array_push($menu, array('Relatórios do evento', 'Ausências e presenças de discentes e docentes', 'ITE', '/semic/ausencia_no_evento'));
 
 		$data = array();
 		$data['menu'] = $menu;

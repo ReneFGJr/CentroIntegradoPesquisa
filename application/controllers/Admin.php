@@ -43,11 +43,11 @@ class admin extends CI_Controller {
 		/* Menu */
 		$menus = array();
 		array_push($menus, array('Home', 'index.php/admin/'));
-		
+
 		array_push($menus, array('Lattes', 'index.php/admin/lattes'));
 		array_push($menus, array('ISSN', 'index.php/issn'));
 		array_push($menus, array('Perfis', 'index.php/admin/logins/'));
-		
+
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -71,23 +71,49 @@ class admin extends CI_Controller {
 		}
 	}
 
-	function ultimos_acessos()
-		{
+function usuario_sem_email($xls=''){
+	
+	$this -> load -> model('usuarios');
+		
+		if ($xls == '')
+			{
+				$this -> cab();
+				$data = array();
+				//$this -> load -> view('header/content_open');
+				$data['submenu'] = '<a href="'.base_url('index.php/usuario/usuario_sem_email/xls').'" class="lt0 link">exportar para excel</a>';
+			} else {
+				xls('lista-usu-sem-email-cadastrado.xls');
+			}
+		
+		$data['content'] = $this -> usuarios -> sem_email();
+		$data['title'] = 'Usuários se email';
+		
+		$this -> load -> view('content', $data);
+
+		if ($xls == '')
+			{
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+			}
+	
+}
+
+	function ultimos_acessos() {
 		$this -> load -> model('usuarios');
 		$this -> cab();
-		
-		$data = date("Ymd");		
-		$tela = $this->usuarios->lista_ultimos_acessos($data);
+
+		$data = date("Ymd");
+		$tela = $this -> usuarios -> lista_ultimos_acessos($data);
 		$data = array();
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
-		
-		$data = date("Y-m-d");		
-		$tela = $this->usuarios->lista_ultimos_erros_acessos($data);
+
+		$data = date("Y-m-d");
+		$tela = $this -> usuarios -> lista_ultimos_erros_acessos($data);
 		$data = array();
 		$data['content'] = $tela;
-		$this -> load -> view('content', $data);		
-		}
+		$this -> load -> view('content', $data);
+	}
 
 	function checar_cpf($pg = 0) {
 		$this -> load -> model('usuarios');
@@ -124,22 +150,20 @@ class admin extends CI_Controller {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$cracha = $line['ic_aluno_cracha'];
-			
+
 			/****************/
-			$sql = "update us_usuario set us_dt_update_cs = '".date("Y-m-d")."' where us_cracha = '$cracha' ";
-			$ttt = $this->db->query($sql);
-			
-			
+			$sql = "update us_usuario set us_dt_update_cs = '" . date("Y-m-d") . "' where us_cracha = '$cracha' ";
+			$ttt = $this -> db -> query($sql);
+
 			$sx .= '<tr><td>' . $cracha;
 			$this -> ws_sga -> findStudentByCracha($cracha, 1);
 			$sx .= '<td align="center">ok</td>';
 		}
 		$sx .= '</table>';
-		
-		if (count($rlt) > 0)
-			{
-				$sx .= '<meta http-equiv="refresh" content="2">';
-			}
+
+		if (count($rlt) > 0) {
+			$sx .= '<meta http-equiv="refresh" content="2">';
+		}
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
 
@@ -240,21 +264,21 @@ class admin extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
-	
+
 	function lattes() {
 		$this -> cab();
 		$data = array();
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
-		
+
 		array_push($menu, array('CNPq Lattes', 'Arquivos indexados', 'ITE', '/admin/cnpq_artigos'));
 		array_push($menu, array('CNPq Lattes', '___Docentes e produção', 'ITE', '/admin/docentes_sem_producao'));
 		array_push($menu, array('CNPq Lattes', '___Docentes sem produção (todos)', 'ITE', '/admin/docentes_sem_producao/2'));
 		array_push($menu, array('CNPq Lattes', '___Docentes sem produção (SS)', 'ITE', '/admin/docentes_sem_producao/1'));
 
 		array_push($menu, array('CNPq WebServices', '___WebServices (CNPq)', 'ITE', '/cnpq_ws'));
-		
+
 		array_push($menu, array('Inportação', 'Inportação de Dados', 'ITE', '/inport'));
 
 		/*View principal*/
@@ -265,7 +289,7 @@ class admin extends CI_Controller {
 		/*Fecha */ 		/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	}	
+	}
 
 	function index() {
 		$this -> cab();
@@ -287,13 +311,14 @@ class admin extends CI_Controller {
 		array_push($menu, array('Usuários', 'Ajustar/Validar CPF', 'ITE', '/admin/checar_cpf'));
 		array_push($menu, array('Usuários', 'Crachas duplicados', 'ITE', '/admin/cracha_duplicados'));
 		array_push($menu, array('Usuários', 'Sem escolas', 'ITE', '/admin/nome_sem_escola'));
-		
+		array_push($menu, array('Usuários', 'Sem e-mail', 'ITE', '/admin/usuario_sem_email'));
+
 		array_push($menu, array('Acessos de Usuários', 'Ultimos acessos', 'ITE', '/admin/ultimos_acessos'));
 
 		array_push($menu, array('Unidades', 'Unidades da PUCPR', 'ITE', '/unidade'));
 
 		array_push($menu, array('Instituições', 'Instituições do grupo de pesquisa', 'ITE', '/instituicao'));
-		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/ies_instituicao'));		
+		array_push($menu, array('Instituições', 'Instituições de ensino', 'ITE', '/ies_instituicao'));
 
 		array_push($menu, array('Iniciação Científica', 'Manutenção de Bolsas', 'ITE', '/admin/ic'));
 		array_push($menu, array('Iniciação Científica', 'ID/usuarios bas bolsas', 'ITE', '/admin/ic_id'));
@@ -301,13 +326,13 @@ class admin extends CI_Controller {
 		array_push($menu, array('Iniciação Científica', 'Finalizar projetos do ano anterior', 'ITE', '/admin/finalizar_ic'));
 
 		array_push($menu, array('Iniciação Científica', 'Converter Pasta GED', 'ITE', '/admin/ged_ic'));
-		
+
 		array_push($menu, array('CNPq Lattes', 'Arquivos indexados', 'ITE', '/admin/lattes'));
 
 		array_push($menu, array('SEMIC', 'Salas de Apresentação', 'ITE', '/semic/salas'));
 		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
 		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
-		
+
 		array_push($menu, array('Inportação', 'Inportação de Dados', 'ITE', '/inport'));
 
 		/*View principal*/
@@ -320,8 +345,7 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function cnpq_artigos($id = 0, $pg = '')
-	{
+	function cnpq_artigos($id = 0, $pg = '') {
 		/* Load Models */
 		$this -> load -> model('phplattess');
 
@@ -347,7 +371,7 @@ class admin extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}		
+	}
 
 	function inporta_professor() {
 		$this -> load -> model('usuarios');
@@ -359,28 +383,26 @@ class admin extends CI_Controller {
 		$this -> load -> view('content', $data);
 	}
 
-	function docentes_sem_producao($tp='') {
+	function docentes_sem_producao($tp = '') {
 		$this -> load -> model('phplattess');
 		$this -> cab();
 
 		$tela = $this -> phplattess -> docentes_sem_producao($tp);
-		switch ($tp)
-			{
-			case '1':
+		switch ($tp) {
+			case '1' :
 				$data['title'] = 'Docentes SS sem produção registrada (Artigos)';
-				break;		
-			case '2':
+				break;
+			case '2' :
 				$data['title'] = 'Docentes (todos) sem produção registrada (Artigos)';
 				break;
-			default:
+			default :
 				$data['title'] = 'Docentes & Produção de artigos';
-				break;		
-			}
-		
+				break;
+		}
+
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
 	}
-
 
 	function ic($id = 0, $pg = '') {
 		$this -> load -> model('ics');
@@ -687,8 +709,7 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function usuarios_edit($id=0)
-		{
+	function usuarios_edit($id = 0) {
 		global $dd;
 		$this -> load -> model('usuarios');
 
@@ -706,25 +727,23 @@ class admin extends CI_Controller {
 		if ($form -> saved > 0) {
 			$tabela = 'us_usuario';
 			$cracha = get("dd2");
-			$cracha = $this->usuarios->limpa_cracha($cracha);
-			$us = $this->usuarios->le_cracha($cracha);
-			
-			if (count($us) > 0)
-				{
-					$data['content'] = '<h2><font color="red">Usuário já cadastrado</font></h2>';
-					$this -> load -> view('content', $data);
-				} else {
-					$_POST['dd2'] = $cracha;
-					$form -> editar($cp, $tabela);
-					redirect(base_url('index.php/admin/usuarios'));
-				}
-			
+			$cracha = $this -> usuarios -> limpa_cracha($cracha);
+			$us = $this -> usuarios -> le_cracha($cracha);
+
+			if (count($us) > 0) {
+				$data['content'] = '<h2><font color="red">Usuário já cadastrado</font></h2>';
+				$this -> load -> view('content', $data);
+			} else {
+				$_POST['dd2'] = $cracha;
+				$form -> editar($cp, $tabela);
+				redirect(base_url('index.php/admin/usuarios'));
+			}
+
 			//
 		}
 
 		$data['title'] = 'Cadastro de novo usuário';
-		$data['tela'] .=
-		'
+		$data['tela'] .= '
 		<script>
 			$("#dd3").mask(\'999.999.999-99\');
 		</script>
@@ -732,7 +751,7 @@ class admin extends CI_Controller {
 		$this -> load -> view('form/form', $data);
 
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);			
-		}
+		$this -> load -> view('header/foot', $data);
+	}
 
 }
