@@ -80,7 +80,7 @@ function usuario_sem_email($xls=''){
 				$this -> cab();
 				$data = array();
 				//$this -> load -> view('header/content_open');
-				$data['submenu'] = '<a href="'.base_url('index.php/usuario/usuario_sem_email/xls').'" class="lt0 link">exportar para excel</a>';
+				$data['submenu'] = '<a href="'.base_url('index.php/admin/usuario_sem_email/xls').'" class="lt0 link">exportar para excel</a>';
 			} else {
 				xls('lista-usu-sem-email-cadastrado.xls');
 			}

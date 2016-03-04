@@ -866,6 +866,8 @@ class ic extends CI_Controller {
 		array_push($menu, array('Orientadores', 'Dados dos orientadores', 'ITE', '/ic/report_orientadores'));
 		
 		array_push($menu, array('Professor', 'Professores sem e-mail', 'ITE', '/ic/usuario_sem_email'));
+		
+		array_push($menu, array('Estudante', 'Estudantes sem e-mail', 'ITE', '/ic/aluno_sem_email'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -892,6 +894,31 @@ class ic extends CI_Controller {
 		}
 
 		$data['content'] = $this -> usuarios -> sem_email();
+		$data['title'] = 'Usuários se email';
+
+		$this -> load -> view('content', $data);
+
+		if ($xls == '') {
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
+
+	}
+	
+	function aluno_sem_email($xls = '') {
+
+		$this -> load -> model('usuarios');
+
+		if ($xls == '') {
+			$this -> cab();
+			$data = array();
+			//$this -> load -> view('header/content_open');
+			$data['submenu'] = '<a href="' . base_url('index.php/ic/aluno_sem_email/xls') . '" class="lt0 link">exportar para excel</a>';
+		} else {
+			xls('lista-aluno-sem-email-cadastrado.xls');
+		}
+
+		$data['content'] = $this -> usuarios -> aluno_sem_email();
 		$data['title'] = 'Usuários se email';
 
 		$this -> load -> view('content', $data);

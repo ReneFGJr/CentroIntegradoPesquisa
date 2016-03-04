@@ -236,6 +236,90 @@ class usuarios extends CI_model {
 
 	}
 
+function aluno_sem_email() {
+		$ano_ver = (date("Y") - 1);
+		$sql = "select distinct email, us_nome, us_cracha, id_us, mb_descricao,
+									CASE
+						         WHEN email = '' THEN 'Sem email cadastrado'
+						       ELSE email          
+						       END as email
+						from  us_usuario
+						left join(
+						          select 1 as email, usuario_id_us from  us_email where usm_ativo = 1 group by usuario_id_us, email
+						          ) as email on usuario_id_us = id_us
+						inner join ic on ic_cracha_aluno = us_cracha
+						inner join ic_aluno on  ic_aluno_cracha = ic_cracha_aluno
+						inner join ic_modalidade_bolsa on mb_id = id_mb
+						and ic_ano = '2015' 
+						where us_ativo = 1 
+						and email is null
+						and mb_ativo = 1
+						and id_mb not in ('24','25','26')
+						order by us_nome
+		";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<table width="100%" class="tabela01 lt2">';
+		$sx .= '<tr><td class="lt1" colspan=4> </td></tr>';
+		$sx .= '<tr><th width="2%">#</th>
+								<th width="8%" align="left">Crachá</th>
+								<th width="60%" align="left">Nome</th>
+								<th width="20%" align="left">Bolsa</th>								
+								<th width="10%" align="left">email</th>
+					</tr>';
+
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+
+			$cor = '';
+
+			$line = $rlt[$r];
+			$tot++;
+
+			if (strlen($line['email']) == 0) {
+				$cor = '<font color="red">';
+			} else {
+				$cor = '<font color="green">';
+			}
+
+			$sx .= '<tr align="left" class="lt2">';
+			$sx .= '<td class="lt1 border1" align="center">';
+			$sx .= $tot;
+			$sx .= '</td>';
+
+			$sx .= '<td class="lt1 border1"  align="center">';
+			$sx .= $cor;
+			$sx .= $line['us_cracha'];
+			$sx .= '</font>';
+			$sx .= '</td>';
+
+			$sx .= '<td class="lt1 border1">';
+			$sx .= $cor;
+			$sx .= link_perfil($line['us_nome'], $line['id_us']);
+			$sx .= '</font>';
+			$sx .= '</td>';
+			
+			$sx .= '<td class="lt1 border1">';
+			$sx .= $line['mb_descricao'];
+			$sx .= '</font>';
+			$sx .= '</td>';			
+
+			$sx .= '<td class="lt1 border1" align="center">';
+			$sx .= $cor;
+			$sx .= msg('sem registro');
+			$sx .= '</font>';
+			$sx .= '</td>';
+
+		}
+		$sx .= '</table>';
+		$sx .= '<br>' . $tot . ' total ';
+
+		return ($sx);
+
+	}
+
 	function is_ss($id) {
 		/* Strict Sensu */
 		$ss = '0';
