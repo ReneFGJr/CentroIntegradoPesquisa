@@ -790,6 +790,13 @@ class evento extends CI_controller {
 		}
 
 	}
+	function entre_em_contato($id=0,$chk='')
+		{
+			$id = 0;
+			
+			enviaremail_usuario(11,'teste','teste',1);
+			print_r($_POST);
+		}
 
 }
 ?>

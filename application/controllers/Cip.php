@@ -191,20 +191,16 @@ class CIP extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
 
 		$data = $this -> mensagens -> le($id);
 
 		$head = base_url($data['m_header']);
 		$foot = base_url($data['m_foot']);
 
-		$msg_body = $data['nw_texto'];
-		if ($data['nw_formato'] == 'TEXT') { $msg_body = mst($msg_body);
+		if ($data['nw_formato'] == 'TEXT') { $data['nw_texto'] = mst($data['nw_texto']);
 		}
-
-		$data['title'] = msg('visualizar_mensagem');
-
-		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('comunicacao/mensagem', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
