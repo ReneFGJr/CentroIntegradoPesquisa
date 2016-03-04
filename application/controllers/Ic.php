@@ -894,7 +894,7 @@ class ic extends CI_Controller {
 		}
 
 		$data['content'] = $this -> usuarios -> sem_email();
-		$data['title'] = 'Usuários se email';
+		$data['title'] = 'Professores sem email';
 
 		$this -> load -> view('content', $data);
 
@@ -919,7 +919,7 @@ class ic extends CI_Controller {
 		}
 
 		$data['content'] = $this -> usuarios -> aluno_sem_email();
-		$data['title'] = 'Usuários se email';
+		$data['title'] = 'Estudantes sem email';
 
 		$this -> load -> view('content', $data);
 

@@ -166,7 +166,12 @@ class usuarios extends CI_model {
 	}
 
 	function sem_email() {
-		$ano_ver = (date("Y") - 1);
+		//$ano_ver = (date("Y") - 1);
+		$ano = date("Y");
+		if (date("m") < 7) {
+			 $ano = $ano - 1;
+		}
+		
 		$sql = "select distinct email, us_nome, us_cracha, id_us,
 									CASE
 						         WHEN email = '' THEN 'Sem email cadastrado'
@@ -175,7 +180,7 @@ class usuarios extends CI_model {
 						from  us_usuario
 						left join(select 1 as email, usuario_id_us from  us_email where usm_ativo = 1 group by usuario_id_us, email) as email on usuario_id_us = id_us
 						inner join ic on ic_cracha_prof = us_cracha 
-						and ic_ano = '2015' 
+						and ic_ano = '". $ano ."'  
 						where us_ativo = 1 and email is null
 						order by us_nome
 		";
@@ -237,7 +242,11 @@ class usuarios extends CI_model {
 	}
 
 function aluno_sem_email() {
-		$ano_ver = (date("Y") - 1);
+		//$ano_ver = (date("Y") - 1);
+		$ano = date("Y");
+		if (date("m") < 7) {
+			 $ano = $ano - 1;
+		}
 		$sql = "select distinct email, us_nome, us_cracha, id_us, mb_descricao,
 									CASE
 						         WHEN email = '' THEN 'Sem email cadastrado'
@@ -250,11 +259,10 @@ function aluno_sem_email() {
 						inner join ic on ic_cracha_aluno = us_cracha
 						inner join ic_aluno on  ic_aluno_cracha = ic_cracha_aluno
 						inner join ic_modalidade_bolsa on mb_id = id_mb
-						and ic_ano = '2015' 
+						and ic_ano = '". $ano ."'  
 						where us_ativo = 1 
 						and email is null
 						and mb_ativo = 1
-						and id_mb not in ('24','25','26')
 						order by us_nome
 		";
 

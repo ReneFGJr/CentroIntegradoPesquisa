@@ -17,17 +17,16 @@ if (!isset($us_nome))
 			<li>
 				CPF: <?php echo $us_cpf;?>
 			</li>
+			<li>
+				<?php echo $email;?>
+				<BR>
+			</li>
 			<li class="lt1">
 				Data Nascimento <?php echo stodbr($us_dt_nascimento);?>
 				- <?php echo $us_idade;?>
 			</li>
 			<li>
 				<?php echo $us_curso_vinculo;?>
-			</li>
-			<li>
-				<?php echo $usm_email;?>
-				<BR>
-				<?php echo $us_contatos;?>
 			</li>
 			<li></li>
 			<li>
