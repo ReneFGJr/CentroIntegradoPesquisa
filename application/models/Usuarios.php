@@ -165,9 +165,9 @@ class usuarios extends CI_model {
 		return ($tela);
 	}
 
-	function sem_email(){
-		$ano_ver = (date("Y")-1);
-		$sql = "select email, us_nome, us_cracha, id_us,
+	function sem_email() {
+		$ano_ver = (date("Y") - 1);
+		$sql = "select distinct email, us_nome, us_cracha, id_us,
 									CASE
 						         WHEN email = '' THEN 'Sem email cadastrado'
 						       ELSE email          
@@ -176,47 +176,65 @@ class usuarios extends CI_model {
 						left join(select 1 as email, usuario_id_us from  us_email where usm_ativo = 1 group by usuario_id_us, email) as email on usuario_id_us = id_us
 						inner join ic on ic_cracha_prof = us_cracha 
 						and ic_ano = '2015' 
-						where us_ativo = 1
-						order by email
+						where us_ativo = 1 and email is null
+						order by us_nome
 		";
-		
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		
-		$sx = '<table width="100%" class="tabela01>';
-		$sx .= '<tr><td class="lt1" colspan=3> </td></tr>'; 
-		$sx .= '<tr><th align="left">Nome</th>
-								<th align="left">Crachá</th>
-								<th align="left">email</th>
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<table width="100%" class="tabela01 lt2">';
+		$sx .= '<tr><td class="lt1" colspan=3> </td></tr>';
+		$sx .= '<tr>			<th width="2%">#</th>
+								<th width="5%" align="left">Crachá</th>
+								<th width="85%" align="left">Nome</th>								
+								<th width="8%" align="left">email</th>
 					</tr>';
 
-			$tot = 0;			
-			for ($r=0;$r < count($rlt);$r++){
-					
-					$line = $rlt[$r];
-					$tot++;						
-					
-					$sx .= '<tr align="left">';	
-					$sx .= '<td class="lt1">';
-					$sx .= link_perfil($line['us_nome'], $line['id_us']);
-					$sx .= '</td>';
-					
-					$sx .= '<td class="lt1">';
-					$sx .= $line['us_cracha'];
-					$sx .= '</td>';
-					
-					$sx .= '<td class="lt1">';
-					$sx .= $line['email'];
-					$sx .= '</td>';
-					
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
 
-}
-					$sx .= '</table>';
-					$sx .= '<br>'.$tot.' total ';
-			
-			return($sx);
-	
-}
+			$cor = '';
+
+			$line = $rlt[$r];
+			$tot++;
+
+			if (strlen($line['email']) == 0) {
+				$cor = '<font color="red">';
+			} else {
+				$cor = '<font color="green">';
+			}
+
+			$sx .= '<tr align="left" class="lt2">';
+			$sx .= '<td class="lt1 border1" align="center">';
+			$sx .= $tot;
+			$sx .= '</td>';
+
+			$sx .= '<td class="lt1 border1"  align="center">';
+			$sx .= $cor;
+			$sx .= $line['us_cracha'];
+			$sx .= '</font>';
+			$sx .= '</td>';
+
+			$sx .= '<td class="lt1 border1">';
+			$sx .= $cor;
+			$sx .= link_perfil($line['us_nome'], $line['id_us']);
+			$sx .= '</font>';
+			$sx .= '</td>';
+
+			$sx .= '<td class="lt1 border1" align="center">';
+			$sx .= $cor;
+			$sx .= msg('sem registro');
+			$sx .= '</font>';
+			$sx .= '</td>';
+
+		}
+		$sx .= '</table>';
+		$sx .= '<br>' . $tot . ' total ';
+
+		return ($sx);
+
+	}
 
 	function is_ss($id) {
 		/* Strict Sensu */

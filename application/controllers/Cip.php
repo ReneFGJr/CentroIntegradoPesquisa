@@ -119,12 +119,23 @@ class CIP extends CI_Controller {
 	}
 
 	function isencoes() {
+		$par = get("dd0");
+		$this -> load -> model('isencoes');
 		$this -> cab();
 		$data = array();
 		
 		$tela = $this->isencoes->resumo();
+		$data['title'] = msg('Isencoes');
 		$data['content'] = $tela;
 		$this->load->view('content',$data);
+		
+		if (strlen($par) > 0)
+			{
+				$tela = $this->isencoes->lista_por_grupo_status($par);
+				$data['title'] = msg('Isencoes_'.$par);
+				$data['content'] = $tela;
+				$this->load->view('content',$data);					
+			}
 		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

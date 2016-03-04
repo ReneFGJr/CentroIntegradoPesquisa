@@ -109,27 +109,64 @@ class isencoes extends CI_model {
 		return ($cp);
 	}
 
-	function lista_liberar() {
-		$sql = "select *
+	
+	function resumo()
+		{
+			$sql = "select bn_status, count(*) as total, bns_descricao
+					FROM bonificacao_situacao
+					LEFT JOIN bonificacao ON bn_status = bns_codigo and bns_tipo = 'IPR'
+						WHERE bn_original_tipo = 'IPR'
+						GROUP BY bn_status, bns_descricao
+						order by bns_codigo ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<table width="100%>';
+			$sa = '';
+			$sb = '';
+			for ($r=0;$r < count($rlt); $r++)
+				{
+					$line = $rlt[$r];
+					$link = '<a href="?dd0='.$line['bn_status'].'" class="lt6 link">';
+					$sa .= '<th>'.$line['bns_descricao'].'</th>';
+					$sb .= '<td class="border1">'.$link.$line['total'].'</a>'.'</td>';
+				}
+			$sx .= '<tr class="lt1">'.$sa.'</tr>';
+			$sx .= '<tr class="lt6" align="center">'.$sb.'</tr>';
+			
+			$sx .= '</table>';
+			return($sx);
+		}	
+		
+	function lista_por_grupo_status($sta='') {
+		$sql = "select prof.us_nome as pf_nome, prof.id_us as id_pf,
+					aluno.us_nome as al_nome, aluno.id_us as id_al,
+					id_ca, bn_status, bn_original_protocolo, ca_agencia,
+					ca_titulo_projeto, ca_descricao, ca_edital_nr, bns_descricao					
 					FROM bonificacao
 					LEFT JOIN bonificacao_situacao on bns_codigo = bn_status 
-					LEFT JOIN captacao on ca_protocolo = bn_original_protocolo 
-					LEFT JOIN us_usuario on bn_beneficiario = us_cracha and bn_beneficiario <> ''
+					LEFT JOIN captacao on ca_protocolo = bn_original_protocolo
+					LEFT JOIN us_usuario as aluno on bn_beneficiario = aluno.us_cracha and bn_beneficiario <> '' 
+					LEFT JOIN us_usuario as prof on bn_professor = prof.us_cracha
+					
 							WHERE bn_original_tipo = 'IPR' 
-							and bn_status = 'A'
+							and bn_status = '$sta'
 				order by bn_status, bns_descricao  ";
 				
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		$sx = '<table width="100%" class="tabela01 border1 lt2">';
+		$sx = '<table width="100%" class="tabela01 border1 lt1">';
+		$id = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			$id++;
+			$line['pos'] = ($id);
 			$sx .= $this -> load -> view('isencoes/simple_row_2', $line, true);
 		}
 		$sx .= '</table>';
 		return ($sx);
 	}
-
+		
 	function transfere_para_outra_modalidade($mod = '', $proto = '') {
 
 		$sql = "update bonificacao set 

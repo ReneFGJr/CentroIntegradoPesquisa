@@ -27,6 +27,12 @@ $lang['duracao'] = 'duração';
 $lang['prorrogacao'] = 'prorrogação';
 $lang['agencia'] = 'agência';
 $lang['participacao'] = 'participação';
+$lang['Isencoes'] = 'Isenções';
+$lang['Isencoes_!'] = 'Isenções para indicar';
+$lang['Isencoes_A'] = 'Isenções em processo de liberação';
+$lang['Isencoes_H'] = 'Isenções concedidas';
+$lang['Isencoes_X'] = 'Isenção com processo cancelado';
+$lang['Isencoes_Z'] = 'Isenções com vigência expirada';
 
 $lang['modalidade_M'] = 'Mestrado';
 $lang['modalidade_D'] = 'Doutorado';

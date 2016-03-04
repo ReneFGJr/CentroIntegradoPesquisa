@@ -374,12 +374,12 @@ class ic extends CI_Controller {
 		$this -> load -> model('ics');
 		if (strlen($fmt) > 0) {
 			/* Exporta no formato excel */
-			xls('segurado-'.date("Y-m").'.xls');
+			xls('segurado-' . date("Y-m") . '.xls');
 		} else {
 			$this -> cab();
 			$data['title'] = 'Relatório de Seguro';
-			$data['submenu'] = '<A href="'.base_url('index.php/ic/seguro/'.$id.'/xls').'" class="link lt0">'.msg('export_to_excel').'</a>';
-		}		
+			$data['submenu'] = '<A href="' . base_url('index.php/ic/seguro/' . $id . '/xls') . '" class="link lt0">' . msg('export_to_excel') . '</a>';
+		}
 		$tit = 'Seguro';
 
 		$sx = $this -> ics -> ic_seguro($id, '2016-02-01');
@@ -860,10 +860,12 @@ class ic extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Relatórios', 'Resumo de implementações', 'ITE', '/ic/report_resumo'));
 		array_push($menu, array('Relatórios', 'Guia do Estudante', 'ITE', '/ic/report_guia'));
-		
+
 		array_push($menu, array('Relatórios', 'Número de orientações por professor (Excel)', 'ITE', '/ic/report_drh'));
 
 		array_push($menu, array('Orientadores', 'Dados dos orientadores', 'ITE', '/ic/report_orientadores'));
+		
+		array_push($menu, array('Professor', 'Professores sem e-mail', 'ITE', '/ic/usuario_sem_email'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -875,16 +877,40 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 
 	}
-	
-	function report_drh()
-		{
-			$ano = '';
-			$this->load->model('ics');
-			$tela = $this->ics->orientaoes_ativas($ano);
-			xls('orientacoes-ic-'.date("Y-m").'.xls');
-			$data['content'] = $tela;
-			$this->load->view('content',$data);
+
+	function usuario_sem_email($xls = '') {
+
+		$this -> load -> model('usuarios');
+
+		if ($xls == '') {
+			$this -> cab();
+			$data = array();
+			//$this -> load -> view('header/content_open');
+			$data['submenu'] = '<a href="' . base_url('index.php/usuario/usuario_sem_email/xls') . '" class="lt0 link">exportar para excel</a>';
+		} else {
+			xls('lista-usu-sem-email-cadastrado.xls');
 		}
+
+		$data['content'] = $this -> usuarios -> sem_email();
+		$data['title'] = 'Usuários se email';
+
+		$this -> load -> view('content', $data);
+
+		if ($xls == '') {
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
+
+	}
+
+	function report_drh() {
+		$ano = '';
+		$this -> load -> model('ics');
+		$tela = $this -> ics -> orientaoes_ativas($ano);
+		xls('orientacoes-ic-' . date("Y-m") . '.xls');
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+	}
 
 	/* Reports */
 
@@ -1120,9 +1146,9 @@ class ic extends CI_Controller {
 			}
 			$data['search'] .= '<br>Metodo: ' . $mt;
 		} else {
-			$data['search'] .= '<center>'.$this -> resumo_entrega($fld, $ano, $tit).'</center>';
-			
-			$data['search'] .= $this->load->view('ic/_short_url',null,true);
+			$data['search'] .= '<center>' . $this -> resumo_entrega($fld, $ano, $tit) . '</center>';
+
+			$data['search'] .= $this -> load -> view('ic/_short_url', null, true);
 		}
 
 		/* Mostra tela principal */
@@ -2026,7 +2052,8 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO'; ;
+			$msg = 'REMOVIDO';
+			;
 		}
 
 		$data = array();

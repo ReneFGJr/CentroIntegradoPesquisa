@@ -62,20 +62,6 @@ class isencao extends CI_Controller {
 		$data['logo'] = base_url('img/logo/logo_ic.png');
 		$this -> load -> view('header/logo', $data);
 	}
-	
-	function resumo()
-		{
-			$sql = "select bn_status, count(*) as total 
-					FROM bn_bonificacao where bn_original_tipo = 'IPR'
-						GROUP BY bn_status ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			for ($r=0;$r < count($rlt); $r++)
-				{
-					
-				}
-		}
 
 	function lanca($id = 0, $chk = '') {
 		/* Load Models */
@@ -95,7 +81,6 @@ class isencao extends CI_Controller {
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
 		}
-
 	}
 
 	function lista_liberar($id = 0, $chk = '') {
@@ -105,7 +90,7 @@ class isencao extends CI_Controller {
 		$this -> cab();
 		$data = array();
 
-		$tela = $this -> isencoes -> lista_liberar();
+		$tela = $this->isencoes->lista_por_grupo_status('A');
 		$data['content'] = $tela;
 		$data['title'] = msg('Lista de isenções');
 		$this -> load -> view('content', $data);
