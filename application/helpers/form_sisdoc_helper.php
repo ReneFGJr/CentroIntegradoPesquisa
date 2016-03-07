@@ -118,7 +118,7 @@ function page_count() {
 		$scrp = $_SERVER['SCRIPT_FILENAME'];
 		$info = troca($info, $scrp, '');
 	}
-	echo '-->' . $info;
+
 	/* limpa */
 	if (substr($info, 0, 1) == '/') {
 		$info = substr($info, 1, strlen($info));
@@ -131,7 +131,7 @@ function page_count() {
 			$info = substr($info, $pos + 1, strlen($info));
 		}
 	}
-	echo '-->' . $path;
+	
 	/* Info */
 	$pos = strpos($info, '/');
 	if ($pos > 0) {
