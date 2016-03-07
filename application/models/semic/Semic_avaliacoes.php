@@ -48,7 +48,7 @@ class semic_avaliacoes extends CI_Model {
 			$rlt = $rlt->result_array();
 			
 			//cria cabecalho da tab
-			$sx = '<table width="100%" class="border01>';
+			$sx = '<table width="100%" class="tabela00">';
 			$sx .= '<tr><td class="lt3" colspan=5> SEMIC '. (date("Y")-1) .'</tr>'; 
 			$sx .= '<tr><th align="left">#</th>
 									<th align="left">Protocolo</th>
@@ -196,7 +196,7 @@ function professores_ausentes(){
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			
-			$sx = '<table width="100%" class="tabela01>';
+			$sx = '<table width="100%" class="tabela00">';
 			$sx .= '<tr><td class="lt6" colspan=5> SEMIC '. (date("Y")-1) .'</tr>'; 
 			$sx .= '<tr><th align="left">Id</th>
 									<th align="left">Protocolo</th>
@@ -337,7 +337,7 @@ function professores_ausentes(){
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			
-			$sx = '<table width="100%" class="tabela01>';
+			$sx = '<table width="100%" class="tabela00">';
 			$sx .= '<tr><td class="lt6" colspan=5> SEMIC '. (date("Y")-1) .'</tr>';
 			$sx .= '<tr><th align="left">Id</th>
 									<th align="left">Protocolo</th>
