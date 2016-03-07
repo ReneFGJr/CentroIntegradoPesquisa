@@ -26,7 +26,16 @@ class mensagens extends CI_model {
 				{ $txt = troca($txt,'$nome',$data['nome']); }
 			if (isset($data['ic_plano']))
 				{ $txt = troca($txt,'$ic_plano',$data['ic_plano']); }
-				
+
+			if (isset($data['link']))
+				{
+					$botao = '<button style="background-color:#96454d; padding: 10 55 10 55; border-radius: 8px;  color:#ffffff; border:0; font-size:18px; font-weight: bold;"><a href="'.$data['link'].'" style="text-decoration: none; color:#fff;">Link de acesso</a></button>';
+					$txt = troca($txt,'$LINK',$botao); 
+				}
+
+			if (isset($data['ic_projeto_professor_titulo']))
+				{ $txt = troca($txt,'$plano_titulo',$data['ic_projeto_professor_titulo']); }				
+
 			$txt .= '<br><br><br><font style="fonte-size: 6px;">'.$ref.'</font>';
 				
 			$sx['nw_texto'] = $txt;

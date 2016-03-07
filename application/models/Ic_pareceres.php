@@ -1,6 +1,6 @@
 <?php
 class Ic_pareceres extends CI_model {
-	var $tabela = "pibic_parecer_2015";
+	var $tabela = "pibic_parecer_2016";
 
 	function update_line($line) {
 		$tabela = $this -> tabela;
@@ -13,15 +13,175 @@ class Ic_pareceres extends CI_model {
 
 		}
 	}
-	
-	function avaliacoes_avaliador($id)
-		{
-			echo '<HR>OLA';
-			for ($r=date("Y");$r < (date("Y")-4);$r--)
-				{
-					echo "++";			
-				}
+
+	function le($id) {
+		$sql = "select * from " . $tabela . " where id_pp = " . $id_pp;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		if (count($rlt)) {
+			return ($rlt[0]);
+		} else {
+			return ( array());
 		}
+	}
+
+	function avaliacoes_avaliador($id) {
+		for ($r = date("Y"); $r < (date("Y") - 4); $r--) {
+			echo "++";
+		}
+	}
+
+	function comunicar_avaliador($id_us,$proto,$tipo='')
+		{
+			$this->load->model('ics');
+			$this->load->model('usuarios');
+			$this->load->model('mensagens');			
+			
+			
+			$data = $this->ics->le_protocolo($proto);
+			$data['link'] = $this->usuarios->link_acesso($id_us);
+			$txt = $this->mensagens->busca($tipo,$data);
+			$texto = mst($txt['nw_texto']);
+			$ass = mst($txt['nw_titulo']);
+			enviaremail_usuario($id_us,$ass,$texto,2);
+		}
+
+	function mostra_indicacoes_interna($proto='',$tipo='RPAR',$ic_semic_area='') {
+		$area = substr($ic_semic_area, 0, 5);
+		$sql = "select * from us_avaliador_area
+			inner join us_usuario on pa_parecerista = id_us
+			LEFT JOIN area_conhecimento on pa_area = ac_cnpq
+			left join (SELECT COUNT(*) as indicados, pp_avaliador_id as id_av_usuario from pibic_parecer_" . date("Y") . " where pp_tipo = '$tipo' and (pp_status = '@' or pp_status = 'A' or pp_status = 'B') group by pp_avaliador_id ) as indicados on id_us = id_av_usuario
+			left join (SELECT COUNT(*) as declinados, pp_avaliador_id as id_dc_usuario from pibic_parecer_" . date("Y") . " where pp_tipo = '$tipo' and (pp_status = 'D') group by pp_avaliador_id ) as declinados on id_us = id_dc_usuario 
+			WHERE pa_area like '$area%' and substr(pa_area,6,2) = '00'
+				AND pa_ativo = 1 and us_avaliador = 1			
+			ORDER BY pa_area, us_nome";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sa = '';
+		$sb = '';
+		$sc = '';
+		
+		$xarea = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$dec = '';
+			$ind = '';
+			if ($line['declinados'] > 0)
+				{
+					$dec = '<font color="red">'.round($line['declinados']).' declinado(s)</font>';
+				}
+			if ($line['indicados'] > 0)
+				{
+					$ind = '<font color="blue">'.round($line['indicados']).' indicado(s)</font>';
+				}
+							$area = $line['pa_area'];
+			if ($area != $xarea) {
+				$sa .= '<h3>' . $line['pa_area'] . ' - ' . $line['ac_nome_area'] . '</h3>';
+				$xarea = $area;
+			}
+			if ((strlen($dec) > 0) and (strlen($ind) > 0))
+				{
+					$dec = ', '.$dec;
+				}
+			
+			$nome = link_avaliador($line['us_nome'], $line['id_us']);
+			$sa .= '<input type="checkbox" name="av' . $line['id_us'] . '" value="1"> ' . $nome;
+			$sa .= ' ' . $ind . $dec .' ';
+			$sa .= '<br>';
+
+			if (get("av" . $line['id_us']) == '1') {
+				$sc .= '<h1>Indicado - ' . $line['us_nome'] . '</h1>';
+				$this -> ic_pareceres -> indicar_avaliador($line['id_us'], $tipo,$proto);
+				$tipo = 'IC_RPAR_INDICACAO';
+				$this -> comunicar_avaliador($line['id_us'],$proto,$tipo);
+			}
+			if (strlen($sc) > 0) { $sa = $sc; }
+		}
+		return($sa);
+	}
+	
+	function lista_de_avaliacoes($id_us)
+		{
+			$sql = "select * from ".$this->tabela." where pp_avaliador_id = $id_us ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '';
+			$sx .= '<table width="100%"><tr><td><br></tr></table>';
+			$sx .= '<table width="100%" class="lt2 border1 shadown pad5">';
+			$sx .= '<tr><td colspan="15" class="lt4">';
+			$sx .= 'Avaliações Indicadas';
+			$sx .= '</td></tr>';
+			$sx .= '<tr><th width="2%">#</th>
+						<th width="5%">protocolo</th>
+						<th width="100">acao</th>
+						<th width="50%">tipo</th>
+						<th width="10%">indicação</th>
+						<th width="3%">nota<br>1</th>
+						<th width="3%">nota<br>2</th>
+						<th width="3%">nota<br>3</th>
+						<th width="3%">nota<br>4</th>
+						<th width="3%">nota<br>5</th>
+						<th width="3%">nota<br>6</th>
+						<th width="3%">nota<br>7</th>
+						<th width="3%">nota<br>8</th>
+						<th width="3%">nota<br>9</th>
+						<th width="3%">nota<br>10</th>						
+					</tr>';
+			$pos = 0;
+			for ($ri=0;$ri < count($rlt);$ri++)
+				{
+					$line = $rlt[$ri];
+					$pos++;
+					$acao = '-';
+					$sta = trim($line['pp_status']);
+					switch($sta)
+						{
+						case 'A':
+							$url = base_url('index.php/ic/indicacao_declinar/'.$line['id_pp'].'/'.checkpost_link($line['id_pp']));
+							$click = ' onclick="newwin2(\''.$url.'\',300,100);" ';
+							$acao = '<font color="#808000">declinar<font>';
+							$acao = '<span class="link" style="cursor: pointer;" '.$click.'>'.$acao.'</span>';
+							break;
+						}
+					
+					$sx .= '<tr>';
+					$sx .= '<td align="center">'.$pos.'</td>';
+					$sx .= '<td align="center">'.$line['pp_protocolo'].'</td>';
+					$sx .= '<td align="center">'.$acao.'</td>';					
+					$sx .= '<td>'.msg('ic_tipo_'.$line['pp_tipo']).'</td>';
+					$sx .= '<td align="center">'.stodbr($line['pp_data']).'</td>';
+					for ($r=1;$r <= 10;$r++)
+						{
+							$sx .= '<td align="center">'.$line['pp_p'.strzero($r,2)].'</td>';
+						}
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
+
+	function indicar_avaliador($id_us = 0, $tipo = '', $proto = '') {
+		$sql = "select * from " . $this -> tabela . " where pp_avaliador_id = $id_us and pp_protocolo = '$proto' and pp_tipo = '$tipo' ";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		
+		if (count($rlt) > 0)
+			{
+				
+			} else {
+				$data = date("Ymd");
+				$sql = "insert into ".$this->tabela." 
+					(pp_avaliador_id, pp_protocolo, pp_tipo,
+					pp_status, pp_data 
+					) values (
+					$id_us,'$proto','$tipo',
+					'A',$data) ";
+				$rlt = $this->db->query($sql);
+			}
+		return(1);
+	}
 
 }
 ?>

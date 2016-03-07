@@ -22,7 +22,7 @@ if (function_exists("perfil")) {
 	}
 }
 ?>
-<fieldset class="fieldset01" >
+<fieldset class="fieldset01" style="width: 98%" >
 	<legend class="legend01">
 		Dados do projeto
 	</legend>

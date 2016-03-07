@@ -672,6 +672,12 @@ function aluno_sem_email() {
 		}
 		return ("");
 	}
+	
+	function link_acesso($id) 
+		{
+		$link = base_url('index.php/login/a/' . $id . '/' . checkpost_link($id . 'acesso_professor'));
+		return($link);
+		}
 
 	function cp_usuario() {
 		$cp = array();

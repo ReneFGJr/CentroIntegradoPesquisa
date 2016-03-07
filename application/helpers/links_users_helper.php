@@ -100,7 +100,7 @@ function link_perfil($nome='',$id,$ln=array())
 function link_avaliador($nome='',$id)
 	{
 		$id = round($id);
-		$href = '<a href="'.base_url('index.php/avaliador/view/'.$id.'/'.checkpost_link($id)).'" target="_new">';
+		$href = '<a href="'.base_url('index.php/avaliador/view/'.$id.'/'.checkpost_link($id)).'" target="_new" class="link">';
 		if ($id == 0)
 			{
 				$href = '<font color="blue">-sem indicação-</A>';

@@ -112,7 +112,7 @@ class login extends CI_Controller {
 		$txt = $nw['nw_texto'];
 		$assunto = $nw['nw_titulo'];
 		$fmt = $nw['nw_formato'];
-		$link = base_url('index.php/login/a/' . $id . '/' . checkpost_link($id . 'acesso_professor'));
+		$link = $this->usuarios->link_acesso($id);
 		$link = '<a href="' . $link . '">link de acesso</a><br>ou ' . $link;
 		$txt = troca($txt, '$link', $link);
 

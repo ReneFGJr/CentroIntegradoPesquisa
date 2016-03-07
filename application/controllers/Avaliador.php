@@ -98,13 +98,64 @@ class avaliador extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 	}
 
-	function index() {
-		$this -> cab();
-		$data = array();
+	function cab_avaliador() {
+		/* Carrega classes adicionais */
+		$css = array();
+		array_push($css, 'form_sisdoc.css');
+		$js = array();
+		array_push($css, 'style_cab.css');
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Menu */
+		$menus = array();
+		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
+
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+		$data['title_page'] = msg('page_avaliadores');
+		$data['menu'] = 0;
+		//$data['menus'] = $menus;
+		$this -> load -> view('header/cab', $data);
+
 		$this -> load -> view('header/content_open');
+	}
+
+	function index() {
+		$this -> cab_avaliador();
+		$data = array();
 
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
+		$this -> load -> view('header/foot_modelo_2', $data);
+	}
+
+	function ficha($id) {
+		$this -> load -> model('ics');
+		$this -> load -> model('geds');
+		$this -> load -> model('ic_pareceres');
+
+		$proto = '0010050';
+		$dados = $this -> ics -> le_protocolo($proto);
+
+		/* arquivos */
+		$data = array();
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$data['ged'] = $this -> geds -> list_files_table($proto, 'ic');
+		
+		$data['plano'] = $this -> load -> view('ic/plano', $dados, true);
+
+		$tipo = 'RPAR';
+		$this -> cab_avaliador();
+
+		switch ($tipo) {
+			case 'RPAR' :
+				$this -> load -> view('ic/avaliacao_rpar', $data);
+				break;
+		}
 	}
 
 	function avaliador_status_alterar($id = 0, $st = '') {
@@ -149,7 +200,7 @@ class avaliador extends CI_Controller {
 			$this -> load -> view('avaliador/perfil_areas', $data);
 		}
 
-		$data['content'] = '<table width="100%"><tr><td>&nbsp</td></tr></table>';
+		$data['content'] = $this->ic_pareceres->lista_de_avaliacoes($id);
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');

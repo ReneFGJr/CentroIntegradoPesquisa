@@ -104,10 +104,15 @@ class main extends CI_Controller {
 				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit_'.$mod));
 			}
 		}
+		/* AVALIACOES IC */
+		if ((strlen($idu) > 0) and ($this->ics->existe_avaliacoes($idu) ==1))
+			{
+				array_push($menu, array('Avaliação IC', '<img src="'.base_url('img/icon/icon_avaliacoes.png').'" align="right" width="48">Indicações para sua avaliação', 'BTS', '/avaliador'));	
+			}
 
 		if (strlen($ss) > 0) {
 
-			array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
+			array_push($menu, array('Perfil','Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
 		}
 
 		/* Libera Menus */

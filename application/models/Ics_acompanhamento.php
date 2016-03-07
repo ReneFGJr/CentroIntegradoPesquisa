@@ -6,26 +6,33 @@ class ics_acompanhamento extends CI_model {
 	var $tabela = 'ic';
 	var $tabela_2 = "ic_modalidade_bolsa";
 	
-	function relatorio_parcial_entregue($ano = 0)
+	function relatorio_parcial_entregue($ano = 0,$sem_indicacao=0)
 		{
 			$wh = " (ic_ano = '$ano') ";
 			$wh .= " and (ic_rp_data > '2000-01-01')";
-			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'al_nome');
+			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
+			
+			/* sem indicacao */
+			if ($sem_indicacao == 1)
+				{
+					$sqla = " LEFT JOIN pibic_parecer_".date("Y")." on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
+					$sqla .= ' WHERE (pp_protocolo is null ) AND ';
+					$sql = troca($sql,'where',$sqla);
+				}
+			
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			$sx = '<table width="100%" class="tabela00">';
-			$sx .= '<tr>
-						<th>protocolo</th>
-						<th>situação</th>
-						<th>ano</th>
-						<th>Título do plano</th>
-						<th>Orientador</th>
-						<th>Estudante</th>
-						<th>Modalidade</th>
-					</tr>';
+			$xarea = '';
 			for ($r=0;$r < count($rlt);$r++)
 				{
 					$line = $rlt[$r];
+					$area = $line['ic_semic_area'];
+					if ($area != $xarea)
+						{
+							$sx .= '<tr><td colspan=10 class="lt3"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
+							$xarea = $area;
+						}
 					$line['page'] = 'ic';
 					$sx .= $this->load->view('ic/plano-row.php',$line,true);
 				}

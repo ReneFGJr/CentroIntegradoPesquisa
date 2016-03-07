@@ -263,6 +263,26 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
+	function existe_avaliacoes($id_us)
+		{
+			$sql = "select count(*) as total from pibic_parecer_".date("Y")." where pp_avaliador_id = $id_us ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					if ($line['total'] > 0)
+						{
+							return(1);		
+						} else {
+							return(0);
+						}
+					
+				} else {
+					return(0);
+				}
+		}
+
 	function is_ic($us_cracha = '') {
 		$sql = "SELECT count(*) as total, mb_tipo, id_s FROM ic_aluno 
 				INNER JOIN ic on id_ic = ic_id
