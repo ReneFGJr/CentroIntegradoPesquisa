@@ -20,7 +20,7 @@ class semic extends CI_Controller {
 		$ph = $_SERVER['PATH_INFO'];
 		if (strpos($ph, 'poster_localizacao')) {
 
-		} else {
+		} else { 
 			$this -> security();
 		}
 	}
@@ -39,7 +39,7 @@ class semic extends CI_Controller {
 			}
 		
 		$data['content'] = $this -> semic_avaliacoes -> presenca_geral();
-		$data['title'] = 'Panorama do evento';
+		$data['title'] = 'Panorama geral de presenças no evento';
 		
 		$this -> load -> view('content', $data);
 
@@ -91,7 +91,7 @@ class semic extends CI_Controller {
 			} 
 		
 		$data['content'] = $this -> semic_avaliacoes -> professores_ausentes();
-		$data['title'] = 'Estudantes ausentes';
+		$data['title'] = 'Professores ausentes';
 		
 		$this -> load -> view('content', $data);
 
@@ -591,7 +591,7 @@ class semic extends CI_Controller {
 
 		array_push($menu, array('Relatórios do evento', 'Alunos ausentes', 'ITE', '/semic/ausencia_alunos'));
 		array_push($menu, array('Relatórios do evento', 'Professores ausentes', 'ITE', '/semic/ausencia_professores'));
-		array_push($menu, array('Relatórios do evento', 'Ausências e presenças de discentes e docentes', 'ITE', '/semic/ausencia_no_evento'));
+		array_push($menu, array('Relatórios do evento', 'Panoroma Geral de presenças', 'ITE', '/semic/ausencia_no_evento'));
 
 		$data = array();
 		$data['menu'] = $menu;

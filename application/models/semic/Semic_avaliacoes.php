@@ -1,11 +1,10 @@
 <?php
 class semic_avaliacoes extends CI_Model {
-	 
 	
 	function alunos_ausentes(){
 		
 		$ano_semic = (date("Y")-1);
-		
+		//busca presenca de alunos e professores no semic
 		$sql = "
 						select distinct
 						pp_protocolo as proto,
@@ -42,112 +41,115 @@ class semic_avaliacoes extends CI_Model {
 						inner join us_usuario as aval on pp_avaliador_id = aval.id_us
 						where pp_p19 not in('JI', 'JE')
 						and ( pp_p05 = 1 or pp_p05 = 2 or pp_p05 = 3 ) 
-						order by proto, al_nome		
+						order by al_nome, proto		
        ";
+      //result sql 
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			
-			$sx = '<table width="100%" class="tabela01>';
-			$sx .= '<tr><td class="lt6" colspan=5> Alunos ausentes no SEMIC '. (date("Y")-1) .'</tr>'; 
-			$sx .= '<tr><th align="left">Id</th>
+			//cria cabecalho da tab
+			$sx = '<table width="100%" class="border01>';
+			$sx .= '<tr><td class="lt3" colspan=5> SEMIC '. (date("Y")-1) .'</tr>'; 
+			$sx .= '<tr><th align="left">#</th>
 									<th align="left">Protocolo</th>
+									<th align="left" >Aluno</th>
 									<th align="left">Crachá aluno</th>
-									<th align="left">Aluno</th>
-									<th align="left">Crachá professor</th>
 									<th align="left">Professor</th>
-									<th align="left">Evento</th>
+									<th align="left">Crachá professor</th>
 									<th align="left">Pres_aluno</th>
 									<th align="left">Pres_prof</th>
+									<th align="left">Evento</th>
 									<th align="left">Apresentação</th>
 									<th align="left">Avaliador</th>
 						</tr>';
-							
-			$tot = 0;			
+			//itera array nas linhas da tab				
+			$tot = 0;
+			//$tot2 = 0;	
+			//$tot3 = 0;		
 			for ($r=0;$r < count($rlt);$r++){
-					
+					//transfere para variavel $line todo o result da query
 					$line = $rlt[$r];
-				
+					//soma ao total
 					$tot++;
-					
+					//
 					$sx .= '<tr align="left">';
 					$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';				
-					
+					//protocolo
 					$sx .= '<td class="lt1">';
 					$sx .= $line['proto'];
 					$sx .= '</td>';
-					
-					$sx .= '<td class="lt1">'.$line['al_cracha'].'</td>';
-					
+					//nome_al
 					$sx .= '<td class="lt1">';
 					$sx .= link_perfil($line['al_nome'], $line['al_id']);
-					$sx .= '</td>';	
-					
+					$sx .= '</td>';
+					//cracha
+					$sx .= '<td class="lt1">';
+					$sx .= $line['al_cracha'];
+					$sx .= '</td>';
+					//nome_prof
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['pf_nome'], $line['prof_id']);
+					$sx .= '</td>';					
+					//cracha_prof
 					$sx .= '<td class="lt1">';
 					$sx .= $line['pof_cracha'];
 					$sx .= '</td>';				
-					
-					$sx .= '<td class="lt1">';
-					$sx .= link_perfil($line['pf_nome'], $line['prof_id']);
-					$sx .= '</td>';	
-					
-					$sx .= '<td class="lt1">';
-					$sx .= $line['pp_tipo'];
-					$sx .= '</td>';
-					
-$st = $line['p05'];
-$sf = '';
-$sff = '';
-if ($st > '0' ) {
-	$sf = '<font color="red">';
-	$sff = '</font>';
-} else {
-	$sf = '<font color="green">';
-	$sff = '</font>';
-	$tot++;
-}
-
+					//presença_al					
+					$st = $line['p05'];
+					$sf = '';
+					$sff = '';
+					if ($st > '0' ) {
+						$sf = '<font color="red">';
+						$sff = '</font>';
+						//$tot2++;
+					} else {
+						$sf = '<font color="green">';
+						$sff = '</font>';
+						
+					}
 					$sx .= '<td class="lt1">';
 					$sx .= $sf .$line['pres_aluno']. $sff;
 					$sx .= '</td>';
-					
-$st = $line['p07'];
-$sf = '';
-$sff = '';
-if ( $st > '0' ) {
-	$sf = '<font color="red">';
-	$sff = '</font>';
-} else {
-	$sf = '<font color="green">';
-	$sff = '</font>';
-	$tot++;
-}
-					
+					//presença_prof					
+					$st = $line['p07'];
+					$sf = '';
+					$sff = '';
+					if ( $st > '0' ) {
+						$sf = '<font color="red">';
+						$sff = '</font>';
+						//$tot3++;
+					} else {
+						$sf = '<font color="green">';
+						$sff = '</font>';
+						
+					}
 					$sx .= '<td class="lt1">';
 					$sx .= $sf .$line['pres_prof']. $sff;
+					$sx .= '</td>';	
+					//evento
+					$sx .= '<td class="lt1">';
+					$sx .= $line['pp_tipo'];
 					$sx .= '</td>';
-					
-					
-					
+					//tipo apresentacao
 					$sx .= '<td class="lt1">';
 					$sx .= $line['apresentacao'];
 					$sx .= '</td>';	
-					
-					//$sx .= '<td class="lt2">';
-					//$sx .= $line['aval_nome'];
-					//$sx .= '</td>';	
-					
+					//avaliador
 					$sx .= '<td class="lt0">';
 					$sx .= link_perfil($line['aval_nome'], $line['aval_id']);
 					$sx .= '</td>';				
-					
 				}
 				
 				$sx .= '</table>';
-				$sx .= '<br>'.$tot.' aluno ';
+				//mostra soma
+				$sx .= '<br>'.$tot.' casos registrados ';
+				//$sx .= '<br>'.$tot2.' casos de alunos com alguma pendência';
+				//$sx .= '<br>'.$tot3.' casos de professores com alguma pendência';
 			
 			return($sx);
 		
 	}
+
 
 function professores_ausentes(){
 		
@@ -189,102 +191,101 @@ function professores_ausentes(){
 						inner join us_usuario as aval on pp_avaliador_id = aval.id_us
 						where pp_p19 not in('JI', 'JE')
 						and ( pp_p07 = 1 or pp_p07 = 2 or pp_p07 = 3 or pp_p07 = 4 ) 
-						order by proto, al_nome		
+						order by pf_nome
        ";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			
 			$sx = '<table width="100%" class="tabela01>';
-			$sx .= '<tr><td class="lt6" colspan=5> Alunos ausentes no SEMIC '. (date("Y")-1) .'</tr>'; 
+			$sx .= '<tr><td class="lt6" colspan=5> SEMIC '. (date("Y")-1) .'</tr>'; 
 			$sx .= '<tr><th align="left">Id</th>
 									<th align="left">Protocolo</th>
-									<th align="left">Crachá aluno</th>
-									<th align="left">Aluno</th>
-									<th align="left">Crachá professor</th>
 									<th align="left">Professor</th>
-									<th align="left">Evento</th>
+									<th align="left">Crachá professor</th>
+									<th align="left">Aluno</th>
+									<th align="left">Crachá aluno</th>
 									<th align="left">Pres_aluno</th>
 									<th align="left">Pres_prof</th>
+									<th align="left">Evento</th>
 									<th align="left">Apresentação</th>
 									<th align="left">Avaliador</th>
 						</tr>';
 							
 			$tot = 0;			
 			for ($r=0;$r < count($rlt);$r++){
-					
+				//transfere para variavel $line todo o result da query
 					$line = $rlt[$r];
-				
+					//soma ao total
 					$tot++;
-					
+					//
 					$sx .= '<tr align="left">';
 					$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';				
-					
+					//protocolo
 					$sx .= '<td class="lt1">';
 					$sx .= $line['proto'];
 					$sx .= '</td>';
-					
-					$sx .= '<td class="lt1">'.$line['al_cracha'].'</td>';
-					
+					//nome_al
 					$sx .= '<td class="lt1">';
 					$sx .= link_perfil($line['al_nome'], $line['al_id']);
-					$sx .= '</td>';	
-					
+					$sx .= '</td>';
+					//cracha
+					$sx .= '<td class="lt1">';
+					$sx .= $line['al_cracha'];
+					$sx .= '</td>';
+					//nome_prof
+					$sx .= '<td class="lt1">';
+					$sx .= link_perfil($line['pf_nome'], $line['prof_id']);
+					$sx .= '</td>';					
+					//cracha_prof
 					$sx .= '<td class="lt1">';
 					$sx .= $line['pof_cracha'];
 					$sx .= '</td>';				
-					
+					//presença_al					
+					$st = $line['p05'];
+					$sf = '';
+					$sff = '';
+					if ($st > '0' ) {
+						$sf = '<font color="red">';
+						$sff = '</font>';
+					} else {
+						$sf = '<font color="green">';
+						$sff = '</font>';
+					}
 					$sx .= '<td class="lt1">';
-					$sx .= link_perfil($line['pf_nome'], $line['prof_id']);
+					$sx .= $sf .$line['pres_aluno']. $sff;
+					$sx .= '</td>';
+					//presença_prof					
+					$st = $line['p07'];
+					$sf = '';
+					$sff = '';
+					if ( $st > '0' ) {
+						$sf = '<font color="red">';
+						$sff = '</font>';
+					} else {
+						$sf = '<font color="green">';
+						$sff = '</font>';
+					}
+					$sx .= '<td class="lt1">';
+					$sx .= $sf .$line['pres_prof']. $sff;
 					$sx .= '</td>';	
-					
+					//evento
 					$sx .= '<td class="lt1">';
 					$sx .= $line['pp_tipo'];
 					$sx .= '</td>';
 					
-$st = $line['p05'];
-$sf = '';
-$sff = '';
-if ($st > '0' ) {
-	$sf = '<font color="red">';
-	$sff = '</font>';
-} else {
-	$sf = '<font color="green">';
-	$sff = '</font>';
-	$tot++;
-}
-
-					$sx .= '<td class="lt1">';
-					$sx .= $sf .$line['pres_aluno']. $sff;
-					$sx .= '</td>';
-					
-$st = $line['p07'];
-$sf = '';
-$sff = '';
-if ( $st > '0' ) {
-	$sf = '<font color="red">';
-	$sff = '</font>';
-} else {
-	$sf = '<font color="green">';
-	$sff = '</font>';
-	$tot++;
-}
-					
-					$sx .= '<td class="lt1">';
-					$sx .= $sf .$line['pres_prof']. $sff;
-					$sx .= '</td>';
-					
+					//tipo apresentacao
 					$sx .= '<td class="lt1">';
 					$sx .= $line['apresentacao'];
 					$sx .= '</td>';	
-					
+					//avaliador
 					$sx .= '<td class="lt0">';
 					$sx .= link_perfil($line['aval_nome'], $line['aval_id']);
-					$sx .= '</td>';				
+					$sx .= '</td>';		
 					
 				}
 				
 				$sx .= '</table>';
-				$sx .= '<br>'.$tot.' aluno ';
+				$sx .= '<br>'.$tot.' casos registrados ';
 			
 			return($sx);
 		
@@ -308,7 +309,8 @@ if ( $st > '0' ) {
 						aval.id_us as aval_id,  
 						aval.us_nome  as aval_nome,
 						pp_p05 as p05, pp_p07 as p07,       
-						pp_tipo,CASE
+						pp_tipo,
+						CASE
 						         WHEN pp_p05 = 0 THEN 'estudante presente'
 						         WHEN pp_p05 = 1 THEN 'estudante ausente, trabalho apresentado pelo professor'
 						         WHEN pp_p05 = 2 THEN 'pôster afixado e estudante ausente'
@@ -330,13 +332,13 @@ if ( $st > '0' ) {
 						inner join us_usuario as prof on sm_docente = prof.us_cracha
 						inner join us_usuario as aval on pp_avaliador_id = aval.id_us
 						where pp_p19 not in('JI', 'JE')
-						order by proto, al_nome		
+						order by al_nome, proto 	
        ";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			
 			$sx = '<table width="100%" class="tabela01>';
-			$sx .= '<tr><td class="lt6" colspan=5> Alunos ausentes no SEMIC '. (date("Y")-1) .'</tr>'; 
+			$sx .= '<tr><td class="lt6" colspan=5> SEMIC '. (date("Y")-1) .'</tr>';
 			$sx .= '<tr><th align="left">Id</th>
 									<th align="left">Protocolo</th>
 									<th align="left">Crachá aluno</th>
@@ -350,13 +352,13 @@ if ( $st > '0' ) {
 									<th align="left">Avaliador</th>
 						</tr>';
 							
-			$tot = 0;			
+			$tot = 0;
+
 			for ($r=0;$r < count($rlt);$r++){
 					
 					$line = $rlt[$r];
 				
 					$tot++;
-					
 					$sx .= '<tr align="left">';
 					$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';				
 					
@@ -382,57 +384,45 @@ if ( $st > '0' ) {
 					$sx .= $line['pp_tipo'];
 					$sx .= '</td>';
 
-$st = $line['p05'];
-$sf = '';
-$sff = '';
-if ($st > '0' ) {
-	$sf = '<font color="red">';
-	$sff = '</font>';
-} else {
-	$sf = '<font color="green">';
-	$sff = '</font>';
-	$tot++;
-}
-					
+					$st = $line['p05'];
+					$sf = '';
+					$sff = '';
+					if ($st > '0' ) {
+						$sf = '<font color="red">';
+						$sff = '</font>';
+					} else {
+						$sf = '<font color="green">';
+						$sff = '</font>';
+					}
 					$sx .= '<td class="lt1">';
 					$sx .= $sf .$line['pres_aluno']. $sff;
 					$sx .= '</td>';
 					
-					
-$st = $line['p07'];
-$sf = '';
-$sff = '';
-if ( $st > '0' ) {
-	$sf = '<font color="red">';
-	$sff = '</font>';
-} else {
-	$sf = '<font color="green">';
-	$sff = '</font>';
-	$tot++;
-}
-	
-					
+					$st = $line['p07'];
+					$sf = '';
+					$sff = '';
+					if ( $st > '0' ) {
+						$sf = '<font color="red">';
+						$sff = '</font>';
+					} else {
+						$sf = '<font color="green">';
+						$sff = '</font>';
+					}
 					$sx .= '<td class="lt1">';
 					$sx .= $sf .$line['pres_prof']. $sff;
-					$sx .= '</td>'; 
-					
+					$sx .= '</td>';
+					 
 					$sx .= '<td class="lt1">';
 					$sx .= $line['apresentacao'];
 					$sx .= '</td>';	
-					
-					//$sx .= '<td class="lt2">';
-					//$sx .= $line['aval_nome'];
-					//$sx .= '</td>';	
-					
+
 					$sx .= '<td class="lt1">';
 					$sx .= link_perfil($line['aval_nome'], $line['aval_id']);
 					$sx .= '</td>';				
-					
 				}
-				
 				$sx .= '</table>';
-				$sx .= '<br>'.$tot.' aluno ';
-			
+				$sx .= '<br>'.$tot.' casos registrados ';
+
 			return($sx);
 		
 	}
