@@ -1732,7 +1732,80 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function entrega($tipo = '') {
+function rp_cancelados($tipo = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$this -> load -> model('ics_acompanhamento');
+		$cp = $this -> ics -> cp_switch();
+		$data = array();
+		$tela01 = '';
+		$this -> cab();
+		switch ($tipo) {
+			case 'IC_FORM_RP' :
+				$fld = 'ic_rp_data';
+				$tit = 'Relatório Parcial';
+				$ano = date("Y");
+				if (date("m") < 8) {
+					 $ano = $ano - 1;
+				}
+				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_cancelados($ano);
+				break;
+			default :
+				$fld = '';
+				$tit = '';
+				break;
+		}
+
+		$sx = '';
+		if (strlen($fld) > 0) {
+			/* Resumo de Entrega */
+			$sx .= $this -> resumo_entrega($fld, $ano, $tit);
+		}
+		$data['content'] = $sx . $tela01;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+
+	function rp_nao_entregue($tipo = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$this -> load -> model('ics_acompanhamento');
+		$cp = $this -> ics -> cp_switch();
+		$data = array();
+		$tela01 = '';
+		$this -> cab();
+		switch ($tipo) {
+			case 'IC_FORM_RP' :
+				$fld = 'ic_rp_data';
+				$tit = 'Relatório Parcial';
+				$ano = date("Y");
+				if (date("m") < 8) {
+					 $ano = $ano - 1;
+				}
+				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_nao_entregue($ano);
+				break;
+			default :
+				$fld = '';
+				$tit = '';
+				break;
+		}
+
+		$sx = '';
+		if (strlen($fld) > 0) {
+			/* Resumo de Entrega */
+			$sx .= $this -> resumo_entrega($fld, $ano, $tit);
+		}
+		$data['content'] = $sx . $tela01;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+function rp_entregue($tipo = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
 		$this -> load -> model('ics_acompanhamento');
@@ -1747,7 +1820,7 @@ class ic extends CI_Controller {
 				$ano = date("Y");
 				if (date("m") < 8) { $ano = $ano - 1;
 				}
-
+				
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
 			case 'IC_FORM_RP' :
@@ -1776,6 +1849,10 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+
+
+
 
 	function resumo_entrega_2($fld, $ano, $tit, $tp = 0) {
 		$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao, mb_tipo from ic
@@ -1912,9 +1989,12 @@ class ic extends CI_Controller {
 		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (IC)', 'ITE', '/ic/acompanhamento_sw'));
 		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (PIBIC MASTER)', 'ITE', '/ic/acompanhamento_ic_master_sw'));
 		array_push($menu, array('Acompanhamento', 'Calendário de Entregas', 'ITE', '/ic/acompanhamento_data'));
-
 		array_push($menu, array('Formulário de acompanhamento', 'Entrega de formlários', 'ITE', '/ic/entrega/FORM_PROF'));
-		array_push($menu, array('Relatório Parcial', 'Entregas do relatório Parcial', 'ITE', '/ic/entrega/IC_FORM_RP'));
+		
+		array_push($menu, array('Relatório Parcial', 'RP Entregues', 'ITE', '/ic/rp_entregue/IC_FORM_RP'));
+		array_push($menu, array('Relatório Parcial', 'RP Não Entregues', 'ITE', '/ic/rp_nao_entregue/IC_FORM_RP'));
+		array_push($menu, array('Relatório Parcial', 'RP cancelados', 'ITE', '/ic/rp_cancelados/IC_FORM_RP'));
+		
 		array_push($menu, array('Relatório Parcial', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RP'));
 
