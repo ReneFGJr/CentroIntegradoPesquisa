@@ -106,6 +106,7 @@ class comunicacoes extends CI_Model
 							$line = $rlt[$r];
 							$email .= $line['usm_email'].cr();
 						}
+						$email .= 'cleybe.vieira@pucpr.br'.cr();
 				}
 			/* Professores orientadores IC que não entregaram relatório de acompanhamento */
 			if ($gr == 9)
@@ -130,6 +131,33 @@ class comunicacoes extends CI_Model
 							$line = $rlt[$r];
 							$email .= $line['usm_email'].cr();
 						}
+						$email .= 'cleybe.vieira@pucpr.br'.cr();
+				}
+			/* Professores orientadores IC que não entregaram relatório rarcial */
+			if ($gr == 12)
+				{
+					$ano = date("Y");
+					if (date("m") < 8) { $ano = ($ano -1); }
+					$sql = "select distinct usm_email from ( 
+							       select distinct id_us as id from ic inner 
+							       join ic_aluno on id_ic = ic_id 
+							       inner join ic_modalidade_bolsa on id_mb = mb_id 
+							       inner join us_usuario on ic_cracha_prof = us_cracha
+							       where ic_ano = '$ano'
+							       and us_ativo = 1 and (ic_rp_data <= '2000-01-01')
+							       and (icas_id = 1) and (s_id = 1)
+							       ) as tabela
+							inner join us_email on id = usuario_id_us
+							where usm_ativo = 1 ";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$email = '';
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$email .= $line['usm_email'].cr();
+						}
+						$email .= 'cleybe.vieira@pucpr.br'.cr();
 				}				
 			return($email);
 		}

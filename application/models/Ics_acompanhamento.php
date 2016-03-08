@@ -47,9 +47,10 @@ class ics_acompanhamento extends CI_model {
 	function relatorio_parcial_nao_entregue($ano = 0,$sem_indicacao=0)
 		{
 			$wh = " (ic_ano = '$ano') ";
-			$wh .= " and (ic_rp_data <= '2000-01-01')";
 			$wh .= " and (icas_id = 1)";
 			$wh .= " and (s_id = 1)";
+			$wh .= " and (ic_rp_data <= '2000-01-01')";
+	
 			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
 			
 			/* sem indicacao */
@@ -87,7 +88,7 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		{
 			$wh = " (ic_ano = '$ano') ";
 			$wh .= " and (ic_rp_data <= '2000-01-01')";
-			$wh .= " and(icas_id = 4)";
+			$wh .= " and(icas_id = 2)";
 			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
 			
 			/* sem indicacao */
