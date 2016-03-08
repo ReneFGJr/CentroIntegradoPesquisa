@@ -15,14 +15,17 @@ class Ic_pareceres extends CI_model {
 	}
 
 	function gera_parecer($tipo, $dados) {
+		$this -> load -> model("geds");
+		$this -> geds -> tabela = 'ic_ged_documento';
+
 		switch($tipo) {
 			case 'RPAR' :
 			/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);
-				
-				$content = $this->load->view('ic/plano-parecer',$dados,true);
-				$content = utf8_encode($content . $avaliacao) ;
-				
+
+				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
+				$content = utf8_encode($content . $avaliacao);
+
 				$image_file = 'img/headers/header_model_contrato_ic.JPG';
 
 				/* Construção do PDF */
@@ -42,10 +45,33 @@ class Ic_pareceres extends CI_model {
 				$pdf -> SetXY(20, 50);
 				$pdf -> writeHTMLCell(0, 0, '', '', $content, 0, 2, 0, true, 'J', true);
 				/* Arquivo de saida */
-				$nome_asc = UpperCaseSql($dados['pp_protocolo']);
+				$proto = UpperCaseSql($dados['pp_protocolo']) . '-';
 				//$nome_asc = troca($nome_asc,' ','_');
-				$pdf -> Output('d:/lixo/avaliacao-' . $nome_asc . '.pdf', 'F');
-				break;
+				$nome_asc = substr(md5(date("YmdHis")), 4, 5);
+				$file = $proto . 'avaliacao-rp-' . $nome_asc . '.pdf';
+
+				$path = $_SERVER['DOCUMENT_ROOT'];
+				$this -> geds -> dir($path . '_document');
+				$this -> geds -> dir($path . '_document/' . date("Y"));
+				$this -> geds -> dir($path . '_document/' . date("Y") . "/" . date("m"));
+				$file_long = $path . '_document/' . date("Y") . '/' . date("m") . '/' . $file;
+				$pdf -> Output($file_long, 'F');
+				$file_local = '_document/' . date("Y") . '/' . date("m") . '/' . $file;
+				copy($file_long, $file_local);
+				unlink($file_long);
+
+				/* Save File */
+				$this -> geds -> protocol = $dados['pp_protocolo'];
+				$this -> geds-> file_type = 'pdf';
+				$this -> geds-> file_name = $file;
+				$this -> geds-> file_data = date("Ymd");;
+				$this -> geds-> file_time = date("H:is");
+				$this -> geds-> file_saved = $file_local;
+				$this -> geds-> file_extensao($this -> geds -> file_name) . "'";
+				$this -> geds-> file_size = filesize($file_local);
+				$this -> geds-> versao = "0.1";
+				$this -> geds-> user = $_SESSION['id_us'];
+				$this->geds->save();
 		}
 	}
 

@@ -230,6 +230,8 @@ if (strlen($dd9) > 0)
 		<br>
 		<br>
 		<br>
+		<?php 
+		if ($mb_tipo == 'PIBIC') { ?>
 		7) <b>O projeto apresenta teor de tecnologia e inovação, portanto, seria indicado que migrasse para o PIBITI.</b>
 		<br>
 		<input name="dd7" type="radio" value="2" <?php echo $chk[7][2];?> >
@@ -237,6 +239,9 @@ if (strlen($dd9) > 0)
 		<br>
 		<input name="dd7" type="radio" value="1" <?php echo $chk[7][1];?> >
 		SIM <!----------------- item 8 ---------------------------->
+		<?php } else { ?>
+		<input name="dd7" type="hidden" value="3">	
+		<?php } ?>
 		<br>
 		<br>
 		<br>
@@ -251,10 +256,11 @@ if (strlen($dd9) > 0)
 		9) <b>Resultado da avaliação</b>:
 		<br>
 		<input name="dd9" type="radio" value="1" <?php echo $chk[9][1];?> >
-		<font color="green"><B>APROVADO</B></font> - comentários e sugestões deverão ser incorporados no relatório final
+		<font color="green"><B>APROVADO</B></font> - comentários e sugestões deverão ser incorporados no relatório final. Sugerimos que a pontuação atribuída seja de 7,0 a 10,0.
 		<br>
 		<input name="dd9" type="radio" value="-1" <?php echo $chk[9][2];?> >
-		<font color="red"><B>PENDÊNCIAS</B></font> - relatório parcial deve ser reapresentado realizando as devidas correções. <!----------------- item 10 ---------------------------->
+		<font color="red"><B>PENDÊNCIAS</B></font> - relatório parcial deve ser reapresentado realizando as devidas correções. Sugerimos que a pontuação atribuída seja abaixo de 7,0. 
+		<!----------------- item 10 ---------------------------->
 		<br>
 		<br>
 		<br>

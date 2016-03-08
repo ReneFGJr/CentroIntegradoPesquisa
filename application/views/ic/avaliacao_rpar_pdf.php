@@ -33,6 +33,7 @@ $qs[6][2] = 'NÂO';
 
 $qs[7][1] = 'SIM';
 $qs[7][2] = 'NÂO';
+$qs[7][2] = 'NÂO APLICÁVEL';
 
 $qs[9][1] = '<font color="green"><b>APROVADO</b></font>';
 $qs[9][-1] = '<font color="red"><b>PENDENTE</b></font>';
@@ -152,10 +153,6 @@ $qs[9][-1] = '<font color="red"><b>PENDENTE</b></font>';
 		<br>
 		Avaliação: <?php echo $qs[9][$pp_p09];?>
 		<br>
-		<br>
-		<br>
-		<br>
-		10) <b>Nota final ao relatório</b>: <font style="font-size: 32px;"><b><?php echo number_format($pp_p10,1,',','.');?></b></font> 
 		<br>
 		<br>
 		</td>
