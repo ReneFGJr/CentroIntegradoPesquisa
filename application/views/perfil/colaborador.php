@@ -7,7 +7,7 @@ $us_nada = '<font color="grey">[em construção]</font>';
 			<div id="foto-perfil"><IMG SRC="http://www2.pucpr.br/reol/cip/img/no_photo.jpg" border=0 width="130" class="foto-perfil"></div>
 			<TD>
 			<div id="nome-dados-perfil">
-				<li class="lt5"><B><?php echo $us_nome; ?>&nbsp;</B></li>
+				<li class="lt5"><B><?php echo $us_nome; ?>&nbsp;</B><?php echo $ghost;?></li>
 				<li>CPF: <?php echo $us_cpf; ?> </li>
 				<li><?php echo $email;?> <BR>
 				<li></li>

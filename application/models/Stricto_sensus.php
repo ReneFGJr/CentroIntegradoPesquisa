@@ -519,6 +519,8 @@ class Stricto_sensus extends CI_model {
 		array_push($cp, array('$}', '', 'Modalidades disponíveis', False, True));
 
 		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and us_professor_tipo = 2', 'id_us_coordenador', 'Coordenador', False, True));
+		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and usuario_tipo_ust_id = 4', 'id_us_secretaria1', 'Secretaria (1)', False, True));
+		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and usuario_tipo_ust_id = 4', 'id_us_secretaria2', 'Secretaria (2)', False, True));
 
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_ativo', 'Ativo', True, True));
 

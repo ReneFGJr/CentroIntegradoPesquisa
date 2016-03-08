@@ -119,8 +119,7 @@ class ic extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
-
+		
 		$data = $this -> comunicacoes -> le($id);
 
 		if (strlen(get("dd1")) == 0) {
@@ -1732,7 +1731,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-function rp_cancelados($tipo = '') {
+	function rp_cancelados($tipo = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
 		$this -> load -> model('ics_acompanhamento');
@@ -1746,7 +1745,7 @@ function rp_cancelados($tipo = '') {
 				$tit = 'Relatório Parcial';
 				$ano = date("Y");
 				if (date("m") < 8) {
-					 $ano = $ano - 1;
+					$ano = $ano - 1;
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_cancelados($ano);
 				break;
@@ -1768,7 +1767,6 @@ function rp_cancelados($tipo = '') {
 		$this -> load -> view('header/foot', $data);
 	}
 
-
 	function rp_nao_entregue($tipo = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -1783,7 +1781,7 @@ function rp_cancelados($tipo = '') {
 				$tit = 'Relatório Parcial';
 				$ano = date("Y");
 				if (date("m") < 8) {
-					 $ano = $ano - 1;
+					$ano = $ano - 1;
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_nao_entregue($ano);
 				break;
@@ -1805,7 +1803,7 @@ function rp_cancelados($tipo = '') {
 		$this -> load -> view('header/foot', $data);
 	}
 
-function rp_entregue($tipo = '') {
+	function rp_entregue($tipo = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
 		$this -> load -> model('ics_acompanhamento');
@@ -1820,7 +1818,7 @@ function rp_entregue($tipo = '') {
 				$ano = date("Y");
 				if (date("m") < 8) { $ano = $ano - 1;
 				}
-				
+
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
 			case 'IC_FORM_RP' :
@@ -1849,10 +1847,6 @@ function rp_entregue($tipo = '') {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-
-
-
-
 
 	function resumo_entrega_2($fld, $ano, $tit, $tp = 0) {
 		$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao, mb_tipo from ic
@@ -1970,11 +1964,10 @@ function rp_entregue($tipo = '') {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function indicacao_declinar($id,$chk='')
-		{
-			$data = array();
-			$this->load->view('header/header',$data);
-		}
+	function indicacao_declinar($id, $chk = '') {
+		$data = array();
+		$this -> load -> view('header/header', $data);
+	}
 
 	function acompanhamento() {
 		/* Load Models */
@@ -1990,11 +1983,11 @@ function rp_entregue($tipo = '') {
 		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (PIBIC MASTER)', 'ITE', '/ic/acompanhamento_ic_master_sw'));
 		array_push($menu, array('Acompanhamento', 'Calendário de Entregas', 'ITE', '/ic/acompanhamento_data'));
 		array_push($menu, array('Formulário de acompanhamento', 'Entrega de formlários', 'ITE', '/ic/entrega/FORM_PROF'));
-		
+
 		array_push($menu, array('Relatório Parcial', 'RP Entregues', 'ITE', '/ic/rp_entregue/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'RP Não Entregues', 'ITE', '/ic/rp_nao_entregue/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'RP cancelados', 'ITE', '/ic/rp_cancelados/IC_FORM_RP'));
-		
+
 		array_push($menu, array('Relatório Parcial', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RP'));
 
@@ -2041,10 +2034,10 @@ function rp_entregue($tipo = '') {
 			if (count($data) > 0) {
 				/* atualiza base */
 				$sql = "update ic set $cp1 = '0000-00-00', $cp2 = '-1' where ic_plano_aluno_codigo = '$proto' ";
-				$rlt = $this->db->query($sql);
-				
+				$rlt = $this -> db -> query($sql);
+
 				/* insere historico */
-				$this->ics->inserir_historico($proto, $ac, $title, $aluno1, $aluno2, $motivo, $obs = '');
+				$this -> ics -> inserir_historico($proto, $ac, $title, $aluno1, $aluno2, $motivo, $obs = '');
 				$this -> load -> view('ic/plano', $data);
 				$this -> load -> view('sucesso', $data);
 			} else {
@@ -2184,6 +2177,38 @@ function rp_entregue($tipo = '') {
 		$data['ged_arquivos'] = $this -> geds -> form_upload($data['ic_plano_aluno_codigo'], 'ic');
 		$this -> load -> view('ged/list_files', $data);
 
+		/****/
+		/* Submissões IC */
+		$this -> load -> model("ics");
+		$subm = $this -> ics -> submissoes_abertas();
+		
+		
+		/***** RELATARIO PARCIAL ***/
+		
+		if (($subm['sw_06'] == '1') and ($data['ic_rp_data'] < '2010-01-01')) {
+				$data['content'] = 'FORM';
+				$cp = array();
+				array_push($cp,array('$HV','id_ic',$id,False,True));
+				array_push($cp,array('$A','','Finalização do Relatório Parcial',False,True));
+				array_push($cp,array('$D8','ic_rp_data','Data entrega',True,True));
+				$sql = "select ac_cnpq, concat(ac_cnpq,' - ',ac_nome_area) as ac_nome_area from area_conhecimento where ac_ativo = 1 and ac_semic = 1  and not (ac_cnpq like '0%') order by ac_nome_area";
+				array_push($cp, array('$Q ac_cnpq:ac_nome_area:' . $sql, 'ic_semic_area', msg('area_conhecimento'), True, True));
+				array_push($cp,array('$HV','ic_nota_rp','0',True,True));
+				$form = new form;
+				$form->id = $id;
+				$tela = $form->editar($cp,'ic');
+				$tela = '<div class="bg_lgreen">'.$tela.'</div>';
+				$data['content'] = $tela;
+				
+				if ($form->saved > 0)
+					{
+						redirect(base_url('index.php/ic/view/'.$id.'/'.checkpost_link($id)));
+						exit;
+					}
+				
+				$this -> load -> view('content', $data);
+		}
+
 		$this -> load -> view('ic/plano_historico', $data);
 		$this -> load -> view('ic/plano_avaliacao', $data);
 
@@ -2201,13 +2226,12 @@ function rp_entregue($tipo = '') {
 		/* Indicação relatório parcial */
 		if (($data['ic_rp_data'] > 0) and ($data['ic_nota_rp'] < 1)) {
 			$area = $data['ic_semic_area'];
-			$tela = $this->ic_pareceres->mostra_indicacoes_interna($protocolo,'RPAR',$area);
+			$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'RPAR', $area);
 			$data['sa'] = $tela;
-			$this->load->view('ic/avaliador_indicar_tipo_1',$data);
-			if (get("dd1") > 0)
-				{
-					redirect(base_url('index.php/ic/view/'.$id.'/'.$check));
-				}
+			$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
+			if (get("dd1") > 0) {
+				redirect(base_url('index.php/ic/view/' . $id . '/' . $check));
+			}
 		}
 
 		$this -> load -> view('header/content_close');
@@ -2272,8 +2296,7 @@ function rp_entregue($tipo = '') {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();

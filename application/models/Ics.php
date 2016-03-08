@@ -1774,10 +1774,14 @@ class ics extends CI_model {
 		return ($cp);
 	}
 
-	function submissoes_abertas() {
-		$sql = "select * from switch where sw_01 = '1' order by id_sw ";
+	function submissoes_abertas($id='1') {
+		$sql = "select * from switch where id_sw = $id order by id_sw ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
+		if (count($rlt) > 0)
+			{
+				$rlt = $rlt[0];
+			}
 		return ($rlt);
 	}
 
@@ -1789,6 +1793,7 @@ class ics extends CI_model {
 		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_mst_form_acompanhamento'), False, True));
 		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_mst_rel_final'), False, True));
 		array_push($cp, array('$SW', 'sw_05', msg('sw_ic_mst_resumo'), False, True));
+		array_push($cp, array('$SW', 'sw_06', msg('sw_ic_validacao'), False, True));
 		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_rel_final'), False, True));
 		array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
@@ -1802,7 +1807,7 @@ class ics extends CI_model {
 		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_form_acompanhamento'), False, True));
 		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_rel_final'), False, True));
 		array_push($cp, array('$SW', 'sw_05', msg('sw_ic_resumo'), False, True));
-		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_rel_final'), False, True));
+		array_push($cp, array('$SW', 'sw_06', msg('sw_ic_validacao'), False, True));
 		array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
 	}

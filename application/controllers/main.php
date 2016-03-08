@@ -1,6 +1,5 @@
 <?php
 
-
 class main extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
@@ -54,7 +53,7 @@ class main extends CI_Controller {
 	}
 
 	function index() {
-
+		$cracha = $_SESSION['cracha'];
 		/* Carrega classes adicionais */
 		$this -> cab();
 		$data = array();
@@ -88,31 +87,23 @@ class main extends CI_Controller {
 
 		/* Submissões IC */
 		$this -> load -> model("ics");
-		$subm = $this -> ics -> submissoes_abertas();
-		for ($r = 0; $r < count($subm); $r++) {
-			$ok = 1;
-			if ($subm[$r]['id_sw'] == '2') {
-				$ok = 0;
-			}
-			
-			/* Se for SS habilita SS */
-			if ((strlen($ss) > 0) or (perfil("#CPI#SPI#ADM") > 0)) { $ok = 1;
-			}
+		$subm = $this -> ics -> submissoes_abertas(2);
 
-			if ($ok == 1) {
-				$mod = $subm[$r]['sw_tipo'];
-				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit_'.$mod));
+		/* Submissão PIBIC MASTER */
+		if ($subm['sw_01'] == '1') {
+			if ((strlen($ss) > 0) or (perfil("#CPI#SPI#ADM") > 0)) {
+				$mod = $subm['sw_tipo'];
+				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit_' . $mod));
 			}
 		}
 		/* AVALIACOES IC */
-		if ((strlen($idu) > 0) and ($this->ics->existe_avaliacoes($idu) ==1))
-			{
-				array_push($menu, array('Avaliação IC', '<img src="'.base_url('img/icon/icon_avaliacoes.png').'" align="right" width="48">Indicações para sua avaliação', 'BTS', '/avaliador'));	
-			}
+		if ((strlen($idu) > 0) and ($this -> ics -> existe_avaliacoes($idu) == 1)) {
+			array_push($menu, array('Avaliação IC', '<img src="' . base_url('img/icon/icon_avaliacoes.png') . '" align="right" width="48">Indicações para sua avaliação', 'BTS', '/avaliador'));
+		}
 
 		if (strlen($ss) > 0) {
 
-			array_push($menu, array('Perfil','Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
+			array_push($menu, array('Perfil', 'Perfil individual de pesquisador, com captação, artigos e orientações', 'BTN', '/persona'));
 		}
 
 		/* Libera Menus */
@@ -127,9 +118,9 @@ class main extends CI_Controller {
 		if (perfil('#ADM#SEP') == 1) {
 			array_push($menu, array('Stricto Sensu', 'Secretaria e Coordenação do <i>stricto sensu</i>', 'BTA', '/stricto_sensu'));
 		}
-		
+
 		if (perfil('#ADM') == 1) {
-		array_push($menu, array('CNPq', 'Administração', 'BTN', '/cnpq'));
+			array_push($menu, array('CNPq', 'Administração', 'BTN', '/cnpq'));
 		}
 
 		if (perfil('#CPP#SPI#ADM#EVE') == 1) {
@@ -158,7 +149,9 @@ class main extends CI_Controller {
 			array_push($menu, array('Banco de Projetos', 'Pesquisa realizadas na PUCPR', 'BTN', '/banco_projetos'));
 		}
 		/* Iniciação Científica */
-		array_push($menu, array('Iniciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
+		if ($this -> ics -> is_ic($cracha)) {
+			array_push($menu, array('Iniciação Científica', 'Programa de Iniciação Científica e Tecnológia da PUCPR', 'BTN', '/pibic'));
+		}
 
 		if ((perfil('#TST') == 1) or ($ss == 1)) {
 			array_push($menu, array('Stricto Sensu', 'Coordenadores e Professores do <i>stricto sensu</i>', 'BTN', '/ss'));
