@@ -1,32 +1,72 @@
 <?php
-$chk = array();
-$chk[1] = array('', '', '', '', '', '', '', '');
-$chk[2] = array('', '', '', '', '', '', '', '');
-$chk[3] = array('', '', '', '', '', '', '', '');
-$chk[4] = array('', '', '', '', '', '', '', '');
-$chk[5] = array('', '', '', '', '', '', '', '');
-$chk[6] = array('', '', '', '', '', '', '', '');
-$chk[7] = array('', '', '', '', '', '', '', '');
-$chk[8] = array('', '', '', '', '', '', '', '');
-$chk[9] = array('', '', '', '', '', '', '', '');
-$chk[10] = array('', '', '', '', '', '', '', '');
-$chk[11] = array('', '', '', '', '', '', '', '');
-
-
-$dd10 = 8;
-$dd21 = get('dd21');
-$dd22 = get('dd22');
-$dd23 = get('dd23');
-$dd24 = get('dd24');
-$dd25 = get('dd25');
-$dd26 = get('dd26');
-$dd27 = get('dd27');
-$dd28 = get('dd28');
-$dd29 = get('dd29');
-$dd30 = get('dd30');
-$dd31 = get('dd31');
-
 $color = '<font color="#3030ef">';
+
+		$chk = array();
+		$chk[1] = array('', '', '', '', '', '', '', '');
+		$chk[2] = array('', '', '', '', '', '', '', '');
+		$chk[3] = array('', '', '', '', '', '', '', '');
+		$chk[4] = array('', '', '', '', '', '', '', '');
+		$chk[5] = array('', '', '', '', '', '', '', '');
+		$chk[6] = array('', '', '', '', '', '', '', '');
+		$chk[7] = array('', '', '', '', '', '', '', '');
+		$chk[8] = array('', '', '', '', '', '', '', '');
+		$chk[9] = array('', '', '', '', '', '', '', '');
+		$chk[10] = array('', '', '', '', '', '', '', '');
+		$chk[11] = array('', '', '', '', '', '', '', '');	
+		
+		
+/* Checked */
+if (strlen($dd1) > 0)
+	{
+		if ($dd1=='20') { $chk[1][0] = 'checked'; }
+		if ($dd1=='10') { $chk[1][1] = 'checked'; }
+		if ($dd1=='5') { $chk[1][2] = 'checked'; }
+		if ($dd1=='1') { $chk[1][3] = 'checked'; }
+	}
+if (strlen($dd2) > 0)
+	{
+		if ($dd2=='20') { $chk[2][0] = 'checked'; }
+		if ($dd2=='10') { $chk[2][1] = 'checked'; }
+		if ($dd2=='1') { $chk[2][2] = 'checked'; }
+	}			
+if (strlen($dd3) > 0)
+	{
+		if ($dd3=='20') { $chk[3][0] = 'checked'; }
+		if ($dd3=='10') { $chk[3][1] = 'checked'; }
+		if ($dd3=='5') { $chk[3][2] = 'checked'; }
+		if ($dd3=='1') { $chk[3][3] = 'checked'; }
+	}			
+if (strlen($dd4) > 0)
+	{
+		if ($dd4=='20') { $chk[4][0] = 'checked'; }
+		if ($dd4=='10') { $chk[4][1] = 'checked'; }
+		if ($dd4=='5') { $chk[4][2] = 'checked'; }
+		if ($dd4=='1') { $chk[4][3] = 'checked'; }
+		if ($dd4=='19') { $chk[4][4] = 'checked'; }
+	}
+if (strlen($dd5) > 0)
+	{
+		if ($dd5=='20') { $chk[5][0] = 'checked'; }
+		if ($dd5=='10') { $chk[5][1] = 'checked'; }
+		if ($dd5=='5') { $chk[5][2] = 'checked'; }
+		if ($dd5=='1') { $chk[5][3] = 'checked'; }
+		if ($dd5=='19') { $chk[5][4] = 'checked'; }
+	}
+if (strlen($dd6) > 0)
+	{
+		if ($dd6=='2') { $chk[6][2] = 'checked'; }
+		if ($dd6=='1') { $chk[6][1] = 'checked'; }
+	}		
+if (strlen($dd7) > 0)
+	{
+		if ($dd7=='2') { $chk[7][2] = 'checked'; }
+		if ($dd7=='1') { $chk[7][1] = 'checked'; }
+	}
+if (strlen($dd9) > 0)
+	{
+		if ($dd9=='1') { $chk[9][1] = 'checked'; }
+		if ($dd9=='-1') { $chk[9][2] = 'checked'; }
+	}			
 ?>
 <h1>Ficha de avaliação do Relatório Parcial</h1>
 <?php echo $plano;?>
@@ -34,6 +74,7 @@ $color = '<font color="#3030ef">';
 <br>
 <br>
 <br>
+<form method="post">
 <table width="90%" align="center">
 	<tr>
 		<td> Prezado avaliador
@@ -88,10 +129,10 @@ $color = '<font color="#3030ef">';
 		<input name="dd2" type="radio" value="20" <?php echo $chk[2][0];?> >
 		adequado
 		<br>
-		<input name="dd2" type="radio" value="10" <?php echo $chk[2][0];?> >
+		<input name="dd2" type="radio" value="10" <?php echo $chk[2][1];?> >
 		parcialmente adequado
 		<br>
-		<input name="dd2" type="radio" value="1" <?php echo $chk[2][0];?> >
+		<input name="dd2" type="radio" value="1" <?php echo $chk[2][2];?> >
 		inadequado
 		<br>
 		Comentários sobre sua avaliação deste item:
@@ -180,10 +221,10 @@ $color = '<font color="#3030ef">';
 		Indique tais problemas no campo de comentários restrito. O avaliador considera que deve ser
 		realizada uma reunião com o professor orientador</b>?
 		<br>
-		<input name="dd6" type="radio" value="20" <?php echo $chk[6][0];?> >
+		<input name="dd6" type="radio" value="2" <?php echo $chk[6][2];?> >
 		NÃO
 		<br>
-		<input name="dd6" type="radio" value="10" <?php echo $chk[6][1];?> >
+		<input name="dd6" type="radio" value="1" <?php echo $chk[6][1];?> >
 		SIM <!----------------- item 7 ---------------------------->
 		<br>
 		<br>
@@ -191,10 +232,10 @@ $color = '<font color="#3030ef">';
 		<br>
 		7) <b>O projeto apresenta teor de tecnologia e inovação, portanto, seria indicado que migrasse para o PIBITI.</b>
 		<br>
-		<input name="dd7" type="radio" value="20" <?php echo $chk[7][0];?> >
+		<input name="dd7" type="radio" value="2" <?php echo $chk[7][2];?> >
 		NÃO
 		<br>
-		<input name="dd7" type="radio" value="10" <?php echo $chk[7][1];?> >
+		<input name="dd7" type="radio" value="1" <?php echo $chk[7][1];?> >
 		SIM <!----------------- item 8 ---------------------------->
 		<br>
 		<br>
@@ -209,10 +250,10 @@ $color = '<font color="#3030ef">';
 		<br>
 		9) <b>Resultado da avaliação</b>:
 		<br>
-		<input name="dd9" type="radio" value="1" <?php echo $chk[9][0];?> >
+		<input name="dd9" type="radio" value="1" <?php echo $chk[9][1];?> >
 		<font color="green"><B>APROVADO</B></font> - comentários e sugestões deverão ser incorporados no relatório final
 		<br>
-		<input name="dd9" type="radio" value="-1" <?php echo $chk[9][1];?> >
+		<input name="dd9" type="radio" value="-1" <?php echo $chk[9][2];?> >
 		<font color="red"><B>PENDÊNCIAS</B></font> - relatório parcial deve ser reapresentado realizando as devidas correções. <!----------------- item 10 ---------------------------->
 		<br>
 		<br>
@@ -223,7 +264,7 @@ $color = '<font color="#3030ef">';
 		<select name="dd10"  class="lt3">
 			<option value=""></option>
 			<?php
-			for ($r = 10; $r >= 0; $r = $r - 0.5) {
+			for ($r = 10; $r >= 1; $r = $r - 0.5) {
 				$sel = '';
 				if ($r == $dd10) { $sel = 'selected'; }
 				echo '<option value="' . $r . '" '.$sel.'>' . number_format($r, 1, ',', '.') . '</option>';
@@ -235,7 +276,8 @@ $color = '<font color="#3030ef">';
 		<br>
 		<br>
 		<br>
-		<input type="submit" value="Finalizar avaliação >>>" class="botao3d back_green_shadown back_green">
+		<input type="submit" name="acao" value="Finalizar avaliação >>>" class="botao3d back_green_shadown back_green">
 		</td>
 	</tr>
 </table>
+</form>

@@ -1,7 +1,3 @@
-<?php
-echo $ic_semic_area;
-
-?>
 <h1>Indicar avaliador do Relatório Parcial</h1>
 <form method="post">
 	<input type="submit" value="Indicar >>>" name="acao" class="botao3d">
