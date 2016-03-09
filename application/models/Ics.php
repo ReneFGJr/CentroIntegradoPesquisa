@@ -37,6 +37,43 @@ class ics extends CI_model {
 		return ($tabela);
 	}
 
+	function ja_implementado($proto)
+		{
+			$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return(1);
+				} else {
+					return(0);
+				}
+		}
+	function estudante_com_ic_implementado($id=0)
+		{
+			$sql = "select * from ic_aluno where aluno_id = $id and icas_id = 1";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return(1);
+				} else {
+					return(0);
+				}
+		}
+	function existe_projeto_enviado($proto)
+		{
+			$sql = "select * from ic_submissao_plano where doc_protocolo = '$proto' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					return(1);
+				} else {
+					return(0);
+				}			
+		}
+	
 	function orientaoes_ativas($ano = '') {
 		$sx = '';
 		$mod = '';
@@ -51,15 +88,15 @@ class ics extends CI_model {
 		
 		$sql = "select * from ic
             			left join ic_aluno as pa on ic_id = id_ic
-						left join (select us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
+						left join (select us_campus_vinculo, us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						left join ic_situacao on id_s = icas_id
 						where $wh
 						";
 		
-		$sql = "select pf_cracha, pf_nome, count(*) as total 
+		$sql = "select pf_cracha, pf_nome, count(*) as total, us_campus_vinculo
 					FROM ($sql) as resultado
-					GROUP BY pf_nome, pf_cracha ";		
+					GROUP BY pf_nome, pf_cracha, us_campus_vinculo ";		
 		
 		//$sql .= " order by al_nome ";
 		$rlt = $this -> db -> query($sql);
@@ -68,8 +105,9 @@ class ics extends CI_model {
 		$totp = 0;
 		$sx .= '<table width="100%">';
 		$sx .= '<tr><th width="5%">Cod.Crachá</th>
-					<th width="85%">Nome</th>
-					<th width="5%">Orien- tações</th>
+					<th width="55%">Nome</th>
+					<th width="30%">Campus</th>
+					<th width="5%">Orientações</th>
 					<th width="5%">Horas</th>
 				</tr>';
 			$class = ' style="border-bottom: 1px #000000 solid" ';
@@ -82,8 +120,9 @@ class ics extends CI_model {
 			$sx .= '<tr>';
 			$sx .= '<td '.$class.' align="center" >'.$line['pf_cracha'].'</td>';
 			$sx .= '<td '.$class.'>'.$line['pf_nome'].'</td>';
+			$sx .= '<td>'.$line['us_campus_vinculo'].'</td>';
 			$sx .= '<td '.$class.' align="center" >'.$line['total'].'</td>';
-			$totx = ($line['total'] + 0.02) / 2;			
+			$totx = ($line['total'] + 0.02) / 2;						
 			$sx .= '<td '.$class.' align="center" >'.number_format($totx,0).'</td>';
 		}
 		$sx .= '<tr><td colspan="3">Total de '.$totp.' orientadores, com '.$tot.' orientações.</td></tr>';
@@ -758,6 +797,19 @@ class ics extends CI_model {
 		return (1);
 	}
 
+	function recupera_nr_ic($protocolo)
+		{
+			$sql = "select * from ic where ic_plano_aluno_codigo = '$protocolo' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$rlt = $rlt[0];
+				} else {
+					$rlt = array();
+				}
+			return($rlt);
+		}
 	function reativar_protocolo($protocolo, $ica) {
 		$data = date("Y-m-d");
 		$sql = "update ic_aluno set

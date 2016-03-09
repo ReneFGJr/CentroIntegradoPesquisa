@@ -6,6 +6,18 @@
 		color: white;
 		padding: 10px 5px 10px 5px;
 	}
+/* Colunas */
+.3colunas{
+    -webkit-column-count: 3; /* Chrome, Safari, Opera */
+    -moz-column-count: 3; /* Firefox */
+    column-count: 3;
+   }
+.2colunas
+	{
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;		
+	}
 /* Botoes do Edital */
 .edital {
 	display: block;

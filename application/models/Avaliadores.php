@@ -1,47 +1,46 @@
 <?php
 class avaliadores extends CI_Model {
-	
-	function avaliador_area_impar($id=0)
-		{
-			$sql = "delete from us_avaliador_area 
-						where pa_ativo = 0 and pa_parecerista = ".round($id);
-			$rlt = $this->db->query($sql);
-			return('');
-		}
 
-	function zera_avaliadores()
-		{
-			$sql = "update us_usuario set us_avaliador = 0 where us_avaliador <> 0  ";
-			$rlt = $this->db->query($sql);
-			print_r($rlt);
+	function avaliador_area_impar($id = 0) {
+		$sql = "delete from us_avaliador_area 
+						where pa_ativo = 0 and pa_parecerista = " . round($id);
+		$rlt = $this -> db -> query($sql);
+		return ('');
+	}
+
+	function zera_avaliadores() {
+		$sql = "update us_usuario set us_avaliador = 0 where us_avaliador <> 0  ";
+		$rlt = $this -> db -> query($sql);
+		print_r($rlt);
+	}
+
+	function ativa_dr_com_ic_avaliadores() {
+		$ano = date("Y");
+		if (date("m") < 8) { $ano--;
 		}
-	function ativa_dr_com_ic_avaliadores()
-		{
-			$ano = date("Y");
-			if (date("m") < 8) { $ano--; }
-			$sql = "select distinct id_us from ic
+		$sql = "select distinct id_us from ic
 						left join ic_aluno as pa on ic_id = id_ic 
 						left join us_usuario on ic_cracha_prof = us_cracha
 					WHERE (usuario_titulacao_ust_id = 6 or usuario_titulacao_ust_id = 7)
 					 	and ic_ano = '$ano' and s_id = 1 and us_ativo = 1";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array($rlt);
-			$wh = '';
-			$tot = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					if (strlen($wh) > 0) { $wh .= ' OR ';}
-					$wh .= '(id_us = '.$line['id_us'].')';
-					$tot++;
-				}
-			if (strlen($wh) > 0)
-				{
-					$sql = "update us_usuario set us_avaliador = 1 where ".$wh;
-					$this->db->query($sql);
-				}
-			return($tot);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$wh = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			if (strlen($wh) > 0) { $wh .= ' OR ';
+			}
+			$wh .= '(id_us = ' . $line['id_us'] . ')';
+			$tot++;
 		}
+		if (strlen($wh) > 0) {
+			$sql = "update us_usuario set us_avaliador = 1 where " . $wh;
+			$this -> db -> query($sql);
+		}
+		return ($tot);
+	}
+
 	function avaliador_add_area($id = 0, $area = '') {
 		$area = trim($area);
 		$data = date("Ymd");
@@ -94,10 +93,10 @@ class avaliadores extends CI_Model {
 				if ($id > 0) {
 					$sql = "update us_usuario set us_avaliador = '1' where id_us = " . round($id);
 					$this -> db -> query($sql);
-					
-					$this -> avaliador_historico('ACT', msg('avaliador') . ': ' . msg('active'), $id);	
+
+					$this -> avaliador_historico('ACT', msg('avaliador') . ': ' . msg('active'), $id);
 				}
-				
+
 			}
 		}
 		return ('');
@@ -197,7 +196,7 @@ class avaliadores extends CI_Model {
 		return ($sx);
 	}
 
-	function avaliadores_area() {
+	function avaliadores_area($sem_area = 0) {
 		$sql = "select * from us_usuario
 						left join us_avaliador_area on pa_parecerista = id_us
 						left join us_avaliador_situacao on us_avaliador = id_as
@@ -220,38 +219,38 @@ class avaliadores extends CI_Model {
 			$cracha = trim($line['id_us']);
 			if ($xcracha != $cracha) {
 				$to1++;
-				$msg_email = '<font class="error">'.msg('email_sem').'</a>';
-				if ($e > 0)
-					{
-						$msg_email = '<font color="green">'.msg('email_ok').'</font>';
-						$bg = '';
-					} else {
-						$bg = ' bgcolor="#FFE0E0" ';
-					}
-				
-				$sx .= '<tr '.$bg.'>';
+				$msg_email = '<font class="error">' . msg('email_sem') . '</a>';
+				if ($e > 0) {
+					$msg_email = '<font color="green">' . msg('email_ok') . '</font>';
+					$bg = '';
+				} else {
+					$bg = ' bgcolor="#FFE0E0" ';
+				}
+
+				$sx .= '<tr ' . $bg . '>';
 				$sx .= '<td style="padding: 3px;"  class="border1" align="center" width="70">' . $link . $line['us_cracha'] . '</a>' . '</td>';
-				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['ust_titulacao_sigla'] . ' ' . $link. $line['us_nome'] . '</a>' .'</td>';
+				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['ust_titulacao_sigla'] . ' ' . $link . $line['us_nome'] . '</a>' . '</td>';
 				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['us_campus_vinculo'] . '</td>';
-				
-				$msg_email = '<font class="error">'.msg('email_sem').'</a>';
-				if ($e > 0)
-					{
-						$msg_email = '<font color="green">'.msg('email_ok').'</font>';
-					}
+
+				$msg_email = '<font class="error">' . msg('email_sem') . '</a>';
+				if ($e > 0) {
+					$msg_email = '<font color="green">' . msg('email_ok') . '</font>';
+				}
 				$sx .= '<td style="padding: 3px;"  class="border1" align="center">' . $msg_email . '</td>';
 				$sx .= '<td style="padding: 3px;"  class="border1" align="center" width="150" bgcolor="' . $line['as_cor'] . '">' . $line['as_situacao'] . '</td>';
 				$sx .= '</tr>';
 				$xcracha = $cracha;
 			}
 			/* */
-			$nome_area = $line['ac_cnpq'] . ' - ' . $line['ac_nome_area'];
-			if (strlen(trim($line['ac_cnpq'])) == 0) {
-				$nome_area = '<font color="red">' . msg('area_nao_definida') . '</font>';
+			if ($sem_area != 1) {
+				$nome_area = $line['ac_cnpq'] . ' - ' . $line['ac_nome_area'];
+				if (strlen(trim($line['ac_cnpq'])) == 0) {
+					$nome_area = '<font color="red">' . msg('area_nao_definida') . '</font>';
+				}
+				$sx .= '<tr>';
+				$sx .= '<td>';
+				$sx .= '<td>' . $nome_area . '</td>';
 			}
-			$sx .= '<tr>';
-			$sx .= '<td>';
-			$sx .= '<td>' . $nome_area . '</td>';
 		}
 		$sx .= '<tr><td colspan="10">Total de ' . $to1 . ' avaliadores</td></tr>';
 		$sx .= '</table>';

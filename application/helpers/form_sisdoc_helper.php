@@ -75,7 +75,17 @@ function extenso($valor = 0, $maiusculas = false) {
 	}
 
 }
-
+/***/
+function sn($it=0)
+	{
+		if ($it == 0)
+			{
+				$rst = mst('NÃO');
+			} else {
+				$rst = mst('SIM');		
+			}
+		return($rst);
+	}
 /**
  * @param string $nome O nome a ser normalizado
  * @return string O nome devidamente normalizado

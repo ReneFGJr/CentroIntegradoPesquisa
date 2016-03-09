@@ -1,6 +1,23 @@
 <?php
 class Stricto_sensus extends CI_model {
-	var $resumo = array();	
+	var $resumo = array();
+	
+	function is_administrativo($id_us=0)
+		{
+			$sql = "select * from ss_programa_pos where  
+						id_us_coordenador = $id_us OR
+						id_us_secretaria1 = $id_us OR
+						id_us_secretaria2 = $id_us ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					return($line);
+				} else {
+					return(array());
+				}
+		}	
 	function orientacoes($cracha='')
 		{
 			$sql = "select * from ss_docente_orientacao 

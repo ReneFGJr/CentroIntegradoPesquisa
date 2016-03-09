@@ -1,6 +1,121 @@
 <?php
 class ic extends CI_Controller {
 
+	function implementacao_manual() {
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');
+		$this -> cab();
+		$tela = '';
+		$title = '';
+
+		$form = new form;
+		if ((strlen(get("dd1")) != 7) or (strlen(get("dd2")) == 0)) {
+			$cp = array();
+			array_push($cp, array('$H8', '', '', False, True));
+			array_push($cp, array('$S8', '', 'Informe o número do protocolo', True, True));
+			$sql = "select * from ic_modalidade_bolsa where mb_vigente = 1 order by mb_descricao ";
+			array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', 'Modalidade de Bolsa', True, True));
+			$tela = $form -> editar($cp, '');
+		} else {
+			/* */
+			$tela = '';
+			$proto = get("dd1");
+			$chk1 = $this -> ics -> ja_implementado($proto);
+			$chk2 = $this -> ics -> existe_projeto_enviado($proto);
+			$chk3 = 0;
+			$chk4 = 0;
+
+			$data = date("Y-m-d");
+
+			$cp = array();
+			array_push($cp, array('$H8', '', '', False, True));
+			array_push($cp, array('$S8', '', 'Informe o número do protocolo', True, True));
+			$sql = "select * from ic_modalidade_bolsa where mb_vigente = 1 order by mb_descricao ";
+			array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', 'Modalidade de Bolsa', True, True));
+			array_push($cp, array('$S8', '', 'Informe o código do aluno', True, True));
+			array_push($cp, array('$T80:3', '', '`Informe título do plano', True, True));
+			array_push($cp, array('$Q us_cracha:us_nome:select * from us_usuario where usuario_tipo_ust_id=2 and us_ativo = 1 order by us_nome ', '', 'Nome do orientador', True, True));
+			array_push($cp, array('$D8', '', 'Início da vigência', True, True));
+			array_push($cp, array('$[' . (date("Y") - 2) . '-' . date("Y") . ']', '', 'Ano do edital', True, True));
+			$tela = $form -> editar($cp, '');
+
+			if (($chk1 == 0) and ($chk2 == 0)) {
+				$estudante = get("dd3");
+
+				if ($form -> saved > 0) {
+					$data_ativacao = brtod(get("dd6"));
+					$prof = get("dd5");
+					$hora = date("H:i:s");
+					$proto = get("dd1");
+					$ano = get("dd7");
+					$titulo = get("dd4");
+					$mdo = get("dd2");
+					$ida = $this -> usuarios -> le_cracha($estudante);
+					if ($ida == 0) {
+						$aluno = $this -> usuarios -> consulta_cracha($estudante);
+						$ida = $this -> usuarios -> le_cracha($estudante);
+					}
+
+					if (count($ida) > 0) {
+						$aluno = $ida['id_us'];
+						$aluno_cracha = $ida['us_cracha'];
+
+						$chk3 = $this -> ics -> estudante_com_ic_implementado($aluno);
+
+						if ($chk3 == 0) {
+							$sql = "insert into ic
+								(
+									ic_cracha_prof, ic_cracha_aluno, s_id,
+									s_id_char, ic_dt_ativacao, 
+									ic_data, ic_hora, ic_ano,
+									
+									ic_projeto_professor_codigo, ic_projeto_professor_titulo, ic_plano_aluno_codigo,
+									ic_plano_aluno_nome										
+								) values (
+									'$prof','$estudante','1',
+									'A','$data_ativacao',
+									'$data','$hora','$ano',
+									
+									'$proto','$titulo','$proto'
+									,'$titulo'
+								)";
+							$this -> db -> query($sql);
+							$idr = $this -> ics -> recupera_nr_ic($proto);
+							if (count($idr) > 0) {
+								$idp = $idr['id_ic'];
+								$sql = "insert into ic_aluno
+										(aluno_id, ic_aluno_cracha, ic_id,
+										mb_id, 	icas_id, aic_dt_entrada, 
+										aic_dt_inicio_bolsa
+										) values (
+										$aluno,'$aluno_cracha', $idp,
+										$mdo, 1, $data_ativacao,
+										$data_ativacao
+										)";
+								$rlt = $this -> db -> query($sql);
+								$this -> load -> view('sucesso');
+								return ('');
+							}
+						}
+					} else { $chk4 = 1;}
+				}
+			}
+
+			$tela .= '<table>';
+			$tela .= '<tr><td align="right">Já implementado:</td><td><b>' . sn($chk1) . '</b></td></tr>';
+			$tela .= '<tr><td align="right">Foi enviado cadastrado plano do aluno:</td><td><b>' . sn($chk2) . '</b></td></tr>';
+			$tela .= '<tr><td align="right">Estudante já está na IC:</td><td><b>' . sn($chk3) . '</b></td></tr>';
+			$tela .= '<tr><td align="right">Problema no cadastro do aluno:</td><td><b>' . sn($chk4) . '</b></td></tr>';
+			
+			$tela .= '</table>';
+		}
+		$data = array();
+		$data['content'] = $tela;
+		$data['title'] = 'Implementação manual';
+		$this -> load -> view('content', $data);
+
+	}
+
 	function avaliadores_set() {
 		/* Load Models */
 		$this -> load -> model('avaliadores');
@@ -15,6 +130,7 @@ class ic extends CI_Controller {
 		$this -> load -> database();
 		$this -> lang -> load("app", "portuguese");
 		$this -> lang -> load("ic", "portuguese");
+		$this -> load -> library("nuSoap_lib");
 
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
@@ -119,7 +235,7 @@ class ic extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		
+
 		$data = $this -> comunicacoes -> le($id);
 
 		if (strlen(get("dd1")) == 0) {
@@ -353,6 +469,8 @@ class ic extends CI_Controller {
 		array_push($menu, array('Gestão', 'Substituição de bolsa', 'ITE', '/ic/admin_substituir_bolsa'));
 
 		array_push($menu, array('Entregas', 'Formulário de acompanhamento', 'ITE', '/ic/acompanhamento'));
+
+		array_push($menu, array('Implementação', 'Implementação Manual', 'ITE', '/ic/implementacao_manual'));
 
 		array_push($menu, array('Discentes (seguro) ', 'Relatório de discentes ativos IC Capital (Seguro)', 'ITE', '/ic/seguro/1'));
 		array_push($menu, array('Discentes (seguro) ', 'Relatório de discentes ativos IC Interior (Seguro)', 'ITE', '/ic/seguro/2'));
@@ -1487,7 +1605,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function avaliadores($id = 0) {
+	function avaliadores($sem_area = 0) {
 		/* Load Models */
 		$this -> load -> model('avaliadores');
 
@@ -1500,8 +1618,10 @@ class ic extends CI_Controller {
 		$data['menu'] = $menu;
 		$this -> load -> view('header/menu_mini', $data);
 
-		$data['content'] = $this -> avaliadores -> avaliadores_area();
+		$data['content'] = $this -> avaliadores -> avaliadores_area($sem_area);
 		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');
+		$data['submenu'] = '<a href="' . base_url('index.php/ic/avaliadores/1') . '" class="lt0 link">sem áreas</a>';
+
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
@@ -2181,32 +2301,30 @@ class ic extends CI_Controller {
 		/* Submissões IC */
 		$this -> load -> model("ics");
 		$subm = $this -> ics -> submissoes_abertas();
-		
-		
+
 		/***** RELATARIO PARCIAL ***/
-		
+
 		if (($subm['sw_06'] == '1') and ($data['ic_rp_data'] < '2010-01-01')) {
-				$data['content'] = 'FORM';
-				$cp = array();
-				array_push($cp,array('$HV','id_ic',$id,False,True));
-				array_push($cp,array('$A','','Finalização do Relatório Parcial',False,True));
-				array_push($cp,array('$D8','ic_rp_data','Data entrega',True,True));
-				$sql = "select ac_cnpq, concat(ac_cnpq,' - ',ac_nome_area) as ac_nome_area from area_conhecimento where ac_ativo = 1 and ac_semic = 1  and not (ac_cnpq like '0%') order by ac_nome_area";
-				array_push($cp, array('$Q ac_cnpq:ac_nome_area:' . $sql, 'ic_semic_area', msg('area_conhecimento'), True, True));
-				array_push($cp,array('$HV','ic_nota_rp','0',True,True));
-				$form = new form;
-				$form->id = $id;
-				$tela = $form->editar($cp,'ic');
-				$tela = '<div class="bg_lgreen">'.$tela.'</div>';
-				$data['content'] = $tela;
-				
-				if ($form->saved > 0)
-					{
-						redirect(base_url('index.php/ic/view/'.$id.'/'.checkpost_link($id)));
-						exit;
-					}
-				
-				$this -> load -> view('content', $data);
+			$data['content'] = 'FORM';
+			$cp = array();
+			array_push($cp, array('$HV', 'id_ic', $id, False, True));
+			array_push($cp, array('$A', '', 'Finalização do Relatório Parcial', False, True));
+			array_push($cp, array('$D8', 'ic_rp_data', 'Data entrega', True, True));
+			$sql = "select ac_cnpq, concat(ac_cnpq,' - ',ac_nome_area) as ac_nome_area from area_conhecimento where ac_ativo = 1 and ac_semic = 1  and not (ac_cnpq like '0%') order by ac_nome_area";
+			array_push($cp, array('$Q ac_cnpq:ac_nome_area:' . $sql, 'ic_semic_area', msg('area_conhecimento'), True, True));
+			array_push($cp, array('$HV', 'ic_nota_rp', '0', True, True));
+			$form = new form;
+			$form -> id = $id;
+			$tela = $form -> editar($cp, 'ic');
+			$tela = '<div class="bg_lgreen">' . $tela . '</div>';
+			$data['content'] = $tela;
+
+			if ($form -> saved > 0) {
+				redirect(base_url('index.php/ic/view/' . $id . '/' . checkpost_link($id)));
+				exit ;
+			}
+
+			$this -> load -> view('content', $data);
 		}
 
 		$this -> load -> view('ic/plano_historico', $data);
@@ -2296,7 +2414,8 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO'; ;
+			$msg = 'REMOVIDO';
+			;
 		}
 
 		$data = array();

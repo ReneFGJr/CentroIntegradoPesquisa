@@ -8,6 +8,7 @@ class indicadores extends CI_Controller {
 		$this -> lang -> load("app", "portuguese");
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 
@@ -96,11 +97,17 @@ class indicadores extends CI_Controller {
 				$data['content'] = $tela;
 				$this -> load -> view('content', $data);
 				break;
+			case 'ss' :
+				$this -> load -> model('stricto_sensus');
+				$data = array();
+
+				$data['title'] = 'Docentes <i>stricto sensu</i>';
+				$data['submenu'] = '<A href="' . base_url('index.php/stricto_sensu/docente/' . $tipo . '/xls') . '" class="link lt0">' . msg('export_to_excel') . '</a>';
+				$data['content'] = $this -> stricto_sensus -> lista_docentes();
+				break;
 		}
-		if ($fmt == '') {
-			$this -> load -> view('header/content_close');
-			$this -> load -> view('header/foot', $data);
-		}
+
+		$this -> load -> view('content', $data);
 	}
 
 	function estudante($tipo = '', $fmt = '') {
@@ -178,6 +185,7 @@ class indicadores extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Pesquisa', 'Docentes atuantes em Pesquisa', 'ITE', '/indicadores/docente/pesquisa/'));
 		array_push($menu, array('Pesquisa', 'Bolsista Produtividade', 'ITE', '/indicadores/docente/produtividade/'));
+		array_push($menu, array('Pesquisa', 'Professores stricto sensu', 'ITE', '/indicadores/docente/ss/'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -227,12 +235,12 @@ class indicadores extends CI_Controller {
 
 		$sx = '<table width="600" class="border1">';
 		$sx .= '<tr><th>ano</th>
-					<th width="23%">Artigos</th>
-					<th width="23%">Livros/Cap./Livros Org.</th>
-					<th width="23%">Orientações Tese/Dissertações</th>
-					<th width="23%">Patente</th>
-				</tr>
-				';
+<th width="23%">Artigos</th>
+<th width="23%">Livros/Cap./Livros Org.</th>
+<th width="23%">Orientações Tese/Dissertações</th>
+<th width="23%">Patente</th>
+</tr>
+';
 		for ($r = 2005; $r <= date("Y"); $r++) {
 			$sx .= '<tr>';
 			$sx .= '<td align="center">';

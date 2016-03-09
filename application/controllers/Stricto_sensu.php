@@ -62,6 +62,26 @@ class stricto_sensu extends CI_Controller {
 		$this -> cab();
 		$data = array();
 
+		/****************** COORDENADOR & SCRETARIA ***/
+		$id_us = $_SESSION['id_us'];
+		$prog = $this -> stricto_sensus -> is_administrativo($id_us);
+		if (count($prog) > 0) {
+			$id = $prog['id_pp'];
+			$data = $this -> stricto_sensus -> le($id);
+			$this -> load -> view('ss/show', $data);
+
+			$data['content'] = $this -> stricto_sensus -> resumo_programa($id);
+			$this -> load -> view('content', $data);
+		} else {
+			$data['content'] = $this -> stricto_sensus -> lista_programas();
+			$this -> load -> view('content', $data);
+		}
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function programas() {
+		$this -> cab();
 		$data['content'] = $this -> stricto_sensus -> lista_programas();
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
@@ -160,7 +180,7 @@ class stricto_sensu extends CI_Controller {
 		if (strlen($fmt) == 0) {
 			$this -> cab();
 			$data['title'] = 'Docentes <i>stricto sensu</i>';
-			$data['submenu'] = '<A href="'.base_url('index.php/stricto_sensu/docente/'.$tipo.'/xls').'" class="link lt0">'.msg('export_to_excel').'</a>';			
+			$data['submenu'] = '<A href="' . base_url('index.php/stricto_sensu/docente/' . $tipo . '/xls') . '" class="link lt0">' . msg('export_to_excel') . '</a>';
 		} else {
 			xls('docentes-ss-' . date("Y-m-d") . '.xls');
 		}
