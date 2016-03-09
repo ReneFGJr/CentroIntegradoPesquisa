@@ -16,8 +16,9 @@ if (!isset($area_avaliacao_nome)) { $area_avaliacao_nome = 'não definida';
 <table id="cabecalho-user-perfil" class="info-pessoais" border=0>
 	<TR valign="top">
 		<TD width="150">
+		<?php echo $img_blacklist;?>	
 		<div id="foto-perfil"><IMG SRC="http://www2.pucpr.br/reol/cip/img/no_photo.jpg" border=0 width="130" class="foto-perfil">
-		</div><TD>
+		</div><?php echo $editar_blacklist;?><TD>
 		<div id="nome-dados-perfil">
 			<li class="lt5">
 				<B><?php echo $us_nome;?>&nbsp;</B><?php echo $ghost;?>

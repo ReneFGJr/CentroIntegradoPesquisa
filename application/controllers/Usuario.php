@@ -511,6 +511,52 @@ class usuario extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	/*edita conta bancaria do usuário */
+	function edit_blackList($id = 0, $check = '') {
+		global $dd;
+		$this -> load -> model('usuarios');
+		
+		$this -> cab();
+		$data = array();
+		
+		//print_r($id);
+		//exit;
+		
+		$id_bl = $this -> usuarios -> existe_impedimento($id);
+		
+		$data = $this -> usuarios -> le($id);
+		$tipo = $data['usuario_tipo_ust_id'];
+
+		switch ($tipo) {
+			case '2' :
+				$this -> load -> view('perfil/docente', $data);
+				break;
+			default :
+				$this -> load -> view('perfil/discente', $data);
+				break;
+		}
+			
+		/* Form */
+		$form = new form;
+		$form -> tabela = 'ic_blacklist';
+		
+		$form -> id = $id_bl;
+		$cp_usu_blacklist = $this -> usuarios -> cp_usu_blacklist($id);
+		$data['tela'] = $form -> editar($cp_usu_blacklist, 'ic_blacklist');
+
+		/* salved */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/usuario/view/' . $id));
+		}
+
+		$data['title'] = 'Edita usuário com impedimentos';
+		$this -> load -> view('form/form', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
 
 }
 ?>

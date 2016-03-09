@@ -198,6 +198,14 @@ $lang['lb_us_origem'] 	= 'Origem';
 $lang['instituicao'] = 'Instituição';
 $lang['lb_us_professor_tipo'] 	= 'Professor Tipo';
 $lang['lb_us_usuario_cursando'] 	= 'Cursando';
+$lang['lb_user_conclusao_em'] 	= 'Cursou ensino médio em escola pública? ';
+
+$lang['lb_blu_motivo'] 		= 'Motivo do impedimento';
+$lang['lb_blu_dt_inicio'] = 'Data início do impedimento ';
+$lang['lb_blu_dt_fim'] 		= 'Data fim do impedimento';
+$lang['lb_blu_ativo'] 		= 'Deseja ativar impedimento?';
+
+
 
 /* Contratos IC */
 $lang['lb_icc_modelo_contrato'] = 'Modelo de Contrato';

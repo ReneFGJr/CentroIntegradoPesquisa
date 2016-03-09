@@ -169,9 +169,9 @@ class usuarios extends CI_model {
 		//$ano_ver = (date("Y") - 1);
 		$ano = date("Y");
 		if (date("m") < 7) {
-			 $ano = $ano - 1;
+			$ano = $ano - 1;
 		}
-		
+
 		$sql = "select distinct email, us_nome, us_cracha, id_us,
 									CASE
 						         WHEN email = '' THEN 'Sem email cadastrado'
@@ -180,7 +180,7 @@ class usuarios extends CI_model {
 						from  us_usuario
 						left join(select 1 as email, usuario_id_us from  us_email where usm_ativo = 1 group by usuario_id_us, email) as email on usuario_id_us = id_us
 						inner join ic on ic_cracha_prof = us_cracha 
-						and ic_ano = '". $ano ."'  
+						and ic_ano = '" . $ano . "'  
 						where us_ativo = 1 and email is null
 						order by us_nome
 		";
@@ -241,11 +241,11 @@ class usuarios extends CI_model {
 
 	}
 
-function aluno_sem_email() {
+	function aluno_sem_email() {
 		//$ano_ver = (date("Y") - 1);
 		$ano = date("Y");
 		if (date("m") < 7) {
-			 $ano = $ano - 1;
+			$ano = $ano - 1;
 		}
 		$sql = "select distinct email, us_nome, us_cracha, id_us, mb_descricao,
 									CASE
@@ -259,7 +259,7 @@ function aluno_sem_email() {
 						inner join ic on ic_cracha_aluno = us_cracha
 						inner join ic_aluno on  ic_aluno_cracha = ic_cracha_aluno
 						inner join ic_modalidade_bolsa on mb_id = id_mb
-						and ic_ano = '". $ano ."'  
+						and ic_ano = '" . $ano . "'  
 						where us_ativo = 1 
 						and email is null
 						and mb_ativo = 1
@@ -308,11 +308,11 @@ function aluno_sem_email() {
 			$sx .= link_perfil($line['us_nome'], $line['id_us']);
 			$sx .= '</font>';
 			$sx .= '</td>';
-			
+
 			$sx .= '<td class="lt1 border1">';
 			$sx .= $line['mb_descricao'];
 			$sx .= '</font>';
-			$sx .= '</td>';			
+			$sx .= '</td>';
 
 			$sx .= '<td class="lt1 border1" align="center">';
 			$sx .= $cor;
@@ -672,12 +672,11 @@ function aluno_sem_email() {
 		}
 		return ("");
 	}
-	
-	function link_acesso($id) 
-		{
+
+	function link_acesso($id) {
 		$link = base_url('index.php/login/a/' . $id . '/' . checkpost_link($id . 'acesso_professor'));
-		return($link);
-		}
+		return ($link);
+	}
 
 	function cp_usuario() {
 		$cp = array();
@@ -1113,6 +1112,7 @@ function aluno_sem_email() {
 		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
 		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
 		array_push($cp, array('$S8', 'us_codigo_rh', 'Código do RH', False, True));
+		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_conclusao_em', msg('lb_user_conclusao_em'), False, True));
 		array_push($cp, array('$}', '', '', False, True));
 
 		array_push($cp, array('${', '', 'Dados Pessoais', False, True));
@@ -1230,6 +1230,7 @@ function aluno_sem_email() {
             left join escola on us_escola_vinculo = id_es
             left join us_bolsa_produtividade on id_us = us_bolsa_produtividade.us_id 
             left join us_bolsa_prod_nome on bpn_id = us_bolsa_prod_nome.id_bpn
+            left join ic_blacklist on bl_user_id = us_usuario.id_us
             left join (select distinct 1 as ss, us_usuario_id_us as us_id_ss from ss_professor_programa_linha where sspp_ativo = 1) as ss on id_us = us_id_ss  
 			WHERE id_us = " . $id;
 
@@ -1243,10 +1244,24 @@ function aluno_sem_email() {
 		$line['us_cc'] = $this -> mostra_conta($id);
 		$line['us_idade'] = $this -> mostra_idade($line['us_dt_nascimento']);
 
+		$line['editar_blacklist'] = '';
 		$line['editar'] = '';
+		$line['img_blacklist'] = '';
+
 		if (function_exists('perfil')) {
+			/*perfil editar user*/
 			if (perfil('#CPP#SPI#ADM') == 1) {
 				$line['editar'] = '<a href="' . base_url('index.php/usuario/edit/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">editar</a>';
+			}
+			/*perfil editar blacklist*/
+			if (perfil('#SPI#ADM') == 1) {
+				$line['editar_blacklist'] = '<a href="' . base_url('index.php/usuario/edit_blackList/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link"><img src="' . base_url('img/icon/bl_list.png') . '" border=0 height="18" title="' . msg("Impedimento") . '"> impedimento</a>';
+				//$line['editar_blacklist'] = '<a href="' . base_url('index.php/usuario/edit_blackList/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">impedimento</a>';
+				
+				if (($line['id_bl'] > 0) and ($line['bl_ativo'] == 1)) {
+					$line['img_blacklist'] = '<div style="border: 5px solid #000000"></div>';
+				}
+
 			}
 		}
 		$line['ghost'] = $this -> ghost_link($line['id_us']);
@@ -1748,6 +1763,41 @@ function aluno_sem_email() {
 		$data = $rlt[0];
 
 		return ($data);
+	}
+
+	/*Atualiza usuario na blacklist */
+	function cp_usu_blacklist($id = 0) {
+
+		$cp = array();
+
+		array_push($cp, array('$H8', 'id_bl', '', False, True));
+		array_push($cp, array('${', '', 'Edita Impedimentos', False, False));
+		array_push($cp, array('$HV', 'bl_user_id', $id, False, True));
+		array_push($cp, array('$T30:5', 'bl_motivo', msg('lb_blu_motivo'), False, True));
+		array_push($cp, array('$D20', 'bl_data', msg('lb_blu_dt_inicio'), False, True));
+		array_push($cp, array('$D20', 'bl_data_ate', msg('lb_blu_dt_fim'), False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'bl_ativo', msg('lb_blu_ativo'), False, True));
+		array_push($cp, array('$}', '', '', False, False));
+
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+	}
+
+	function existe_impedimento($id = 0) {
+
+		$sql = "select * from ic_blacklist 
+						where bl_user_id = " . $id;
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			return $line['id_bl'];
+		} else {
+			return 0;
+		}
 	}
 
 }
