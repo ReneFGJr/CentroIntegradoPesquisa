@@ -272,10 +272,10 @@ class semic extends CI_Controller {
 		array_push($menus, array('Avaliadores', 'index.php/semic/avaliadores'));
 		array_push($menus, array('Suplentes', 'index.php/semic/suplentes'));
 		array_push($menus, array('Credenciamento', 'index.php/credenciamento'));
+		array_push($menus, array('Acompanhamento', 'index.php/semic/acompanhamento'));
 
 		if (perfil('#TST') == 1) {
 			array_push($menus, array('Anais do evento', 'index.php/semic/anais'));
-			array_push($menus, array('Acompanhamento', 'index.php/semic/acompanhamento'));
 			array_push($menus, array('Exportar', 'index.php/semic/anais_exportar'));
 			array_push($menus, array('Exportar', 'index.php/semic/anais_exportar_trabalhos'));
 		}
