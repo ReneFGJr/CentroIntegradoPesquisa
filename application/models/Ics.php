@@ -13,27 +13,31 @@ class ics extends CI_model {
 		if (strlen($orderby) > 0) {
 			$orderby .= ', ';
 		}
-		$tabela = "	select * from ic
-            			left join ic_aluno as pa on ic_id = id_ic
-						left join (select us_campus_vinculo as al_campus_vinculo, us_dt_nascimento as al_nasc, 
-									us_cpf as al_cpf, us_cracha as id_al, id_us as aluno_id, us_nome as al_nome, 
-									us_campus_vinculo as al_campus, us_genero as al_genero, us_link_lattes as al_lattes,
-									us_ativo as al_ativo, usuario_tipo_ust_id as al_tipo,
-									us_cracha as al_cracha,us_curso_vinculo as al_curso from us_usuario) 
-							AS us_est on pa.ic_aluno_cracha = us_est.id_al
-						left join (select us_campus_vinculo as pf_campus_vinculo, us_dt_nascimento as pf_nasc, 
-									us_cpf as pf_cpf, us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome,
-									us_campus_vinculo as pf_campus, us_genero as pf_genero, us_link_lattes as pf_lattes,
-									us_ativo as pf_ativo, usuario_tipo_ust_id as pf_tipo,
-									us_cracha as pf_cracha, us_curso_vinculo as pf_curso from us_usuario) 
-							AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
-						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
-						left join ic_situacao on id_s = icas_id
-						left join area_conhecimento on ic_semic_area = ac_cnpq
-						$wh
-						order by $orderby ic_ano desc, s_id, ic_plano_aluno_codigo, pf_nome, al_nome
-						limit $limit offset $offset
-						";
+		$tabela = "	SELECT * FROM ic
+								LEFT JOIN ic_aluno AS pa ON ic_id = id_ic
+								LEFT JOIN (SELECT us_campus_vinculo AS al_campus_vinculo, us_dt_nascimento as al_nasc, 
+												   us_cpf AS al_cpf, us_cracha AS id_al, id_us AS aluno_id, 
+												   us_nome AS al_nome, us_campus_vinculo AS al_campus, 
+												   us_genero AS al_genero, us_link_lattes AS al_lattes,us_ativo AS al_ativo, 
+								           usuario_tipo_ust_id AS al_tipo, us_cracha AS al_cracha, us_curso_vinculo AS al_curso, 
+								           bl_ativo
+								           FROM us_usuario
+								           LEFT JOIN ic_blacklist ON id_us = bl_user_id
+								           ) AS us_est ON pa.ic_aluno_cracha = us_est.id_al                            
+								LEFT JOIN (SELECT us_campus_vinculo AS pf_campus_vinculo, us_dt_nascimento AS pf_nasc, us_cpf AS pf_cpf, 
+												  us_cracha AS id_pf, id_us AS prof_id, us_nome AS pf_nome,
+												  us_campus_vinculo AS pf_campus, us_genero AS pf_genero, us_link_lattes AS pf_lattes,
+												  us_ativo AS pf_ativo, usuario_tipo_ust_id AS pf_tipo, us_cracha AS pf_cracha, 
+												  us_curso_vinculo AS pf_curso
+										      FROM us_usuario) AS us_prof ON ic.ic_cracha_prof = us_prof.id_pf                      
+								LEFT JOIN ic_modalidade_bolsa AS mode ON pa.mb_id = mode.id_mb
+								LEFT JOIN ic_situacao ON id_s = icas_id
+								LEFT JOIN area_conhecimento ON ic_semic_area = ac_cnpq
+								$wh
+								ORDER BY $orderby ic_ano desc, s_id, ic_plano_aluno_codigo, pf_nome, al_nome
+								LIMIT  $limit 
+								OFFSET $offset
+							";
 		return ($tabela);
 	}
 
@@ -81,7 +85,7 @@ class ics extends CI_model {
 		$ano1 = $ano;
 		$ano2 = ($ano+1);
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
-		$wh .= ' and (s_id = 1)';
+		$wh .= ' and (icas_id = 1)';
 		if (strlen($mod) > 0) {
 			$wh .= ' and id_mb = ' . $mod;
 		}
@@ -552,16 +556,51 @@ class ics extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
-		$sx = '<table width="100%" class="lt1">';
-		$sx .= '<tr><th>protocolo<th>ano<th>nome_aluno<th>cracha_aluno<th>curso_aluno<th>nome_prof<th>cracha_prof<th>curso_prof<th>status<th>bolsa<th>modalidade<th>fomento<th>titulo</tr>';
+		$sh = '';
+		$sx .= '<H1> Orientações Iniciação Científica '. (date("Y")-1) .'</H1>';		
+		$sx .= '<table width="100%" class="tabela00">';
+		$sx .= '<tr class="lt2">
+							<th align="left">#</th>
+							<th align="left">protocolo</th>
+							<th align="left">ano</th>
+							<th align="left">nome_aluno</th>
+							<th align="left">cracha_aluno</th>
+							<th align="left">curso_aluno</th>
+							<th align="left">nome_prof</th>
+							<th align="left">cracha_prof</th>
+							<th align="left">curso_prof</th>
+							<th align="left">bolsa</th>
+							<th align="left">modalidade</th>
+							<th align="left">fomento</th>
+							<th align="left">titulo</th>
+							<th align="left">Imp</th>
+							<th align="right">status</th>
+						</tr>';
 		$to = 0;
+		$xmb = '';
 		for ($r = 0; $r < count($rlt); $r++) {
-			$to++;
+		
 			$line = $rlt[$r];
+			
+			$st = $line['icas_id'];
+			$sf = '';
+			$sff = '';
+			if ($st == '2') {
+				$sf = '<font color="red"><s>';
+				$sff = '</s></font>';
+			} else {
+				$to++;
+			}
+			
+			$to++;
+			$link_ic = link_ic($line['id_ic'], 'ic');
 			$sx .= '<tr>';
+			
+			//indice
+			$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';
 
-			$sx .= '<td>';
-			$sx .= $line['ic_plano_aluno_codigo'];
+			$sx .= '<td align="center">';
+			$sx .= $link_ic . $line['ic_plano_aluno_codigo'] . '</a>';
 			$sx .= '</td>';
 
 			$sx .= '<td>';
@@ -569,8 +608,8 @@ class ics extends CI_model {
 			$sx .= '</td>';
 
 			$sx .= '<td>';
-			$sx .= $line['al_nome'];
-			$sx .= '</td>';
+			$link = $sf . link_perfil($line['al_nome'], $line['aluno_id']);
+			$sx .= $link . $sff;
 
 			$sx .= '<td>';
 			$sx .= $line['ic_cracha_aluno'];
@@ -581,7 +620,8 @@ class ics extends CI_model {
 			$sx .= '</td>';
 
 			$sx .= '<td>';
-			$sx .= $line['pf_nome'];
+			$link = $sf . link_perfil($line['pf_nome'], $line['prof_id']);
+			$sx .= $link . $sff . '</a>';
 			$sx .= '</td>';
 
 			$sx .= '<td>';
@@ -590,10 +630,6 @@ class ics extends CI_model {
 
 			$sx .= '<td>';
 			$sx .= $line['pf_curso'];
-			$sx .= '</td>';
-
-			$sx .= '<td>';
-			$sx .= $line['s_situacao'];
 			$sx .= '</td>';
 
 			$sx .= '<td>';
@@ -609,7 +645,15 @@ class ics extends CI_model {
 			$sx .= '</td>';
 
 			$sx .= '<td>';
-			$sx .= $line['ic_projeto_professor_titulo'];
+			$sx .= $sf . $line['ic_projeto_professor_titulo'] . $sff;
+			$sx .= '</td>';
+			
+			$sx .= '<td align="left">';
+			$sx .= $sf . $line['bl_ativo'] . $sff;
+			$sx .= '</td>';
+			
+			$sx .= '<td align="left">';
+			$sx .= $sf . $line['s_situacao'] . $sff;
 			$sx .= '</td>';
 
 			$sx .= '</tr>';
@@ -617,10 +661,28 @@ class ics extends CI_model {
 		}
 		$sx .= '<tr><td colspan=10>Total ' . $to . ' registros</td></tr>';
 		$sx .= '</table>';
-
+		$sxc = $sx;
+		/****/
+		$sx = '<table width="100%" class="lt1">';
+		$sx .= '<tr  >';
+		$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
+		$sx .= $line['mb_descricao'];
+		$sx .= ' - ';
+		$sx .= $line['mb_fomento'];
+		$sx .= ' - ';
+		$sx .= $line['mb_tipo'];
+		$sx .= ' - ';
+		$sx .= $ano1 . '-' . ($ano2);
+		$sx .= ' - ';
+		$sx .= 'Total: ' . $to;
+		$sx .= '</td>';
+		$sx .= '</tr>';
+		$sx .= $sh;
+		$sx .= $sxc;
+		
 		return ($sx);
 	}
-
+	
 	function report_guia_estudante($ano1 = 0, $ano2 = 0, $mod = '') {
 		$sx = '';
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
@@ -628,22 +690,26 @@ class ics extends CI_model {
 			$wh .= ' and id_mb = ' . $mod;
 		}
 		$sql = $this -> table_view($wh, 0, 9999999, 'al_nome');
-		//$sql .= " order by al_nome ";
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
-		$sx = '';
-		$sh = '<tr><th>protocolo</th>
-					<th>ano</th>
-					<th align="left">nome_aluno</th>
-					<th align="left">cpf_aluno</th>
-					<th align="left">curso_aluno</th>
-					<th align="left">nome_prof</th>
-					<th align="left">curso_prof</th>
-					<th align="right">status</th>
-					</tr>';
-		$to = 0;
+		$sh = '';
+		$sx .= '<H1> Iniciação Científica _ '. (date("Y")-1) .'</H1>';		
+		$sx .= '<table width="100%" class="tabela00">';
+		$sx .= '<tr class="lt2">
+							<th align="left">#</th>
+							<th align="left">protocolo</th>
+							<th align="left">ano</th>
+							<th align="left">nome_aluno</th>
+							<th align="left">cpf_aluno</th>
+							<th align="left">curso_aluno</th>
+							<th align="left">nome_prof</th>
+							<th align="left">curso_prof</th>
+							<th align="right">status</th>
+						</tr>';
+		$tot = 0;
+		$tot2 = 0;
 		$xmb = '';
 		for ($r = 0; $r < count($rlt); $r++) {
 
@@ -655,8 +721,9 @@ class ics extends CI_model {
 			if ($st == '2') {
 				$sf = '<font color="red"><s>';
 				$sff = '</s></font>';
+				$tot2++;
 			} else {
-				$to++;
+				$tot++;
 			}
 
 			/**/
@@ -665,6 +732,9 @@ class ics extends CI_model {
 			$mb = $line['mb_descricao'];
 
 			$sx .= '<tr>';
+			
+			//indice
+			$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';
 
 			$sx .= '<td align="center">';
 			$sx .= $link_ic . $line['ic_plano_aluno_codigo'] . '</a>';
@@ -702,7 +772,8 @@ class ics extends CI_model {
 			$sx .= '</tr>';
 
 		}
-		$sx .= '<tr><td colspan=10>Total ' . $to . ' registros</td></tr>';
+		$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
+		$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
 		$sx .= '</table>';
 		$sxc = $sx;
 		/****/
@@ -717,7 +788,7 @@ class ics extends CI_model {
 		$sx .= ' - ';
 		$sx .= $ano1 . '-' . ($ano2);
 		$sx .= ' - ';
-		$sx .= 'Total: ' . $to;
+		$sx .= 'Total: ' . $tot;
 		$sx .= '</td>';
 		$sx .= '</tr>';
 		$sx .= $sh;
