@@ -576,7 +576,8 @@ class ics extends CI_model {
 							<th align="left">Imp</th>
 							<th align="right">status</th>
 						</tr>';
-		$to = 0;
+		$tot = 0;
+		$tot2 = 0;
 		$xmb = '';
 		for ($r = 0; $r < count($rlt); $r++) {
 		
@@ -588,11 +589,11 @@ class ics extends CI_model {
 			if ($st == '2') {
 				$sf = '<font color="red"><s>';
 				$sff = '</s></font>';
+				$tot2++;
 			} else {
-				$to++;
+				$tot++;
 			}
 			
-			$to++;
 			$link_ic = link_ic($line['id_ic'], 'ic');
 			$sx .= '<tr>';
 			
@@ -659,7 +660,8 @@ class ics extends CI_model {
 			$sx .= '</tr>';
 
 		}
-		$sx .= '<tr><td colspan=10>Total ' . $to . ' registros</td></tr>';
+		$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
+		$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
 		$sx .= '</table>';
 		$sxc = $sx;
 		/****/
@@ -674,7 +676,7 @@ class ics extends CI_model {
 		$sx .= ' - ';
 		$sx .= $ano1 . '-' . ($ano2);
 		$sx .= ' - ';
-		$sx .= 'Total: ' . $to;
+		$sx .= 'Total: ' . $tot;
 		$sx .= '</td>';
 		$sx .= '</tr>';
 		$sx .= $sh;

@@ -976,7 +976,11 @@ class ic extends CI_Controller {
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Relatórios', 'Resumo de implementações', 'ITE', '/ic/report_resumo'));
-		array_push($menu, array('Relatórios', 'Guia do Estudante', 'ITE', '/ic/report_guia'));
+		array_push($menu, array('Relatórios', 'Guia do Estudante (Resumo)', 'ITE', '/ic/report_guia'));
+		if (perfil('#TST') == 1) {
+			//ação a executar
+			array_push($menu, array('Relatórios', 'Guia do Estudante (Excel)', 'ITE', '/ic/report_guia_excel'));
+		}
 
 		array_push($menu, array('Relatórios', 'Número de orientações por professor (Excel)', 'ITE', '/ic/report_drh'));
 
@@ -1138,6 +1142,41 @@ class ic extends CI_Controller {
 			$ano_fim = get("dd3");
 			$modalidade = get("dd4");
 			$data['content'] = $this -> ics -> report_guia_estudante($ano_ini, $ano_fim, $modalidade);
+			$this -> load -> view('content', $data);
+		} else {
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+		}
+
+		/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+function report_guia_excel($id = 0, $gr = '') {
+		global $form;
+		/* Load Models */
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+
+		$form = new form;
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, False));
+		array_push($cp, array('$A', '', msg('Guia do Estudante'), False, true));
+		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano inicial'), True, TRUE));
+		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano final'), True, True));
+		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
+		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('ic_modalidade'), False, False));
+		$tela = $form -> editar($cp, '');
+
+		if ($form -> saved) {
+			$ano_ini = get("dd2");
+			$ano_fim = get("dd3");
+			$modalidade = get("dd4");
+			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
 			$this -> load -> view('content', $data);
 		} else {
 			$data['content'] = $tela;
