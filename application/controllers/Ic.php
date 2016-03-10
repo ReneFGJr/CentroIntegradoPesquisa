@@ -89,8 +89,8 @@ class ic extends CI_Controller {
 										aic_dt_inicio_bolsa
 										) values (
 										$aluno,'$aluno_cracha', $idp,
-										$mdo, 1, $data_ativacao,
-										$data_ativacao
+										$mdo, 1, '$data_ativacao',
+										'$data_ativacao'
 										)";
 								$rlt = $this -> db -> query($sql);
 								$this -> load -> view('sucesso');
