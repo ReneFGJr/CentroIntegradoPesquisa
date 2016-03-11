@@ -200,10 +200,10 @@ function professores_ausentes(){
 			$sx .= '<tr><td class="lt6" colspan=5> SEMIC '. (date("Y")-1) .'</tr>'; 
 			$sx .= '<tr><th align="left">Id</th>
 									<th align="left">Protocolo</th>
-									<th align="left">Professor</th>
-									<th align="left">Crachá professor</th>
 									<th align="left">Aluno</th>
 									<th align="left">Crachá aluno</th>
+									<th align="left">Professor</th>
+									<th align="left">Crachá professor</th>
 									<th align="left">Pres_aluno</th>
 									<th align="left">Pres_prof</th>
 									<th align="left">Evento</th>
