@@ -72,6 +72,21 @@ class stricto_sensu extends CI_Controller {
 
 			$data['content'] = $this -> stricto_sensus -> resumo_programa($id);
 			$this -> load -> view('content', $data);
+
+			/************* MENU */
+			$menu = array();
+			array_push($menu, array('Bonificação e Isenção', 'Relatórios e indicadores de Captações, Isenções, Bonificações por programa', 'BTA', '/stricto_sensu/bonificacao_isencao/'.$id));
+			//array_push($menu, array('Docentes do Programa', 'Relação dos docentes do programa', 'BTA', 'stricto_sensu/doscentes/'.$id));
+			//array_push($menu, array('Produção Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
+			//array_push($menu, array('Fluxo Discente', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
+			//array_push($menu, array('Iniciação Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
+			$data['menu'] = $menu;
+
+			$data['title_menu'] = '';
+			$this -> load -> view('header/main_menu', $data);
+			$data['content'] = '<script>  $("#main_menu").toggleClass("2colunas"); </script>';
+			$data['content'] .= '<style>  #main_menu { max-width: 100%; </style>';
+			$this -> load -> view('content', $data);
 		} else {
 			$data['content'] = $this -> stricto_sensus -> lista_programas();
 			$this -> load -> view('content', $data);
@@ -79,6 +94,15 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function bonificacao_isencao($pg=0)
+		{
+			$this->load->model("bonificacoes");
+			$this->cab();
+			
+			
+			
+		}
 
 	function programas() {
 		$this -> cab();
@@ -167,7 +191,7 @@ class stricto_sensu extends CI_Controller {
 		$data['title_menu'] = 'Menu Administração';
 		$this -> load -> view('header/main_menu', $data);
 
-		/*Fecha */ 		/*Gera rodapé*/
+		/*Fecha */	/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}

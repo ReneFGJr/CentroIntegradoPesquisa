@@ -245,6 +245,7 @@ class Ic_pareceres extends CI_model {
 		$sc = '';
 
 		$xarea = '';
+		$ed = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$dec = '';
@@ -269,11 +270,11 @@ class Ic_pareceres extends CI_model {
 			$sa .= ' ' . $ind . $dec . ' ';
 			$sa .= '<br>';
 
-			if (get("av" . $line['id_us']) == '1') {
+			if (($ed == 0) and (get("av" . $line['id_us']) == '1')) {
 				$sc .= '<h1>Indicado - ' . $line['us_nome'] . '</h1>';
 				$this -> ic_pareceres -> indicar_avaliador($line['id_us'], $tipo, $proto);
-				$tipo = 'IC_RPAR_INDICACAO';
-				$this -> comunicar_avaliador($line['id_us'], $proto, $tipo);
+				$tipom = 'IC_RPAR_INDICACAO';
+				$this -> comunicar_avaliador($line['id_us'], $proto, $tipom);
 			}
 			if (strlen($sc) > 0) { $sa = $sc;
 			}

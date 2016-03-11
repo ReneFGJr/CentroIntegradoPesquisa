@@ -1,5 +1,17 @@
 <?php
 class bonificacoes extends CI_Model {
+	function bonificacao_indicadores($prog)
+		{
+			$sql = "SELECT distinct us_usuario_id_us, us_nome, bn_codigo, bn_original_tipo, bn_valor, bn_beneficiario
+						FROM `ss_professor_programa_linha`
+						inner join us_usuario on id_us = us_usuario_id_us
+						inner join bonificacao on us_cracha = bn_professor
+						where programa_pos_id_pp = 1
+						order by us_nome
+					";
+			$rlt = $this->db->query($sql);	
+		}
+	
 	function mostra_bonificacoes($proto) {
 		$this->load->model('geds');
 		$sql = "select * from bonificacao
