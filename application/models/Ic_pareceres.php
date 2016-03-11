@@ -2,6 +2,22 @@
 class Ic_pareceres extends CI_model {
 	var $tabela = "pibic_parecer_2016";
 
+	function cp_declinar(){
+		
+		$cp = array();
+		array_push($cp, array('$H20', 'id_pp', '', False, True));
+		array_push($cp, array('$S8', 'pp_tipo', msg('lb_parecer_tipo'), false, True));
+		array_push($cp, array('$O D:SIM&A:NÃO', 'pp_status', msg('lb_parecer_declinar'), True, True));
+		array_push($cp, array('$T50:5', 'pp_abe_19', msg('lb_parecer_motivo_declinar'), True, True));
+		//array_push($cp, array('$S20', 'pp_avaliador_id', msg('lb_parecer_avaliador'), false, True));
+		array_push($cp, array('$HV', 'pp_data_leitura', date('Ymd'), True, True));
+		
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+		
+	}
+
 	function update_line($line) {
 		$tabela = $this -> tabela;
 		$sql = "select * from " . $tabela . " where id_pp = " . $id_pp;

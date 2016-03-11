@@ -2125,8 +2125,30 @@ class ic extends CI_Controller {
 	}
 
 	function indicacao_declinar($id, $chk = '') {
+		/* Load Models */
+		$this -> load -> model('ic_pareceres');
+		
+		$cp = $this -> ic_pareceres -> cp_declinar();
+		
 		$data = array();
 		$this -> load -> view('header/header', $data);
+		
+		$form = new form;
+		$form->id = $id;
+		
+		$tela = $form->editar($cp, $this -> ic_pareceres -> tabela);
+		
+		$data['title'] = msg('lb_parecer_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form',$data);
+		
+		/* Salva */
+		if ($form->saved > 0)
+			{
+				$this -> load -> view('header/windows_close',$data);
+			}
+		
+		
 	}
 
 	function acompanhamento() {

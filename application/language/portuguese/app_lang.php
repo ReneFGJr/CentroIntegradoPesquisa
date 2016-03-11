@@ -523,6 +523,18 @@ $lang['Label_csf_pais'] 	= 'Nome do país';
 $lang['Label_csf_iso'] 		= 'Codigo Iso3';
 $lang['Label_csf_cod_iso'] 	= 'Código Numerico';
 
+/* Pareceres - Declinio */
+$lang['lb_parecer_title'] = 'Declinar Parecer';
+$lang['lb_parecer_tipo'] = 'Tipo Parecer';
+$lang['lb_parecer_declinar'] = 'Declinar?';
+$lang['lb_parecer_motivo_declinar'] = 'Motivo';
+$lang['lb_parecer_avaliador'] = 'id avaliador';
+$lang['lb_parecer_data_declinou'] = 'Data declinio';
+$lang['ic_tipo_RPAR'] = 'Relatório Parcial';
+
+
+
+
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
 /**              ADMINISTRATIVOS                                      **/
 /**%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%**/
