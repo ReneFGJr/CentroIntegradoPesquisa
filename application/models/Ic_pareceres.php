@@ -321,6 +321,9 @@ class Ic_pareceres extends CI_model {
 					$acao = '<font color="#808000">declinar<font>';
 					$acao = '<span class="link" style="cursor: pointer;" ' . $click . '>' . $acao . '</span>';
 					break;
+				case 'D':
+					$acao = '<font color="#A0001F">Declinou<font>';
+					break;	
 			}
 
 			$sx .= '<tr>';
