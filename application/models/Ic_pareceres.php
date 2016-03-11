@@ -346,7 +346,15 @@ class Ic_pareceres extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		if (count($rlt) > 0) {
-
+				$data = date("Ymd");
+			$sql = "update " . $this -> tabela . " 
+							set pp_status = 'A'
+							where pp_avaliador_id = $id_us 
+							and pp_protocolo = '$proto' 
+							and pp_tipo = '$tipo'
+					";
+			$rlt = $this -> db -> query($sql);
+		
 		} else {
 			$data = date("Ymd");
 			$sql = "insert into " . $this -> tabela . " 
