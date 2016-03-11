@@ -216,7 +216,8 @@ class Ic_pareceres extends CI_model {
 			LEFT JOIN area_conhecimento on pa_area = ac_cnpq
 			left join (SELECT COUNT(*) as indicados, pp_avaliador_id as id_av_usuario from pibic_parecer_" . date("Y") . " where pp_tipo = '$tipo' and (pp_status = '@' or pp_status = 'A' or pp_status = 'B') group by pp_avaliador_id ) as indicados on id_us = id_av_usuario
 			left join (SELECT COUNT(*) as declinados, pp_avaliador_id as id_dc_usuario from pibic_parecer_" . date("Y") . " where pp_tipo = '$tipo' and (pp_status = 'D') group by pp_avaliador_id ) as declinados on id_us = id_dc_usuario 
-			WHERE pa_area like '$area%' and substr(pa_area,6,2) = '00'
+			WHERE pa_area like '$area%' 
+				/* and substr(pa_area,6,2) = '00' */
 				AND pa_ativo = 1 and us_avaliador = 1
 				AND us_cracha <> '$cracha'			
 			ORDER BY pa_area, us_nome";

@@ -275,7 +275,6 @@ class avaliador extends CI_Controller {
 				$nota = get('dd9');
 				$proto = $dados['pp_protocolo'];
 				$this->ic_pareceres->finaliza_nota_ic($proto,$nota);
-				exit;
 					
 				
 				$aluno = $this->usuarios->le_cracha($dados['ic_cracha_aluno']);
