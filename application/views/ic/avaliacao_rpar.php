@@ -81,7 +81,7 @@ if (strlen($dd7) > 0)
 if (strlen($dd9) > 0)
 	{
 		if ($dd9=='1') { $chk[9][1] = 'checked'; }
-		if ($dd9=='-1') { $chk[9][2] = 'checked'; }
+		if ($dd9=='2') { $chk[9][2] = 'checked'; }
 	}			
 ?>
 <h1>Ficha de avaliação do Relatório Parcial</h1>
