@@ -95,12 +95,23 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function bonificacao_isencao($pg=0)
+	function bonificacao_isencao($pg=0,$xls='')
 		{
 			$this->load->model("bonificacoes");
-			$this->cab();
+			$data = array();
+			if (strlen($xls) > 0)
+				{
+					xls('segurado-' . date("Y-m") . '.xls');
+				} else {
+					$this->cab();
+					$data['title'] = 'Bonificações por Professor';
+					$data['submenu'] = '<a href="'.base_url('index.php/stricto_sensu/bonificacao_isencao/'.$pg.'/xls').'" class="link lt0">exportar para excel</a>';		
+				}
 			
 			
+			$tela = $this->bonificacoes->bonificacao_indicadores($pg);
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
 			
 		}
 
