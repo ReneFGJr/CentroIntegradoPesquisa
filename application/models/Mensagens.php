@@ -29,7 +29,7 @@ class mensagens extends CI_model {
 
 			if (isset($data['link']))
 				{
-					$botao = '<button style="background-color:#96454d; padding: 10 55 10 55; border-radius: 8px;  color:#ffffff; border:0; font-size:18px; font-weight: bold;"><a href="'.$data['link'].'" style="text-decoration: none; color:#fff;">Link de acesso</a></button>';
+					$botao = '<button ><a href="'.$data['link'].'">Link de acesso</a></button>';
 					$txt = troca($txt,'$LINK',$botao); 
 				}
 

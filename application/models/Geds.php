@@ -541,6 +541,11 @@ class Geds extends CI_Model {
 		$sql .= " (doc_dd0,doc_tipo,doc_ano,doc_filename,doc_status,doc_data,doc_hora,
 							doc_arquivo,doc_extensao,doc_size,doc_ativo,
 							doc_versao ";
+		$sta = '@';
+		if (isset($this->file_status))
+			{
+				$sta = $this->file_status;
+			}
 		if (strlen($this -> user) > 0) { $sql .= ', doc_user ';
 		}
 		$sql .= " )";
@@ -549,7 +554,7 @@ class Geds extends CI_Model {
 		$sql .= "'" . $this -> file_type . "',";
 		$sql .= "'" . date("Y") . "',";
 		$sql .= "'" . $this -> file_name . "',";
-		$sql .= "'@',";
+		$sql .= "'".$sta."',";
 		$sql .= "'" . $this -> file_data . "',";
 		$sql .= "'" . $this -> file_time . "',";
 		$sql .= "'" . $this -> file_saved . "',";

@@ -1,4 +1,7 @@
 <?php $us_nada = '<font color="blue">[em construção]</font>';
+$st_rpar = '';
+if ($ic_nota_rp == 1) { $st_rpar = '<b><font color="green">Apr.</font></b>'; }
+if ($ic_nota_rp == 2) { $st_rpar = '<b><font color="orange">Pend.</font></b>'; }
 
 $link_pre = '';
 if ($ic_pre_data != '0000-00-00') {
@@ -63,7 +66,7 @@ if (function_exists("perfil")) {
 							<td class="lt0" align="right"><?php echo $link_pre; ?>Form. Acompanhamento</td><td class="lt1"><B><B><font color="a0a0a0"><?php echo $ic_pre_data; ?></B></b></td>
 						</tr>
 						<tr>
-							<td class="lt0" align="right">Data de entrega Rel. Parcial </td><td class="lt1"><B><B><font color="a0a0a0"><?php echo $ic_rp_data; ?></B></b></td>
+							<td class="lt0" align="right">Data de entrega Rel. Parcial </td><td class="lt1"><B><B><font color="a0a0a0"><?php echo $ic_rp_data; ?> <?php echo $st_rpar;?></B></b></td>
 						</tr>
 						<tr>
 							<td class="lt0" align="right">Data de entrega Rel. Final</td><td class="lt1"><B><B><font color="a0a0a0"><?php echo $ic_rf_data; ?></B></b></td>

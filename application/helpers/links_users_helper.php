@@ -1,5 +1,5 @@
 <?php
-function enviaremail_usuario($para, $assunto, $texto, $de)
+function enviaremail_usuario($para, $assunto, $texto, $de, $anexos = array())
 	{
 		global $server_type;
 		require("_server_type.php");
@@ -25,7 +25,7 @@ function enviaremail_usuario($para, $assunto, $texto, $de)
 			}
 		if ($server_type > 2)
 				{			
-					$ok = enviaremail($email, $assunto, $texto, $de);
+					$ok = enviaremail($email, $assunto, $texto, $de, $anexos);
 				}
 		return($ok);
 	}

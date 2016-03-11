@@ -252,7 +252,8 @@ function meses_short() {
 	$mes = array('', 'Jan.', 'Fev.', 'Mar.', 'Abr.', 'Maio', 'Jun.', 'Jul.', 'Ago.', 'Set.', 'Out.', 'Nov.', 'Dez.');
 }
 
-function enviaremail($para, $assunto, $texto, $de) {
+function enviaremail($para, $assunto, $texto, $de, $anexos = array()) {
+	
 	if (!is_array($para)) {
 		$para = array($para);
 	}
@@ -262,6 +263,11 @@ function enviaremail($para, $assunto, $texto, $de) {
 	$CI -> load -> library('email', $config);
 	$CI -> email -> subject($assunto);
 	$CI -> email -> message($texto);
+	
+	for ($r=0;$r < count($anexos);$r++)
+		{
+			$CI -> email -> attach($anexos[$r]);
+		}
 
 	/* de */
 	$sql = "select * from mensagem_own where id_m = " . round($de);

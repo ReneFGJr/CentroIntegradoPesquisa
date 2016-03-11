@@ -97,7 +97,8 @@ class ic extends CI_Controller {
 								return ('');
 							}
 						}
-					} else { $chk4 = 1;}
+					} else { $chk4 = 1;
+					}
 				}
 			}
 
@@ -106,7 +107,7 @@ class ic extends CI_Controller {
 			$tela .= '<tr><td align="right">Foi enviado cadastrado plano do aluno:</td><td><b>' . sn($chk2) . '</b></td></tr>';
 			$tela .= '<tr><td align="right">Estudante já está na IC:</td><td><b>' . sn($chk3) . '</b></td></tr>';
 			$tela .= '<tr><td align="right">Problema no cadastro do aluno:</td><td><b>' . sn($chk4) . '</b></td></tr>';
-			
+
 			$tela .= '</table>';
 		}
 		$data = array();
@@ -1154,7 +1155,7 @@ class ic extends CI_Controller {
 
 	}
 
-function report_guia_excel($id = 0, $gr = '') {
+	function report_guia_excel($id = 0, $gr = '') {
 		global $form;
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -2382,12 +2383,21 @@ function report_guia_excel($id = 0, $gr = '') {
 
 		/* Indicação relatório parcial */
 		if (($data['ic_rp_data'] > 0) and ($data['ic_nota_rp'] < 1)) {
-			$area = $data['ic_semic_area'];
-			$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'RPAR', $area);
-			$data['sa'] = $tela;
-			$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
-			if (get("dd1") > 0) {
-				redirect(base_url('index.php/ic/view/' . $id . '/' . $check));
+			if ($this -> ic_pareceres -> existe_documento($protocolo, 'RELAP') == 1) {
+
+				if ($this -> ic_pareceres -> existe_indicacao($protocolo, 'RPAR') == 0) {
+					$area = $data['ic_semic_area'];
+					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'RPAR', $area ,$data);
+					$data['sa'] = $tela;
+					$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
+					if (get("dd1") > 0) {
+						redirect(base_url('index.php/ic/view/' . $id . '/' . $check));
+					}
+				}
+			} else {
+					$tela = '<h1><font color="red">Problemas ao abrir o arquivo do relatório Parcial enviado</font></h1>';
+					$data['content']  = $tela;
+					$this->load->view('content',$data);
 			}
 		}
 

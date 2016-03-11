@@ -36,7 +36,7 @@ $qs[7][2] = 'NÂO';
 $qs[7][2] = 'NÂO APLICÁVEL';
 
 $qs[9][1] = '<font color="green"><b>APROVADO</b></font>';
-$qs[9][-1] = '<font color="red"><b>PENDENTE</b></font>';
+$qs[9][2] = '<font color="red"><b>PENDENTE</b></font>';
 ?>
 <h1>Ficha de avaliação do Relatório Parcial</h1>
 <br>

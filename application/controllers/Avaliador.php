@@ -147,14 +147,25 @@ class avaliador extends CI_Controller {
 	function ficha($id=0) {
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
-		$this -> load -> model('mensagens');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('mensagens');		
 		$this -> load -> model('ic_pareceres');
+		
+		$this -> cab_avaliador();
 		
 		$data = array();
 
 		$dados = $this->ic_pareceres->le($id);
 		$proto = $dados['pp_protocolo'];		
 		
+		$sta = $dados['pp_status'];
+		/* Avaliação não disponível */
+		if ($sta != 'A')
+		{
+			$txt = '<center><h1 color="red">Parecer já avaliador, cancelado ou declinado</h1></center>';
+			return('');
+		}
+	
 		$dados2 = $this -> ics -> le_protocolo($proto);
 		$dados = array_merge($dados,$dados2);
 		
@@ -257,24 +268,45 @@ class avaliador extends CI_Controller {
 		$data['plano'] = $this -> load -> view('ic/plano', $dados, true);
 
 		$tipo = 'RPAR';
-		$this -> cab_avaliador();
+		
 		
 		if ($ok == 15)
 			{
-				/* gera PDF */
-				$this->ic_pareceres->gera_parecer('RPAR',$dados);
+				$nota = get('dd9');
+				$proto = $dados['pp_protocolo'];
+				$this->ic_pareceres->finaliza_nota_ic($proto,$nota);
+				exit;
+					
 				
+				$aluno = $this->usuarios->le_cracha($dados['ic_cracha_aluno']);
+				
+				/* gera PDF */
+				$file_local = $this->ic_pareceres->gera_parecer('RPAR',$dados);
+				$anexos = array($file_local);
+				
+			
 				/* Envia e-mail */
 				$txt = $this->mensagens->busca('RPAR_RESULT_'.get("dd9"),$dados);
+				
 				$ass = $txt['nw_titulo'];
 				$texto = $txt['nw_texto'];
-				enviaremail_usuario(1,$ass,$texto,2);
+				$prof_id = $dados['prof_id'];
+				
+				/* troca */
+				$texto = troca($texto,'$aluno',$aluno['us_nome']);
+				enviaremail_usuario($prof_id,$ass,$texto,2, $anexos);
 				
 				/* Finaliza avaliacao */
-				//$this->ic_pareceres->finaliza_avaliacao($id);
+				$this->ic_pareceres->finaliza_avaliacao($id);
+				
 				$data['volta'] = base_url('index.php/avaliador');
 				$this->load->view('sucesso',$data);
 				return('');
+			} else {
+				if (strlen($acao) > 0)
+					{
+						echo '<script> alert("Existe campos não preenchidos!"); </script>';
+					}
 			}
 
 		switch ($tipo) {

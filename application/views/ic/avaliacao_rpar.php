@@ -13,7 +13,23 @@ $color = '<font color="#3030ef">';
 		$chk[9] = array('', '', '', '', '', '', '', '');
 		$chk[10] = array('', '', '', '', '', '', '', '');
 		$chk[11] = array('', '', '', '', '', '', '', '');	
+		$ob = array('','','','','','','','','','','','','');
 		
+		$acao = get("acao");
+		if (strlen($acao) > 0)
+			{
+				$obr = '<img src="'.base_url('img/icon/icone_exclamation.png').'" height="30" align="left">';
+				if ((strlen($dd1) == 0) or (strlen($dd21)==0)) { $ob[1] = $obr; }
+				if ((strlen($dd2) == 0) or (strlen($dd22)==0)) { $ob[2] = $obr; }
+				if ((strlen($dd3) == 0) or (strlen($dd23)==0)) { $ob[3] = $obr; }
+				if ((strlen($dd4) == 0) or (strlen($dd24)==0)) { $ob[4] = $obr; }
+				if ((strlen($dd5) == 0) or (strlen($dd25)==0)) { $ob[5] = $obr; }
+				if ((strlen($dd6) == 0) 					 ) { $ob[6] = $obr; }
+				if ((strlen($dd7) == 0) 					 ) { $ob[7] = $obr; }
+				if (					   (strlen($dd28)==0)) { $ob[8] = $obr; }
+				if ((strlen($dd9) == 0) 				     ) { $ob[9] = $obr; }
+				if ((strlen($dd10) == 0)) { $ob[10] = $obr; }
+			}		
 		
 /* Checked */
 if (strlen($dd1) > 0)
@@ -99,7 +115,7 @@ if (strlen($dd9) > 0)
 		<b>AVALIAÇÃO</b>
 		<br>
 		<br>
-		<!----------------- item 1 ----------------------------> 1) <b>Clareza, legibilidade e objetividade (português, organização geral do texto, figuras, gráficos,
+		<!----------------- item 1 ----------------------------> 1) <?php echo $ob[1];?><b>Clareza, legibilidade e objetividade (português, organização geral do texto, figuras, gráficos,
 		tabelas, referências, adequação do relatório ao modelo do Programa)</b>:
 		<br>
 		<input name="dd1" type="radio" value="20" <?php echo $chk[1][0];?> >
@@ -122,7 +138,7 @@ if (strlen($dd9) > 0)
 		<br>
 		<br>
 		<br>
-		2) <b>Na estruturação do relatório, os itens: introdução, desenvolvimento, resultados parciais, etapas
+		2) <?php echo $ob[2];?><b>Na estruturação do relatório, os itens: introdução, desenvolvimento, resultados parciais, etapas
 		futuras e referências bibliográficas, estão apresentados adequadamente, bem como, mantêm
 		relação coerente entre si. Neste ponto este relatório está</b>:
 		<br>
@@ -142,7 +158,7 @@ if (strlen($dd9) > 0)
 		<br>
 		<br>
 		<br>
-		3) <b>Cumprimento do cronograma previsto</b>:
+		3) <?php echo $ob[3];?><b>Cumprimento do cronograma previsto</b>:
 		<br>
 		<input name="dd3" type="radio" value="20" <?php echo $chk[3][0];?> >
 		Excelente <?php echo $color;?>( as atividades estão sendo realizadas dentro do cronograma previsto)</font>
@@ -166,7 +182,7 @@ if (strlen($dd9) > 0)
 		<br>
 		<br>
 		<br>
-		4) <b>Resultados parciais obtidos</b>:
+		4) <?php echo $ob[4];?><b>Resultados parciais obtidos</b>:
 		<br>
 		<input name="dd4" type="radio" value="20" <?php echo $chk[4][0];?> >
 		Excelente <?php echo $color;?>(resultados parciais altamente relevantes para o prosseguimento das atividades)</font>
@@ -192,7 +208,7 @@ if (strlen($dd9) > 0)
 		<br>
 		<br>
 		<br>
-		5) <b>No caso desta pesquisa de IC ser parte de uma pesquisa de mestrado, doutorado ou parte de projeto  mais amplo, assinale se</b>:
+		5) <?php echo $ob[5];?><b>No caso desta pesquisa de IC ser parte de uma pesquisa de mestrado, doutorado ou parte de projeto  mais amplo, assinale se</b>:
 		<br>
 		<input name="dd5" type="radio" value="20" <?php echo $chk[5][0];?> >
 		As atividades descritas não estão adequadas para uma proposta de IC <?php echo $color;?>(obrigatória a modificação, ver justificativa)</font>
@@ -206,17 +222,22 @@ if (strlen($dd9) > 0)
 		<input name="dd5" type="radio" value="1" <?php echo $chk[5][3];?> >
 		Ruim. <?php echo $color;?>(poucos ou nenhum resultado relevante no contexto do projeto foram apresentados)</font>
 		<br>
-		<input name="dd5" type="radio" value="19" <?php echo $chk[5][4];?> >
+		<input name="dd5" type="radio" value="19" <?php echo $chk[5][4];?> id="dd54">
 		Não se aplica.
+		<script>
+			$("#dd54").click(function() {
+				$("#dd25").val('Não aplicável');
+			});
+		</script>
 		<br>
 		Comentários sobre sua avaliação deste item:
 		<br>
-		<textarea name="dd25" cols=80 rows=4 style="width: 100%"><?php echo $dd25;?></textarea>		<!----------------- item 6 ---------------------------->
+		<textarea name="dd25" cols=80 rows=4 style="width: 100%" id="dd25"><?php echo $dd25;?></textarea>		<!----------------- item 6 ---------------------------->
 		<br>
 		<br>
 		<br>
 		<br>
-		6) <b>O relatório parcial apresenta graves problemas relacionados a orientação desenvolvida e/ou
+		6) <?php echo $ob[6];?><b>O relatório parcial apresenta graves problemas relacionados a orientação desenvolvida e/ou
 		problemas metodológicos que comprometem a formação do aluno de iniciação científica.
 		Indique tais problemas no campo de comentários restrito. O avaliador considera que deve ser
 		realizada uma reunião com o professor orientador</b>?
@@ -232,7 +253,7 @@ if (strlen($dd9) > 0)
 		<br>
 		<?php 
 		if ($mb_tipo == 'PIBIC') { ?>
-		7) <b>O projeto apresenta teor de tecnologia e inovação, portanto, seria indicado que migrasse para o PIBITI.</b>
+		7) <?php echo $ob[7];?><b>O projeto apresenta teor de tecnologia e inovação, portanto, seria indicado que migrasse para o PIBITI.</b>
 		<br>
 		<input name="dd7" type="radio" value="2" <?php echo $chk[7][2];?> >
 		NÃO
@@ -246,26 +267,26 @@ if (strlen($dd9) > 0)
 		<br>
 		<br>
 		<br>
-		8) <b>Outros comentários (o avaliador fica livre para suas sugestões e comentários sobre a apreciação geral do trabalho)</b>:
+		8) <?php echo $ob[8];?><b>Outros comentários (o avaliador fica livre para suas sugestões e comentários sobre a apreciação geral do trabalho)</b>:
 		<br>
 		<textarea name="dd28" cols=80 rows=4 style="width: 100%"><?php echo $dd28;?></textarea>		<!----------------- item 9 ---------------------------->
 		<br>
 		<br>
 		<br>
 		<br>
-		9) <b>Resultado da avaliação</b>:
+		9) <?php echo $ob[9];?><b>Resultado da avaliação</b>:
 		<br>
 		<input name="dd9" type="radio" value="1" <?php echo $chk[9][1];?> >
 		<font color="green"><B>APROVADO</B></font> - comentários e sugestões deverão ser incorporados no relatório final. Sugerimos que a pontuação atribuída seja de 7,0 a 10,0.
 		<br>
-		<input name="dd9" type="radio" value="-1" <?php echo $chk[9][2];?> >
+		<input name="dd9" type="radio" value="2" <?php echo $chk[9][2];?> >
 		<font color="red"><B>PENDÊNCIAS</B></font> - relatório parcial deve ser reapresentado realizando as devidas correções. Sugerimos que a pontuação atribuída seja abaixo de 7,0. 
 		<!----------------- item 10 ---------------------------->
 		<br>
 		<br>
 		<br>
 		<br>
-		10) <b>Considerando o relatório como um todo, assinale atribua uma nota de 0 a 10,0.</b>:
+		10) <?php echo $ob[10];?><b>Considerando o relatório como um todo, assinale atribua uma nota de 0 a 10,0.</b>:
 		&nbsp;
 		<select name="dd10"  class="lt3">
 			<option value=""></option>

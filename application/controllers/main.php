@@ -160,7 +160,11 @@ class main extends CI_Controller {
 		if (perfil('#TST#SPI') == 1) {
 			array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));
 		}
-
+		
+		if (perfil('#CEP#TST') == 1) { array_push($menu, array('CEP', 'Comitê de Ética em Pesquisa com Seres Humanos', 'BTA', '/csf'));
+		}
+		
+		
 		$data['menu'] = $menu;
 
 		$data['title_menu'] = 'Menu Principal';
