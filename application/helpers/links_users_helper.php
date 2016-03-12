@@ -23,7 +23,7 @@ function enviaremail_usuario($para, $assunto, $texto, $de, $anexos = array())
 						array_push($email,$e);
 					}
 			}
-		if ($server_type > 2)
+		if (($server_type > 2) and (count($email) > 0))
 				{			
 					$ok = enviaremail($email, $assunto, $texto, $de, $anexos);
 				}

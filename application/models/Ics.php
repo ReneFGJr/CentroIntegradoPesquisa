@@ -308,7 +308,7 @@ class ics extends CI_model {
 
 	function existe_avaliacoes($id_us)
 		{
-			$sql = "select count(*) as total from pibic_parecer_".date("Y")." where pp_avaliador_id = $id_us ";
+			$sql = "select count(*) as total from pibic_parecer_".date("Y")." where pp_avaliador_id = $id_us and (pp_status = 'A')";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			if (count($rlt) > 0)

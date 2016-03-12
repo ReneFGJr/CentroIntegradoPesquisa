@@ -253,7 +253,9 @@ function meses_short() {
 }
 
 function enviaremail($para, $assunto, $texto, $de, $anexos = array()) {
+	global $sem_copia;
 	
+	if (!isset($sem_copia)) { $sem_copia = 0; }
 	if (!is_array($para)) {
 		$para = array($para);
 	}
@@ -283,8 +285,11 @@ function enviaremail($para, $assunto, $texto, $de, $anexos = array()) {
 		$CI -> email -> subject($assunto);
 		$CI -> email -> message($texto);
 
-		array_push($para, trim($line['m_email']));
-		//array_push($para, 'renefgj@gmail.com');
+		if ($sem_copia != 1)
+			{
+				array_push($para, trim($line['m_email']));
+			//array_push($para, 'renefgj@gmail.com');
+			}
 
 		/* e-mail com copias */
 		$bcc = array();

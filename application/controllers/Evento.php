@@ -18,6 +18,18 @@ class evento extends CI_controller {
 		/* Security */
 	}
 	
+	function enviar_email_form()
+		{
+			$ev = get("dd1");
+			$ev = 6;
+			$nome = get("Nome");
+			$text = get("mensagem");
+			$email = get("email");
+			
+			//enviaremail('edena.grein@pucpr.br','Feira de Ciências - Dúvida','De:'.$nome.'<br>'.'e-mail:'.$email.'<HR>'.$text,$ev);
+			echo '<script>alert("e-mail enviado com sucesso!");</script>';
+		}
+	
 	function inscricao_cracha($ev=0)
 		{
 			$this->load->model('evento/eventos');
@@ -49,8 +61,19 @@ class evento extends CI_controller {
 						{
 							$id_us = $data['id_us'];
 							$data['form'] = $this->load->view('evento/user_view',$data, true);
-							$data['form'] .= '<h2>Inscrição confirmada!</h2>';
-							$this->eventos->insere_inscricao($ev,$id_us);
+							$data['form'] .= '<h2>'.$this->eventos->insere_inscricao($ev,$id_us).'</h2>';
+							
+							/* Enviar e-mail */
+							$sql = "select * from evento_mailing where ml_ev = ".round($ev)." and ml_query = 'CONFIRMACAO' and ml_status = 1";
+							$rlt = $this->db->query($sql);
+							$rlt = $rlt->result_array();
+							if (count($rlt) > 0)
+								{
+									$line = $rlt[0];
+									$txt = $line['ml_html'];
+									$ass = $line['ml_subject'];
+									enviaremail_usuario($id_us,$ass,$txt,$ev);
+								}
 						}
 					
 				}
@@ -319,8 +342,8 @@ class evento extends CI_controller {
 		$this -> cab();
 		$data = array();
 
-		$this -> eventos -> enviar_email($id);
-
+		$data['tela'] = $this -> eventos -> enviar_email($id);
+		$this->load->view('content',$data);
 		/*
 		 $this->email->attach('img/img_noPhoto.jpg');
 		 $cid = $this->email->attachment_cid('img/img_noPhoto.jpg');

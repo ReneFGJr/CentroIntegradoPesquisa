@@ -1,0 +1,80 @@
+#barra_institucional {
+	height:61px;
+	background:url(https://cip.pucpr.br/eventos/feiradeciencias/1/img/bk_barra_puc.png) repeat-x;
+	border-bottom:solid 1px #FFF;
+}
+.logo_pucpr_topo {
+	background:url(https://cip.pucpr.br/eventos/feiradeciencias/1/img/logo_puc_topo.png) no-repeat;
+	width:160px;
+	height:61px;
+	float:left;
+	}
+.cont_barra_inst {
+	width:980px;
+	height:61px;
+	margin:0 auto;
+	background:url(https://cip.pucpr.br/eventos/feiradeciencias/1/img/bk_marcadagua_institucional.png) right no-repeat;
+	}
+.menu_institucional {
+	float:right;
+	width:344px;
+}
+.menu_institucional a {
+	color:#FFF;
+	font-size:11px;
+	font-family:Arial, Helvetica, sans-serif;
+	float:left;
+	margin:33px 13px 0 0;
+	}
+.menu_inst_1 {
+	background:url(https://cip.pucpr.br/eventos/feiradeciencias/1/img/bk_menu_inst_1.png) no-repeat left;
+	width:88px;
+	height:19px;
+	padding-top:2px;
+	text-align:center;
+	}
+.menu_inst_1:hover {
+	background-position:right;
+	color:#8c1318;
+	}
+.menu_inst_2 {
+	background:url(https://cip.pucpr.br/eventos/feiradeciencias/1/img/bk_menu_inst_2.png) no-repeat left;
+	width:83px;
+	height:19px;
+	padding-top:2px;
+	text-align:center;
+	}
+.menu_inst_2:hover {
+	background-position:right;
+	color:#8c1318;
+	}
+.menu_inst_3 {
+	background:url(https://cip.pucpr.br/eventos/feiradeciencias/1/img/bk_menu_inst_3.png) no-repeat left;
+	width:128px;
+	height:19px;
+	padding-top:2px;
+	text-align:center;
+	}
+.menu_inst_3:hover {
+	background-position:right;
+	color:#8c1318;
+	}
+@media screen and (max-width: 768px) {
+	.cont_barra_inst {
+		width:100%;
+	}
+}
+@media screen and (max-width: 503px)  {
+	.menu_institucional {
+		width: 60%;
+	}
+	.menu_inst_1, .menu_inst_2 {
+		display: none;
+	}
+	.menu_institucional {
+    	width: 50%;
+	}
+	.menu_institucional a {
+	    margin: 21px 13px 0px 0px;
+	}
+}

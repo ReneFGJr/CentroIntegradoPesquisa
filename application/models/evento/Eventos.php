@@ -12,7 +12,8 @@ class eventos extends CI_model {
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) > 0) {
-			return (0);
+			$txt = 'Você já está inscrito!';
+			return ($txt);
 		}
 		$sql = "insert into evento_inscricao 
 					(ei_us_usuario_id, ei_evento_id, ei_status,
@@ -21,7 +22,8 @@ class eventos extends CI_model {
 					values
 					($us_id, $evento, 1, 0)";
 		$rlt = $this -> db -> query($sql);
-		return (1);
+		$txt = 'Inscrição confirmada!';
+		return ($txt);
 
 	}
 
@@ -759,27 +761,31 @@ class eventos extends CI_model {
 	}
 
 	function enviar_email($id = 0, $msg = '') {
-
+		global $sem_copia;
 		/* Perfil do usuário */
-		$this -> load -> model('email_local');
-		$config = Array('protocol' => 'smtp', 'smtp_host' => 'smtps.pucpr.br', 'smtp_port' => 25, 'smtp_user' => '', 'smtp_pass' => '', 'mailtype' => 'html', 'charset' => 'iso-8859-1', 'wordwrap' => TRUE);
-		$this -> load -> library('email', $config);
-
+		$us_id = $_SESSION['id_us'];
 		$t = $this -> show_mailing($id);
+		$evento = $t['ml_ev'];
 		$texto = $t['ml_html'];
 		$ass = $t['ml_subject'];
 		$sql = $t['ml_query'];
-		$email_own = 2;
-		$idu = 1;
+		/* Recupera evento */
+		$ev = $this->le($evento);
+		$enviador = $ev['ev_own'];
 
 		$sql = troca($sql, '´', "'");
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
+		$sem_copia = 1;
+		$sx = '';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$idu = $line['id_us'];
-			enviaremail_usuario($idu, $ass, $texto, 2);
+			$us_id = $line['id_us'];
+			$st = enviaremail_usuario($us_id, $ass, $texto, $enviador);
+			//enviaremail_usuario($us_id, $ass, $texto, $enviador);
+			$sx .= '<br>'.$line['us_nome'].' '.$st;
 		}
+		return($sx);
 	}
 
 	function enviar_email_test($id = 0) {
