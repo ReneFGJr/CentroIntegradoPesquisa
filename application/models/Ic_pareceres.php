@@ -133,7 +133,7 @@ class Ic_pareceres extends CI_model {
 				$sql = "update ic set ic_nota_rp = $nota, ic_nota_rpc = 0
 						where ic_plano_aluno_codigo = '$proto' ";
 				} else {
-				$sql = "update ic set ic_nota_rp = $nota, ic_nota_rpc = -1
+				$sql = "update ic set ic_nota_rp = $2, ic_nota_rpc = -1
 						where ic_plano_aluno_codigo = '$proto' ";
 				}
 			$rlt = $this->db->query($sql);
