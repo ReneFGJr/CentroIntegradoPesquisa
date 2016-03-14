@@ -272,11 +272,12 @@ class avaliador extends CI_Controller {
 		
 		if ($ok == 15)
 			{
+				$dados = $this->ic_pareceres->le($id);
+				$dados = array_merge($dados,$dados2);
 				$nota = get('dd9');
 				$proto = $dados['pp_protocolo'];
 				$this->ic_pareceres->finaliza_nota_ic($proto,$nota);
 					
-				
 				$aluno = $this->usuarios->le_cracha($dados['ic_cracha_aluno']);
 				
 				/* gera PDF */
