@@ -456,6 +456,99 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
+	
+	
+	function admin_rpar_lista_professores_com_erro_no_pdf() {
+		$this -> cab();
+		$this -> load -> model("geds");
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> load -> model('usuarios');
+		$this -> load -> model('ics');
+		
+		
+		$data['title'] = msg('Emails que deram erro no pdf do RP nos dias 11 á 14 de Março de 2016');
+		//$data['submenu'] = '<a href="'.base_url('index.php/ic/admin_rpar_lista_professores_com_erro_no_pdf').'" class="lt0 link">exportar para excel</a>';
+	
+		$d1 = '20160311';
+		$d2 = '20160314';
+
+		//$sql = "select * from ic_ged_documento where doc_data >= $d1 and doc_data <= $d2 ";
+		$sql = "select distinct doc_dd0, ic_cracha_prof, us_nome, usm_email, 
+                ic_plano_aluno_codigo, us_cracha,
+                id_us, usuario_id_us, id_usm, usm_tipo, usm_ativo
+						from ic_ged_documento
+						left join ic on ic_plano_aluno_codigo = doc_dd0
+						left join us_usuario on ic_cracha_prof = us_cracha
+						inner join us_email on id_us = usuario_id_us
+						where doc_data >= $d1 
+						and doc_data <= $d2 
+						and usm_ativo = 1
+						group by doc_dd0, ic_cracha_prof, us_nome, usm_email, 
+						         ic_plano_aluno_codigo, us_cracha,
+						         id_us, usuario_id_us, id_usm, usm_tipo, usm_ativo
+		
+		";
+		$sql .= " and doc_tipo = 'PRP' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00 lt3">';
+		$http = 'https://cip.pucpr.br/';
+	
+		$sx .= '<tr><th align="left">#</th>
+								<th align="left">Protocolo</th>
+								<th align="left">Cracha</th>
+								<th align="left">Professor</th>
+								<th align="left">email</th>
+								<th align="left">email_tipo</th>
+
+						</tr>';	
+		$tot = 0;
+			
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			$sx .= '<tr class="lt4">';
+			
+			//indice
+			$sx .= '<td class="lt2">'.($r+1).'.</td>';
+			
+			$sx .= '<td class="lt2">';
+			$sx .= $line['doc_dd0'];
+			$sx .= '</td>';
+			
+			$sx .= '<td class="lt2">';
+			$sx .= $line['ic_cracha_prof'];
+			$sx .= '</td>';
+			
+			//nome_prof
+			$sx .= '<td class="lt1">';
+			$sx .= link_perfil($line['us_nome'], $line['id_us']);
+			$sx .= '</td>';
+			
+			$sx .= '<td class="lt2">';
+			$sx .= $line['usm_email'];
+			$sx .= '</td>';
+			
+			$sx .= '<td class="lt2">';
+			$sx .= $line['usm_tipo'];
+			$sx .= '</td>';
+
+			$sx .= '</tr>';
+		}
+		//print_r($line);
+		$sx .= '</table>';
+		
+		$sx .= '<TR><TD colspan=6> '.$tot.' emails';
+		$sx .= '</BR>';
+		$sx .= '<TR><TD class="lt1"><font color="red"> obs.: Existem professores com mais de um emal cadasdtrado em seu perfil</font>';
+		
+		$data['content'] = $sx;
+		
+
+				$this -> load -> view("content", $data);
+		
+	}
+	
 
 	function admin_rpar() {
 		$this -> cab();
@@ -495,7 +588,7 @@ class ic extends CI_Controller {
 
 			$sx .= '</tr>';
 		}
-		print_r($line);
+		//print_r($line);
 		$sx .= '</table>';
 		$data['content'] = $sx;
 		$this -> load -> view("content", $data);
@@ -581,6 +674,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Discentes (seguro) ', 'Relatório de discentes ativos IC Interior (Seguro)', 'ITE', '/ic/seguro/2'));
 
 		array_push($menu, array('Relatório Parcial ', 'Problemas no PDF do relatório parcial', 'ITE', '/ic/admin_rpar'));
+		array_push($menu, array('Relatório Parcial ', 'Professores com problemas no PDF do RP', 'ITE', '/ic/admin_rpar_lista_professores_com_erro_no_pdf'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
