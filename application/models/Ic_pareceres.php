@@ -66,6 +66,51 @@ class Ic_pareceres extends CI_model {
 		$this -> geds -> tabela = 'ic_ged_documento';
 
 		switch($tipo) {
+			case 'RPARC' :
+			/* Background */
+				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);
+
+				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
+				$content = utf8_encode($content . $avaliacao);
+
+				$image_file = 'img/headers/header_model_contrato_ic_150.JPG';
+
+				/* Construção do PDF */
+				tcpdf();
+
+				$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+				// PAGE 1 - BIG background image
+				$pdf -> AddPage();
+				$pdf -> SetAutoPageBreak(True, 0);
+
+				// set image scale factor
+				//$pdf -> Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
+				//$pdf->Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
+				$pdf->Image($image_file, 0, 0, 220, 50, 'JPG', '', '', true, 150, '', false, false, '', false, false, false);				
+				/* Background */
+				//$pdf -> Image($img_file, 0, 0, 297, 210, '', '', '', false, 300, '', false, false, 0);
+				/* Posição de impressão */
+				$pdf -> SetXY(20, 50);
+				$pdf -> writeHTMLCell(0, 0, '', '', $content, 0, 2, 0, true, 'J', true);
+				/* Arquivo de saida */
+				$proto = UpperCaseSql($dados['pp_protocolo']) . '-';
+				//$nome_asc = troca($nome_asc,' ','_');
+				$nome_asc = substr(md5(date("YmdHis")), 4, 5);
+				$file = $proto . 'avaliacao-rp-' . $nome_asc . '.pdf';
+				echo '<h1>'.$dados['doc_arquivo'].'</h1>';
+						$path = $_SERVER['DOCUMENT_ROOT'];
+						$this -> geds -> dir('_document');
+						$this -> geds -> dir('_document/' . date("Y"));
+						$this -> geds -> dir('_document/' . date("Y") . "/" . date("m"));
+						$file_long = $path . '_document/' . $file;
+						$pdf -> Output($file_long, 'F');
+						$file_local = '_document/' . date("Y") . '/' . date("m") . '/' . $file;
+
+				copy($file_long, $file_local);
+				unlink($file_long);
+
+				return($file_local);
+			
 			case 'RPAR' :
 			/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);

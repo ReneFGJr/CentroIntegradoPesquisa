@@ -1,6 +1,78 @@
 <?php
 class ic extends CI_Controller {
 
+	function __construct() {
+		global $dd, $acao;
+		parent::__construct();
+		$this -> load -> library('form_validation');
+		$this -> load -> database();
+		$this -> lang -> load("app", "portuguese");
+		$this -> lang -> load("ic", "portuguese");
+		$this -> load -> library("nuSoap_lib");
+
+		$this -> load -> helper('form');
+		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
+		$this -> load -> helper('url');
+		$this -> load -> helper('tcpdf');
+		$this -> load -> library('session');
+
+		date_default_timezone_set('America/Sao_Paulo');
+		/* Security */
+		$this -> security();
+	}
+
+	function security() {
+
+		/* Seguranca */
+		$this -> load -> model('usuarios');
+		$this -> usuarios -> security();
+	}
+
+	function cab() {
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'style_cab.css');
+		array_push($css, 'switch_onoff.css');
+		array_push($css, 'form_sisdoc.css');
+		array_push($js, 'js_cab.js');
+		array_push($js, 'unslider.min.js');
+		array_push($js, 'high/highcharts.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Menu */
+		$menus = array();
+		array_push($menus, array('Home', 'index.php/ic/'));
+
+		array_push($menus, array('Professores & Alunos', 'index.php/ic/usuarios'));
+		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
+		array_push($menus, array('Acompanhamento', 'index.php/ic/acompanhamento'));
+		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
+		array_push($menus, array('Relatórios', 'index.php/ic/report'));
+		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
+		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
+		array_push($menus, array('Contratos', 'index.php/ic_contrato/contratos/'));
+		array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
+
+		$data['menu'] = 1;
+		$data['menus'] = $menus;
+
+		/* Monta telas */
+		$this -> load -> view('header/header', $data);
+		$data['title_page'] = 'Iniciação Científica';
+		$data['menu'] = 1;
+		$this -> load -> view('header/cab', $data);
+
+		$this -> load -> view('header/content_open');
+		$data['logo'] = base_url('img/logo/logo_ic.png');
+		$this -> load -> view('header/logo', $data);
+	}
+
+
 	function implementacao_manual() {
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
@@ -124,75 +196,6 @@ class ic extends CI_Controller {
 		redirect(base_url('index.php/ic'));
 	}
 
-	function __construct() {
-		global $dd, $acao;
-		parent::__construct();
-		$this -> load -> library('form_validation');
-		$this -> load -> database();
-		$this -> lang -> load("app", "portuguese");
-		$this -> lang -> load("ic", "portuguese");
-		$this -> load -> library("nuSoap_lib");
-
-		$this -> load -> helper('form');
-		$this -> load -> helper('form_sisdoc');
-		$this -> load -> helper('links_users');
-		$this -> load -> helper('url');
-		$this -> load -> library('session');
-
-		date_default_timezone_set('America/Sao_Paulo');
-		/* Security */
-		$this -> security();
-	}
-
-	function security() {
-
-		/* Seguranca */
-		$this -> load -> model('usuarios');
-		$this -> usuarios -> security();
-	}
-
-	function cab() {
-		/* Carrega classes adicionais */
-		$css = array();
-		$js = array();
-		array_push($css, 'style_cab.css');
-		array_push($css, 'switch_onoff.css');
-		array_push($css, 'form_sisdoc.css');
-		array_push($js, 'js_cab.js');
-		array_push($js, 'unslider.min.js');
-		array_push($js, 'high/highcharts.js');
-
-		/* transfere para variavel do codeigniter */
-		$data['css'] = $css;
-		$data['js'] = $js;
-
-		/* Menu */
-		$menus = array();
-		array_push($menus, array('Home', 'index.php/ic/'));
-
-		array_push($menus, array('Professores & Alunos', 'index.php/ic/usuarios'));
-		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
-		array_push($menus, array('Acompanhamento', 'index.php/ic/acompanhamento'));
-		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
-		array_push($menus, array('Relatórios', 'index.php/ic/report'));
-		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
-		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
-		array_push($menus, array('Contratos', 'index.php/ic_contrato/contratos/'));
-		array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
-
-		$data['menu'] = 1;
-		$data['menus'] = $menus;
-
-		/* Monta telas */
-		$this -> load -> view('header/header', $data);
-		$data['title_page'] = 'Iniciação Científica';
-		$data['menu'] = 1;
-		$this -> load -> view('header/cab', $data);
-
-		$this -> load -> view('header/content_open');
-		$data['logo'] = base_url('img/logo/logo_ic.png');
-		$this -> load -> view('header/logo', $data);
-	}
 
 	function pagamento_cracha($cracha = '', $chk = '') {
 		$this -> load -> model('ics');
@@ -454,6 +457,107 @@ class ic extends CI_Controller {
 
 	}
 
+	function admin_rpar() {
+		$this -> cab();
+		$this -> load -> model("geds");
+		$this -> geds -> tabela = 'ic_ged_documento';
+
+		$d1 = '20160311';
+		$d2 = '20160314';
+
+		$sql = "select * from ic_ged_documento where doc_data >= $d1 and doc_data <= $d2 ";
+		$sql .= " and doc_tipo = 'PRP' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00 lt3">';
+		$http = 'https://cip.pucpr.br/';
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<tr class="lt4">';
+			$sx .= '<td>';
+			$sx .= $line['doc_dd0'];
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= '<a href="' . $http . $line['doc_arquivo'] . '" target="new">' . $line['doc_filename'] . '</a>';
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= $line['doc_tipo'];
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= stodbr($line['doc_data']);
+			$sx .= ' ';
+			$sx .= substr($line['doc_hora'], 0, 5);
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= '<a href="' . base_url('index.php/ic/gera_novo_parecer/' . $line['id_doc']) . '" target="new">gerar novo</a>';
+			$sx .= '</td>';
+
+			$sx .= '</tr>';
+		}
+		print_r($line);
+		$sx .= '</table>';
+		$data['content'] = $sx;
+		$this -> load -> view("content", $data);
+	}
+
+	function gera_novo_parecer($id) {
+		$this->load->model("ics");
+		$this->load->model("ic_pareceres");
+		
+		$sql = "select * from ic_ged_documento where id_doc = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$proto = $line['doc_dd0'];
+			
+			$sql = "select * from pibic_parecer_".date("Y")." 
+					where pp_protocolo = '$proto' 
+						and pp_tipo = 'RPAR' 
+						and pp_status = 'B' ";
+			$rrlt = $this->db->query($sql);
+			$rrlt = $rrlt->result_array();
+			$dados = $rrlt[0];
+			$dados2 = $this->ics->le_protocolo($proto);
+			
+			$dados3 = $this -> ic_pareceres -> le($id);
+			$dados = array_merge($dados, $dados2,$dados3,$line);
+			$nota = $dados['pp_p09'];
+			$proto = $dados['pp_protocolo'];
+			$this -> ic_pareceres -> finaliza_nota_ic($proto, $nota);
+
+			$aluno = $this -> usuarios -> le_cracha($dados['ic_cracha_aluno']);
+
+			/* gera PDF */
+			$file_local = $this -> ic_pareceres -> gera_parecer('RPARC', $dados);
+
+			for ($r=0;$r < 9999;$r++)
+				{
+					$file1 = $dados['doc_arquivo'];
+					$file2 = $dados['doc_arquivo'].'-'.$r;
+					echo '<br>'.$file2.' - ';
+					if (!(file_exists($file2)))
+						{
+							$r = 9999;
+							echo 'ok';
+						}
+						
+				}
+			if (file_exists($file1))
+				{
+					echo '->'.$file1.' - renomeado';
+					rename($file1,$file2);
+				} else {
+					echo ' - arquivo não localizado!';
+				}
+			rename($file_local,$file1);
+
+		}
+
+	}
+
 	/*************************************************************************************************
 	 *************************************************************************** ADMINISTRATIVO ******
 	 *************************************************************************************************/
@@ -475,6 +579,8 @@ class ic extends CI_Controller {
 
 		array_push($menu, array('Discentes (seguro) ', 'Relatório de discentes ativos IC Capital (Seguro)', 'ITE', '/ic/seguro/1'));
 		array_push($menu, array('Discentes (seguro) ', 'Relatório de discentes ativos IC Interior (Seguro)', 'ITE', '/ic/seguro/2'));
+
+		array_push($menu, array('Relatório Parcial ', 'Problemas no PDF do relatório parcial', 'ITE', '/ic/admin_rpar'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -2127,28 +2233,26 @@ class ic extends CI_Controller {
 	function indicacao_declinar($id, $chk = '') {
 		/* Load Models */
 		$this -> load -> model('ic_pareceres');
-		
+
 		$cp = $this -> ic_pareceres -> cp_declinar();
-		
+
 		$data = array();
 		$this -> load -> view('header/header', $data);
-		
+
 		$form = new form;
-		$form->id = $id;
-		
-		$tela = $form->editar($cp, $this -> ic_pareceres -> tabela);
-		
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> ic_pareceres -> tabela);
+
 		$data['title'] = msg('lb_parecer_title');
 		$data['tela'] = $tela;
-		$this -> load -> view('form/form',$data);
-		
+		$this -> load -> view('form/form', $data);
+
 		/* Salva */
-		if ($form->saved > 0)
-			{
-				$this -> load -> view('header/windows_close',$data);
-			}
-		
-		
+		if ($form -> saved > 0) {
+			$this -> load -> view('header/windows_close', $data);
+		}
+
 	}
 
 	function acompanhamento() {
@@ -2409,7 +2513,7 @@ class ic extends CI_Controller {
 
 				if ($this -> ic_pareceres -> existe_indicacao($protocolo, 'RPAR') == 0) {
 					$area = $data['ic_semic_area'];
-					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'RPAR', $area ,$data);
+					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'RPAR', $area, $data);
 					$data['sa'] = $tela;
 					$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
 					if (get("dd1") > 0) {
@@ -2417,9 +2521,9 @@ class ic extends CI_Controller {
 					}
 				}
 			} else {
-					$tela = '<h1><font color="red">Problemas ao abrir o arquivo do relatório Parcial enviado</font></h1>';
-					$data['content']  = $tela;
-					$this->load->view('content',$data);
+				$tela = '<h1><font color="red">Problemas ao abrir o arquivo do relatório Parcial enviado</font></h1>';
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
 			}
 		}
 
@@ -2485,8 +2589,7 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();
