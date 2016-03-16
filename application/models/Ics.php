@@ -20,7 +20,7 @@ class ics extends CI_model {
 												   us_nome AS al_nome, us_campus_vinculo AS al_campus, 
 												   us_genero AS al_genero, us_link_lattes AS al_lattes,us_ativo AS al_ativo, 
 								           usuario_tipo_ust_id AS al_tipo, us_cracha AS al_cracha, us_curso_vinculo AS al_curso, 
-								           bl_ativo
+								           bl_ativo, us_cpf
 								           FROM us_usuario
 								           LEFT JOIN ic_blacklist ON id_us = bl_user_id
 								           ) AS us_est ON pa.ic_aluno_cracha = us_est.id_al                            
@@ -28,8 +28,9 @@ class ics extends CI_model {
 												  us_cracha AS id_pf, id_us AS prof_id, us_nome AS pf_nome,
 												  us_campus_vinculo AS pf_campus, us_genero AS pf_genero, us_link_lattes AS pf_lattes,
 												  us_ativo AS pf_ativo, usuario_tipo_ust_id AS pf_tipo, us_cracha AS pf_cracha, 
-												  us_curso_vinculo AS pf_curso
-										      FROM us_usuario) AS us_prof ON ic.ic_cracha_prof = us_prof.id_pf                      
+												  us_curso_vinculo AS pf_curso, us_escola_vinculo
+										      FROM us_usuario) AS us_prof ON ic.ic_cracha_prof = us_prof.id_pf 
+								LEFT JOIN escola ON id_es = us_escola_vinculo		                           
 								LEFT JOIN ic_modalidade_bolsa AS mode ON pa.mb_id = mode.id_mb
 								LEFT JOIN ic_situacao ON id_s = icas_id
 								LEFT JOIN area_conhecimento ON ic_semic_area = ac_cnpq
@@ -544,6 +545,7 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
+	
 	function report_guia_estudante_xls($ano1 = 0, $ano2 = 0, $mod = '') {
 		$sx = '';
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
@@ -557,7 +559,6 @@ class ics extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		$sh = '';
-		$sx .= '<H1> Orientações Iniciação Científica '. (date("Y")-1) .'</H1>';		
 		$sx .= '<table width="100%" class="tabela00">';
 		$sx .= '<tr class="lt2">
 							<th align="left">#</th>
@@ -566,9 +567,11 @@ class ics extends CI_model {
 							<th align="left">nome_aluno</th>
 							<th align="left">cracha_aluno</th>
 							<th align="left">curso_aluno</th>
+							<th align="left">CPF_aluno</th>
 							<th align="left">nome_prof</th>
 							<th align="left">cracha_prof</th>
 							<th align="left">curso_prof</th>
+							<th align="left">escola</th>
 							<th align="left">bolsa</th>
 							<th align="left">modalidade</th>
 							<th align="left">fomento</th>
@@ -576,9 +579,11 @@ class ics extends CI_model {
 							<th align="left">Imp</th>
 							<th align="right">status</th>
 						</tr>';
-		$tot = 0;
-		$tot2 = 0;
-		$xmb = '';
+		
+			$tot = 0;
+			$tot2 = 0;
+			$xmb = '';
+		
 		for ($r = 0; $r < count($rlt); $r++) {
 		
 			$line = $rlt[$r];
@@ -586,6 +591,7 @@ class ics extends CI_model {
 			$st = $line['icas_id'];
 			$sf = '';
 			$sff = '';
+			
 			if ($st == '2') {
 				$sf = '<font color="red"><s>';
 				$sff = '</s></font>';
@@ -595,10 +601,11 @@ class ics extends CI_model {
 			}
 			
 			$link_ic = link_ic($line['id_ic'], 'ic');
+			
 			$sx .= '<tr>';
 			
 			//indice
-			$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';
+			$sx .= '<td width="20" class="lt1">'.($r+1).'.</td>';
 
 			$sx .= '<td align="center">';
 			$sx .= $link_ic . $line['ic_plano_aluno_codigo'] . '</a>';
@@ -612,26 +619,34 @@ class ics extends CI_model {
 			$link = $sf . link_perfil($line['al_nome'], $line['aluno_id']);
 			$sx .= $link . $sff;
 
-			$sx .= '<td>';
+			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_aluno'];
 			$sx .= '</td>';
 
 			$sx .= '<td>';
 			$sx .= $line['al_curso'];
 			$sx .= '</td>';
+			
+			$sx .= '<td >';
+			$sx .= mask_cpf($line['us_cpf']);
+			$sx .= '</td>';			
 
 			$sx .= '<td>';
 			$link = $sf . link_perfil($line['pf_nome'], $line['prof_id']);
 			$sx .= $link . $sff . '</a>';
 			$sx .= '</td>';
 
-			$sx .= '<td>';
+			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_prof'];
 			$sx .= '</td>';
 
 			$sx .= '<td>';
 			$sx .= $line['pf_curso'];
 			$sx .= '</td>';
+			
+			$sx .= '<td>';
+			$sx .= $line['es_escola'];
+			$sx .= '</td>';			
 
 			$sx .= '<td>';
 			$sx .= $line['mb_tipo'];
@@ -660,27 +675,27 @@ class ics extends CI_model {
 			$sx .= '</tr>';
 
 		}
-		$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
-		$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
-		$sx .= '</table>';
-		$sxc = $sx;
-		/****/
-		$sx = '<table width="100%" class="lt1">';
-		$sx .= '<tr  >';
-		$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
-		$sx .= $line['mb_descricao'];
-		$sx .= ' - ';
-		$sx .= $line['mb_fomento'];
-		$sx .= ' - ';
-		$sx .= $line['mb_tipo'];
-		$sx .= ' - ';
-		$sx .= $ano1 . '-' . ($ano2);
-		$sx .= ' - ';
-		$sx .= 'Total: ' . $tot;
-		$sx .= '</td>';
-		$sx .= '</tr>';
-		$sx .= $sh;
-		$sx .= $sxc;
+			$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
+			$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
+			$sx .= '</table>';
+			$sxc = $sx;
+			/****/
+			$sx = '<table width="100%" class="lt1">';
+			$sx .= '<tr  >';
+			$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
+			$sx .= $line['mb_descricao'];
+			$sx .= ' - ';
+			$sx .= $line['mb_fomento'];
+			$sx .= ' - ';
+			$sx .= $line['mb_tipo'];
+			$sx .= ' - ';
+			$sx .= $ano1 . '-' . ($ano2);
+			$sx .= ' - ';
+			$sx .= 'Total: ' . $tot;
+			$sx .= '</td>';
+			$sx .= '</tr>';
+			$sx .= $sh;
+			$sx .= $sxc;
 		
 		return ($sx);
 	}

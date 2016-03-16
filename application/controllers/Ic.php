@@ -1355,14 +1355,19 @@ class ic extends CI_Controller {
 
 	}
 
-	function report_guia_excel($id = 0, $gr = '') {
+	function report_guia_excel($id = 0, $gr = '', $xls='') {
 		global $form;
 		/* Load Models */
 		$this -> load -> model('ics');
-
-		$this -> cab();
-		$data = array();
-
+		
+		if ($xls == '')
+				{
+					$this -> cab();
+					$data = array();
+				}else {
+				xls('nome-do-arquivo.xls');
+			}	
+		
 		$form = new form;
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, False));
@@ -1372,22 +1377,30 @@ class ic extends CI_Controller {
 		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
 		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('ic_modalidade'), False, False));
 		$tela = $form -> editar($cp, '');
-
+		
 		if ($form -> saved) {
 			$ano_ini = get("dd2");
 			$ano_fim = get("dd3");
 			$modalidade = get("dd4");
-			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
-			$this -> load -> view('content', $data);
+			
+				$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
+				$data['title'] = 'Orientações de Iniciação Científica de '. $ano_ini .' á '. $ano_fim .' ';
+				$data['submenu'] = '<a href="'.base_url('index.php/ic/report_guia_excel/xls?dd2='.$ano_ini.'&dd3='.$ano_fim.'&dd4='.$modalidade.'').'" class="lt0 link">exportar para excel</a>';
+				
+				
+				$this -> load -> view('content', $data);
+		
 		} else {
-			$data['content'] = $tela;
-			$this -> load -> view('content', $data);
-		}
-
-		/*Gera rodapé*/
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
-
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			}
+				
+				/*Gera rodapé*/
+			if ($xls == '')
+					{
+						$this -> load -> view('header/content_close');
+						$this -> load -> view('header/foot', $data);
+					}
 	}
 
 	function comunicacao() {
