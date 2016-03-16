@@ -470,7 +470,7 @@ class ic extends CI_Controller {
 		//$data['submenu'] = '<a href="'.base_url('index.php/ic/admin_rpar_lista_professores_com_erro_no_pdf').'" class="lt0 link">exportar para excel</a>';
 	
 		$d1 = '20160311';
-		$d2 = '20160314';
+		$d2 = date("Ymd");
 
 		//$sql = "select * from ic_ged_documento where doc_data >= $d1 and doc_data <= $d2 ";
 		$sql = "select distinct doc_dd0, ic_cracha_prof, us_nome, usm_email, 
@@ -556,18 +556,25 @@ class ic extends CI_Controller {
 		$this -> geds -> tabela = 'ic_ged_documento';
 
 		$d1 = '20160311';
-		$d2 = '20160314';
+		$d2 = date("Ymd");
 
 		$sql = "select * from ic_ged_documento where doc_data >= $d1 and doc_data <= $d2 ";
 		$sql .= " and doc_tipo = 'PRP' ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="tabela00 lt3">';
+		$sx .= '<tr><th>#</th>
+					<th>protocolo</th>
+					<th>tipo</th>
+					<th>data e hora</th>
+					<th>acao</th>
+				</tr>';
 		$http = 'https://cip.pucpr.br/';
 
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$sx .= '<tr class="lt4">';
+			$sx .= '<td>'.($r+1).'</td>';
 			$sx .= '<td>';
 			$sx .= $line['doc_dd0'];
 			$sx .= '</td>';
