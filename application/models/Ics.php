@@ -539,7 +539,6 @@ class ics extends CI_model {
 					$rrr = $this -> db -> query($sql);
 					$sx .= '<br>' . $proto . ' finalizado';
 				}
-
 			}
 		}
 		return ($sx);
@@ -618,6 +617,7 @@ class ics extends CI_model {
 			$sx .= '<td>';
 			$link = $sf . link_perfil($line['al_nome'], $line['aluno_id']);
 			$sx .= $link . $sff;
+			$sx .= '</td>';
 
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_aluno'];
@@ -627,9 +627,9 @@ class ics extends CI_model {
 			$sx .= $line['al_curso'];
 			$sx .= '</td>';
 			
-			$sx .= '<td >';
+			$sx .= '<td><nobr>';
 			$sx .= mask_cpf($line['us_cpf']);
-			$sx .= '</td>';			
+			$sx .= '</nobr></td>';			
 
 			$sx .= '<td>';
 			$link = $sf . link_perfil($line['pf_nome'], $line['prof_id']);
@@ -668,7 +668,7 @@ class ics extends CI_model {
 			$sx .= $sf . $line['bl_ativo'] . $sff;
 			$sx .= '</td>';
 			
-			$sx .= '<td align="left">';
+			$sx .= '<td align="right">';
 			$sx .= $sf . $line['s_situacao'] . $sff;
 			$sx .= '</td>';
 

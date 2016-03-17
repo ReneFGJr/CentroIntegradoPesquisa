@@ -72,7 +72,6 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/logo', $data);
 	}
 
-
 	function implementacao_manual() {
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
@@ -195,7 +194,6 @@ class ic extends CI_Controller {
 		$this -> avaliadores -> regra_avaliadores();
 		redirect(base_url('index.php/ic'));
 	}
-
 
 	function pagamento_cracha($cracha = '', $chk = '') {
 		$this -> load -> model('ics');
@@ -456,19 +454,17 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
-	
-	
+
 	function admin_rpar_lista_professores_com_erro_no_pdf() {
 		$this -> cab();
 		$this -> load -> model("geds");
 		$this -> geds -> tabela = 'ic_ged_documento';
 		$this -> load -> model('usuarios');
 		$this -> load -> model('ics');
-		
-		
+
 		$data['title'] = msg('Emails que deram erro no pdf do RP nos dias 11 á 14 de Março de 2016');
 		//$data['submenu'] = '<a href="'.base_url('index.php/ic/admin_rpar_lista_professores_com_erro_no_pdf').'" class="lt0 link">exportar para excel</a>';
-	
+
 		$d1 = '20160311';
 		$d2 = '20160314';
 
@@ -493,7 +489,7 @@ class ic extends CI_Controller {
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="tabela00 lt3">';
 		$http = 'https://cip.pucpr.br/';
-	
+
 		$sx .= '<tr><th align="left">#</th>
 								<th align="left">Protocolo</th>
 								<th align="left">Cracha</th>
@@ -501,34 +497,34 @@ class ic extends CI_Controller {
 								<th align="left">email</th>
 								<th align="left">email_tipo</th>
 
-						</tr>';	
+						</tr>';
 		$tot = 0;
-			
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
 			$sx .= '<tr class="lt4">';
-			
+
 			//indice
-			$sx .= '<td class="lt2">'.($r+1).'.</td>';
-			
+			$sx .= '<td class="lt2">' . ($r + 1) . '.</td>';
+
 			$sx .= '<td class="lt2">';
 			$sx .= $line['doc_dd0'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td class="lt2">';
 			$sx .= $line['ic_cracha_prof'];
 			$sx .= '</td>';
-			
+
 			//nome_prof
 			$sx .= '<td class="lt1">';
 			$sx .= link_perfil($line['us_nome'], $line['id_us']);
 			$sx .= '</td>';
-			
+
 			$sx .= '<td class="lt2">';
 			$sx .= $line['usm_email'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td class="lt2">';
 			$sx .= $line['usm_tipo'];
 			$sx .= '</td>';
@@ -537,18 +533,16 @@ class ic extends CI_Controller {
 		}
 		//print_r($line);
 		$sx .= '</table>';
-		
-		$sx .= '<TR><TD colspan=6> '.$tot.' emails';
+
+		$sx .= '<TR><TD colspan=6> ' . $tot . ' emails';
 		$sx .= '</BR>';
 		$sx .= '<TR><TD class="lt1"><font color="red"> obs.: Existem professores com mais de um emal cadasdtrado em seu perfil</font>';
-		
-		$data['content'] = $sx;
-		
 
-				$this -> load -> view("content", $data);
-		
+		$data['content'] = $sx;
+
+		$this -> load -> view("content", $data);
+
 	}
-	
 
 	function admin_rpar() {
 		$this -> cab();
@@ -595,9 +589,9 @@ class ic extends CI_Controller {
 	}
 
 	function gera_novo_parecer($id) {
-		$this->load->model("ics");
-		$this->load->model("ic_pareceres");
-		
+		$this -> load -> model("ics");
+		$this -> load -> model("ic_pareceres");
+
 		$sql = "select * from ic_ged_documento where id_doc = " . $id;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -605,18 +599,18 @@ class ic extends CI_Controller {
 		if (count($rlt) > 0) {
 			$line = $rlt[0];
 			$proto = $line['doc_dd0'];
-			
-			$sql = "select * from pibic_parecer_".date("Y")." 
+
+			$sql = "select * from pibic_parecer_" . date("Y") . " 
 					where pp_protocolo = '$proto' 
 						and pp_tipo = 'RPAR' 
 						and pp_status = 'B' ";
-			$rrlt = $this->db->query($sql);
-			$rrlt = $rrlt->result_array();
+			$rrlt = $this -> db -> query($sql);
+			$rrlt = $rrlt -> result_array();
 			$dados = $rrlt[0];
-			$dados2 = $this->ics->le_protocolo($proto);
-			
+			$dados2 = $this -> ics -> le_protocolo($proto);
+
 			$dados3 = $this -> ic_pareceres -> le($id);
-			$dados = array_merge($dados, $dados2,$dados3,$line);
+			$dados = array_merge($dados, $dados2, $dados3, $line);
 			$nota = $dados['pp_p09'];
 			$proto = $dados['pp_protocolo'];
 			$this -> ic_pareceres -> finaliza_nota_ic($proto, $nota);
@@ -626,26 +620,23 @@ class ic extends CI_Controller {
 			/* gera PDF */
 			$file_local = $this -> ic_pareceres -> gera_parecer('RPARC', $dados);
 
-			for ($r=0;$r < 9999;$r++)
-				{
-					$file1 = $dados['doc_arquivo'];
-					$file2 = $dados['doc_arquivo'].'-'.$r;
-					echo '<br>'.$file2.' - ';
-					if (!(file_exists($file2)))
-						{
-							$r = 9999;
-							echo 'ok';
-						}
-						
+			for ($r = 0; $r < 9999; $r++) {
+				$file1 = $dados['doc_arquivo'];
+				$file2 = $dados['doc_arquivo'] . '-' . $r;
+				echo '<br>' . $file2 . ' - ';
+				if (!(file_exists($file2))) {
+					$r = 9999;
+					echo 'ok';
 				}
-			if (file_exists($file1))
-				{
-					echo '->'.$file1.' - renomeado';
-					rename($file1,$file2);
-				} else {
-					echo ' - arquivo não localizado!';
-				}
-			rename($file_local,$file1);
+
+			}
+			if (file_exists($file1)) {
+				echo '->' . $file1 . ' - renomeado';
+				rename($file1, $file2);
+			} else {
+				echo ' - arquivo não localizado!';
+			}
+			rename($file_local, $file1);
 
 		}
 
@@ -1355,19 +1346,22 @@ class ic extends CI_Controller {
 
 	}
 
-	function report_guia_excel($id = 0, $gr = '', $xls='') {
-		global $form;
+	function report_guia_excel($xls = '') {
+			$ano_ini = get("dd2");
+			$ano_fim = get("dd3");
+			$modalidade = get("dd4");
+			
 		/* Load Models */
 		$this -> load -> model('ics');
-		
-		if ($xls == '')
-				{
-					$this -> cab();
-					$data = array();
-				}else {
-				xls('nome-do-arquivo.xls');
-			}	
-		
+	
+		if ($xls == '') {
+			$this -> cab();
+			$data = array();
+			$data['submenu'] = '<a href="'. base_url('index.php/ic/report_guia_excel/xls?dd2='. $ano_ini .'&dd3='. $ano_fim .'&dd4='. $modalidade .'&acao=xls') .'" class="lt0 link">exportar para excel</a>';
+		} else {
+			xls('Guia_do_estudante.xls');
+		}
+
 		$form = new form;
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, False));
@@ -1377,30 +1371,27 @@ class ic extends CI_Controller {
 		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
 		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('ic_modalidade'), False, False));
 		$tela = $form -> editar($cp, '');
-		
+
 		if ($form -> saved) {
-			$ano_ini = get("dd2");
-			$ano_fim = get("dd3");
-			$modalidade = get("dd4");
+
 			
-				$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
-				$data['title'] = 'Orientações de Iniciação Científica de '. $ano_ini .' á '. $ano_fim .' ';
-				$data['submenu'] = '<a href="'.base_url('index.php/ic/report_guia_excel/xls?dd2='.$ano_ini.'&dd3='.$ano_fim.'&dd4='.$modalidade.'').'" class="lt0 link">exportar para excel</a>';
-				
-				
-				$this -> load -> view('content', $data);
-		
+
+			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
+			
+			$data['title']   = 'Orientações de Iniciação Científica de '. $ano_ini .' á '. $ano_fim .' ';
+			
+			$this -> load -> view('content', $data);
+
 		} else {
-				$data['content'] = $tela;
-				$this -> load -> view('content', $data);
-			}
-				
-				/*Gera rodapé*/
-			if ($xls == '')
-					{
-						$this -> load -> view('header/content_close');
-						$this -> load -> view('header/foot', $data);
-					}
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+		}
+
+		/*Gera rodapé*/
+		if ($xls == '') {
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
 	}
 
 	function comunicacao() {
@@ -2696,7 +2687,8 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO'; ;
+			$msg = 'REMOVIDO';
+			;
 		}
 
 		$data = array();

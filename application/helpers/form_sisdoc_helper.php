@@ -1680,14 +1680,13 @@ if (!function_exists('form_edit')) {
 	function valida_post($cp) {
 		/* recupera post */
 		$CI = &get_instance();
-		$post = $CI -> input -> post();
 		/* define como default */
 		$saved = 1;
 		$sx = '';
 		for ($r = 0; $r < count($cp); $r++) {
 			$requer = $cp[$r][3];
 			if ($requer == true) {
-				$vlr = $CI -> input -> post('dd' . $r);
+				$vlr = get('dd' . $r);
 				if (is_array($vlr)) {
 					if (count($vlr) == 0) {
 						$saved = 0;
@@ -1716,11 +1715,11 @@ if (!function_exists('form_edit')) {
 		/* Recupera dados do banco */
 		$recupera = 0;
 		/* recupera ACAO do post */
-		$acao = '';
-
-		if (!isset($post['acao'])) { $recupera = 1;
+		$acao = get("acao");
+		
+		if (strlen($acao) == 0) { $recupera = 1;
 		}
-
+	
 		/* Save in table */
 		if ($recupera == 0) {
 			/* Valida */
@@ -1760,9 +1759,7 @@ if (!function_exists('form_edit')) {
 					$vlr = $data -> $fld;
 				}
 			} else {
-				if (isset($post['dd' . $r])) {
-					$vlr = $post['dd' . $r];
-				}
+					$vlr = get('dd' . $r);
 			}
 			$tela .= form_field($cp[$r], $vlr);
 		}
