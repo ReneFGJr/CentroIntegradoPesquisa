@@ -85,7 +85,7 @@ class semic extends CI_Controller {
 				$this -> cab();
 				$data = array();
 				$this -> load -> view('header/content_open');
-				$data['submenu'] = '<a href="'.base_url('index.php/semic/professores_ausentes/xls').'" class="lt0 link">exportar para excel</a>';
+				$data['submenu'] = '<a href="'.base_url('index.php/semic/ausencia_professores/xls').'" class="lt0 link">exportar para excel</a>';
 			} else {
 				xls('lista-professores-ausentes-apresentacoes-semic_'. $ano_semic .'.xls');
 			} 
