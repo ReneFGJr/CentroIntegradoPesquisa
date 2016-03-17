@@ -156,6 +156,7 @@ class indicadores extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Docentes', 'Bolsista Produtividade, Professores stricto sensu, Orientadores PIBIC, ...', 'BOX', '/indicadores/docentes/'));
 		array_push($menu, array('Discentes', 'Estudantes de Iniciação Científica, ', 'BOX', '/indicadores/estudantes/'));
+		array_push($menu, array('Produção Científica', 'Produção e produção qualificada em Arqtigos, Livros, Capítulos de livros e eventos, ', 'BOX', '/indicadores/producoes/'));
 
 		for ($r = 2012; $r <= date("Y"); $r++) {
 			array_push($menu, array('Iniciação Científica', 'Submissão - ' . $r, 'ITE', '/indicadores/ic/' . $r));
@@ -197,6 +198,69 @@ class indicadores extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function producoes($id = 0) {
+		/* Load Models */
+
+		$this -> cab();
+		$data = array();
+
+		/* Menu de botões na tela Admin*/
+		$menu = array();
+		array_push($menu, array('Indicador Produção', 'Estrato Qualis do stricto sensu', 'ITE', '/indicadores/artigos_01/'));
+		array_push($menu, array('Indicador Produção', 'Estrato Scimago/Quartil do stricto sensu', 'ITE', '/indicadores/artigos_02/'));
+
+		/*View principal*/
+		$data['menu'] = $menu;
+
+		$data['title_menu'] = 'Menu Produção Científica Qualificada';
+		$this -> load -> view('header/main_menu', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	/* ARTIGO QUALIFICADOS */
+	function artigos_01($pp = 0, $xls = '') {
+		$this -> load -> model('phpLattess');
+
+		if (strlen($xls) > 0) {
+			xls('indicador-artigos-001.xls');
+		} else {
+			$this -> cab();
+			$data['title'] = msg('lb_indicador_qualis');
+		}
+		$sx = $this -> phpLattess -> artigos_qualificados_por_ano($pp);
+		$dados = array();
+		
+		$dados['dados'] = $this -> phpLattess -> dados;
+
+		$data['content'] = $sx;
+
+		$data['submenu'] = '<a href="' . base_url('index.php/indicadores/artigos_02/' . $pp . '/xls') . '" class="link lt0">exportar para excel</a>';
+		$this -> load -> view('content', $data);
+
+		if (strlen($xls) == 0) {
+			$this -> load -> view('highcharts/area', $dados);
+		}
+	}
+
+	/* QUARTIL */
+	function artigos_02($pp = 0, $xls = '') {
+		$this -> load -> model('phpLattess');
+
+		if (strlen($xls) > 0) {
+			xls('indicador-artigos-001.xls');
+		} else {
+			$this -> cab();
+			$data['title'] = msg('lb_indicador_quartil');
+		}
+		$sx = $this -> phpLattess -> artigos_quartis_por_ano($pp);
+		$data['content'] = $sx;
+
+		$data['submenu'] = '<a href="' . base_url('index.php/indicadores/artigos_02/' . $pp . '/xls') . '" class="link lt0">exportar para excel</a>';
+		$this -> load -> view('content', $data);
+	}
+
 	function estudantes($id = 0) {
 		/* Load Models */
 
@@ -235,12 +299,12 @@ class indicadores extends CI_Controller {
 
 		$sx = '<table width="600" class="border1">';
 		$sx .= '<tr><th>ano</th>
-<th width="23%">Artigos</th>
-<th width="23%">Livros/Cap./Livros Org.</th>
-<th width="23%">Orientações Tese/Dissertações</th>
-<th width="23%">Patente</th>
-</tr>
-';
+				<th width="23%">Artigos</th>
+				<th width="23%">Livros/Cap./Livros Org.</th>
+				<th width="23%">Orientações Tese/Dissertações</th>
+				<th width="23%">Patente</th>
+				</tr>
+				';
 		for ($r = 2005; $r <= date("Y"); $r++) {
 			$sx .= '<tr>';
 			$sx .= '<td align="center">';

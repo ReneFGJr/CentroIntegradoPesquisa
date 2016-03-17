@@ -27,7 +27,7 @@ class usuario extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$sql = "select * from us_usuario 
-					where usuario_tipo_ust_id = 3
+					where (usuario_tipo_ust_id = 3 or usuario_tipo_ust_id = 0)
 					and us_dt_update_cs < '" . date("Y-m") . "-01'
 					limit 10";
 		$rlt = $this -> db -> query($sql);

@@ -1,6 +1,118 @@
 <?php
 class phpLattess extends CI_Model {
+	var $qualis = '2014';
+	var $dados = array();
+	function artigos_qualificados_por_ano() {
+		$ano = $this -> qualis;
+		$sql = "
+					select acpp_ano, count(*) as total, estrato from `cnpq_acpp` 
+					inner join us_usuario on acpp_autor = us_nome_lattes 
+					inner join ss_professor_programa_linha on id_us = us_usuario_id_us 
+					inner join ss_programa_pos on programa_pos_id_pp = id_pp 
+					left join webqualis on acpp_issn_link = wq_issn_l and area_id = pp_area 
+					where sspp_ativo = 1 and ano = '$ano' group by acpp_ano, estrato
+				";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$rs = array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$ano = $line['acpp_ano'];
+			$total = $line['total'];
+			$estrato = $line['estrato'];
+			if (!isset($rs[$ano])) {
+				$rs[$ano] = array();
+			}
+			$rs[$ano][$estrato] = $total;
+		}
+		$st = '<table>';
+		$st .= '<tr><th>Ano</th>
+					<th>A1</th>
+					<th>A2</th>
+					<th>B1</th>
+					<th>B2</th>
+					<th>B3</th>
+					<th>B4</th>
+					<th>B5</th>
+					<th>C</th>
+				</tr>					
+				';
+		
+		$this -> phpLattess -> dados = $rs;
+		
+		foreach ($rs as $q => $t) {
+			$it = array('A1','A2','B1','B2','B3','B4','B5','C');
+			$st .= '<tr><td>'.$q.'</td>';
+			for ($r=0;$r < count($it);$r++)
+				{
+					$fld = $it[$r];					
+					if (isset($t[$fld]))
+						{
+							$st .= '<td class="border1 pad5" width="50" align="center">'.$t[$fld].'</td>';
+						} else {
+							$st .= '<td>&nbsp;</td>';
+						}
+				}
+		}
+		$st .= '</table>';
+		return($st);		
 
+	}
+	function artigos_quartis_por_ano() {
+		$ano = $this -> qualis;
+		$sql = "
+					select acpp_ano, count(*) as total, estrato from `cnpq_acpp` 
+					inner join us_usuario on acpp_autor = us_nome_lattes 
+					inner join ss_professor_programa_linha on id_us = us_usuario_id_us 
+					inner join ss_programa_pos on programa_pos_id_pp = id_pp 
+					left join (select issn_l , min(sjr_quartile) as estrato from scimago group by issn_l) as Scimago on issn_l = acpp_issn_link 
+					where sspp_ativo = 1 group by acpp_ano, estrato
+				";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$rs = array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$ano = $line['acpp_ano'];
+			$total = $line['total'];
+			$estrato = $line['estrato'];
+			if (!isset($rs[$ano])) {
+				$rs[$ano] = array();
+			}
+			$rs[$ano][$estrato] = $total;
+		}
+		$st = '<table>';
+		$st .= '<tr><th>Ano</th>
+					<th>Q1</th>
+					<th>Q2</th>
+					<th>Q3</th>
+					<th>Q4</th>
+					<th>nc</th>
+				</tr>					
+				';
+		
+		$this -> phpLattess -> dados = $rs;
+		print_r($rs);
+		exit;
+		
+		foreach ($rs as $q => $t) {
+			$it = array('Q1','Q2','Q3','Q4','');
+			$st .= '<tr><td>'.$q.'</td>';
+			for ($r=0;$r < count($it);$r++)
+				{
+					$fld = $it[$r];					
+					if (isset($t[$fld]))
+						{
+							$st .= '<td class="border1 pad5" width="50" align="center">'.$t[$fld].'</td>';
+						} else {
+							$st .= '<td>&nbsp;</td>';
+						}
+				}
+		}
+		$st .= '</table>';
+		return($st);		
+
+	}
 	function row_acpp($obj) {
 		global $cdf, $cdm, $masc;
 		$obj -> fd = array('	id_acpp', 'acpp_autor', 'acpp_ano', 'acpp_titulo', 'acpp_periodico', 'acpp_issn');
@@ -32,77 +144,73 @@ class phpLattess extends CI_Model {
 		return ($rlt);
 	}
 
-	function docentes_sem_producao($tp=0) {
-		switch($tp)
-			{
+	function docentes_sem_producao($tp = 0) {
+		switch($tp) {
 			/* SS sem produção */
-			case '1':
+			case '1' :
 				$wh = " and (total is null) and (us_professor_tipo = 2) ";
 				break;
 			/* Docentes sem produção */
-			case '2':
+			case '2' :
 				$wh = " and (total is null) ";
-				break;				
-			default:
+				break;
+			default :
 				$wh = '';
 				break;
-			}
+		}
 
 		$sql = "select * from us_usuario
 					left join (select count(*) as total, acpp_autor from cnpq_acpp group by acpp_autor ) as tabela on acpp_autor = us_nome_lattes
 					where ((usuario_tipo_ust_id = 2) or (us_professor_tipo = 2))
 					$wh 
 				order by us_nome ";
-				
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="lt1">';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot = $line['total'];
-			$cor = ''; $corf = '';
+			$cor = '';
+			$corf = '';
 			$sx .= '<tr>';
-			
+
 			$sx .= '<td align="center" class="lt1 borderb1" width="10">';
 			$sx .= ($r + 1) . '.';
 			$sx .= '</td>';
-			
-			if ($tot == 0)
-				{
-					$cor = '<font color="red">';
-					$corf = '</font>';
-					$sx .= '<td class="lt1 borderb1" align="center">';
-					$sx .= $cor;
-					$sx .= 'SP';
-					$sx .= $corf;
-					$sx .= '</td>';					
-				} else {
-					$sx .= '<td class="lt1 borderb1" align="center">';
-					$sx .= $cor;
-					$sx .= $line['total'];
-					$sx .= $corf;
-					$sx .= '</td>';					
-				}
-			
-			
+
+			if ($tot == 0) {
+				$cor = '<font color="red">';
+				$corf = '</font>';
+				$sx .= '<td class="lt1 borderb1" align="center">';
+				$sx .= $cor;
+				$sx .= 'SP';
+				$sx .= $corf;
+				$sx .= '</td>';
+			} else {
+				$sx .= '<td class="lt1 borderb1" align="center">';
+				$sx .= $cor;
+				$sx .= $line['total'];
+				$sx .= $corf;
+				$sx .= '</td>';
+			}
+
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $cor;
 			$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
 			$sx .= $corf;
 			$sx .= '</td>';
-			
-			if ($line['us_professor_tipo']=='2')
-				{
-					if ($tot == 0)
-						{
-							$sx .= '<td class="lt1 borderb1" align="center"><img src="'.base_url('img/icon/icone_exclamation.png').'" height="16"></td>';
-						} else {
-							$sx .= '<td class="lt1 borderb1" align="center">SS</td>';		
-						}
-					
+
+			if ($line['us_professor_tipo'] == '2') {
+				if ($tot == 0) {
+					$sx .= '<td class="lt1 borderb1" align="center"><img src="' . base_url('img/icon/icone_exclamation.png') . '" height="16"></td>';
 				} else {
-					$sx .= '<td class="lt1 borderb1" align="center">-</td>';
-				}		
+					$sx .= '<td class="lt1 borderb1" align="center">SS</td>';
+				}
+
+			} else {
+				$sx .= '<td class="lt1 borderb1" align="center">-</td>';
+			}
 
 			$sx .= '<td class="lt1 borderb1">';
 			$sx .= $cor;
@@ -115,8 +223,6 @@ class phpLattess extends CI_Model {
 			$sx .= $line['us_nome_lattes'];
 			$sx .= $corf;
 			$sx .= '</td>';
-
-
 
 		}
 		$sx .= '</table>';

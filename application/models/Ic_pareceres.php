@@ -204,6 +204,7 @@ class Ic_pareceres extends CI_model {
 						left join area_conhecimento on ic_semic_area = ac_cnpq					 
 					 WHERE pp_avaliador_id = $id_us 
 					 AND pp_status = 'A' ";
+					 echo $sql;
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();

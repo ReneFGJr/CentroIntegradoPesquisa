@@ -157,7 +157,7 @@ class main extends CI_Controller {
 			array_push($menu, array('Stricto Sensu', 'Coordenadores e Professores do <i>stricto sensu</i>', 'BTN', '/ss'));
 		}
 
-		if (perfil('#TST#SPI') == 1) {
+		if (perfil('#TST#SPI#OBS') == 1) {
 			array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));
 		}
 		

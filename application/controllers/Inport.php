@@ -1,8 +1,8 @@
 <?php
 class inport extends CI_Controller {
-	
-	var $tipo = array('TESE_', 'DISSE_','ARTIG_', 'CAPIT_', 'ORGAN_', 'EVENC_', 'IC_', 'LIVRO_', 'LVORG_', 'POSDOC_', 'COTESE_', 'PATEN_');
-	
+
+	var $tipo = array('TESE_', 'DISSE_', 'ARTIG_', 'CAPIT_', 'ORGAN_', 'EVENC_', 'IC_', 'LIVRO_', 'LVORG_', 'POSDOC_', 'COTESE_', 'PATEN_');
+
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -24,7 +24,7 @@ class inport extends CI_Controller {
 
 	function exist_files_to_import() {
 		$ft = 0;
-		$tipos = $this->tipo;
+		$tipos = $this -> tipo;
 		for ($y = 0; $y < count($tipos); $y++) {
 			for ($r = 0; $r < 1000; $r++) {
 				$fl = $tipos[$y] . strzero($r, 4);
@@ -55,10 +55,10 @@ class inport extends CI_Controller {
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
 		$data['js'] = $js;
-		
+
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Home', 'index.php/inport/'));		
+		array_push($menus, array('Home', 'index.php/inport/'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -68,29 +68,27 @@ class inport extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 		$this -> load -> view('header/content_open');
 	}
-	
-	function ged()
-		{
+
+	function ged() {
 		$this -> cab();
 		$st = '/pucpr/httpd/htdocs/www2.pucpr.br/reol/cip/../cip/document/';
 		$sql = "select * from captacao_ged_documento where doc_arquivo like '$st%'
 					limit 100;";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
 		$sx = '';
 		$tot = 0;
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$tot++;
-				$line = $rlt[$r];
-				$id = $line['id_doc'];
-				$arq = trim($line['doc_arquivo']);
-				$arq = troca($arq,$st,'_document/');
-				
-				$sql = "update captacao_ged_documento set doc_arquivo = '$arq' where id_doc = $id";
-				$rltx = $this->db->query($sql);
-				$sx .= '<br>'.$sql;
-			}	
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$id = $line['id_doc'];
+			$arq = trim($line['doc_arquivo']);
+			$arq = troca($arq, $st, '_document/');
+
+			$sql = "update captacao_ged_documento set doc_arquivo = '$arq' where id_doc = $id";
+			$rltx = $this -> db -> query($sql);
+			$sx .= '<br>' . $sql;
+		}
 
 		/* Artigos */
 		$st = '';
@@ -98,32 +96,28 @@ class inport extends CI_Controller {
 		$sql = "select * from cip_artigo_ged_documento where doc_arquivo like '$st%'
 					limit 100;";
 
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
 		$sx = '';
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$tot++;
-				$line = $rlt[$r];
-				$id = $line['id_doc'];
-				$arq = trim($line['doc_arquivo']);
-				$arq = troca($arq,$st,'_document/');
-				
-				$sql = "update cip_artigo_ged_documento set doc_arquivo = '$arq' where id_doc = $id";
-				$rltx = $this->db->query($sql);
-				$sx .= '<br>'.$sql;
-			}	
-			if ($tot > 0)
-				{
-					$sx .= '<meta http-equiv="refresh" content="10">';
-				}
-		
-			
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$id = $line['id_doc'];
+			$arq = trim($line['doc_arquivo']);
+			$arq = troca($arq, $st, '_document/');
 
-			$tela['content'] = $sx;
-			$this->load->view('content',$tela);
-			
+			$sql = "update cip_artigo_ged_documento set doc_arquivo = '$arq' where id_doc = $id";
+			$rltx = $this -> db -> query($sql);
+			$sx .= '<br>' . $sql;
 		}
+		if ($tot > 0) {
+			$sx .= '<meta http-equiv="refresh" content="10">';
+		}
+
+		$tela['content'] = $sx;
+		$this -> load -> view('content', $tela);
+
+	}
 
 	function lattes($id = '', $off = '') {
 		/* Load Models */
@@ -132,7 +126,6 @@ class inport extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['content'] = '';
-		
 
 		$data = array();
 		$data['content'] = $id;
@@ -157,17 +150,17 @@ class inport extends CI_Controller {
 				/* Capítulo de Livro */
 				$data['content'] .= $this -> phplattess -> inport_lattes_bibliografia('LIVRO');
 				/* Capítulo de Livro */
-				$data['content'] .= $this -> phplattess -> inport_lattes_bibliografia('CAPIT');				
+				$data['content'] .= $this -> phplattess -> inport_lattes_bibliografia('CAPIT');
 				/* Livro Organizado */
-				$data['content'] .= $this -> phplattess -> inport_lattes_bibliografia('ORGAN');						
+				$data['content'] .= $this -> phplattess -> inport_lattes_bibliografia('ORGAN');
 				/* Evento */
-				$data['content'] .= $this -> phplattess -> inport_lattes_evento('EVENC');						
+				$data['content'] .= $this -> phplattess -> inport_lattes_evento('EVENC');
 				/* Patente */
 				$data['content'] .= $this -> phplattess -> inport_lattes_patente('PATEN');
 				/* Orientacoes - Dissertacao */
-				$data['content'] .= $this -> phplattess -> inport_lattes_orientacoes('DISSE');										
+				$data['content'] .= $this -> phplattess -> inport_lattes_orientacoes('DISSE');
 				/* Orientacoes - Dissertacao */
-				$data['content'] .= $this -> phplattess -> inport_lattes_orientacoes('TESE');										
+				$data['content'] .= $this -> phplattess -> inport_lattes_orientacoes('TESE');
 				break;
 		}
 		$this -> load -> view('content', $data);
@@ -178,7 +171,6 @@ class inport extends CI_Controller {
 
 	}
 
-
 	function issn_ajuste($id = '', $off = '') {
 		/* Load Models */
 		$this -> load -> model('issns');
@@ -187,10 +179,9 @@ class inport extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$data['content'] = '';
-		$this -> load -> view('header/content_open');
 
 		$data = array();
-		$data['content'] = $this->issns->issn_ajuste();
+		$data['content'] = $this -> issns -> issn_ajuste();
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
@@ -287,7 +278,8 @@ class inport extends CI_Controller {
 				break;
 			case 'editais' :
 				$data['content'] = $this -> ro8s -> inport_editais($off);
-				break;		}
+				break;
+		}
 		$this -> load -> view('content', $data);
 		// http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=ic_noticia&limit=100
 
@@ -302,7 +294,6 @@ class inport extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
-		$this -> load -> view('header/content_open');
 
 		$tela['title'] = $this -> lang -> line('title_ic');
 		$tela['tela'] = '';
@@ -323,10 +314,11 @@ class inport extends CI_Controller {
 		array_push($menu, array('RO8-PostGress', 'SEMIC - Resumos', 'ITE', '/inport/ro8/semic-trabalho'));
 
 		array_push($menu, array('CNPq', 'Importar arquivo CNPq', 'ITE', '/inport/lattes/arquivo'));
-		
 
 		$fl = $this -> exist_files_to_import();
 		array_push($menu, array('CNPq', 'Processar Lattes - ' . ($fl) . ' arquivos', 'ITE', '/inport/lattes/processar'));
+
+		array_push($menu, array('CAPES', 'WebQualis CAPES', 'ITE', '/inport/capes/qualis'));
 
 		array_push($menu, array('ISSN', 'ISSN-L', 'ITE', '/inport/issn/arquivo'));
 		array_push($menu, array('ISSN', 'ISSN (Ajuste)', 'ITE', '/inport/issn_ajuste'));
@@ -338,6 +330,46 @@ class inport extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	function capes($id = '', $off = '') {
+		/* Load Models */
+		$this -> load -> model('qualis');
+
+		$this -> cab();
+		$data = array();
+
+		$data = array();
+		$data['content'] = $id;
+
+		switch ($id) {
+			case 'qualis' :
+				$txt = array('Arquivo de estrato da CAPES');
+				$sx = '<h1>Tipos de documentos compatíveis</h1>
+				<ul>';
+				for ($r = 0; $r < count($txt); $r++) {
+					$sx .= '<li>' . $txt[$r] . '</li>' . cr();
+				}
+				$sx .= '</ul>';
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+
+				$data['content'] = $this -> qualis -> inport_file($off);
+				break;
+			case 'processar' :
+				/* Artigos do professor */
+				//$data['content'] .= $this -> phplattess -> inport_lattes_professar($off);
+				/* Capítulo de Livro */
+				break;
+			case 'arquivo':
+				echo '===';
+				break;
+		}
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
 	}
 
 }

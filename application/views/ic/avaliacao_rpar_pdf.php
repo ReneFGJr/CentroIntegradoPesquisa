@@ -33,7 +33,7 @@ $qs[6][2] = 'NÂO';
 
 $qs[7][1] = 'SIM';
 $qs[7][2] = 'NÂO';
-$qs[7][2] = 'NÂO APLICÁVEL';
+$qs[7][3] = 'NÂO APLICÁVEL';
 
 $qs[9][1] = '<font color="green"><b>APROVADO</b></font>';
 $qs[9][2] = '<font color="red"><b>PENDENTE</b></font>';
