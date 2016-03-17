@@ -1364,29 +1364,26 @@ class ic extends CI_Controller {
 		if ($xls == '') {
 			$this -> cab();
 			$data = array();
+			
 			$data['submenu'] = '<a href="'. base_url('index.php/ic/report_guia_excel/xls?dd2='. $ano_ini .'&dd3='. $ano_fim .'&dd4='. $modalidade .'&acao=xls') .'" class="lt0 link">exportar para excel</a>';
 		} else {
-			xls('Guia_do_estudante.xls');
+			xls('Guia_do_estudante '. $ano_ini .' até '. $ano_fim .'.xls');
 		}
 
 		$form = new form;
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, False));
 		array_push($cp, array('$A', '', msg('Guia do Estudante'), False, true));
-		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano inicial'), True, TRUE));
-		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano final'), True, True));
+		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('lb_ano_inicio'), True, TRUE));
+		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('lb_ano_final'), True, True));
 		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
-		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('ic_modalidade'), False, False));
+		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('lb_ic_modalidade'), False, False));
 		$tela = $form -> editar($cp, '');
 
 		if ($form -> saved) {
-
-			
-
-			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
 			
 			$data['title']   = 'Orientações de Iniciação Científica de '. $ano_ini .' á '. $ano_fim .' ';
-			
+			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
 			$this -> load -> view('content', $data);
 
 		} else {
