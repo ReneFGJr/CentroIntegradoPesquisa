@@ -2170,6 +2170,10 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	function entrega($tipo = '') {
+		$sx = $this->rp_entregue($tipo);
+		return($sx);
+		}
 
 	function rp_entregue($tipo = '') {
 		/* Load Models */

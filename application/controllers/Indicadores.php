@@ -241,6 +241,8 @@ class indicadores extends CI_Controller {
 
 		if (strlen($xls) == 0) {
 			$this -> load -> view('highcharts/area', $dados);
+			$this -> load -> view('highcharts/column_stacked', $dados);
+			
 		}
 	}
 

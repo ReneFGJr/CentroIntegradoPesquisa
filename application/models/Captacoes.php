@@ -6,7 +6,7 @@ class captacoes extends CI_Model {
 		$data = date("Y-m-d");
 		switch ($tp) {
 			case '0' :
-			// Com isenção e com bonificação pelo COORDENADOR //
+				// Com isenção e com bonificação pelo COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 1,
 								ca_bonificacao = 1,
@@ -19,7 +19,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '2' :
-			// Com isenção e sem bonificação pelo  COORDENADOR //
+				// Com isenção e sem bonificação pelo  COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 1,
 								ca_bonificacao = 0,
@@ -32,7 +32,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '1' :
-			// Sem isenção e com bonificação pelo  COORDENADOR //
+				// Sem isenção e com bonificação pelo  COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 1,
@@ -45,7 +45,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '3' :
-			// Com isenção e com bonificação pelo  COORDENADOR //
+				// Com isenção e com bonificação pelo  COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 0,
@@ -59,7 +59,7 @@ class captacoes extends CI_Model {
 				break;
 
 			case '4' :
-			// Devolver ao professor para correção  COORDENADOR OU SECRETARIA//
+				// Devolver ao professor para correção  COORDENADOR OU SECRETARIA//
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 0,
@@ -77,7 +77,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '5' :
-			// Cancelar o protocolo  COORDENADOR OU SECRETARIA //
+				// Cancelar o protocolo  COORDENADOR OU SECRETARIA //
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 0,
@@ -94,7 +94,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '6' :
-			// validar a documentação pela SECRETARIA //
+				// validar a documentação pela SECRETARIA //
 				$sql = "update captacao set 
 								ca_status = 11,
 								ca_lastupdate = $data
@@ -110,7 +110,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '7' :
-			// Cancelar o protocolo  COORDENADOR OU SECRETARIA //
+				// Cancelar o protocolo  COORDENADOR OU SECRETARIA //
 				$sql = "update captacao set 
 								ca_status = 14,
 								ca_lastupdate = $data
@@ -129,7 +129,7 @@ class captacoes extends CI_Model {
 			/**************** secretaria */
 			/*********************************************** DIRETORIA DE PESQUISA **************/
 			case '10' :
-			// Com isenção e com bonificação pelo COORDENADOR //
+				// Com isenção e com bonificação pelo COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 1,
 								ca_bonificacao = 1,
@@ -142,7 +142,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '12' :
-			// Com isenção e sem bonificação pelo  COORDENADOR //
+				// Com isenção e sem bonificação pelo  COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 1,
 								ca_bonificacao = 0,
@@ -155,7 +155,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '11' :
-			// Sem isenção e com bonificação pelo  COORDENADOR //
+				// Sem isenção e com bonificação pelo  COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 1,
@@ -168,7 +168,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '13' :
-			// Com isenção e com bonificação pelo  COORDENADOR //
+				// Com isenção e com bonificação pelo  COORDENADOR //
 				$sql = "update captacao set 
 								ca_isencao = 0,
 								ca_bonificacao = 0,
@@ -181,7 +181,7 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '19' :
-			// validar a documentação pela SECRETARIA //
+				// validar a documentação pela SECRETARIA //
 				$sql = "update captacao set 
 								ca_status = 11,
 								ca_lastupdate = $data
@@ -197,12 +197,12 @@ class captacoes extends CI_Model {
 				return (1);
 				break;
 			case '20' :
-			// GERAR ISENÇÂO PELA SECRETARIA //
+				// GERAR ISENÇÂO PELA SECRETARIA //
 				$isencao = $this -> isencoes -> tem_isencao($proto);
 				if ($isencao == 0) {
-					$dt = $this->captacoes->le_protocolo($proto);
-					$this->isencoes->gerar_isencao($proto,$dt);
-					
+					$dt = $this -> captacoes -> le_protocolo($proto);
+					$this -> isencoes -> gerar_isencao($proto, $dt);
+
 					$sql = "update captacao set 
 								ca_lastupdate = $data
 							where ca_protocolo = '" . $proto . "'";
@@ -220,6 +220,99 @@ class captacoes extends CI_Model {
 		}
 
 	}
+
+	function cp_valores() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ca', '', False, False));
+		array_push($cp, array('${', '', 'Valores para proponente', false, true));
+		array_push($cp, array('$N8', 'ca_proponente_vlr', msg('ca_proponente_vlr'), true, true));
+		//array_push($cp, array('$}', '', '', false, true));
+
+		array_push($cp, array('$N8', 'ca_vlr_capital', msg('ca_vlr_capital'), true, true));
+		array_push($cp, array('$N8', 'ca_vlr_custeio', msg('ca_vlr_custeio'), true, true));
+		array_push($cp, array('$N8', 'ca_vlr_bolsa', msg('ca_vlr_bolsa'), true, true));
+		array_push($cp, array('$N8', 'ca_vlr_outros', msg('ca_vlr_outros'), true, true));
+		/* ca_vlr_total */
+		array_push($cp, array('$L', '', msg('ca_vlr_total'), false, false));
+		array_push($cp, array('$}', '', 'Valores para proponente', false, true));
+		return($cp);
+	}
+	
+	function cp_dados($id=0) {
+		$ops = 'cp_cod:cp_descricao:select * from captacao_participacao where cp_ativo = 1';
+		$opa = 'id_agf:agf_nome:select * from fomento_agencia where agf_ativo = 1 order by agf_nome';
+		$sql_pos = "SELECT id_pp, pp_nome  FROM `ss_professor_programa_linha`
+    					inner join ss_programa_pos ON programa_pos_id_pp = id_pp
+    				";
+					
+		/* Vigencia */
+		$vg = '';
+		for ($r = 2010; $r <= (date("Y") + 1); $r++) {
+			for ($m = 1; $m <= 12; $m++) {
+				$dt = $r . strzero($m, 2) . ':' . strzero($m, 2) . '/' . $r;
+				if (strlen($vg) > 0) { $vg .= '&';
+				}
+				$vg .= $dt;
+			}
+
+		}
+		/* Duracao */
+		$dr = '';
+		for ($r = 1; $r <= 72; $r++) {
+			$dt = $r;
+			/* regras */
+			if ($dt == 1) { $dt = '1 ' . msg('mes');
+			}
+			if ($dt > 1) { $dt = $r . ' ' . msg('meses');
+			}
+
+			if (round($r / 12) == ($r / 12)) {
+				$dt = round($r / 12);
+				if ($dt == 1) {
+					$dt = '1 ' . msg('ano');
+				} else {
+					$dt = round($r / 12) . ' ' . msg('anos');
+				}
+			}
+			if ($dt == 0) { $dt = msg('nao_aplicado');
+			}
+			if (strlen($dr) > 0) { $dr .= '&';
+			}
+			$dr .= $r . ':' . $dt;
+		}					
+		
+		$cp = array();
+		array_push($cp, array('$HV', 'id_ca', $id, true, true));
+		array_push($cp, array('${', '', msg('Participacao'), false, true));
+
+		array_push($cp, array('${', '', msg('captacao_edital'), false, true));
+		array_push($cp, array('$Q ' . $ops, 'ca_participacao', 'Sua participação neste projeto de pesquisa, perante a instituição é de:', True, true));
+		//array_push($cp, array('$Q ' . $opa, 'ca_agencia_id', msg('fomente_agencia'), false, true));
+		array_push($cp, array('$S20', 'ca_edital_nr', msg('fomento_edital'), true, true));
+		array_push($cp, array('$[2010-' . date("Y") . ']', 'ca_edital_ano', msg('fomento_ed_ano'), True, true));
+		array_push($cp, array('$S20', 'ca_processo', msg('fomento_processo'), false, true));
+
+		array_push($cp, array('$}', '', msg('captacao_edital'), false, true));
+
+		array_push($cp, array('${', '', msg('captacao_perfil'), false, true));
+		array_push($cp, array('$C', 'ca_academico', 'Projeto Acadêmico (Projeto de pesquisa, eventos, entre outros)', false, true));
+		array_push($cp, array('$C', 'ca_insticional', 'Projeto de Coordenação Institucional (Recursos para infraestrutura, entre outros)', false, true));
+		array_push($cp, array('$C', 'ca_desmembramento', 'Desmembramento de Projeto de Coordenação Institucional (Recursos para infraestrutura, entre outros)', false, true));
+		array_push($cp, array('$}', '', msg('captacao_perfil'), false, true));
+
+		array_push($cp, array('${', '', msg('captacao_dados'), false, true));
+		array_push($cp, array('$T80:3', 'ca_descricao', msg('captacao_titulo'), true, true));
+		array_push($cp, array('$}', '', msg('captacao_dados'), false, true));
+
+		array_push($cp, array('${', '', msg('captacao_vigencia'), false, true));
+		array_push($cp, array('$O ' . $vg, 'ca_vigencia_final_ano', msg('captacao_vigencia_inicio'), true, true));
+		array_push($cp, array('$O ' . $dr, 'ca_duracao', msg('captacao_duracao'), true, true));
+		array_push($cp, array('$O ' . $dr, 'ca_vigencia_prorrogacao', msg('captacao_prorrogacao'), false, true));
+		array_push($cp, array('$}', '', msg('captacao_vigencia'), false, true));
+
+		array_push($cp, array('$}', '', msg('Participacao'), false, true));
+		return($cp);
+	}	
 
 	function mostra_historico($id) {
 		$proto = strzero($id, 7);
@@ -575,6 +668,7 @@ class captacoes extends CI_Model {
 		}
 		return ($line);
 	}
+
 	function le_protocolo($proto = '') {
 		$sql = "select * from captacao 
 					LEFT JOIN captacao_situacao ON ca_status_old = ca_status
@@ -784,11 +878,25 @@ class captacoes extends CI_Model {
 	}
 
 	function resumo_acoes_perfil($id = '') {
-		$sql = "select * 
-				FROM captacao
-				INNER JOIN captacao_situacao ON ca_status_old = ca_status
-				LEFT JOIN us_usuario on us_cracha = ca_professor
-				WHERE cs_perfil = '#$id' ";
+			switch ($id)
+				{
+					case 'COP':
+						$sql = "select * 
+								FROM captacao
+								INNER JOIN captacao_situacao ON ca_status_old = ca_status
+								LEFT JOIN us_usuario on us_cracha = ca_professor
+								WHERE ca_status = '10' ";					
+					break;
+					default:
+						$sql = "select * 
+								FROM captacao
+								INNER JOIN captacao_situacao ON ca_status_old = ca_status
+								LEFT JOIN us_usuario on us_cracha = ca_professor
+								WHERE cs_perfil = '#$id' ";										
+					break;
+				}
+		
+		
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="tabela00 lt1">';

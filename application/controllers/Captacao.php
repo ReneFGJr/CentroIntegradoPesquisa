@@ -248,6 +248,46 @@ class Captacao extends CI_Controller {
 		$this -> load -> view('header/foot', null);
 	}
 
+	function edit_ca($id = 0, $chk = '') {
+		$this->load->view('header/header');
+		$this -> load -> model('captacoes');
+		$cp = $this->captacoes->cp_valores();
+		$form = new form;
+		$form->id = $id;
+		$tela = $form -> editar($cp, 'captacao');
+
+		/* Salvo */
+		if ($form -> saved > 0) {
+			$this->captacoes->atualiza_valor_total($id);
+			$this->load->view('header/windows_close',null);
+		} else {
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+		}	
+	}
+	
+	function edit_cb($id = 0, $chk = '') {
+		$this->load->view('header/header');
+
+		$this -> load -> model('captacoes');
+		$cp = $this->captacoes->cp_dados();
+
+		$form = new form;
+		$form->id = $id;
+		
+		$tela = $form -> editar($cp, 'captacao');
+		
+
+		/* Salvo */
+		if ($form -> saved > 0) {
+			$this->captacoes->atualiza_valor_total($id);
+			$this->load->view('header/windows_close',null);
+		} else {
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+		}	
+	}	
+
 	function view($id = 0, $chk = '') {
 		
 		$this -> load -> model('geds');

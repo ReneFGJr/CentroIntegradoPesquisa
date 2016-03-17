@@ -1255,7 +1255,7 @@ class usuarios extends CI_model {
 			}
 			/*perfil editar blacklist*/
 			if (perfil('#SPI#ADM') == 1) {
-				$line['editar_blacklist'] = '<a href="' . base_url('index.php/usuario/edit_blackList/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link"><img src="' . base_url('img/icon/bl_list.png') . '" border=0 height="18" title="' . msg("Impedimento") . '"> impedimento</a>';
+				$line['editar_blacklist'] = '<a href="' . base_url('index.php/usuario/edit_blackList/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">'.msg("editar_impedimento").'</a>';
 				//$line['editar_blacklist'] = '<a href="' . base_url('index.php/usuario/edit_blackList/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">impedimento</a>';
 				
 				if (($line['id_bl'] > 0) and ($line['bl_ativo'] == 1)) {
@@ -1427,7 +1427,7 @@ class usuarios extends CI_model {
 		$sx = '<font class="lt2">';
 
 		if ((function_exists('perfil'))) {
-			if (perfil('#CPP#SPI#ADM') == 1) {
+			if (perfil('#CPP#SPI#ADM#SEP') == 1) {
 				$edit = 1;
 			}
 		}

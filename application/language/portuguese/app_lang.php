@@ -12,7 +12,7 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
-
+$lang['editar_impedimento'] = 'inpedimento do perfil';
 $lang['shortcuts'] = 'Acesso rápido';
 $lang['bt_search'] = 'Busca';
 $lang['bt_clear'] = 'Limpa filtro';
