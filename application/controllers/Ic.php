@@ -1176,7 +1176,7 @@ class ic extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Relatórios', 'Resumo de implementações', 'ITE', '/ic/report_resumo'));
 		array_push($menu, array('Relatórios', 'Guia do Estudante (Resumo)', 'ITE', '/ic/report_guia'));
-		if (perfil('#TST') == 1) {
+		if (perfil('#TST') and (perfil('##SPI')) == 1) {
 			//ação a executar
 			array_push($menu, array('Relatórios', 'Guia do Estudante (Excel)', 'ITE', '/ic/report_guia_excel'));
 		}
