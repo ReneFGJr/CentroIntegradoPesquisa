@@ -297,6 +297,11 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 			$f1 = $this -> submissao_relatorio_parcial();
 			$action = array_merge($f1, $action);
 		}
+		/* Entrega do Relatório Parcial -  Correções*/
+		if (trim($sis['sw_07']) == '1') {
+			$f1 = $this -> submissao_relatorio_parcial_correcoes();
+			$action = array_merge($f1, $action);
+		}		
 		/* Mostra atividades */
 		if (count($action) > 0) {
 			$size = round(250 + 60);
@@ -390,7 +395,43 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		return ($it);
 
 	}
-	
+	function submissao_relatorio_parcial_correcoes() {
+		/* professor */
+		$ano = date("Y");
+		if (date("m") < 7)
+			{
+				$ano--;
+			}
+		/* reliza consulta */
+		$cracha = $_SESSION['cracha'];
+		$sql = "select * from ic
+					left join ic_acompanhamento on pa_protocolo = ic_plano_aluno_codigo 
+					where ic_cracha_prof = '$cracha' 
+						and ic_ano = '" . $ano . "'
+						and s_id = 1
+			 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+
+			$line = $rlt[$r];
+			$proto = trim($line['ic_plano_aluno_codigo']);
+			$data_pre = $line['ic_rpc_data'];
+			$nota = $line['ic_nota_rp'];
+			if (($data_pre == '0000-00-00') and ($nota == 2)) {
+				$tot++;
+			}
+		}
+		if ($tot > 0) {
+			$it = array('IC_FORM_RPC' => $tot);
+		} else {
+			$it = array();
+		}
+		return ($it);
+
+	}	
 	function submissao_questionarios_professor() {
 		/* professor */
 		$ano = date("Y");

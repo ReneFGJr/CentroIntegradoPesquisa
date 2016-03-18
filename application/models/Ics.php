@@ -1951,8 +1951,10 @@ class ics extends CI_model {
 		array_push($cp, array('$H8', 'id_sw', '', False, True));
 		array_push($cp, array('$SW', 'sw_01', msg('sw_ic_submissao'), False, True));
 		array_push($cp, array('$SW', 'sw_02', msg('sw_ic_rel_pacial'), False, True));
+		array_push($cp, array('$SW', 'sw_07', msg('sw_ic_rel_pacial_correcao'), False, True));
 		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_form_acompanhamento'), False, True));
 		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_rel_final'), False, True));
+		array_push($cp, array('$SW', 'sw_08', msg('sw_ic_rel_final_correcao'), False, True));
 		array_push($cp, array('$SW', 'sw_05', msg('sw_ic_resumo'), False, True));
 		array_push($cp, array('$SW', 'sw_06', msg('sw_ic_validacao'), False, True));
 		array_push($cp, array('$B', '', msg('update'), False, True));

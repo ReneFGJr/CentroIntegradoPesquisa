@@ -1176,7 +1176,7 @@ class ic extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Relatórios', 'Resumo de implementações', 'ITE', '/ic/report_resumo'));
 		array_push($menu, array('Relatórios', 'Guia do Estudante (Resumo)', 'ITE', '/ic/report_guia'));
-		if (perfil('#TST') and (perfil('##SPI')) == 1) {
+		if (perfil('#TST') == 1) {
 			//ação a executar
 			array_push($menu, array('Relatórios', 'Guia do Estudante (Excel)', 'ITE', '/ic/report_guia_excel'));
 		}
@@ -2360,6 +2360,18 @@ class ic extends CI_Controller {
 		}
 
 	}
+	
+	function avaliacoes_situacao()
+		{
+			$this->load->model('Ic_pareceres');
+			$this->cab();
+			
+			$this->ic_pareceres = 'pibic_parecer_'.date("Y");
+			$tela = $this->Ic_pareceres->resumo_parecer();
+			
+			$data['content'] = $tela;
+			$this->load->view('content',$data);			
+		}
 
 	function acompanhamento() {
 		/* Load Models */
@@ -2382,6 +2394,7 @@ class ic extends CI_Controller {
 
 		array_push($menu, array('Relatório Parcial', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RP'));
+		array_push($menu, array('Relatório Parcial', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
 
 		/*View principal*/
 		$data['menu'] = $menu;

@@ -2,8 +2,20 @@
 class Ic_pareceres extends CI_model {
 	var $tabela = "pibic_parecer_2016";
 
-	function cp_declinar(){
-		
+	function que_foi_avaliador($proto, $tipo) {
+		$sql = "select * from " . $this -> tabela . " where pp_protocolo = '$proto' and pp_tipo = '$tipo' and pp_status = 'B' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$id = $rlt[0]['pp_avaliador_id'];
+		} else {
+			$id = 0;
+		}
+		return ($id);
+	}
+
+	function cp_declinar() {
+
 		$cp = array();
 		array_push($cp, array('$H20', 'id_pp', '', False, True));
 		array_push($cp, array('$S8', 'pp_tipo', msg('lb_parecer_tipo'), false, True));
@@ -11,11 +23,11 @@ class Ic_pareceres extends CI_model {
 		array_push($cp, array('$T50:5', 'pp_abe_19', msg('lb_parecer_motivo_declinar'), True, True));
 		//array_push($cp, array('$S20', 'pp_avaliador_id', msg('lb_parecer_avaliador'), false, True));
 		array_push($cp, array('$HV', 'pp_data_leitura', date('Ymd'), True, True));
-		
+
 		array_push($cp, array('$B', '', msg('enviar'), false, True));
 
 		return ($cp);
-		
+
 	}
 
 	function update_line($line) {
@@ -29,46 +41,84 @@ class Ic_pareceres extends CI_model {
 
 		}
 	}
-	
-	function existe_documento($proto, $tipo)
-		{
-			$sql = "select * from ic_ged_documento 
+
+	function existe_documento($proto, $tipo) {
+		$sql = "select * from ic_ged_documento 
 					where doc_dd0 = '$proto'  
 						  and doc_tipo = '$tipo' 
 						  and doc_status <> 'X'";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					return(1);
-				} else {
-					return(0);
-				}
-		}	
-	
-	function existe_indicacao($proto, $tipo)
-		{
-			$sql = "select * from ".$this->tabela." where pp_protocolo = '$proto' 
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
+		}
+	}
+
+	function existe_indicacao($proto, $tipo) {
+		$sql = "select * from " . $this -> tabela . " where pp_protocolo = '$proto' 
 						and (pp_status <> 'D') 
 						and pp_tipo = '$tipo' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
+		}
+	}
+	
+	function resumo_parecer()
+		{
+			$sql = "select count(*) as total, pp_tipo, pp_status from ".$this->tabela." 
+						group by pp_tipo, pp_status 
+						order by pp_tipo, pp_status";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
+
+			$rs = array();
+			$rs['RPAR'] = array();
+			$rs['RPRC'] = array();
+			
+			for ($r=0;$r < count($rlt);$r++)
 				{
-					return(1);
-				} else {
-					return(0);
+					$line = $rlt[$r];
+					$tipo = $line['pp_tipo'];
+					$sta = $line['pp_status'];
+					$rs[$tipo][$sta] = $line['total'];
 				}
+			$sx = '<table width="700">';
+			$sx .= '<tr class="lt1"><th>Tipo</th><th>Abertos</th><th>Avaliados</th><th>Declinados</th></tr>';
+			foreach ($rs as $key => $value) {
+				$tp = array('A','B','D');
+				$sx .= '<tr>';
+				$sx .= '<td>'.msg('ic_tipo_'.$key).'</td>';
+				for ($r=0;$r < count($tp);$r++)
+					{
+						$tt = $tp[$r];
+						if (isset($rs[$key][$tt]))
+						{
+							$vr = $rs[$key][$tt];	
+						} else {
+							$vr = '-';
+						}
+						
+						$sx .= '<td align="center" class="border1" width="20%">'.$vr.'</td>';
+					}			
+			}
+			$sx .= '</table>';
+			return($sx);
 		}
 
 	function gera_parecer($tipo, $dados) {
 		$this -> load -> model("geds");
 		$this -> geds -> tabela = 'ic_ged_documento';
-
+		
 		switch($tipo) {
-			case 'RPARC' :
-			/* Background */
-				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);
+			case 'RPRC' :
+				/* Background */
+				$avaliacao = $this -> load -> view('ic/avaliacao_rprc_pdf', $dados, true);
 
 				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
 				$content = utf8_encode($content . $avaliacao);
@@ -86,7 +136,7 @@ class Ic_pareceres extends CI_model {
 				// set image scale factor
 				//$pdf -> Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
 				//$pdf->Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
-				$pdf->Image($image_file, 0, 0, 220, 50, 'JPG', '', '', true, 150, '', false, false, '', false, false, false);				
+				$pdf -> Image($image_file, 0, 0, 220, 50, 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
 				/* Background */
 				//$pdf -> Image($img_file, 0, 0, 297, 210, '', '', '', false, 300, '', false, false, 0);
 				/* Posição de impressão */
@@ -96,23 +146,37 @@ class Ic_pareceres extends CI_model {
 				$proto = UpperCaseSql($dados['pp_protocolo']) . '-';
 				//$nome_asc = troca($nome_asc,' ','_');
 				$nome_asc = substr(md5(date("YmdHis")), 4, 5);
-				$file = $proto . 'avaliacao-rp-' . $nome_asc . '.pdf';
-				echo '<h1>'.$dados['doc_arquivo'].'</h1>';
-						$path = $_SERVER['DOCUMENT_ROOT'];
-						$this -> geds -> dir('_document');
-						$this -> geds -> dir('_document/' . date("Y"));
-						$this -> geds -> dir('_document/' . date("Y") . "/" . date("m"));
-						$file_long = $path . '_document/' . $file;
-						$pdf -> Output($file_long, 'F');
-						$file_local = '_document/' . date("Y") . '/' . date("m") . '/' . $file;
+				$file = $proto . 'avaliacao-rpc-' . $nome_asc . '.pdf';
+				
+				$path = $_SERVER['DOCUMENT_ROOT'];
+				$this -> geds -> dir('_document');
+				$this -> geds -> dir('_document/' . date("Y"));
+				$this -> geds -> dir('_document/' . date("Y") . "/" . date("m"));
+				$file_long = $path . '_document/' . $file;
+				$pdf -> Output($file_long, 'F');
+				$file_local = '_document/' . date("Y") . '/' . date("m") . '/' . $file;
 
 				copy($file_long, $file_local);
 				unlink($file_long);
 
-				return($file_local);
-			
+				/* Save File */
+				$this -> geds -> protocol = $dados['pp_protocolo'];
+				$this -> geds -> file_type = 'PRC';
+				$this -> geds -> file_name = $file;
+				$this -> geds -> file_status = 'A';
+				$this -> geds -> file_data = date("Ymd");
+				;
+				$this -> geds -> file_time = date("H:is");
+				$this -> geds -> file_saved = $file_local;
+				$this -> geds -> file_extensao($this -> geds -> file_name) . "'";
+				$this -> geds -> file_size = filesize($file_local);
+				$this -> geds -> versao = "0.1";
+				$this -> geds -> user = $_SESSION['id_us'];
+				$this -> geds -> save();
+				return ($file_local);
+
 			case 'RPAR' :
-			/* Background */
+				/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);
 
 				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
@@ -131,7 +195,7 @@ class Ic_pareceres extends CI_model {
 				// set image scale factor
 				//$pdf -> Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
 				//$pdf->Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
-				$pdf->Image($image_file, 0, 0, 220, 50, 'JPG', '', '', true, 150, '', false, false, '', false, false, false);				
+				$pdf -> Image($image_file, 0, 0, 220, 50, 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
 				/* Background */
 				//$pdf -> Image($img_file, 0, 0, 297, 210, '', '', '', false, 300, '', false, false, 0);
 				/* Posição de impressão */
@@ -150,40 +214,55 @@ class Ic_pareceres extends CI_model {
 				$file_long = $path . '_document/' . $file;
 				$pdf -> Output($file_long, 'F');
 				$file_local = '_document/' . date("Y") . '/' . date("m") . '/' . $file;
-				
+
 				copy($file_long, $file_local);
 				unlink($file_long);
 
 				/* Save File */
 				$this -> geds -> protocol = $dados['pp_protocolo'];
-				$this -> geds-> file_type = 'PRP';
-				$this -> geds-> file_name = $file;
-				$this -> geds-> file_status = 'A';
-				$this -> geds-> file_data = date("Ymd");;
-				$this -> geds-> file_time = date("H:is");
-				$this -> geds-> file_saved = $file_local;
-				$this -> geds-> file_extensao($this -> geds -> file_name) . "'";
-				$this -> geds-> file_size = filesize($file_local);
-				$this -> geds-> versao = "0.1";
-				$this -> geds-> user = $_SESSION['id_us'];
-				$this->geds->save();
-				return($file_local);
+				$this -> geds -> file_type = 'PRP';
+				$this -> geds -> file_name = $file;
+				$this -> geds -> file_status = 'A';
+				$this -> geds -> file_data = date("Ymd");
+				;
+				$this -> geds -> file_time = date("H:is");
+				$this -> geds -> file_saved = $file_local;
+				$this -> geds -> file_extensao($this -> geds -> file_name) . "'";
+				$this -> geds -> file_size = filesize($file_local);
+				$this -> geds -> versao = "0.1";
+				$this -> geds -> user = $_SESSION['id_us'];
+				$this -> geds -> save();
+				return ($file_local);
 		}
 	}
 
-	function finaliza_nota_ic($proto,$nota,$tipo = 'RPAR')
-		{
-			if ($nota == 1)
-				{
-				$sql = "update ic set ic_nota_rp = $nota, ic_nota_rpc = 0
+	function finaliza_nota_ic($proto, $nota, $tipo = 'RPAR') {
+		switch ($tipo) {
+			case 'RPAR' :
+				if ($nota == 1) {
+					$sql = "update ic set ic_nota_rp = $nota, ic_nota_rpc = 0
 						where ic_plano_aluno_codigo = '$proto' ";
 				} else {
-				$sql = "update ic set ic_nota_rp = 2, ic_nota_rpc = -1
+					$sql = "update ic set ic_nota_rp = 2, ic_nota_rpc = -1
 						where ic_plano_aluno_codigo = '$proto' ";
 				}
-			$rlt = $this->db->query($sql);
-			return(1);
+				$rlt = $this -> db -> query($sql);
+				return (1);
+				break;
+			case 'RPRC' :
+				if ($nota == 1) {
+					$sql = "update ic set ic_nota_rpc = $nota
+						where ic_plano_aluno_codigo = '$proto' ";
+				} else {
+					$sql = "update ic set ic_nota_rpc = 2
+						where ic_plano_aluno_codigo = '$proto' ";
+				}
+				$rlt = $this -> db -> query($sql);
+				return (1);				
+				break;
 		}
+	}
+
 	function finaliza_avaliacao($id) {
 		$data = date("Ymd");
 		$hora = date("H:i:s");
@@ -204,7 +283,6 @@ class Ic_pareceres extends CI_model {
 						left join area_conhecimento on ic_semic_area = ac_cnpq					 
 					 WHERE pp_avaliador_id = $id_us 
 					 AND pp_status = 'A' ";
-					 echo $sql;
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -270,7 +348,7 @@ class Ic_pareceres extends CI_model {
 		enviaremail_usuario($id_us, $ass, $texto, 2);
 	}
 
-	function mostra_indicacoes_interna($proto = '', $tipo = 'RPAR', $ic_semic_area = '' , $data) {
+	function mostra_indicacoes_interna($proto = '', $tipo = 'RPAR', $ic_semic_area = '', $data) {
 		$cracha = $data['ic_cracha_prof'];
 		$area = substr($ic_semic_area, 0, 5);
 		$sql = "select * from us_avaliador_area
@@ -367,9 +445,9 @@ class Ic_pareceres extends CI_model {
 					$acao = '<font color="#808000">declinar<font>';
 					$acao = '<span class="link" style="cursor: pointer;" ' . $click . '>' . $acao . '</span>';
 					break;
-				case 'D':
+				case 'D' :
 					$acao = '<font color="#A0001F">Declinou<font>';
-					break;	
+					break;
 			}
 
 			$sx .= '<tr>';
@@ -392,7 +470,7 @@ class Ic_pareceres extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		if (count($rlt) > 0) {
-				$data = date("Ymd");
+			$data = date("Ymd");
 			$sql = "update " . $this -> tabela . " 
 							set pp_status = 'A'
 							where pp_avaliador_id = $id_us 
@@ -400,7 +478,7 @@ class Ic_pareceres extends CI_model {
 							and pp_tipo = '$tipo'
 					";
 			$rlt = $this -> db -> query($sql);
-		
+
 		} else {
 			$data = date("Ymd");
 			$sql = "insert into " . $this -> tabela . " 

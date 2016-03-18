@@ -134,9 +134,16 @@ $lang['ca_programa'] = 'Vinculo com o programa de Pós-Graduação';
 $lang['SELECIONA_IDIOMA'] = 'Selecionar Idioma >>';
 $lang['SELECIONA_AREA'] = 'Selecionar Área >>';
 $lang['bt_submit_confirm'] = 'Confirmar envio >>>';
-$lang['protocolo_botao_form_ic_rp'] = 'Enviar relatório Parcial';
+$lang['protocolo_botao_form_ic_rp'] = 'Enviar Relatório Parcial';
+$lang['protocolo_botao_form_ic_rpc'] = 'Enviar Correções do Relatório Parcial';
 $lang['sw_ic_rel_pacial'] = 'Submissão do Relatório Parcial';
+$lang['sw_ic_rel_pacial_correcao'] = 'Submissão do Relatório Parcial (Correção)';
 $lang['sw_ic_form_acompanhamento'] = 'Submissão do questionário de acompanhamento';
+$lang['sw_ic_rel_final'] = 'Submissão do Relatório Final';
+$lang['sw_ic_rel_final_correcao'] = 'Submissão do Relatório Final (Correção)';
+$lang['sw_ic_resumo'] = 'Submissão do Resumo';
+$lang['sw_ic_validacao'] = 'Sistema de avaliação';
+$lang['sw_ic_submissao'] = 'Submissão de propostas';
 
 /* Artigos */
 
@@ -226,6 +233,7 @@ $lang['lb_form_prof_inf'] = '<p class="lt3">Prezado orientador, este questionári
 /***************************** PIBIC */
 $lang['ic_atividade_aberta'] = 'Atividades para entrega';
 $lang['IC_FORM_RP'] = 'Entrega do Relatório Parcial (professor)';
+$lang['IC_FORM_RPC'] = 'Entrega das Correções do Relatório Parcial (professor)';
 $lang['IC_FORM_PROF'] = 'Formulário de acompanhamento (professor)';
 $lang['IC_FORM_ESTU'] = 'Formulário de acompanhamento (estudante)';
 $lang['bt_entregar'] = 'Entregar Atividade';
@@ -530,6 +538,7 @@ $lang['lb_parecer_motivo_declinar'] = 'Motivo';
 $lang['lb_parecer_avaliador'] = 'id avaliador';
 $lang['lb_parecer_data_declinou'] = 'Data declinio';
 $lang['ic_tipo_RPAR'] = 'Relatório Parcial';
+$lang['ic_tipo_RPRC'] = 'Correção do Relatório Parcial';
 
 /* Guia de estudante - gera Excel */
 $lang['lb_ano_inicio'] = 'Ano Inicial';
