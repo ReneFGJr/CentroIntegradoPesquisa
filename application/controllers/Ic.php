@@ -1382,7 +1382,7 @@ class ic extends CI_Controller {
 
 		if ($form -> saved) {
 			
-			$data['title']   = 'Orientações de Iniciação Científica de '. $ano_ini .' á '. $ano_fim .' ';
+			$data['title']   = 'Orientações de Iniciação Científica de '. $ano_ini .' até '. $ano_fim .' ';
 			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
 			$this -> load -> view('content', $data);
 
