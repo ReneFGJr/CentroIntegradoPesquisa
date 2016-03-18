@@ -56,8 +56,17 @@ class stricto_sensu extends CI_Controller {
 
 		$this -> load -> view('ss/index', $data);
 	}
+	function discentes($pp=0)
+		{
+			$this -> load -> model('stricto_sensus');
+			$this->cab();
+			
+			$tela = $this->stricto_sensus->fluxo_discente_mostra($pp);
+			$data['content'] = $tela;
+			$this->load->view('content',$data);	
+		}
 
-	function index() {
+	function index($pp=0) {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
@@ -78,7 +87,7 @@ class stricto_sensu extends CI_Controller {
 			array_push($menu, array('Bonificação e Isenção', 'Relatórios e indicadores de Captações, Isenções, Bonificações por programa', 'BTA', '/stricto_sensu/bonificacao_isencao/'.$id));
 			//array_push($menu, array('Docentes do Programa', 'Relação dos docentes do programa', 'BTA', 'stricto_sensu/doscentes/'.$id));
 			//array_push($menu, array('Produção Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
-			//array_push($menu, array('Fluxo Discente', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
+			array_push($menu, array('Fluxo Discente', 'Indicadores da Produção Científica dos Programas', 'BTA', '/stricto_sensu/discentes/'.$id));
 			//array_push($menu, array('Iniciação Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
 			$data['menu'] = $menu;
 

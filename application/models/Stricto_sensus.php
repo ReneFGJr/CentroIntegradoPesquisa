@@ -1,41 +1,139 @@
 <?php
 class Stricto_sensus extends CI_model {
 	var $resumo = array();
-	
-	function is_administrativo($id_us=0)
-		{
-			$sql = "select * from ss_programa_pos where  
+
+	function is_administrativo($id_us = 0) {
+		$sql = "select * from ss_programa_pos where  
 						id_us_coordenador = $id_us OR
 						id_us_secretaria1 = $id_us OR
 						id_us_secretaria2 = $id_us ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					return($line);
-				} else {
-					return(array());
-				}
-		}	
-	function orientacoes($cracha='')
-		{
-			$sql = "select * from ss_docente_orientacao 
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			return ($line);
+		} else {
+			return ( array());
+		}
+	}
+
+	function fluxo_discente_mostra($pg) {
+		$sql = "select * from ss_linha_pesquisa_programa
+						INNER JOIN programa_pos_linhas ON posln_descricao = sslpp_nome_linha 
+						WHERE sslpp_old = ''";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$od = $line['id_sslpp'];
+			$pp = $line['posln_codigo'];
+			$sql = "update ss_linha_pesquisa_programa set sslpp_old = '$pp' where id_sslpp = $od ";
+			$xxx = $this -> db -> query($sql);
+		}
+
+		$sql = "select * from ss_docente_orientacao 
+						INNER JOIN ss_linha_pesquisa_programa on od_linha = sslpp_old
+						INNER JOIN programa_pos_linhas on posln_descricao = sslpp_nome_linha
+						where od_linha_id = 0 
+						limit 250";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$od = $line['id_od'];
+			$pp = $line['id_sslpp'];
+			$sql = "update ss_docente_orientacao set od_linha_id = $pp where id_od = $od ";
+			$xxx = $this -> db -> query($sql);
+			echo $sql . '<BR>';
+		}
+
+		$sql = "select * from ss_docente_orientacao 
+						INNER JOIN ss_programa_pos on id_pp_char = od_programa
+						where od_programa_id = 0 
+						limit 200";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$od = $line['id_od'];
+			$pp = $line['id_pp'];
+			$sql = "update ss_docente_orientacao set od_programa_id = $pp where id_od = $od ";
+			$xxx = $this -> db -> query($sql);
+		}
+
+		$sql = "select 
+						aluno.us_nome as al_nome, aluno.id_us as al_id,
+						prof.us_nome as pf_nome, prof.id_us as pf_id,
+						od_ano_ingresso, od_ano_diplomacao, od_status,
+						od_modalidade, od_linha, sss_descricao,
+						sslpp_nome_linha
+						
+					 FROM ss_docente_orientacao 
+					LEFT JOIN us_usuario as aluno on aluno.us_cracha = od_aluno and od_aluno <> ''
+					LEFT JOIN us_usuario as prof on prof.us_cracha = od_professor
+					LEFT JOIN ss_docente_orientacao_situacao on sss_cod = od_status
+					LEFT JOIN ss_programa_pos on od_programa_id = id_pp
+					LEFT JOIN ss_linha_pesquisa_programa on od_linha_id = id_sslpp
+					WHERE od_programa_id = $pg
+					order by pf_nome, od_ano_ingresso desc, al_nome 
+					";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00 lt1">';
+		$sx .= '<tr><th>#</th>
+						<th>Estudante</th>
+						<th>situação</th>
+						<th>Ano Ingresso</th>
+						<th>Ano Titulação</th>
+						<th>Modalidade</th>
+						<th>Linha de Pesquisa</th>
+						</tr>';
+
+		$xprof = '';
+		$nr = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$prof = $line['pf_id'];
+			if ($prof != $xprof) {
+				$sx .= '<tr><td class="lt3" colspan=10><b>' . $line['pf_nome'] . '</b></td></tr>' . cr();
+				$xprof = $prof;
+				$nr = 0;
+			}
+			$nr++;
+			$sx .= '<tr>';
+			$sx .= '<td align="center">' . $nr . '</td>';
+			$sx .= '<TD>' . link_user($line['al_nome'], $line['al_id']) . '</td>';
+			$sx .= '<TD>' . $line['sss_descricao'] . '</td>';
+			$sx .= '<TD align="center">' . $line['od_ano_ingresso'] . '</td>';
+			$sx .= '<TD align="center">' . substr($line['od_ano_diplomacao'], 0, 4) . '</td>';
+			$sx .= '<TD align="center">' . $line['od_modalidade'] . '</td>';
+			$sx .= '<TD>' . $line['sslpp_nome_linha'] . '</td>';
+
+		}
+		$sx .= '</table>';
+		return ($sx);
+
+	}
+
+	function orientacoes($cracha = '') {
+		$sql = "select * from ss_docente_orientacao 
 					left join us_usuario on us_cracha = od_aluno
 					left join ss_docente_orientacao_situacao on sss_cod = od_status
 						WHERE od_professor = '$cracha' 
 						ORDER BY od_ano_ingresso desc, od_modalidade, us_nome
 					";
-					
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			$dr = array(0,0,0,0,0,0);
-			$ms = array(0,0,0,0,0,0);
-			$mp = array(0,0,0,0,0,0);
-			
-			$sx = '<table width="100%" class="tabela00 lt1">';
-			$sx .= '<tr>
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$dr = array(0, 0, 0, 0, 0, 0);
+		$ms = array(0, 0, 0, 0, 0, 0);
+		$mp = array(0, 0, 0, 0, 0, 0);
+
+		$sx = '<table width="100%" class="tabela00 lt1">';
+		$sx .= '<tr>
 						<th width="2%">#</th>
 						<th width="35%">Estudante</th>
 						<th width="5%">Crachá</th>
@@ -43,56 +141,50 @@ class Stricto_sensus extends CI_model {
 						<th width="5%">Diplomação</th>
 						<th width="10%">Modalidade</th>
 						<th width="35%">Título da pesquisa mestrado/doutado</th>
-						<th width="8%">Situação</th>
 					</tr>';
-			
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$sx .= '<tr>';
-					$sx .= '<td align="center" class="border1">'.($r+1).'</td>';
-					$sx .= '<td class="border1">'.$line['us_nome'].'</td>';
-					$sx .= '<td class="border1">'.$line['od_aluno'].'</td>';
-					$sx .= '<td align="center" class="border1">'.$line['od_ano_ingresso'].'</td>';
-					$sx .= '<td align="center" class="border1">'.substr($line['od_ano_diplomacao'],0,4).'</td>';
-					$sx .= '<td align="center" class="border1">'.msg('modalidade_'.$line['od_modalidade']).'</td>';
-					$sx .= '<td class="border1">';
-					$sx .= $line['od_titulo_projeto'];
-					$sx .= '</td>';
-					$sx .= '<td align="center" class="border1">'.$line['sss_descricao'].'</td>';
-					$sx .= '</tr>';
-					
-					/* Tipo */
-					$sss = round($line['sss_grupo']);
-					if ($line['od_modalidade'] == 'D')
-					{
-						$dr[$sss] = $dr[$sss] + 1;
-					}
-					if ($line['od_modalidade'] == 'M')
-					{
-						$ms[$sss] = $ms[$sss] + 1;
-					}
-					if ($line['od_modalidade'] == 'P')
-					{
-						$mp[$sss] = $mp[$sss] + 1;
-					}
-				}
-			$sx .= '</table>';
-			
-			$rs = array($dr,$ms,$mp);
-			$this->resumo = $rs;
-			return($sx);
-			
-		}
 
-	function is_coordenador($id_us, $programa='') {
-		$wh = '';
-		if (strlen($programa) > 0)
-			{
-				$wh .= " AND (id_pp = '$programa' or id_pp_char = '$programa') ";
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<tr>';
+			$sx .= '<td align="center" class="border1">' . ($r + 1) . '</td>';
+			$sx .= '<td class="border1">' . $line['us_nome'] . '</td>';
+			$sx .= '<td class="border1">' . $line['od_aluno'] . '</td>';
+			$sx .= '<td align="center" class="border1">' . $line['od_ano_ingresso'] . '</td>';
+			$sx .= '<td align="center" class="border1">' . substr($line['od_ano_diplomacao'], 0, 4) . '</td>';
+			$sx .= '<td align="center" class="border1">' . msg('modalidade_' . $line['od_modalidade']) . '</td>';
+			$sx .= '<td class="border1">';
+			$sx .= $line['od_titulo_projeto'];
+			$sx .= '</td>';
+			$sx .= '<td align="center" class="border1">' . $line['sss_descricao'] . '</td>';
+			$sx .= '</tr>';
+
+			/* Tipo */
+			$sss = round($line['sss_grupo']);
+			if ($line['od_modalidade'] == 'D') {
+				$dr[$sss] = $dr[$sss] + 1;
 			}
+			if ($line['od_modalidade'] == 'M') {
+				$ms[$sss] = $ms[$sss] + 1;
+			}
+			if ($line['od_modalidade'] == 'P') {
+				$mp[$sss] = $mp[$sss] + 1;
+			}
+		}
+		$sx .= '</table>';
+
+		$rs = array($dr, $ms, $mp);
+		$this -> resumo = $rs;
+		return ($sx);
+
+	}
+
+	function is_coordenador($id_us, $programa = '') {
+		$wh = '';
+		if (strlen($programa) > 0) {
+			$wh .= " AND (id_pp = '$programa' or id_pp_char = '$programa') ";
+		}
 		$sql = "select 1 from ss_programa_pos
-						WHERE id_us_coordenador = $id_us ".$wh;		
+						WHERE id_us_coordenador = $id_us " . $wh;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$to = 0;
@@ -103,6 +195,7 @@ class Stricto_sensus extends CI_model {
 		}
 
 	}
+
 	function lista_atividades_coordenador($us_id = 0) {
 		$sql = "select * from captacao 
 					LEFT JOIN captacao_situacao ON ca_status_old = ca_status
@@ -111,7 +204,7 @@ class Stricto_sensus extends CI_model {
 					LEFT JOIN captacao_participacao on cp_cod = ca_participacao
 					LEFT JOIN ss_programa_pos ON ((ca_programa = id_pp_char) or (ca_programa = id_pp)) 
 				WHERE ca_status = 10 and id_us_coordenador = $us_id	";
-				
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$to = 0;
@@ -133,13 +226,14 @@ class Stricto_sensus extends CI_model {
 		if (count($rlt) > 0) {
 			for ($r = 0; $r < count($rlt); $r++) {
 				$line = $rlt[$r];
-				$sx .= $this->load->view('captacao/captacao_row',$line,true);
-			} }
+				$sx .= $this -> load -> view('captacao/captacao_row', $line, true);
+			}
+		}
 		$sx .= '</table>';
-		return($sx);
-		
+		return ($sx);
+
 	}
-		
+
 	function atividades_coordenador($us_id = 0) {
 		/******************************************************************************** CAPTACAO */
 		$av = array('-', '-');
@@ -304,16 +398,15 @@ class Stricto_sensus extends CI_model {
 		$pos = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			
+
 			$prog = $line['pp_nome'];
-			if ($prog != $xprog)
-				{
-					$sx .= '<tr><td colspan="6" class="lt4"><b>'.$prog.'</b></td></tr>';
-					$sx .= $th;
-					$xprog = $prog;
-					$pos = 0;
-				}
-						 
+			if ($prog != $xprog) {
+				$sx .= '<tr><td colspan="6" class="lt4"><b>' . $prog . '</b></td></tr>';
+				$sx .= $th;
+				$xprog = $prog;
+				$pos = 0;
+			}
+
 			$sx .= '<tr>';
 			$sx .= '<td align="center" class="lt1" width="10">';
 			$sx .= ($pos + 1) . '.';
@@ -330,7 +423,6 @@ class Stricto_sensus extends CI_model {
 			$sx .= $line['us_link_lattes'];
 			$sx .= '</td>';
 
-
 			$sx .= '<td>';
 			$sx .= $line['es_escola'];
 			$sx .= '</td>';
@@ -338,7 +430,7 @@ class Stricto_sensus extends CI_model {
 			$sx .= '<td align="center">';
 			$sx .= msg('genero_' . $line['us_genero']);
 			$sx .= '</td>';
-			
+
 			$pos++;
 
 		}
@@ -599,7 +691,7 @@ class Stricto_sensus extends CI_model {
 			$sx .= '<td align="center" class="border1">' . $link . $line['pp_ano_inicio'] . '</a>' . '</td>';
 			$sx .= '<td align="center" class="border1">' . $link . $line['pp_ano_inicio_doutorado'] . '</a>' . '</td>';
 
-			$sx .= '<td align="left" width="25%" class="border1">' . link_perfil($line['us_nome'],$line['id_us']) . '</td>';
+			$sx .= '<td align="left" width="25%" class="border1">' . link_perfil($line['us_nome'], $line['id_us']) . '</td>';
 
 			if (perfil('#CPP#SPI#ADM') == 1) {
 				$link = '<A href="' . base_url('index.php/stricto_sensu/editar/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp'])) . '" class="link lt1">editar</A>';
