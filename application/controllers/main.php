@@ -161,7 +161,7 @@ class main extends CI_Controller {
 			array_push($menu, array('Indicadores de Pesquisa', 'Indicadores Pesquisa', 'BTB', '/indicadores'));
 		}
 		
-		if (perfil('#CEP#TST') == 1) { array_push($menu, array('CEP', 'Comitê de Ética em Pesquisa com Seres Humanos', 'BTA', '/csf'));
+		if (perfil('#CEP#TST') == 1) { array_push($menu, array('CEP', 'Comitê de Ética em Pesquisa com Seres Humanos', 'BTA', '/cep'));
 		}
 		
 		

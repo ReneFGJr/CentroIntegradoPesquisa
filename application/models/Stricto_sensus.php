@@ -762,6 +762,26 @@ class Stricto_sensus extends CI_model {
 		return ($modalidade);
 	}
 
+	function professores_ss_do_programa($prog=0)
+		{
+		$pf = array();
+		$sql = "select * from (
+						select count(*) as linhas, sspp_tipo as situacao, min(sspp_dt_entrada) as entrada, us_usuario_id_us, programa_pos_id_pp from ss_professor_programa_linha where sspp_ativo = 1
+							group by us_usuario_id_us, programa_pos_id_pp, situacao
+					) as professor
+					inner join us_usuario on us_usuario_id_us = id_us
+					where programa_pos_id_pp = $prog
+					order by us_nome
+					";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			array_push($pf,$line['us_usuario_id_us']);
+		}
+		return ($pf);
+		}
+
 	function lista_programas() {
 		$sql = "select * from ss_programa_pos
 						left join us_usuario on id_us = id_us_coordenador
@@ -785,7 +805,7 @@ class Stricto_sensus extends CI_model {
 			$line = $rlt[$r];
 
 			/* Link */
-			$link = '<A href="' . base_url('index.php/stricto_sensu/ver/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp'])) . '" class="link lt2">';
+			$link = '<A href="' . base_url('index.php/stricto_sensu/v/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp'])) . '" class="link lt2">';
 
 			$sx .= '<tr valign="top">';
 			$sx .= '<td class="border1">' . ($r + 1) . '</td>';

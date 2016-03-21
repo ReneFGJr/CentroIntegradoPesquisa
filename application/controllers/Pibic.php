@@ -422,7 +422,11 @@ class pibic extends CI_Controller {
 								$mss = $this -> mensagens -> busca($mss, $ms);
 								if (isset($mss['nw_titulo'])) {
 									$id_own_pibic = $this -> id_own_pibic;
-									enviaremail_usuario($professor, $mss['nw_titulo'] . ' - [' . $proto . '] - ' . trim($data['pf_nome']), $mss['nw_texto'], $id_own_pibic);
+									$texto = $mss['nw_texto'];
+									$texto = troca($texto,'$PROTOCOLO',$proto);
+									$texto = troca($text,'$plano_titulo',$data['ic_projeto_professor_titulo']);
+									$texto = troca($text,'$LINK','http://cip.pucpr.br/');
+									enviaremail_usuario($avaliador, $mss['nw_titulo'] . ' - [' . $proto . '] - ' . trim($data['pf_nome']), $texto, $id_own_pibic);
 								}
 								/* Indicar avaliacao */
 								$this->ic_pareceres->indicar_avaliador($avaliador, 'RPRC', $proto);
@@ -438,7 +442,6 @@ class pibic extends CI_Controller {
 							return ('');
 							break;
 					}
-
 				}
 
 				/* Formulário já finalizado */

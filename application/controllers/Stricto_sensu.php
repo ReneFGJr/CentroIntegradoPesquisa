@@ -79,7 +79,7 @@ class stricto_sensu extends CI_Controller {
 
 		if ($form -> saved > 0) {
 			$this -> load -> view('header/windows_close', null);
-			return('');
+			return ('');
 		}
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
@@ -101,11 +101,16 @@ class stricto_sensu extends CI_Controller {
 
 		if ($form -> saved > 0) {
 			$this -> load -> view('header/windows_close', null);
-			return('');
+			return ('');
 		}
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
 
+	}
+
+	function v($pp = 0) {
+		$this -> load -> model('stricto_sensus');
+		$this -> index($pp);
 	}
 
 	function index($pp = 0) {
@@ -116,8 +121,11 @@ class stricto_sensu extends CI_Controller {
 		/****************** COORDENADOR & SCRETARIA ***/
 		$id_us = $_SESSION['id_us'];
 		$prog = $this -> stricto_sensus -> is_administrativo($id_us);
-		if (count($prog) > 0) {
-			$id = $prog['id_pp'];
+		if ((count($prog) > 0) or ($pp > 0)) {
+			if (isset($prog['id_pp'])) { $id = $prog['id_pp'];
+			}
+			if ($pp > 0) { $id = $pp;
+			}
 			$data = $this -> stricto_sensus -> le($id);
 			$this -> load -> view('ss/show', $data);
 
@@ -126,11 +134,12 @@ class stricto_sensu extends CI_Controller {
 
 			/************* MENU */
 			$menu = array();
+			array_push($menu, array('Docentes do Programa', 'Relação dos docentes do programa', 'BTA', '/stricto_sensu/ver/' . $id));
 			array_push($menu, array('Bonificação e Isenção', 'Relatórios e indicadores de Captações, Isenções, Bonificações por programa', 'BTA', '/stricto_sensu/bonificacao_isencao/' . $id));
 			//array_push($menu, array('Docentes do Programa', 'Relação dos docentes do programa', 'BTA', 'stricto_sensu/doscentes/'.$id));
 			//array_push($menu, array('Produção Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
 			array_push($menu, array('Fluxo Discente', 'Indicadores da Produção Científica dos Programas', 'BTA', '/stricto_sensu/discentes/' . $id));
-			//array_push($menu, array('Iniciação Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
+			array_push($menu, array('Iniciação Científica', 'Indicadores da Iniciação Científica dos Programas', 'BTA', '/stricto_sensu/iniciacao_cientifica/' . $id));
 			$data['menu'] = $menu;
 
 			$data['title_menu'] = '';
@@ -142,6 +151,72 @@ class stricto_sensu extends CI_Controller {
 			$data['content'] = $this -> stricto_sensus -> lista_programas();
 			$this -> load -> view('content', $data);
 		}
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function iniciacao_cientifica_pos($id=0)
+		{
+		$this -> load -> model('ics');			
+		$this -> load -> model('stricto_sensus');
+		$this->cab();
+		
+		$prfs = $this->stricto_sensus->professores_ss_do_programa($id);
+		$wh = '';
+		for ($r=0;$r < count($prfs);$r++)
+			{
+				if (strlen($wh) > 0) { $wh .= ' OR '; }
+				$wh .= '(prof_id = '.$prfs[$r].') ';
+			}
+		if (count($prfs) > 0)
+			{
+				$wh = '('.$wh.')';		
+			} else {
+				$wh = '(2=1)';
+			}
+		
+		$sql = $this->ics->table_view($wh,'0','99999999','ic_data desc, pf_nome');
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		
+		//$rs = $this->ics->mostra_resumo_orientadores($rlt);
+		
+		$sx = '<table width="100%" class="lt0">';
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				$line['page'] = 'ic';
+				$sx .= $this->load->view('ic/plano-row',$line,true);
+			}
+		$sx .= '</table>';
+		$data['content'] = $sx;
+		$this->load->view('content',$data);
+		}
+
+	function iniciacao_cientifica($id = 0) {
+		$this -> load -> model('stricto_sensus');
+		$this->cab();
+		/****************** COORDENADOR & SCRETARIA ***/
+		$id_us = $_SESSION['id_us'];
+
+		$data = $this -> stricto_sensus -> le($id);
+		$this -> load -> view('ss/show', $data);
+
+		$data['content'] = $this -> stricto_sensus -> resumo_programa($id);
+		$this -> load -> view('content', $data);
+
+		/************* MENU */
+		$menu = array();
+		array_push($menu, array('Iniciação Científica', 'Professores orientadores', 'ITE', '/stricto_sensu/iniciacao_cientifica_pos/' . $id));
+		array_push($menu, array('Iniciação Científica', 'Doutorandos com orientação', 'ITE', '/stricto_sensu/iniciacao_cientifica_doutorandos/' . $id));
+		$data['menu'] = $menu;
+
+		$data['title_menu'] = '';
+		$this -> load -> view('header/main_menu', $data);
+		$data['content'] = '<script>  $("#main_menu").toggleClass("2colunas"); </script>';
+		$data['content'] .= '<style>  #main_menu { max-width: 100%; </style>';
+		
+		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
