@@ -182,6 +182,31 @@ class comunicacoes extends CI_Model
 						}
 						$email .= 'cleybe.vieira@pucpr.br'.cr();
 				}
+	
+			//* IC - Avaliadores que não reavaliaram o Relatório Parcial (RPRC) */
+			if ($gr == 17)
+				{
+					$ano = date("Y");
+					if (date("m") < 8) { $ano = ($ano -1); }
+					$sql = "select distinct usm_email 
+									from pibic_parecer_2016
+									inner join us_email on pp_avaliador_id = usuario_id_us
+									where usm_ativo = 1
+									and pp_tipo = 'RPRC'
+									AND pp_status = 'A'
+					";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$email = '';
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$email .= $line['usm_email'].cr();
+						}
+						$email .= 'cleybe.vieira@pucpr.br'.cr();
+				}				
+				
+				
 				
 			return($email);
 		}
