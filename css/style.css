@@ -311,6 +311,7 @@ body {
 .link {
 	color: #000080;
 	text-decoration: none;
+	cursor: pointer;
 }
 .link:hover {
 	color: #000000;

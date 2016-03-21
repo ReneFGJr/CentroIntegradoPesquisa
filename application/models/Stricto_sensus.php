@@ -61,13 +61,15 @@ class Stricto_sensus extends CI_model {
 			$sql = "update ss_docente_orientacao set od_programa_id = $pp where id_od = $od ";
 			$xxx = $this -> db -> query($sql);
 		}
+		
+		/****************** Consulta ***************************************/
 
-		$sql = "select 
+		$sql = "select  id_od,
 						aluno.us_nome as al_nome, aluno.id_us as al_id,
 						prof.us_nome as pf_nome, prof.id_us as pf_id,
 						od_ano_ingresso, od_ano_diplomacao, od_status,
 						od_modalidade, od_linha, sss_descricao,
-						sslpp_nome_linha
+						sslpp_nome_linha, id_us_secretaria1, id_us_secretaria2
 						
 					 FROM ss_docente_orientacao 
 					LEFT JOIN us_usuario as aluno on aluno.us_cracha = od_aluno and od_aluno <> ''
@@ -93,8 +95,22 @@ class Stricto_sensus extends CI_model {
 
 		$xprof = '';
 		$nr = 0;
+		/* Recupera ID do usuário do perfil */
+		$id_us = $_SESSION['id_us'];
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			
+			/* Secretárias */
+			$sec1 = $line['id_us_secretaria1'];
+			$sec2 = $line['id_us_secretaria2'];
+			
+			$edit = '';
+			
+			if (($sec1 == $id_us) OR ($sec2 == $id_us))
+				{
+					$link = base_url('index.php/stricto_sensu/orientacao_id/'.$line['id_od'].'/'.checkpost_link($line['id_od']));
+					$edit = '<span class="link lt1" onclick="newwin(\''.$link.'\')">editar</span>';
+				}
 			$prof = $line['pf_id'];
 			if ($prof != $xprof) {
 				$sx .= '<tr><td class="lt3" colspan=10><b>' . $line['pf_nome'] . '</b></td></tr>' . cr();
@@ -110,6 +126,10 @@ class Stricto_sensus extends CI_model {
 			$sx .= '<TD align="center">' . substr($line['od_ano_diplomacao'], 0, 4) . '</td>';
 			$sx .= '<TD align="center">' . $line['od_modalidade'] . '</td>';
 			$sx .= '<TD>' . $line['sslpp_nome_linha'] . '</td>';
+			if (strlen($edit) > 0)
+				{
+					$sx .= '<td>'.$edit.'</td>';
+				}
 
 		}
 		$sx .= '</table>';
@@ -603,6 +623,38 @@ class Stricto_sensus extends CI_model {
 		} else {
 			return ( array());
 		}
+	}
+
+	function cp() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_pp', '', False, True));
+		array_push($cp, array('$S100', 'pp_nome', 'Nome do programa', True, True));
+		array_push($cp, array('$S10', 'pp_sigla', 'Sigla', True, True));
+
+		$sql = "select * from area_avaliacao order by area_avaliacao_nome ";
+		array_push($cp, array('$Q id_area:area_avaliacao_nome:' . $sql, 'pp_area', 'Área de avaliação', False, True));
+
+		array_push($cp, array('$[2-7]', 'pp_conceito', 'Nota do programa', True, True));
+		array_push($cp, array('$S15', 'pp_codigo_capes', 'Código CAPES', False, True));
+
+		array_push($cp, array('${', '', 'Modalidades disponíveis', False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_mestrado', 'Mestrado', True, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_mestrado_prof', 'Mestrado Profissional', True, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_doutorado', 'Doutorado', True, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_pos_doutorado', 'Pós-Doutorado', True, True));
+
+		array_push($cp, array('$[1950-' . date("Y") . ']', 'pp_ano_inicio', 'Início do Mestrado', False, True));
+		array_push($cp, array('$[1950-' . date("Y") . ']', 'pp_ano_inicio_doutorado', 'Início do Doutorado', False, True));
+		array_push($cp, array('$}', '', 'Modalidades disponíveis', False, True));
+
+		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and us_professor_tipo = 2', 'id_us_coordenador', 'Coordenador', False, True));
+		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and usuario_tipo_ust_id = 4', 'id_us_secretaria1', 'Secretaria (1)', False, True));
+		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and usuario_tipo_ust_id = 4', 'id_us_secretaria2', 'Secretaria (2)', False, True));
+
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_ativo', 'Ativo', True, True));
+
+		array_push($cp, array('$B8', '', 'salvar', False, True));
+		return ($cp);
 	}
 
 	function cp() {

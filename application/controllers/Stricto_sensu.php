@@ -66,6 +66,21 @@ class stricto_sensu extends CI_Controller {
 			$this->load->view('content',$data);	
 		}
 
+	function orientacao_id($id=0,$chk='')
+		{
+			$this->load->model('stricto_sensus');
+			$this->load->view('header/header',null);
+			$form = new form;
+			$form->id = $id;
+			
+			$cp = $this->stricto_sensus->cp_orientacao();
+			$tela = $form->editar($cp,$this->stricto_sensus->tabela);
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+			
+			
+		}
+
 	function index($pp=0) {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
