@@ -171,6 +171,43 @@ class inport extends CI_Controller {
 
 	}
 
+	function docente($id = '', $off = '') {
+		/* Load Models */
+		$this -> load -> model('phplattess');
+
+		$this -> cab();
+		$data = array();
+		$data['content'] = '';
+
+		$data = array();
+		$data['content'] = $id;
+
+		switch ($id) {
+			case 'arquivo' :
+				$txt = array('Carga Horario de Professores');
+				$sx = '<h1>Tipos de documentos compatíveis</h1>
+				<ul>';
+				for ($r = 0; $r < count($txt); $r++) {
+					$sx .= '<li>' . $txt[$r] . '</li>' . cr();
+				}
+				$sx .= '</ul>';
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+
+				$data['content'] = $this -> phplattess -> inport_lattes_acpp($off);
+				break;
+			case 'processar' :
+				/* Artigos do professor */
+				break;
+		}
+		$this -> load -> view('content', $data);
+		// http://www2.pucpr.br/reol/ro8_index.php?verbo=ListRecord&table=ic_noticia&limit=100
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
 	function issn_ajuste($id = '', $off = '') {
 		/* Load Models */
 		$this -> load -> model('issns');
@@ -300,18 +337,20 @@ class inport extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
-		array_push($menu, array('RO8-PostGress', 'SEMIC IC', 'ITE', '/inport/ro8/semic_ic'));
-		array_push($menu, array('RO8-PostGress', 'PIBIC Avaliações', 'ITE', '/inport/ro8/pibic_avaliacoes'));
-		array_push($menu, array('RO8-PostGress', 'PIBIC Bolsas', 'ITE', '/inport/ro8/pibic'));
-		array_push($menu, array('RO8-PostGress', 'Mensagens do Sistema', 'ITE', '/inport/ro8/ic'));
-		array_push($menu, array('RO8-PostGress', 'Instituições', 'ITE', '/inport/ro8/instituicao'));
-		array_push($menu, array('RO8-PostGress', 'Estudantes', 'ITE', '/inport/ro8/estudante'));
-		array_push($menu, array('RO8-PostGress', 'Professor', 'ITE', '/inport/ro8/professor'));
-		array_push($menu, array('RO8-PostGress', 'CsF', 'ITE', '/inport/ro8/csf'));
-		array_push($menu, array('RO8-PostGress', 'CIP - Artigos', 'ITE', '/inport/ro8/cip-artigos'));
-		array_push($menu, array('RO8-PostGress', 'Observatório - Editais', 'ITE', '/inport/ro8/editais'));
-		array_push($menu, array('RO8-PostGress', 'SEMIC - Notas', 'ITE', '/inport/ro8/semic-notas'));
-		array_push($menu, array('RO8-PostGress', 'SEMIC - Resumos', 'ITE', '/inport/ro8/semic-trabalho'));
+		//array_push($menu, array('RO8-PostGress', 'SEMIC IC', 'ITE', '/inport/ro8/semic_ic'));
+		//array_push($menu, array('RO8-PostGress', 'PIBIC Avaliações', 'ITE', '/inport/ro8/pibic_avaliacoes'));
+		//array_push($menu, array('RO8-PostGress', 'PIBIC Bolsas', 'ITE', '/inport/ro8/pibic'));
+		//array_push($menu, array('RO8-PostGress', 'Mensagens do Sistema', 'ITE', '/inport/ro8/ic'));
+		//array_push($menu, array('RO8-PostGress', 'Instituições', 'ITE', '/inport/ro8/instituicao'));
+		//array_push($menu, array('RO8-PostGress', 'Estudantes', 'ITE', '/inport/ro8/estudante'));
+		//array_push($menu, array('RO8-PostGress', 'Professor', 'ITE', '/inport/ro8/professor'));
+		//array_push($menu, array('RO8-PostGress', 'CsF', 'ITE', '/inport/ro8/csf'));
+		//array_push($menu, array('RO8-PostGress', 'CIP - Artigos', 'ITE', '/inport/ro8/cip-artigos'));
+		//array_push($menu, array('RO8-PostGress', 'Observatório - Editais', 'ITE', '/inport/ro8/editais'));
+		//array_push($menu, array('RO8-PostGress', 'SEMIC - Notas', 'ITE', '/inport/ro8/semic-notas'));
+		//array_push($menu, array('RO8-PostGress', 'SEMIC - Resumos', 'ITE', '/inport/ro8/semic-trabalho'));
+		
+		array_push($menu, array('DRH-PUCPR', 'Carga Horario Professor', 'ITE', '/inport/docente/arquivo'));
 
 		array_push($menu, array('CNPq', 'Importar arquivo CNPq', 'ITE', '/inport/lattes/arquivo'));
 

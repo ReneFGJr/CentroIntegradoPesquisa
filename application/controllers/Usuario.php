@@ -18,6 +18,60 @@ class usuario extends CI_Controller {
 		/* Security */
 		$this -> security();
 	}
+	
+	function inport_lattes_acpp($id = 0) {
+		if (isset($_POST['dd1'])) { $dd1 = $_POST['dd1'];
+		} else { $dd1 = '';
+		}
+		$file = '';
+		if (strlen($dd1) > 0) {
+			$temp = $_FILES['arquivo']['tmp_name'];
+			$size = $_FILES['arquivo']['size'];
+			$file = $_FILES['arquivo']['name'];
+		} else {
+			$temp = '';
+		}
+
+		if (strlen($temp) == 0) {
+			$sx = '
+					<center>
+							<form id="upload" action="' . base_url('index.php/inport/lattes/arquivo/') . '" method="post" enctype="multipart/form-data">
+							<input type="file" name="arquivo" id="arquivo" />
+							<input type="submit" name="dd1" value="enviar >>>">
+						</form>
+					</center>					
+					';
+			return ($sx);
+		} else {
+			$sx = 'Arquivo lido com sucesso!';
+			$rHandle = fopen($temp, "r");
+			$sData = '';
+			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Abrindo Arquivo ';
+			while (!feof($rHandle)) {
+				$sData .= fread($rHandle, filesize($temp));
+			}
+			fclose($rHandle);
+			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Tamanho do arquivo lido ' . number_format(strlen($sData) / 1024, 1, ',', '.') . ' kBytes';
+
+			$ln = splitx(chr(13), $sData);
+			$sx .= '<BR>Total de linhas: ' . count($ln);
+			$sx .= '<BR>Indentificação do tipo de obra: ';
+			/* Identicação do tipo de obra */
+			$tpo = $this -> tipo_obra($ln[0], $file);
+			if (strlen($tpo) > 0) {
+				$sx .= '<B>' . $tpo . '</B>';
+				$sx .= $this -> arquivos_salva_quebrado($ln, $tpo);
+				$sx .= '<BR>SALVO!';
+			} else {
+				$sx .= '<font color="red">Tipo de obra não identificada</font>';
+				for ($r = 0; $r < 100; $r++) {
+					print_r($ln[$r]);
+					echo '<HR>';
+				}
+			}
+			return ($sx);
+		}
+	}	
 
 	function integracao_sga($id = 0) {
 		/* Load Models */

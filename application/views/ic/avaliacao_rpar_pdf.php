@@ -37,6 +37,14 @@ $qs[7][3] = 'NÂO APLICÁVEL';
 
 $qs[9][1] = '<font color="green"><b>APROVADO</b></font>';
 $qs[9][2] = '<font color="red"><b>PENDENTE</b></font>';
+
+
+$pp_abe_01 = troca($pp_abe_01,'<','&lt;');
+$pp_abe_02 = troca($pp_abe_02,'<','&lt;');
+$pp_abe_03 = troca($pp_abe_03,'<','&lt;');
+$pp_abe_04 = troca($pp_abe_04,'<','&lt;');
+$pp_abe_05 = troca($pp_abe_05,'<','&lt;');
+$pp_abe_08 = troca($pp_abe_08,'<','&lt;');
 ?>
 <h1>Ficha de avaliação do Relatório Parcial</h1>
 <br>

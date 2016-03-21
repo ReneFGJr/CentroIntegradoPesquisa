@@ -174,14 +174,17 @@ class Ic_pareceres extends CI_model {
 				$this -> geds -> user = $_SESSION['id_us'];
 				$this -> geds -> save();
 				return ($file_local);
-
+				break;
 			case 'RPAR' :
 				/* Background */
+
 				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);
 
 				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
 				$content = utf8_encode($content . $avaliacao);
-
+				//$content = troca($content,'<','&lt;');
+				//$content = troca($content,'>','&gt;');
+				
 				$image_file = 'img/headers/header_model_contrato_ic_150.JPG';
 
 				/* Construção do PDF */
@@ -200,6 +203,7 @@ class Ic_pareceres extends CI_model {
 				//$pdf -> Image($img_file, 0, 0, 297, 210, '', '', '', false, 300, '', false, false, 0);
 				/* Posição de impressão */
 				$pdf -> SetXY(20, 50);
+				
 				$pdf -> writeHTMLCell(0, 0, '', '', $content, 0, 2, 0, true, 'J', true);
 				/* Arquivo de saida */
 				$proto = UpperCaseSql($dados['pp_protocolo']) . '-';
@@ -233,6 +237,7 @@ class Ic_pareceres extends CI_model {
 				$this -> geds -> user = $_SESSION['id_us'];
 				$this -> geds -> save();
 				return ($file_local);
+				break;
 		}
 	}
 

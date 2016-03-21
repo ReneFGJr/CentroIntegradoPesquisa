@@ -625,7 +625,7 @@ class ic extends CI_Controller {
 			$aluno = $this -> usuarios -> le_cracha($dados['ic_cracha_aluno']);
 
 			/* gera PDF */
-			$file_local = $this -> ic_pareceres -> gera_parecer('RPARC', $dados);
+			$file_local = $this -> ic_pareceres -> gera_parecer('RPAR', $dados);
 
 			for ($r = 0; $r < 9999; $r++) {
 				$file1 = $dados['doc_arquivo'];
