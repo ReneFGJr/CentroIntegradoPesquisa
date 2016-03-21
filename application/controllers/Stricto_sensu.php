@@ -56,32 +56,59 @@ class stricto_sensu extends CI_Controller {
 
 		$this -> load -> view('ss/index', $data);
 	}
-	function discentes($pp=0)
-		{
-			$this -> load -> model('stricto_sensus');
-			$this->cab();
-			
-			$tela = $this->stricto_sensus->fluxo_discente_mostra($pp);
-			$data['content'] = $tela;
-			$this->load->view('content',$data);	
-		}
 
-	function orientacao_id($id=0,$chk='')
-		{
-			$this->load->model('stricto_sensus');
-			$this->load->view('header/header',null);
-			$form = new form;
-			$form->id = $id;
-			
-			$cp = $this->stricto_sensus->cp_orientacao();
-			$tela = $form->editar($cp,$this->stricto_sensus->tabela);
-			$data['content'] = $tela;
-			$this->load->view('content',$data);
-			
-			
-		}
+	function discentes($pp = 0) {
+		$this -> load -> model('stricto_sensus');
+		$this -> cab();
 
-	function index($pp=0) {
+		$tela = $this -> stricto_sensus -> fluxo_discente_mostra($pp);
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+	}
+
+	function orientacao_new($id = 0, $chk = '') {
+		$this -> load -> model('usuarios');
+		$this -> load -> model('stricto_sensus');
+		$this -> load -> view('header/header', null);
+		$form = new form;
+		$form -> id = 0;
+
+		$cp = $this -> stricto_sensus -> cp_orientacao_nova($id);
+
+		$tela = $form -> editar($cp, 'ss_docente_orientacao');
+
+		if ($form -> saved > 0) {
+			$this -> load -> view('header/windows_close', null);
+			return('');
+		}
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+	}
+
+	function orientacao_id($id = 0, $chk = '') {
+		$this -> load -> model('stricto_sensus');
+		$this -> load -> view('header/header', null);
+		$form = new form;
+		$form -> id = $id;
+
+		$data = $this -> stricto_sensus -> le_orientacao($id);
+		$programa = $data['od_programa_id'];
+		$this -> load -> view('ss/orientacao_ss', $data);
+
+		$cp = $this -> stricto_sensus -> cp_orientacao($programa);
+		$tela = $form -> editar($cp, 'ss_docente_orientacao');
+
+		if ($form -> saved > 0) {
+			$this -> load -> view('header/windows_close', null);
+			return('');
+		}
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+	}
+
+	function index($pp = 0) {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 		$data = array();
@@ -99,10 +126,10 @@ class stricto_sensu extends CI_Controller {
 
 			/************* MENU */
 			$menu = array();
-			array_push($menu, array('Bonificação e Isenção', 'Relatórios e indicadores de Captações, Isenções, Bonificações por programa', 'BTA', '/stricto_sensu/bonificacao_isencao/'.$id));
+			array_push($menu, array('Bonificação e Isenção', 'Relatórios e indicadores de Captações, Isenções, Bonificações por programa', 'BTA', '/stricto_sensu/bonificacao_isencao/' . $id));
 			//array_push($menu, array('Docentes do Programa', 'Relação dos docentes do programa', 'BTA', 'stricto_sensu/doscentes/'.$id));
 			//array_push($menu, array('Produção Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
-			array_push($menu, array('Fluxo Discente', 'Indicadores da Produção Científica dos Programas', 'BTA', '/stricto_sensu/discentes/'.$id));
+			array_push($menu, array('Fluxo Discente', 'Indicadores da Produção Científica dos Programas', 'BTA', '/stricto_sensu/discentes/' . $id));
 			//array_push($menu, array('Iniciação Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
 			$data['menu'] = $menu;
 
@@ -119,25 +146,22 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function bonificacao_isencao($pg=0,$xls='')
-		{
-			$this->load->model("bonificacoes");
-			$data = array();
-			if (strlen($xls) > 0)
-				{
-					xls('segurado-' . date("Y-m") . '.xls');
-				} else {
-					$this->cab();
-					$data['title'] = 'Bonificações por Professor';
-					$data['submenu'] = '<a href="'.base_url('index.php/stricto_sensu/bonificacao_isencao/'.$pg.'/xls').'" class="link lt0">exportar para excel</a>';		
-				}
-			
-			
-			$tela = $this->bonificacoes->bonificacao_indicadores($pg);
-			$data['content'] = $tela;
-			$this->load->view('content',$data);
-			
+	function bonificacao_isencao($pg = 0, $xls = '') {
+		$this -> load -> model("bonificacoes");
+		$data = array();
+		if (strlen($xls) > 0) {
+			xls('segurado-' . date("Y-m") . '.xls');
+		} else {
+			$this -> cab();
+			$data['title'] = 'Bonificações por Professor';
+			$data['submenu'] = '<a href="' . base_url('index.php/stricto_sensu/bonificacao_isencao/' . $pg . '/xls') . '" class="link lt0">exportar para excel</a>';
 		}
+
+		$tela = $this -> bonificacoes -> bonificacao_indicadores($pg);
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+	}
 
 	function programas() {
 		$this -> cab();

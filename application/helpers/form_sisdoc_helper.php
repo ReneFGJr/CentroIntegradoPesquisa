@@ -1561,7 +1561,7 @@ if (!function_exists('form_edit')) {
 				}
 
 				/* Salvar */
-				if (isset($vlr)) {
+				if ((isset($vlr)) and (strlen($cp[$r][1]) > 0)) {
 
 					if ($sv > 0) { $sq1 .= ', ';
 						$sq2 .= ', ';
