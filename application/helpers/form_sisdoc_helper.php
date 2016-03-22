@@ -313,7 +313,10 @@ function enviaremail($para, $assunto, $texto, $de, $anexos = array()) {
 				setTimeout(function() {	$(\'#email_enviado\').fadeOut(\'fast\');}, 3000);
 				</script>
 				';
-		echo $sx;
+		IF (perfil("#ADM") == 1)
+			{
+				echo $sx;
+			}
 
 		$CI -> email -> send();
 		return ('ok');

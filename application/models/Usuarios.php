@@ -845,6 +845,204 @@ class usuarios extends CI_model {
 		$this -> load -> view('content', $data);
 	}
 
+	function inport_arquivo($id = 0) {
+		if (isset($_POST['dd1'])) { $dd1 = $_POST['dd1'];
+		} else { $dd1 = '';
+		}
+		$file = '';
+		if (strlen($dd1) > 0) {
+			$temp = $_FILES['arquivo']['tmp_name'];
+			$size = $_FILES['arquivo']['size'];
+			$file = $_FILES['arquivo']['name'];
+		} else {
+			$temp = '';
+		}
+
+		if (strlen($temp) == 0) {
+			$sx = '
+					<center>
+							<form id="upload" action="' . base_url('index.php/inport/docente/arquivo/') . '" method="post" enctype="multipart/form-data">
+							<input type="file" name="arquivo" id="arquivo" />
+							<input type="submit" name="dd1" value="enviar >>>">
+						</form>
+					</center>					
+					';
+			return ($sx);
+		} else {
+			$sx = 'Arquivo lido com sucesso!';
+			$rHandle = fopen($temp, "r");
+			$sData = '';
+			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Abrindo Arquivo ';
+			while (!feof($rHandle)) {
+				$sData .= fread($rHandle, filesize($temp));
+			}
+			fclose($rHandle);
+			$sx .= '<BR>' . date("d/m/Y H:i::s") . ' Tamanho do arquivo lido ' . number_format(strlen($sData) / 1024, 1, ',', '.') . ' kBytes';
+
+			$ln = splitx(chr(13), $sData);
+			$sx .= '<BR>Total de linhas: ' . count($ln);
+			$sx .= '<BR>Indentificação do tipo de obra: ';
+			/* Identicação do tipo de obra */
+			$tpo = 'DRH';
+			if (strlen($tpo) > 0) {
+				$sx .= '<B>' . $tpo . '</B>';
+				$this -> salvar_arquivo_importado($ln);
+
+				$sx .= '<BR>SALVO!';
+			} else {
+				$sx .= '<font color="red">Tipo de obra não identificada</font>';
+				for ($r = 0; $r < 100; $r++) {
+					print_r($ln[$r]);
+					echo '<HR>';
+				}
+			}
+			return ($sx);
+		}
+
+	}
+
+	function salvar_arquivo_importado($ln) {
+		$hd = array();
+		$h = splitx(';', $ln[0]);
+		/* Nível, Situação do Empregado */
+		for ($r = 0; $r < count($h); $r++) {
+			$t = $h[$r];
+			switch ($t) {
+				case 'Curso Vínculo' :
+					$fld[$r] = 'curso';
+					break;
+				case 'Número Crachá' :
+					$fld[$r] = 'cracha';
+					break;
+				case 'Sexo' :
+					$fld[$r] = 'sexo';
+					break;
+				case 'XXXXXXXXXXXXXX' :
+					$fld[$r] = 'dt_nascimento';
+					break;
+				case 'XXXXXXXXXXXXXX' :
+					$fld[$r] = 'pais_nascimento';
+					break;
+				case 'XXXXXXXXXXXXXX' :
+					$fld[$r] = 'estado_nascimento';
+					break;
+				case 'XXXXXXXXXXXXXX' :
+					$fld[$r] = 'nacionalidade';
+					break;
+				case 'Nível' :
+					$fld[$r] = 'nivel';
+					break;
+				case 'XXXXXXXXXXXXXXXX' :
+					$fld[$r] = 'escolaridade';
+					break;
+				case 'CPF' :
+					$fld[$r] = 'cpf';
+					break;
+				case 'XXXXXXXXXXXXXXXXX' :
+					$fld[$r] = 'tipo_endereco';
+					break;
+				case 'XXXXXXXXXXXXXX' :
+					$fld[$r] = 'logradouro';
+					break;
+				case 'XXXXXXXXXXXXXX' :
+					$fld[$r] = 'numero';
+					break;
+				case 'XXXXXXXXXXXXXXXX' :
+					$fld[$r] = 'complemento';
+					break;
+				case 'XXXXXXXXXXXXXXXXX' :
+					$fld[$r] = 'bairro';
+					break;
+				case 'XXXXXXXXXXXXXXXXXX' :
+					$fld[$r] = 'pais';
+					break;
+				case 'XXXXXXXXXXXXXXXXXX' :
+					$fld[$r] = 'estado';
+					break;
+				case 'XXXXXXXXXXXXXXXXXX' :
+					$fld[$r] = 'municipio';
+					break;
+				case 'XXXXXXXXXXXXXXXXXX' :
+					$fld[$r] = 'email';
+					break;
+				case 'Campus Vínculo' :
+					$fld[$r] = 'campus';
+					break;
+				case 'XXXXX' :
+					$fld[$r] = 'centro_academico';
+					break;
+				case 'TOTAL' :
+					$fld[$r] = 'horas_semanais';
+					break;
+				case 'Horas Letivas' :
+					$fld[$r] = 'horas_letivas';
+					break;
+				case 'Horas de Permanência' :
+					$fld[$r] = 'horas_permanencia';
+					break;
+				case 'Complementação Pedagógica' :
+					$fld[$r] = 'horas_pedagogicas';
+					break;
+				case 'Horas Direção' :
+					$fld[$r] = 'horas_direcao';
+					break;
+				case 'Horas Administrativas' :
+					$fld[$r] = 'horas_administrativas';
+					break;
+				case 'Horas Mestrado/Doutorado' :
+					$fld[$r] = 'horas_ss';
+					break;
+				case 'Licença' :
+					$fld[$r] = 'horas_licencao';
+					break;
+
+				case 'Função - Nome' :
+					$fld[$r] = 'funcao';
+					break;
+				case 'Títulação' :
+					$fld[$r] = 'titulacao';
+					break;
+				case 'Curso Vínculo' :
+					$fld[$r] = 'curso_vinculo';
+					break;
+				case 'Regime de trabalho' :
+					$fld[$r] = 'regime_trabalho';
+					break;
+				case 'Data da Admissão' :
+					$fld[$r] = 'dt_inicio_vinculo';
+					break;
+				case 'Escola Vínculo' :
+					$fld[$r] = 'escola';
+					break;
+				case 'XX' :
+					$fld[$r] = 'modulacao';
+					break;
+				case 'Matrícula ADP' :
+					$fld[$r] = '';
+					break;
+			}
+		}
+		$data = date("Y-m-d");
+
+		for ($r = 1; $r < count($ln); $r++) { {
+				$s1 = '';
+				$s2 = '';
+				
+				$dt = $ln[$r];
+				
+				$sh = splitx(';',$dt);
+				if (strlen($flr[$r]) > 0) {
+					$s1 .= "'" . $fld[$r] . "', ";
+					$s2 .= "'" . $ln[$r] . "', ";
+				}
+			}
+			$sql = "insert into us_importar_drh
+					($s1,update) values ($s2,'$data') 
+			";
+		}
+
+	}
+
 	function inport_professores() {
 		$tabela = 'us_importar_drh_nov2015';
 		$sql = "select s1.cpf, us.us_cpf, s1.nome from " . $tabela . " as s1
@@ -953,23 +1151,23 @@ class usuarios extends CI_model {
 		$sx = '';
 		switch($tipo) {
 			case '1' :
-			/* Não Definido */
+				/* Não Definido */
 				$sx = $this -> load -> view('perfil/docente.php', $data, true);
 				break;
 			case '2' :
-			/* Docente */
+				/* Docente */
 				$sx = $this -> load -> view('perfil/docente.php', $data, true);
 				break;
 			case '3' :
-			/* Discente */
+				/* Discente */
 				$sx = $this -> load -> view('perfil/discente.php', $data, true);
 				break;
 			case '4' :
-			/* Colaborador */
+				/* Colaborador */
 				$sx = $this -> load -> view('perfil/docente.php', $data, true);
 				break;
 			case '5' :
-			/* Externo */
+				/* Externo */
 				$sx = $this -> load -> view('perfil/docente.php', $data, true);
 				break;
 		}
@@ -1255,9 +1453,9 @@ class usuarios extends CI_model {
 			}
 			/*perfil editar blacklist*/
 			if (perfil('#SPI#ADM') == 1) {
-				$line['editar_blacklist'] = '<a href="' . base_url('index.php/usuario/edit_blackList/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">'.msg("editar_impedimento").'</a>';
+				$line['editar_blacklist'] = '<a href="' . base_url('index.php/usuario/edit_blackList/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">' . msg("editar_impedimento") . '</a>';
 				//$line['editar_blacklist'] = '<a href="' . base_url('index.php/usuario/edit_blackList/' . $line['id_us'] . '/' . checkpost_link($line['id_us'])) . '" class="lt0 link">impedimento</a>';
-				
+
 				if (($line['id_bl'] > 0) and ($line['bl_ativo'] == 1)) {
 					$line['img_blacklist'] = '<div style="border: 5px solid #000000"></div>';
 				}

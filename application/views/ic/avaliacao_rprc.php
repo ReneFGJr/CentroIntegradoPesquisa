@@ -126,7 +126,7 @@ if (strlen($dd9) > 0)
 		Não</font>
 		<br>
 		<br>
-		Em caso negativo, indique o que não foi corrigido:
+		Comentários sobre sua avaliação deste item (obrigatório):
 		<br>
 		<textarea name="dd21" cols=80 rows=4 style="width: 100%"><?php echo $dd21;?></textarea>		<!----------------- item 2 ---------------------------->
 		<br>

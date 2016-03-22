@@ -173,7 +173,7 @@ class inport extends CI_Controller {
 
 	function docente($id = '', $off = '') {
 		/* Load Models */
-		$this -> load -> model('phplattess');
+		$this -> load -> model('usuarios');
 
 		$this -> cab();
 		$data = array();
@@ -194,7 +194,7 @@ class inport extends CI_Controller {
 				$data['content'] = $sx;
 				$this -> load -> view('content', $data);
 
-				$data['content'] = $this -> phplattess -> inport_lattes_acpp($off);
+				$data['content'] = $this -> usuarios -> inport_arquivo($off);
 				break;
 			case 'processar' :
 				/* Artigos do professor */

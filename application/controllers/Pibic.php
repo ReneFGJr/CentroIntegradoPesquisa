@@ -424,8 +424,8 @@ class pibic extends CI_Controller {
 									$id_own_pibic = $this -> id_own_pibic;
 									$texto = $mss['nw_texto'];
 									$texto = troca($texto,'$PROTOCOLO',$proto);
-									$texto = troca($text,'$plano_titulo',$data['ic_projeto_professor_titulo']);
-									$texto = troca($text,'$LINK','http://cip.pucpr.br/');
+									$texto = troca($texto,'$plano_titulo',$data['ic_projeto_professor_titulo']);
+									$texto = troca($texto,'$LINK','http://cip.pucpr.br/');
 									enviaremail_usuario($avaliador, $mss['nw_titulo'] . ' - [' . $proto . '] - ' . trim($data['pf_nome']), $texto, $id_own_pibic);
 								}
 								/* Indicar avaliacao */
