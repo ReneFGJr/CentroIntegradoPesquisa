@@ -155,7 +155,7 @@ class usuarios extends CI_model {
 		}
 
 		/* Aba - Carga horaria */
-		if ($carga_horaria_ativo == 31) {
+		if ($carga_horaria_ativo == 1) {
 			$abas[9]['title'] = 'Carga Horária';
 			$abas[9]['content'] = $this -> usuarios -> mostra_carga_horaria($cpf);
 		}
@@ -904,15 +904,31 @@ class usuarios extends CI_model {
 	function salvar_arquivo_importado($ln) {
 		$hd = array();
 		$h = splitx(';', $ln[0]);
+		/* deleta registros */
+		$sql = "delete from us_importar_drh where 1=1 ";
+		$rlt = $this -> db -> query($sql);
+
 		/* Nível, Situação do Empregado */
 		for ($r = 0; $r < count($h); $r++) {
-			$t = $h[$r];
+			$t = trim($h[$r]);
 			switch ($t) {
+				case 'Matrícula ADP' :
+					$fld[$r] = 'matricula_adp';
+					break;
+				case 'Matrícula  ADP' :
+					$fld[$r] = 'matricula_adp';
+					break;
 				case 'Curso Vínculo' :
 					$fld[$r] = 'curso';
 					break;
+				case 'Nome' :
+					$fld[$r] = 'nome_professor';
+					break;
 				case 'Número Crachá' :
 					$fld[$r] = 'cracha';
+					break;
+				case 'Situação do Empregado' :
+					$fld[$r] = 'situacao';
 					break;
 				case 'Sexo' :
 					$fld[$r] = 'sexo';
@@ -980,6 +996,9 @@ class usuarios extends CI_model {
 				case 'Horas de Permanência' :
 					$fld[$r] = 'horas_permanencia';
 					break;
+				case 'Horas Permanencia Discip Especiais' :
+					$fld[$r] = 'horas_permanencia_esp';
+					break;
 				case 'Complementação Pedagógica' :
 					$fld[$r] = 'horas_pedagogicas';
 					break;
@@ -995,7 +1014,6 @@ class usuarios extends CI_model {
 				case 'Licença' :
 					$fld[$r] = 'horas_licencao';
 					break;
-
 				case 'Função - Nome' :
 					$fld[$r] = 'funcao';
 					break;
@@ -1017,9 +1035,11 @@ class usuarios extends CI_model {
 				case 'XX' :
 					$fld[$r] = 'modulacao';
 					break;
-				case 'Matrícula ADP' :
-					$fld[$r] = '';
+				case 'CR' :
+					$fld[$r] = 'CR';
 					break;
+				default :
+					echo 'Not found:' . $t . '<br>';
 			}
 		}
 		$data = date("Y-m-d");
@@ -1027,35 +1047,120 @@ class usuarios extends CI_model {
 		for ($r = 1; $r < count($ln); $r++) { {
 				$s1 = '';
 				$s2 = '';
-				
+
 				$dt = $ln[$r];
-				
-				$sh = splitx(';',$dt);
-				if (strlen($flr[$r]) > 0) {
-					$s1 .= "'" . $fld[$r] . "', ";
-					$s2 .= "'" . $ln[$r] . "', ";
+
+				$sh = splitx(';', $dt);
+
+				for ($y = 0; $y < count($sh); $y++) {
+					if (isset($fld[$y])) {
+
+						switch ($fld[$y]) {
+							case 'cpf' :
+								$sh[$y] = strzero($sh[$y], 11);
+								break;
+							case 'CR' :
+								$sh[$y] = strzero($sh[$y], 6);
+								break;
+							case 'cracha' :
+								$cracha = trim($sh[$y]);
+								$cracha = $this -> limpa_cracha($cracha);
+								$sh[$y] = $cracha;
+								break;
+						}
+
+						$s1 .= "" . $fld[$y] . ", ";
+						$s2 .= "'" . $sh[$y] . "', ";
+					}
 				}
 			}
 			$sql = "insert into us_importar_drh
-					($s1,update) values ($s2,'$data') 
+					($s1 lastupdate) values ($s2 '$data') 
 			";
+			$rrr = $this -> db -> query($sql);
 		}
 
 	}
 
 	function inport_professores() {
-		$tabela = 'us_importar_drh_nov2015';
-		$sql = "select s1.cpf, us.us_cpf, s1.nome from " . $tabela . " as s1
-						left join  us_usuario as us on s1.cpf = us.us_cpf 
-					where us.us_cpf is null";
+		$tabela = 'us_importar_drh';
+
+		$sql = "update us_usuario set usuario_tipo_ust_id = 3
+						where usuario_tipo_ust_id = 2";
+		$this -> db -> query($sql);
+
+		$sql = "select * from " . $tabela . " ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-
+		$hora = date("H:i:s");
+		$sx = '';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			print_r($line);
-			exit ;
+			$cracha = $line['cracha'];
+			$idrh = $line['matricula_adp'];
+			$data = $this -> usuarios -> le_cracha($cracha);
+
+			//print_r($line);
+			//echo '<hr>';
+			//($data);
+
+			if (count($data) > 0) {
+				$dt = $line['lastupdate'];
+				$id_us = $data['id_us'];
+				$sql = "update us_usuario set 
+								us_dt_updat_drh = '$dt',
+								us_dt_import_drh = '$dt',
+								usuario_tipo_ust_id = 2, 
+								us_prof_drh = 1,
+								us_lastupdate = '$dt',
+								us_lastupdate_hora = '$hora',
+								us_codigo_rh = $idrh
+							where id_us = $id_us ";
+				$this -> db -> query($sql);
+				$sx .= '. ';
+			} else {
+				//echo '**************** NOVO *******************';
+				//print_r($line);
+				$nome = nbr_autor($line['nome_professor'],7);
+				$cpf = $line['cpf'];
+				$cracha = $line['cracha'];
+				$nome_lattes = nbr_autor($line['nome_professor'],0);
+				$curso = $line['curso'];
+				$regime = $line['regime_trabalho'];
+				$sexo = substr($line['sexo'],0,1);
+				$tipo = '2';
+				$idrh = $line['matricula_adp'];
+				$ti = $line['titulacao'];
+				$sql = "select * from us_titulacao where ust_titulacao = '$ti' ";
+				$qqq = $this->db->query($sql);
+				$qqq = $qqq->result_array();
+				$titulacao = 0;
+				if (count($qqq) > 0)
+					{
+						$qqq = $qqq[0];
+						$titulacao = $qqq['ust_id'];
+					}
+				
+				$sql = "insert into us_usuario 
+						(
+						us_nome, us_cpf, us_cracha,
+						us_codigo_rh, us_nome_lattes,
+						us_curso_vinculo, us_ativo, us_regime,
+						us_genero, usuario_tipo_ust_id, us_prof_drh,
+						ies_instituicao_ies_id, usuario_titulacao_ust_id
+						) values (
+						'$nome','$cpf','$cracha',
+						'$idrh','$nome_lattes',
+						'$curso','1','$regime',
+						'$sexo','2','1',
+						1,$titulacao
+						)";
+				$qqq = $this->db->query($sql);
+				$sx .= 'N ';
+			}
+
 		}
+		return ($sx);
 
 	}
 
@@ -1197,32 +1302,56 @@ class usuarios extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		$sx = '<table width="100%" class="lt1 border1">';
-		$sx .= '<tr><th>Curso</th>
-						<th>Horas</th>
-						<th>Integral</th>
-						<th>Tipo Horas</th>
-						<th>Função</th>
-						<th>Vinculo</th>
+		$sx .= '<tr><th width="15%">Curso</th>
+						<th width="6%">Horas Semanais</th>
+						<th width="6%">Letivas</th>
+						<th width="6%">Permanência</th>
+						<th width="6%">Pedagógica</th>
+						<th width="6%">Administrativas</th>
+						<th width="6%">Direção / Coord.</th>
+						<th width="6%">Permanencia Esp.</th>
+						<th width="6%">Compl. Pedag.</th>
+						<th width="6%">Horas SS</th>
+						<th width="6%">Tipo Horas</th>
+						<th width="30%">Função</th>
 					</tr>
 					';
 		$tot = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			
 			$tot = $tot + $line['horas_semanais'];
 			$sx .= '<tr>';
-			$sx .= '<td>';
+			$sx .= '<td class="border1 lt1">';
 			$sx .= $line['curso'];
 			$sx .= '</td>';
-			$sx .= '<td align="center">';
-			$sx .= $line['horas_semanais'];
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= '<b>'.$line['horas_semanais'].'h</b>';
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= $line['horas_letivas'].'h';
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= $line['horas_permanencia'].'h';
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= $line['complementacao_pedagogica'].'h';
+			
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= $line['horas_administrativas'].'h';
+			
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= $line['horas_direcao'].'h';
+			
+
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= $line['horas_licencao'].'h';
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= $line['horas_permanencia_esp'].'h';
+			$sx .= '<td align="center" class="border1 lt3">';
+			$sx .= '<b>'.$line['horas_ss'].'h</b>';															
 			$sx .= '</td>';
-			$sx .= '<td align="center">';
-			$sx .= $line['tempo_integral'];
+			$sx .= '<td align="center" class="border1 lt1">';
+			$sx .= $line['regime_trabalho'];
 			$sx .= '</td>';
-			$sx .= '<td align="center">';
-			$sx .= $line['tipo_hora'];
-			$sx .= '</td>';
-			$sx .= '<td>';
+			$sx .= '<td class="border1 lt1">';
 			$sx .= $line['funcao'];
 			$sx .= '</td>';
 
@@ -1232,7 +1361,7 @@ class usuarios extends CI_model {
 
 			$sx .= '</tr>';
 		}
-		$sx .= '<tr><td colspan="5">Total de horas <b>' . $tot . '</b></td></tr>';
+		$sx .= '<tr><td colspan="5">Total de horas <b>' . $tot . ' horas</b></td></tr>';
 		$sx .= '</table>';
 		return ($sx);
 	}
@@ -1853,6 +1982,11 @@ class usuarios extends CI_model {
 			} else {
 				$up = '';
 			}
+			if ($DadosUsuario['tipo'] != '') {
+				$up = ", us_tipo = '$tipo' ";
+			} else {
+				$up = '';
+			}			
 
 			$sql = "update " . $this -> tabela . " set
 						us_curso_vinculo = '$curso',

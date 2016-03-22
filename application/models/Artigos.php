@@ -265,7 +265,7 @@ class artigos extends CI_Model {
 					$art[2] = $art[2] + $tot;
 					break;
 				default :
-					echo $sta . '...';
+					echo $sta . '......';
 					break;
 			}
 		}

@@ -54,7 +54,7 @@ foreach ($abas as $key => $value) {
 	$js .= '		$($div).addClass("aba_active"); '.cr();
 
 	$js .= '		$pag = '.$r.'; '.cr();
-	for ($y = 0; $y < count($abas); $y++) {
+	for ($y = 0; $y < 10; $y++) {
 		if ($y != $r) {
 			$js .= '		$("#abav' . $y . '").hide(); ' . cr();
 		} else {

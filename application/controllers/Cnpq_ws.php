@@ -63,18 +63,44 @@ class cnpq_ws extends CI_Controller {
 		
 	}
 
-	function index($view = '') {
+	function index()
+		{
+			$this->cab();
+			$menu = array();
+			$sx = '<a href="'.base_url('index.php/cnpq_ws/get_xml').'">Get XML</a>';
+			$sx .= '<br>';
+			$sx .= '<a href="'.base_url('index.php/cnpq_ws/get_update').'">Get update</a>';
+			$data['content'] = $sx;
+			$this->load->view('content',$data);
+		}
+	function get_xml($id = '5900345665779424') {
 		/* Load Models */
 		$this -> load -> model('webservice/ws_cnpq');
 		
 		$this -> cab();
 		$data = array();
 		
-		$this->ws_cnpq->getCurriculoCompactado('9568021117744368');
+		$data['content'] = 'Atualizado em: '.$this->ws_cnpq->getCurriculoCompactado($id);
+		$this->load->view('content',$data);	
 			
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}	
+
+	function get_update($id = '9568021117744368') {
+		/* Load Models */
+		$this -> load -> model('webservice/ws_cnpq');
+		
+		$this -> cab();
+		$data = array();
+		
+		$data['content'] = 'Atualizado em: '.$this->ws_cnpq->getDataAtualizacaoCV($id);
+		$this->load->view('content',$data);				
+		
+			
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 
 }
 ?>

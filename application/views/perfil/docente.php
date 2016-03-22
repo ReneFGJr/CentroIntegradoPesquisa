@@ -89,14 +89,14 @@ if (!isset($area_avaliacao_nome)) { $area_avaliacao_nome = 'não definida';
 				echo '<li><strong>Bolsa produtividade:</strong> ' . $bpn_bolsa_descricao . '</li>';
 			?>
 			<li>
-				<strong>Carga horária:</strong><?php echo $ush_total;?>
+				<strong>Carga horária:</strong> <?php echo $ush_total;?>
 				horas
 			</li>
 			<li>
-				<strong>Dados Atualizados:</strong><?php echo stodbr($us_dt_update_cs);?>
+				<strong>Dados Atualizados:</strong> <?php echo stodbr($us_dt_updat_drh);?>
 			</li>
 			<li>
-				<strong>Área de atuação:</strong><?php echo $area_avaliacao_nome;?>
+				<strong>Área de atuação:</strong> <?php echo $area_avaliacao_nome;?>
 			</li>
 			<li>
 				<strong><?php echo $editar;?>

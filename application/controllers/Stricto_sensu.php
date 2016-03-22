@@ -221,6 +221,44 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function iniciacao_cientifica_doutorandos($id = 0) {
+		$this -> load -> model('ics');			
+		$this -> load -> model('stricto_sensus');
+		$this->cab();
+		
+		$prfs = $this->stricto_sensus->alunos_doutorandos($id);
+		$wh = '';
+		for ($r=0;$r < count($prfs);$r++)
+			{
+				if (strlen($wh) > 0) { $wh .= ' OR '; }
+				$wh .= '(prof_id = '.$prfs[$r].') ';
+			}
+		if (count($prfs) > 0)
+			{
+				$wh = '('.$wh.')';		
+			} else {
+				$wh = '(2=1)';
+			}
+		
+		$sql = $this->ics->table_view($wh,'0','99999999','ic_data desc, pf_nome');
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		
+		//$rs = $this->ics->mostra_resumo_orientadores($rlt);
+		
+		$sx = '<table width="100%" class="lt0">';
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				$line['page'] = 'ic';
+				$sx .= $this->load->view('ic/plano-row',$line,true);
+			}
+		$sx .= '</table>';
+		$data['content'] = $sx;
+		$this->load->view('content',$data);
+
+	}
+
 	function bonificacao_isencao($pg = 0, $xls = '') {
 		$this -> load -> model("bonificacoes");
 		$data = array();
