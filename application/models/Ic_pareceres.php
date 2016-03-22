@@ -68,56 +68,155 @@ class Ic_pareceres extends CI_model {
 			return (0);
 		}
 	}
-	
-	function resumo_parecer()
-		{
-			$sql = "select count(*) as total, pp_tipo, pp_status from ".$this->tabela." 
+
+
+	function resumo_parecer() {
+		$sql = "select count(*) as total, pp_tipo, pp_status from " . $this -> tabela . " 
 						group by pp_tipo, pp_status 
 						order by pp_tipo, pp_status";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
 
-			$rs = array();
-			$rs['RPAR'] = array();
-			$rs['RPRC'] = array();
-			
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$tipo = $line['pp_tipo'];
-					$sta = $line['pp_status'];
-					$rs[$tipo][$sta] = $line['total'];
-				}
-			$sx = '<table width="700">';
-			$sx .= '<tr class="lt1"><th>Tipo</th><th>Abertos</th><th>Avaliados</th><th>Declinados</th></tr>';
-			foreach ($rs as $key => $value) {
-				$tp = array('A','B','D');
-				$sx .= '<tr>';
-				$sx .= '<td>'.msg('ic_tipo_'.$key).'</td>';
-				for ($r=0;$r < count($tp);$r++)
-					{
-						$tt = $tp[$r];
-						if (isset($rs[$key][$tt]))
-						{
-							$vr = $rs[$key][$tt];	
-						} else {
-							$vr = '-';
-						}
-						
-						$sx .= '<td align="center" class="border1" width="20%">'.$vr.'</td>';
-					}			
-			}
-			$sx .= '</table>';
-			return($sx);
+		$rs = array();
+		$rs['RPAR'] = array();
+		$rs['RPRC'] = array();
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tipo = $line['pp_tipo'];
+			$sta = $line['pp_status'];
+			$rs[$tipo][$sta] = $line['total'];
 		}
+		
+		$sx = '<table width="700">';
+		$sx .= '<tr class="lt1"><th>Tipo</th><th>Abertos</th><th>Avaliados</th><th>Declinados</th></tr>';
+		
+		foreach ($rs as $key => $value) {
+			$tp = array('A', 'B', 'D');
+			$sx .= '<tr>';
+			$sx .= '<td>' . msg('ic_tipo_' . $key) . '</td>';
+			
+			for ($r = 0; $r < count($tp); $r++) {
+					
+				$tt = $tp[$r];
+				
+				$link0 = '';
+				$link1 = '';
+				$link2 = '';
+				
+				$vr = '';
+				
+				if (isset($rs[$key][$tt])) {
+					$link0 = '<a href="' . base_url('index.php/ic/avaliacoes_situacao/'.$key.'/'.$tt) . '" class="link lt6">';	
+					$vr = $link0.$rs[$key][$tt].'</a>';
+
+				} else {
+					$vr = '-';
+				}
+
+				
+				$sx .= '<td align="center" class="border1" width="20%">' . $vr . '</td>';
+			}
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function resumo_parecer_mostrar($tipo = '', $status='') {
+		$sql = "select * 
+						from pibic_parecer_2016
+						left join us_usuario on pp_avaliador_id = id_us
+						where pp_status = '$status'
+						and pp_tipo = '$tipo'
+						order by us_nome
+											";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		for ($r = 0; $r < count($rlt); $r++) {
+		$line = $rlt[$r];
+		$sta = trim($line['pp_status']);
+		
+		$sx = '<table width="100%" class="tabela00">';
+
+			switch($sta) {
+				case 'A' :
+					$sx .= '<tr><td class="lt6" colspan=4> Avaliações em aberto </tr>';
+					break;
+				case 'B' :
+					$sx .= '<tr><td class="lt6" colspan=4> Avaliações finalizadas </tr>';
+					break;
+				case 'D' :
+					$sx .= '<tr><td class="lt6" colspan=4> Avaliações declinadas </tr>';
+					break;	
+			}
+		
+		}
+		//$sx .= '<tr><td class="lt6" colspan=4> Avaliadores com Avaliações em aberto </tr>';
+	
+		$sx .= '<tr>
+								<th width="2%">#</th>
+								<th width="8%">Protocolo</th>
+								<th width="10%">acao</th>
+								<th width="80%">Avaliador</th>
+						</tr>';
+						
+		$tot = 0;
+		
+			for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			//indice
+			
+			$acao = '-';
+			$sta = trim($line['pp_status']);
+			
+			switch($sta) {
+				case 'A' :
+					$url = base_url('index.php/ic/indicacao_declinar/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp']));
+					$click = ' onclick="newwin2(\'' . $url . '\',300,100);" ';
+					$acao = '<font color="#808000">declinar<font>';
+					$acao = '<span class="link" style="cursor: pointer;" ' . $click . '>' . $acao . '</span>';
+					break;
+				case 'B' :
+					$acao = '<font color="#308030">Avaliado<font>';
+					break;
+				case 'D' :
+					$acao = '<font color="#A0001F">Declinou<font>';
+					break;	
+			}
+
+			$sx .= '<tr>';
+			$sx .= '<td class="lt2" align="left">' . ($r + 1) . '.</td>';
+			//protocolo
+			$sx .= '<td class="lt2" align="center">';
+			$link = link_perfil($line['pp_protocolo'], $line['id_pp']);
+			$sx .= $link . '</a>';
+			$sx .= '</td>';
+			
+			$sx .= '<td class="lt2" align="center">' . $acao . '</td>';
+			
+			//nome avaliador
+			$sx .= '<td class="lt2" align="rigth">';
+			$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
+			$sx .= '</td>';
+
+		}
+		
+		$sx .= '<tr><td colspan=10>Total de ' . $tot . ' registros</td></tr>';	
+		$sx .= '</table>';
+		return ($sx);
+
+	}
 
 	function gera_parecer($tipo, $dados) {
 		$this -> load -> model("geds");
 		$this -> geds -> tabela = 'ic_ged_documento';
-		
+
 		switch($tipo) {
 			case 'RPRC' :
-				/* Background */
+			/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rprc_pdf', $dados, true);
 
 				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
@@ -147,7 +246,7 @@ class Ic_pareceres extends CI_model {
 				//$nome_asc = troca($nome_asc,' ','_');
 				$nome_asc = substr(md5(date("YmdHis")), 4, 5);
 				$file = $proto . 'avaliacao-rpc-' . $nome_asc . '.pdf';
-				
+
 				$path = $_SERVER['DOCUMENT_ROOT'];
 				$this -> geds -> dir('_document');
 				$this -> geds -> dir('_document/' . date("Y"));
@@ -176,15 +275,14 @@ class Ic_pareceres extends CI_model {
 				return ($file_local);
 				break;
 			case 'RPAR' :
-				/* Background */
-
+			/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);
 
 				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
 				$content = utf8_encode($content . $avaliacao);
 				//$content = troca($content,'<','&lt;');
 				//$content = troca($content,'>','&gt;');
-				
+
 				$image_file = 'img/headers/header_model_contrato_ic_150.JPG';
 
 				/* Construção do PDF */
@@ -203,7 +301,7 @@ class Ic_pareceres extends CI_model {
 				//$pdf -> Image($img_file, 0, 0, 297, 210, '', '', '', false, 300, '', false, false, 0);
 				/* Posição de impressão */
 				$pdf -> SetXY(20, 50);
-				
+
 				$pdf -> writeHTMLCell(0, 0, '', '', $content, 0, 2, 0, true, 'J', true);
 				/* Arquivo de saida */
 				$proto = UpperCaseSql($dados['pp_protocolo']) . '-';
@@ -263,7 +361,7 @@ class Ic_pareceres extends CI_model {
 						where ic_plano_aluno_codigo = '$proto' ";
 				}
 				$rlt = $this -> db -> query($sql);
-				return (1);				
+				return (1);
 				break;
 		}
 	}

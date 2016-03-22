@@ -359,6 +359,8 @@ $lang['aceitar_avaliacao'] = 'ACEITAR';
 $lang['recusar_avaliacao'] = 'RECUSAR';
 $lang['recusar_avaliacao_confirma'] = 'GRAVAR RECUSA >>';
 
+$lang['lb_ic_avaliaçãoes_pendentes'] = 'Avaliações';
+
 /* Perfil */
 $lang['captacao_academica'] = 'Total de captações acadêmicas';
 $lang['captacao_institucional'] =  'Total de captação institucionais';

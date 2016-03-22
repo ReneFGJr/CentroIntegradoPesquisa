@@ -1519,6 +1519,7 @@ class ic extends CI_Controller {
 		$fld = 'ic_rp_data';
 
 		$data['resumo'] = $this -> protocolos_ic -> resumo();
+		
 		$data['resumo'] .= $this -> ics -> resumo();
 
 		/* Search */
@@ -2358,16 +2359,31 @@ class ic extends CI_Controller {
 
 	}
 	
-	function avaliacoes_situacao()
+	function avaliacoes_situacao($tipo='', $status='')
 		{
 			$this->load->model('Ic_pareceres');
 			$this->cab();
 			
+			$data = array();
+			$data['title'] = msg('lb_ic_avaliaçãoes_pendentes');
+			
 			$this->ic_pareceres = 'pibic_parecer_'.date("Y");
+			
 			$tela = $this->Ic_pareceres->resumo_parecer();
 			
+			if(strlen($tipo) > 0){
+				
+				$tela .= $this->Ic_pareceres->resumo_parecer_mostrar($tipo, $status);
+			
+			}else{
+				
+			}
+			
 			$data['content'] = $tela;
-			$this->load->view('content',$data);			
+			$this->load->view('content',$data);
+			
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);			
 		}
 
 	function acompanhamento() {
