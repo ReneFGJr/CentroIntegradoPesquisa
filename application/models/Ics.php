@@ -1907,13 +1907,16 @@ class ics extends CI_model {
 		
 		
 		/**************************** PLANOS ************/
-		$sql = "select * from ic_submissao_plano where doc_protocolo_mae = '$idp' order by doc_protocolo ";
+		$sql = "select * from ic_submissao_plano
+					left join us_usuario on doc_aluno = us_cracha
+					 where doc_protocolo_mae = '$idp' order by doc_protocolo ";
 		$rlt = $this->db->query($sql);
 		$rlt = $rlt -> result_array();
 		
 		for ($r=0;$r < count($rlt);$r++)
 			{
 				$data = $rlt[$r];
+				//print_r($data);
 				$nrplano++;
 				$data['nrplano'] = $nrplano;
 				$txt = $this->load->view('ic/plano_submit',$data,true);
@@ -1940,6 +1943,10 @@ class ics extends CI_model {
 
 				
 				$ok = $this->ics->insere_plano_submissao($protocolo_mae,$titulo,$aluno,$escola_publica,$modalidade);
+				if ($ok == 1)
+					{
+						redirect(base_url('index.php/ic/submit_edit/IC/'.$id.'/'.checkpost_link($id).'/3'));
+					}
 			}
 		
 		array_push($cp, array('$M', '', ($txt), False, True));		
@@ -2070,6 +2077,9 @@ class ics extends CI_model {
 						$escola_publica
 						)";
 			$this->db->query($sql);
+			
+			$sql = "update ic_submissao_plano set doc_protocolo = lpad(id_doc,7,0) where doc_protocolo = '' ";
+			$rlt = $this->db->query($sql);
 			return(1);
 											
 		}
