@@ -245,7 +245,7 @@ class ics_master extends CI_model {
 	}
 
 	function updatex() {
-		$sql = "update " . $this -> tabela . " set pj_codigo = concat('1',lpad(id_pj,6,0)) where pj_codigo = '' ";
+		$sql = "update " . $this -> tabela . " set pj_codigo = concat('2',lpad(id_pj,6,0)) where pj_codigo = '' ";
 		$rlt = $this -> db -> query($sql);
 	}
 

@@ -87,6 +87,17 @@ class main extends CI_Controller {
 
 		/* Submissões IC */
 		$this -> load -> model("ics");
+		
+		/***************************************** PIBIC *********************************/
+		$subm = $this -> ics -> submissoes_abertas(1);
+
+		/* Submissão PIBIC MASTER */
+		if ($subm['sw_01'] == '1') {
+				$mod = $subm['sw_tipo'];
+				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit_' . $mod));
+		}
+		
+		/***************************************** PIBIC MASTER **************************/
 		$subm = $this -> ics -> submissoes_abertas(2);
 
 		/* Submissão PIBIC MASTER */
