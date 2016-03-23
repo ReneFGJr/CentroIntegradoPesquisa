@@ -92,6 +92,11 @@ class cep extends CI_Controller {
 			$this->load->model('ceps');
 			$acao = get("acao");
 			$dd1 = get("dd1");
+			$dd10 = get("dd10");
+			if ((strlen($dd1) > 0) and ($dd10 == 'DEL'))
+				{
+					$this->ceps->indicar_para_reuniao($dd1,'0000-00-00');
+				}			
 			if ((strlen($acao) > 0) and (strlen($dd1) > 0))
 				{
 					$this->ceps->indicar_para_reuniao($dd1,$dt);

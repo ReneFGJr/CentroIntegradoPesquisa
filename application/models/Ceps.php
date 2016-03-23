@@ -51,20 +51,38 @@ class ceps extends CI_model {
 		$rlt = $this->db->query($sql);
 		$rlt = $rlt->result_array();
 		$sx = '<table width="100%" class="tabela00 lt2">';
-		$sx .= '<tr><th>CAAE</th>';
+		$sh = '<tr><th>#</th><th>CAAE</th>
+					<th>Título</th>
+					<th>Inst./Pesquisador</th>
+					<th>Relator</th>
+					<th class="noscreen">Avaliação</th>
+			</tr>';
+		$sx .= $sh;
+		$id = 0;
 		for ($r=0;$r < count($rlt);$r++)
 			{
+				$id++;
 				$line = $rlt[$r];
-				$sx .= '<tr class="lt3">';
-				$sx .= '<td align="center" class="lt1">'.$line['ct_caae'];
+				$remove = '<a href="'.base_url('index.php/cep/pauta_montar/'.sonumero($dt).'?dd1='.$line['id_ct'].'&dd10=DEL').'" class="link lt4"><font color="#FF0000"><b>X</b></font></a>';
+				
+				$sx .= '<tr class="lt2" valign="top">';
+				$sx .= '<td align="center">'.$id.'</td>';
+				$sx .= '<td align="center" class="lt1 borderb1">'.$line['ct_caae'];
 				$sx .= '<br>'.$line['ct_tipo'].' - v.'.$line['ct_versao'].'</td>';
-				$sx .= '<td align="center">'.$line['pc_titulo'].'</td>';
-				$sx .= '<td align="center">'.$line['pc_autor'].'</td>';
-				$sx .= '<td align="center">'.$line['pc_instituicao'].'</td>';
-				$sx .= '<td align="center">'.$line['us_nome'].'</td>';
+				$sx .= '<td align="left" class="lt1 borderb1">'.$line['pc_titulo'].'</td>';
+				
+				$sx .= '<td align="left" class="lt1 borderb1">'.$line['pc_instituicao'].'<br>';
+				$sx .= '<i>'.$line['pc_autor'].'</i></td>';
+				$sx .= '<td align="left" class="lt1 borderb1">'.$line['us_nome'].'</td>';
+				$sx .= '<td align="center" class="nopr">'.$remove.'</td>';
+				$sx .= '<td align="center" class="noscreen"><div style="width:20px; height: 20px; border: 4px solid #808080;"></div></td>';
 				
 			}
 		$sx .= '</table>';
+		$sx .= '<font class="lt0">Situação: A - Aprovado; N - Não aprovado; R - Retirado; P - Pendente</font>';
+		$sx .= '<br><font class="lt0">Legenda: PO - Projeto do Centro Coordenador; POp - Projeto do Centro Participante; POc - Projeto do Centro Coparticipante; 
+				<br>E - Emenda; Ep - Emenda de Centro Participante; Ec - Emenda de Centro Coparticipante;
+				N - Notificação; Np - Notificação do centro Participante</font>';
 		return($sx);
 	}
 

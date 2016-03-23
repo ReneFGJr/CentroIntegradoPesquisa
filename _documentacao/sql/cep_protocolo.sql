@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 23, 2016 at 10:09 AM
+-- Generation Time: Mar 23, 2016 at 12:38 PM
 -- Server version: 5.6.20-log
 -- PHP Version: 5.4.31
 
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `cep_protocolo` (
   `pc_dt_last` date NOT NULL DEFAULT '0000-00-00',
   `pc_situacao` int(11) NOT NULL,
   `pc_instituicao` char(80) NOT NULL
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=41 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=41 ;
 
 --
 -- Dumping data for table `cep_protocolo`
