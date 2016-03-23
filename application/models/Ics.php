@@ -1913,6 +1913,7 @@ class ics extends CI_model {
 		
 		for ($r=0;$r < count($rlt);$r++)
 			{
+				$data = $rlt[$r];
 				$nrplano++;
 				$data['nrplano'] = $nrplano;
 				$txt = $this->load->view('ic/plano_submit',$data,true);
@@ -1929,14 +1930,16 @@ class ics extends CI_model {
 		$data['dd15'] = get("dd15");
 		$txt = $this->load->view('ic/plano_submit_insert',$data,true);
 		
-		if (($data['dd20'] == '1') and (strlen($data['dd10']) > 2) and (strlen($data['dd11'])))
+		if (($data['dd20'] == '1') and (strlen($data['dd10']) > 2) and (strlen($data['dd11']) > 0) and (strlen($data['dd13']) > 0))
 			{
 				$protocolo_mae = $idp;
 				$titulo = get("dd10");
 				$aluno = $this->usuarios->limpa_cracha(get("dd11"));
 				$escola_publica = get("dd12");
+				$modalidade = get("dd13");
+
 				
-				$ok = $this->ics->insere_plano_submissao($protocolo_mae,$titulo,$aluno,$escola_publica);
+				$ok = $this->ics->insere_plano_submissao($protocolo_mae,$titulo,$aluno,$escola_publica,$modalidade);
 			}
 		
 		array_push($cp, array('$M', '', ($txt), False, True));		
@@ -2008,16 +2011,67 @@ class ics extends CI_model {
 		return ($cp);
 	}
 
-	function insere_plano_submissao($protocolo_mae,$titulo,$aluno,$escola_publica)
+	function insere_plano_submissao($protocolo_mae,$titulo,$aluno,$escola_publica,$modalidade)
 		{
+			$escola_publica = round($escola_publica);
 			$ano = date("Y");
 				$sql = "select * from ic_submissao_plano 
 							WHERE
 								doc_1_titulo = '$titulo'
-								AND doc_aluno = '$aluno' 
 								AND doc_ano = '$ano' ";
-				echo $sql;
-								
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				
+				if (count($rlt) > 0)
+					{
+						$ok = 0;
+						return($ok);
+					} else {
+						$ok = 1;
+					}
+					
+			/************ Busca Aluno em Outro Plano *********/
+				$sql = "select * from ic_submissao_plano 
+							WHERE
+								doc_aluno = '$aluno' 
+								AND doc_ano = '$ano' ";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				
+				if (count($rlt) > 0)
+					{
+						$ok = 0;
+						return($ok);
+					} else {
+						$ok = 1;
+					}
+			$dt = date("Ymd");
+			$dtn = date("Y-m-d");
+			$hora = date("H:i");
+			
+			$autor = $_SESSION['cracha'];
+			
+			$sql = "insert into ic_submissao_plano 
+						(doc_1_titulo, doc_1_idioma, doc_aluno, 
+						doc_protocolo, doc_protocolo_mae, doc_data,
+						doc_dt_data, doc_hora, doc_status,
+						doc_ano, doc_aluno_original,
+						doc_dt_atualizado, doc_autor_principal, doc_tipo,
+						doc_journal_id, doc_edital, doc_update,
+						doc_icv
+						)
+						values
+						('$titulo','pt_BR','$aluno',
+						'','$protocolo_mae','$dt',
+						'$dtn','$hora','@',
+						'$ano','$aluno',
+						'$dt', '$autor', 'PLANO',
+						20, '$modalidade', '$dt',
+						$escola_publica
+						)";
+			$this->db->query($sql);
+			return(1);
+											
 		}
 	function ativar_bolsa($id, $ida, $cracha, $d1, $d2, $d3, $d4, $tipo, $situacao) {
 		$d1 = brtos($d1);

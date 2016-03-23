@@ -326,9 +326,9 @@ class ic extends CI_Controller {
 	 *************************************************************************** SUBMISSAO MASTER ****
 	 *************************************************************************************************/
 	function submit_new() {
-		$this -> load -> model('ics_master');
+		$this -> load -> model('ics');
 		$cracha = $_SESSION['cracha'];
-		$this -> ics_master -> projeto_novo($cracha);
+		$this -> ics -> projeto_novo($cracha);
 	}
 
 	function submit_finished() {
@@ -354,17 +354,18 @@ class ic extends CI_Controller {
 		$data['content'] = '<center><h1><font color="green"><b>Submissão concluída com Sucesso!</b></font></h1></center>';
 		$this -> load -> view('content', $data);
 	}
+	
 
 	function submit_edit($tipo = '', $id = '', $chk = '', $pag = '') {
 		$this -> load -> model('ics');
-		$this -> load -> model('ics_master');
 		$this -> load -> model('geds');
 
 		$this -> cab();
 		$data = array();
 
-		$prj_data = $this -> ics_master -> le($id);
+		$prj_data = $this -> ics -> le_projeto($id);
 		$sta = $prj_data['pj_status'];
+		
 		if ($sta != '@') {
 			redirect(base_url('index.php/ic/submit_view/' . $id . '/' . checkpost_link($id)));
 			exit ;
@@ -376,10 +377,11 @@ class ic extends CI_Controller {
 		$data['bp_atual'] = $pag;
 
 		switch ($tipo) {
-			case 'ICMST' :
-				$bp[1] = 'Identificação do projeto';
-				$bp[2] = 'Submissão de Arquivos';
-				$bp[3] = 'Confirmação';
+			case 'IC' :
+				$bp[1] = 'Projeto do Professor';
+				$bp[2] = 'Arquivos do Projeto do Professor';
+				$bp[3] = 'Planos de Alunos';
+				$bp[4] = 'Confirmação';
 				$data['bp'] = $bp;
 				$data['bp_link'] = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . $chk . '/');
 				$this -> load -> view('gadget/progessbar_horizontal.php', $data);
@@ -389,7 +391,7 @@ class ic extends CI_Controller {
 
 				switch ($pag) {
 					case '1' :
-						$cp = $this -> ics_master -> cp_subm_01();
+						$cp = $this -> ics -> cp_subm_01();
 
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
@@ -397,28 +399,43 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '2' :
-						$cp = $this -> ics_master -> cp_subm_02($id);
+						$cp = $this -> ics -> cp_subm_02($id);
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
 						$data['content'] = $tela;
 						$this -> load -> view('content', $data);
 						break;
 					case '3' :
-						$cp = $this -> ics_master -> valida_entrada($id);
-
+						$cp = $this -> ics -> cp_subm_03($id);
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
 						$data['content'] = $tela;
 						$this -> load -> view('content', $data);
 						break;
 					case '4' :
-						$this -> ics_master -> altera_status($id, 'A');
+						$cp = $this -> ics -> valida_entrada($id);
+
+						$tela = $form -> editar($cp, 'ic_submissao_projetos');
+
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+						break;						
+					case '4' :
+						$cp = $this -> ics -> valida_entrada($id);
+
+						$tela = $form -> editar($cp, 'ic_submissao_projetos');
+
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+						break;
+					case '5' :
+						$this -> ics -> altera_status($id, 'A');
 						redirect(base_url('index.php/ic/submit_finished/' . $id));
 						break;
 				}
 
 				if ($form -> saved > 0) {
-					redirect(base_url('index.php/ic/submit_edit/ICMST/' . $id . '/' . $chk . '/' . ($pag + 1)));
+					redirect(base_url('index.php/ic/submit_edit/IC/' . $id . '/' . $chk . '/' . ($pag + 1)));
 				}
 		}
 
@@ -454,7 +471,36 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
+	function submit_PIBIC() {
+		$this -> load -> model('ics');
+		$this -> cab();
 
+		$id_us = $_SESSION['id_us'];
+		$cracha = $_SESSION['cracha'];
+		$ano = date("Y");
+		$tela = $this -> ics -> resumo_submit($cracha, $ano);
+
+		/* Habilita botão de submissão */
+		$prj = $this -> ics -> exist_submit($cracha, $ano);
+		/* se 0, não existe projeto cadastrado */
+		$tipo = 'IC';
+		if ($prj > 0) {
+			$chk = checkpost_link($prj);
+			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $prj . '/' . $chk . '/');
+			$botao = '<a href="' . $botao . '" class="botao3d back_green_shadown back_green">';
+			$botao .= msg('ic_submit_edit_project');
+			$botao .= '</a>';
+		} else {
+			$botao = '<a href="' . base_url('index.php/ic/submit_new/' . $tipo . '') . '" class="botao3d back_green_shadown back_green">';
+			$botao .= msg('ic_submit_new_project');
+			$botao .= '</a>';
+		}
+		$tela .= '<br>' . $botao;
+
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+	}
 	function admin_rpar_lista_professores_com_erro_no_pdf() {
 		$this -> cab();
 		$this -> load -> model("geds");
@@ -2188,6 +2234,7 @@ class ic extends CI_Controller {
 				$ano = date("Y");
 				if (date("m") < 8) { $ano = $ano - 1;
 				}
+
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
 			case 'IC_FORM_RP' :
@@ -2196,6 +2243,7 @@ class ic extends CI_Controller {
 				$ano = date("Y");
 				if (date("m") < 8) { $ano = $ano - 1;
 				}
+
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano);
 				break;
 			default :

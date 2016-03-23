@@ -7,7 +7,7 @@
 			
 		</td>
 		<td rowspan=5 width="5%"><img src="http://localhost/projeto/CentroIntegradoPesquisa/img/logo/logo_ic_pibic.png" height="50"></td>
-		<td><b>Título do trabalho</b></td>
+		<td><b><?php echo $doc_protocolo;?></b></td>
 		<td width="5%" align="center" rowspan=4 >
 			<a href="#" class="link">
 			<font color="red"><font class="lt0">excluir<br>plano</font><br><font class="lt6"><b>X</b></font></font>
