@@ -41,6 +41,7 @@ class cep extends CI_Controller {
 		$menus = array();
 		array_push($menus, array('home', 'index.php/cip/'));
 		array_push($menus, array(msg('pauta'), 'index.php/cep/pauta'));
+		array_push($menus, array(msg('inport_cep'), 'index.php/cep/inport'));
 
 		array_push($menus, array(msg('comunicacao'), 'index.php/cip/comunicacao'));
 
@@ -64,6 +65,50 @@ class cep extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function pauta()
+		{
+			$this->load->model('ceps');
+			
+			$this->cab();		
+			
+			$form = new form;
+			$cp = array();
+			array_push($cp,array('$H8','','',False,True));
+			array_push($cp,array('$D8','','Data da Reunião',True,True));
+			$tela = $form->editar($cp,'');
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+			
+			if ($form->saved > 0)
+				{
+					$data = brtos(get("dd1"));
+					redirect(base_url('index.php/cep/pauta_montar/'.$data));
+				}
+		}
+		
+	function pauta_montar($dt=0)
+		{
+			$this->load->model('ceps');
+			$acao = get("acao");
+			$dd1 = get("dd1");
+			if ((strlen($acao) > 0) and (strlen($dd1) > 0))
+				{
+					$this->ceps->indicar_para_reuniao($dd1,$dt);
+				}
+			$this->cab();
+			$data = array();
+			$tela = '';
+			
+			$data['para_indicar'] = $this->ceps->protocolos_para_indicacao();
+			$data['pauta'] = $this->ceps->mostra_pauta($dt);
+			/* Mostra protocolos disponíveis para indicação */
+			$tela .= $this->load->view('cep/pauta',$data,true);
+			
+			$data['title'] = 'Pauta do dia '.stodbr($dt);
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+		}
 	
 	function inport() {
 
