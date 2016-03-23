@@ -122,6 +122,7 @@ class Ic_pareceres extends CI_model {
 		$sql = "select * 
 						from pibic_parecer_2016
 						left join us_usuario on pp_avaliador_id = id_us
+						left join ic on ic_plano_aluno_codigo = pp_protocolo
 						where pp_status = '$status'
 						and pp_tipo = '$tipo'
 						order by us_nome
@@ -169,6 +170,7 @@ class Ic_pareceres extends CI_model {
 			$acao2 = '';
 			$sta = trim($line['pp_status']);
 			$resultado = trim($line['pp_p09']);
+			$link_ic = link_ic($line['id_ic']);
 			
 			//Resultado das avaliações
 			switch($sta) {
@@ -198,27 +200,21 @@ class Ic_pareceres extends CI_model {
 					$acao2 = '<font color="#A0001F"> - <font>';
 					break;	
 			}
-			
 			//indice
 			$sx .= '<tr>';
 			$sx .= '<td class="lt2" align="left">' . ($r + 1) . '.</td>';
 			//protocolo
 			$sx .= '<td class="lt2" align="center">';
-			$link = $line['pp_protocolo'];
-			$sx .= $link . '</a>';
+			$sx .= $link_ic . $line['pp_protocolo'] . '</a>';
 			$sx .= '</td>';
-			
 			//acao de declinio
 			$sx .= '<td class="lt2" align="center">' . $acao . '</td>';
-			
 			//nome avaliador
 			$sx .= '<td class="lt2" align="rigth">';
 			$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
 			$sx .= '</td>';
-			
 			//resultado do RP
 			$sx .= '<td class="lt2" align="center">' . $acao2 . '</td>';
-
 		}
 		
 		$sx .= '<tr><td colspan=10>Total de ' . $tot . ' registros</td></tr>';	
