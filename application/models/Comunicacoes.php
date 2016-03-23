@@ -80,6 +80,8 @@ class comunicacoes extends CI_Model
 			
 			return($data);
 		}
+		
+	//gera grupo com emails para criar msg de comunicação	
 	function le_email_grupo($gr=0)
 		{
 			$email = '';
@@ -206,6 +208,31 @@ class comunicacoes extends CI_Model
 						$email .= 'cleybe.vieira@pucpr.br'.cr();
 				}				
 				
+			//* IC - Orientadores que não postaram a correção Relatório Parcial (RPRC) */
+			if ($gr == 18)
+				{
+					$ano = date("Y");
+					if (date("m") < 8) { $ano = ($ano -1); }
+					$sql = "SELECT DISTINCT usm_email
+									FROM us_usuario
+									INNER JOIN ic ON us_cracha = ic_cracha_prof
+									INNER JOIN us_email on id_us = usuario_id_us
+									WHERE usm_ativo = 1
+									AND s_id = 1 
+									AND ic_rpc_data = '0000-00-00'
+									AND ic_nota_rp = 2
+									and ic_ano = '2015'
+								 ";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$email = '';
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$email .= $line['usm_email'].cr();
+						}
+						$email .= 'cleybe.vieira@pucpr.br'.cr();
+				}
 				
 				
 			return($email);
