@@ -97,24 +97,20 @@ class Ic_pareceres extends CI_model {
 			$sx .= '<td>' . msg('ic_tipo_' . $key) . '</td>';
 			
 			for ($r = 0; $r < count($tp); $r++) {
-					
+				
+				//variaveis	
 				$tt = $tp[$r];
-				
 				$link0 = '';
-				$link1 = '';
-				$link2 = '';
-				
 				$vr = '';
 				
 				if (isset($rs[$key][$tt])) {
+						
 					$link0 = '<a href="' . base_url('index.php/ic/avaliacoes_situacao/'.$key.'/'.$tt) . '" class="link lt6">';	
 					$vr = $link0.$rs[$key][$tt].'</a>';
 
 				} else {
 					$vr = '-';
 				}
-
-				
 				$sx .= '<td align="center" class="border1" width="20%">' . $vr . '</td>';
 			}
 		}
@@ -129,17 +125,19 @@ class Ic_pareceres extends CI_model {
 						where pp_status = '$status'
 						and pp_tipo = '$tipo'
 						order by us_nome
-											";
+						";
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		
 		for ($r = 0; $r < count($rlt); $r++) {
+			
 		$line = $rlt[$r];
 		$sta = trim($line['pp_status']);
 		
 		$sx = '<table width="100%" class="tabela00">';
 
+			//Troca de titulo conforme status
 			switch($sta) {
 				case 'A' :
 					$sx .= '<tr><td class="lt6" colspan=4> Avaliações em aberto </tr>';
@@ -151,27 +149,28 @@ class Ic_pareceres extends CI_model {
 					$sx .= '<tr><td class="lt6" colspan=4> Avaliações declinadas </tr>';
 					break;	
 			}
-		
 		}
-		//$sx .= '<tr><td class="lt6" colspan=4> Avaliadores com Avaliações em aberto </tr>';
-	
+		//titulos tabela
 		$sx .= '<tr>
 								<th width="2%">#</th>
 								<th width="8%">Protocolo</th>
 								<th width="10%">acao</th>
-								<th width="80%">Avaliador</th>
+								<th width="60%">Avaliador</th>
+								<th width="10%">Resultado da avaliação</th>
 						</tr>';
 						
 		$tot = 0;
 		
 			for ($r = 0; $r < count($rlt); $r++) {
+			//variaveis
 			$line = $rlt[$r];
 			$tot++;
-			//indice
-			
 			$acao = '-';
+			$acao2 = '';
 			$sta = trim($line['pp_status']);
+			$resultado = trim($line['pp_p09']);
 			
+			//Resultado das avaliações
 			switch($sta) {
 				case 'A' :
 					$url = base_url('index.php/ic/indicacao_declinar/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp']));
@@ -186,21 +185,39 @@ class Ic_pareceres extends CI_model {
 					$acao = '<font color="#A0001F">Declinou<font>';
 					break;	
 			}
-
+			
+			//acao resultado RP
+			switch($resultado) {
+				case '1' :
+					$acao2 = '<font color="#308030">Aprovado<font>';
+					break;
+				case '2' :
+					$acao2 = '<font color="#8A0419">Pendente<font>';
+					break;
+				case '' :
+					$acao2 = '<font color="#A0001F"> - <font>';
+					break;	
+			}
+			
+			//indice
 			$sx .= '<tr>';
 			$sx .= '<td class="lt2" align="left">' . ($r + 1) . '.</td>';
 			//protocolo
 			$sx .= '<td class="lt2" align="center">';
-			$link = link_perfil($line['pp_protocolo'], $line['id_pp']);
+			$link = $line['pp_protocolo'];
 			$sx .= $link . '</a>';
 			$sx .= '</td>';
 			
+			//acao de declinio
 			$sx .= '<td class="lt2" align="center">' . $acao . '</td>';
 			
 			//nome avaliador
 			$sx .= '<td class="lt2" align="rigth">';
 			$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
 			$sx .= '</td>';
+			
+			//resultado do RP
+			$sx .= '<td class="lt2" align="center">' . $acao2 . '</td>';
 
 		}
 		

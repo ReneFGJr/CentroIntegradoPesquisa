@@ -2188,7 +2188,6 @@ class ic extends CI_Controller {
 				$ano = date("Y");
 				if (date("m") < 8) { $ano = $ano - 1;
 				}
-
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
 			case 'IC_FORM_RP' :
@@ -2197,7 +2196,6 @@ class ic extends CI_Controller {
 				$ano = date("Y");
 				if (date("m") < 8) { $ano = $ano - 1;
 				}
-
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano);
 				break;
 			default :
