@@ -356,9 +356,19 @@ class ic extends CI_Controller {
 	}
 	
 
-	function submit_edit($tipo = '', $id = '', $chk = '', $pag = '') {
+	function submit_edit($tipo = '', $id = '', $chk = '', $pag = '',$f1='',$f2='',$f3='') {
+		
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
+
+		/************* Cancela Plano ***********************/
+		if ($f1 == 'DEL')
+			{
+				$this->ics->cancela_plano($f2);
+				$url = base_url('index.php/ic/submit_edit/'.$tipo.'/'.$id.'/'.checkpost_link($id).'/'.$pag);
+				redirect($url);
+			}
+
 
 		$this -> cab();
 		$data = array();
@@ -406,7 +416,9 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '3' :
-						$cp = $this -> ics -> cp_subm_03($id);
+						$this->load->view('ic/projeto',$prj_data);
+						
+						$cp = $this -> ics -> cp_subm_03($id,$tipo);
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
 						$data['content'] = $tela;
@@ -429,7 +441,8 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '5' :
-						$this -> ics -> altera_status($id, 'A');
+						$this -> ics -> submit_altera_status($id, 'A');
+						$this -> ics -> submit_enviar_email($id);						
 						redirect(base_url('index.php/ic/submit_finished/' . $id));
 						break;
 				}
@@ -471,7 +484,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
-	function submit_PIBIC() {
+	function submit_PIBIC($sta='') {
 		$this -> load -> model('ics');
 		$this -> cab();
 
@@ -499,6 +512,15 @@ class ic extends CI_Controller {
 
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
+		
+		
+		/***** Mostra Protoclos ****/
+		if (strlen($sta) > 0)
+			{
+				$tela = $this->ics->mostra_projetos_situacao($cracha,$sta);
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);						
+			}
 
 	}
 	function admin_rpar_lista_professores_com_erro_no_pdf() {

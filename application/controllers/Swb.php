@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Swb2 extends CI_Controller {
+class Swb extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -19,8 +19,8 @@ class Swb2 extends CI_Controller {
 	}
 	public function index()
 	{
-			
-		$this->load->view('index');
+		$this->load->view('header/header',null);	
+		$this->load->view('header/404');
 	}
 	
 	
@@ -40,25 +40,27 @@ class Swb2 extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
-		$this -> load -> view('evento/swb2/img_cab', $data);
+		$this -> load -> view('evento/swb/img_cab', $data);
 		
-		$data['title_page'] = 'SWB2';
+		$data['title_page'] = 'SWB';
 	}
 	
 	
 	function inscricoes($id=0,$check='') {
 		$tabela = 'evento_inscricao';
 		
-		$this -> load -> model('eventos/swb2s');
+		$this -> load -> model('eventos/swbs');
 		$this -> load -> model('usuarios');
 		$this -> cab();
 		$data = array();
+		
+		$evento = $this->swbs->evento_ativo();
 		
 		$form = new form;
 		$form->id = $id;
 		$form->tabela = $tabela;
 		
-		$cp = $this->swb2s->cp();
+		$cp = $this->swbs->cp();
 		$err = '';
 		$tela = $form->editar($cp,'');
 		if ($form->saved > 0)
@@ -72,8 +74,8 @@ class Swb2 extends CI_Controller {
 					{
 						$err = 'Código inválido';
 					} else {
-						$idi = $this->swb2s->insere_inscricao($dados['id_us'],4);
-						$url = base_url('index.php/swb2/questionario/'.$idi.'/'.checkpost_link($idi));
+						$idi = $this->swbs->insere_inscricao($dados['id_us'],$evento);
+						$url = base_url('index.php/swb/questionario/'.$idi.'/'.checkpost_link($idi));
 						redirect($url);
 						
 					} 
@@ -87,7 +89,7 @@ class Swb2 extends CI_Controller {
 	function questionario($id=0,$check='') {
 		$tabela = 'evento_inscricao';
 		
-		$this -> load -> model('eventos/swb2s');
+		$this -> load -> model('eventos/swbs');
 		$this -> load -> model('usuarios');
 		$this -> cab();
 		$data = array();
@@ -96,19 +98,19 @@ class Swb2 extends CI_Controller {
 		$form->id = $id;
 		$form->tabela = $tabela;
 		
-		$dados = $this->swb2s->le($id);
+		$dados = $this->swbs->le($id);
 		$user = $dados['ei_us_usuario_id'];
 
 		
 		$data = $this->usuarios->le($user);
 		$this->load->view('usuario/view',$data);
 		
-		$cp = $this->swb2s->cp_questionario();
+		$cp = $this->swbs->cp_questionario();
 		$err = '';
 		$tela = $form->editar($cp,$tabela);
 		if ($form->saved > 0)
 			{
-				redirect(base_url('index.php/swb2/finalizacao'));
+				redirect(base_url('index.php/swb/finalizacao'));
 			}
 			
 			$data['content'] = $tela;
@@ -119,8 +121,8 @@ class Swb2 extends CI_Controller {
 	function finalizacao()
 		{
 			$this->cab();
-			//$this -> load -> view('evento/swb2/img_cab', $data);
-			$this->load->view('evento/swb2/agredecimento');
+			//$this -> load -> view('evento/swb/img_cab', $data);
+			$this->load->view('evento/swb/agredecimento');
 		}
 		
 	

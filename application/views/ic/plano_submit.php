@@ -1,6 +1,34 @@
 <?php
 $edital = lowercase($doc_edital);
 $logo = 'logo_ic_'.$edital.'.png';
+$cancel = '<a href="#" class="link" onclick="cancelar_plano(<?php echo $id_doc;?>);">
+			<font color="red"><font class="lt0">excluir<br>plano</font><br><font class="lt6"><b>X</b></font></font>
+			</a>';
+$arquivos_label = 'Arquivos do Plano:';
+
+
+if (isset($bloquear))
+	{
+		$cancel = '';
+		$arquivos_label = '';
+	}
+
+if (!isset($fcn))
+	{
+		$sx = '
+		<script>
+		function cancelar_plano($id)
+				{
+					rsp = confirm(\'Confirmar exclusão deste plano?\'+$id);
+					if (rsp)
+						{
+							window.location.assign("'.base_url('index.php/ic/submit_edit/'.$tipo.'/' . $id . '/3/3/DEL/').'/" + $id);
+						}
+				}
+			</script>';
+		echo $sx;
+		$fnc=1;
+	}
 ?>
 <table width="100%" class="tabela00 border1" style="border-radius: 10px;">
 	<tr valign="top">
@@ -8,12 +36,10 @@ $logo = 'logo_ic_'.$edital.'.png';
 			<br><font class="lt1"><?php echo $doc_protocolo;?></font>
 			
 		</td>
-		<td rowspan=5 width="5%"><img src="http://localhost/projeto/CentroIntegradoPesquisa/img/logo/<?php echo $logo;?>" height="50"></td>
+		<td rowspan=5 width="5%"><img src="<?php echo base_url('img/logo/'.$logo);?>" height="50"></td>
 		<td><b><?php echo $doc_1_titulo;?></b></td>
 		<td width="5%" align="center" rowspan=4 >
-			<a href="#" class="link">
-			<font color="red"><font class="lt0">excluir<br>plano</font><br><font class="lt6"><b>X</b></font></font>
-			</a>
+			<?php echo $cancel; ?>
 			</td>
 	</tr>
 	<tr>
@@ -23,9 +49,11 @@ $logo = 'logo_ic_'.$edital.'.png';
 		<td class="lt0"><i>Aluno oriundo de escola pública: <b>Não</b></i></td>
 	</tr>	
 	<tr>
-		<td class="lt0">Arquivos do Plano:
-			<br>XXX	
+		<td class="lt0"><?php echo $arquivos_label;?>
+			<br><?php echo $arquivos;?>	
+			<br><?php echo $arquivos_submit;?>
 		</td>
 	</tr>		
 </table>
 <br>
+

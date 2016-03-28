@@ -43,7 +43,7 @@ class ics extends CI_model {
 							";
 		return ($tabela);
 	}
-	
+
 	//copia da table , só que para funções expecifica(exemplo: Guia do estudante)
 	function table_view_2($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
@@ -82,58 +82,53 @@ class ics extends CI_model {
 									OFFSET $offset							
 							";
 		return ($tabela);
-	}	
-	
+	}
 
-	function ja_implementado($proto)
-		{
-			$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					return(1);
-				} else {
-					return(0);
-				}
+	function ja_implementado($proto) {
+		$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
 		}
-	function estudante_com_ic_implementado($id=0)
-		{
-			$sql = "select * from ic_aluno where aluno_id = $id and icas_id = 1";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					return(1);
-				} else {
-					return(0);
-				}
+	}
+
+	function estudante_com_ic_implementado($id = 0) {
+		$sql = "select * from ic_aluno where aluno_id = $id and icas_id = 1";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
 		}
-	function existe_projeto_enviado($proto)
-		{
-			$sql = "select * from ic_submissao_plano where doc_protocolo = '$proto' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					return(1);
-				} else {
-					return(0);
-				}			
+	}
+
+	function existe_projeto_enviado($proto) {
+		$sql = "select * from ic_submissao_plano where doc_protocolo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return (1);
+		} else {
+			return (0);
 		}
-	
+	}
+
 	function orientaoes_ativas($ano = '') {
 		$sx = '';
 		$mod = '';
 		$ano = '2015';
 		$ano1 = $ano;
-		$ano2 = ($ano+1);
+		$ano2 = ($ano + 1);
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
 		$wh .= ' and (icas_id = 1)';
 		if (strlen($mod) > 0) {
 			$wh .= ' and id_mb = ' . $mod;
 		}
-		
+
 		$sql = "select * from ic
             			left join ic_aluno as pa on ic_id = id_ic
 						left join (select us_campus_vinculo, us_cracha as id_pf, id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
@@ -141,11 +136,11 @@ class ics extends CI_model {
 						left join ic_situacao on id_s = icas_id
 						where $wh
 						";
-		
+
 		$sql = "select pf_cracha, pf_nome, count(*) as total, us_campus_vinculo
 					FROM ($sql) as resultado
-					GROUP BY pf_nome, pf_cracha, us_campus_vinculo ";		
-		
+					GROUP BY pf_nome, pf_cracha, us_campus_vinculo ";
+
 		//$sql .= " order by al_nome ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -158,24 +153,23 @@ class ics extends CI_model {
 					<th width="5%">Orientações</th>
 					<th width="5%">Horas</th>
 				</tr>';
-			$class = ' style="border-bottom: 1px #000000 solid" ';
-			$class = '';
-		for ($r=0;$r < count($rlt);$r++)
-		{
+		$class = ' style="border-bottom: 1px #000000 solid" ';
+		$class = '';
+		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot = $tot + $line['total'];
 			$totp++;
 			$sx .= '<tr>';
-			$sx .= '<td '.$class.' align="center" >'.$line['pf_cracha'].'</td>';
-			$sx .= '<td '.$class.'>'.$line['pf_nome'].'</td>';
-			$sx .= '<td>'.$line['us_campus_vinculo'].'</td>';
-			$sx .= '<td '.$class.' align="center" >'.$line['total'].'</td>';
-			$totx = ($line['total'] + 0.02) / 2;						
-			$sx .= '<td '.$class.' align="center" >'.number_format($totx,0).'</td>';
+			$sx .= '<td ' . $class . ' align="center" >' . $line['pf_cracha'] . '</td>';
+			$sx .= '<td ' . $class . '>' . $line['pf_nome'] . '</td>';
+			$sx .= '<td>' . $line['us_campus_vinculo'] . '</td>';
+			$sx .= '<td ' . $class . ' align="center" >' . $line['total'] . '</td>';
+			$totx = ($line['total'] + 0.02) / 2;
+			$sx .= '<td ' . $class . ' align="center" >' . number_format($totx, 0) . '</td>';
 		}
-		$sx .= '<tr><td colspan="3">Total de '.$totp.' orientadores, com '.$tot.' orientações.</td></tr>';
+		$sx .= '<tr><td colspan="3">Total de ' . $totp . ' orientadores, com ' . $tot . ' orientações.</td></tr>';
 		$sx .= '</table>';
-		return($sx);
+		return ($sx);
 	}
 
 	function docentes_em_pesquisa($ano) {
@@ -350,25 +344,22 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-	function existe_avaliacoes($id_us)
-		{
-			$sql = "select count(*) as total from pibic_parecer_".date("Y")." where pp_avaliador_id = $id_us and (pp_status = 'A')";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					if ($line['total'] > 0)
-						{
-							return(1);		
-						} else {
-							return(0);
-						}
-					
-				} else {
-					return(0);
-				}
+	function existe_avaliacoes($id_us) {
+		$sql = "select count(*) as total from pibic_parecer_" . date("Y") . " where pp_avaliador_id = $id_us and (pp_status = 'A')";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			if ($line['total'] > 0) {
+				return (1);
+			} else {
+				return (0);
+			}
+
+		} else {
+			return (0);
 		}
+	}
 
 	function is_ic($us_cracha = '') {
 		$sql = "SELECT count(*) as total, mb_tipo, id_s FROM ic_aluno 
@@ -587,7 +578,6 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-	
 	function report_guia_estudante_xls($ano1 = 0, $ano2 = 0, $mod = '') {
 		$sx = '';
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
@@ -621,19 +611,19 @@ class ics extends CI_model {
 							<th align="left">Imp</th>
 							<th align="right">status</th>
 						</tr>';
-		
-			$tot = 0;
-			$tot2 = 0;
-			$xmb = '';
-		
+
+		$tot = 0;
+		$tot2 = 0;
+		$xmb = '';
+
 		for ($r = 0; $r < count($rlt); $r++) {
-		
+
 			$line = $rlt[$r];
-			
+
 			$st = $line['icas_id'];
 			$sf = '';
 			$sff = '';
-			
+
 			if ($st == '2') {
 				$sf = '<font color="red"><s>';
 				$sff = '</s></font>';
@@ -641,13 +631,13 @@ class ics extends CI_model {
 			} else {
 				$tot++;
 			}
-			
+
 			$link_ic = link_ic($line['id_ic'], 'ic');
-			
+
 			$sx .= '<tr>';
-			
+
 			//indice
-			$sx .= '<td width="20" class="lt1">'.($r+1).'.</td>';
+			$sx .= '<td width="20" class="lt1">' . ($r + 1) . '.</td>';
 
 			$sx .= '<td align="center">';
 			$sx .= $link_ic . $line['ic_plano_aluno_codigo'] . '</a>';
@@ -669,7 +659,7 @@ class ics extends CI_model {
 			$sx .= '<td>';
 			$sx .= $line['al_curso'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td><nobr>';
 			$sx .= mask_cpf($line['us_cpf']);
 			$sx .= '</nobr></td>';
@@ -690,10 +680,10 @@ class ics extends CI_model {
 			$sx .= '<td>';
 			$sx .= $line['pf_curso'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td>';
 			$sx .= $line['es_escola'];
-			$sx .= '</td>';			
+			$sx .= '</td>';
 
 			$sx .= '<td>';
 			$sx .= $line['mb_tipo'];
@@ -710,11 +700,11 @@ class ics extends CI_model {
 			$sx .= '<td>';
 			$sx .= $sf . $line['ic_projeto_professor_titulo'] . $sff;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $sf . $line['bl_ativo'] . $sff;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="right">';
 			$sx .= $sf . $line['s_situacao'] . $sff;
 			$sx .= '</td>';
@@ -722,31 +712,31 @@ class ics extends CI_model {
 			$sx .= '</tr>';
 
 		}
-			$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
-			$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
-			$sx .= '</table>';
-			$sxc = $sx;
-			/****/
-			$sx = '<table width="100%" class="lt1">';
-			$sx .= '<tr  >';
-			$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
-			$sx .= $line['mb_descricao'];
-			$sx .= ' - ';
-			$sx .= $line['mb_fomento'];
-			$sx .= ' - ';
-			$sx .= $line['mb_tipo'];
-			$sx .= ' - ';
-			$sx .= $ano1 . '-' . ($ano2);
-			$sx .= ' - ';
-			$sx .= 'Total: ' . $tot;
-			$sx .= '</td>';
-			$sx .= '</tr>';
-			$sx .= $sh;
-			$sx .= $sxc;
-		
+		$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
+		$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
+		$sx .= '</table>';
+		$sxc = $sx;
+		/****/
+		$sx = '<table width="100%" class="lt1">';
+		$sx .= '<tr  >';
+		$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
+		$sx .= $line['mb_descricao'];
+		$sx .= ' - ';
+		$sx .= $line['mb_fomento'];
+		$sx .= ' - ';
+		$sx .= $line['mb_tipo'];
+		$sx .= ' - ';
+		$sx .= $ano1 . '-' . ($ano2);
+		$sx .= ' - ';
+		$sx .= 'Total: ' . $tot;
+		$sx .= '</td>';
+		$sx .= '</tr>';
+		$sx .= $sh;
+		$sx .= $sxc;
+
 		return ($sx);
 	}
-	
+
 	function report_guia_estudante($ano1 = 0, $ano2 = 0, $mod = '') {
 		$sx = '';
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
@@ -759,7 +749,7 @@ class ics extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		$sh = '';
-		$sx .= '<H1> Iniciação Científica _ '. (date("Y")-1) .'</H1>';		
+		$sx .= '<H1> Iniciação Científica _ ' . (date("Y") - 1) . '</H1>';
 		$sx .= '<table width="100%" class="tabela00">';
 		$sx .= '<tr class="lt2">
 							<th align="left">#</th>
@@ -778,7 +768,7 @@ class ics extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 
 			$line = $rlt[$r];
-			
+
 			$st = $line['icas_id'];
 			$sf = '';
 			$sff = '';
@@ -796,9 +786,9 @@ class ics extends CI_model {
 			$mb = $line['mb_descricao'];
 
 			$sx .= '<tr>';
-			
+
 			//indice
-			$sx .= '<td width="20" class="lt2">'.($r+1).'.</td>';
+			$sx .= '<td width="20" class="lt2">' . ($r + 1) . '.</td>';
 
 			$sx .= '<td align="center">';
 			$sx .= $link_ic . $line['ic_plano_aluno_codigo'] . '</a>';
@@ -932,19 +922,18 @@ class ics extends CI_model {
 		return (1);
 	}
 
-	function recupera_nr_ic($protocolo)
-		{
-			$sql = "select * from ic where ic_plano_aluno_codigo = '$protocolo' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$rlt = $rlt[0];
-				} else {
-					$rlt = array();
-				}
-			return($rlt);
+	function recupera_nr_ic($protocolo) {
+		$sql = "select * from ic where ic_plano_aluno_codigo = '$protocolo' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$rlt = $rlt[0];
+		} else {
+			$rlt = array();
 		}
+		return ($rlt);
+	}
+
 	function reativar_protocolo($protocolo, $ica) {
 		$data = date("Y-m-d");
 		$sql = "update ic_aluno set
@@ -1823,11 +1812,11 @@ class ics extends CI_model {
 		}
 		return ($rlt);
 	}
-	
+
 	function cp_subm_01() {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_pj', '', False, True));
-		
+
 		$txt = '<b>Instruções para o Orientador</b><br>
 				- Professor orientador com título de doutor pode submeter no máximo quatro planos de trabalho de estudantes de graduação, vinculados a um ou mais projetos de pesquisa.<br>
 				- Professor orientador com título de mestre pode submeter no máximo dois planos de trabalho de estudantes de graduação, vinculados a um ou dois projetos de pesquisa.<br>
@@ -1837,7 +1826,7 @@ class ics extends CI_model {
 				<br><br>
 				';
 		array_push($cp, array('$M', '', ($txt), False, True));
-				
+
 		array_push($cp, array('$T80:5', 'pj_titulo', msg('titulo_pesquisa'), True, True));
 
 		$sql = "select ac_cnpq, concat(ac_cnpq,' - ',ac_nome_area) as ac_nome_area from area_conhecimento where not (ac_cnpq like '9%') and ac_ativo = 1 and ac_semic = 1  and not (ac_cnpq like '0%') order by ac_nome_area";
@@ -1845,22 +1834,21 @@ class ics extends CI_model {
 
 		$sql = "select ac_cnpq, concat(ac_cnpq,' - ',ac_nome_area) as ac_nome_area from area_conhecimento where (ac_cnpq like '9%') and ac_ativo = 1 and ac_semic = 1  and not (ac_cnpq like '0%') order by ac_nome_area";
 		array_push($cp, array('$Q ac_cnpq:ac_nome_area:' . $sql, 'pj_area_estra', msg('area_estrategica'), True, True));
-		
-		
+
 		array_push($cp, array('${', '', 'Projeto aprovado externamente', False, True));
-		array_push($cp, array('$C', 'pj_ext_sn', msg('projeto aprovado externamente'), False, True));
+		array_push($cp, array('$O 0:Não&1:SIM', 'pj_ext_sn', msg('projeto aprovado externamente'), True, True));
 		array_push($cp, array('$T80:3', 'pj_ext_local', 'Descreva a agência de fomento, o montante dos recursos e o vinculo com o projeto de pesquisa (caso aprovado externamente)', False, True));
-		
+
 		array_push($cp, array('$}', '', 'Projeto aprovado externamente', False, True));
-		
+
 		array_push($cp, array('${', '', 'Comitês de Ética em Pesquisa', False, True));
 		$op = '1:Não aplicável (não envolve seres humanos)';
-		$op .= '&2:Em submissão (deve-se apresentar a parecer até Novembro de '.date("Y").')';
+		$op .= '&2:Em submissão (deve-se apresentar a parecer até Novembro de ' . date("Y") . ')';
 		$op .= '&3:Já aprovado (anexar o parecer do Comitê de Éticas nos Documentos)';
-		array_push($cp, array('$R '.$op, 'pj_cep_status', 'Comitê de Ética em Pesquisa com Humanos (CEP)', False, True));
-		array_push($cp, array('$R '.$op, 'pj_ceua_status', 'Comitê de Ética no Uso de Animais (CEUA)', False, True));
+		array_push($cp, array('$R ' . $op, 'pj_cep_status', 'Comitê de Ética em Pesquisa com Humanos (CEP)', False, True));
+		array_push($cp, array('$R ' . $op, 'pj_ceua_status', 'Comitê de Ética no Uso de Animais (CEUA)', False, True));
 		array_push($cp, array('$}', '', 'Comitês de Ética em Pesquisa', False, True));
-		
+
 		array_push($cp, array('$U8', 'pj_update', '', False, True));
 
 		array_push($cp, array('$M', '', '<br><br>', False, True));
@@ -1891,111 +1879,318 @@ class ics extends CI_model {
 		array_push($cp, array('$M', '', '<br><br>', False, True));
 		array_push($cp, array('$B8', '', msg('bt_salvar_continuar'), False, True));
 		return ($cp);
-	}	
+	}
 
-	function cp_subm_03($id = 0) {
+	function cp_subm_03($id = 0, $tipo = '') {
+		$this -> load -> model('geds');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('Stricto_sensus');
+
+		$cracha = $_SESSION['cracha'];
+		$user = $this -> usuarios -> le_cracha($cracha);
+
+		/********* Estudante de Doutorado ***************/
+		if ($tipo != 2) {
+			$user['usuario_tipo_ust_id'] = $this -> Stricto_sensus -> is_phd_student($cracha);
+		}
+
 		$cp = array();
+		$txt = '';
 		$idp = '2' . strzero($id, 6);
 		array_push($cp, array('$HV', 'pj_codigo', $idp, False, True));
 
 		$txt = '<b>Planos de Trabalho do Estudante</b><br><br>';
 		array_push($cp, array('$M', '', ($txt), False, True));
 
-
 		$data = array();
 		$nrplano = 0;
-		
-		
+		$data = array_merge($data, $user);
+		/********* BOTAO ***************************************************************/
+		$data['doc_protocolo_mae'] = $idp;
+		$data['resumo_planos'] = $this -> ics -> submissao_planos_cadastrados($idp, $cracha);
+		$txt = $this -> load -> view('ic/plano_submit_insert', $data, true);
+		array_push($cp, array('$M', '', ($txt), False, True));
+
 		/**************************** PLANOS ************/
 		$sql = "select * from ic_submissao_plano
 					left join us_usuario on doc_aluno = us_cracha
-					 where doc_protocolo_mae = '$idp' order by doc_protocolo ";
-		$rlt = $this->db->query($sql);
+					 WHERE doc_protocolo_mae = '$idp'
+					 AND doc_status <> 'X' 
+					 order by doc_edital, doc_protocolo 
+					  ";
+		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$data = $rlt[$r];
-				//print_r($data);
-				$nrplano++;
-				$data['nrplano'] = $nrplano;
-				$txt = $this->load->view('ic/plano_submit',$data,true);
-				array_push($cp, array('$M', '', ($txt), False, True));						
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$data = $rlt[$r];
+			$nrplano++;
+			$data['nrplano'] = $nrplano;
+			$data['id'] = $id;
+			$data['tipo'] = $tipo;
+
+			$this -> geds -> tabela = 'ic_ged_documento';
+			$pag = 'ic';
+			$data['arquivos'] = $this -> geds -> list_files_table($data['doc_protocolo'], $pag);
+			if (strlen($data['arquivos']) == 0) {
+				$data['arquivos'] = '<img src="' . base_url('img/icon/icone_exclamation.png') . '" height="50" align="left"><font class="lt2" color="red">Não foram postados arquivos para este plano</font>';
 			}
-				
+
+			$data['arquivos_submit'] = $botao_file_submit = '
+					<input type="button" id="ged_upload_' . $data['doc_protocolo'] . '" value="enviar arquivo >>>">
+					<script>
+					$("#ged_upload_' . $data['doc_protocolo'] . '").click(function() {
+						var $tela = newwin("' . base_url('index.php/ic/ged/' . $data['doc_protocolo']) . '",600,400);
+					});
+					</script>';
+
+			$txt = $this -> load -> view('ic/plano_submit', $data, true);
+			array_push($cp, array('$M', '', ($txt), False, True));
+		}
+
 		/************************************************************* INCLUIR NOVO PLANO **/
 		$data['dd20'] = get("dd20");
-		$data['dd10'] = get("dd10");
-		$data['dd11'] = $this->usuarios->limpa_cracha(get("dd11"));
-		$data['dd12'] = get("dd12");
-		$data['dd13'] = get("dd13");
-		$data['dd14'] = get("dd14");
-		$data['dd15'] = get("dd15");
-		$txt = $this->load->view('ic/plano_submit_insert',$data,true);
-		
-		if (($data['dd20'] == '1') and (strlen($data['dd10']) > 2) and (strlen($data['dd11']) > 0) and (strlen($data['dd13']) > 0))
-			{
-				$protocolo_mae = $idp;
-				$titulo = get("dd10");
-				$aluno = $this->usuarios->limpa_cracha(get("dd11"));
-				$escola_publica = get("dd12");
-				$modalidade = get("dd13");
+		$data['dd30'] = get("dd30");
+		$data['dd31'] = $this -> usuarios -> limpa_cracha(get("dd31"));
+		$data['dd32'] = get("dd32");
+		$data['dd33'] = get("dd33");
+		$data['dd34'] = get("dd34");
+		$data['dd35'] = get("dd35");
+		$ttt = '';
 
-				
-				$ok = $this->ics->insere_plano_submissao($protocolo_mae,$titulo,$aluno,$escola_publica,$modalidade);
-				if ($ok == 1)
-					{
-						redirect(base_url('index.php/ic/submit_edit/IC/'.$id.'/'.checkpost_link($id).'/3'));
-					}
+		if (($data['dd20'] == '1') and (strlen($data['dd30']) > 2) and (strlen($data['dd31']) > 0) and (strlen($data['dd33']) > 0)) {
+			$protocolo_mae = $idp;
+			$titulo = get("dd30");
+			$aluno = $this -> usuarios -> limpa_cracha(get("dd31"));
+			$escola_publica = get("dd32");
+			$modalidade = get("dd33");
+
+			$ok = $this -> ics -> insere_plano_submissao($protocolo_mae, $titulo, $aluno, $escola_publica, $modalidade);
+			if ($ok == 1) {
+				redirect(base_url('index.php/ic/submit_edit/IC/' . $id . '/' . checkpost_link($id) . '/3'));
+			} else {
+				if ($ok == -2) {
+					$ttt = '<script> alert("Aluno já está inserido em outro plano de trabalho"); </script>';
+				}
+				if ($ok == -1) {
+					$ttt = '<script> alert("Já existe um Plano de Trabalho com este nome"); </script>';
+				}
 			}
-		
-		array_push($cp, array('$M', '', ($txt), False, True));		
-		array_push($cp, array('$HV', '', '', True, True));
-		
-		//pj_area_estrapj_area
-		array_push($cp, array('$M', '', '<br><br>', False, True));
-		array_push($cp, array('$B8', '', msg('bt_salvar_continuar'), False, True));
-		return ($cp);
-	}	
+		}
 
+		$btn = msg('bt_salvar_continuar');
+		$valided = '';
+		if (get("acao") == $btn) {
+			$valided = '1';
+		}
+		array_push($cp, array('$HV', '', $valided, True, True));
+
+		//pj_area_estrapj_area
+		array_push($cp, array('$M', '', '<br>' . $ttt . '<br>', False, True));
+		array_push($cp, array('$B8', '', $btn, False, True));
+		return ($cp);
+	}
+
+	function mostra_projetos_situacao($cracha,$sta,$ano = '')
+		{
+			if ($ano =='') { $ano = date("Y"); }
+			$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
+					and pj_ano = '$ano' and pj_status = '$sta' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<table class="tabela01" width="100%">';
+			$sx .= '<tr>
+					<th width="5%">protocolo</th>
+					<th>Título do projeto</th>
+					<th width="5%">Ano</th>
+					<th width="5%">Situação</th>
+					</tr>';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$link = base_url('index.php/ic/projeto_view/'.$line['id_pj'].'/'.checkpost_link($line['id_pj']));
+					$link = '<a href="'.$link.'" class="link lt1">';
+					$sx .= '<tr>';
+					$sx .= '<td align="center" class="border1">';
+					$sx .= $link.$line['pj_codigo'].'</a>';
+					$sx .= '</td>';
+
+					$sx .= '<td class="border1">';
+					$sx .= $line['pj_titulo'];
+					$sx .= '</td>';
+					
+					$sx .= '<td align="center" class="border1">';
+					$sx .= $line['pj_ano'];
+					$sx .= '</td>';					
+					
+					$sx .= '<td align="center" class="border1">';
+					$sx .= mst('situacao_'.$line['pj_status']);
+					$sx .= '</td>';					
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
+
+	function submit_enviar_email($proto)
+		{
+			$prj_data = $this -> ics -> le_projeto($proto);
+			$proto = '2'.strzero($proto,6);
+			
+			
+			$sx = $this->load->view('header/header_email',null,true);
+			$sx .= '<h1>Submissão de PIBIC/PIBITI</h1>';
+			$sx .= $this->load->view('ic/projeto',$prj_data,true);
+			
+			/* Planos */
+			$sql = "select * from ic_submissao_plano where doc_protocolo_mae = '$proto' and doc_status = '@' ";
+			$rrr = $this->db->query($sql);
+			$rrr = $rrr->result_array();
+			for ($r=0;$r < count($rrr);$r++)
+				{
+					$data = $rrr[$r];
+					$data['tipo'] = '';
+					$data['id'] = '';
+					$data['nrplano'] = ($r+1);
+					$data['arquivos'] = '';
+					$data['arquivos_submit'] = '';
+					$data['bloquear'] = 'SIM';
+					$sx .= '<hr>';
+					$sx .= $this->load->view('ic/plano_submit.php',$data,true);
+				}
+			echo $sx;
+			$user = $this->usuarios->le_cracha($prj_data['pj_professor']);
+			$idu = $user['id_us'];
+			enviaremail_usuario($idu,'Submissão de Projeto IC - '.$proto,$sx,2);
+		}
+
+	function submit_altera_status($proto,$para)
+		{
+			$proto = '2'.strzero($proto,6);
+			
+			$sql = "update ic_submissao_projetos set pj_status = 'A' where pj_codigo = '$proto' ";
+			$rrr = $this->db->query($sql);
+			
+			$sql = "select * from ic_submissao_plano where doc_protocolo_mae = '$proto' and doc_status = '@' ";
+			$rrr = $this->db->query($sql);
+			$rrr = $rrr->result_array();
+			
+			for ($r=0;$r < count($rrr);$r++)
+				{
+					$proto_plano = $line['doc_protocolo'];
+					$sql = "update ic_ged_documento set doc_status = 'A' where doc_dd0 = '$proto_plano' and doc_status ='@' ";
+					$XXX = $this->db->query($sql);
+					$sql = "update ic_submissao_plano set doc_status = 'A' where doc_protocolo = '$proto_plano' and doc_status ='@' ";
+					$XXX = $this->db->query($sql);
+				}
+			return(1);
+		}
+
+	/*********************** validacao ****************************************************/
 	function valida_entrada($id = '') {
+		$idp = '2' . strzero($id, 6);
+
 		$data = $this -> le_projeto($id);
 		$erro = '<font color="red">Erro</font>';
 		$ok = '<font color="green">OK</font>';
 		$vd = array($erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro);
-		/* Regra */
-		if (strlen($data['pj_titulo']) > 10) {
-			$vd[0] = $ok;
-		}
 
 		$sx = '<table class="tabela01 lt1" width="50%">';
 		$sx .= '<tr><th width="80%">' . msg('rule') . '</th><th width="20%">' . msg('chk') . '</th></tr>';
 
+		/* Regra - titulo do professor */
+		if (strlen($data['pj_titulo']) > 10) {
+			$vd[0] = $ok;
+		}
 		$sx .= '<tr><td class="border1">Título do projeto - (' . strlen($data['pj_titulo']) . ' caracteres)</td>
 						<td class="border1" align="center">' . $vd[0] . '</tr>';
 
-		/* REGRA - ISSN */
-		if (strlen($data['pj_aluno']) == 8) {
+		/* Regra - area do conhecimento */
+		if ((strlen($data['pj_area']) > 0) and (substr($data['pj_area'], 0, 1) <> '0')) {
 			$vd[1] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('pj_aluno') . '(' . $data['pj_aluno'] . ')' . '</td>
+		$sx .= '<tr><td class="border1">Área do conhecimento - (' . ($data['pj_area']) . ')</td>
 						<td class="border1" align="center">' . $vd[1] . '</tr>';
+
+		/* Regra - area do conhecimento */
+		if ((strlen($data['pj_area_estra']) > 0) and (substr($data['pj_area_estra'], 0, 1) <> '0')) {
+			$vd[2] = $ok;
+		}
+		$sx .= '<tr><td class="border1">Área do estratégica - (' . ($data['pj_area_estra']) . ')</td>
+						<td class="border1" align="center">' . $vd[2] . '</tr>';
 
 		/* REGRA - arquivos postados */
 		$sql = "select 1 as total from ic_ged_documento 
-					WHERE doc_dd0 = '" . strzero($id, 6) . "' and doc_status <> 'X' ";
+					WHERE doc_dd0 = '2" . strzero($id, 6) . "' and doc_status <> 'X'
+					and doc_tipo = 'PROJ' ";
 		$rrr = $this -> db -> query($sql);
 		$rrr = $rrr -> result_array();
 
 		if (count($rrr) > 0) {
 			$vd[3] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('captacao_arquivos') . ' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+		$sx .= '<tr><td class="border1">Arquivos do projeto do professor - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
 						<td class="border1" align="center">' . $vd[3] . '</tr>';
+
+		/* projeto aprovado externamente */
+		if ($data['pj_ext_sn'] == '1') {
+			/* REGRA - arquivos postados */
+			$sql = "select 1 as total from ic_ged_documento 
+					WHERE doc_dd0 = '2" . strzero($id, 6) . "' and doc_status <> 'X'
+					and doc_tipo = 'APAGE' ";
+			$rrr = $this -> db -> query($sql);
+			$rrr = $rrr -> result_array();
+
+			if (count($rrr) > 0) {
+				$vd[4] = $ok;
+			}
+			$sx .= '<tr><td class="border1">Arquivos de Aprovação por Orgão de Fomento - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+						<td class="border1" align="center">' . $vd[4] . '</tr>';
+		} else {
+			/* REGRA - arquivos postados */
+			$vd[4] = $ok;
+			$sx .= '<tr><td class="border1">Arquivos de Aprovação por Orgão de Fomento - (não aplicado)</td>
+						<td class="border1" align="center">' . $ok . '</tr>';
+		}
+
+		/* Validação dos Planos */
+		/**************************** PLANOS ************/
+		$sql = "select * from ic_submissao_plano
+					left join us_usuario on doc_aluno = us_cracha
+					 WHERE doc_protocolo_mae = '$idp'
+					 AND doc_status <> 'X' 
+					 order by doc_edital, doc_protocolo 
+					  ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$vd[5] = $ok;
+		$vd[6] = $ok;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$vds = $ok;
+			$sx .= '<tr><td class="border1">Plano do Aluno - ' . $line['doc_protocolo'] . ' - Título</td>
+						<td class="border1" align="center">' . $vds . '</tr>';
+			$proto = $line['doc_protocolo'];
+
+			/* REGRA - arquivos postados */
+			$sql = "select 1 as total from ic_ged_documento 
+					WHERE doc_dd0 = '" . $proto . "' and doc_status <> 'X'
+					and doc_tipo = 'PLANO' and doc_ativo = 1 ";
+
+			$rrr = $this -> db -> query($sql);
+			$rrr = $rrr -> result_array();
+			$rs = $erro;
+			if (count($rrr) > 0) {
+				$rs = $ok;
+			} else {
+				$vd[6] = $erro;
+			}
+			$sx .= '<tr><td class="border1">Plano do Aluno - '.$proto.' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+						<td class="border1" align="center">' . $rs . '</tr>';
+		}
 
 		/* valicacao */
 		$ok = 1;
-		$cps = 3;
+		$cps = 6;
 		/* Campos para validacao */
 
 		for ($r = 0; $r <= $cps; $r++) {
@@ -2013,52 +2208,75 @@ class ics extends CI_model {
 		$idp = '1' . strzero($id, 6);
 		array_push($cp, array('$HV', 'pj_codigo', $idp, False, True));
 		array_push($cp, array('$M', '', $sx, False, True));
-		array_push($cp, array('$C', '', 'Concordo em enviar o projeto para análise!', True, True));
+		if ($ok == 1)
+			{			
+			array_push($cp, array('$C', '', 'Concordo em enviar o projeto para análise!', True, True));
+			} else {
+			array_push($cp, array('$H', '', '', True, True));				
+			}
 
 		return ($cp);
 	}
 
-	function insere_plano_submissao($protocolo_mae,$titulo,$aluno,$escola_publica,$modalidade)
-		{
-			$escola_publica = round($escola_publica);
-			$ano = date("Y");
-				$sql = "select * from ic_submissao_plano 
+	function submissao_planos_cadastrados($idp = '', $author = '') {
+		$ano = date("Y");
+		/**************************** PLANOS ************/
+		$sql = "select count(*) as total, doc_edital, doc_protocolo_mae from ic_submissao_plano
+					left join ic_submissao_projetos on pj_codigo = doc_protocolo_mae
+					 WHERE pj_professor = '$author' and doc_ano = '$ano'
+					 AND doc_status <> 'X' 
+				GROUP BY doc_edital, doc_protocolo_mae  ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		return ($rlt);
+	}
+
+	function cancela_plano($id) {
+		$sql = "update ic_submissao_plano set doc_status = 'X' where id_doc = " . round($id);
+		$this -> db -> query($sql);
+		return (1);
+	}
+
+	function insere_plano_submissao($protocolo_mae, $titulo, $aluno, $escola_publica, $modalidade) {
+		$escola_publica = round($escola_publica);
+		$ano = date("Y");
+		$sql = "select * from ic_submissao_plano 
 							WHERE
 								doc_1_titulo = '$titulo'
-								AND doc_ano = '$ano' ";
-				$rlt = $this->db->query($sql);
-				$rlt = $rlt->result_array();
-				
-				if (count($rlt) > 0)
-					{
-						$ok = 0;
-						return($ok);
-					} else {
-						$ok = 1;
-					}
-					
-			/************ Busca Aluno em Outro Plano *********/
-				$sql = "select * from ic_submissao_plano 
+								AND doc_ano = '$ano'
+								AND doc_status <> 'X' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		if (count($rlt) > 0) {
+			$ok = -1;
+			return ($ok);
+		} else {
+			$ok = 1;
+		}
+
+		/************ Busca Aluno em Outro Plano *********/
+		$sql = "select * from ic_submissao_plano 
 							WHERE
 								doc_aluno = '$aluno' 
-								AND doc_ano = '$ano' ";
-				$rlt = $this->db->query($sql);
-				$rlt = $rlt->result_array();
-				
-				if (count($rlt) > 0)
-					{
-						$ok = 0;
-						return($ok);
-					} else {
-						$ok = 1;
-					}
-			$dt = date("Ymd");
-			$dtn = date("Y-m-d");
-			$hora = date("H:i");
-			
-			$autor = $_SESSION['cracha'];
-			
-			$sql = "insert into ic_submissao_plano 
+								AND doc_ano = '$ano' 
+								AND doc_status <> 'X' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		if ((count($rlt) > 0) and ($aluno != '00000000')) {
+			$ok = -2;
+			return ($ok);
+		} else {
+			$ok = 1;
+		}
+		$dt = date("Ymd");
+		$dtn = date("Y-m-d");
+		$hora = date("H:i");
+
+		$autor = $_SESSION['cracha'];
+
+		$sql = "insert into ic_submissao_plano 
 						(doc_1_titulo, doc_1_idioma, doc_aluno, 
 						doc_protocolo, doc_protocolo_mae, doc_data,
 						doc_dt_data, doc_hora, doc_status,
@@ -2076,13 +2294,14 @@ class ics extends CI_model {
 						20, '$modalidade', '$dt',
 						$escola_publica
 						)";
-			$this->db->query($sql);
-			
-			$sql = "update ic_submissao_plano set doc_protocolo = lpad(id_doc,7,0) where doc_protocolo = '' ";
-			$rlt = $this->db->query($sql);
-			return(1);
-											
-		}
+		$this -> db -> query($sql);
+
+		$sql = "update ic_submissao_plano set doc_protocolo = lpad(id_doc,7,0) where doc_protocolo = '' ";
+		$rlt = $this -> db -> query($sql);
+		return (1);
+
+	}
+
 	function ativar_bolsa($id, $ida, $cracha, $d1, $d2, $d3, $d4, $tipo, $situacao) {
 		$d1 = brtos($d1);
 		$d2 = brtos($d2);
@@ -2240,14 +2459,13 @@ class ics extends CI_model {
 		return ($cp);
 	}
 
-	function submissoes_abertas($id='1') {
+	function submissoes_abertas($id = '1') {
 		$sql = "select * from switch where id_sw = $id order by id_sw ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
-		if (count($rlt) > 0)
-			{
-				$rlt = $rlt[0];
-			}
+		if (count($rlt) > 0) {
+			$rlt = $rlt[0];
+		}
 		return ($rlt);
 	}
 
@@ -2595,6 +2813,7 @@ class ics extends CI_model {
 		}
 		return ($ok);
 	}
+
 	function resumo_submit($cracha = '', $ano = '') {
 		$res = array('0', '-', '-', '-', '-', '-');
 		$link = array('', '', '', '', '', '');
@@ -2662,10 +2881,12 @@ class ics extends CI_model {
 
 		return ($sx);
 	}
+
 	function updatex() {
 		$sql = "update " . $this -> tabela_projetos . " set pj_codigo = concat('2',lpad(id_pj,6,0)) where pj_codigo = '' ";
 		$rlt = $this -> db -> query($sql);
 	}
+
 	function projeto_novo($cracha) {
 		$ano = date("Y");
 		$data = date("Y-m-d");
@@ -2689,7 +2910,7 @@ class ics extends CI_model {
 		$url = base_url('index.php/ic/submit_edit/IC/' . $id . '/' . checkpost_link($id));
 		redirect($url);
 		return ($id);
-	}	
+	}
 
 	function exist_submit($cracha, $ano) {
 		$sql = "select id_pj from " . $this -> tabela_projetos . " where pj_status = '@' 
@@ -2706,5 +2927,6 @@ class ics extends CI_model {
 			return (0);
 		}
 	}
+
 }
 ?>

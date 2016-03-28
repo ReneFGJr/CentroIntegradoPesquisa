@@ -1,7 +1,22 @@
 <?php
 
-class swb2s extends CI_model {
+class swbs extends CI_model {
 	var $tabela = 'evento_inscricao';
+	
+	function evento_ativo()
+		{
+			$sql = "select * from evento_nome where ev_nome like '%SwB%' and ev_ativo = 1 order by id_ev desc limit 1";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					$id = $line['id_ev'];
+					return($id);
+				} else {
+					return(0);
+				}
+		}
 
 	function row($obj) {
 		$obj -> fd = array('id_ie', 'ei_us_usuario_id');

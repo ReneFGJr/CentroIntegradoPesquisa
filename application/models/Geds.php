@@ -7,6 +7,7 @@ class Geds extends CI_Model {
 	var $versao = 0;
 	var $nw_log = '';
 	var $total_files = 0;
+	var $extension = array('.pdf');
 
 	function form_upload($id = 0, $frame) {
 		$sx = '
@@ -277,11 +278,30 @@ class Geds extends CI_Model {
 				$path .= date("m") . '/';
 				$this -> dir($path);
 			}
-			$dd2 = $this -> input -> post('dd2');
+			$dd2 = get('dd2');
 
 			if (strlen($dd2) == 0) { $erro = 10;
 				$erro_tipo = '<font color="red">Erro de tipo de arquivo</font>';
 			}
+			
+			/********* FORMATO DO ARQUIVO ******************/
+			$tipos = $this->extension;
+			$errof=1;
+			for ($r=0;$r < count($tipos);$r++)
+				{
+					$tp = UpperCase($tipos[$r]);
+					$tipo_c = UpperCase(substr($nome,strlen($nome)-strlen($tp),strlen($tp)));
+					if ($tp == $tipo_c)
+						{
+							$errof = 0;
+						}
+				}
+			$erro = ($erro OR $errof);
+			
+			if ($errof == 1)
+				{
+					$erro_tipo .= '<br><font color="red">Extensão do Arquivo inválida ('.$tipo_c.')</font>';
+				}
 
 			if (strlen($erro) == 0) {
 				$compl = $proto . '-' . substr(md5($nome . date("His")), 0, 5) . '-';

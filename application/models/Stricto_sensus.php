@@ -1,6 +1,29 @@
 <?php
 class Stricto_sensus extends CI_model {
 	var $resumo = array();
+	
+	function is_phd_student($cracha='')
+		{
+			$sql = "select * from ss_docente_orientacao where od_aluno = '$cracha' order by od_ano_ingresso desc limit 1";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					$mod = $line['od_modalidade'];
+					if ($mod == 'D') {
+						return(7);
+					}
+					if ($mod == 'P') {
+						return(8);
+					}
+					if ($mod == 'M') {
+						return(6);
+					}
+				} else {
+					return(0);
+				}
+		}
 
 	function is_administrativo($id_us = 0) {
 		$sql = "select * from ss_programa_pos where  
