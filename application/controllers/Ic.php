@@ -104,13 +104,25 @@ class ic extends CI_Controller {
 			$sql = "select * from ic_modalidade_bolsa where mb_vigente = 1 order by mb_descricao ";
 			array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', 'Modalidade de Bolsa', True, True));
 			array_push($cp, array('$S8', '', 'Informe o código do aluno', True, True));
-			array_push($cp, array('$T80:3', '', '`Informe título do plano', True, True));
-			array_push($cp, array('$Q us_cracha:us_nome:select * from us_usuario where usuario_tipo_ust_id=2 and us_ativo = 1 order by us_nome ', '', 'Nome do orientador', True, True));
-			array_push($cp, array('$D8', '', 'Início da vigência', True, True));
-			array_push($cp, array('$[' . (date("Y") - 2) . '-' . date("Y") . ']', '', 'Ano do edital', True, True));
+			
+			
+			if ($chk2 == 0)
+				{
+					array_push($cp, array('$T80:3', '', '`Informe título do plano', True, True));				
+					array_push($cp, array('$Q us_cracha:us_nome:select * from us_usuario where usuario_tipo_ust_id=2 and us_ativo = 1 order by us_nome ', '', 'Nome do orientador', True, True));
+					array_push($cp, array('$D8', '', 'Início da vigência', True, True));
+					array_push($cp, array('$[' . (date("Y") - 2) . '-' . date("Y") . ']', '', 'Ano do edital', True, True));
+				} else {
+					$plano = $this->ics->le_plano_submit(get("dd1"));
+					//print_r($plano);
+					array_push($cp, array('$HV', '', $plano['doc_1_titulo'], True, True));
+					array_push($cp, array('$HV', '', $plano['doc_autor_principal'], True, True));
+					array_push($cp, array('$D8', '', 'Início da vigência', True, True));
+					array_push($cp, array('$HV', '', $plano['doc_ano'], True, True));					
+				}
 			$tela = $form -> editar($cp, '');
 
-			if (($chk1 == 0) and ($chk2 == 0)) {
+			if (($chk1 == 0)) {
 				$estudante = get("dd3");
 
 				if ($form -> saved > 0) {

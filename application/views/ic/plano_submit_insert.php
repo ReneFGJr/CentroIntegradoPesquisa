@@ -84,6 +84,11 @@ if ($us_tipo == 2) {
 		}
 	}
 } else {
+	/* Doutorando */
+	if ($usuario_tipo_ust_id == 7)
+		{
+			$us_tipo = '7';
+		}
 	$post_pibicem = 0;
 	/********** MESTRANDO *************/
 	if (($us_tipo != 7) and ($us_tipo != 8)) {

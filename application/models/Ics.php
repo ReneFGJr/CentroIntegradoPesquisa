@@ -1538,6 +1538,19 @@ class ics extends CI_model {
 		}
 	}
 
+	function le_plano_submit($id = '') {
+		$sql = "select * from ic_submissao_plano where doc_protocolo = '$id' ";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			return ($line);
+		} else {
+			return ( array());
+		}
+	}
+
 	function le_protocolo_cancelado($id = 0) {
 		$sql = $this -> table_view("ic.ic_plano_aluno_codigo = '" . $id . "' and s_id = 2", $offset = 0, $limit = 9999999);
 		$rlt = db_query($sql);
