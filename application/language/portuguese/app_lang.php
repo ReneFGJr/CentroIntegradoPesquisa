@@ -12,6 +12,11 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+$lang['titulo_pesquisa'] = 'Título do projeto do professor';
+$lang['submit_PIBIC'] = 'Submissão IC';
+$lang['area_conhecimento'] = 'Área do conhecimento';
+$lang['area_estrategica'] = 'Área do estratégica (se aplicado)';
+$lang['submit_PIBIC_text'] = 'Submissão de projetos e planos do PIBIC, PIBITI e PIBIC (jr)';
 $lang['editar_impedimento'] = 'inpedimento do perfil';
 $lang['shortcuts'] = 'Acesso rápido';
 $lang['bt_search'] = 'Busca';

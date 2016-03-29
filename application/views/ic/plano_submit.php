@@ -1,7 +1,7 @@
 <?php
 $edital = lowercase($doc_edital);
 $logo = 'logo_ic_'.$edital.'.png';
-$cancel = '<a href="#" class="link" onclick="cancelar_plano(<?php echo $id_doc;?>);">
+$cancel = '<a href="#" class="link" onclick="cancelar_plano('.$id_doc.');">
 			<font color="red"><font class="lt0">excluir<br>plano</font><br><font class="lt6"><b>X</b></font></font>
 			</a>';
 $arquivos_label = 'Arquivos do Plano:';

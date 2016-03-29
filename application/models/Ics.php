@@ -1846,6 +1846,10 @@ class ics extends CI_model {
 		$op .= '&2:Em submissão (deve-se apresentar a parecer até Novembro de ' . date("Y") . ')';
 		$op .= '&3:Já aprovado (anexar o parecer do Comitê de Éticas nos Documentos)';
 		array_push($cp, array('$R ' . $op, 'pj_cep_status', 'Comitê de Ética em Pesquisa com Humanos (CEP)', False, True));
+
+		$op = '1:Não aplicável (não envolve animais)';
+		$op .= '&2:Em submissão (deve-se apresentar a parecer até Novembro de ' . date("Y") . ')';
+		$op .= '&3:Já aprovado (anexar o parecer do Comitê de Éticas nos Documentos)';
 		array_push($cp, array('$R ' . $op, 'pj_ceua_status', 'Comitê de Ética no Uso de Animais (CEUA)', False, True));
 		array_push($cp, array('$}', '', 'Comitês de Ética em Pesquisa', False, True));
 
@@ -1860,11 +1864,14 @@ class ics extends CI_model {
 	function cp_subm_02($id = 0) {
 		$cp = array();
 		$idp = '2' . strzero($id, 6);
+
+		$data = $this -> le_projeto($id);
+
 		array_push($cp, array('$HV', 'pj_codigo', $idp, False, True));
 
 		$txt = '<b>Documentos obrigatórios para submissão do Projeto de Pesquisa:</b><br><br>
 						- O projeto de pesquisa (todos os casos)</br>
-						- Carta de aceite do co-orientador da universidade de destino, bem como seu curriculum vitae. (para Doutorandos)</br>
+						- Carta de ciência do orientador. (para Doutorandos)</br>
 						- Documento de aprovação da Agências de Fomento (para projetos aprovados externamente)</br>
 						- <font color="red">Os Planos dos Alunos devem ser submetidos na Aba 3</font><br>
 						';
@@ -1872,7 +1879,30 @@ class ics extends CI_model {
 		array_push($cp, array('$M', '', ($txt), False, True));
 
 		array_push($cp, array('${', '', msg('list_arquivos'), False, True));
-		array_push($cp, array('$FILE:ic_ged_documento:ic', '', $idp, false, true));
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$txt = $this -> geds -> list_files_table($idp, 'IC');
+		$txt .= '<input type="button" onclick="newwin(\'' . base_url('index.php/ic/ged/' . $idp) . '/PROJ\',600,400);" value="enviar arquivo do projeto de pesquisa >>>">';
+
+		/* Botao de projeto externo */
+		if ($data['pj_ext_sn'] == '1') {
+			$txt .= '<br><br>';
+			$txt .= '<input type="button" onclick="newwin(\'' . base_url('index.php/ic/ged/' . $idp) . '/APAGE\',600,400);" value="enviar arquivo de aprocação externa >>>">';
+		}
+
+		/* Botao de comite de ética CEP */
+		if ($data['pj_cep_status'] == '3') {
+			$txt .= '<br><br>';
+			$txt .= '<input type="button" onclick="newwin(\'' . base_url('index.php/ic/ged/' . $idp) . '/CEP\',600,400);" value="enviar arquivo do parecer do CEP >>>">';
+		}
+
+		/* Botao de comite de ética CEUA */
+		if ($data['pj_ceua_status'] == '3') {
+
+			$txt .= '<br><br>';
+			$txt .= '<input type="button" onclick="newwin(\'' . base_url('index.php/ic/ged/' . $idp) . '/CEU\',600,400);" value="enviar arquivo do parecer do CEUA >>>">';
+		}
+
+		array_push($cp, array('$M', '', $txt, false, true));
 		array_push($cp, array('$}', '', msg('files'), False, True));
 
 		//pj_area_estrapj_area
@@ -1908,6 +1938,7 @@ class ics extends CI_model {
 		/********* BOTAO ***************************************************************/
 		$data['doc_protocolo_mae'] = $idp;
 		$data['resumo_planos'] = $this -> ics -> submissao_planos_cadastrados($idp, $cracha);
+		
 		$txt = $this -> load -> view('ic/plano_submit_insert', $data, true);
 		array_push($cp, array('$M', '', ($txt), False, True));
 
@@ -1939,7 +1970,7 @@ class ics extends CI_model {
 					<input type="button" id="ged_upload_' . $data['doc_protocolo'] . '" value="enviar arquivo >>>">
 					<script>
 					$("#ged_upload_' . $data['doc_protocolo'] . '").click(function() {
-						var $tela = newwin("' . base_url('index.php/ic/ged/' . $data['doc_protocolo']) . '",600,400);
+						var $tela = newwin("' . base_url('index.php/ic/ged/' . $data['doc_protocolo']) . '/PLANO",600,400);
 					});
 					</script>';
 
@@ -1982,7 +2013,7 @@ class ics extends CI_model {
 		if (get("acao") == $btn) {
 			$valided = '1';
 		}
-		array_push($cp, array('$HV', '', $valided, True, True));
+		array_push($cp, array('$HV', '', $valided, False, True));
 
 		//pj_area_estrapj_area
 		array_push($cp, array('$M', '', '<br>' . $ttt . '<br>', False, True));
@@ -1990,109 +2021,105 @@ class ics extends CI_model {
 		return ($cp);
 	}
 
-	function mostra_projetos_situacao($cracha,$sta,$ano = '')
-		{
-			if ($ano =='') { $ano = date("Y"); }
-			$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
+	function mostra_projetos_situacao($cracha, $sta, $ano = '') {
+		if ($ano == '') { $ano = date("Y");
+		}
+		$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
 					and pj_ano = '$ano' and pj_status = '$sta' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			$sx = '<table class="tabela01" width="100%">';
-			$sx .= '<tr>
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<table class="tabela01" width="100%">';
+		$sx .= '<tr>
 					<th width="5%">protocolo</th>
 					<th>Título do projeto</th>
 					<th width="5%">Ano</th>
 					<th width="5%">Situação</th>
 					</tr>';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$link = base_url('index.php/ic/projeto_view/'.$line['id_pj'].'/'.checkpost_link($line['id_pj']));
-					$link = '<a href="'.$link.'" class="link lt1">';
-					$sx .= '<tr>';
-					$sx .= '<td align="center" class="border1">';
-					$sx .= $link.$line['pj_codigo'].'</a>';
-					$sx .= '</td>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$link = base_url('index.php/ic/projeto_view/' . $line['id_pj'] . '/' . checkpost_link($line['id_pj']));
+			$link = '<a href="' . $link . '" class="link lt1">';
+			$sx .= '<tr>';
+			$sx .= '<td align="center" class="border1">';
+			$sx .= $link . $line['pj_codigo'] . '</a>';
+			$sx .= '</td>';
 
-					$sx .= '<td class="border1">';
-					$sx .= $line['pj_titulo'];
-					$sx .= '</td>';
-					
-					$sx .= '<td align="center" class="border1">';
-					$sx .= $line['pj_ano'];
-					$sx .= '</td>';					
-					
-					$sx .= '<td align="center" class="border1">';
-					$sx .= mst('situacao_'.$line['pj_status']);
-					$sx .= '</td>';					
-				}
-			$sx .= '</table>';
-			return($sx);
-		}
+			$sx .= '<td class="border1">';
+			$sx .= $line['pj_titulo'];
+			$sx .= '</td>';
 
-	function submit_enviar_email($proto)
-		{
-			$prj_data = $this -> ics -> le_projeto($proto);
-			$proto = '2'.strzero($proto,6);
-			
-			
-			$sx = $this->load->view('header/header_email',null,true);
-			$sx .= '<h1>Submissão de PIBIC/PIBITI</h1>';
-			$sx .= $this->load->view('ic/projeto',$prj_data,true);
-			
-			/* Planos */
-			$sql = "select * from ic_submissao_plano where doc_protocolo_mae = '$proto' and doc_status = '@' ";
-			$rrr = $this->db->query($sql);
-			$rrr = $rrr->result_array();
-			for ($r=0;$r < count($rrr);$r++)
-				{
-					$data = $rrr[$r];
-					$data['tipo'] = '';
-					$data['id'] = '';
-					$data['nrplano'] = ($r+1);
-					$data['arquivos'] = '';
-					$data['arquivos_submit'] = '';
-					$data['bloquear'] = 'SIM';
-					$sx .= '<hr>';
-					$sx .= $this->load->view('ic/plano_submit.php',$data,true);
-				}
-			echo $sx;
-			$user = $this->usuarios->le_cracha($prj_data['pj_professor']);
-			$idu = $user['id_us'];
-			enviaremail_usuario($idu,'Submissão de Projeto IC - '.$proto,$sx,2);
-		}
+			$sx .= '<td align="center" class="border1">';
+			$sx .= $line['pj_ano'];
+			$sx .= '</td>';
 
-	function submit_altera_status($proto,$para)
-		{
-			$proto = '2'.strzero($proto,6);
-			
-			$sql = "update ic_submissao_projetos set pj_status = 'A' where pj_codigo = '$proto' ";
-			$rrr = $this->db->query($sql);
-			
-			$sql = "select * from ic_submissao_plano where doc_protocolo_mae = '$proto' and doc_status = '@' ";
-			$rrr = $this->db->query($sql);
-			$rrr = $rrr->result_array();
-			
-			for ($r=0;$r < count($rrr);$r++)
-				{
-					$proto_plano = $line['doc_protocolo'];
-					$sql = "update ic_ged_documento set doc_status = 'A' where doc_dd0 = '$proto_plano' and doc_status ='@' ";
-					$XXX = $this->db->query($sql);
-					$sql = "update ic_submissao_plano set doc_status = 'A' where doc_protocolo = '$proto_plano' and doc_status ='@' ";
-					$XXX = $this->db->query($sql);
-				}
-			return(1);
+			$sx .= '<td align="center" class="border1">';
+			$sx .= mst('situacao_' . $line['pj_status']);
+			$sx .= '</td>';
 		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function submit_enviar_email($proto) {
+		$prj_data = $this -> ics -> le_projeto($proto);
+		$proto = '2' . strzero($proto, 6);
+
+		$sx = $this -> load -> view('header/header_email', null, true);
+		$sx .= '<h1>Submissão de PIBIC/PIBITI</h1>';
+		$sx .= $this -> load -> view('ic/projeto', $prj_data, true);
+
+		/* Planos */
+		$sql = "select * from ic_submissao_plano where doc_protocolo_mae = '$proto' and doc_status = '@' ";
+		$rrr = $this -> db -> query($sql);
+		$rrr = $rrr -> result_array();
+		for ($r = 0; $r < count($rrr); $r++) {
+			$data = $rrr[$r];
+			$data['tipo'] = '';
+			$data['id'] = '';
+			$data['nrplano'] = ($r + 1);
+			$data['arquivos'] = '';
+			$data['arquivos_submit'] = '';
+			$data['bloquear'] = 'SIM';
+			$sx .= '<hr>';
+			$sx .= $this -> load -> view('ic/plano_submit.php', $data, true);
+		}
+		echo $sx;
+		$user = $this -> usuarios -> le_cracha($prj_data['pj_professor']);
+		$idu = $user['id_us'];
+		enviaremail_usuario($idu, 'Submissão de Projeto IC - ' . $proto, $sx, 2);
+	}
+
+	function submit_altera_status($proto, $para) {
+		$proto = '2' . strzero($proto, 6);
+
+		$sql = "update ic_submissao_projetos set pj_status = 'A' where pj_codigo = '$proto' ";
+		$rrr = $this -> db -> query($sql);
+
+		$sql = "select * from ic_submissao_plano where doc_protocolo_mae = '$proto' and doc_status = '@' ";
+		$rrr = $this -> db -> query($sql);
+		$rrr = $rrr -> result_array();
+
+		for ($r = 0; $r < count($rrr); $r++) {
+			$line = $rrr[$r];
+			$proto_plano = $line['doc_protocolo'];
+			$sql = "update ic_ged_documento set doc_status = 'A' where doc_dd0 = '$proto_plano' and doc_status ='@' ";
+			$XXX = $this -> db -> query($sql);
+			$sql = "update ic_submissao_plano set doc_status = 'A' where doc_protocolo = '$proto_plano' and doc_status ='@' ";
+			$XXX = $this -> db -> query($sql);
+		}
+		return (1);
+	}
 
 	/*********************** validacao ****************************************************/
 	function valida_entrada($id = '') {
 		$idp = '2' . strzero($id, 6);
 
 		$data = $this -> le_projeto($id);
+
 		$erro = '<font color="red">Erro</font>';
 		$ok = '<font color="green">OK</font>';
-		$vd = array($erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro);
+		$vd = array($erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro);
 
 		$sx = '<table class="tabela01 lt1" width="50%">';
 		$sx .= '<tr><th width="80%">' . msg('rule') . '</th><th width="20%">' . msg('chk') . '</th></tr>';
@@ -2164,6 +2191,15 @@ class ics extends CI_model {
 		$rlt = $rlt -> result_array();
 		$vd[5] = $ok;
 		$vd[6] = $ok;
+
+		/******** Total de planos submetidos ***********/
+		$total_planos = count($rlt);
+		if ($total_planos > 0) {
+			$vd[9] = $ok;
+		} else {
+			$vd[9] = $erro;
+		}
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$vds = $ok;
@@ -2184,13 +2220,81 @@ class ics extends CI_model {
 			} else {
 				$vd[6] = $erro;
 			}
-			$sx .= '<tr><td class="border1">Plano do Aluno - '.$proto.' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+			$sx .= '<tr><td class="border1">Plano do Aluno - ' . $proto . ' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
 						<td class="border1" align="center">' . $rs . '</tr>';
 		}
 
-		/* valicacao */
+		/********************************** ComitÊ de ética CEUA **********************************/
+		$cep = $data['pj_ceua_status'];
+		$sf = '';
+		if (strlen($cep) == 0) {
+			$sx .= '<tr><td class="border1">Situação do Comitê de Ética CEUA - <font color="red">Não informado</font></td>
+						<td class="border1" align="center">' . $erro . '</tr>';
+		} else {
+			/* parecer parovado */
+			if ($cep == 3) {
+				/* REGRA - arquivos postados */
+				$sql = "select 1 as total from ic_ged_documento 
+					WHERE doc_dd0 = '" . $proto . "' and doc_status <> 'X'
+					and doc_tipo = 'CEU' and doc_ativo = 1 ";
+
+				$rrr = $this -> db -> query($sql);
+				$rrr = $rrr -> result_array();
+				$rs = $erro;
+				if (count($rrr) > 0) {
+					$vd[7] = $ok;
+				} else {
+					$sf = '<tr><td class="border1">Parecer do Comitê de Ética - CEUA - <font color="red">Não postado</td>
+						<td class="border1" align="center">' . $erro . '</tr>';
+					$vd[7] = $erro;
+				}
+			} else {
+				$vd[7] = $ok;
+
+			}
+			$sx .= '<tr><td class="border1">Situação do Comitê de Ética (CEUA) </td>
+						<td class="border1" align="center">' . $vd[7] . '</tr>';
+			$sx .= $sf;
+		}
+		/********************************** ComitÊ de ética **********************************/
+		$cep = $data['pj_cep_status'];
+		$sf = '';
+		if (strlen($cep) == 0) {
+			$sx .= '<tr><td class="border1">Situação do Comitê de Ética CEP<font color="red">Não informado</font></td>
+						<td class="border1" align="center">' . $erro . '</tr>';
+		} else {
+			/* parecer parovado */
+			if ($cep == 3) {
+				/* REGRA - arquivos postados */
+				$sql = "select 1 as total from ic_ged_documento 
+					WHERE doc_dd0 = '" . $proto . "' and doc_status <> 'X'
+					and doc_tipo = 'CEP' and doc_ativo = 1 ";
+
+				$rrr = $this -> db -> query($sql);
+				$rrr = $rrr -> result_array();
+				$rs = $erro;
+				if (count($rrr) > 0) {
+					$vd[8] = $ok;
+				} else {
+					$sf = '<tr><td class="border1">Parecer do Comitê de Ética - CEP - <font color="red">Não postado</td>
+						<td class="border1" align="center">' . $erro . '</tr>';
+					$vd[8] = $erro;
+				}
+			} else {
+				$vd[8] = $ok;
+
+			}
+			$sx .= '<tr><td class="border1">Situação do Comitê de Ética (CEP) </td>
+						<td class="border1" align="center">' . $vd[8] . '</tr>';
+			$sx .= $sf;
+		}
+		/********************************** Total de Planos **********************************/
+
+		$sx .= '<tr><td class="border1">Total de Planos submetidos - ' . $total_planos . '</td>
+		<td class="border1" align="center">' . $vd[9] . '</tr>';
+
 		$ok = 1;
-		$cps = 6;
+		$cps = 9;
 		/* Campos para validacao */
 
 		for ($r = 0; $r <= $cps; $r++) {
@@ -2208,12 +2312,11 @@ class ics extends CI_model {
 		$idp = '1' . strzero($id, 6);
 		array_push($cp, array('$HV', 'pj_codigo', $idp, False, True));
 		array_push($cp, array('$M', '', $sx, False, True));
-		if ($ok == 1)
-			{			
+		if ($ok == 1) {
 			array_push($cp, array('$C', '', 'Concordo em enviar o projeto para análise!', True, True));
-			} else {
-			array_push($cp, array('$H', '', '', True, True));				
-			}
+		} else {
+			array_push($cp, array('$H', '', '', True, True));
+		}
 
 		return ($cp);
 	}

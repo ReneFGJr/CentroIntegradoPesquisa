@@ -425,6 +425,7 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '4' :
+						$this->load->view('ic/projeto',$prj_data);
 						$cp = $this -> ics -> valida_entrada($id);
 
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
@@ -432,14 +433,7 @@ class ic extends CI_Controller {
 						$data['content'] = $tela;
 						$this -> load -> view('content', $data);
 						break;						
-					case '4' :
-						$cp = $this -> ics -> valida_entrada($id);
 
-						$tela = $form -> editar($cp, 'ic_submissao_projetos');
-
-						$data['content'] = $tela;
-						$this -> load -> view('content', $data);
-						break;
 					case '5' :
 						$this -> ics -> submit_altera_status($id, 'A');
 						$this -> ics -> submit_enviar_email($id);						

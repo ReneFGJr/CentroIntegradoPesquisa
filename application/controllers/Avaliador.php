@@ -267,7 +267,13 @@ class avaliador extends CI_Controller {
 
 		/* arquivos */
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$data['ged'] = $this -> geds -> list_files_table($proto, 'ic');
+		$proto_mae = $dados['ic_projeto_professor_codigo'];
+		$data['ged'] = '';
+		if (strlen($proto_mae) > 0)
+			{
+				$data['ged'] .= $this -> geds -> list_files_table($proto_mae, 'ic');
+			} 
+		$data['ged'] .= $this -> geds -> list_files_table($proto, 'ic');
 		$data['plano'] = $this -> load -> view('ic/plano', $dados, true);
 
 		/* VALIDACOES */

@@ -57,10 +57,11 @@ for ($r = 0; $r < count($pl); $r++) {
 	}
 }
 
+
 /**************************** Limite por titulacao ***************************/
 /********** MESTRE *************/
-$titulacao = $ust_id;
-$us_tipo = $usuario_tipo_ust_id;
+$titulacao = $usuario_titulacao_ust_id;
+$us_tipo = $id_ustp;
 
 /***** Professores *************/
 if ($us_tipo == 2) {
@@ -85,7 +86,7 @@ if ($us_tipo == 2) {
 } else {
 	$post_pibicem = 0;
 	/********** MESTRANDO *************/
-	if ($us_tipo == 6) {
+	if (($us_tipo != 7) and ($us_tipo != 8)) {
 		$post_pibic = 0;
 		$post_pibiti = 0;
 	}
