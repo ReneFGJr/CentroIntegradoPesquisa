@@ -59,6 +59,7 @@ $lang['lb_bn_rf_parcela'] = 'Número de parcelas a isentar';
 $lang['submit_ICMST'] = 'PIBIC MASTER';
 $lang['submit_ICMST_text'] = 'Submissão para o Edital do PIBIC Master';
 $lang['pj_aluno'] = 'Estudante';
+$lang['submit_'] = 'Submissão';
 
 $lang['export_to_excel'] = 'Exportar para o Excel';
 $lang['update'] = 'Atualizar';

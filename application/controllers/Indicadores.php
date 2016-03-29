@@ -52,7 +52,95 @@ class indicadores extends CI_Controller {
 
 		$this -> load -> view('header/content_open');
 	}
-
+	
+	#menu para indicadores de ic
+	function indicadores_ic(){
+		$this -> cab();
+		$data = array();
+		
+		$menu = array();
+		//indicadores
+		array_push($menu, array('Eventos', 'Estudantes x ano', 'ITE', '/indicadores/alunos_ic_ano/'));
+		array_push($menu, array('Eventos', 'Estudantes x evento', 'ITE', '/indicadores/alunos_inscritos_evento/'));
+		array_push($menu, array('Eventos', 'Estudantes x curso', 'ITE', '/indicadores/alunos_curso_evento/'));
+		
+		
+		/*View principal*/
+		$data['menu'] = $menu;
+		$data['title_menu'] = 'Iniciação científica';
+		$this -> load -> view('header/main_menu', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+	/**evolucao de alunos ic por ano*/
+	function alunos_ic_ano(){
+		$this -> load -> model('ics_indicadores');
+		
+		$this -> cab();
+		$data = array();
+		
+		/*View principal*/
+		$data['title_menu'] = 'Resumo anual de IC';
+		$this -> load -> view('header/main_menu', $data);
+		
+		//chama indicador[tabela]
+		$data['content'] = $this -> ics_indicadores -> ind_alunos_curso();
+		$this -> load -> view('content', $data);
+		
+		/** Rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	
+	}
+	
+	/**alunos por tipo de evento */
+	function alunos_inscritos_evento(){
+		$this -> load -> model('ics_indicadores');
+		
+		$this -> cab();
+		$data = array();
+		
+		/*View principal*/
+		$data['title_menu'] = 'Inscritos no Evento';
+		$this -> load -> view('header/main_menu', $data);
+		
+		//chama indicador[tabela]
+		$data['content'] = $this -> ics_indicadores -> ind_alunos_inscritos_ev();
+		$this -> load -> view('content', $data);
+		
+		/** Rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	
+	}
+	
+	/**alunos por curso no evento */
+	function alunos_curso_evento(){
+		$this -> load -> model('ics_indicadores');
+		
+		$this -> cab();
+		$data = array();
+		
+		/*View principal*/
+		$data['title_menu'] = 'Perfil dos inscritos no eventos(curso)';
+		$this -> load -> view('header/main_menu', $data);
+		
+		//chama indicador[tabela]
+		$data['content'] = $this -> ics_indicadores -> ind_alunos_curso_inscritos_ev();
+		$this -> load -> view('content', $data);
+		
+		/** Rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	
+	}
+	
+	
+	
+	
+	
 	function docente($tipo = '', $fmt = '') {
 		$this -> load -> model('produtividades');
 		$this -> load -> model('ics');
@@ -157,6 +245,9 @@ class indicadores extends CI_Controller {
 		array_push($menu, array('Docentes', 'Bolsista Produtividade, Professores stricto sensu, Orientadores PIBIC, ...', 'BOX', '/indicadores/docentes/'));
 		array_push($menu, array('Discentes', 'Estudantes de Iniciação Científica, ', 'BOX', '/indicadores/estudantes/'));
 		array_push($menu, array('Produção Científica', 'Produção e produção qualificada em Arqtigos, Livros, Capítulos de livros e eventos, ', 'BOX', '/indicadores/producoes/'));
+		//bt indicadores
+		array_push($menu, array('Iniciação Científica', 'Indicadores de IC', 'BOX', '/indicadores/indicadores_ic/'));
+		
 
 		for ($r = 2012; $r <= date("Y"); $r++) {
 			array_push($menu, array('Iniciação Científica', 'Submissão - ' . $r, 'ITE', '/indicadores/ic/' . $r));
