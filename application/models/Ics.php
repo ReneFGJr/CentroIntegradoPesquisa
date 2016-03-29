@@ -578,6 +578,7 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
+	/** Gera guia do estudante em excel */
 	function report_guia_estudante_xls($ano1 = 0, $ano2 = 0, $mod = '') {
 		$sx = '';
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
@@ -586,10 +587,10 @@ class ics extends CI_model {
 		}
 		$sql = $this -> table_view_2($wh, 0, 9999999, 'al_nome');
 		//$sql .= " order by al_nome ";
-
+	
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-
+	
 		$sh = '';
 		$sx .= '<table width="100%" class="tabela00">';
 		$sx .= '<tr class="lt2">
@@ -600,6 +601,7 @@ class ics extends CI_model {
 							<th align="left">cracha_aluno</th>
 							<th align="left">curso_aluno</th>
 							<th align="left">CPF_aluno</th>
+							<th align="left">gen_aluno</th>
 							<th align="left">nome_prof</th>
 							<th align="left">cracha_prof</th>
 							<th align="left">curso_prof</th>
@@ -611,19 +613,19 @@ class ics extends CI_model {
 							<th align="left">Imp</th>
 							<th align="right">status</th>
 						</tr>';
-
-		$tot = 0;
-		$tot2 = 0;
-		$xmb = '';
-
+		
+			$tot = 0;
+			$tot2 = 0;
+			$xmb = '';
+		
 		for ($r = 0; $r < count($rlt); $r++) {
-
+		
 			$line = $rlt[$r];
-
+			
 			$st = $line['icas_id'];
 			$sf = '';
 			$sff = '';
-
+			
 			if ($st == '2') {
 				$sf = '<font color="red"><s>';
 				$sff = '</s></font>';
@@ -631,109 +633,113 @@ class ics extends CI_model {
 			} else {
 				$tot++;
 			}
-
+			
 			$link_ic = link_ic($line['id_ic'], 'ic');
-
+			
 			$sx .= '<tr>';
-
+			
 			//indice
-			$sx .= '<td width="20" class="lt1">' . ($r + 1) . '.</td>';
-
+			$sx .= '<td width="20" class="lt1">'.($r+1).'.</td>';
+	
 			$sx .= '<td align="center">';
 			$sx .= $link_ic . $line['ic_plano_aluno_codigo'] . '</a>';
 			$sx .= '</td>';
-
+	
 			$sx .= '<td>';
 			$sx .= $line['ic_ano'];
 			$sx .= '</td>';
-
+	
 			$sx .= '<td>';
 			$link = $sf . link_perfil($line['al_nome'], $line['aluno_id']);
 			$sx .= $link . $sff;
 			$sx .= '</td>';
-
+	
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_aluno'];
 			$sx .= '</td>';
-
+	
 			$sx .= '<td>';
 			$sx .= $line['al_curso'];
 			$sx .= '</td>';
-
+			
 			$sx .= '<td><nobr>';
 			$sx .= mask_cpf($line['us_cpf']);
 			$sx .= '</nobr></td>';
-
+			
+			$sx .= '<td align="center">';
+			$sx .= $line['al_genero'];
+			$sx .= '</td>';			
+	
 			//$sx .= '<td>';
 			//$sx .= $line['usm_email'];
 			//$sx .= '</td>';
-
+	
 			$sx .= '<td>';
 			$link = $sf . link_perfil($line['pf_nome'], $line['prof_id']);
 			$sx .= $link . $sff . '</a>';
 			$sx .= '</td>';
-
+	
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_prof'];
 			$sx .= '</td>';
-
+	
 			$sx .= '<td>';
 			$sx .= $line['pf_curso'];
 			$sx .= '</td>';
-
+			
 			$sx .= '<td>';
 			$sx .= $line['es_escola'];
-			$sx .= '</td>';
-
+			$sx .= '</td>';			
+	
 			$sx .= '<td>';
 			$sx .= $line['mb_tipo'];
 			$sx .= '</td>';
-
+	
 			$sx .= '<td>';
 			$sx .= $line['mb_descricao'];
 			$sx .= '</td>';
-
+	
 			$sx .= '<td>';
 			$sx .= $line['mb_fomento'];
 			$sx .= '</td>';
-
-			$sx .= '<td>';
+	
+			$sx .= '<td class="lt0">';
 			$sx .= $sf . $line['ic_projeto_professor_titulo'] . $sff;
 			$sx .= '</td>';
-
+			
 			$sx .= '<td align="left">';
 			$sx .= $sf . $line['bl_ativo'] . $sff;
 			$sx .= '</td>';
-
+			
 			$sx .= '<td align="right">';
 			$sx .= $sf . $line['s_situacao'] . $sff;
 			$sx .= '</td>';
-
+	
 			$sx .= '</tr>';
-
+	
 		}
-		$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
-		$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
-		$sx .= '</table>';
-		$sxc = $sx;
-		/****/
-		$sx = '<table width="100%" class="lt1">';
-		$sx .= '<tr  >';
-		$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
-		$sx .= $line['mb_descricao'];
-		$sx .= ' - ';
-		$sx .= $line['mb_fomento'];
-		$sx .= ' - ';
-		$sx .= $line['mb_tipo'];
-		$sx .= ' - ';
-		$sx .= $ano1 . '-' . ($ano2);
-		$sx .= ' - ';
-		$sx .= 'Total: ' . $tot;
-		$sx .= '</td>';
-		$sx .= '</tr>';
-		$sx .= $sh;
-		$sx .= $sxc;
-
+			$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
+			$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
+			$sx .= '</table>';
+			$sxc = $sx;
+			/****/
+			$sx = '<table width="100%" class="lt1">';
+			$sx .= '<tr  >';
+			$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
+			$sx .= $line['mb_descricao'];
+			$sx .= ' - ';
+			$sx .= $line['mb_fomento'];
+			$sx .= ' - ';
+			$sx .= $line['mb_tipo'];
+			$sx .= ' - ';
+			$sx .= $ano1 . '-' . ($ano2);
+			$sx .= ' - ';
+			$sx .= 'Total: ' . $tot;
+			$sx .= '</td>';
+			$sx .= '</tr>';
+			$sx .= $sh;
+			$sx .= $sxc;
+		
 		return ($sx);
 	}
 
