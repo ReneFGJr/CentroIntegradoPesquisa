@@ -140,6 +140,7 @@ class stricto_sensu extends CI_Controller {
 			//array_push($menu, array('Produção Científica', 'Indicadores da Produção Científica dos Programas', 'BTA', 'stricto_sensu/doscentes/'.$id));
 			array_push($menu, array('Fluxo Discente', 'Indicadores da Produção Científica dos Programas', 'BTA', '/stricto_sensu/discentes/' . $id));
 			array_push($menu, array('Iniciação Científica', 'Indicadores da Iniciação Científica dos Programas', 'BTA', '/stricto_sensu/iniciacao_cientifica/' . $id));
+			array_push($menu, array('Produção Científica', 'Artigos, Anais, Congressos, Livros.', 'BTA', '/stricto_sensu/producao/' . $id));
 			$data['menu'] = $menu;
 
 			$data['title_menu'] = '';
@@ -220,6 +221,68 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function producoes($tipo='',$ppg=0)
+		{
+			$this -> load -> model('phplattess');
+			$this -> load -> model('stricto_sensus');
+			$this->cab();
+			$tela = $tipo;
+			switch($tipo)
+				{
+				case 'artigo':
+					$tela = $this->phplattess->producao_ss_artigos($ppg);
+					break;
+				case 'livros':
+					$tela = $this->phplattess->producao_ss_bibliografica($ppg,'LIVRO');
+					break;
+				case 'capitulos':
+					$tela = $this->phplattess->producao_ss_bibliografica($ppg,'CAPIT');
+					break;	
+				case 'organizado':
+					$tela = $this->phplattess->producao_ss_bibliografica($ppg,'ORGAN');
+					break;									
+				case 'eventos':
+					$tela = $this->phplattess->producao_ss_eventos($ppg,'EVENC');
+					break;
+				}
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+		}
+
+	function producao($id = 0) {
+		$this -> load -> model('stricto_sensus');
+		$this->cab();
+		/****************** COORDENADOR & SCRETARIA ***/
+		$id_us = $_SESSION['id_us'];
+
+		$data = $this -> stricto_sensus -> le($id);
+		$this -> load -> view('ss/show', $data);
+
+		$data['content'] = $this -> stricto_sensus -> resumo_programa($id);
+		$this -> load -> view('content', $data);
+
+		/************* MENU */
+		$menu = array();
+		array_push($menu, array('Produção', 'Artigos Científicos', 'ITE', '/stricto_sensu/producoes/artigo/'.$id));
+		array_push($menu, array('Produção', 'Anais eventos', 'ITE', '/stricto_sensu/producoes/anais/'.$id));
+		array_push($menu, array('Produção', 'Livros', 'ITE', '/stricto_sensu/producoes/livros/'.$id));
+		array_push($menu, array('Produção', 'Livros Organizados', 'ITE', '/stricto_sensu/producoes/organizado/'.$id));
+		array_push($menu, array('Produção', 'Capítulos de livros', 'ITE', '/stricto_sensu/producoes/capitulos/'.$id));
+		array_push($menu, array('Produção', 'Eventos', 'ITE', '/stricto_sensu/producoes/eventos/'.$id));
+		$data['menu'] = $menu;
+		
+
+		$data['title_menu'] = '';
+		$this -> load -> view('header/main_menu', $data);
+		$data['content'] = '<script>  $("#main_menu").toggleClass("2colunas"); </script>';
+		$data['content'] .= '<style>  #main_menu { max-width: 100%; </style>';
+		
+		$this -> load -> view('content', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 
 	function iniciacao_cientifica_doutorandos($id = 0) {
 		$this -> load -> model('ics');			
@@ -447,3 +510,4 @@ class stricto_sensu extends CI_Controller {
 	}
 
 }
+

@@ -2,6 +2,207 @@
 class phpLattess extends CI_Model {
 	var $qualis = '2014';
 	var $dados = array();
+	
+	function producao_ss_artigos($prppg=0)
+		{
+			$sql = "
+			select * from (
+				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha FROM `ss_professor_programa_linha` 
+					inner join us_usuario on id_us = us_usuario_id_us
+					where programa_pos_id_pp = 10
+				) as tabela
+				inner join cnpq_acpp on acpp_autor = us_nome_lattes
+				order by acpp_ano desc, us_nome
+			";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="tabela01 lt1">';
+			$tot = 0;
+			$toti = 0;
+			$xano = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					
+					$ano = $line['acpp_ano'];
+					if ($ano != $xano)
+						{
+							$sx .= '<tr><td class="lt4" colspan=10><b>'.$ano.'</b></td></tr>';
+							$xano = $ano;
+							$toti = 0;
+						}
+					
+					$tot++;
+					$toti++;
+					
+					
+					$sx .= '<tr valign="top">';					
+					$sx .= '<td align="center">';
+					$sx .= $toti;
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= $line['acpp_ano'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['acpp_autores'].'. ';
+					$sx .= $line['acpp_titulo'].'. ';
+					$sx .= $line['acpp_periodico'];
+					if (strlen($line['acpp_volume']) > 0) { $sx .= ', v. '.$line['acpp_volume']; }
+					if (strlen($line['acpp_fasciculo']) >0) { $sx .= ', n. '.$line['acpp_fasciculo'];}
+					if (strlen($line['acpp_pg_ini']) > 0)
+						{
+							$sx .= ', p. '.$line['acpp_pg_ini'].'-'.$line['acpp_pg_fim'];
+						}
+					$sx .= '</td>';
+					
+					$sx .= '<td><nobr>';
+					$sx .= substr($line['acpp_issn'],0,4).'-'.substr($line['acpp_issn'],4,4);
+					$sx .= '</nobr></td>';
+
+				}
+			$sx .= '</table>';
+			
+			print_r($line);
+			return($sx);
+		}
+	
+	function producao_ss_eventos($prppg=0,$tipo = '')
+		{
+			$wh = " where ev_tipo = '$tipo' ";
+			$sql = "
+			select * from (
+				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha FROM `ss_professor_programa_linha` 
+					inner join us_usuario on id_us = us_usuario_id_us
+					where programa_pos_id_pp = 10
+				) as tabela
+				inner join cnpq_evento on ev_nome = us_nome_lattes
+			    $wh
+				order by ev_ano desc, us_nome
+			";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="tabela01 lt1">';
+			$tot = 0;
+			$toti = 0;
+			$xano = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					
+					$ano = $line['ev_ano'];
+					if ($ano != $xano)
+						{
+							$sx .= '<tr><td class="lt4" colspan=10><b>'.$ano.'</b></td></tr>';
+							$xano = $ano;
+							$toti = 0;
+						}
+					
+					$tot++;
+					$toti++;
+					
+					
+					$sx .= '<tr valign="top">';					
+					$sx .= '<td align="center">';
+					$sx .= $toti;
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= $line['ev_ano'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['ev_outros'].'. ';
+					$sx .= $line['ev_evento'].'. ';
+					if (strlen($line['ev_num']) > 0) { $sx .= ', '.$line['ev_num']; }
+					$sx .= ', '.$line['ev_ano'].'. ';
+					
+					$sx .= '</td>';
+					$sx .= '<td>'.$line['ev_tipo'].'</td>';
+					
+					$sx .= '<td><nobr>';
+					$sx .= $line['cc_isbn'];
+					$sx .= '</nobr></td>';
+
+					$sx .= '<td><nobr>';
+					$sx .= $line['cc_idioma'];
+					$sx .= '</nobr></td>';
+
+				}
+			$sx .= '</table>';
+			
+			print_r($line);
+			return($sx);
+		}
+
+
+	function producao_ss_bibliografica($prppg=0,$tipo = '')
+		{
+			$wh = " where cc_tipo = '$tipo' ";
+			$sql = "
+			select * from (
+				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha FROM `ss_professor_programa_linha` 
+					inner join us_usuario on id_us = us_usuario_id_us
+					where programa_pos_id_pp = 10
+				) as tabela
+				inner join cnpq_bibliografia on cc_nome = us_nome_lattes
+			    $wh
+				order by cc_ano desc, us_nome
+			";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="tabela01 lt1">';
+			$tot = 0;
+			$toti = 0;
+			$xano = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					
+					$ano = $line['cc_ano'];
+					if ($ano != $xano)
+						{
+							$sx .= '<tr><td class="lt4" colspan=10><b>'.$ano.'</b></td></tr>';
+							$xano = $ano;
+							$toti = 0;
+						}
+					
+					$tot++;
+					$toti++;
+					
+					
+					$sx .= '<tr valign="top">';					
+					$sx .= '<td align="center">';
+					$sx .= $toti;
+					$sx .= '</td>';
+					$sx .= '<td>';
+					$sx .= $line['cc_ano'];
+					$sx .= '</td>';
+					
+					$sx .= '<td>';
+					$sx .= $line['cc_outros'].'. ';
+					$sx .= $line['cc_titulo'].'. ';
+					if (strlen($line['cc_volume']) > 0) { $sx .= ', '.$line['cc_volume']; }
+					if (strlen($line['cc_editora']) >0) { $sx .= ', '.$line['cc_editora'];}
+					$sx .= ', '.$line['cc_ano'].'. ';
+					
+					$sx .= '</td>';
+					$sx .= '<td>'.$line['cc_tipo'].'</td>';
+					
+					$sx .= '<td><nobr>';
+					$sx .= $line['cc_isbn'];
+					$sx .= '</nobr></td>';
+
+					$sx .= '<td><nobr>';
+					$sx .= $line['cc_idioma'];
+					$sx .= '</nobr></td>';
+
+				}
+			$sx .= '</table>';
+			
+			print_r($line);
+			return($sx);
+		}
+
 	function artigos_qualificados_por_ano() {
 		$ano = $this -> qualis;
 		$sql = "
