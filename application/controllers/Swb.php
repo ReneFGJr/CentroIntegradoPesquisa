@@ -122,7 +122,7 @@ class Swb extends CI_Controller {
 		{
 			$this->cab();
 			//$this -> load -> view('evento/swb/img_cab', $data);
-			$this->load->view('evento/swb/agredecimento');
+			$this->load->view('evento/swb/agredecimento2');
 		}
 		
 	
