@@ -156,7 +156,8 @@ class Ic_pareceres extends CI_model {
 								<th width="2%">#</th>
 								<th width="8%">Protocolo</th>
 								<th width="10%">acao</th>
-								<th width="60%">Avaliador</th>
+								<th width="50%">Avaliador</th>
+								<th width="10%">Observação</th>
 								<th width="10%">Resultado da avaliação</th>
 						</tr>';
 						
@@ -213,6 +214,14 @@ class Ic_pareceres extends CI_model {
 			$sx .= '<td class="lt2" align="rigth">';
 			$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
 			$sx .= '</td>';
+			
+			/* Aletar */
+			if (($tipo = 'RPAR') and ($line['pp_p06'] == '1'))
+				{
+					$sx .= '<td align="center"><font color="red">Alerta</font>';
+				} else {
+					$sx .= '<td></td>';
+				}
 			//resultado do RP
 			$sx .= '<td class="lt2" align="center">' . $acao2 . '</td>';
 		}
