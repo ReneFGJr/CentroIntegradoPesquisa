@@ -1498,7 +1498,7 @@ if (!function_exists('form_edit')) {
 			$sv = 0;
 			for ($r = 1; $r < count($cp); $r++) {
 				/* verifica se existe parametro */
-				$vlr = $CI -> input -> post('dd' . $r);
+				$vlr = get('dd' . $r);
 				$cpt = $cp[$r][0];
 				/* Checkbox */
 				if (substr($cpt, 0, 3) == '$SW') {
