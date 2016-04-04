@@ -52,95 +52,90 @@ class indicadores extends CI_Controller {
 
 		$this -> load -> view('header/content_open');
 	}
-	
+
 	#menu para indicadores de ic
-	function indicadores_ic(){
+	function indicadores_ic() {
 		$this -> cab();
 		$data = array();
-		
+
 		$menu = array();
 		//indicadores
 		array_push($menu, array('Eventos', 'Estudantes x ano', 'ITE', '/indicadores/alunos_ic_ano/'));
 		array_push($menu, array('Eventos', 'Estudantes x evento', 'ITE', '/indicadores/alunos_inscritos_evento/'));
 		array_push($menu, array('Eventos', 'Estudantes x curso', 'ITE', '/indicadores/alunos_curso_evento/'));
-		
-		
+
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Iniciação científica';
 		$this -> load -> view('header/main_menu', $data);
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
+
 	/**evolucao de alunos ic por ano*/
-	function alunos_ic_ano(){
+	function alunos_ic_ano() {
 		$this -> load -> model('ics_indicadores');
-		
+
 		$this -> cab();
 		$data = array();
-		
+
 		/*View principal*/
 		$data['title_menu'] = 'Resumo anual de IC';
 		$this -> load -> view('header/main_menu', $data);
-		
+
 		//chama indicador[tabela]
 		$data['content'] = $this -> ics_indicadores -> ind_alunos_curso();
 		$this -> load -> view('content', $data);
-		
+
 		/** Rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	
+
 	}
-	
+
 	/**alunos por tipo de evento */
-	function alunos_inscritos_evento(){
+	function alunos_inscritos_evento() {
 		$this -> load -> model('ics_indicadores');
-		
+
 		$this -> cab();
 		$data = array();
-		
+
 		/*View principal*/
 		$data['title_menu'] = 'Inscritos no Evento';
 		$this -> load -> view('header/main_menu', $data);
-		
+
 		//chama indicador[tabela]
 		$data['content'] = $this -> ics_indicadores -> ind_alunos_inscritos_ev();
 		$this -> load -> view('content', $data);
-		
+
 		/** Rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	
+
 	}
-	
+
 	/**alunos por curso no evento */
-	function alunos_curso_evento(){
+	function alunos_curso_evento() {
 		$this -> load -> model('ics_indicadores');
-		
+
 		$this -> cab();
 		$data = array();
-		
+
 		/*View principal*/
 		$data['title_menu'] = 'Perfil dos inscritos no eventos(curso)';
 		$this -> load -> view('header/main_menu', $data);
-		
+
 		//chama indicador[tabela]
 		$data['content'] = $this -> ics_indicadores -> ind_alunos_curso_inscritos_ev();
 		$this -> load -> view('content', $data);
-		
+
 		/** Rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	
+
 	}
-	
-	
-	
-	
-	
+
 	function docente($tipo = '', $fmt = '') {
 		$this -> load -> model('produtividades');
 		$this -> load -> model('ics');
@@ -247,7 +242,6 @@ class indicadores extends CI_Controller {
 		array_push($menu, array('Produção Científica', 'Produção e produção qualificada em Arqtigos, Livros, Capítulos de livros e eventos, ', 'BOX', '/indicadores/producoes/'));
 		//bt indicadores
 		array_push($menu, array('Iniciação Científica', 'Indicadores de IC', 'BOX', '/indicadores/indicadores_ic/'));
-		
 
 		for ($r = 2012; $r <= date("Y"); $r++) {
 			array_push($menu, array('Iniciação Científica', 'Submissão - ' . $r, 'ITE', '/indicadores/ic/' . $r));
@@ -300,6 +294,8 @@ class indicadores extends CI_Controller {
 		array_push($menu, array('Indicador Produção', 'Estrato Qualis do stricto sensu', 'ITE', '/indicadores/artigos_01/'));
 		array_push($menu, array('Indicador Produção', 'Estrato Scimago/Quartil do stricto sensu', 'ITE', '/indicadores/artigos_02/'));
 
+		array_push($menu, array('Indicador Produção', 'Consolidado da produção pela qualificação', 'ITE', '/indicadores/artigos_03/'));
+
 		/*View principal*/
 		$data['menu'] = $menu;
 
@@ -322,7 +318,7 @@ class indicadores extends CI_Controller {
 		}
 		$sx = $this -> phpLattess -> artigos_qualificados_por_ano($pp);
 		$dados = array();
-		
+
 		$dados['dados'] = $this -> phpLattess -> dados;
 
 		$data['content'] = $sx;
@@ -333,7 +329,7 @@ class indicadores extends CI_Controller {
 		if (strlen($xls) == 0) {
 			$this -> load -> view('highcharts/area', $dados);
 			$this -> load -> view('highcharts/column_stacked', $dados);
-			
+
 		}
 	}
 
@@ -352,6 +348,39 @@ class indicadores extends CI_Controller {
 
 		$data['submenu'] = '<a href="' . base_url('index.php/indicadores/artigos_02/' . $pp . '/xls') . '" class="link lt0">exportar para excel</a>';
 		$this -> load -> view('content', $data);
+	}
+
+	/* CONSOLIDADO */
+	function artigos_03($pp = 0, $xls = '') {
+		$ano = '';
+		/* busca aultomaticamente */
+		$this -> load -> model('phpLattess');
+
+		if (strlen($xls) > 0) {
+			xls('producao-qualificada-' . date("Y-m-d") . '.xls');
+		} else {
+			$this -> cab();
+			$data['title'] = msg('lb_indicador_quartil');
+		}
+		$sql = "select * from ss_programa_pos where pp_ativo = 1 order by pp_sigla";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sr = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sigla = $line['pp_sigla'];
+			$prppg = $line['id_pp'];
+			$sa = $this -> phpLattess -> producao_ss_artigos_calc($prppg, $ano, 0, $sigla);
+			$sr .= $sa;
+		}
+		$sh = '<tr><th>Programa</th><th>ano</th><th>A1</th><th>A2</th><th>B1</th><th>B2</th><th>B3</th><th>B4</th><th>B5</th><th>C</th><th>nc</th><th>Prod. Qualif.</th><th>Prod. não Qualif.</th></tr>';
+		$data['content'] = '<table>' . $sh . $sr . '</table>';
+		if (strlen($xls) == 0) {
+			$data['submenu'] = '<a href="' . base_url('index.php/indicadores/artigos_03/' . $pp . '/xls') . '" class="link lt0">exportar para excel</a>';
+		}
+		$data['title'] = 'Produção qualificada';
+		$this -> load -> view('content', $data);
+
 	}
 
 	function estudantes($id = 0) {

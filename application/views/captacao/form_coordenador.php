@@ -24,9 +24,9 @@ $erro = '';
 		<td><form method="post"></td>
 	</tr>
 	<tr class="lt1" align="left">
-		<td>deliberação</td>
-		<td>comentários</td>
-		<td>ação</td>
+		<td>Deliberação</td>
+		<td>Parecer sobre a deliberação (obrigatório)</td>
+		<td>Ação</td>
 	</tr>
 	<tr class="lt2" align="left" valign="top">
 		<td>
@@ -53,6 +53,7 @@ $erro = '';
 			
 		</td>
 	</tr>
+	
 	<tr>
 		<td><?php echo $erro;?></form></td>
 	</tr>

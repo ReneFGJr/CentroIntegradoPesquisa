@@ -34,6 +34,7 @@ class stricto_sensu extends CI_Controller {
 		array_push($css, 'form_sisdoc.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
+		array_push($js, 'high/highcharts.js');
 
 		/* transfere para variavel do codeigniter */
 		$data['css'] = $css;
@@ -156,47 +157,44 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function iniciacao_cientifica_pos($id=0)
-		{
-		$this -> load -> model('ics');			
+	function iniciacao_cientifica_pos($id = 0) {
+		$this -> load -> model('ics');
 		$this -> load -> model('stricto_sensus');
-		$this->cab();
-		
-		$prfs = $this->stricto_sensus->professores_ss_do_programa($id);
+		$this -> cab();
+
+		$prfs = $this -> stricto_sensus -> professores_ss_do_programa($id);
 		$wh = '';
-		for ($r=0;$r < count($prfs);$r++)
-			{
-				if (strlen($wh) > 0) { $wh .= ' OR '; }
-				$wh .= '(prof_id = '.$prfs[$r].') ';
+		for ($r = 0; $r < count($prfs); $r++) {
+			if (strlen($wh) > 0) { $wh .= ' OR ';
 			}
-		if (count($prfs) > 0)
-			{
-				$wh = '('.$wh.')';		
-			} else {
-				$wh = '(2=1)';
-			}
-		
-		$sql = $this->ics->table_view($wh,'0','99999999','ic_data desc, pf_nome');
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		
+			$wh .= '(prof_id = ' . $prfs[$r] . ') ';
+		}
+		if (count($prfs) > 0) {
+			$wh = '(' . $wh . ')';
+		} else {
+			$wh = '(2=1)';
+		}
+
+		$sql = $this -> ics -> table_view($wh, '0', '99999999', 'ic_data desc, pf_nome');
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
 		//$rs = $this->ics->mostra_resumo_orientadores($rlt);
-		
+
 		$sx = '<table width="100%" class="lt0">';
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$line = $rlt[$r];
-				$line['page'] = 'ic';
-				$sx .= $this->load->view('ic/plano-row',$line,true);
-			}
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$line['page'] = 'ic';
+			$sx .= $this -> load -> view('ic/plano-row', $line, true);
+		}
 		$sx .= '</table>';
 		$data['content'] = $sx;
-		$this->load->view('content',$data);
-		}
+		$this -> load -> view('content', $data);
+	}
 
 	function iniciacao_cientifica($id = 0) {
 		$this -> load -> model('stricto_sensus');
-		$this->cab();
+		$this -> cab();
 		/****************** COORDENADOR & SCRETARIA ***/
 		$id_us = $_SESSION['id_us'];
 
@@ -216,43 +214,48 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> view('header/main_menu', $data);
 		$data['content'] = '<script>  $("#main_menu").toggleClass("2colunas"); </script>';
 		$data['content'] .= '<style>  #main_menu { max-width: 100%; </style>';
-		
+
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function producoes($tipo='',$ppg=0)
-		{
-			$this -> load -> model('phplattess');
-			$this -> load -> model('stricto_sensus');
-			$this->cab();
-			$tela = $tipo;
-			switch($tipo)
-				{
-				case 'artigo':
-					$tela = $this->phplattess->producao_ss_artigos($ppg);
-					break;
-				case 'livros':
-					$tela = $this->phplattess->producao_ss_bibliografica($ppg,'LIVRO');
-					break;
-				case 'capitulos':
-					$tela = $this->phplattess->producao_ss_bibliografica($ppg,'CAPIT');
-					break;	
-				case 'organizado':
-					$tela = $this->phplattess->producao_ss_bibliografica($ppg,'ORGAN');
-					break;									
-				case 'eventos':
-					$tela = $this->phplattess->producao_ss_eventos($ppg,'EVENC');
-					break;
-				}
-			$data['content'] = $tela;
-			$this->load->view('content',$data);
+	function producoes($tipo = '', $ppg = 0) {
+		$this -> load -> model('phplattess');
+		$this -> load -> model('stricto_sensus');
+		$this -> cab();
+
+		if ($ppg > 0)
+			{
+			$data = $this -> stricto_sensus -> le($ppg);
+			$this -> load -> view('ss/show', $data);
+			}
+
+		$tela = $tipo;
+		switch($tipo) {
+			case 'artigo' :
+				$tela = $this -> phplattess -> producao_ss_artigos($ppg);
+				break;
+			case 'livros' :
+				$tela = $this -> phplattess -> producao_ss_bibliografica($ppg, 'LIVRO');
+				break;
+			case 'capitulos' :
+				$tela = $this -> phplattess -> producao_ss_bibliografica($ppg, 'CAPIT');
+				break;
+			case 'organizado' :
+				$tela = $this -> phplattess -> producao_ss_bibliografica($ppg, 'ORGAN');
+				break;
+			case 'eventos' :
+				$tela = $this -> phplattess -> producao_ss_eventos($ppg, 'EVENC');
+				break;
 		}
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+	}
 
 	function producao($id = 0) {
 		$this -> load -> model('stricto_sensus');
-		$this->cab();
+		$this -> cab();
 		/****************** COORDENADOR & SCRETARIA ***/
 		$id_us = $_SESSION['id_us'];
 
@@ -264,61 +267,57 @@ class stricto_sensu extends CI_Controller {
 
 		/************* MENU */
 		$menu = array();
-		array_push($menu, array('Produção', 'Artigos Científicos', 'ITE', '/stricto_sensu/producoes/artigo/'.$id));
-		array_push($menu, array('Produção', 'Anais eventos', 'ITE', '/stricto_sensu/producoes/anais/'.$id));
-		array_push($menu, array('Produção', 'Livros', 'ITE', '/stricto_sensu/producoes/livros/'.$id));
-		array_push($menu, array('Produção', 'Livros Organizados', 'ITE', '/stricto_sensu/producoes/organizado/'.$id));
-		array_push($menu, array('Produção', 'Capítulos de livros', 'ITE', '/stricto_sensu/producoes/capitulos/'.$id));
-		array_push($menu, array('Produção', 'Eventos', 'ITE', '/stricto_sensu/producoes/eventos/'.$id));
+		array_push($menu, array('Produção', 'Artigos Científicos', 'ITE', '/stricto_sensu/producoes/artigo/' . $id));
+		array_push($menu, array('Produção', 'Anais eventos', 'ITE', '/stricto_sensu/producoes/anais/' . $id));
+		array_push($menu, array('Produção', 'Livros', 'ITE', '/stricto_sensu/producoes/livros/' . $id));
+		array_push($menu, array('Produção', 'Livros Organizados', 'ITE', '/stricto_sensu/producoes/organizado/' . $id));
+		array_push($menu, array('Produção', 'Capítulos de livros', 'ITE', '/stricto_sensu/producoes/capitulos/' . $id));
+		array_push($menu, array('Produção', 'Eventos', 'ITE', '/stricto_sensu/producoes/eventos/' . $id));
 		$data['menu'] = $menu;
-		
 
 		$data['title_menu'] = '';
 		$this -> load -> view('header/main_menu', $data);
 		$data['content'] = '<script>  $("#main_menu").toggleClass("2colunas"); </script>';
 		$data['content'] .= '<style>  #main_menu { max-width: 100%; </style>';
-		
+
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
-
 	function iniciacao_cientifica_doutorandos($id = 0) {
-		$this -> load -> model('ics');			
+		$this -> load -> model('ics');
 		$this -> load -> model('stricto_sensus');
-		$this->cab();
-		
-		$prfs = $this->stricto_sensus->alunos_doutorandos($id);
+		$this -> cab();
+
+		$prfs = $this -> stricto_sensus -> alunos_doutorandos($id);
 		$wh = '';
-		for ($r=0;$r < count($prfs);$r++)
-			{
-				if (strlen($wh) > 0) { $wh .= ' OR '; }
-				$wh .= '(prof_id = '.$prfs[$r].') ';
+		for ($r = 0; $r < count($prfs); $r++) {
+			if (strlen($wh) > 0) { $wh .= ' OR ';
 			}
-		if (count($prfs) > 0)
-			{
-				$wh = '('.$wh.')';		
-			} else {
-				$wh = '(2=1)';
-			}
-		
-		$sql = $this->ics->table_view($wh,'0','99999999','ic_data desc, pf_nome');
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
-		
+			$wh .= '(prof_id = ' . $prfs[$r] . ') ';
+		}
+		if (count($prfs) > 0) {
+			$wh = '(' . $wh . ')';
+		} else {
+			$wh = '(2=1)';
+		}
+
+		$sql = $this -> ics -> table_view($wh, '0', '99999999', 'ic_data desc, pf_nome');
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
 		//$rs = $this->ics->mostra_resumo_orientadores($rlt);
-		
+
 		$sx = '<table width="100%" class="lt0">';
-		for ($r=0;$r < count($rlt);$r++)
-			{
-				$line = $rlt[$r];
-				$line['page'] = 'ic';
-				$sx .= $this->load->view('ic/plano-row',$line,true);
-			}
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$line['page'] = 'ic';
+			$sx .= $this -> load -> view('ic/plano-row', $line, true);
+		}
 		$sx .= '</table>';
 		$data['content'] = $sx;
-		$this->load->view('content',$data);
+		$this -> load -> view('content', $data);
 
 	}
 
@@ -510,4 +509,3 @@ class stricto_sensu extends CI_Controller {
 	}
 
 }
-

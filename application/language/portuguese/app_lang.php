@@ -12,6 +12,7 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+$lang['captacao_outras'] = 'Bolsas previstas no projeto de pesquisa';
 $lang['titulo_pesquisa'] = 'Título do projeto do professor';
 $lang['submit_PIBIC'] = 'Submissão IC';
 $lang['area_conhecimento'] = 'Área do conhecimento';
@@ -91,20 +92,20 @@ $lang['captacao_arquivos'] = 'Arquivos comprobatórios';
 $lang['captacao_confirmacao'] = 'Validação e Finalização';
 $lang['captacao_edital'] = 'Informações sobre o edital';
 $lang['captacao_perfil'] = 'Perfil do projeto de captação';
-$lang['captacao_descricao'] = 'Vinculo da captação com projeto de pesquisa';
-$lang['captacao_titulo'] = 'Título do projeto de pesquisa';
+$lang['captacao_descricao'] = '';
+$lang['captacao_titulo'] = 'Título do projeto';
 $lang['captacao_programa'] = 'Projeto vinculado ao programa';
 $lang['captacao_vigencia_inicio '] = 'Início da vigência da captação';
 $lang['captacao_duracao'] = 'Duração do recurso';
 $lang['captacao_prorrogacao'] = 'Prorrogação';
-$lang['captacao_vigencia'] = 'Sobre a vigência dos recursos captados';
+$lang['captacao_vigencia'] = 'Vigência dos recursos captados';
 $lang['ca_vlr_capital'] = 'Valor em capital';
 $lang['ca_vlr_custeio'] = 'Valor em custeio';
 $lang['ca_vlr_bolsa'] = 'Valor em bolsas';
 $lang['ca_vlr_outros'] = 'Outras rúbricas (serviços)';
 $lang['ca_proponente_vlr'] = 'Valor total aplicado na PUCPR';
 $lang['ca_proponente'] = 'Proponente da captação';
-$lang['ca_contexto'] = 'Informe o contexto<br>da captação (informativo)';
+$lang['ca_contexto'] = 'Informe o contexto<br>da captação';
 $lang['capt_file_texto'] = 'Deve ser anexado os documentos comprobatórios e de aprovação dos recursos.';
 $lang['send'] = 'Confirmar e finalizar o cadastro >>>';
 $lang['fomente_agencia'] = 'Agência de fomento / Financiador';

@@ -478,15 +478,28 @@ class captacoes extends CI_Model {
 		array_push($cp, array('$}', '', msg('captacao_edital'), false, true));
 
 		array_push($cp, array('${', '', msg('captacao_perfil'), false, true));
-		array_push($cp, array('$C', 'ca_academico', 'Projeto Acadêmico (Projeto de pesquisa, eventos, entre outros)', false, true));
-		array_push($cp, array('$C', 'ca_insticional', 'Projeto de Coordenação Institucional (Recursos para infraestrutura, entre outros)', false, true));
-		array_push($cp, array('$C', 'ca_desmembramento', 'Desmembramento de Projeto de Coordenação Institucional (Recursos para infraestrutura, entre outros)', false, true));
+		array_push($cp, array('$C', 'ca_academico', 'Projeto de Pesquisa', false, true));
+		array_push($cp, array('$C', 'ca_empresa', 'Projeto de Pesquisa com empresa', false, true));
+		array_push($cp, array('$C', 'ca_evento', 'Participação em evento científico', false, true));
+		array_push($cp, array('$C', 'ca_evento_org', 'Organização de evento científico', false, true));
+		array_push($cp, array('$C', 'ca_insticional', 'Projeto de Coordenação Institucional (recursos para equipamentos e ou infraestrutura)', false, true));
+		array_push($cp, array('$C', 'ca_desmembramento', 'Desmembramento de Projeto de Coordenação Institucional (subprojeto)', false, true));
 		array_push($cp, array('$}', '', msg('captacao_perfil'), false, true));
+		
+		
+		array_push($cp, array('${', '', msg('captacao_outras'), false, true));
+		$txt = 'Selecione as modalidades de bolsas vinculadas a outros beneficiários do projeto de pesquisa.';
+		array_push($cp, array('$M', '', $txt, false, true));
+		array_push($cp, array('$C', '', 'Bolsas para estudantes de graduação', false, true));
+		array_push($cp, array('$C', '', 'Bolsas para estudantes de Pós-Graduação (Mestrado/Doutorado)', false, true));
+		array_push($cp, array('$C', '', 'Bolsas para estudantes de Pós-Graduação (Pós-Doutorado)', false, true));
+		array_push($cp, array('$C', '', 'Bolsas para professor visitante', false, true));
+		array_push($cp, array('$}', '', msg('captacao_outras'), false, true));
 
 		array_push($cp, array('${', '', msg('captacao_dados'), false, true));
-		array_push($cp, array('$A', '', msg('captacao_descricao'), false, true));
+		//array_push($cp, array('$A', '', msg('captacao_descricao'), false, true));
 		array_push($cp, array('$T80:3', 'ca_descricao', msg('captacao_titulo'), true, true));
-		array_push($cp, array('$Q id_pp:pp_nome:' . $sql_pos, 'ca_programa', msg('captacao_programa'), false, true));
+		array_push($cp, array('$Q id_pp:pp_nome:' . $sql_pos, 'ca_programa', msg('captacao_programa'), true, true));
 		array_push($cp, array('$}', '', msg('captacao_dados'), false, true));
 
 		array_push($cp, array('${', '', msg('captacao_vigencia'), false, true));
@@ -538,7 +551,26 @@ class captacoes extends CI_Model {
 		array_push($cp, array('$HV', 'id_ca', $id, true, true));
 		array_push($cp, array('${', '', msg('Recusos captados'), false, true));
 
-		array_push($cp, array('$M', '', msg('capt_file_texto'), false, true));
+		$txt = 'Tipos de documentos comprobatórios:
+			<ul>
+				<li><b>Descritivo de projeto</b> Arquivo do Projeto de pesquisa ou plano de trabalho.</li>
+				<li><b>Termo do convênio / concessão do auxílio</b> Documento de formalização junto a agência financiadora</li>
+				<li><b>Orçamento aprovado</b> Descritivo dos valores e rubricas aprovados. Este arquivo pode ser um print screen da tela com o detalhamento dos valores.</li>
+				<li><b>Contrato firmado entre empresa e PUCPR</b> Obrigatório para projetos com empresas.
+			</ul>
+		Todos os arquivos anexados devem estar em formato PDF.
+		<br>
+		<br>
+		Os documentos comprabatórios devem:
+			<ul>
+				<li>Apresentar o nome do pesquisador como coordenador e ou colaborador.</li>
+				<li>Ter a PUCPR como proponente do projeto aprovado.</li>
+				<li>Descrever período de vigência do projeto (cronograma).</li>
+			</ul>	
+		';
+		array_push($cp, array('$M', '', $txt, false, true));
+
+		//array_push($cp, array('$M', '', msg('capt_file_texto'), false, true));
 
 		array_push($cp, array('$FILE:captacao_ged_documento:captacao', '', $id, false, true));
 		array_push($cp, array('$}', '', '', false, true));

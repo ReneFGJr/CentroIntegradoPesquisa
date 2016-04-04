@@ -2,75 +2,191 @@
 class phpLattess extends CI_Model {
 	var $qualis = '2014';
 	var $dados = array();
-	
-	function producao_ss_artigos($prppg=0)
-		{
-			$sql = "
-			select * from (
-				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha FROM `ss_professor_programa_linha` 
+
+	function producao_ss_artigos($prppg = 0, $ano = '') {
+		$sx = $this -> producao_ss_artigos_calc($prppg, $ano, 1);
+		return ($sx);
+	}
+
+	function producao_ss_artigos_calc($prppg = 0, $ano = '', $grafico = 1, $sigla = '') {
+		if (strlen($ano) == 0) {
+			$ano = $this -> qualis;
+		}
+		if ($prppg > 0) {
+			$wh = " programa_pos_id_pp = $prppg and ";
+		} else {
+			$wh = '';
+		}
+		$sql = "
+			select distinct acpp_ano, acpp_autores, acpp_titulo, acpp_periodico,
+				acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, estrato
+					
+				FROM (
+				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha, programa_pos_id_pp FROM `ss_professor_programa_linha` 
 					inner join us_usuario on id_us = us_usuario_id_us
-					where programa_pos_id_pp = 10
+					where $wh sspp_ativo = 1
 				) as tabela
 				inner join cnpq_acpp on acpp_autor = us_nome_lattes
-				order by acpp_ano desc, us_nome
+				left join ss_programa_pos on programa_pos_id_pp = id_pp
+				left join webqualis on issn = concat(substr(acpp_issn,1,4),'-',substr(acpp_issn,5,4)) and pp_area = area_id and ano = '$ano'				
+				order by acpp_ano, acpp_autores
 			";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="tabela01 lt1">';
-			$tot = 0;
-			$toti = 0;
-			$xano = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					
-					$ano = $line['acpp_ano'];
-					if ($ano != $xano)
-						{
-							$sx .= '<tr><td class="lt4" colspan=10><b>'.$ano.'</b></td></tr>';
-							$xano = $ano;
-							$toti = 0;
-						}
-					
-					$tot++;
-					$toti++;
-					
-					
-					$sx .= '<tr valign="top">';					
-					$sx .= '<td align="center">';
-					$sx .= $toti;
-					$sx .= '</td>';
-					$sx .= '<td>';
-					$sx .= $line['acpp_ano'];
-					$sx .= '</td>';
-					
-					$sx .= '<td>';
-					$sx .= $line['acpp_autores'].'. ';
-					$sx .= $line['acpp_titulo'].'. ';
-					$sx .= $line['acpp_periodico'];
-					if (strlen($line['acpp_volume']) > 0) { $sx .= ', v. '.$line['acpp_volume']; }
-					if (strlen($line['acpp_fasciculo']) >0) { $sx .= ', n. '.$line['acpp_fasciculo'];}
-					if (strlen($line['acpp_pg_ini']) > 0)
-						{
-							$sx .= ', p. '.$line['acpp_pg_ini'].'-'.$line['acpp_pg_fim'];
-						}
-					$sx .= '</td>';
-					
-					$sx .= '<td><nobr>';
-					$sx .= substr($line['acpp_issn'],0,4).'-'.substr($line['acpp_issn'],4,4);
-					$sx .= '</nobr></td>';
 
-				}
-			$sx .= '</table>';
-			
-			print_r($line);
-			return($sx);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela01 lt1">';
+		$tot = 0;
+		$toti = 0;
+		$xano = 0;
+
+		$rs = array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$ano = $line['acpp_ano'];
+			if ($ano != $xano) {
+				$sx .= '<tr><td class="lt4" colspan=10><b>' . $ano . '</b></td></tr>';
+				$xano = $ano;
+				$toti = 0;
+			}
+
+			$tot++;
+			$toti++;
+
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center">';
+			$sx .= $toti;
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= $line['acpp_ano'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['acpp_autores'] . '. ';
+			$sx .= $line['acpp_titulo'] . '. ';
+			$sx .= $line['acpp_periodico'];
+			if (strlen($line['acpp_volume']) > 0) { $sx .= ', v. ' . $line['acpp_volume'];
+			}
+			if (strlen($line['acpp_fasciculo']) > 0) { $sx .= ', n. ' . $line['acpp_fasciculo'];
+			}
+			if (strlen($line['acpp_pg_ini']) > 0) {
+				$sx .= ', p. ' . $line['acpp_pg_ini'];
+			}
+			$sx .= '</td>';
+
+			$sx .= '<td><nobr>';
+			$sx .= substr($line['acpp_issn_link'], 0, 4) . '-' . substr($line['acpp_issn_link'], 4, 4);
+			$sx .= '</nobr></td>';
+
+			$sx .= '<td align="center">' . $line['estrato'] . '</td>';
+
+			/* Monta Matrix */
+			$estrato = $line['estrato'];
+			if ($estrato == '') { $estrato = 'nc';
+			}
+
+			if (isset($rs[$ano][$estrato])) {
+				$rs[$ano][$estrato] = $rs[$ano][$estrato] + 1;
+			} else {
+				$rs[$ano][$estrato] = 1;
+			}
+			$sx .= cr();
 		}
-	
-	function producao_ss_eventos($prppg=0,$tipo = '')
-		{
-			$wh = " where ev_tipo = '$tipo' ";
-			$sql = "
+		$sx .= '</table>';
+
+		if ($grafico == 0) { $sx = '';
+		}
+		$sx = $this -> monta_tabela_dados_qualis($rs, $grafico, $sigla) . $sx;
+		return ($sx);
+	}
+
+	function monta_tabela_dados_qualis($rs, $grafico = 1, $sigla = '') {
+		$gr1 = '';
+		$gr2 = '';
+		$gra = '';
+		$sx = '';
+		$q = array('A1', 'A2', 'B1', 'B2', 'B3', 'B4', 'B5', 'C', 'nc');
+		/****************HEADER**/
+		if (strlen($sigla) == 0) {
+			$sx = '<table width="100%" class="tabela00 lt1" border=0>';
+			$sx .= '<tr>';
+			if (strlen($sigla) > 0) { $sx .= '<th>Programa</th>';
+			}
+			$sx .= '<th>Ano</th>';
+			for ($r = 0; $r < count($q); $r++) {
+				$sx .= '<th>' . $q[$r] . '</th>';
+			}
+			$sx .= '<th>Prod. Qualif.</th><th>Prod. não Qualif.</th>';
+		}
+		if ($grafico == 1) {
+			$sx .= '<th width="50%" rowspan=50>';
+			$sx .= '<div id="container_line" style="min-width: 310px; height: 400px; margin: 0 auto">gerando gráfico ...</div>';
+			$sz = '4%';
+		} else {
+			$sz = '8%';
+		}
+		$sx .= '</tr>';
+
+		/******************************/
+		foreach ($rs as $ano => $value) {
+			if (strlen($gra) > 0) {
+				$gra .= ', ';
+			}
+			$gra .= "'" . $ano . "'";
+			$sx .= '<tr>';
+			if (strlen($sigla) > 0) { $sx .= '<td>' . $sigla . '</td>';
+			}
+			$sx .= '<td align="center">' . $ano . '</td>';
+			$pq = 0;
+			$pnq = 0;
+			for ($r = 0; $r < count($q); $r++) {
+				$es = $q[$r];
+				if (isset($value[$es])) {
+					$eq = $q[$r];
+					$sx .= '<td align="center" width="' . $sz . '">' . $value[$es] . '</td>';
+					/****** Producao qualificada *********/
+					if (($eq == 'A1') OR ($eq == 'A2') OR ($eq == 'B1')) {
+						$pq = $pq + $value[$es];
+					} else {
+						if ($eq != 'nc') {
+							$pnq = $pnq + $value[$es];
+						}
+					}
+
+				} else {
+					$sx .= '<td align="center">-</td>';
+				}
+			}
+			$sx .= '<td align="center" width="' . $sz . '">' . $pq . '</td>';
+			$sx .= '<td align="center" width="' . $sz . '">' . $pnq . '</td>';
+			if (strlen($gr1) > 0) {
+				$gr1 .= ', ';
+				$gr2 .= ', ';
+			}
+			$gr1 .= $pq;
+			$gr2 .= $pnq;
+			$sx .= '</tr>';
+		}
+
+		if ($grafico == 1) {
+			$sx .= '</table>';
+			/* GRAFICO DADOS */
+			$gra = '[' . $gra . ']';
+			$gr1 = '{ name: "Alta", data: [' . $gr1 . ']} ';
+			$gr2 = '{ name: "Baixa", data: [' . $gr2 . ']} ';
+			$data['categorias'] = $gra;
+			$data['dados'] = $gr1 . ', ' . $gr2;
+			$data['title'] = 'Produção com alta e baixa qualificação - Qualis';
+			$data['unidade'] = 'Artigos';
+			$data['source'] = 'http://cip.pucpr.br';
+			$sx .= $this -> load -> view('highcharts/lines', $data, true);
+		}
+		return ($sx);
+	}
+
+	function producao_ss_eventos($prppg = 0, $tipo = '') {
+		$wh = " where ev_tipo = '$tipo' ";
+		$sql = "
 			select * from (
 				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha FROM `ss_professor_programa_linha` 
 					inner join us_usuario on id_us = us_usuario_id_us
@@ -80,65 +196,61 @@ class phpLattess extends CI_Model {
 			    $wh
 				order by ev_ano desc, us_nome
 			";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="tabela01 lt1">';
-			$tot = 0;
-			$toti = 0;
-			$xano = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					
-					$ano = $line['ev_ano'];
-					if ($ano != $xano)
-						{
-							$sx .= '<tr><td class="lt4" colspan=10><b>'.$ano.'</b></td></tr>';
-							$xano = $ano;
-							$toti = 0;
-						}
-					
-					$tot++;
-					$toti++;
-					
-					
-					$sx .= '<tr valign="top">';					
-					$sx .= '<td align="center">';
-					$sx .= $toti;
-					$sx .= '</td>';
-					$sx .= '<td>';
-					$sx .= $line['ev_ano'];
-					$sx .= '</td>';
-					
-					$sx .= '<td>';
-					$sx .= $line['ev_outros'].'. ';
-					$sx .= $line['ev_evento'].'. ';
-					if (strlen($line['ev_num']) > 0) { $sx .= ', '.$line['ev_num']; }
-					$sx .= ', '.$line['ev_ano'].'. ';
-					
-					$sx .= '</td>';
-					$sx .= '<td>'.$line['ev_tipo'].'</td>';
-					
-					$sx .= '<td><nobr>';
-					$sx .= $line['cc_isbn'];
-					$sx .= '</nobr></td>';
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela01 lt1">';
+		$tot = 0;
+		$toti = 0;
+		$xano = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
 
-					$sx .= '<td><nobr>';
-					$sx .= $line['cc_idioma'];
-					$sx .= '</nobr></td>';
+			$ano = $line['ev_ano'];
+			if ($ano != $xano) {
+				$sx .= '<tr><td class="lt4" colspan=10><b>' . $ano . '</b></td></tr>';
+				$xano = $ano;
+				$toti = 0;
+			}
 
-				}
-			$sx .= '</table>';
-			
-			print_r($line);
-			return($sx);
+			$tot++;
+			$toti++;
+
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center">';
+			$sx .= $toti;
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= $line['ev_ano'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['ev_outros'] . '. ';
+			$sx .= $line['ev_evento'] . '. ';
+			if (strlen($line['ev_num']) > 0) { $sx .= ', ' . $line['ev_num'];
+			}
+			$sx .= ', ' . $line['ev_ano'] . '. ';
+
+			$sx .= '</td>';
+			$sx .= '<td>' . $line['ev_tipo'] . '</td>';
+
+			$sx .= '<td><nobr>';
+			$sx .= $line['cc_isbn'];
+			$sx .= '</nobr></td>';
+
+			$sx .= '<td><nobr>';
+			$sx .= $line['cc_idioma'];
+			$sx .= '</nobr></td>';
+
 		}
+		$sx .= '</table>';
 
+		print_r($line);
+		return ($sx);
+	}
 
-	function producao_ss_bibliografica($prppg=0,$tipo = '')
-		{
-			$wh = " where cc_tipo = '$tipo' ";
-			$sql = "
+	function producao_ss_bibliografica($prppg = 0, $tipo = '') {
+		$wh = " where cc_tipo = '$tipo' ";
+		$sql = "
 			select * from (
 				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha FROM `ss_professor_programa_linha` 
 					inner join us_usuario on id_us = us_usuario_id_us
@@ -148,60 +260,59 @@ class phpLattess extends CI_Model {
 			    $wh
 				order by cc_ano desc, us_nome
 			";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="tabela01 lt1">';
-			$tot = 0;
-			$toti = 0;
-			$xano = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					
-					$ano = $line['cc_ano'];
-					if ($ano != $xano)
-						{
-							$sx .= '<tr><td class="lt4" colspan=10><b>'.$ano.'</b></td></tr>';
-							$xano = $ano;
-							$toti = 0;
-						}
-					
-					$tot++;
-					$toti++;
-					
-					
-					$sx .= '<tr valign="top">';					
-					$sx .= '<td align="center">';
-					$sx .= $toti;
-					$sx .= '</td>';
-					$sx .= '<td>';
-					$sx .= $line['cc_ano'];
-					$sx .= '</td>';
-					
-					$sx .= '<td>';
-					$sx .= $line['cc_outros'].'. ';
-					$sx .= $line['cc_titulo'].'. ';
-					if (strlen($line['cc_volume']) > 0) { $sx .= ', '.$line['cc_volume']; }
-					if (strlen($line['cc_editora']) >0) { $sx .= ', '.$line['cc_editora'];}
-					$sx .= ', '.$line['cc_ano'].'. ';
-					
-					$sx .= '</td>';
-					$sx .= '<td>'.$line['cc_tipo'].'</td>';
-					
-					$sx .= '<td><nobr>';
-					$sx .= $line['cc_isbn'];
-					$sx .= '</nobr></td>';
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela01 lt1">';
+		$tot = 0;
+		$toti = 0;
+		$xano = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
 
-					$sx .= '<td><nobr>';
-					$sx .= $line['cc_idioma'];
-					$sx .= '</nobr></td>';
+			$ano = $line['cc_ano'];
+			if ($ano != $xano) {
+				$sx .= '<tr><td class="lt4" colspan=10><b>' . $ano . '</b></td></tr>';
+				$xano = $ano;
+				$toti = 0;
+			}
 
-				}
-			$sx .= '</table>';
-			
-			print_r($line);
-			return($sx);
+			$tot++;
+			$toti++;
+
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center">';
+			$sx .= $toti;
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= $line['cc_ano'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['cc_outros'] . '. ';
+			$sx .= $line['cc_titulo'] . '. ';
+			if (strlen($line['cc_volume']) > 0) { $sx .= ', ' . $line['cc_volume'];
+			}
+			if (strlen($line['cc_editora']) > 0) { $sx .= ', ' . $line['cc_editora'];
+			}
+			$sx .= ', ' . $line['cc_ano'] . '. ';
+
+			$sx .= '</td>';
+			$sx .= '<td>' . $line['cc_tipo'] . '</td>';
+
+			$sx .= '<td><nobr>';
+			$sx .= $line['cc_isbn'];
+			$sx .= '</nobr></td>';
+
+			$sx .= '<td><nobr>';
+			$sx .= $line['cc_idioma'];
+			$sx .= '</nobr></td>';
+
 		}
+		$sx .= '</table>';
+
+		print_r($line);
+		return ($sx);
+	}
 
 	function artigos_qualificados_por_ano() {
 		$ano = $this -> qualis;
@@ -238,27 +349,26 @@ class phpLattess extends CI_Model {
 					<th>C</th>
 				</tr>					
 				';
-		
+
 		$this -> phpLattess -> dados = $rs;
-		
+
 		foreach ($rs as $q => $t) {
-			$it = array('A1','A2','B1','B2','B3','B4','B5','C');
-			$st .= '<tr><td>'.$q.'</td>';
-			for ($r=0;$r < count($it);$r++)
-				{
-					$fld = $it[$r];					
-					if (isset($t[$fld]))
-						{
-							$st .= '<td class="border1 pad5" width="50" align="center">'.$t[$fld].'</td>';
-						} else {
-							$st .= '<td>&nbsp;</td>';
-						}
+			$it = array('A1', 'A2', 'B1', 'B2', 'B3', 'B4', 'B5', 'C');
+			$st .= '<tr><td>' . $q . '</td>';
+			for ($r = 0; $r < count($it); $r++) {
+				$fld = $it[$r];
+				if (isset($t[$fld])) {
+					$st .= '<td class="border1 pad5" width="50" align="center">' . $t[$fld] . '</td>';
+				} else {
+					$st .= '<td>&nbsp;</td>';
 				}
+			}
 		}
 		$st .= '</table>';
-		return($st);		
+		return ($st);
 
 	}
+
 	function artigos_quartis_por_ano() {
 		$ano = $this -> qualis;
 		$sql = "
@@ -291,29 +401,28 @@ class phpLattess extends CI_Model {
 					<th>nc</th>
 				</tr>					
 				';
-		
+
 		$this -> phpLattess -> dados = $rs;
 		print_r($rs);
-		exit;
-		
+		exit ;
+
 		foreach ($rs as $q => $t) {
-			$it = array('Q1','Q2','Q3','Q4','');
-			$st .= '<tr><td>'.$q.'</td>';
-			for ($r=0;$r < count($it);$r++)
-				{
-					$fld = $it[$r];					
-					if (isset($t[$fld]))
-						{
-							$st .= '<td class="border1 pad5" width="50" align="center">'.$t[$fld].'</td>';
-						} else {
-							$st .= '<td>&nbsp;</td>';
-						}
+			$it = array('Q1', 'Q2', 'Q3', 'Q4', '');
+			$st .= '<tr><td>' . $q . '</td>';
+			for ($r = 0; $r < count($it); $r++) {
+				$fld = $it[$r];
+				if (isset($t[$fld])) {
+					$st .= '<td class="border1 pad5" width="50" align="center">' . $t[$fld] . '</td>';
+				} else {
+					$st .= '<td>&nbsp;</td>';
 				}
+			}
 		}
 		$st .= '</table>';
-		return($st);		
+		return ($st);
 
 	}
+
 	function row_acpp($obj) {
 		global $cdf, $cdm, $masc;
 		$obj -> fd = array('	id_acpp', 'acpp_autor', 'acpp_ano', 'acpp_titulo', 'acpp_periodico', 'acpp_issn');

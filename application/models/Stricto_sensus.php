@@ -288,6 +288,7 @@ class Stricto_sensus extends CI_model {
 	function atividades_coordenador($us_id = 0) {
 		/******************************************************************************** CAPTACAO */
 		$av = array('-', '-');
+		/* Projetos */
 		$sql = "select count(*) as total from captacao 
 					INNER JOIN ss_programa_pos on ((ca_programa = id_pp) or (ca_programa = id_pp_char))
 						WHERE ca_status = 10 and id_us_coordenador = $us_id	";
@@ -301,6 +302,21 @@ class Stricto_sensus extends CI_model {
 				$av[0] = $line['total'];
 			}
 		}
+		/* Artigos */
+		$sql = "select count(*) as total from captacao 
+					INNER JOIN ss_programa_pos on ((ca_programa = id_pp) or (ca_programa = id_pp_char))
+						WHERE ca_status = 10 and id_us_coordenador = $us_id	";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$to = 0;
+		if (count($rlt) > 0) {
+			for ($r = 0; $r < count($rlt); $r++) {
+				$to++;
+				$line = $rlt[$r];
+				$av[0] = $line['total'];
+			}
+		}
+		
 		$sx = '';
 		if ($to > 0) {
 			$link = base_url('index.php/ss/coordenador/');

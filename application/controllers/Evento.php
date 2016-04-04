@@ -539,8 +539,8 @@ class evento extends CI_controller {
 			if ($inscrito != '1') {
 				$ft = '<font color = red><s>';
 				$ftend = '</s></font>';
-			} else {
 				$totc++;
+			} else {				
 				$ft = '';
 				$ftend = '';
 			}
@@ -605,21 +605,6 @@ class evento extends CI_controller {
 
 			$sx .= '</tr>';
 		}
-
-		//Soma os inscritos
-		$sql_inscrito = "Select count(*) as total
-											from evento_inscricao 
-											where ei_status = 1";
-
-		$rlt = $this -> db -> query($sql);
-		$rlt = $rlt -> result_array();
-		$tot = '';
-
-		for ($r = 0; $r < count($rlt); $r++) {
-			$tot++;
-			$line = $rlt[$r];
-		}
-
 		$sx .= '<TR>
 				 		<TD colspan=14 align=right BGCOLOR="#C0C0C0" valign="bottom">
 						<font color="white">Total de ' . ($tot - $totc) . ' estudantes inscritos</font>';
@@ -728,7 +713,7 @@ class evento extends CI_controller {
 			if ($ei_evento_confirmar == '1') {
 				$ft = '<font color = green><b>';
 				$ftend = '</b></font>';
-			}
+			} 
 
 			$sx .= '<tr valign="middle" style="height: 50px;">';
 			$sx .= '<td class="borderb1">' . ($r + 1) . '.</td>';
