@@ -117,7 +117,7 @@ class semic_anais extends CI_Model {
 
 		$path = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
 
-		$ano = (date("Y") - 1);
+		//$ano = (date("Y") - 1);
 		$sql = "select * from semic_nota_trabalhos 
 					where st_ano = '$ano' 
 					and (st_poster = 'S' or st_oral = 'S' ) and (st_status = 'A' or st_status = 'F')
@@ -204,13 +204,13 @@ class semic_anais extends CI_Model {
 		}
 	}
 
-	function gerar_paginas_trabalho() {
+	function gerar_paginas_trabalho($ano) {
 
 		$this -> load -> model('semic/semic_salas');
 
 		$path = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
 
-		$ano = (date("Y") - 1);
+		//$ano = (date("Y") - 1);
 		$sql = "select * from semic_nota_trabalhos 
 					where st_ano = '$ano' 
 					and (st_poster = 'S' or st_oral = 'S' )
