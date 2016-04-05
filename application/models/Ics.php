@@ -84,6 +84,95 @@ class ics extends CI_model {
 		return ($tabela);
 	}
 
+	/** COCKPIT - Resumo */
+	function cockpit_resumo($ano) {
+		
+		$sql = "select count(*) as total, pj_ano, doc_edital, 
+										CASE
+												WHEN pj_status = '@' THEN 'em submissao'
+												WHEN pj_status = 'A' THEN 'submetido'
+												WHEN pj_status = 'B' THEN 'em análise'
+												WHEN pj_status = 'C' THEN 'analise finalizada'
+												WHEN pj_status = 'X' THEN 'cancelado'
+										ELSE pj_status          
+										END  as status
+						from ic_submissao_projetos
+						left join ic_submissao_plano on doc_protocolo_mae = pj_codigo
+						where pj_ano = '$ano'
+						AND (pj_status  <> 'X' AND pj_status  <> '@')
+						AND (doc_status <> 'X' AND doc_status <> '@')
+						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE')
+						group by doc_edital, pj_ano
+					 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		$sx  = '';
+		
+		$sx .= '<table width="40%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Planos submetidos para '.$ano.'</b></td></tr>';
+		$sx .= '<tr class="lt3">
+								<th align="left">edital</th>
+								<th align="left">status</th>
+								<th align="center">qtd</th>
+						</tr>';
+		
+		for ($r = 0; $r < count($rlt); $r++) {
+			
+		$line = $rlt[$r];
+		
+		$sx .= '<tr>';
+		
+		$sx .= '<td align="center">';
+		$sx .= $line['doc_edital'];
+		$sx .= '</td>';
+		
+		$sx .= '<td align="center">';
+		$sx .= $line['status'];
+		$sx .= '</td>';
+		
+		$sx .= '<td align="center">';
+		$sx .= $line['total'];
+		$sx .= '</td>';		
+		
+		}		
+		$sx .= '</table>';
+		return ($sx);
+	}
+	
+	function cockpit_resumo_graf($ano) {
+		
+		$sql = "select doc_edital, count(*) as total, 
+										CASE
+												WHEN pj_status = '@' THEN 'em submissao'
+												WHEN pj_status = 'A' THEN 'submetido'
+												WHEN pj_status = 'B' THEN 'em análise'
+												WHEN pj_status = 'C' THEN 'analise finalizada'
+												WHEN pj_status = 'X' THEN 'cancelado'
+										ELSE pj_status          
+										END  as status
+						from ic_submissao_projetos
+						left join ic_submissao_plano on doc_protocolo_mae = pj_codigo
+						where pj_ano = '$ano'
+						AND (pj_status  <> 'X' AND pj_status  <> '@')
+						AND (doc_status <> 'X' AND doc_status <> '@')
+						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE')
+						group by doc_edital, pj_ano
+					 ";
+		
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$line = $rlt[0];
+		//return values
+		$tot = 0;
+		$dados = array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$dados[$line['doc_edital']] = $line['total'];
+		}
+		return ($dados);
+	}
+
 	function ja_implementado($proto) {
 		$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' ";
 		$rlt = $this -> db -> query($sql);
@@ -587,10 +676,10 @@ class ics extends CI_model {
 		}
 		$sql = $this -> table_view_2($wh, 0, 9999999, 'al_nome');
 		//$sql .= " order by al_nome ";
-	
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-	
+
 		$sh = '';
 		$sx .= '<table width="100%" class="tabela00">';
 		$sx .= '<tr class="lt2">
@@ -613,19 +702,19 @@ class ics extends CI_model {
 							<th align="left">Imp</th>
 							<th align="right">status</th>
 						</tr>';
-		
-			$tot = 0;
-			$tot2 = 0;
-			$xmb = '';
-		
+
+		$tot = 0;
+		$tot2 = 0;
+		$xmb = '';
+
 		for ($r = 0; $r < count($rlt); $r++) {
-		
+
 			$line = $rlt[$r];
-			
+
 			$st = $line['icas_id'];
 			$sf = '';
 			$sff = '';
-			
+
 			if ($st == '2') {
 				$sf = '<font color="red"><s>';
 				$sff = '</s></font>';
@@ -633,113 +722,113 @@ class ics extends CI_model {
 			} else {
 				$tot++;
 			}
-			
+
 			$link_ic = link_ic($line['id_ic'], 'ic');
-			
+
 			$sx .= '<tr>';
-			
+
 			//indice
-			$sx .= '<td width="20" class="lt1">'.($r+1).'.</td>';
-	
+			$sx .= '<td width="20" class="lt1">' . ($r + 1) . '.</td>';
+
 			$sx .= '<td align="center">';
 			$sx .= $link_ic . $line['ic_plano_aluno_codigo'] . '</a>';
 			$sx .= '</td>';
-	
+
 			$sx .= '<td>';
 			$sx .= $line['ic_ano'];
 			$sx .= '</td>';
-	
+
 			$sx .= '<td>';
 			$link = $sf . link_perfil($line['al_nome'], $line['aluno_id']);
 			$sx .= $link . $sff;
 			$sx .= '</td>';
-	
+
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_aluno'];
 			$sx .= '</td>';
-	
+
 			$sx .= '<td>';
 			$sx .= $line['al_curso'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td><nobr>';
 			$sx .= mask_cpf($line['us_cpf']);
 			$sx .= '</nobr></td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $line['al_genero'];
-			$sx .= '</td>';			
-	
+			$sx .= '</td>';
+
 			//$sx .= '<td>';
 			//$sx .= $line['usm_email'];
 			//$sx .= '</td>';
-	
+
 			$sx .= '<td>';
 			$link = $sf . link_perfil($line['pf_nome'], $line['prof_id']);
 			$sx .= $link . $sff . '</a>';
 			$sx .= '</td>';
-	
+
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_prof'];
 			$sx .= '</td>';
-	
+
 			$sx .= '<td>';
 			$sx .= $line['pf_curso'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td>';
 			$sx .= $line['es_escola'];
-			$sx .= '</td>';			
-	
+			$sx .= '</td>';
+
 			$sx .= '<td>';
 			$sx .= $line['mb_tipo'];
 			$sx .= '</td>';
-	
+
 			$sx .= '<td>';
 			$sx .= $line['mb_descricao'];
 			$sx .= '</td>';
-	
+
 			$sx .= '<td>';
 			$sx .= $line['mb_fomento'];
 			$sx .= '</td>';
-	
+
 			$sx .= '<td class="lt0">';
 			$sx .= $sf . $line['ic_projeto_professor_titulo'] . $sff;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $sf . $line['bl_ativo'] . $sff;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="right">';
 			$sx .= $sf . $line['s_situacao'] . $sff;
 			$sx .= '</td>';
-	
+
 			$sx .= '</tr>';
-	
+
 		}
-			$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
-			$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
-			$sx .= '</table>';
-			$sxc = $sx;
-			/****/
-			$sx = '<table width="100%" class="lt1">';
-			$sx .= '<tr  >';
-			$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
-			$sx .= $line['mb_descricao'];
-			$sx .= ' - ';
-			$sx .= $line['mb_fomento'];
-			$sx .= ' - ';
-			$sx .= $line['mb_tipo'];
-			$sx .= ' - ';
-			$sx .= $ano1 . '-' . ($ano2);
-			$sx .= ' - ';
-			$sx .= 'Total: ' . $tot;
-			$sx .= '</td>';
-			$sx .= '</tr>';
-			$sx .= $sh;
-			$sx .= $sxc;
-		
+		$sx .= '<tr><td colspan=10>Total ' . $tot . ' registros</td></tr>';
+		$sx .= '<tr><td colspan=10>Total ' . $tot2 . ' registros cancelados</td></tr>';
+		$sx .= '</table>';
+		$sxc = $sx;
+		/****/
+		$sx = '<table width="100%" class="lt1">';
+		$sx .= '<tr  >';
+		$sx .= '<td colspan=10 style="background-color: #ccc;" class="lt3 borderb1">';
+		$sx .= $line['mb_descricao'];
+		$sx .= ' - ';
+		$sx .= $line['mb_fomento'];
+		$sx .= ' - ';
+		$sx .= $line['mb_tipo'];
+		$sx .= ' - ';
+		$sx .= $ano1 . '-' . ($ano2);
+		$sx .= ' - ';
+		$sx .= 'Total: ' . $tot;
+		$sx .= '</td>';
+		$sx .= '</tr>';
+		$sx .= $sh;
+		$sx .= $sxc;
+
 		return ($sx);
 	}
 
@@ -1103,7 +1192,8 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1168,7 +1258,8 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1546,8 +1637,8 @@ class ics extends CI_model {
 
 	function le_plano_submit($id = '') {
 		$sql = "select * from ic_submissao_plano where doc_protocolo = '$id' ";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
 
 		if (count($rlt) > 0) {
 			$line = $rlt[0];
@@ -1957,7 +2048,7 @@ class ics extends CI_model {
 		/********* BOTAO ***************************************************************/
 		$data['doc_protocolo_mae'] = $idp;
 		$data['resumo_planos'] = $this -> ics -> submissao_planos_cadastrados($idp, $cracha);
-		
+
 		$txt = $this -> load -> view('ic/plano_submit_insert', $data, true);
 		array_push($cp, array('$M', '', ($txt), False, True));
 
