@@ -142,15 +142,7 @@ class ics extends CI_model {
 	
 	function cockpit_resumo_graf($ano) {
 		
-		$sql = "select doc_edital, count(*) as total, 
-										CASE
-												WHEN pj_status = '@' THEN 'em submissao'
-												WHEN pj_status = 'A' THEN 'submetido'
-												WHEN pj_status = 'B' THEN 'em análise'
-												WHEN pj_status = 'C' THEN 'analise finalizada'
-												WHEN pj_status = 'X' THEN 'cancelado'
-										ELSE pj_status          
-										END  as status
+		$sql = "select doc_edital, count(*) as total, pj_status          
 						from ic_submissao_projetos
 						left join ic_submissao_plano on doc_protocolo_mae = pj_codigo
 						where pj_ano = '$ano'
@@ -164,7 +156,6 @@ class ics extends CI_model {
 		$rlt = $rlt -> result_array($rlt);
 		$line = $rlt[0];
 		//return values
-		$tot = 0;
 		$dados = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
@@ -172,6 +163,8 @@ class ics extends CI_model {
 		}
 		return ($dados);
 	}
+
+
 
 	function ja_implementado($proto) {
 		$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' ";

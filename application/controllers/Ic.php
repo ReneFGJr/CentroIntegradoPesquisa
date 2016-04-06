@@ -86,10 +86,10 @@ class ic extends CI_Controller {
 		$tela = $form -> editar($cp, '');
 		
 		if ($form -> saved) {
+				
 			$ano = get("dd1");
 			$data['content'] = $this -> ics -> cockpit_resumo($ano);
-			
-			
+			$this -> load -> view('content', $data);
 			
 			//carrega grafico de parceiros
 			$data_cockpit = array();
@@ -97,7 +97,10 @@ class ic extends CI_Controller {
 			$data_cockpit['dado_coc'] = $line;
 			$this -> load -> view('ic/resumo_cockpit', $data_cockpit);
 			
-			$this -> load -> view('content', $data);
+			
+			
+			
+			
 		} else {
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);

@@ -1,21 +1,26 @@
 <?php
-$dados = '';
-foreach ($dado_coc as $key => $value) {
-	$dados .= "['$key',   $value],";
-}
-
-$meta = 20;
-$tot = $value;
-
-$part = $meta - $tot;
-	$rest = $tot;
-	$cap = 'Planos submetidos';
-	if ($part < 0)
-		{
-			$part = $meta;
-			$rest = $tot - $meta;
-			$cap = 'Planos acima da meta';
+		$soma = 0;
+		$dados = '';
+		foreach ($dado_coc as $key => $value) {
+			$dados .= "['$key',   $value],";
+			$soma += $value ;
 		}
+		//print_r($dados);
+		//print_r($soma);
+		
+		$meta = 1200;
+		$tot  = $soma;
+		
+		$part = $meta - $tot;
+		$rest = $tot;
+		$cap = 'Planos submetidos';
+		
+		if ($part < 0)
+			{
+				$part = $meta;
+				$rest = $tot - $meta;
+				$cap = 'Planos acima da meta';
+			}
 ?>		 
  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	  <script type="text/javascript">
@@ -30,7 +35,7 @@ $part = $meta - $tot;
 						          ['Meta (<?php echo $meta;?> planos)', <?php echo $part;?>]
 						      	 ]);
 	      var options = {
-	        title: 'Metas da Iniciação Científica'
+	        title: 'Metas da Iniciação Científica '
 	      };
 	
 	      var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
