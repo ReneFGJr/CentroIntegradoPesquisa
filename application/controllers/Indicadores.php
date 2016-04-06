@@ -294,7 +294,8 @@ class indicadores extends CI_Controller {
 		array_push($menu, array('Indicador Produção', 'Estrato Qualis do stricto sensu', 'ITE', '/indicadores/artigos_01/'));
 		array_push($menu, array('Indicador Produção', 'Estrato Scimago/Quartil do stricto sensu', 'ITE', '/indicadores/artigos_02/'));
 
-		array_push($menu, array('Indicador Produção', 'Consolidado da produção pela qualificação', 'ITE', '/indicadores/artigos_03/'));
+		array_push($menu, array('Produção pela qualificação', 'Qualis x Programas (consolidado)', 'ITE', '/indicadores/artigos_03/'));
+		array_push($menu, array('Produção pela qualificação', 'SCIMAGO x Programas (consolidado)', 'ITE', '/indicadores/artigos_04/'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -377,6 +378,39 @@ class indicadores extends CI_Controller {
 		$data['content'] = '<table>' . $sh . $sr . '</table>';
 		if (strlen($xls) == 0) {
 			$data['submenu'] = '<a href="' . base_url('index.php/indicadores/artigos_03/' . $pp . '/xls') . '" class="link lt0">exportar para excel</a>';
+		}
+		$data['title'] = 'Produção qualificada';
+		$this -> load -> view('content', $data);
+
+	}
+
+	/* CONSOLIDADO */
+	function artigos_04($pp = 0, $xls = '') {
+		$ano = '';
+		/* busca aultomaticamente */
+		$this -> load -> model('phpLattess');
+
+		if (strlen($xls) > 0) {
+			xls('producao-qualificada-scimago-' . date("Y-m-d") . '.xls');
+		} else {
+			$this -> cab();
+			$data['title'] = msg('lb_indicador_quartil');
+		}
+		$sql = "select * from ss_programa_pos where pp_ativo = 1 order by pp_sigla";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sr = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sigla = $line['pp_sigla'];
+			$prppg = $line['id_pp'];
+			$sa = $this -> phpLattess -> producao_ss_artigos_scimago_calc($prppg, $ano, 0, $sigla);
+			$sr .= $sa;
+		}
+		$sh = '<tr><th>Programa</th><th>ano</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>nc</th><th>qualif.</th><th>Não qualif.</th></tr>';
+		$data['content'] = '<table>' . $sh . $sr . '</table>';
+		if (strlen($xls) == 0) {
+			$data['submenu'] = '<a href="' . base_url('index.php/indicadores/artigos_04/' . $pp . '/xls') . '" class="link lt0">exportar para excel</a>';
 		}
 		$data['title'] = 'Produção qualificada';
 		$this -> load -> view('content', $data);

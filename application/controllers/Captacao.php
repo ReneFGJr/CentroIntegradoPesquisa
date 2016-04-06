@@ -179,7 +179,9 @@ class Captacao extends CI_Controller {
 				$cp = $this -> captacoes -> cp_02($id);
 				break;
 			case '3' :
-				$cp = $this -> captacoes -> cp_03($id);
+				$data = $this->captacoes->le($id);
+				$proto = $data['ca_protocolo'];
+				$cp = $this -> captacoes -> cp_03($id,$proto);
 				break;
 			case '4' :
 				$cp = $this -> captacoes -> validacao_cp($id);

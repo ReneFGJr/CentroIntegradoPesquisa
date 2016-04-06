@@ -100,6 +100,102 @@ class phpLattess extends CI_Model {
 		return ($sx);
 	}
 
+	function producao_ss_artigos_scimago_calc($prppg = 0, $ano = '', $grafico = 1, $sigla = '') {
+		if (strlen($ano) == 0) {
+			$ano = $this -> qualis;
+		}
+		if ($prppg > 0) {
+			$wh = " programa_pos_id_pp = $prppg and ";
+		} else {
+			$wh = '';
+		}
+		$sql = "
+			select distinct acpp_ano, acpp_autores, acpp_titulo, acpp_periodico,
+				acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, min(sjr_quartile) as estrato
+					
+				FROM (
+				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha, programa_pos_id_pp FROM `ss_professor_programa_linha` 
+					inner join us_usuario on id_us = us_usuario_id_us
+					where $wh sspp_ativo = 1
+				) as tabela
+				inner join cnpq_acpp on acpp_autor = us_nome_lattes
+				left join ss_programa_pos on programa_pos_id_pp = id_pp
+				left join scimago on issn = concat(substr(acpp_issn,1,4),'-',substr(acpp_issn,5,4))	
+				group by acpp_ano, acpp_autores, acpp_titulo, acpp_periodico,
+				acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link			
+				order by acpp_ano, acpp_autores
+			";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela01 lt1">';
+		$tot = 0;
+		$toti = 0;
+		$xano = 0;
+
+		$rs = array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			
+
+			$ano = $line['acpp_ano'];
+			if ($ano != $xano) {
+				$sx .= '<tr><td class="lt4" colspan=10><b>' . $ano . '</b></td></tr>';
+				$xano = $ano;
+				$toti = 0;
+			}
+
+			$tot++;
+			$toti++;
+
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center">';
+			$sx .= $toti;
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= $line['acpp_ano'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['acpp_autores'] . '. ';
+			$sx .= $line['acpp_titulo'] . '. ';
+			$sx .= $line['acpp_periodico'];
+			if (strlen($line['acpp_volume']) > 0) { $sx .= ', v. ' . $line['acpp_volume'];
+			}
+			if (strlen($line['acpp_fasciculo']) > 0) { $sx .= ', n. ' . $line['acpp_fasciculo'];
+			}
+			if (strlen($line['acpp_pg_ini']) > 0) {
+				$sx .= ', p. ' . $line['acpp_pg_ini'];
+			}
+			$sx .= '</td>';
+
+			$sx .= '<td><nobr>';
+			$sx .= substr($line['acpp_issn_link'], 0, 4) . '-' . substr($line['acpp_issn_link'], 4, 4);
+			$sx .= '</nobr></td>';
+
+			$sx .= '<td align="center">' . $line['estrato'] . '</td>';
+
+			/* Monta Matrix */
+			$estrato = $line['estrato'];
+			if ($estrato == '') { $estrato = 'nc';
+			}
+
+			if (isset($rs[$ano][$estrato])) {
+				$rs[$ano][$estrato] = $rs[$ano][$estrato] + 1;
+			} else {
+				$rs[$ano][$estrato] = 1;
+			}
+			$sx .= cr();
+		}
+		$sx .= '</table>';
+
+		if ($grafico == 0) { $sx = '';
+		}
+		$sx = $this -> monta_tabela_dados_quartil($rs, $grafico, $sigla) . $sx;
+		return ($sx);
+	}
+
+
 	function monta_tabela_dados_qualis($rs, $grafico = 1, $sigla = '') {
 		$gr1 = '';
 		$gr2 = '';
@@ -184,6 +280,89 @@ class phpLattess extends CI_Model {
 		return ($sx);
 	}
 
+	function monta_tabela_dados_quartil($rs, $grafico = 1, $sigla = '') {
+		$gr1 = '';
+		$gr2 = '';
+		$gra = '';
+		$sx = '';
+		$q = array('Q1', 'Q2', 'Q3', 'Q4', 'nc');
+		/****************HEADER**/
+		if (strlen($sigla) == 0) {
+			$sx = '<table width="100%" class="tabela00 lt1" border=0>';
+			$sx .= '<tr>';
+			if (strlen($sigla) > 0) { $sx .= '<th>Programa</th>';
+			}
+			$sx .= '<th>Ano</th>';
+			for ($r = 0; $r < count($q); $r++) {
+				$sx .= '<th>' . $q[$r] . '</th>';
+			}
+			$sx .= '<th>Prod. Qualif.</th><th>Prod. não Qualif.</th>';
+		}
+		if ($grafico == 1) {
+			$sx .= '<th width="50%" rowspan=50>';
+			$sx .= '<div id="container_line" style="min-width: 310px; height: 400px; margin: 0 auto">gerando gráfico ...</div>';
+			$sz = '4%';
+		} else {
+			$sz = '8%';
+		}
+		$sx .= '</tr>';
+
+		/******************************/
+		foreach ($rs as $ano => $value) {
+			if (strlen($gra) > 0) {
+				$gra .= ', ';
+			}
+			$gra .= "'" . $ano . "'";
+			$sx .= '<tr>';
+			if (strlen($sigla) > 0) { $sx .= '<td>' . $sigla . '</td>';
+			}
+			$sx .= '<td align="center">' . $ano . '</td>';
+			$pq = 0;
+			$pnq = 0;
+			for ($r = 0; $r < count($q); $r++) {
+				$es = $q[$r];
+				if (isset($value[$es])) {
+					$eq = $q[$r];
+					$sx .= '<td align="center" width="' . $sz . '">' . $value[$es] . '</td>';
+					/****** Producao qualificada *********/
+					if (($eq == 'Q1')) {
+						$pq = $pq + $value[$es];
+					} else {
+						if ($eq != 'nc') {
+							$pnq = $pnq + $value[$es];
+						}
+					}
+
+				} else {
+					$sx .= '<td align="center">-</td>';
+				}
+			}
+			$sx .= '<td align="center" width="' . $sz . '">' . $pq . '</td>';
+			$sx .= '<td align="center" width="' . $sz . '">' . $pnq . '</td>';
+			if (strlen($gr1) > 0) {
+				$gr1 .= ', ';
+				$gr2 .= ', ';
+			}
+			$gr1 .= $pq;
+			$gr2 .= $pnq;
+			$sx .= '</tr>';
+		}
+
+		if ($grafico == 1) {
+			$sx .= '</table>';
+			/* GRAFICO DADOS */
+			$gra = '[' . $gra . ']';
+			$gr1 = '{ name: "Alta", data: [' . $gr1 . ']} ';
+			$gr2 = '{ name: "Baixa", data: [' . $gr2 . ']} ';
+			$data['categorias'] = $gra;
+			$data['dados'] = $gr1 . ', ' . $gr2;
+			$data['title'] = 'Produção com alta e baixa qualificação - Qualis';
+			$data['unidade'] = 'Artigos';
+			$data['source'] = 'http://cip.pucpr.br';
+			$sx .= $this -> load -> view('highcharts/lines', $data, true);
+		}
+		return ($sx);
+	}
 	function producao_ss_eventos($prppg = 0, $tipo = '') {
 		$wh = " where ev_tipo = '$tipo' ";
 		$sql = "

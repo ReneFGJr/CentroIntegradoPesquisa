@@ -546,7 +546,7 @@ class captacoes extends CI_Model {
 		return ($cp);
 	}
 
-	function cp_03($id = '') {
+	function cp_03($id = '', $proto) {
 		$cp = array();
 		array_push($cp, array('$HV', 'id_ca', $id, true, true));
 		array_push($cp, array('${', '', msg('Recusos captados'), false, true));
@@ -571,8 +571,11 @@ class captacoes extends CI_Model {
 		array_push($cp, array('$M', '', $txt, false, true));
 
 		//array_push($cp, array('$M', '', msg('capt_file_texto'), false, true));
+		$this->load->model('geds');
+		$this->geds->tabela = 'bonificacao_ged_documento';
+		$txt = $this->geds->list_files($id, 'captacao');
 
-		array_push($cp, array('$FILE:captacao_ged_documento:captacao', '', $id, false, true));
+		array_push($cp, array('$FILE:captacao_ged_documento:captacao', '', $proto, false, true));
 		array_push($cp, array('$}', '', '', false, true));
 
 		array_push($cp, array('$}', '', msg('Recusos captados'), false, true));
@@ -583,6 +586,8 @@ class captacoes extends CI_Model {
 
 	function valida_entrada($id = '') {
 		$data = $this -> captacoes -> le($id);
+		$proto = $data['ca_protocolo'];
+		
 		$erro = '<font color="red">Erro</font>';
 		$ok = '<font color="green">OK</font>';
 		$vd = array($erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro);
@@ -624,7 +629,7 @@ class captacoes extends CI_Model {
 
 		/* REGRA - arquivos postados */
 		$sql = "select 1 as total from captacao_ged_documento 
-					WHERE doc_dd0 = '" . strzero($id, 7) . "' and doc_status <> 'X' ";
+					WHERE doc_dd0 = '" . $proto . "' and doc_status <> 'X' ";
 		$rrr = $this -> db -> query($sql);
 		$rrr = $rrr -> result_array();
 
@@ -876,7 +881,7 @@ class captacoes extends CI_Model {
 					LEFT JOIN captacao_situacao ON ca_status_old = ca_status
 					LEFT JOIN captacao_participacao ON cp_cod = ca_participacao
 					LEFT JOIN us_usuario on us_cracha = ca_professor
-					WHERE cs_resumo = $id
+					WHERE ca_status = $id
 					ORDER BY ca_lastupdate desc, ca_protocolo
 					";
 
@@ -987,7 +992,7 @@ class captacoes extends CI_Model {
 					$id = 1;
 					break;
 				case '#DIP' :
-					$id = 0;
+					$id = 2;
 					break;
 				default :
 					$id = 5;
@@ -1024,34 +1029,28 @@ class captacoes extends CI_Model {
 		$sz = round(100 / $it);
 		$ar = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-		$sql = "select count(*) as total, ca_status, cs_resumo 
+		$sql = "select count(*) as total, ca_status, cs_situacao 
 				FROM captacao
 				INNER JOIN captacao_situacao ON ca_status_old = ca_status
-				group by ca_status, cs_resumo ";
+				group by ca_status, cs_situacao ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
-		for ($r = 0; $r < count($rlt); $r++) {
-			$line = $rlt[$r];
-			$id = $line['cs_resumo'];
-			$ar[$id] = $ar[$id] + $line['total'];
-		}
+
 
 		$sx = '<table class="lt2 border1" width="100%">';
-		$sx .= '<tr class="lt1">';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_em_cadastro') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_devolvido_correcoes') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_validacao_coordenador') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_validacao_diretoria') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_comunicacao') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_finalizado') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_cancelado') . '</th>';
-		$sx .= '</tr>';
-		$sx .= '<tr align="center" class="lt5">';
-		for ($r = 0; $r < $it; $r++) {
-			$link = '<a href="' . base_url('index.php/cip/captacao/' . $r) . '" class="link lt6">';
-			$sx .= '<td class="border1">' . $link . $ar[$r] . '</a></td>';
-		}
+		$sa = '<tr align="center" class="lt1">';
+		$sb = '<tr align="center" class="lt5">';
+		
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sa .= '<td class="border1">' . $line['cs_situacao'] . '</td>';
+			$link = '<a href="' . base_url('index.php/cip/captacao/' . $line['ca_status']) . '" class="link lt6">';
+			$sb .= '<td class="border1">' . $link . $line['total'] . '</a></td>';
+			
+		}		
+		$sx .= $sa;
+		$sx .= $sb;
 		$sx .= '</tr>';
 		$sx .= '</table>';
 		return ($sx);

@@ -27,6 +27,7 @@ class ic extends CI_Controller {
 		/* Seguranca */
 		$this -> load -> model('usuarios');
 		$this -> usuarios -> security();
+
 	}
 
 	function cab() {
@@ -48,15 +49,20 @@ class ic extends CI_Controller {
 		$menus = array();
 		array_push($menus, array('Home', 'index.php/ic/'));
 
-		array_push($menus, array('Professores & Alunos', 'index.php/ic/usuarios'));
-		array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
-		array_push($menus, array('Acompanhamento', 'index.php/ic/acompanhamento'));
-		array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
-		array_push($menus, array('Relatórios', 'index.php/ic/report'));
-		array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
-		array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
-		array_push($menus, array('Contratos', 'index.php/ic_contrato/contratos/'));
-		array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
+		if (!(perfil('#CPP#SPI#ADM') == 1)) {
+			
+			array_push($menus, array('Submissões', 'index.php/ic/submit_PIBIC'));
+		} else {
+			array_push($menus, array('Professores & Alunos', 'index.php/ic/usuarios'));
+			array_push($menus, array('Avaliadores', 'index.php/ic/avaliadores'));
+			array_push($menus, array('Acompanhamento', 'index.php/ic/acompanhamento'));
+			array_push($menus, array('Pagamentos', 'index.php/ic/pagamentos'));
+			array_push($menus, array('Relatórios', 'index.php/ic/report'));
+			array_push($menus, array('Comunicação', 'index.php/ic/comunicacao/'));
+			array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
+			array_push($menus, array('Contratos', 'index.php/ic_contrato/contratos/'));
+			array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
+		}
 
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
@@ -104,22 +110,20 @@ class ic extends CI_Controller {
 			$sql = "select * from ic_modalidade_bolsa where mb_vigente = 1 order by mb_descricao ";
 			array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', 'Modalidade de Bolsa', True, True));
 			array_push($cp, array('$S8', '', 'Informe o código do aluno', True, True));
-			
-			
-			if ($chk2 == 0)
-				{
-					array_push($cp, array('$T80:3', '', '`Informe título do plano', True, True));				
-					array_push($cp, array('$Q us_cracha:us_nome:select * from us_usuario where usuario_tipo_ust_id=2 and us_ativo = 1 order by us_nome ', '', 'Nome do orientador', True, True));
-					array_push($cp, array('$D8', '', 'Início da vigência', True, True));
-					array_push($cp, array('$[' . (date("Y") - 2) . '-' . date("Y") . ']', '', 'Ano do edital', True, True));
-				} else {
-					$plano = $this->ics->le_plano_submit(get("dd1"));
-					//print_r($plano);
-					array_push($cp, array('$HV', '', $plano['doc_1_titulo'], True, True));
-					array_push($cp, array('$HV', '', $plano['doc_autor_principal'], True, True));
-					array_push($cp, array('$D8', '', 'Início da vigência', True, True));
-					array_push($cp, array('$HV', '', $plano['doc_ano'], True, True));					
-				}
+
+			if ($chk2 == 0) {
+				array_push($cp, array('$T80:3', '', '`Informe título do plano', True, True));
+				array_push($cp, array('$Q us_cracha:us_nome:select * from us_usuario where usuario_tipo_ust_id=2 and us_ativo = 1 order by us_nome ', '', 'Nome do orientador', True, True));
+				array_push($cp, array('$D8', '', 'Início da vigência', True, True));
+				array_push($cp, array('$[' . (date("Y") - 2) . '-' . date("Y") . ']', '', 'Ano do edital', True, True));
+			} else {
+				$plano = $this -> ics -> le_plano_submit(get("dd1"));
+				//print_r($plano);
+				array_push($cp, array('$HV', '', $plano['doc_1_titulo'], True, True));
+				array_push($cp, array('$HV', '', $plano['doc_autor_principal'], True, True));
+				array_push($cp, array('$D8', '', 'Início da vigência', True, True));
+				array_push($cp, array('$HV', '', $plano['doc_ano'], True, True));
+			}
 			$tela = $form -> editar($cp, '');
 
 			if (($chk1 == 0)) {
@@ -366,28 +370,25 @@ class ic extends CI_Controller {
 		$data['content'] = '<center><h1><font color="green"><b>Submissão concluída com Sucesso!</b></font></h1></center>';
 		$this -> load -> view('content', $data);
 	}
-	
 
-	function submit_edit($tipo = '', $id = '', $chk = '', $pag = '',$f1='',$f2='',$f3='') {
-		
+	function submit_edit($tipo = '', $id = '', $chk = '', $pag = '', $f1 = '', $f2 = '', $f3 = '') {
+
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
 
 		/************* Cancela Plano ***********************/
-		if ($f1 == 'DEL')
-			{
-				$this->ics->cancela_plano($f2);
-				$url = base_url('index.php/ic/submit_edit/'.$tipo.'/'.$id.'/'.checkpost_link($id).'/'.$pag);
-				redirect($url);
-			}
-
+		if ($f1 == 'DEL') {
+			$this -> ics -> cancela_plano($f2);
+			$url = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . checkpost_link($id) . '/' . $pag);
+			redirect($url);
+		}
 
 		$this -> cab();
 		$data = array();
 
 		$prj_data = $this -> ics -> le_projeto($id);
 		$sta = $prj_data['pj_status'];
-		
+
 		if ($sta != '@') {
 			redirect(base_url('index.php/ic/submit_view/' . $id . '/' . checkpost_link($id)));
 			exit ;
@@ -428,27 +429,27 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '3' :
-						$this->load->view('ic/projeto',$prj_data);
-						
-						$cp = $this -> ics -> cp_subm_03($id,$tipo);
+						$this -> load -> view('ic/projeto', $prj_data);
+
+						$cp = $this -> ics -> cp_subm_03($id, $tipo);
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
 						$data['content'] = $tela;
 						$this -> load -> view('content', $data);
 						break;
 					case '4' :
-						$this->load->view('ic/projeto',$prj_data);
+						$this -> load -> view('ic/projeto', $prj_data);
 						$cp = $this -> ics -> valida_entrada($id);
 
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
 						$data['content'] = $tela;
 						$this -> load -> view('content', $data);
-						break;						
+						break;
 
 					case '5' :
 						$this -> ics -> submit_altera_status($id, 'A');
-						$this -> ics -> submit_enviar_email($id);						
+						$this -> ics -> submit_enviar_email($id);
 						redirect(base_url('index.php/ic/submit_finished/' . $id));
 						break;
 				}
@@ -490,7 +491,8 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
-	function submit_PIBIC($sta='') {
+
+	function submit_PIBIC($sta = '') {
 		$this -> load -> model('ics');
 		$this -> cab();
 
@@ -518,17 +520,16 @@ class ic extends CI_Controller {
 
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
-		
-		
+
 		/***** Mostra Protoclos ****/
-		if (strlen($sta) > 0)
-			{
-				$tela = $this->ics->mostra_projetos_situacao($cracha,$sta);
-				$data['content'] = $tela;
-				$this -> load -> view('content', $data);						
-			}
+		if (strlen($sta) > 0) {
+			$tela = $this -> ics -> mostra_projetos_situacao($cracha, $sta);
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+		}
 
 	}
+
 	function admin_rpar_lista_professores_com_erro_no_pdf() {
 		$this -> cab();
 		$this -> load -> model("geds");
@@ -642,7 +643,7 @@ class ic extends CI_Controller {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$sx .= '<tr class="lt4">';
-			$sx .= '<td>'.($r+1).'</td>';
+			$sx .= '<td>' . ($r + 1) . '</td>';
 			$sx .= '<td>';
 			$sx .= $line['doc_dd0'];
 			$sx .= '</td>';
@@ -1425,20 +1426,20 @@ class ic extends CI_Controller {
 	}
 
 	function report_guia_excel($xls = '') {
-			$ano_ini = get("dd2");
-			$ano_fim = get("dd3");
-			$modalidade = get("dd4");
-			
+		$ano_ini = get("dd2");
+		$ano_fim = get("dd3");
+		$modalidade = get("dd4");
+
 		/* Load Models */
 		$this -> load -> model('ics');
-	
+
 		if ($xls == '') {
 			$this -> cab();
 			$data = array();
-			
-			$data['submenu'] = '<a href="'. base_url('index.php/ic/report_guia_excel/xls?dd2='. $ano_ini .'&dd3='. $ano_fim .'&dd4='. $modalidade .'&acao=xls') .'" class="lt0 link">exportar para excel</a>';
+
+			$data['submenu'] = '<a href="' . base_url('index.php/ic/report_guia_excel/xls?dd2=' . $ano_ini . '&dd3=' . $ano_fim . '&dd4=' . $modalidade . '&acao=xls') . '" class="lt0 link">exportar para excel</a>';
 		} else {
-			xls('Guia_do_estudante '. $ano_ini .' até '. $ano_fim .'.xls');
+			xls('Guia_do_estudante ' . $ano_ini . ' até ' . $ano_fim . '.xls');
 		}
 
 		$form = new form;
@@ -1452,8 +1453,8 @@ class ic extends CI_Controller {
 		$tela = $form -> editar($cp, '');
 
 		if ($form -> saved) {
-			
-			$data['title']   = 'Orientações de Iniciação Científica de '. $ano_ini .' até '. $ano_fim .' ';
+
+			$data['title'] = 'Orientações de Iniciação Científica de ' . $ano_ini . ' até ' . $ano_fim . ' ';
 			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
 			$this -> load -> view('content', $data);
 
@@ -1593,7 +1594,7 @@ class ic extends CI_Controller {
 		$fld = 'ic_rp_data';
 
 		$data['resumo'] = $this -> protocolos_ic -> resumo();
-		
+
 		$data['resumo'] .= $this -> ics -> resumo();
 
 		/* Search */
@@ -2242,10 +2243,11 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
 	function entrega($tipo = '') {
-		$sx = $this->rp_entregue($tipo);
-		return($sx);
-		}
+		$sx = $this -> rp_entregue($tipo);
+		return ($sx);
+	}
 
 	function rp_entregue($tipo = '') {
 		/* Load Models */
@@ -2432,33 +2434,32 @@ class ic extends CI_Controller {
 		}
 
 	}
-	
-	function avaliacoes_situacao($tipo='', $status='')
-		{
-			$this->load->model('Ic_pareceres');
-			$this->cab();
-			
-			$data = array();
-			$data['title'] = msg('lb_ic_avaliaçãoes_pendentes');
-			
-			$this->ic_pareceres = 'pibic_parecer_'.date("Y");
-			
-			$tela = $this->Ic_pareceres->resumo_parecer();
-			
-			if(strlen($tipo) > 0){
-				
-				$tela .= $this->Ic_pareceres->resumo_parecer_mostrar($tipo, $status);
-			
-			}else{
-				
-			}
-			
-			$data['content'] = $tela;
-			$this->load->view('content',$data);
-			
-			$this -> load -> view('header/content_close');
-			$this -> load -> view('header/foot', $data);			
+
+	function avaliacoes_situacao($tipo = '', $status = '') {
+		$this -> load -> model('Ic_pareceres');
+		$this -> cab();
+
+		$data = array();
+		$data['title'] = msg('lb_ic_avaliaçãoes_pendentes');
+
+		$this -> ic_pareceres = 'pibic_parecer_' . date("Y");
+
+		$tela = $this -> Ic_pareceres -> resumo_parecer();
+
+		if (strlen($tipo) > 0) {
+
+			$tela .= $this -> Ic_pareceres -> resumo_parecer_mostrar($tipo, $status);
+
+		} else {
+
 		}
+
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function acompanhamento() {
 		/* Load Models */
@@ -2483,10 +2484,10 @@ class ic extends CI_Controller {
 		array_push($menu, array('Relatório Parcial', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
-		
+
 		//sub-menu submissoes
 		array_push($menu, array('Submissão', 'Cockpit (Resumo)', 'ITE', '/ic/avaliacoes_situacao'));
-		
+
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
@@ -2799,8 +2800,7 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();
