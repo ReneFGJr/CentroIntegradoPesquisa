@@ -3031,7 +3031,9 @@ class ics extends CI_model {
 		{
 			$this->load->model('geds');
 			
-			$sql = "select * from ".$this->tabela_planos." where doc_protocolo_mae = '$proto' and doc_status = '$sta' ";
+			$sql = "select * from ".$this->tabela_planos."
+						LEFT JOIN us_usuario on us_cracha = doc_aluno 
+						where doc_protocolo_mae = '$proto' and doc_status = '$sta' ";
 			$rlt = $this->db->query($sql);
 			$rlt = $rlt->result_array();
 			$sx = '';
