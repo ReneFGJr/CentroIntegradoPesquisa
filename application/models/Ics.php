@@ -1543,7 +1543,7 @@ class ics extends CI_model {
             			inner join ic_aluno as pa on ic_id = id_ic
 						left join ic_situacao on id_s = s_id
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
-						where ic_ano = '$ano' and (icas_id = 1 or icas_id = 4) 
+						where ic_ano = '$ano' and (icas_id = 1) 
             	group by mb_fomento, mb_tipo";
 
 		$rlt = db_query($sql);

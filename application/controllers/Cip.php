@@ -61,11 +61,13 @@ class CIP extends CI_Controller {
 
 	function index($id = 0) {
 
-		/* Load Models */
-		$this -> load -> model('usuarios');
+		/* Load Models */		
 		$this -> load -> model('cips');
+		$this -> load -> model('artigos');
 		$this -> load -> model('isencoes');
+		$this -> load -> model('usuarios');
 		$this -> load -> model('captacoes');
+		
 
 		$this -> cab();
 		$data = array();
@@ -81,6 +83,7 @@ class CIP extends CI_Controller {
 
 		/* Resumo de validação Captação */
 		$data['resumo'] .= $this -> captacoes -> resumo_acoes();
+		$data['resumo'] .= $this -> artigos -> resumo_acoes();
 
 		$data['search'] = '';
 
@@ -440,6 +443,17 @@ class CIP extends CI_Controller {
 		$data['title'] = msg('captacoes');
 		$this -> load -> view('content', $data);		
 	}
+
+function artigos_status($id = '') {
+		$this -> load -> model('artigos');
+		$this -> cab();
+		
+		$capta_resumo = $this -> artigos -> resumo_acoes_perfil($id);
+		$data['content'] = $capta_resumo;
+		$data['title'] = msg('captacoes');
+		$this -> load -> view('content', $data);		
+	}
+
 
 	function captacao($id = '') {
 		$this -> load -> model('captacoes');

@@ -224,7 +224,10 @@ class Artigo extends CI_Controller {
 	}
 
 	function detalhe($id = 0, $chk = '') {
+		$id_us = $_SESSION['id_us'];
+		
 		$proto= strzero($id,7);
+		$this -> load -> model('stricto_sensus');
 		$this -> load -> model('usuarios');
 		$this -> load -> model('artigos');
 		$this -> load -> model('geds');
@@ -234,19 +237,86 @@ class Artigo extends CI_Controller {
 			redirect(base_url('index.php/main'));
 		}
 		/* Load Models */
+		
+		/******************** acao */
+		$acao = get("xacao");
+		$tp = get("dd1");
+
+		if ((strlen($acao) > 0) and (strlen($tp) > 0)) {
+			$ok = 0;
+			$acao = get("xacao");
+			switch ($acao) {
+				case 'LIBERACAO_COORDENADOR' :
+					$ok = $this -> artigos -> acao_artigo($proto, $tp);
+					break;
+				case 'VALIDACAO_DOCUMENTAL' :
+					$ok = $this -> artigos -> acao_artigo($proto, $tp);
+					break;
+				case 'LIBERACAO_DIRETORIA' :
+					$ok = $this -> artigos -> acao_artigo($proto, $tp);
+					break;
+				case 'LIBERACAO_PROCESSO' :
+					$ok = $this -> artigos -> acao_artigo($proto, $tp);
+					break;
+				case 'LIBERACAO_PROCESSO' :
+					$ok = $this -> artigos -> acao_artigo($proto, $tp);
+					break;
+			}
+			if ($ok == 1) {
+				redirect(base_url('index.php/artigo/detalhe/' . $id . '/' . $chk));
+			}
+		}		
 
 		$this -> cab();
 		$data = $this -> artigos -> le($id);
 
 		$this -> load -> view('artigo/detalhe', $data);
-
-		$data['content'] = '<fieldset><legend>' . msg('artigo_historico') . '</legend>' . $this -> artigos -> mostra_historico($id) . '</fieldset>';
 		
+		/* Histórico */
+		$data['content'] = '<fieldset class="captacao_folha black border1"><legend>' . msg('artigo_historico') . '</legend>' . $this -> artigos -> mostra_historico($id) . '</fieldset>';
+
+		/* Arquivos */	
 		$this->geds->tabela = 'cip_artigo_ged_documento';
 		$data['content'] .= $this->geds->list_files_table($proto, 'artigo');
-		$data['content'] .= $this->geds->form_upload($proto, 'artigo');
+		if (perfil('#ADM#CPS') == 1) {
+			$data['content'] .= $this->geds->form_upload($proto, 'artigo');
+		}
 		
 		$this -> load -> view('content', $data);
+		
+		
+	
+		
+		/* Validação do coordenador */
+		if ($data['ar_status'] == 10) {
+			if ($this -> stricto_sensus -> is_coordenador($id_us)) {
+				$this -> load -> view('artigo/form_coordenador', $data);
+			}
+		}
+				
+		if (perfil($data['cas_perfil'] . '#ADM') == 1) {
+			/* Validacao da secretaria */
+			if ($data['ar_status'] == 80) {
+				$this -> load -> view('artigo/form_secretaria_validacao', $data);
+			}
+			/* Gerar bonificaçoes e isenções pela secretaria */
+			if ($data['ar_status'] == 81) {
+				$data['isencao'] = 0;
+				if (($this -> isencoes -> tem_isencao($proto) == 0) and ($data['ca_isencao'] == 1)) {
+					$data['isencao'] = 1;
+					$this -> load -> view('artigo/form_isencao_gerar', $data);
+				} else {
+					$this -> load -> view('artigo/form_secretaria_liberacao', $data);
+				}
+			}
+
+			/* Validação da diretoria de pesquisa */
+			if ($data['ar_status'] == 11) {
+				$this -> load -> view('captacao/form_diretoria', $data);
+			}
+		}		
+
+
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', null);

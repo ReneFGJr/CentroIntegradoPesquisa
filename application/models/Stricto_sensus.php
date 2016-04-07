@@ -281,6 +281,45 @@ class Stricto_sensus extends CI_model {
 			}
 		}
 		$sx .= '</table>';
+		
+		
+		/* ARTIGOS */
+		
+		$sql = "select * from cip_artigo 
+				inner join (
+				SELECT distinct us_cracha as cracha FROM ss_programa_pos
+					inner join `ss_professor_programa_linha` on id_pp = programa_pos_id_pp
+				    inner join us_usuario on id_us = us_usuario_id_us
+					WHERE `sspp_ativo` = 1 and id_us_coordenador = $us_id
+				) as tabela on cracha = ar_professor
+				inner join us_usuario on us_usuario.us_cracha = ar_professor
+				inner join cip_artigo_status on ar_status = cas_status
+				where ar_status = 10 ";
+				
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$to = 0;
+		
+		$sx .= '<h1>Artigos</h1>';
+		$sx .= '<table width="100%" class="tabela01 lt1">';
+		$sx .= '<tr>
+					<th>Protocolo</th>
+					<th width="40%">Título do artigo</th>
+					<th width="20%">Publicação</th>
+					<th width="2%">Qualis</th>
+					<th width="2%">Scimago</th>
+					<th width="5%">Atualização</th>
+					<th width="10%">Situação</th>
+					<th width="20%">Professor</th>
+				</tr>';
+		if (count($rlt) > 0) {
+			for ($r = 0; $r < count($rlt); $r++) {
+				$ll = $rlt[$r];
+				//print_r($ll);
+				$sx .= $this -> load -> view('artigo/artigo_row', $ll, true);
+			}
+		}
+		$sx .= '</table>';						
 		return ($sx);
 
 	}
@@ -303,9 +342,14 @@ class Stricto_sensus extends CI_model {
 			}
 		}
 		/* Artigos */
-		$sql = "select count(*) as total from captacao 
-					INNER JOIN ss_programa_pos on ((ca_programa = id_pp) or (ca_programa = id_pp_char))
-						WHERE ca_status = 10 and id_us_coordenador = $us_id	";
+		$sql = "select count(*) as total from cip_artigo 
+				inner join (
+				SELECT distinct us_cracha FROM ss_programa_pos
+					inner join `ss_professor_programa_linha` on id_pp = programa_pos_id_pp
+				    inner join us_usuario on id_us = us_usuario_id_us
+					WHERE `sspp_ativo` = 1 and id_us_coordenador = $us_id
+				) as tabela on us_cracha = ar_professor
+				where ar_status = 10 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$to = 0;
@@ -313,7 +357,7 @@ class Stricto_sensus extends CI_model {
 			for ($r = 0; $r < count($rlt); $r++) {
 				$to++;
 				$line = $rlt[$r];
-				$av[0] = $line['total'];
+				$av[1] = $line['total'];
 			}
 		}
 		

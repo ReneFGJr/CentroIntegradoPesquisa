@@ -1,6 +1,6 @@
 <?php
 class artigos extends CI_Model {
-	
+
 	function novo_artigos($cracha) {
 		$id = $this -> artigos_em_cadastro($cracha);
 		$data = date("Ymd");
@@ -14,7 +14,7 @@ class artigos extends CI_Model {
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
 			if (count($rlt) > 0) {
-				$cod = ($rlt[0]['id']+1);
+				$cod = ($rlt[0]['id'] + 1);
 			} else {
 				$cod = 1;
 			}
@@ -33,105 +33,414 @@ class artigos extends CI_Model {
 			$this -> db -> query($sql);
 
 			$sql = "update cip_artigo set ar_protocolo = lpad(id_ar,7,0) where ar_protocolo = 'NOVO'";
-			$this -> db -> query($sql);			
-			
+			$this -> db -> query($sql);
+
 			$id = $this -> artigos_em_cadastro($cracha);
 		}
 		return ($id);
-	}	
-	
-	function mostra_historico($id)
-		{
-			$proto = strzero($id,7);
-			
-			$sql = "select * from cip_artigo_historico 
+	}
+
+	function mostra_historico($id) {
+		$proto = strzero($id, 7);
+		$prot2 = 'AR' . strzero($id, 5);
+		$sql = "select * from cip_artigo_historico 
+						left join cip_artigo_status on cas_status = bnh_ope
 						LEFT JOIN us_usuario ON bnh_log = id_us
 						WHERE bnh_protocolo = '$proto'
-						ORDER BY bnh_data desc, bnh_hora desc ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			$sx = '<table width="100%" class="tabela00 lt1">';
-			$sx .= '<tr><th>data e hora</th>
+				union 
+				
+				select * from captacao_historico 
+						left join cip_artigo_status on cas_status = bnh_ope
+						LEFT JOIN us_usuario ON bnh_log = id_us
+						WHERE bnh_protocolo = '$prot2'
+						
+				ORDER BY bnh_data desc, bnh_hora desc ";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<table width="100%" class="tabela00 lt1">';
+		$sx .= '<tr><th>data e hora</th>
 						<th></th>
 					</tr>';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$sx .= '<tr>';
-					$sx .= '<td align="center">';
-					$sx .= stodbr($line['bnh_data']);
-					$sx .= '&nbsp';
-					$sx .= substr($line['bnh_hora'],0,5);
-					$sx .= '</td>';
-					
-					$sx .= '<td>'.$line['bnh_historico'].'</td>';
-					
-					$sx .= '<td>'.$line['us_nome'].'</td>';
-					
-					$sx .= '<td align="center">';
-					$sx .= '</tr>';
-				}
-			$sx .= '</table>';
-			return($sx);
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<tr>';
+			$sx .= '<td align="center">';
+			$sx .= stodbr($line['bnh_data']);
+			$sx .= '&nbsp';
+			$sx .= substr($line['bnh_hora'], 0, 5);
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			if (strlen(trim($line['cas_situacao_acao'])) > 0) { $sx .= $line['cas_situacao_acao'];
+			}
+			
+			
+			if ((strlen($line['bnh_historico']) > 0) and ($line['cas_situacao_acao'] != $line['bnh_historico'])) {
+				if ((strlen($line['cas_situacao_acao']) > 0) and (strlen($line['bnh_historico']) > 0 )) { $sx .= '<br>'; }
+				$sx .= $line['bnh_historico'];
+			}
+			$sx .= '</td>';
+
+			$sx .= '<td>' . $line['us_nome'] . '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= '</tr>';
 		}
-	function alterar_status($id,$ope)
-		{
-			$historico = '??';
-			$sql = "select * from cip_artigo_status where cas_status = ".$ope;
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					$historico = trim($line['cas_situacao_acao']);
-				}
-			
-			$data = date("Ymd");
-			$hora= date("H:i:s");
-			$proto = strzero($id,7);
-			$us_id = $_SESSION['id_us'];
-			
-			$sql = "select * from cip_artigo_historico 
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function alterar_status($id, $ope) {
+		$historico = '??';
+		$sql = "select * from cip_artigo_status where cas_status = " . $ope;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$historico = trim($line['cas_situacao_acao']);
+		}
+
+		$proto = strzero($id, 7);
+		$this -> insere_historico($proto = '', $ope = '', $desc = '');
+
+		/* Atualiza status */
+		$sql = "update cip_artigo set
+						ar_status = $ope,
+						ar_lastupdate = $data
+					where id_ar = " . round($id);
+		$rlt = $this -> db -> query($sql);
+	}
+
+	function insere_historico($proto = '', $ope = '', $desc = '') {
+		$us_id = $_SESSION['id_us'];
+		$data = date("Ymd");
+		$hora = date("H:i:s");
+
+		$sql = "select * from cip_artigo_historico 
 						WHERE bnh_ope = '$ope' and bnh_log = $us_id 
 						AND bnh_data = '$data' AND bnh_protocolo = '$proto' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) == 0)
-				{
-					/* Insere histórico */
-					$sql = "insert into cip_artigo_historico
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) == 0) {
+			/* Insere histórico */
+			$sql = "insert into cip_artigo_historico
 							(bnh_protocolo, bnh_data, bnh_hora,
 							bnh_historico, bnh_ope, bnh_log,
 							bnh_descricao
 							) values (
 							'$proto', '$data', '$hora',
-							'$historico', '$ope', $us_id,
+							'$desc', '$ope', $us_id,
 							'')";
-					$rlt = $this->db->query($sql);
-					
-					/* Atualiza status */
-					$sql = "update cip_artigo set
-								ar_status = $ope,
-								ar_lastupdate = $data
-							where id_ar = ".round($id);
-					$rlt = $this->db->query($sql);								
-				}
+			$rlt = $this -> db -> query($sql);
 		}
-		
-	
+	}
+
+	function resumo_acoes() {
+		$it = 3;
+		$sz = round(100 / $it);
+		$ar = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+		$sql = "select count(*) as total, cas_perfil 
+				FROM cip_artigo
+				INNER JOIN cip_artigo_status ON cas_status = ar_status
+				group by cas_perfil ";
+		$rlt = $this -> db -> query($sql);
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$fl = array(0, 0, 0, 0, 0, 0);
+		$ca = array('COP', 'CPS', 'DIP');
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$perf = $line['cas_perfil'];
+			switch ($perf) {
+				case '#COP' :
+					$id = 0;
+					break;
+				case '#CPS' :
+					$id = 1;
+					break;
+				case '#DIP' :
+					$id = 2;
+					break;
+				default :
+					$id = 5;
+					break;
+			}
+
+			$fl[$id] = $fl[$id] + $line['total'];
+		}
+
+		/* Format o número */
+		for ($r = 0; $r < count($ca); $r++) {
+			if ($fl[$r] > 0) {
+				$link = '<a href="' . base_url('index.php/cip/artigos_status/' . $ca[$r]) . '" class="link lt6">';
+				$fl[$r] = $link . '<br><font class="lt6">' . $fl[$r] . '</font></a>';
+			} else {
+				$link = '<a href="#" class="link lt6">';
+				$fl[$r] = $link . '<br><font class="lt6">-</font></a>';
+			}
+		}
+		$sx = '<table class="lt2" width="100%">';
+		$sx .= '<tr class="lt1" valign="bottom">';
+		$sx .= '<th colspan=4 class="lt2">' . msg('artigos') . '</th></tr>';
+		$sx .= '<tr class="lt1" valign="bottom">';
+		$sx .= '<td width="' . $sz . '%" class="captacao_folha border1 black lt0">' . msg('cap_acao_coordenador') . $fl[0] . '</td>';
+		$sx .= '<td width="' . $sz . '%" class="captacao_folha border1 black lt0">' . msg('cap_acao_secretaria') . $fl[1] . '</td>';
+		$sx .= '<td width="' . $sz . '%" class="captacao_folha border1 black lt0">' . msg('cap_acao_diretoria') . $fl[2] . '</td>';
+		$sx .= '</tr>';
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function resumo_acoes_perfil($id = '') {
+		switch ($id) {
+			case 'COP' :
+				$sql = "select * 
+								FROM cip_artigo
+								INNER JOIN cip_artigo_status ON cas_status = ar_status
+								LEFT JOIN us_usuario on us_cracha = ar_professor
+								WHERE ar_status = '10' ";
+				break;
+			default :
+				$sql = "select * 
+								FROM cip_artigo
+								INNER JOIN cip_artigo_status ON cas_status = ar_status
+								LEFT JOIN us_usuario on us_cracha = ar_professor
+								WHERE cas_perfil = '#$id' ";
+				break;
+		}
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00 lt1">';
+		$sx .= '<tr>
+					<th>Protocolo</th>
+					<th>Título</th>
+					<th>Publicação</th>
+					<th>Qualis</th>
+					<th>Scimago</th>
+					<th>Atualização</th>
+					<th>Situação</th>
+					<th>Solicitante</th>
+				</tr>';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$sx .= $this -> load -> view('artigo/artigo_row', $line, true);
+		}
+		$sx .= '<tr><td colspan="10">Total ' . $tot . '</td></tr>';
+		$sx .= '</table>';
+		return ($sx);
+
+	}
+
+	function acao_artigo($proto, $tp) {
+		$data = date("Y-m-d");
+		switch ($tp) {
+			case '0' :
+				// Com isenção e com bonificação pelo COORDENADOR //
+				$sql = "update cip_artigo set 
+								ar_bonificacao = 1,
+								ar_status = 80,
+								ar_lastupdate = '$data'
+							where ar_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado com <b>bonificação</b><br>' . get("dd2");
+				$this -> artigos -> insere_historico($proto, '80', $desc);
+				return (1);
+				break;
+			case '1' :
+				// Com isenção e sem bonificação pelo  COORDENADOR //
+				$sql = "update cip_artigo set 
+								ar_bonificacao = 2,
+								ar_status = 80,
+								ar_lastupdate = '$data'
+							where ar_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <font color=red><b>sem bonificação</b></font><br>' . get("dd2");
+				$this -> artigos -> insere_historico($proto, '80', $desc);
+				return (1);
+				break;
+
+			case '4' :
+				// Devolver ao professor para correção  COORDENADOR OU SECRETARIA//
+				$sql = "update cip_artigo set 
+								ar_bonificacao = 0,
+								ar_status = 1,
+								ar_lastupdate = '$data'
+							where ar_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Motivo: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+
+				$this -> artigos -> insere_historico($proto, '1', $desc);
+				return (1);
+				break;
+			case '5' :
+				// Cancelar o protocolo  COORDENADOR OU SECRETARIA //
+				$sql = "update cip_artigo set 
+								ar_bonificacao = 0,
+								ar_status = 9,
+								ar_lastupdate = '$data'
+							where ar_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Justificativa: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+				$this -> artigos -> insere_historico($proto, '9', $desc);
+				return (1);
+				break;
+			case '6' :
+				// validar a documentação pela SECRETARIA //
+				$sql = "update cip_artigo set 
+								ar_status = 91,
+								ar_lastupdate = '$data'
+							where ar_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Justificativa: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+
+				$this -> artigos -> insere_historico($proto, '91', $desc);
+				return (1);
+				break;
+			case '7' :
+				$sql = "update cip_artigo set 
+								ar_status = 90,
+								ar_lastupdate = '$data'
+							where ar_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Justificativa: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+
+				$this -> artigos -> insere_historico($proto, '90', $desc);
+				return (1);
+				break;
+
+			/**************** secretaria */
+			/*********************************************** DIRETORIA DE PESQUISA **************/
+			case '10' :
+				// Com isenção e com bonificação pelo COORDENADOR //
+				$sql = "update cip_artigo set 
+								ca_isencao = 1,
+								ca_bonificacao = 1,
+								ca_status = 81,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <b>com isenção</b> e com <b>bonificação</b><br>' . get("dd2");
+				$this -> artigos -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+			case '12' :
+				// Com isenção e sem bonificação pelo  COORDENADOR //
+				$sql = "update cip_artigo set 
+								ca_isencao = 1,
+								ca_bonificacao = 0,
+								ca_status = 81,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <b>com isenção</b> e <font color=red><b>sem bonificação</b></font><br>' . get("dd2");
+				$this -> artigos -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+			case '11' :
+				// Sem isenção e com bonificação pelo  COORDENADOR //
+				$sql = "update cip_artigo set 
+								ca_isencao = 0,
+								ca_bonificacao = 1,
+								ca_status = 81,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <font color=red><b>sem isenção</b></font> e <b>com bonificação</b><br>' . get("dd2");
+				$this -> artigos -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+			case '13' :
+				// Com isenção e com bonificação pelo  COORDENADOR //
+				$sql = "update cip_artigo set 
+								ca_isencao = 0,
+								ca_bonificacao = 0,
+								ca_status = 81,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <font color=red><b>sem isenção</b> e <b>sem bonificação</b></font><br>' . get("dd2");
+				$this -> artigos -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+			case '19' :
+				// validar a documentação pela SECRETARIA //
+				$sql = "update cip_artigo set 
+								ca_status = 11,
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				if (strlen(get("dd2")) > 0) {
+					$desc = 'Justificativa: ' . get("dd2");
+				} else {
+					$desc = '';
+				}
+
+				$this -> artigos -> insere_historico($proto, '11', $desc);
+				return (1);
+				break;
+			case '20' :
+				// GERAR ISENÇÂO PELA SECRETARIA //
+				$isencao = $this -> isencoes -> tem_isencao($proto);
+				if ($isencao == 0) {
+					$dt = $this -> artigos -> le_protocolo($proto);
+					$this -> isencoes -> gerar_isencao($proto, $dt);
+
+					$sql = "update cip_artigo set 
+								ca_lastupdate = $data
+							where ca_protocolo = '" . $proto . "'";
+					$this -> db -> query($sql);
+					if (strlen(get("dd2")) > 0) {
+						$desc = 'Justificativa: ' . get("dd2");
+					} else {
+						$desc = '';
+					}
+
+					$this -> artigos -> insere_historico($proto, '20', $desc);
+				}
+				return (1);
+				break;
+		}
+
+	}
+
 	function le($id) {
-		$sql = "select * from cip_artigo 
+		$sql = "select * from cip_artigo
+					INNER JOIN us_usuario on ar_professor = us_cracha 
 					LEFT JOIN cip_artigo_status on ar_status = cas_status
 				WHERE id_ar = " . round($id);
-		$rlt = $this -> db -> query($sql);					
+		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		if (count($rlt) > 0) {
 			$line = $rlt[0];
 			return ($line);
 		} else {
-			return (array());
+			return ( array());
 		}
 
 	}
@@ -172,21 +481,20 @@ class artigos extends CI_Model {
 					</tr>';
 
 		$xano = '';
-					
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$ano = $line['ar_ano'];
 			$id = $line['id_ar'];
-			
-			if ($xano != $ano)
-				{
-					$sx .= '<tr><td class="lt4" colspan=10>'.$ano.'</td></tr>';
-					$xano = $ano;
-				}
-			
-			$link = base_url('index.php/artigo/detalhe/'.$id.'/'.checkpost_link($id));
-			$link = '<a href="'.$link.'" class="link lt1">';
-			
+
+			if ($xano != $ano) {
+				$sx .= '<tr><td class="lt4" colspan=10>' . $ano . '</td></tr>';
+				$xano = $ano;
+			}
+
+			$link = base_url('index.php/artigo/detalhe/' . $id . '/' . checkpost_link($id));
+			$link = '<a href="' . $link . '" class="link lt1">';
+
 			$leg = trim($line['ar_journal']);
 			if (strlen(trim($line['ar_vol'])) > 0) {$leg .= ', v. ' . $line['ar_vol'];
 			}
@@ -204,7 +512,7 @@ class artigos extends CI_Model {
 				$doi = $line['ar_doi'];
 			}
 			$sx .= '<tr valign="top">';
-			$sx .= '<td align="center" class="border1">' . $link. $line['ar_protocolo'] . '</a>'.'</td>';
+			$sx .= '<td align="center" class="border1">' . $link . $line['ar_protocolo'] . '</a>' . '</td>';
 			$sx .= '<td class="border1">' . $line['ar_titulo'] . '</td>';
 			$sx .= '<td align="center" class="border1">' . $line['ar_issn'] . '</td>';
 			$sx .= '<td class="border1">' . $leg . '</td>';
@@ -254,7 +562,7 @@ class artigos extends CI_Model {
 					break;
 				case '11' :
 					$art[1] = $art[1] + $tot;
-					break;					
+					break;
 				case '25' :
 					$art[2] = $art[2] + $tot;
 					break;
@@ -298,7 +606,7 @@ class artigos extends CI_Model {
 		array_push($cp, array('$S5', 'ar_num', 'Num.', False, True));
 		array_push($cp, array('$S10', 'ar_pags', 'Paginação Ex: (192-208)', False, True));
 		array_push($cp, array('$}', '', 'Dados do Artigo', False, True));
-		
+
 		array_push($cp, array('${', '', 'Sobre o estado da publicação', False, True));
 		array_push($cp, array('$Q id_cap:cap_descricao:select * from cip_artigo_publica order by cap_descricao', 'ar_publicado', 'O artigo está', True, True));
 		array_push($cp, array('$}', '', 'Dados do Artigo', False, True));
@@ -378,60 +686,58 @@ class artigos extends CI_Model {
 		$ok = '<font color="green">OK</font>';
 		$vd = array($erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro, $erro);
 		/* Regra */
-		if (strlen($data['ar_titulo']) > 10)
-			{
-				$vd[0] = $ok;
-			}
+		if (strlen($data['ar_titulo']) > 10) {
+			$vd[0] = $ok;
+		}
 
 		$sx = '<table class="tabela01 lt1" width="50%">';
 		$sx .= '<tr><th width="80%">' . msg('rule') . '</th><th width="20%">' . msg('chk') . '</th></tr>';
-		
-		$sx .= '<tr><td class="border1">Título do artigo - ('.strlen($data['ar_titulo']).' caracteres)</td>
+
+		$sx .= '<tr><td class="border1">Título do artigo - (' . strlen($data['ar_titulo']) . ' caracteres)</td>
 						<td class="border1" align="center">' . $vd[0] . '</tr>';
 
 		/* REGRA - ISSN */
-		if ((strlen($data['ar_issn']) == 9) and (substr($data['ar_issn'],4,1) == '-')) {
+		if ((strlen($data['ar_issn']) == 9) and (substr($data['ar_issn'], 4, 1) == '-')) {
 			$vd[1] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('artigo_issn') . '('.$data['ar_issn'].')'.'</td>
+		$sx .= '<tr><td class="border1">' . msg('artigo_issn') . '(' . $data['ar_issn'] . ')' . '</td>
 						<td class="border1" align="center">' . $vd[1] . '</tr>';
 
 		/* REGRA - ano do edital */
 		if ($data['ar_ano'] > 2000) {
 			$vd[2] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('artigo_ano') . ' ('.$data['ar_ano'].') </td>
+		$sx .= '<tr><td class="border1">' . msg('artigo_ano') . ' (' . $data['ar_ano'] . ') </td>
 						<td class="border1" align="center">' . $vd[2] . '</tr>';
-										
-		
+
 		/* REGRA - arquivos postados */
 		$sql = "select 1 as total from cip_artigo_ged_documento 
-					WHERE doc_dd0 = '".strzero($id,7)."' and doc_status <> 'X' ";
-		$rrr = $this->db->query($sql);
-		$rrr = $rrr->result_array();
-		
+					WHERE doc_dd0 = '" . strzero($id, 7) . "' and doc_status <> 'X' ";
+		$rrr = $this -> db -> query($sql);
+		$rrr = $rrr -> result_array();
+
 		if (count($rrr) > 0) {
 			$vd[3] = $ok;
 		}
-		$sx .= '<tr><td class="border1">' . msg('captacao_arquivos') .' - '.count($rrr).' '.msg('file_posted').''.'</td>
-						<td class="border1" align="center">' . $vd[3] . '</tr>';		
-		
+		$sx .= '<tr><td class="border1">' . msg('artigo_arquivos') . ' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+						<td class="border1" align="center">' . $vd[3] . '</tr>';
+
 		/* valicacao */
 		$ok = 1;
-		$cps = 3; /* Campos para validacao */
-		
-		for ($r=0;$r <= $cps;$r++)
-			{
-				if ($vd[$r]==$erro) { $ok = 0; }
+		$cps = 3;
+		/* Campos para validacao */
+
+		for ($r = 0; $r <= $cps; $r++) {
+			if ($vd[$r] == $erro) { $ok = 0;
 			}
-		if ($ok == 1)
-			{
-				$sx .= '<tr><td><B><font color="green">'.msg('validataion_ok').'</font></b></td></tr>';
-			} else {
-				$sx .= '<tr><td><B><font color="red">'.msg('validataion_error').'</font></b></td></tr>';
-			}
+		}
+		if ($ok == 1) {
+			$sx .= '<tr><td><B><font color="green">' . msg('validataion_ok') . '</font></b></td></tr>';
+		} else {
+			$sx .= '<tr><td><B><font color="red">' . msg('validataion_error') . '</font></b></td></tr>';
+		}
 		$sx .= '</table>';
-		return (array($ok,$sx));
+		return ( array($ok, $sx));
 	}
 
 	function validacao_cp($id = 0) {
@@ -506,14 +812,14 @@ class artigos extends CI_Model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$id = $line['id_ar'];
-			$link = '<a href="'.base_url('index.php/artigo/detalhe/'.$id.'/'.checkpost_link($id)).'" class="link lt1">';
-						
+			$link = '<a href="' . base_url('index.php/artigo/detalhe/' . $id . '/' . checkpost_link($id)) . '" class="link lt1">';
+
 			$sx .= '<tr>';
 			$sx .= '<td align="center" width="10" class="borderb1">';
 			$sx .= ($r + 1) . '.';
 			$sx .= '</td>';
-			
-			$sx .= '<td align="center" class="borderb1">'.$link.$line['ar_protocolo'].'</a></td>';
+
+			$sx .= '<td align="center" class="borderb1">' . $link . $line['ar_protocolo'] . '</a></td>';
 			$sx .= '<td class="borderb1">';
 			$sx .= $line['ar_issn'];
 			$sx .= '</td>';
