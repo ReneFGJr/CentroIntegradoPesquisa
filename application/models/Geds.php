@@ -134,7 +134,7 @@ class Geds extends CI_Model {
 				$sx .= '<td>';
 				$sx .= $link . $line['doc_filename'];
 				$sx .= ' | ';
-				$sx .= $line['doc_data'];
+				$sx .= stodbr($line['doc_data']);
 				$sx .= ' | ';
 				$sx .= $line['doc_tipo'];
 				$sx .= ' | ';
@@ -623,6 +623,14 @@ class Geds extends CI_Model {
 		$this -> id_doc = $id;
 		$this -> file_delete_confirm();
 		echo $this -> windows_close();
+	}
+	
+	function file_lock_all($proto) {
+		$sql = "update " . $this -> tabela;
+		$sql .= " set doc_status = 'A' ";
+		$sql .= " where doc_dd0 = '" . $proto. "' and doc_status = '@'";
+		$rlt = $this -> db -> query($sql);
+		return (1);
 	}
 
 	function file_lock($id) {

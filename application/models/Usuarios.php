@@ -1508,6 +1508,8 @@ class usuarios extends CI_model {
 		if (strlen($cracha) == 0) {
 			return ('');
 		}
+		$cracha = $this->limpa_cracha($cracha);
+		
 		$this -> load -> model('usuarios');
 		$this -> load -> model('webservice/ws_sga');
 

@@ -5,6 +5,7 @@ class ics extends CI_model {
 	var $tabela_2 = "ic_modalidade_bolsa";
 	var $tabela_3 = "pibic_acompanhamento";
 	var $tabela_projetos = "ic_submissao_projetos";
+	var $tabela_planos = "ic_submissao_plano";
 	var $resumo = array();
 
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
@@ -2127,8 +2128,10 @@ class ics extends CI_model {
 	function mostra_projetos_situacao($cracha, $sta, $ano = '') {
 		if ($ano == '') { $ano = date("Y");
 		}
+		if ($sta == '0') { $sta = '@'; }
 		$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
 					and pj_ano = '$ano' and pj_status = '$sta' ";
+					
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -2445,6 +2448,10 @@ class ics extends CI_model {
 
 	function insere_plano_submissao($protocolo_mae, $titulo, $aluno, $escola_publica, $modalidade) {
 		$escola_publica = round($escola_publica);
+		
+		/* CONSULTA ALUNO */
+		$this->usuarios->consulta_cracha($aluno);
+		
 		$ano = date("Y");
 		$sql = "select * from ic_submissao_plano 
 							WHERE
@@ -3020,9 +3027,34 @@ class ics extends CI_model {
 		return ($ok);
 	}
 
+	function mostra_planos($proto,$sta)
+		{
+			$this->load->model('geds');
+			
+			$sql = "select * from ".$this->tabela_planos." where doc_protocolo_mae = '$proto' and doc_status = '$sta' ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$line['nrplano'] = ($r+1);
+					$line['arquivos'] = '';
+					$line['arquivos_submit'] = '';
+					$protocolo = $line['doc_protocolo'];
+					
+					$line['arquivos'] = $this->geds->list_files($protocolo,'ic');
+					$sx .= $this->load->view('ic/email_plano_submit',$line,true);
+					
+				}
+			return($sx);
+		}
+
 	function resumo_submit($cracha = '', $ano = '') {
 		$res = array('0', '-', '-', '-', '-', '-');
 		$link = array('', '', '', '', '', '');
+		
+		/* projetos */
 
 		$sql = "select count(*) as total, pj_status 
 							FROM " . $this -> tabela_projetos . "
@@ -3048,6 +3080,31 @@ class ics extends CI_model {
 			}
 
 		}
+		
+		/* Planos */
+		$sql = "select count(*) as total, doc_status 
+							FROM " . $this -> tabela_planos . "
+							WHERE doc_ano = '$ano' and doc_autor_principal = '$cracha'
+							GROUP BY doc_status ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			
+			$sta = $line['doc_status'];
+			switch($sta) {
+				case '@' :
+					$res[1] = round($res[1]) + $line['total'];
+					$link[1] = '';
+					break;
+				case 'A' :
+					$res[3] = round($res[3]) + $line['total'];
+					$link[3] = '';
+			}
+
+		}				
+		
 		$sql = "ic_submissao_plano";
 
 		$sx = '<table width="100%" class="tabela01 lt2" cellspacing=10>';
