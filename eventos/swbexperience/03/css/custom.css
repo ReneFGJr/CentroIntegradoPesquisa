@@ -1,0 +1,39 @@
+body{
+    background-color:#a6272f;
+    padding-top: 64px;
+}
+
+
+.navbar .navbar-nav > li > a {
+    padding: 0px 15px;
+    vertical-align: middle;
+   /* padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    margin: 15px 3px; */
+}
+
+.text-insc{
+    color:#fff;
+    padding: 10px 0px 15px 0px;
+}
+
+.text-insc button {
+    padding: 20px 0px;
+}
+
+.container parallax {
+    width: 100%;
+    background-size: cover;
+    background-image: image("img/img_05.png");
+    
+    
+}
+
+.navbar-brand {
+    padding: 12px 15px;
+}
+.navbar .navbar-brand {
+    padding: 6px 15px;
+}
