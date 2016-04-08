@@ -485,13 +485,13 @@ class stricto_sensu extends CI_Controller {
 			$this -> load -> model('stricto_sensus');
 			$this -> cab();
 			$data = array();
-
+			
 			$form = new form;
 			$form -> id = $id;
 			$form -> tabela = $tabela;
-
+			
 			$cp = $this -> stricto_sensus -> cp();
-
+			
 			$tela = $form -> editar($cp, $tabela);
 			if ($form -> saved > 0) {
 				$url = base_url('index.php/stricto_sensu');
@@ -499,6 +499,7 @@ class stricto_sensu extends CI_Controller {
 			}
 
 			$data['content'] = $tela;
+			$data['title'] = 'Editar dados do Programa';
 			$this -> load -> view('content', $data);
 
 			$this -> load -> view('header/content_close');

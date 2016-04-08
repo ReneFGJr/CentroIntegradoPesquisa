@@ -77,7 +77,7 @@
 	<tr class="lt0">
 		<td colspan=2>Escola / Centro</td>		
 		<td colspan=1>Secretaria</td>
-		<td colspan=2>Contato</td>
+		<td colspan=2>Contatos</td>
 	</tr>
 	
 	<tr>
@@ -89,7 +89,10 @@
 			<?php echo $us_secretaria_2; ?><br>
 		</td>
 		<td colspan=2>
-			<?php echo $pp_fone1. ' '.$pp_fone2. ' '. $pp_email1. ' '. $pp_email2; ?>
+			<?php echo $pp_fone1  ?><br>
+			<?php echo $pp_fone2  ?><br>
+			<?php echo $pp_email1 ?><br>
+			<?php echo $pp_email2 ?>
 		</td>		
 	</tr>	
 </table>

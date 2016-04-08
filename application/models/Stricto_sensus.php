@@ -718,32 +718,42 @@ class Stricto_sensus extends CI_model {
 
 	function cp() {
 		$cp = array();
+		
 		array_push($cp, array('$H8', 'id_pp', '', False, True));
+		
+		array_push($cp, array('${', '', 'Dados do Programa', False, True));
 		array_push($cp, array('$S100', 'pp_nome', 'Nome do programa', True, True));
 		array_push($cp, array('$S10', 'pp_sigla', 'Sigla', True, True));
-
 		$sql = "select * from area_avaliacao order by area_avaliacao_nome ";
 		array_push($cp, array('$Q id_area:area_avaliacao_nome:' . $sql, 'pp_area', 'Área de avaliação', False, True));
-
 		array_push($cp, array('$[2-7]', 'pp_conceito', 'Nota do programa', True, True));
 		array_push($cp, array('$S15', 'pp_codigo_capes', 'Código CAPES', False, True));
+		array_push($cp, array('$}', '', '', False, True));
 
 		array_push($cp, array('${', '', 'Modalidades disponíveis', False, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_mestrado', 'Mestrado', True, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_mestrado_prof', 'Mestrado Profissional', True, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_doutorado', 'Doutorado', True, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_pos_doutorado', 'Pós-Doutorado', True, True));
-
 		array_push($cp, array('$[1950-' . date("Y") . ']', 'pp_ano_inicio', 'Início do Mestrado', False, True));
 		array_push($cp, array('$[1950-' . date("Y") . ']', 'pp_ano_inicio_doutorado', 'Início do Doutorado', False, True));
 		array_push($cp, array('$}', '', 'Modalidades disponíveis', False, True));
 
+		array_push($cp, array('${', '', 'Administrativo', False, True));
 		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and us_professor_tipo = 2', 'id_us_coordenador', 'Coordenador', False, True));
 		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and usuario_tipo_ust_id = 4', 'id_us_secretaria1', 'Secretaria (1)', False, True));
 		array_push($cp, array('$Q id_us:us_nome:select * from us_usuario where us_ativo = 1 and usuario_tipo_ust_id = 4', 'id_us_secretaria2', 'Secretaria (2)', False, True));
-
+		
+		array_push($cp, array('${', '', 'Contatos', False, True));
+		array_push($cp, array('$S50', 'pp_email1', 'E-mail (1)', True, True));
+		array_push($cp, array('$S50', 'pp_email2', 'E-mail (2)', False, True));
+		array_push($cp, array('$S15', 'pp_fone1', 'Tefefone (1)', True, True));
+		array_push($cp, array('$S15', 'pp_fone2', 'Tefefone (2)', False, True));
+		array_push($cp, array('$}', '', '', False, True));
+		
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'pp_ativo', 'Ativo', True, True));
-
+		array_push($cp, array('$}', '', '', False, True));
+		
 		array_push($cp, array('$B8', '', 'salvar', False, True));
 		return ($cp);
 	}
