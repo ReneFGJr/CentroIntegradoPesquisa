@@ -777,10 +777,26 @@ class Stricto_sensus extends CI_model {
 	function cp_orientacao_nova($programa = 0) {
 		$cp = array();
 		$aluno = $this -> usuarios -> limpa_cracha(get("dd1"));
+		$aluno_nome = '';
+		if (strlen($aluno) > 0)
+			{
+				$aluno = $this->usuarios->consulta_cracha($aluno);
+				$dt = $this->usuarios->le_cracha($aluno);
+				if (isset($dt['us_nome']))
+					{
+						$aluno_nome = $dt['us_nome'];		
+					} else {
+						$aluno = '';
+					}
+				
+			}
+		
 		array_push($cp, array('$H8', 'id_od', '', False, True));
 		array_push($cp, array('$S12', '', 'Código do aluno', True, True));
 		array_push($cp, array('$HV', 'od_aluno', $aluno, True, True));
 		array_push($cp, array('$HV', 'od_programa_id', $programa, True, True));
+		
+		array_push($cp, array('$M', '', '<h2>'.$aluno_nome.'</h2>', False, True));
 
 		$sqlc = "ssm_cod:ssm_nome:select id_ssm, ssm_nome, ssm_cod from ss_modalidade where ssm_ativo = 1";
 		array_push($cp, array('$Q ' . $sqlc, 'od_modalidade', 'Modalidade', True, True));
@@ -801,8 +817,15 @@ class Stricto_sensus extends CI_model {
 		array_push($cp, array('$[1990-' . date("Y") . ']D', 'od_ano_ingresso', 'Ano ingresso', True, True));
 		array_push($cp, array('$[1990-' . (date("Y") + 6) . ']D', 'od_ano_diplomacao', 'Ano titulação (previsão)', False, True));
 		array_push($cp, array('$}', '', 'Ano ingresso', False, True));
+		
+		if (strlen($aluno) > 0)
+			{
+				array_push($cp, array('$B8', '', 'Confirmar >>>', False, True));
+			} else {
+				array_push($cp, array('$B8', '', 'Validar', False, True));		
+			}
 
-		array_push($cp, array('$B8', '', 'salvar', False, True));
+		
 		return ($cp);
 	}
 

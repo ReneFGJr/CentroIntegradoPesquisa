@@ -68,6 +68,7 @@ class stricto_sensu extends CI_Controller {
 	}
 
 	function orientacao_new($id = 0, $chk = '') {
+		
 		$this -> load -> model('usuarios');
 		$this -> load -> model('stricto_sensus');
 		$this -> load -> view('header/header', null);
