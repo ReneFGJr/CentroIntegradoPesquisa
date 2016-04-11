@@ -1984,7 +1984,7 @@ class ics extends CI_model {
 
 		array_push($cp, array('${', '', msg('list_arquivos'), False, True));
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$txt = $this -> geds -> list_files_table($idp, 'IC');
+		$txt = $this -> geds -> list_files_table($idp, 'ic');
 		$txt .= '<input type="button" onclick="newwin(\'' . base_url('index.php/ic/ged/' . $idp) . '/PROJ\',600,400);" value="enviar arquivo do projeto de pesquisa >>>">';
 
 		/* Botao de projeto externo */
@@ -2341,7 +2341,7 @@ class ics extends CI_model {
 			if ($cep == 3) {
 				/* REGRA - arquivos postados */
 				$sql = "select 1 as total from ic_ged_documento 
-					WHERE doc_dd0 = '" . $proto . "' and doc_status <> 'X'
+					WHERE doc_dd0 = '" . $idp . "' and doc_status <> 'X'
 					and doc_tipo = 'CEU' and doc_ativo = 1 ";
 
 				$rrr = $this -> db -> query($sql);
@@ -2373,9 +2373,9 @@ class ics extends CI_model {
 			if ($cep == 3) {
 				/* REGRA - arquivos postados */
 				$sql = "select 1 as total from ic_ged_documento 
-					WHERE doc_dd0 = '" . $proto . "' and doc_status <> 'X'
+					WHERE doc_dd0 = '" . $idp . "' and doc_status <> 'X'
 					and doc_tipo = 'CEP' and doc_ativo = 1 ";
-
+					
 				$rrr = $this -> db -> query($sql);
 				$rrr = $rrr -> result_array();
 				$rs = $erro;
