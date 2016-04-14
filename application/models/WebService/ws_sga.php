@@ -3,26 +3,24 @@ class ws_sga extends CI_model {
 	var $producao = 'https://sarch.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
 	var $homologacao = 'https://haiti.cwb.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
 	var $desenvolvimento = 'https://sarch.pucpr.br:8100/services/ServicoConsultaPibic?wsdl';
-	
-	function inser_sga($daDos)
-		{
-			$pessoa = $daDos['pessoa'];
-			$nomeCurso = $daDos['nomeCurso'];
-			$nivelCurso = $daDos['nivelCurso'];
-			$centroAcademico = $daDos['centroAcademico'];
-			$situacao = $daDos['situacao'];
-			
-			$sql = "select * from us_importar_sga where nomeCurso = '$nomeCurso' and pessoa = '$pessoa' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$sql = "update us_importar_sga
+
+	function inser_sga($daDos) {
+		$pessoa = $daDos['pessoa'];
+		$nomeCurso = $daDos['nomeCurso'];
+		$nivelCurso = $daDos['nivelCurso'];
+		$centroAcademico = $daDos['centroAcademico'];
+		$situacao = $daDos['situacao'];
+
+		$sql = "select * from us_importar_sga where nomeCurso = '$nomeCurso' and pessoa = '$pessoa' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$sql = "update us_importar_sga
 								set situacao = '$situacao'
 							where nomeCurso = '$nomeCurso' and pessoa = '$pessoa' ";
-					$xrlt = $this->db->query($sql);							 
-				} else {
-					$sql = "insert into us_importar_sga
+			$xrlt = $this -> db -> query($sql);
+		} else {
+			$sql = "insert into us_importar_sga
 							(
 								pessoa, nomeCurso, centroAcademico,
 								nivelCurso, situacao
@@ -31,12 +29,12 @@ class ws_sga extends CI_model {
 								'$nivelCurso','$situacao'
 							)
 					";
-					$xrlt = $this->db->query($sql);
-				}
-			return(1);
+			$xrlt = $this -> db -> query($sql);
 		}
+		return (1);
+	}
 
-	function findStudentByCracha($cracha,$force=1) {
+	function findStudentByCracha($cracha, $force = 1) {
 		$cracha = sonumero($cracha);
 
 		if (strlen($cracha) == 12) { $cracha = substr($cracha, 3, 8);
@@ -66,26 +64,27 @@ class ws_sga extends CI_model {
 				$wsdl = $this -> desenvolvimento;
 				break;
 		}
-		
+
 		$client = new soapclient($wsdl, true);
 		$response = $client -> call('opPesquisarPorCodigo', $param);
-			if (!isset($response['DadoAluno']))
-			{
-				return(array());
-				exit;
-			}		
-		$DadoAluno = $response['DadoAluno'];	
+
+		if (!isset($response['DadoAluno'])) {
+			echo 'Ops, código não localizado';
+			return ( array());
+			exit ;
+		}
+		$DadoAluno = $response['DadoAluno'];
 		if (count($DadoAluno) == 0) {
 			/* Retorna vazio */
+			echo 'Ops, não localizado dados do aluno';
 			return ('');
-		}	
-		
+		}
+
 		/* Modelo 1 - Somente um curso */
 		if (isset($DadoAluno['pessoa'])) {
 			$DadoAluno['tipo'] = '3';
 			/* Aluno */
-			
-			$this->inser_sga($DadoAluno);
+			$this -> inser_sga($DadoAluno);
 			$this -> load -> model('usuarios');
 			$this -> usuarios -> insere_usuario($DadoAluno);
 			return ($DadoAluno);
@@ -99,9 +98,10 @@ class ws_sga extends CI_model {
 			/* Cursos Outras opcoes */
 			$pref3 = array();
 			for ($r = 0; $r < count($DadoAluno); $r++) {
-				$this->inser_sga($DadoAluno[$r]);
-				
+				$this -> inser_sga($DadoAluno[$r]);
+
 				$situacao = substr(UpperCaseSql($DadoAluno[$r]['situacao']), 0, 4);
+				echo '-->' . $situacao;
 				switch ($situacao) {
 					case 'NORM' :
 						array_push($pref1, $DadoAluno[$r]);
@@ -114,28 +114,28 @@ class ws_sga extends CI_model {
 						break;
 					case 'TRAN' :
 						array_push($pref2, $DadoAluno[$r]);
-						break;						
+						break;
 					case 'CONC' :
 						array_push($pref2, $DadoAluno[$r]);
 						break;
 					case 'CANC' :
 						array_push($pref3, $DadoAluno[$r]);
-						break;	
+						break;
 					case 'DESI' :
 						array_push($pref3, $DadoAluno[$r]);
-						break;												
+						break;
 					case 'DESL' :
 						array_push($pref3, $DadoAluno[$r]);
 						break;
 					case 'REPR' :
 						array_push($pref3, $DadoAluno[$r]);
-						break;	
+						break;
 					case 'RETR' :
 						array_push($pref3, $DadoAluno[$r]);
-						break;												
+						break;
 					case 'NAO' :
 						array_push($pref3, $DadoAluno[$r]);
-						break;												
+						break;
 					default :
 						echo '<BR>-->' . $situacao;
 						break;
@@ -158,13 +158,12 @@ class ws_sga extends CI_model {
 				$this -> usuarios -> insere_usuario($DadoAluno);
 				return ($pref3[0]);
 			}
-			if (isset($pref1[0]))
-				{
-					return ($pref1[0]);
-				} else {
-					return(array());
-				}
-					
+			if (isset($pref1[0])) {
+				return ($pref1[0]);
+			} else {
+				return ( array());
+			}
+
 		}
 
 	}

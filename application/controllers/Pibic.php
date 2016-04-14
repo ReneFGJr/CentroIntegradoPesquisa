@@ -17,6 +17,7 @@ class pibic extends CI_Controller {
 		$this -> load -> helper('url');
 		$this -> load -> library("nuSoap_lib");
 		$this -> load -> library('session');
+		$this -> load -> helper('tcpdf');
 
 		date_default_timezone_set('America/Sao_Paulo');
 	}
@@ -55,6 +56,58 @@ class pibic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function carta_horas_eventuais_pdf($tp='', $id='',$chk='')
+		{
+			$this->load->model('ics');
+			$this->load->model('mensagens');
+			switch($tp)
+				{
+					case 'horas':
+						$data = array();
+						$data = $this->ics->le_protocolo($id);
+						$data['DIA'] = date("d");
+						$data['MES'] = meses(date("m"));
+						$data['ANO'] = date("Y");
+						
+						$dado = $this->mensagens->busca('TERMO_CONVITE',$data);
+						$this->load->view('central_certificado/ic/carta_horas_eventuais',$dado);
+						break;
+					default:
+						echo 'OPS';
+				}
+		}	
+	
+	function carta_horas_eventuais($tp='horas')
+		{
+		$cracha = $_SESSION['cracha'];
+
+		$this -> load -> model('protocolos_ic');
+		$this -> load -> model('ics');
+
+		/* Recupera dados */
+		$chk = $this -> input -> get("dd3");
+		$dd2 = $this -> input -> get("dd2");
+		$dd4 = $this -> input -> get("dd4");
+		$chk2 = checkpost_link($dd2 . $dd4);
+
+		if (($chk == $chk2) and (strlen($dd2) > 0)) {
+			$url = base_url('index.php/pibic/carta_horas_eventuais_pdf/' . $dd4 . '/' . $dd2 . '/' . checkpost_link($dd4 . $dd2));
+			redirect($url);
+			exit ;
+		}
+
+		$this -> cab();
+		$data = array();
+		$data['resumo'] = $this -> protocolos_ic -> resumo_protocolos($cracha);
+		$tela = '<h1>' . msg('protocolo_ic_' . $tp) . '</h1>';
+		$tela .= '<p>' . msg('protocolo_ic_' . $tp . '_info') . '</p>';
+		$bt = msg('protocolo_botao_' . $tp);
+
+		$data['search'] = $tela . $this -> protocolos_ic -> orientacoes_protocolo($tp, $bt);
+		$this -> load -> view('ic/home', $data);
+		$this -> load -> view('header/content_close');
+		}
 
 	function pibic_protocolo_ver($id = '', $chk = '') {
 		$cracha = $_SESSION['cracha'];

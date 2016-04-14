@@ -1968,7 +1968,7 @@ class usuarios extends CI_model {
 
 		$sql = "select * from " . $this -> tabela . " where 
 				us_cpf = '$cpf' 
-				or us_cracha = '$cracha'
+				and us_cracha = '$cracha'
 				";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);

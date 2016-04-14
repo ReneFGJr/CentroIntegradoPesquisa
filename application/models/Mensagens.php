@@ -38,9 +38,35 @@ class mensagens extends CI_model {
 				}				
 
 			if (isset($data['ic_projeto_professor_titulo']))
-				{ $txt = troca($txt,'$plano_titulo',$data['ic_projeto_professor_titulo']); }				
+				{ $txt = troca($txt,'$plano_titulo',$data['ic_projeto_professor_titulo']); }
 
-			$txt .= '<br><br><br><font style="fonte-size: 6px;">'.$ref.'</font>';
+			/* HORAS */
+			if (isset($data['ic_projeto_professor_titulo'])) 
+				{
+					 $txt = troca($txt,'$TITULO',$data['ic_projeto_professor_titulo']);
+					 $txt = troca($txt,'$NOME',$data['pf_nome']); 
+					 $txt = troca($txt,'$ALUNO',$data['al_nome']);
+					 
+				}		
+		
+			if (isset($data['us_nome']))
+				{
+					$txt = troca($txt,'$NOME',$data['us_nome']);
+				}		
+		
+		
+			if (isset($data['dados_do_artigo']))
+				{
+					$txt = troca($txt,'$DADOS_DO_ARTIGO',$data['dados_do_artigo']);
+				}
+			if (isset($data['DIA']))
+				{
+					$txt = troca($txt,'$DIA',$data['DIA']);
+					$txt = troca($txt,'$MES',$data['MES']);
+					$txt = troca($txt,'$ANO',$data['ANO']);
+				}
+
+			$txt .= '<br><br><br><font style="font-size: 4px;">'.$ref.'</font>';
 				
 			$sx['nw_texto'] = $txt;
 			

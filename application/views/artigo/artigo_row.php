@@ -1,19 +1,28 @@
 <?php
 if (!isset($editar)) { $editar = 0;
 }
+$ft = '';
+$ff = '';
 
+if ($ar_status == 9)
+	{
+		$ft = '<font color="red"><strike>';
+		$ff = '</strike></font>';
+	}
+	
 $sx = '';
 /* LINKS */
 $link = '<a href="' . base_url('index.php/artigo/detalhe/' . $id_ar . '/' . checkpost_link($id_ar)) . '" class="link lt2">';
 
 $sx .= '<tr valign="top">';
-$sx .= '<td class="border1"align="center">' . $link . $ar_protocolo . '</a>' . '</td>';
-$sx .= '<td class="border1"align="center">' . $ar_titulo . '</td>';
-$sx .= '<td class="border1" align="center">' . $ar_journal ;
+$sx .= '<td class="border1"align="center">' . $link . $ar_protocolo . $ff. '</a>' . '</td>';
+$sx .= '<td class="border1"align="center">' . $ft . $ar_titulo . $ff. '</td>';
+$sx .= '<td class="border1" align="center">' . $ft . $ar_journal ;
 if (strlen($ar_vol) > 0) { $sx .= ', v.'.$ar_vol; }
 if (strlen($ar_num) > 0) { $sx .= ', n.'.$ar_num; }
 if (strlen($ar_pags) > 0) { $sx .= ', p.'.$ar_pags; }
 if (strlen($ar_ano) > 0) { $sx .= ', '.$ar_ano; }
+$sx .= $ff;
 $sx .= '</td>';
 $sx .= '<td class="border1" align="center">' . $ar_a . '</td>';
 $sx .= '<td class="border1" align="center">' . $ar_q . '</td>';
@@ -32,7 +41,7 @@ if (strlen($situacao) == 0) {
 }
 
 $sx .= '<td class="border1" align="center">' . $cor . $situacao . '</font>' . '</td>';
-$sx .= '<td class="border1" align="center">&nbsp;' . $us_nome . '&nbsp;</td>';
+$sx .= '<td class="border1" align="center">&nbsp;' . link_user($us_nome,$id_us) . '&nbsp;</td>';
 /* Modo editar */
 if ($editar == 1) {
 	$sx .= '<td align="center" class="border1">';

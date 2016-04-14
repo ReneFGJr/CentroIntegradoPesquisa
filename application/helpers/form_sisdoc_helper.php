@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @category	Helpers
  * @author		Rene F. Gabriel Junior <renefgj@gmail.com>
  * @link		http://www.sisdoc.com.br/CodIgniter
- * @version		v0.16.10
+ * @version		v0.16.15
  */
 $dd = array();
 
@@ -275,16 +275,37 @@ function enviaremail($para, $assunto, $texto, $de, $anexos = array()) {
 	$sql = "select * from mensagem_own where id_m = " . round($de);
 	$rlt = $CI -> db -> query($sql);
 	$rlt = $rlt -> result_array();
+	
+	/* Header & footer */
+	$email_header = '';
+	$email_footer = '';
+	
+	/***************************************************/
 	if (count($rlt) == 1) {
 		$line = $rlt[0];
 		$e_mail = trim($line['m_email']);
 		$e_nome = trim($line['m_descricao']);
+		
+		/***************** HEADER AND FOOTER */
+		$email_header = $line['m_header'];
+		$email_footer = $line['m_foot'];
+		
+		if (strlen($email_header) > 0)
+			{
+				$email_header = '<table><tr><td><img src="'.$email_header.'"></td><tr><tr><td><br><br>';
+			}
+		if (strlen($email_footer) > 0)
+			{
+				$email_footer = '</td></tr><tr><td><img src="'.$email_footer . '"></td></tr></table>';
+			}
+		
 
 		$CI -> email -> from($e_mail, $e_nome);
 		$CI -> email -> to($para[0]);
 		$CI -> email -> subject($assunto);
-		$CI -> email -> message($texto);
-
+		$CI -> email -> message($email_header.$texto.$email_footer);		
+		
+			
 		if ($sem_copia != 1)
 			{
 				array_push($para, trim($line['m_email']));

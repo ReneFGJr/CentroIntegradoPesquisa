@@ -68,7 +68,9 @@ class Geds extends CI_Model {
 				$sx .= $link . $line['doct_nome'] . '</span>';
 				$sx .= '</td>';
 				$sx .= '<td>';
-				$sx .= $link . $line['doc_filename'];
+				$filename = $line['doc_filename'];
+				$filename = troca($filename,'_',' ');
+				$sx .= $link . $filename;
 				$sx .= '</td>';
 				$sx .= '<td align="center">';
 				$sx .= stodbr($line['doc_data']);

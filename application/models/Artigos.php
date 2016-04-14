@@ -75,10 +75,10 @@ class artigos extends CI_Model {
 			$sx .= '<td>';
 			if (strlen(trim($line['cas_situacao_acao'])) > 0) { $sx .= $line['cas_situacao_acao'];
 			}
-			
-			
+
 			if ((strlen($line['bnh_historico']) > 0) and ($line['cas_situacao_acao'] != $line['bnh_historico'])) {
-				if ((strlen($line['cas_situacao_acao']) > 0) and (strlen($line['bnh_historico']) > 0 )) { $sx .= '<br>'; }
+				if ((strlen($line['cas_situacao_acao']) > 0) and (strlen($line['bnh_historico']) > 0)) { $sx .= '<br>';
+				}
 				$sx .= $line['bnh_historico'];
 			}
 			$sx .= '</td>';
@@ -92,8 +92,12 @@ class artigos extends CI_Model {
 		return ($sx);
 	}
 
-	function alterar_status($id, $ope) {
+	function alterar_status($id, $ope = '') {
 		$historico = '??';
+		if (strlen($ope) == 0) {
+			echo 'OPS2';
+			exit ;
+		}
 		$sql = "select * from cip_artigo_status where cas_status = " . $ope;
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -103,12 +107,14 @@ class artigos extends CI_Model {
 		}
 
 		$proto = strzero($id, 7);
-		$this -> insere_historico($proto = '', $ope = '', $desc = '');
+		$desc = '';
+		$this -> insere_historico($proto, $ope, $desc);
+		$data = date("Y-m-d");
 
 		/* Atualiza status */
 		$sql = "update cip_artigo set
 						ar_status = $ope,
-						ar_lastupdate = $data
+						ar_lastupdate = '$data'
 					where id_ar = " . round($id);
 		$rlt = $this -> db -> query($sql);
 	}
@@ -219,12 +225,12 @@ class artigos extends CI_Model {
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="tabela00 lt1">';
 		$sx .= '<tr>
-					<th>Protocolo</th>
-					<th>Título</th>
-					<th>Publicação</th>
-					<th>Qualis</th>
-					<th>Scimago</th>
-					<th>Atualização</th>
+					<th width="5%">Protocolo</th>
+					<th width="30%">Título</th>
+					<th width="30%">Publicação</th>
+					<th width="3%">Qualis</th>
+					<th width="3%">Scimago</th>
+					<th width="5%">Atualização</th>
 					<th>Situação</th>
 					<th>Solicitante</th>
 				</tr>';
@@ -338,71 +344,28 @@ class artigos extends CI_Model {
 			case '10' :
 				// Com isenção e com bonificação pelo COORDENADOR //
 				$sql = "update cip_artigo set 
-								ca_isencao = 1,
-								ca_bonificacao = 1,
-								ca_status = 81,
-								ca_lastupdate = $data
-							where ca_protocolo = '" . $proto . "'";
+								ar_bonificacao = 1,
+								ar_status = 81,
+								ar_lastupdate = $data
+							where ar_protocolo = '" . $proto . "'";
 				$this -> db -> query($sql);
-				$desc = 'Indicado <b>com isenção</b> e com <b>bonificação</b><br>' . get("dd2");
+				$desc = 'Indicado com <b>bonificação</b><br>' . get("dd2");
 				$this -> artigos -> insere_historico($proto, '81', $desc);
 				return (1);
 				break;
-			case '12' :
-				// Com isenção e sem bonificação pelo  COORDENADOR //
-				$sql = "update cip_artigo set 
-								ca_isencao = 1,
-								ca_bonificacao = 0,
-								ca_status = 81,
-								ca_lastupdate = $data
-							where ca_protocolo = '" . $proto . "'";
-				$this -> db -> query($sql);
-				$desc = 'Indicado <b>com isenção</b> e <font color=red><b>sem bonificação</b></font><br>' . get("dd2");
-				$this -> artigos -> insere_historico($proto, '81', $desc);
-				return (1);
-				break;
-			case '11' :
-				// Sem isenção e com bonificação pelo  COORDENADOR //
-				$sql = "update cip_artigo set 
-								ca_isencao = 0,
-								ca_bonificacao = 1,
-								ca_status = 81,
-								ca_lastupdate = $data
-							where ca_protocolo = '" . $proto . "'";
-				$this -> db -> query($sql);
-				$desc = 'Indicado <font color=red><b>sem isenção</b></font> e <b>com bonificação</b><br>' . get("dd2");
-				$this -> artigos -> insere_historico($proto, '81', $desc);
-				return (1);
-				break;
-			case '13' :
+			case '25' :
 				// Com isenção e com bonificação pelo  COORDENADOR //
 				$sql = "update cip_artigo set 
-								ca_isencao = 0,
-								ca_bonificacao = 0,
-								ca_status = 81,
-								ca_lastupdate = $data
-							where ca_protocolo = '" . $proto . "'";
+								ar_status = 80,
+								ar_bonificacao = 1,
+								ar_lastupdate = $data
+							where ar_protocolo = '" . $proto . "'";
 				$this -> db -> query($sql);
-				$desc = 'Indicado <font color=red><b>sem isenção</b> e <b>sem bonificação</b></font><br>' . get("dd2");
+				$desc = 'Encaminhado para análise da Diretoria de Pesquisa';
 				$this -> artigos -> insere_historico($proto, '81', $desc);
 				return (1);
 				break;
-			case '19' :
-				// validar a documentação pela SECRETARIA //
-				$sql = "update cip_artigo set 
-								ca_status = 11,
-								ca_lastupdate = $data
-							where ca_protocolo = '" . $proto . "'";
-				$this -> db -> query($sql);
-				if (strlen(get("dd2")) > 0) {
-					$desc = 'Justificativa: ' . get("dd2");
-				} else {
-					$desc = '';
-				}
 
-				$this -> artigos -> insere_historico($proto, '11', $desc);
-				return (1);
-				break;
 			case '20' :
 				// GERAR ISENÇÂO PELA SECRETARIA //
 				$isencao = $this -> isencoes -> tem_isencao($proto);
@@ -591,8 +554,20 @@ class artigos extends CI_Model {
 	}
 
 	function cp_01($id = 0) {
+
+		$cracha = $_SESSION['cracha'];
+		$sql_pos = "SELECT id_pp, pp_nome  FROM `ss_professor_programa_linha`
+    					INNER JOIN us_usuario on us_usuario_id_us = id_us
+    					inner join ss_programa_pos ON programa_pos_id_pp = id_pp
+    				where us_cracha = '$cracha' ";
+
 		$cp = array();
 		array_push($cp, array('$HV', 'id_ar', $id, False, True));
+
+		array_push($cp, array('${', '', 'Programa de Pós-Graduação', False, True));
+		array_push($cp, array('$Q id_pp:pp_nome:' . $sql_pos, 'ar_programa_pos', msg('captacao_programa'), true, true));
+		array_push($cp, array('$}', '', 'Sobre a Publicação', False, True));
+
 		array_push($cp, array('${', '', 'Sobre a Publicação', False, True));
 		array_push($cp, array('$S9', 'ar_issn', 'ISSN (0000-0000)', True, True));
 		array_push($cp, array('$S100', 'ar_doi', 'DOI', False, True));
@@ -710,9 +685,11 @@ class artigos extends CI_Model {
 		$sx .= '<tr><td class="border1">' . msg('artigo_ano') . ' (' . $data['ar_ano'] . ') </td>
 						<td class="border1" align="center">' . $vd[2] . '</tr>';
 
-		/* REGRA - arquivos postados */
+		/***********************************************************
+		 ********************************* REGRA - arquivos postados - COPIA DO ARTIGO
+		 ***********************************************************/
 		$sql = "select 1 as total from cip_artigo_ged_documento 
-					WHERE doc_dd0 = '" . strzero($id, 7) . "' and doc_status <> 'X' ";
+					WHERE doc_dd0 = '" . strzero($id, 7) . "' and  doc_tipo = 'ART' and doc_status <> 'X' ";
 		$rrr = $this -> db -> query($sql);
 		$rrr = $rrr -> result_array();
 
@@ -722,9 +699,55 @@ class artigos extends CI_Model {
 		$sx .= '<tr><td class="border1">' . msg('artigo_arquivos') . ' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
 						<td class="border1" align="center">' . $vd[3] . '</tr>';
 
+		/***********************************************************
+		 ********************************* REGRA - arquivos postados - COPIA DO QUALIS
+		 ***********************************************************/
+		if (substr($data['ar_a'], 0, 1) == 'A') {
+			$sql = "select 1 as total from cip_artigo_ged_documento 
+						WHERE doc_dd0 = '" . strzero($id, 7) . "'  and doc_tipo = 'CAP' and doc_status <> 'X' ";
+			$rrr = $this -> db -> query($sql);
+			$rrr = $rrr -> result_array();
+
+			if (count($rrr) > 0) {
+				$vd[4] = $ok;
+			}
+		} else {
+			$vd[4] = $ok;
+		}
+		$sx .= '<tr><td class="border1">Copia da Tela do Qualis - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+						<td class="border1" align="center">' . $vd[4] . '</tr>';
+						
+		/***********************************************************
+		 ********************************* REGRA - arquivos postados - COPIA DO SCIMAGO
+		 ***********************************************************/
+		if (substr($data['ar_q'], 0, 1) == 'Q') {
+			$sql = "select 1 as total from cip_artigo_ged_documento 
+						WHERE doc_dd0 = '" . strzero($id, 7) . "'  and doc_tipo = 'SC1' and doc_status <> 'X' ";
+			$rrr = $this -> db -> query($sql);
+			$rrr = $rrr -> result_array();
+
+			if (count($rrr) > 0) {
+				$vd[5] = $ok;
+			}
+		} else {
+			$vd[5] = $ok;
+		}
+		$sx .= '<tr><td class="border1">Copia da Tela do Scimago - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+						<td class="border1" align="center">' . $vd[5] . '</tr>';						
+
+		/*********************************************************************************
+		 ********************************* REGRA - Vinculo ao programa de Pós-Graduação
+		 ********************************************************************************/
+
+		if ($data['ar_programa_pos'] > 0) {
+			$vd[6] = $ok;
+		}
+		$sx .= '<tr><td class="border1">' . msg('captacao_programa') . ' </td>
+						<td class="border1" align="center">' . $vd[6] . '</tr>';
+
 		/* valicacao */
 		$ok = 1;
-		$cps = 3;
+		$cps = 6;
 		/* Campos para validacao */
 
 		for ($r = 0; $r <= $cps; $r++) {
@@ -755,39 +778,70 @@ class artigos extends CI_Model {
 		return ($cp);
 	}
 
+	function arquivos_parecidos($id)
+		{
+			$dt = $this->le($id);
+			
+			$issn = $dt['ar_issn'];
+			$ano = $dt['ar_ano'];
+			$vol = $dt['ar_vol'];
+			$tit = $dt['ar_titulo'];
+			
+			$sql = "select * from cip_artigo 
+						left join cip_artigo_status on ar_status = cas_status
+					where 
+					(ar_issn = '$issn') 
+					AND ar_ano = '$ano' 
+					and id_ar <> $id ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			$sx = '<table class="tabela01 lt1" width="100%">';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$sx .= $this->load->view('artigo/artigo_row.php',$line,true);
+				}
+				
+			if (count($rlt) == 0)
+				{
+					$sx .= '<tr><td ><font color="green">Nenhum artigo1 parecido foi localizado!</font></td></tr>';
+				} else {
+					$sx .= '<img src="'.base_url('img/icon/icone_exclamation.png').'" height="60" align="left">';
+					$sx .= '<h3><font color="red">Existem arquivos publicados na mesma revista neste ano, deste ou de outros autores, valide com cuidado!</font></h3>';
+				}
+			$sx .= '</table>';
+			return($sx);			
+		}
+
 	function resumo_processos($id = '') {
 		$it = 6;
 		$sz = round(100 / $it);
 		$ar = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 		/* */
-		$sql = "SELECT *
+		$sql = "SELECT count(*) as total, cas_descricao, cas_status, cas_ordem, ar_status
 					FROM cip_artigo 
-						left join cip_artigo_status on ar_situacao = id_cas 
+						left join cip_artigo_status on ar_status = cas_status 
+					GROUP BY cas_descricao, ar_status
+					ORDER BY cas_ordem
 					";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
+		$sa = '';
+		$sb = '';
+		$sz = round(100 / count($rlt));
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$tp = round($line['cas_grupo']);
-			$ar[$tp] = $ar[$tp] + 1;
+			$link = base_url('index.php/cip/artigos/'.$line['ar_status']);
+			$link = '<a href="'.$link.'" class="link lt6">';
+			$sa .= '<td align="center" class="lt1" width="'.$sz.'%">'.$line['cas_descricao'].'('.$line['cas_status'].')</td>';
+			$sb .= '<td align="center" class="lt6 border1">'.$link.$line['total'].'</a>'.'</td>';
 		}
 
 		$sx = '<table class="lt2 border1" width="100%">';
-		$sx .= '<tr class="lt1">';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_em_cadastro') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_devolvido_correcoes') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_validacao_coordenador') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_validacao_diretoria') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_comunicacao') . '</th>';
-		$sx .= '<th width="' . $sz . '%">' . msg('cap_finalizado') . '</th>';
-		$sx .= '</tr>';
-		$sx .= '<tr align="center" class="lt5">';
-		for ($r = 0; $r < $it; $r++) {
-			$link = '<a href="' . base_url('index.php/cip/artigos/' . $r) . '" class="link lt6">';
-			$sx .= '<td class="border1">' . $link . $ar[$r] . '</a></td>';
-		}
-		$sx .= '</tr>';
+		$sx .= '<tr>'.$sa.'</tr>';
+		$sx .= '<tr>'.$sb.'</tr>';
 		$sx .= '</table>';
 
 		if (strlen($id) > 0) {
@@ -801,9 +855,9 @@ class artigos extends CI_Model {
 		/* */
 		$sql = "SELECT *
 					FROM cip_artigo 
-						left join cip_artigo_status on ar_situacao = id_cas 
+						left join cip_artigo_status on ar_status = cas_status 
 						left join us_usuario on us_cracha = ar_professor
-					where cas_grupo = $sit
+					where ar_status = $sit
 					order by ar_update desc
 					";
 		$rlt = $this -> db -> query($sql);

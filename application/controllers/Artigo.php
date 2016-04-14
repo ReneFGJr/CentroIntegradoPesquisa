@@ -8,6 +8,7 @@ class Artigo extends CI_Controller {
 		$this -> load -> database();
 		$this -> load -> helper('form');
 		$this -> load -> helper('form_sisdoc');
+		$this -> load -> helper('links_users');
 		$this -> load -> helper('url');
 		$this -> load -> library('session');
 
@@ -132,7 +133,10 @@ class Artigo extends CI_Controller {
 	}
 
 	function editar($id = 0, $chk = '', $pag = 1) {
+		$this -> load -> model('geds');
 		$this -> load -> model('artigos');
+		$this -> load -> model('mensagens');
+		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 
 		$data = array();
@@ -164,9 +168,57 @@ class Artigo extends CI_Controller {
 				break;
 			case '5' :
 			/* Finaliza processo */
+
+			/* Fechar arquivos do GED */
+			$proto = strzero($id,7);
+			$this->geds->tabela = 'cip_artigo_ged_documento';		
+			$this->geds->file_lock_all($proto);
+			
+			/* Recupara dados do artigo */
+			$data = $this->artigos->le($id);
+			$data['cas_descricao'] = 'Em análise';			
+			
+					
+			/* Comununica coordenador */
+			$data['dados_do_artigo'] = $this->load->view('artigo/detalhe',$data,true);
+			$txt = $this->mensagens->busca('artigo_coordenador_avisa',$data);
+						
+			/************************************************ Recupera dados do programa */
+			$programa = $data['ar_programa_pos'];
+			$id_coordeador = 0;
+			$data2= $this->stricto_sensus->le($programa);
+			if (isset($data2['id_us']))
+				{
+					$id_coordenador = $data2['id_us'];
+				}
+			
+			$assunto = $txt['nw_titulo'];
+			$texto = $txt['nw_texto']; 
+			$de = '9' /* CIP */;
+			
+			if ($id_coordenador > 0)
+				{
+					//enviaremail_usuario($id_coordenador, $assunto, $texto, $de);
+					enviaremail_usuario($id_coordenador, '[CIP] :: '.$assunto , $texto, $de);	
+				}
+			
+			/**********************************************************************
+			 ********************************************* Comununica autor */
+			$data['dados_do_artigo'] = $this->load->view('artigo/detalhe',$data,true);
+			$txt = $this->mensagens->busca('artigo_autor_comprovante',$data);
+									
+			$assunto = $txt['nw_titulo'];
+			$texto = $txt['nw_texto']; 
+			$de = '9' /* CIP */;
+			
+			$idus = $_SESSION['id_us'];
+			enviaremail_usuario($idus, '[CIP] :: '.$assunto , $texto, $de);
+			enviaremail_usuario(1, '[CIP] :: '.$assunto , $texto, $de);	
+			
 			/* 10 - Enviado para o coordenador */
-				$this -> artigos -> alterar_status($id, 10);
+				$this -> artigos -> alterar_status($id, 10);							
 				redirect(base_url('index.php/artigo/detalhe/'.$id.'/'.checkpost_link($id)));
+				
 				return ('');
 			default :
 				$cp = array('$H', 'id_ar', '', true, true);
@@ -261,6 +313,10 @@ class Artigo extends CI_Controller {
 				case 'LIBERACAO_PROCESSO' :
 					$ok = $this -> artigos -> acao_artigo($proto, $tp);
 					break;
+				case 'LIBERACAO_ADMIN' :
+					$ok = $this -> artigos -> acao_artigo($proto, $tp);
+					break;
+					
 			}
 			if ($ok == 1) {
 				redirect(base_url('index.php/artigo/detalhe/' . $id . '/' . $chk));
@@ -283,24 +339,36 @@ class Artigo extends CI_Controller {
 		}
 		
 		$this -> load -> view('content', $data);
-		
-		
-	
-		
+
 		/* Validação do coordenador */
 		if ($data['ar_status'] == 10) {
 			if ($this -> stricto_sensus -> is_coordenador($id_us)) {
 				$this -> load -> view('artigo/form_coordenador', $data);
 			}
+			
+			/* ADMIN */
+			if (perfil($data['cas_perfil'] . '#ADM') == '1')
+			{
+				$this -> load -> view('artigo/form_admin', $data);
+			}
+			
+
 		}
 				
 		if (perfil($data['cas_perfil'] . '#ADM') == 1) {
+			
+			/* EM CADASTRO */
+			if ($data['ar_status'] == 1) {
+				$this -> load -> view('artigo/form_secretaria_validacao', $data);
+			}			
+			
 			/* Validacao da secretaria */
 			if ($data['ar_status'] == 80) {
 				$this -> load -> view('artigo/form_secretaria_validacao', $data);
 			}
 			/* Gerar bonificaçoes e isenções pela secretaria */
 			if ($data['ar_status'] == 81) {
+				/*
 				$data['isencao'] = 0;
 				if (($this -> isencoes -> tem_isencao($proto) == 0) and ($data['ca_isencao'] == 1)) {
 					$data['isencao'] = 1;
@@ -308,12 +376,19 @@ class Artigo extends CI_Controller {
 				} else {
 					$this -> load -> view('artigo/form_secretaria_liberacao', $data);
 				}
+				 */
 			}
 
 			/* Validação da diretoria de pesquisa */
 			if ($data['ar_status'] == 11) {
-				$this -> load -> view('captacao/form_diretoria', $data);
+				$this -> load -> view('artigo/form_admin', $data);
 			}
+		}
+		
+		/**************** ARQUIVOS EQUIVALENTES */
+		if ((perfil('#ADM#CPS') == 1) or ($data['ar_status'] == '10')) {
+			$data['content'] = $this-> artigos -> arquivos_parecidos($id);
+			$this->load->view('content',$data);
 		}		
 
 

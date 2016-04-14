@@ -104,7 +104,7 @@ class Stricto_sensus extends CI_model {
 
 		/****************** Consulta ***************************************/
 		$sql = "select  id_od,
-						aluno.us_nome as al_nome, aluno.id_us as al_id,
+						aluno.us_nome as al_nome, aluno.id_us as al_id, aluno.us_cracha as al_cracha, od_aluno,
 						prof.us_nome as pf_nome, prof.id_us as pf_id,
 						od_ano_ingresso, od_ano_diplomacao, od_status,
 						od_modalidade, od_linha, sss_descricao,
@@ -139,7 +139,7 @@ class Stricto_sensus extends CI_model {
 			$line = $rlt[$r];
 			$edit = '';
 
-			if (($sec1 == $id_us) OR ($sec2 == $id_us)) {
+			if (($sec1 == $id_us) OR ($sec2 == $id_us) OR (perfil("#ADM") == 1)) {
 				$link = base_url('index.php/stricto_sensu/orientacao_id/' . $line['id_od'] . '/' . checkpost_link($line['id_od']));
 				$edit = '<span class="link lt1" onclick="newwin(\'' . $link . '\')">editar</span>';
 			}
@@ -152,7 +152,8 @@ class Stricto_sensus extends CI_model {
 			$nr++;
 			$sx .= '<tr>';
 			$sx .= '<td align="center">' . $nr . '</td>';
-			$sx .= '<TD>' . link_user($line['al_nome'], $line['al_id']) . '</td>';
+			$sx .= '<TD>' . link_user($line['al_nome'], $line['al_id']) .' ('.$line['od_aluno'].')</td>';
+			
 			$sx .= '<TD>' . $line['sss_descricao'] . '</td>';
 			$sx .= '<TD align="center">' . $line['od_ano_ingresso'] . '</td>';
 			$sx .= '<TD align="center">' . substr($line['od_ano_diplomacao'], 0, 4) . '</td>';
@@ -715,6 +716,7 @@ class Stricto_sensus extends CI_model {
 			return ( array());
 		}
 	}
+
 
 	function cp() {
 		$cp = array();

@@ -516,8 +516,8 @@ class protocolos_ic extends CI_Model {
 		//$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/REC/') . '" class="link lt2">';
 		//$sx .= '<li>' . $linka . 'Recurso' . '</a>' . '</li>';
 		/* */
-		//$linka = '<a href="'.base_url('index.php/protocolos_ic/abrir/004/').'" class="link lt2">';
-		//$sx .= '<li>'.$linka.'Impressão do Convite Horas Eventuais IC'.'</a>'.'</li>';
+		$linka = '<a href="'.base_url('index.php/pibic/carta_horas_eventuais').'" class="link lt2">';
+		$sx .= '<li>'.$linka.'Impressão do Convite Horas Eventuais IC'.'</a>'.'</li>';
 
 		$sx .= '</ul>';
 		}

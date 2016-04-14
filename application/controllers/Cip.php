@@ -434,7 +434,7 @@ class CIP extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function captacao_status($id = '') {
+function captacao_status($id = '') {
 		$this -> load -> model('captacoes');
 		$this -> cab();
 		
@@ -450,7 +450,7 @@ function artigos_status($id = '') {
 		
 		$capta_resumo = $this -> artigos -> resumo_acoes_perfil($id);
 		$data['content'] = $capta_resumo;
-		$data['title'] = msg('captacoes');
+		$data['title'] = msg('artigos');
 		$this -> load -> view('content', $data);		
 	}
 
