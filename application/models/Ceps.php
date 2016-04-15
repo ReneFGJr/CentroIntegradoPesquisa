@@ -3,6 +3,8 @@ class ceps extends CI_model {
 	function inport($txt) {
 		$txt = troca($txt, chr(13), '¬');
 		$txt = troca($txt, '	', ';');
+		$txt = troca($txt, ';;', ';0;');
+		
 		$ln = splitx('¬', $txt);
 
 		for ($r = 0; $r < count($ln); $r++) {
@@ -132,7 +134,7 @@ class ceps extends CI_model {
 					$relator_id = $this->busca_relator($relator);
 					if ($relator_id == 0)
 						{
-							echo 'Nome do relator não localizado na Base:'.$relator;
+							echo '<font color="red">Nome do relator não localizado na Base: <b>'.$relator.'</b></font>';
 						} else {
 							$sql = "insert into cep_tramitacao 
 									(
