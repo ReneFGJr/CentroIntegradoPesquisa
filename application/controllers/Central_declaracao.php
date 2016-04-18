@@ -65,7 +65,7 @@ class central_declaracao extends CI_Controller {
 		/**############################																							   ###################
 		/**##############################################################################################*/
 		
-		/**###################################>> SEMIC 2011 <<############################################*/
+		/**###################################>> SEMIC 2010 <<############################################*/
 		$ano = '2011';
 		/* Estudante IC 2011 */
 		$err1 = $this -> eventos -> emitir('IC', 'ESTUDANTE', $ano, $data);
@@ -74,7 +74,7 @@ class central_declaracao extends CI_Controller {
 						/* Orientador IC 2011*/
 						$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano, $data);
 		
-		/**###################################>> SEMIC 2012 <<############################################*/
+		/**###################################>> SEMIC 2011 <<############################################*/
 		$ano = '2012';
 		/* Estudante IC 2012 */
 		$err1 = $this -> eventos -> emitir('IC', 'ESTUDANTE', $ano, $data);
@@ -83,7 +83,7 @@ class central_declaracao extends CI_Controller {
 						/* Orientador IC 2012*/
 						$this -> eventos -> emitir('IC', 'ORIENTADOR', $ano, $data);
 
-		/**###################################>> SEMIC 2013 <<############################################*/
+		/**###################################>> SEMIC 2012 <<############################################*/
 		$ano = '2013';
 		/* Estudante IC 2013 */
 		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano, $data);
@@ -92,7 +92,7 @@ class central_declaracao extends CI_Controller {
 						/* Orientador IC 2013*/
 						$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano, $data);
 
-		/**###################################>> SEMIC 2014 <<############################################*/
+		/**###################################>> SEMIC 2015 <<############################################*/
 		$ano = '2014';
 		/* Estudante IC 2014 */
 		$err1 = $this -> eventos -> emitir('SEMIC', 'ESTUDANTE', $ano, $data);
@@ -101,7 +101,7 @@ class central_declaracao extends CI_Controller {
 						/* Orientador IC 2014*/
 						$this -> eventos -> emitir('SEMIC', 'ORIENTADOR', $ano, $data);
 
-		/**###################################>> SEMIC 2015 <<############################################*/
+		/**###################################>> SEMIC 2014 <<############################################*/
 		$ano = '2015';
 					/* Ouvinte SEMIC */
 					$this -> eventos -> emitir('SEMIC', 'OUVINTE', $ano, $data);
@@ -133,7 +133,13 @@ class central_declaracao extends CI_Controller {
 					/* SwB2 - Participação */
 					$err1 = $this -> eventos -> emitir('SWB', 'SWB2', $ano, $data);
 					/* SwB2 - Participação */
-					$err1 = $this -> eventos -> emitir('SENAI', 'APRESENTACAO', $ano, $data);		
+					$err1 = $this -> eventos -> emitir('SENAI', 'APRESENTACAO', $ano, $data);	
+		
+		/**###################################>> EDITAGE 2016 <<############################################*/
+					/* Participante editage - Estratégias e Dicas para Escrever um Artigo de Alta Qualidade */
+					$ano = '2016';
+					$err1 = $this -> eventos -> emitir('EDITAGE_ev_01', 'OUVINTE', $ano, $data);	
+									
 		/*********************************************************************************************/
 		/*********************************************************************************************/
 		$this -> load -> view("perfil/user", $data);
