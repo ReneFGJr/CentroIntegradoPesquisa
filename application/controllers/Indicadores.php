@@ -162,10 +162,10 @@ class indicadores extends CI_Controller {
 				$this -> load -> view('content', $data);
 
 				$tela = $this -> produtividades -> lista_produtivade($editar);
+				
 				$data['content'] = $tela;
 				$data['submenu'] = '';
 				$data['title'] = '';
-				$this -> load -> view('content', $data);
 				break;
 			case 'pesquisa' :
 				$ano = date("Y");

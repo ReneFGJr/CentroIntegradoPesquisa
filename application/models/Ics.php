@@ -87,7 +87,7 @@ class ics extends CI_model {
 
 	/** COCKPIT - Resumo */
 	function cockpit_resumo($ano) {
-		
+
 		$sql = "select count(*) as total, pj_ano, doc_edital, 
 										CASE
 												WHEN pj_status = '@' THEN 'em submissao'
@@ -107,42 +107,42 @@ class ics extends CI_model {
 					 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
-		$sx  = '';
-		
+
+		$sx = '';
+
 		$sx .= '<table width="40%" class="tabela00" border=0>';
-		$sx .= '<tr><td class="lt4" colspan=3><b>Planos submetidos para '.$ano.'</b></td></tr>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Planos submetidos para ' . $ano . '</b></td></tr>';
 		$sx .= '<tr class="lt3">
 								<th align="left">edital</th>
 								<th align="left">status</th>
 								<th align="center">qtd</th>
 						</tr>';
-		
+
 		for ($r = 0; $r < count($rlt); $r++) {
-			
-		$line = $rlt[$r];
-		
-		$sx .= '<tr>';
-		
-		$sx .= '<td align="center">';
-		$sx .= $line['doc_edital'];
-		$sx .= '</td>';
-		
-		$sx .= '<td align="center">';
-		$sx .= $line['status'];
-		$sx .= '</td>';
-		
-		$sx .= '<td align="center">';
-		$sx .= $line['total'];
-		$sx .= '</td>';		
-		
-		}		
+
+			$line = $rlt[$r];
+
+			$sx .= '<tr>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['doc_edital'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['status'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $line['total'];
+			$sx .= '</td>';
+
+		}
 		$sx .= '</table>';
 		return ($sx);
 	}
-	
+
 	function cockpit_resumo_graf($ano) {
-		
+
 		$sql = "select doc_edital, count(*) as total, pj_status          
 						from ic_submissao_projetos
 						left join ic_submissao_plano on doc_protocolo_mae = pj_codigo
@@ -152,7 +152,7 @@ class ics extends CI_model {
 						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE')
 						group by doc_edital, pj_ano
 					 ";
-		
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		$line = $rlt[0];
@@ -164,8 +164,6 @@ class ics extends CI_model {
 		}
 		return ($dados);
 	}
-
-
 
 	function ja_implementado($proto) {
 		$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' ";
@@ -1186,8 +1184,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1252,8 +1249,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1857,7 +1853,7 @@ class ics extends CI_model {
 		$data = $this -> ics -> le_protocolo($proto);
 
 		$txt = $this -> load -> view('ic/plano-email', $data, true);
-		$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
+		$txt .= '<hr>' . $this -> load -> view('ic/protocolo', $data, true);
 		enviaremail_usuario($us_id, 'Troca de Modalidade de Bolsa', $txt, 2);
 
 		return (1);
@@ -1895,6 +1891,27 @@ class ics extends CI_model {
 		enviaremail_usuario($us_id, 'Cancelamento de orientação', $txt, 2);
 
 		return (1);
+	}
+
+	function le_projeto_protocolo($proto) {
+		$sql = "select *, 
+					aluno.us_nome as al_nome, aluno.id_us as id_al,
+					prof.us_nome as pf_nome, prof.id_us as id_pf
+				FROM " . $this -> tabela_projetos . "
+					LEFT JOIN us_usuario as prof  on prof.us_cracha = pj_professor
+					LEFT JOIN us_usuario as aluno on aluno.us_cracha = pj_aluno
+					LEFT JOIN area_conhecimento ON pj_area = ac_cnpq
+					LEFT JOIN ic_submissao_situacao on pj_status = ssi_status  
+				where pj_codigo = '" . $proto . "'";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$rlt = $rlt[0];
+		} else {
+			$rlt = array();
+		}
+		return ($rlt);
 	}
 
 	function le_projeto($id) {
@@ -2125,13 +2142,25 @@ class ics extends CI_model {
 		return ($cp);
 	}
 
-	function mostra_projetos_situacao($cracha, $sta, $ano = '') {
+	function altera_status_projeto_submissao($proto, $sta, $sta_to) {
+		$sql = "update " . $this -> tabela_projetos . " set pj_status = '$sta_to' where pj_status = '$sta' and pj_codigo = '$proto'; " . cr();
+		$this -> db -> query($sql);
+
+		$sql = "update " . $this -> tabela_planos . " set doc_status = '$sta_to' where doc_protocolo_mae = '$proto' and doc_status = '$sta' " . cr();
+		$this -> db -> query($sql);
+	}
+
+	function mostra_projetos_situacao($cracha, $sta, $ano = '', $edital = '') {
 		if ($ano == '') { $ano = date("Y");
 		}
-		if ($sta == '0') { $sta = '@'; }
+		if ($sta == '0') { $sta = '@';
+		}
 		$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
 					and pj_ano = '$ano' and pj_status = '$sta' ";
-					
+		if (strlen($edital) > 0) {
+			$sql .= " and pj_edital = '$edital' ";
+		}
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -2139,11 +2168,13 @@ class ics extends CI_model {
 		$sx .= '<tr>
 					<th width="5%">protocolo</th>
 					<th>Título do projeto</th>
+					<th width="10%">Tipo</th>
 					<th width="5%">Ano</th>
 					<th width="5%">Situação</th>
 					</tr>';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+
 			$link = base_url('index.php/ic/projeto_view/' . $line['id_pj'] . '/' . checkpost_link($line['id_pj']));
 			$link = '<a href="' . $link . '" class="link lt1">';
 			$sx .= '<tr>';
@@ -2156,15 +2187,163 @@ class ics extends CI_model {
 			$sx .= '</td>';
 
 			$sx .= '<td align="center" class="border1">';
+			$sx .= $line['pj_edital'];
+			$sx .= '</td>';
+
+			$sx .= '<td align="center" class="border1">';
 			$sx .= $line['pj_ano'];
 			$sx .= '</td>';
 
 			$sx .= '<td align="center" class="border1">';
-			$sx .= mst('situacao_' . $line['pj_status']);
+			$sx .= msg('situacao_' . trim($line['pj_status']));
 			$sx .= '</td>';
 		}
 		$sx .= '</table>';
 		return ($sx);
+	}
+
+	function submit_resumo($ano, $edital) {
+		$edital = uppercasesql($edital);
+		$sql = "select count(*) as total, pj_status from " . $this -> tabela_projetos . " 
+					WHERE pj_edital = '$edital' and pj_ano = '$ano' 
+					group BY pj_status
+					ORDER BY pj_status";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sa = '';
+		$sb = '';
+		$sx = '';
+		if (count($rlt) > 0) {
+			$sz = round(100 / count($rlt));
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				$sta = $line['pj_status'];
+				if ($sta == '@') { $sta = '0';
+				}
+				$link = '<a href="' . base_url('index.php/ic/submit_mostrar_status/' . $sta) . '" class="link lt6">';
+				$sa .= '<td align="center" width="' . $sz . '%">' . msg('situacao_' . $line['pj_status']) . '</td>';
+				$sb .= '<td align="center" width="' . $sz . '%" class="border1">' . $link . $line['total'] . '</a>' . '</td>';
+			}
+			$sx = '<table width="100%" class="border1">';
+			$sx .= '<tr class="lt0">' . $sa . '</tr>';
+			$sx .= '<tr class="lt6">' . $sb . '</tr>';
+			$sx .= '</table>';
+		}
+		return ($sx);
+	}
+
+	function submit_lista_projetos($ano, $edital, $status) {
+		$sql = "select * from " . $this -> tabela_projetos . " 
+					INNER JOIN us_usuario on pj_professor = us_cracha
+					where pj_status = '$status' and pj_ano = '$ano' and pj_edital = '$edital'
+					order by pj_codigo
+			";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela01 lt1">';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$line['nr'] = ($r + 1);
+			$sx .= $this -> load -> view('ic/projeto_row', $line, true);
+		}
+		$sx .= '</table>';
+		return ($sx);
+
+	}
+
+	function projeto_xacao($pj) {
+		$this->load->model('Mensagens');
+		$this->load->model('Usuarios');
+		
+		$ac = get("dd1");
+		$proto = $pj['pj_codigo'];
+
+		switch ($ac) {
+			case '6' :
+				/***** VALIDAÇÂO DOCUMENTAL */
+				$sta = $pj['pj_status'];
+				$sta_to = 'B';
+				$ac = '234';
+				$motivo = '234';
+				$hist = 'Validação dos documentos';
+				$aluno1 = 0;
+				$aluno2 = 0;
+				$motivo = '';
+				$obs = '';
+				$this -> altera_status_projeto_submissao($proto, $sta, $sta_to);
+				$this -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '');
+				return (1);
+				break;
+				
+			case '4':
+				/***** CANECLAR SUBMISSAO */
+				if (strlen(get("dd2")) == 0)
+					{
+						echo alert('campo de comentários é obrigatório');
+						return(0);
+					}
+
+				/* Recupera mensagem */
+				//$txt = $this->Mensagens->busca('PJ_DEVOLVE_PROF',$pj);
+				$pj['motivo'] = get('dd2');
+				$prof = $this->usuarios->le_cracha($pj['pj_professor']);
+				$us_id = $prof['id_us'];
+				
+				$txt = $this->Mensagens->busca('PJ_DEVOLVE_PROF',$pj);
+				
+				enviaremail_usuario($us_id,$txt['nw_assunto'],$txt['nw_texto'],$txt['nw_own']);				
+				
+				$sta = $pj['pj_status'];
+				$sta_to = '@';
+				$ac = '232';
+				$motivo = '232';
+				$hist = 'Devolução do projeto e planos para o professor';
+				$aluno1 = 0;
+				$aluno2 = 0;
+				$motivo = '232';
+				$obs = get("dd2");
+				$this -> altera_status_projeto_submissao($proto, $sta, $sta_to);
+				$this -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+				return (1);
+				break;				
+			case '5':
+				/***** CANECLAR SUBMISSAO */
+				if (strlen(get("dd2")) == 0)
+					{
+						echo alert('campo de comentários é obrigatório');
+						return(0);
+					}
+
+				/* Recupera mensagem */
+				//$txt = $this->Mensagens->busca('PJ_DEVOLVE_PROF',$pj);
+				$pj['motivo'] = get('dd2');
+				$prof = $this->usuarios->le_cracha($pj['pj_professor']);
+				$us_id = $prof['id_us'];
+				
+				$txt = $this->Mensagens->busca('PJ_CANCELA_PROF',$pj);
+				
+				enviaremail_usuario($us_id,$txt['nw_assunto'],$txt['nw_texto'],$txt['nw_own']);				
+				
+				$sta = $pj['pj_status'];
+				$sta_to = 'X';
+				$ac = '234';
+				$motivo = '234';
+				$hist = 'Cancelamento de projeto e planos';
+				$aluno1 = 0;
+				$aluno2 = 0;
+				$motivo = '238';
+				$obs = get("dd2");
+				$this -> altera_status_projeto_submissao($proto, $sta, $sta_to);
+				$this -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+				return (1);
+				break;
+							
+			default :			
+				echo '--->' . $ac;
+				break;
+		}
+		print_r($_POST);
 	}
 
 	function submit_enviar_email($proto) {
@@ -2375,7 +2554,7 @@ class ics extends CI_model {
 				$sql = "select 1 as total from ic_ged_documento 
 					WHERE doc_dd0 = '" . $idp . "' and doc_status <> 'X'
 					and doc_tipo = 'CEP' and doc_ativo = 1 ";
-					
+
 				$rrr = $this -> db -> query($sql);
 				$rrr = $rrr -> result_array();
 				$rs = $erro;
@@ -2448,10 +2627,10 @@ class ics extends CI_model {
 
 	function insere_plano_submissao($protocolo_mae, $titulo, $aluno, $escola_publica, $modalidade) {
 		$escola_publica = round($escola_publica);
-		
+
 		/* CONSULTA ALUNO */
-		$this->usuarios->consulta_cracha($aluno);
-		
+		$this -> usuarios -> consulta_cracha($aluno);
+
 		$ano = date("Y");
 		$sql = "select * from ic_submissao_plano 
 							WHERE
@@ -3027,35 +3206,33 @@ class ics extends CI_model {
 		return ($ok);
 	}
 
-	function mostra_planos($proto,$sta)
-		{
-			$this->load->model('geds');
-			
-			$sql = "select * from ".$this->tabela_planos."
+	function mostra_planos($proto, $sta) {
+		$this -> load -> model('geds');
+
+		$sql = "select * from " . $this -> tabela_planos . "
 						LEFT JOIN us_usuario on us_cracha = doc_aluno 
 						where doc_protocolo_mae = '$proto' and doc_status = '$sta' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$line['nrplano'] = ($r+1);
-					$line['arquivos'] = '';
-					$line['arquivos_submit'] = '';
-					$protocolo = $line['doc_protocolo'];
-					
-					$line['arquivos'] = $this->geds->list_files($protocolo,'ic');
-					$sx .= $this->load->view('ic/email_plano_submit',$line,true);
-					
-				}
-			return($sx);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$line['nrplano'] = ($r + 1);
+			$line['arquivos'] = '';
+			$line['arquivos_submit'] = '';
+			$protocolo = $line['doc_protocolo'];
+
+			$line['arquivos'] = $this -> geds -> list_files($protocolo, 'ic');
+			$sx .= $this -> load -> view('ic/email_plano_submit', $line, true);
+
 		}
+		return ($sx);
+	}
 
 	function resumo_submit($cracha = '', $ano = '') {
 		$res = array('0', '-', '-', '-', '-', '-');
 		$link = array('', '', '', '', '', '');
-		
+
 		/* projetos */
 
 		$sql = "select count(*) as total, pj_status 
@@ -3079,10 +3256,17 @@ class ics extends CI_model {
 					$lk = base_url('index.php/ic/submit_PIBIC/A');
 					$lk = '<A href="' . $lk . '" class="link lt6">';
 					$link[2] = $lk;
+					break;
+				case 'X' :
+					$res[4] = round($res[4]) + $line['total'];
+					$lk = base_url('index.php/ic/submit_PIBIC/X');
+					$lk = '<A href="' . $lk . '" class="link lt6">';
+					$link[4] = $lk;
+					break;
 			}
 
 		}
-		
+
 		/* Planos */
 		$sql = "select count(*) as total, doc_status 
 							FROM " . $this -> tabela_planos . "
@@ -3090,10 +3274,10 @@ class ics extends CI_model {
 							GROUP BY doc_status ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			
+
 			$sta = $line['doc_status'];
 			switch($sta) {
 				case '@' :
@@ -3103,10 +3287,15 @@ class ics extends CI_model {
 				case 'A' :
 					$res[3] = round($res[3]) + $line['total'];
 					$link[3] = '';
+					break;
+				case 'A' :
+					$res[5] = round($res[3]) + $line['total'];
+					$link[5] = '';
+					break;
 			}
 
-		}				
-		
+		}
+
 		$sql = "ic_submissao_plano";
 
 		$sx = '<table width="100%" class="tabela01 lt2" cellspacing=10>';

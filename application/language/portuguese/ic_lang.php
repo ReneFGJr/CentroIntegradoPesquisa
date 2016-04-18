@@ -12,7 +12,9 @@ $lang['ic_projetos'] = 'Projetos de Pesquisa';
 $lang['ic_planos'] = 'Planos de Trabalho';
 $lang['ic_submit_new_project'] = 'Submeter novo projeto >>>';
 $lang['ic_submit_edit_project'] = 'Editar projeto não submetido >>>';
+$lang['ic_cancelar_project'] = 'Canclear projeto e Planos';
 
 $lang['projeto_titulo'] = 'Título do projeto de pesquisa';
 $lang['area'] = 'Área';
+$lang['em_submetidos'] = 'submetidos';
 ?>

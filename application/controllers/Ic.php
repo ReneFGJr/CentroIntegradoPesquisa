@@ -46,7 +46,6 @@ class ic extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		
 
 		if (perfil('#CPP#SPI#ADM') == 1) {
 			array_push($menus, array('Home', 'index.php/ic/'));
@@ -63,7 +62,7 @@ class ic extends CI_Controller {
 			array_push($menus, array('Home', 'index.php/ic/submit_PIBIC/'));
 			array_push($menus, array('Iniciação Científica', 'index.php/pibic/'));
 		}
-		
+
 		$data['menu'] = 1;
 		$data['menus'] = $menus;
 
@@ -504,7 +503,7 @@ class ic extends CI_Controller {
 		/* Habilita botão de submissão */
 		$prj = $this -> ics -> exist_submit($cracha, $ano);
 		/* se 0, não existe projeto cadastrado */
-		$tipo = 'IC';
+		$tipo = 'ic';
 		if ($prj > 0) {
 			$chk = checkpost_link($prj);
 			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $prj . '/' . $chk . '/');
@@ -512,7 +511,7 @@ class ic extends CI_Controller {
 			$botao .= msg('ic_submit_edit_project');
 			$botao .= '</a>';
 		} else {
-			$botao = '<a href="' . base_url('index.php/ic/submit_new/' . $tipo . '') . '" class="botao3d back_green_shadown back_green">';
+			$botao = '<a href="' . base_url('index.php/' . $tipo . '/submit_new/' . $tipo . '') . '" class="botao3d back_green_shadown back_green">';
 			$botao .= msg('ic_submit_new_project');
 			$botao .= '</a>';
 		}
@@ -523,8 +522,9 @@ class ic extends CI_Controller {
 
 		/***** Mostra Protoclos ****/
 		if (strlen($sta) > 0) {
-			if ($sta == '0') { $sta = '@'; }
-			$tela = $this -> ics -> mostra_projetos_situacao($cracha, $sta);
+			if ($sta == '0') { $sta = '@';
+			}
+			$tela = $this -> ics -> mostra_projetos_situacao($cracha, $sta, date("Y"), 'IC');
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
 		}
@@ -2321,8 +2321,7 @@ class ic extends CI_Controller {
 
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			print_r($line);
-			echo '<hr>';
+
 			$sx .= '<tr><td align="right">' . $line['descricao'] . ' ' . $line['mb_tipo'] . '</td>';
 			$sx .= '<td align="center" class="lt4">' . $line['total'] . '</td>';
 			$sx .= '<td align="center">' . number_format(100 * ($line['total'] / $tot), 1, ',', '.') . '%</td>';
@@ -2485,7 +2484,9 @@ class ic extends CI_Controller {
 		array_push($menu, array('Relatório Parcial', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
 
-		array_push($menu, array('Submissão', 'Cockpit (Resumo)', 'ITE', '/ic/cockpit'));
+		array_push($menu, array('Submissão de Projetos e Planos', 'Cockpit (Resumo)', 'ITE', '/ic/cockpit'));
+		array_push($menu, array('Submissão de Projetos e Planos', 'Validar submissão', 'ITE', '/ic/submit_mostrar_status/A'));
+		array_push($menu, array('Submissão de Projetos e Planos', 'Devolver projeto para professor', 'ITE', '/ic/submit_devolver'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -2546,6 +2547,82 @@ class ic extends CI_Controller {
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
 		}
+	}
+
+	function submit_devolver() {
+		$this -> load -> model('ics');
+		$this -> load -> model('Usuarios');
+		$this -> load -> model('Mensagens');
+
+		$this -> cab();
+
+		$data['title'] = 'Devolução de projeto ao professor para correção';
+		$data['content'] = '';
+
+		$cp = array();
+		$form = new form;
+
+		array_push($cp, array('$H8', '', '', false, false));
+		array_push($cp, array('$S8', '', 'Informe o protocolo', True, True));
+		array_push($cp, array('$T80:5', '', 'Motivo', True, True));
+		array_push($cp, array('$B8', '', 'Buscar >>>', False, True));
+
+		$data['content'] = $form -> editar($cp, '');
+
+		if ($form -> saved > 0) {
+			$proto = get('dd1');
+			$pj = $this -> ics -> le_projeto_protocolo($proto);
+			if (($pj['pj_status'] != '@') and ($pj['pj_status'] != 'X')) {
+				if (count($pj) > 0) {
+					$user = $this -> usuarios -> le_cracha($pj['pj_professor']);
+					$us_id = $user['id_us'];
+					$ac = '233';
+					$hist = 'Devolução para correção';
+					$aluno1 = 0;
+					$aluno2 = 0;
+					$motivo = $ac;
+					$obs = get("dd2");
+					$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+
+					$msg = $this -> Mensagens -> busca('PJ_DEVOLVE_PROF', $pj);
+
+					enviaremail_usuario($us_id, $msg['nw_titulo'], $msg['nw_texto'], 2);
+					enviaremail_usuario(1, $msg['nw_titulo'], $msg['nw_texto'], 2);
+
+					$this -> ics -> altera_status_projeto_submissao($proto, $pj['pj_status'], '@');
+
+					$this -> load -> view('sucesso', null);
+				} else {
+					array_push($cp, array('$M', '', 'Protocolo não localizado', True, True));
+				}
+			} else {
+				array_push($cp, array('$M', '', 'Protocolo em cadastro ou cancelado', True, True));
+			}
+		}
+		$this -> load -> view('content', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function submit_mostrar_status($status = '', $ano = '') {
+		if (strlen($ano) == 0) {
+			$ano = date("Y");
+		}
+		$this -> load -> model('ics');
+		$this -> cab();
+
+		$data['content'] = $this -> ics -> submit_resumo($ano, 'IC');
+		$this -> load -> view('content', $data);
+
+		if (strlen($status) > 0) {
+			if ($status == '0') { $status = '@';
+			}
+			$data['title'] = msg('situacao_' . $status);
+			$data['content'] = $this -> ics -> submit_lista_projetos($ano, 'IC', $status);
+			$this -> load -> view('content', $data);
+		}
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 
 	function acompanhamento_sw() {
@@ -3015,26 +3092,97 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-function projeto_view($id,$chk)
-	{
+	function projeto_view($id, $chk, $act = '') {
 		$this -> load -> model('ics');
-		$this->load->model('geds');
-		
-		$this->cab();
-		$dados = $this->ics->le_projeto($id);
-		$this->geds->tabela = 'ic_ged_documento';
-		$this->geds->file_lock_all($dados['pj_codigo']);
-		
-		$dados['ged'] = $this->geds->list_files($dados['pj_codigo'],'ic');
-		
-		$this->load->view('ic/email_projeto',$dados);
-		
-		$dados = $this->ics->mostra_planos($dados['pj_codigo'],$dados['pj_status']);
+		$this -> load -> model('geds');
+
+		$this -> cab();
+		$dados = $this -> ics -> le_projeto($id);
+		$dados_pj = $dados;
+
+		$status = $dados['pj_status'];
+		$proto = $dados['pj_codigo'];
+		$tipo = $dados['pj_edital'];
+		$us_cracha = $dados['pj_professor'];
+
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> geds -> file_lock_all($dados['pj_codigo']);
+
+		$dados['ged'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+
+		$this -> load -> view('ic/email_projeto', $dados);
+
+		$dados = $this -> ics -> mostra_planos($dados['pj_codigo'], $dados['pj_status']);
 		$data['content'] = $dados;
-		$this->load->view('content',$data);
-		
-		
-		
+		$this -> load -> view('content', $data);
+
+		$data['ic_plano_aluno_codigo'] = $proto;
+		$this -> load -> view('ic/plano_historico', $data);
+
+		if (($status == '@') and ($us_cracha == $_SESSION['cracha'])) {
+			if ($act == 'CANCEL') {
+				/* Fase I - Inserir histórico */
+				/******************************/
+				$aluno1 = '';
+				$aluno2 = '';
+				$hist = 'Cancelado projeto e plano';
+				$motivo = '000';
+				$obs = '';
+				$ac = '239';
+
+				$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+
+				$this -> ics -> altera_status_projeto_submissao($proto, '@', 'X');
+
+				/* Fase IV - Tela de Fim */
+				/*************************/
+				$data['volta'] = base_url('index.php/ic/submit_PIBIC');
+				$this -> load -> view('sucesso', $data);
+				return ('');
+			}
+
+			$botao = base_url('index.php/ic/projeto_view/' . $id . '/' . $chk . '/CANCEL');
+			$botao = '<a href="' . $botao . '" class="botao3d back_red_shadown back_red">';
+			$botao .= msg('ic_cancelar_project');
+			$botao .= '</a>';
+
+			$data['content'] = $botao;
+			$data['title'] = '';
+			$this -> load -> view('content', $data);
+
+			$chk = checkpost_link($id);
+			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . $chk . '/');
+			$botao = '<a href="' . $botao . '" class="botao3d back_green_shadown back_green">';
+			$botao .= msg('ic_submit_edit_project');
+			$botao .= '</a>';
+
+			$data['content'] = $botao;
+			$data['title'] = '';
+			$this -> load -> view('content', $data);
+		}
+
+		/* IC */
+		if (perfil('#ADM#SPI') == 1) {
+
+			$xacao = get('xacao');
+			if (strlen($xacao) > 0) {
+				$rd = $this -> ics -> projeto_xacao($dados_pj);
+				if ($rd == 1) {
+					redirect(base_url('index.php/ic/projeto_view/' . $id . '/' . checkpost_link($id)));
+				}
+			}
+
+			/* EM CADASTRO */
+			if ($status == 'A') {
+				$this -> load -> view('ic/form_secretaria_validacao', $dados_pj);
+			}
+			if ($status == '@') {
+				$this -> load -> view('ic/form_secretaria_validacao', $dados_pj);
+			}
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 
 }

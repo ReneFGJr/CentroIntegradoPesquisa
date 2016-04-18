@@ -435,7 +435,7 @@ class usuario extends CI_Controller {
 
 		/* salved */
 		if ($form -> saved > 0) {
-			redirect(base_url('index.php/indicadores/produtividade'));
+			redirect(base_url('index.php/indicadores/docente/produtividade'));
 		}
 
 		$data['title'] = 'Produtividade';

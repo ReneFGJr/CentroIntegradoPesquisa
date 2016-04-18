@@ -248,6 +248,7 @@ class artigos extends CI_Model {
 
 	function acao_artigo($proto, $tp) {
 		$data = date("Y-m-d");
+		
 		switch ($tp) {
 			case '0' :
 				// Com isenção e com bonificação pelo COORDENADOR //
@@ -259,6 +260,9 @@ class artigos extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Indicado com <b>bonificação</b><br>' . get("dd2");
 				$this -> artigos -> insere_historico($proto, '80', $desc);
+				
+				echo '==>'.$sql;
+				exit;
 				return (1);
 				break;
 			case '1' :

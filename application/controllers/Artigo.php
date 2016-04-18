@@ -293,7 +293,7 @@ class Artigo extends CI_Controller {
 		/******************** acao */
 		$acao = get("xacao");
 		$tp = get("dd1");
-
+	
 		if ((strlen($acao) > 0) and (strlen($tp) > 0)) {
 			$ok = 0;
 			$acao = get("xacao");

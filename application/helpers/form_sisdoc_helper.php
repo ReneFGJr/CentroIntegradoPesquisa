@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @category	Helpers
  * @author		Rene F. Gabriel Junior <renefgj@gmail.com>
  * @link		http://www.sisdoc.com.br/CodIgniter
- * @version		v0.16.15
+ * @version		v0.16.16
  */
 $dd = array();
 
@@ -212,6 +212,19 @@ function get($key) {
 
 }
 
+function alert($msg)
+	{
+		$sx = '';
+		if (strlen($msg) > 0)
+			{
+				$sx = '
+				<script>
+					alert("'.$msg.'");
+				</script>';
+			}
+		return($sx);
+	}
+
 function xls($arquivo = '') {
 	// Configurações header para forçar o download
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -292,11 +305,11 @@ function enviaremail($para, $assunto, $texto, $de, $anexos = array()) {
 		
 		if (strlen($email_header) > 0)
 			{
-				$email_header = '<table><tr><td><img src="'.$email_header.'"></td><tr><tr><td><br><br>';
+				$email_header = '<table><tr><td><img src="'.base_url($email_header).'"></td><tr><tr><td><br><br>';
 			}
 		if (strlen($email_footer) > 0)
 			{
-				$email_footer = '</td></tr><tr><td><img src="'.$email_footer . '"></td></tr></table>';
+				$email_footer = '</td></tr><tr><td><img src="'.base_url($email_footer) . '"></td></tr></table>';
 			}
 		
 

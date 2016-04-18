@@ -12,6 +12,19 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+	
+$lang['situacao_@'] = 'Em submissão';
+$lang['situacao_A'] = 'Submetido';
+$lang['situacao_B'] = 'Em validação';
+$lang['situacao_C'] = 'Em avaliação';
+$lang['situacao_D'] = 'Avaliado';
+$lang['situacao_F'] = 'Avaliação Finalizado';
+$lang['situacao_X'] = 'Cancelado';
+
+$lang['situacao_bp_0'] = '<font color="orange"><b>Finalizado</b></font>';
+$lang['situacao_bp_1'] = '<font color="green"><b>Ativo</b></font>';
+$lang['situacao_bp_9'] = '<font color="orange"><b>Cancelado</b></font>';
+
 $lang['captacao_outras'] = 'Bolsas previstas no projeto de pesquisa';
 $lang['titulo_pesquisa'] = 'Título do projeto do professor';
 $lang['submit_PIBIC'] = 'Submissão IC';
