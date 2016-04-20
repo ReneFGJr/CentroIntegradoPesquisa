@@ -400,6 +400,7 @@ function mst($txt) {
 }
 
 function format_fone($tel) {
+	$tel = sonumero($tel);
 	if (strlen($tel) > 9) {
 		if (strlen($tel) > 10) {
 			$tel = '(' . substr($tel, 0, 2) . ') ' . substr($tel, 2, 5) . '-' . substr($tel, 7, 4);

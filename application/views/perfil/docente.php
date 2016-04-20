@@ -27,11 +27,9 @@ if (!isset($area_avaliacao_nome)) { $area_avaliacao_nome = 'não definida';
 				CPF:<?php echo mask_cpf($us_cpf);?>
 			</li>
 			<li>
-				<?php echo $us_nada;?>
+				<?php echo $us_contatos;?>
 			</li>
-			<li>
-				<?php echo $us_nada;?>
-			</li>
+			<li><?php echo $ies_sigla; ?></li>
 			<li>
 				<?php echo $email;?>
 				<BR>

@@ -2,6 +2,46 @@
 class Stricto_sensus extends CI_model {
 	var $resumo = array();
 	
+	function fluxo_discente($ppg='',$mod='')
+		{
+			$wh = '';
+			if (strlen($ppg) > 0)
+				{
+					$wh = " and od_programa_id = $ppg ";
+				}
+			if (strlen($mod) > 0)
+				{
+					$wh = " and od_modalidade = '$mod' ";
+				}
+			$sql = "delete from ss_docente_orientacao where od_status = 'Z' ";
+			$rlt = $this->db->query($sql);
+			
+			$sql = "
+			SELECT sss_descricao, count(*) as total, sss_grupo FROM ss_docente_orientacao_situacao
+				left join ss_docente_orientacao on od_status = sss_cod
+				where od_status <> '#' $wh
+				group by sss_descricao
+				order by sss_grupo, sss_descricao
+			";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt-> result_array();
+			
+			$sz = round(100/count($rlt)).'%';
+			$sa = ''; $sb = '';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$desc = $line['sss_descricao'];
+					$sa .= '<td align="center" width="'.$sz.'">'.$desc.'</td>';
+					$sb .= '<td align="center" class="border1">'.$line['total'].'</td>';
+				}
+			$sx = '<table width="100%" class="tabela01 border1">';
+			$sx .= '<tr class="lt0">'.$sa.'</tr>';
+			$sx .= '<tr class="lt6">'.$sb.'</tr>';
+			$sx .= '</table>';
+			return($sx);
+		}
+	
 	function is_phd_student($cracha='')
 		{
 			$sql = "select * from ss_docente_orientacao where od_aluno = '$cracha' order by od_ano_ingresso desc limit 1";

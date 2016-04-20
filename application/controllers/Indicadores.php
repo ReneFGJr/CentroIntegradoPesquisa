@@ -162,7 +162,7 @@ class indicadores extends CI_Controller {
 				$this -> load -> view('content', $data);
 
 				$tela = $this -> produtividades -> lista_produtivade($editar);
-				
+
 				$data['content'] = $tela;
 				$data['submenu'] = '';
 				$data['title'] = '';
@@ -194,8 +194,10 @@ class indicadores extends CI_Controller {
 	}
 
 	function estudante($tipo = '', $fmt = '') {
-		$this -> load -> model('produtividades');
 		$this -> load -> model('ics');
+		$this -> load -> model('produtividades');
+		$this -> load -> model('stricto_sensus');
+		
 		$editar = 1;
 
 		if (strlen($fmt) > 0) {
@@ -209,6 +211,29 @@ class indicadores extends CI_Controller {
 		}
 
 		switch($tipo) {
+			case 'ppg' :
+				$tela = $this -> stricto_sensus -> fluxo_discente();
+				$data['title'] = 'Fluxo Discentes dos PPGs';
+				if (strlen($fmt) == 0) {
+					$data['submenu'] = '<a href="' . base_url('index.php/indicadores/estudante/ppg/xls') . '" class="lt0 link">' . msg('export_to_excel') . '</a>';
+				}
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+				
+				$sql = "select * from ss_programa_pos where pp_ativo = 1 order by pp_sigla ";
+				$rlt = $this->db->query($sql);
+				$rlt = $rlt->result_array();
+				for ($r=0;$r < count($rlt);$r++)
+					{
+						$line = $rlt[$r];
+						$tela = $this -> stricto_sensus -> fluxo_discente($line['id_pp']);
+						$data['content'] = $tela;
+						$data['title'] = $line['pp_nome'];
+						$data['submenu'] = '';
+						$this -> load -> view('content', $data);
+					}
+
+				break;
 			case 'pesquisa' :
 				$ano = date("Y");
 				if (date("m") < 7) { $ano = $ano - 1;
@@ -425,6 +450,7 @@ class indicadores extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
+		array_push($menu, array('Pesquisa', 'Fluxo Discente nos PPG', 'ITE', '/indicadores/estudante/ppg/'));
 		array_push($menu, array('Pesquisa', 'Atuação Discente em Pesquisa', 'ITE', '/indicadores/estudante/pesquisa/'));
 
 		/*View principal*/

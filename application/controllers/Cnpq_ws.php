@@ -73,7 +73,7 @@ class cnpq_ws extends CI_Controller {
 			$data['content'] = $sx;
 			$this->load->view('content',$data);
 		}
-	function get_xml($id = '5900345665779424') {
+	function get_xml($id = '3483667901818921') {
 		/* Load Models */
 		$this -> load -> model('webservice/ws_cnpq');
 		
@@ -87,7 +87,7 @@ class cnpq_ws extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}	
 
-	function get_update($id = '9568021117744368') {
+	function get_update($id = '3483667901818921') {
 		/* Load Models */
 		$this -> load -> model('webservice/ws_cnpq');
 		

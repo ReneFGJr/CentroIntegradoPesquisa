@@ -14,15 +14,13 @@ $us_nada = '<font color="grey">[em construção]</font>';
 				CPF: <?php echo mask_cpf($us_cpf);?>
 			</li>
 			<li>
-				<?php echo $us_nada;?>
+				<?php echo $us_contatos;?>
 			</li>
 			<li>
-				<?php echo $us_nada;?>
+				<?php echo $ies_sigla;?>
 			</li>
 			<li>
-				<?php echo $email;?>
-				<BR>
-				<?php echo $us_nada;?>
+				<?php echo $email;?>				
 			</li>
 			<li></li>
 			<li>

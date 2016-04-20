@@ -474,7 +474,7 @@ class csf_site extends CI_Controller {
 
 		/* Parte II do formulario */
 		$alunoDados = $this -> usuarios -> readByCracha($aluno);
-		$this -> load -> view('perfil/user', $alunoDados);
+		$this -> load -> view('perfil/discente', $alunoDados);
 
 		$data['content'] = '<BR><BR>' . $this -> csf_sites -> mostra_todas_csf($aluno_id);
 		$this -> load -> view('content', $data);

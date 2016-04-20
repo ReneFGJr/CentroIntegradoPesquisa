@@ -18,6 +18,7 @@ if (!isset($us_nome))
 			<li>
 				CPF: <?php echo mask_cpf($us_cpf);?>
 			</li>
+			<li><?php echo $us_contatos;?></li>
 			<li>
 				<?php echo $email;?>
 				<BR>
@@ -29,7 +30,7 @@ if (!isset($us_nome))
 			<li>
 				<?php echo $us_curso_vinculo;?>
 			</li>
-			<li></li>
+			<li><?php echo $ies_sigla; ?></li>
 			<li>
 				<?php
 				if (strlen($us_link_lattes) > 0) {
