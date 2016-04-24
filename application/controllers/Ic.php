@@ -397,7 +397,8 @@ class ic extends CI_Controller {
 		if (strlen($pag) == 0) { $pag = 1;
 		}
 		$data['bp_atual'] = $pag;
-
+		$tipo = UpperCase($tipo);
+		
 		switch ($tipo) {
 			case 'IC' :
 				$bp[1] = 'Projeto do Professor';
