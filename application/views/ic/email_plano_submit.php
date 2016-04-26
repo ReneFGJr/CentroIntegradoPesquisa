@@ -2,7 +2,12 @@
 $edital = lowercase($doc_edital);
 $logo = 'logo_ic_'.$edital.'.png';
 $arquivos_label = 'Arquivos do Plano:';
+$doc_aluno_escola_publica = 'Não';
 
+if ($doc_icv == '1')
+	{
+		$doc_aluno_escola_publica = 'SIM';
+	}
 
 if (isset($bloquear))
 	{
@@ -24,7 +29,7 @@ if (isset($bloquear))
 		<td class="lt1"><i>Estudante: <?php echo $us_nome;?> (<?php echo $doc_aluno; ?>)</i></td>
 	</tr>
 	<tr>
-		<td class="lt0"><i>Aluno oriundo de escola pública: <b>Não</b></i></td>
+		<td class="lt0"><i>Aluno oriundo de escola pública: <b><?php echo $doc_aluno_escola_publica; ?></b></i></td>
 	</tr>	
 	<tr>
 		<td class="lt0"><?php echo $arquivos_label;?>

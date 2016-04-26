@@ -3059,7 +3059,7 @@ class ic extends CI_Controller {
 
 	}
 
-	function cockpit() {
+	function cockpit($ano='') {
 		$this -> load -> model('ics');
 		$this -> cab();
 		$data = array();
@@ -3072,9 +3072,9 @@ class ic extends CI_Controller {
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano'), True, TRUE));
 		$tela = $form -> editar($cp, '');
 
-		if ($form -> saved) {
+		if ($form -> saved or (strlen($ano) > 0)) {
 
-			$ano = get("dd1");
+			$ano = get("dd1").$ano;
 			$data['content'] = $this -> ics -> cockpit_resumo($ano);
 			$this -> load -> view('content', $data);
 

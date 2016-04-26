@@ -32,6 +32,16 @@ switch ($pj_edital)
 		<td colspan=3><?php echo $pf_nome;?></td>
 		<td align="right"><?php echo $pj_ano;?></td>
 	</tr>
+
+	<?php if ($id_al > 0) { ?>
+	<tr class="lt0" align="left">
+		<td colspan=3><?php echo msg('estudante');?></td>
+	</tr>
+	<tr class="lt2" align="left">
+		<td colspan=5><?php echo link_perfil($al_nome, $id_al);?></td>
+	</tr>
+	<?php } ?>	
+	
 	<tr class="lt0" align="left">
 		<td colspan=2><?php echo msg('area');?></td>
 		<td colspan=2 align="right"><?php echo msg('situacao');?></td>

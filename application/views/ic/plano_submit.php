@@ -6,6 +6,16 @@ $cancel = '<a href="#" class="link" onclick="cancelar_plano('.$id_doc.');">
 			</a>';
 $arquivos_label = 'Arquivos do Plano:';
 
+if ($doc_icv == '1')
+	{
+		$doc_aluno_escola_publica = 'SIM';
+	}
+
+if (isset($bloquear))
+	{
+		$cancel = '';
+		$arquivos_label = '';
+	}
 
 if (isset($bloquear))
 	{
@@ -46,7 +56,7 @@ if (!isset($fcn))
 		<td class="lt1"><i>Estudante: <?php echo $us_nome;?> (<?php echo $doc_aluno; ?>)</i></td>
 	</tr>
 	<tr>
-		<td class="lt0"><i>Aluno oriundo de escola pública: <b>Não</b></i></td>
+		<td class="lt0"><i>Aluno oriundo de escola pública: <b><?php echo $doc_aluno_escola_publica; ?></b></i></td>
 	</tr>	
 	<tr>
 		<td class="lt0"><?php echo $arquivos_label;?>

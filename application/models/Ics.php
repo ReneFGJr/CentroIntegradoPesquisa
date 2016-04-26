@@ -94,11 +94,13 @@ class ics extends CI_model {
 												WHEN pj_status = 'A' THEN 'submetido'
 												WHEN pj_status = 'B' THEN 'em análise'
 												WHEN pj_status = 'C' THEN 'analise finalizada'
+												WHEN pj_status = 'D' THEN 'analise finalizada'
+												WHEN pj_status = 'F' THEN 'analise finalizada'
 												WHEN pj_status = 'X' THEN 'cancelado'
 										ELSE pj_status          
 										END  as status
-						from ic_submissao_projetos
-						left join ic_submissao_plano on doc_protocolo_mae = pj_codigo
+						from ic_submissao_plano
+						left join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
 						where pj_ano = '$ano'
 						AND (pj_status  <> 'X' AND pj_status  <> '@')
 						AND (doc_status <> 'X' AND doc_status <> '@')
@@ -144,8 +146,8 @@ class ics extends CI_model {
 	function cockpit_resumo_graf($ano) {
 
 		$sql = "select doc_edital, count(*) as total, pj_status          
-						from ic_submissao_projetos
-						left join ic_submissao_plano on doc_protocolo_mae = pj_codigo
+						from ic_submissao_plano
+						left join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
 						where pj_ano = '$ano'
 						AND (pj_status  <> 'X' AND pj_status  <> '@')
 						AND (doc_status <> 'X' AND doc_status <> '@')
@@ -2153,10 +2155,14 @@ class ics extends CI_model {
 	function mostra_projetos_situacao($cracha, $sta, $ano = '', $edital = '') {
 		if ($ano == '') { $ano = date("Y");
 		}
-		if ($sta == '0') { $sta = '@';
+		
+		$wh = "pj_status = '$sta' ";
+		if ($sta == '0') { $wh = "pj_status = '@' ";
 		}
-		$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
-					and pj_ano = '$ano' and pj_status = '$sta' ";
+		if ($sta == 'A') { $wh = "(pj_status = 'A' or pj_status = 'B' or pj_status = 'C' or pj_status = 'D' or pj_status = 'E' or pj_status = 'F') ";
+		}
+				$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
+					and pj_ano = '$ano' and $wh ";
 		if (strlen($edital) > 0) {
 			$sql .= " and pj_edital = '$edital' ";
 		}
@@ -2355,7 +2361,9 @@ class ics extends CI_model {
 		$sx .= $this -> load -> view('ic/projeto', $prj_data, true);
 
 		/* Planos */
-		$sql = "select * from ic_submissao_plano where doc_protocolo_mae = '$proto' and doc_status = '@' ";
+		$sql = "select * from ic_submissao_plano
+					inner join us_usuario on doc_aluno = us_cracha 
+					where doc_protocolo_mae = '$proto' and doc_status = '@' ";
 		$rrr = $this -> db -> query($sql);
 		$rrr = $rrr -> result_array();
 		for ($r = 0; $r < count($rrr); $r++) {
@@ -2372,7 +2380,10 @@ class ics extends CI_model {
 		echo $sx;
 		$user = $this -> usuarios -> le_cracha($prj_data['pj_professor']);
 		$idu = $user['id_us'];
+		
 		enviaremail_usuario($idu, 'Submissão de Projeto IC - ' . $proto, $sx, 2);
+		
+		enviaremail_usuario(1, 'Submissão de Projeto IC - ' . $proto, $sx, 2);
 	}
 
 	function submit_altera_status($proto, $para) {
@@ -3257,6 +3268,36 @@ class ics extends CI_model {
 					$lk = '<A href="' . $lk . '" class="link lt6">';
 					$link[2] = $lk;
 					break;
+				case 'B' :
+					$res[2] = round($res[2]) + $line['total'];
+					$lk = base_url('index.php/ic/submit_PIBIC/A');
+					$lk = '<A href="' . $lk . '" class="link lt6">';
+					$link[2] = $lk;
+					break;
+				case 'C' :
+					$res[2] = round($res[2]) + $line['total'];
+					$lk = base_url('index.php/ic/submit_PIBIC/A');
+					$lk = '<A href="' . $lk . '" class="link lt6">';
+					$link[2] = $lk;
+					break;
+				case 'D' :
+					$res[2] = round($res[2]) + $line['total'];
+					$lk = base_url('index.php/ic/submit_PIBIC/A');
+					$lk = '<A href="' . $lk . '" class="link lt6">';
+					$link[2] = $lk;
+					break;
+				case 'E' :
+					$res[2] = round($res[2]) + $line['total'];
+					$lk = base_url('index.php/ic/submit_PIBIC/A');
+					$lk = '<A href="' . $lk . '" class="link lt6">';
+					$link[2] = $lk;
+					break;
+				case 'F' :
+					$res[2] = round($res[2]) + $line['total'];
+					$lk = base_url('index.php/ic/submit_PIBIC/A');
+					$lk = '<A href="' . $lk . '" class="link lt6">';
+					$link[2] = $lk;
+					break;																				
 				case 'X' :
 					$res[4] = round($res[4]) + $line['total'];
 					$lk = base_url('index.php/ic/submit_PIBIC/X');
@@ -3277,7 +3318,7 @@ class ics extends CI_model {
 
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-
+			echo '==>'.$sta;
 			$sta = $line['doc_status'];
 			switch($sta) {
 				case '@' :
@@ -3288,11 +3329,31 @@ class ics extends CI_model {
 					$res[3] = round($res[3]) + $line['total'];
 					$link[3] = '';
 					break;
-				case 'A' :
-					$res[5] = round($res[3]) + $line['total'];
+				case 'B' :
+					$res[3] = round($res[3]) + $line['total'];
+					$link[3] = '';
+					break;
+				case 'C' :
+					$res[3] = round($res[3]) + $line['total'];
+					$link[3] = '';
+					break;
+				case 'D' :
+					$res[3] = round($res[3]) + $line['total'];
+					$link[3] = '';
+					break;
+				case 'E' :
+					$res[3] = round($res[3]) + $line['total'];
+					$link[3] = '';
+					break;
+				case 'F' :
+					$res[3] = round($res[3]) + $line['total'];
+					$link[3] = '';
+					break;
+				case 'X' :
+					$res[5] = round($res[5]) + $line['total'];
 					$link[5] = '';
 					break;
-			}
+				}
 
 		}
 
