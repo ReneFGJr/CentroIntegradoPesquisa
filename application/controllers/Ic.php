@@ -3109,9 +3109,11 @@ class ic extends CI_Controller {
 		$this -> geds -> tabela = 'ic_ged_documento';
 		$this -> geds -> file_lock_all($dados['pj_codigo']);
 
-		$dados['ged'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+		$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+		$dados['ged'] = '<br>Arquivos:';
 
-		$this -> load -> view('ic/email_projeto', $dados);
+		//$this -> load -> view('ic/email_projeto', $dados);
+		$this -> load -> view('ic/projeto', $dados);
 
 		$dados = $this -> ics -> mostra_planos($dados['pj_codigo'], $dados['pj_status']);
 		$data['content'] = $dados;

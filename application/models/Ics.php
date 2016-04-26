@@ -3318,7 +3318,6 @@ class ics extends CI_model {
 
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			echo '==>'.$sta;
 			$sta = $line['doc_status'];
 			switch($sta) {
 				case '@' :
@@ -3392,9 +3391,10 @@ class ics extends CI_model {
 			$sx .= '<font class="lt1">' . $cap[$r] . '</font><br/>';
 			$sx .= $link[$r] . $res[$r] . '</a></td>';
 		}
+		$sx .= '<tr><td colspan=10><font class="lt1">Clique no número dos projetos para visualizar</font></td><tr>';
 		$sx .= '</table>';
-
-		return ($sx);
+		
+		return ($sx); 
 	}
 
 	function updatex() {
