@@ -279,7 +279,12 @@ class evento extends CI_controller {
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Eventos', 'Lista dos Inscritos', 'ITE', '/evento/lista_inscritos/' . $ev));
+		array_push($menu, array('Eventos', 'Lista dos Participantes', 'ITE', '/evento/lista_inscritos_presentes/' . $ev));
+		array_push($menu, array('Eventos', 'Lista dos Ausentes', 'ITE', '/evento/lista_inscritos_ausentes/' . $ev));		
 		array_push($menu, array('Eventos', 'Impressão de Etiquetas', 'ITE', '/evento/etiqueta'));
+		
+		
+		
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -503,11 +508,12 @@ class evento extends CI_controller {
 		$this -> load -> view('header/content_open');
 
 		$ml = $this -> eventos -> le($id);
+		
 		$sql = $ml['ev_query'];
 		$sql = "Select * from evento_inscricao as evento
 						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
 						where evento.ei_evento_id = $id
-						order by user.us_nome";
+						order by ei_evento_confirmar, user.us_nome";
 
 		$sx = '';
 		$sql = troca($sql, '´', "'");
@@ -616,6 +622,275 @@ class evento extends CI_controller {
 		$sx .= '';
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function lista_inscritos_presentes($id = 0, $chk = '') {
+		/* Load Models */
+		$this -> load -> model('evento/eventos');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('eventos/swb2s');
+
+		$cp = $this -> eventos -> cp();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+
+		$ml = $this -> eventos -> le($id);
+		
+		$sql = $ml['ev_query'];
+		$sql = "Select * from evento_inscricao as evento
+						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
+						where evento.ei_evento_id = $id
+						and ei_evento_confirmar = 1
+						order by ei_evento_confirmar, user.us_nome";
+
+		$sx = '';
+		$sql = troca($sql, '´', "'");
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx .= '<table width="100%" class="lt2" border=0>';
+
+		$sx .= '<h1>Lista de Partipantes no Evento</h1>';
+		$sx .= '<th align=left>id<th>nome<th>
+				<th>etiq.<th>
+				<th align=center>nº inscricao<th>
+				<th align=right>cracha<th>
+				<th>data da insc.<th>
+				<th>email contato<th>
+				<th>inscrito';
+
+		$email = '';
+		$tot = 0;
+		$totc = 0;
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+
+			$line = $rlt[$r];
+			$inscrito = $line['ei_status'];
+			$ei_evento_confirmar = $line['ei_evento_confirmar'];
+
+			if ($inscrito != '1') {
+				$ft = '<font color = red><s>';
+				$ftend = '</s></font>';
+				$totc++;
+			} else {				
+				$ft = '';
+				$ftend = '';
+			}
+			if ($ei_evento_confirmar == '1') {
+				$ft = '<font color = green><b>';
+				$ftend = '</b></font>';
+			}
+			$id_us = $line['id_us'];
+
+			$sx .= '<tr>';
+			$sx .= '<td>' . ($r + 1) . '.</td>';
+			$sx .= '<td>';
+			$sx .= $ft . $line['us_nome'] . $ftend;
+			$sx .= '</td>';
+
+			/* Etiqueta */
+			$sx .= '<td align=center width="5">' . " | " . '</td>';
+			$sx .= '<td width="10" align="center">';
+			if ($inscrito != '0') {
+				$link_etiqueta = '<A href="#" onclick="newxy2(\'' . base_url('index.php/evento/etiqueta_print/' . $line['ei_us_usuario_id']) . '\',400,500);" class="link lt2" alt="imprimir cracha">';
+				$link_etiqueta .= '<img src="' . base_url('img/icon/icone_cracha.png') . '" border=0 height="18" title="imprimir cracha">';
+				$link_etiqueta .= '</a>';
+				$sx .= $link_etiqueta;
+			}
+			$sx .= '</td>';
+
+			$sx .= '<td align=center width="5">' . " | " . '</td>';
+			$sx .= '<td align=right>';
+			$sx .= $ft . $line['id_ei'] . $ftend;
+			$sx .= '</td>';
+			$sx .= '<td >' . " | " . '</td>';
+			$sx .= '<td align=right>';
+			$sx .= $ft . $line['us_cracha'] . $ftend;
+			$sx .= '</td>';
+			$sx .= '<td >' . " | " . '</td>';
+			$sx .= '<td align=right>';
+			$sx .= $ft . $line['ei_data_inscricao'] . $ftend;
+			$sx .= '</td>';
+			$sx .= '<td >' . " | " . '</td>';
+			$sx .= '<td>';
+			$em = '';
+			$em = $this -> usuarios -> recupera_email($id_us, 0);
+			$email .= $em . '; ';
+			$sx .= $ft . $em . $ftend;
+			$sx .= '</td>';
+
+			$sx .= '<td >' . " | " . '</td>';
+
+			$id_ei = $line['id_ei'];
+
+			if ($inscrito == '1') {
+				$sx .= '<td align=center>';
+				$link = '<A HREF="' . base_url("index.php/evento/lista_inscritos_editar/" . $id_ei . "/" . checkpost_link($id_ei)) . '" class="link lt2" >  editar';
+				$sx .= $link;
+				$sx .= '</td>';
+			} else {
+				$sx .= '<td align=center>';
+				$link = '<A HREF="' . base_url("index.php/evento/lista_inscritos_editar/" . $id_ei . "/" . checkpost_link($id_ei)) . '"><font color="red">editar</font>';
+				$sx .= $link;
+				$sx .= '</td>';
+			}
+
+			$sx .= '</tr>';
+		}
+		$sx .= '<TR>
+				 		<TD colspan=14 align=right BGCOLOR="#C0C0C0" valign="bottom">
+						<font color="white">Total de ' . ($tot - $totc) . ' estudantes inscritos</font>';
+
+		//Lista de e-mails
+		$sx .= '<tr><td colspan=14></br><fieldset style="border:3px solid #d5d5d5; "><legend><b>Lista com todos os e-mails dos inscritos no evento </b></legend>' . $email . '</fieldset></td></tr>';
+		$sx .= '</table>';
+
+		$sx .= '';
+		$data['content'] = $sx;
+		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+
+	}
+
+function lista_inscritos_ausentes($id = 0, $chk = '') {
+		/* Load Models */
+		$this -> load -> model('evento/eventos');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('eventos/swb2s');
+
+		$cp = $this -> eventos -> cp();
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+
+		$ml = $this -> eventos -> le($id);
+		
+		$sql = $ml['ev_query'];
+		$sql = "Select * from evento_inscricao as evento
+						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
+						where evento.ei_evento_id = $id
+						and ei_evento_confirmar = 0
+						order by ei_evento_confirmar, user.us_nome";
+
+		$sx = '';
+		$sql = troca($sql, '´', "'");
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx .= '<table width="100%" class="lt2" border=0>';
+
+		$sx .= '<h1>Lista de Partipantes no Evento</h1>';
+		$sx .= '<th align=left>id<th>nome<th>
+				<th>etiq.<th>
+				<th align=center>nº inscricao<th>
+				<th align=right>cracha<th>
+				<th>data da insc.<th>
+				<th>email contato<th>
+				<th>inscrito';
+
+		$email = '';
+		$tot = 0;
+		$totc = 0;
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+
+			$line = $rlt[$r];
+			$inscrito = $line['ei_status'];
+			$ei_evento_confirmar = $line['ei_evento_confirmar'];
+
+			if ($inscrito != '1') {
+				$ft = '<font color = red><s>';
+				$ftend = '</s></font>';
+				$totc++;
+			} else {				
+				$ft = '';
+				$ftend = '';
+			}
+			if ($ei_evento_confirmar == '1') {
+				$ft = '<font color = green><b>';
+				$ftend = '</b></font>';
+			}
+			$id_us = $line['id_us'];
+
+			$sx .= '<tr>';
+			$sx .= '<td>' . ($r + 1) . '.</td>';
+			$sx .= '<td>';
+			$sx .= $ft . $line['us_nome'] . $ftend;
+			$sx .= '</td>';
+
+			/* Etiqueta */
+			$sx .= '<td align=center width="5">' . " | " . '</td>';
+			$sx .= '<td width="10" align="center">';
+			if ($inscrito != '0') {
+				$link_etiqueta = '<A href="#" onclick="newxy2(\'' . base_url('index.php/evento/etiqueta_print/' . $line['ei_us_usuario_id']) . '\',400,500);" class="link lt2" alt="imprimir cracha">';
+				$link_etiqueta .= '<img src="' . base_url('img/icon/icone_cracha.png') . '" border=0 height="18" title="imprimir cracha">';
+				$link_etiqueta .= '</a>';
+				$sx .= $link_etiqueta;
+			}
+			$sx .= '</td>';
+
+			$sx .= '<td align=center width="5">' . " | " . '</td>';
+			$sx .= '<td align=right>';
+			$sx .= $ft . $line['id_ei'] . $ftend;
+			$sx .= '</td>';
+			$sx .= '<td >' . " | " . '</td>';
+			$sx .= '<td align=right>';
+			$sx .= $ft . $line['us_cracha'] . $ftend;
+			$sx .= '</td>';
+			$sx .= '<td >' . " | " . '</td>';
+			$sx .= '<td align=right>';
+			$sx .= $ft . $line['ei_data_inscricao'] . $ftend;
+			$sx .= '</td>';
+			$sx .= '<td >' . " | " . '</td>';
+			$sx .= '<td>';
+			$em = '';
+			$em = $this -> usuarios -> recupera_email($id_us, 0);
+			$email .= $em . '; ';
+			$sx .= $ft . $em . $ftend;
+			$sx .= '</td>';
+
+			$sx .= '<td >' . " | " . '</td>';
+
+			$id_ei = $line['id_ei'];
+
+			if ($inscrito == '1') {
+				$sx .= '<td align=center>';
+				$link = '<A HREF="' . base_url("index.php/evento/lista_inscritos_editar/" . $id_ei . "/" . checkpost_link($id_ei)) . '" class="link lt2" >  editar';
+				$sx .= $link;
+				$sx .= '</td>';
+			} else {
+				$sx .= '<td align=center>';
+				$link = '<A HREF="' . base_url("index.php/evento/lista_inscritos_editar/" . $id_ei . "/" . checkpost_link($id_ei)) . '"><font color="red">editar</font>';
+				$sx .= $link;
+				$sx .= '</td>';
+			}
+
+			$sx .= '</tr>';
+		}
+		$sx .= '<TR>
+				 		<TD colspan=14 align=right BGCOLOR="#C0C0C0" valign="bottom">
+						<font color="white">Total de ' . ($tot - $totc) . ' estudantes inscritos</font>';
+
+		//Lista de e-mails
+		$sx .= '<tr><td colspan=14></br><fieldset style="border:3px solid #d5d5d5; "><legend><b>Lista com todos os e-mails dos inscritos no evento </b></legend>' . $email . '</fieldset></td></tr>';
+		$sx .= '</table>';
+
+		$sx .= '';
+		$data['content'] = $sx;
+		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 
 	}
 
@@ -625,6 +900,10 @@ class evento extends CI_controller {
 		$this -> load -> model('evento/eventos');
 		$this -> load -> model('usuarios');
 		$this -> load -> model('eventos/swb2s');
+		
+		$this -> cab();
+
+		$this -> load -> view('header/content_open');
 		
 		$sx = '';
 		if (!isset($_SESSION['evento'])) {
@@ -656,7 +935,6 @@ class evento extends CI_controller {
 		}
 
 
-
 		$cp = $this -> eventos -> cp();
 
 		$data = array();
@@ -668,8 +946,12 @@ class evento extends CI_controller {
 		$data['content'] = '<h1>evento: '.$ml['ev_nome'].'</h1>';
 		$this->load->view("content",$data);
 		
+		if (strlen($tp) > 0) {
+		
 		/* Dados do evento */
 		$tela = $this->eventos->resumo_presenca();
+		}
+		
 		$data['content'] = $tela;
 		$this->load->view("content",$data);		
 				
@@ -762,6 +1044,9 @@ class evento extends CI_controller {
 		$sx .= '';
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 
 	}
 
