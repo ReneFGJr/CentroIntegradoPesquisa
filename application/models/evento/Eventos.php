@@ -153,18 +153,25 @@ class eventos extends CI_model {
 				$au = $au + $line['total'];
 			}
 		}
+		
+		$link = base_url('index.php/evento/lista_inscritos_ausentes/'.$id);
+		$link2 = base_url('index.php/evento/lista_inscritos_presentes/'.$id);
+		$link3 = base_url('index.php/evento/lista_inscritos/'.$id);
+		
 		$sx = '<table width="500" align="center">';
-		$sx .= '<tr><th width="33%">Inscritos</th>
+		$sx .= '<tr><th width="33%">Ausentes</th>
 					<th width="33%">Presentes</th>
-					<th width="33%">Total</th>
+					<th width="33%">Total de Inscritos</th>
 					</tr>';
 		$sx .= '<tr align="center" class="lt5">
-					<td width="33%" class="border1">' . $au . '</td>
-					<td width="33 %" class="border1">' . $ps . '</td>
-					<td width="33%" class="border1">' . ($au + $ps) . '</td>
+					<td width="33%" class="border1"><a href="' . $link . '">' . $au . '</a></td>
+					<td width="33%" class="border1"><a href="' . $link2 . '">' . $ps . '</a></td>
+					<td width="33%" class="border1"><a href="' . $link3 . '">' . ($au + $ps) . '</a></td>
 					</tr>';
 		$sx .= '</table>';
+		
 		return ($sx);
+		
 	}
 
 	/*################>> EMITIR DECLARACOES E CERTIFICADOS DE IC <<###########################*/
