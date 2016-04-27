@@ -8,6 +8,33 @@ class ics extends CI_model {
 	var $tabela_planos = "ic_submissao_plano";
 	var $resumo = array();
 
+	function ic_submit_resumo_escolas($ano, $tipo = 'IC') {
+		$sql = "select us_escola_vinculo, es_escola, count(*) as total
+						from ic_submissao_plano
+						inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
+						inner join us_usuario on us_cracha = pj_professor 
+						left join escola on us_escola_vinculo = id_es
+						where pj_ano = '$ano'
+						AND (pj_status  <> 'X' AND pj_status  <> '@')
+						AND (doc_status <> 'X' AND doc_status <> '@')
+						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE')
+						group by us_escola_vinculo
+						order by total desc
+					 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$sx .= '<tr>';
+			$sx .= '<td>' . $line['es_escola'] . '</td>';
+			$sx .= '<td>' . $line['total'];
+		}
+		$sx .= '</table>';
+		return($sx);
+	}
+
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
 			$wh = 'where (' . $wh . ') ';
@@ -1186,7 +1213,8 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1251,7 +1279,8 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -2155,13 +2184,13 @@ class ics extends CI_model {
 	function mostra_projetos_situacao($cracha, $sta, $ano = '', $edital = '') {
 		if ($ano == '') { $ano = date("Y");
 		}
-		
+
 		$wh = "pj_status = '$sta' ";
 		if ($sta == '0') { $wh = "pj_status = '@' ";
 		}
 		if ($sta == 'A') { $wh = "(pj_status = 'A' or pj_status = 'B' or pj_status = 'C' or pj_status = 'D' or pj_status = 'E' or pj_status = 'F') ";
 		}
-				$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
+		$sql = "select * from ic_submissao_projetos where pj_professor = '$cracha' 
 					and pj_ano = '$ano' and $wh ";
 		if (strlen($edital) > 0) {
 			$sql .= " and pj_edital = '$edital' ";
@@ -2259,9 +2288,9 @@ class ics extends CI_model {
 	}
 
 	function projeto_xacao($pj) {
-		$this->load->model('Mensagens');
-		$this->load->model('Usuarios');
-		
+		$this -> load -> model('Mensagens');
+		$this -> load -> model('Usuarios');
+
 		$ac = get("dd1");
 		$proto = $pj['pj_codigo'];
 
@@ -2281,25 +2310,24 @@ class ics extends CI_model {
 				$this -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '');
 				return (1);
 				break;
-				
-			case '4':
+
+			case '4' :
 				/***** CANECLAR SUBMISSAO */
-				if (strlen(get("dd2")) == 0)
-					{
-						echo alert('campo de comentários é obrigatório');
-						return(0);
-					}
+				if (strlen(get("dd2")) == 0) {
+					echo alert('campo de comentários é obrigatório');
+					return (0);
+				}
 
 				/* Recupera mensagem */
 				//$txt = $this->Mensagens->busca('PJ_DEVOLVE_PROF',$pj);
 				$pj['motivo'] = get('dd2');
-				$prof = $this->usuarios->le_cracha($pj['pj_professor']);
+				$prof = $this -> usuarios -> le_cracha($pj['pj_professor']);
 				$us_id = $prof['id_us'];
-				
-				$txt = $this->Mensagens->busca('PJ_DEVOLVE_PROF',$pj);
-				
-				enviaremail_usuario($us_id,$txt['nw_assunto'],$txt['nw_texto'],$txt['nw_own']);				
-				
+
+				$txt = $this -> Mensagens -> busca('PJ_DEVOLVE_PROF', $pj);
+
+				enviaremail_usuario($us_id, $txt['nw_assunto'], $txt['nw_texto'], $txt['nw_own']);
+
 				$sta = $pj['pj_status'];
 				$sta_to = '@';
 				$ac = '232';
@@ -2312,25 +2340,24 @@ class ics extends CI_model {
 				$this -> altera_status_projeto_submissao($proto, $sta, $sta_to);
 				$this -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
 				return (1);
-				break;				
-			case '5':
+				break;
+			case '5' :
 				/***** CANECLAR SUBMISSAO */
-				if (strlen(get("dd2")) == 0)
-					{
-						echo alert('campo de comentários é obrigatório');
-						return(0);
-					}
+				if (strlen(get("dd2")) == 0) {
+					echo alert('campo de comentários é obrigatório');
+					return (0);
+				}
 
 				/* Recupera mensagem */
 				//$txt = $this->Mensagens->busca('PJ_DEVOLVE_PROF',$pj);
 				$pj['motivo'] = get('dd2');
-				$prof = $this->usuarios->le_cracha($pj['pj_professor']);
+				$prof = $this -> usuarios -> le_cracha($pj['pj_professor']);
 				$us_id = $prof['id_us'];
-				
-				$txt = $this->Mensagens->busca('PJ_CANCELA_PROF',$pj);
-				
-				enviaremail_usuario($us_id,$txt['nw_assunto'],$txt['nw_texto'],$txt['nw_own']);				
-				
+
+				$txt = $this -> Mensagens -> busca('PJ_CANCELA_PROF', $pj);
+
+				enviaremail_usuario($us_id, $txt['nw_assunto'], $txt['nw_texto'], $txt['nw_own']);
+
 				$sta = $pj['pj_status'];
 				$sta_to = 'X';
 				$ac = '234';
@@ -2344,8 +2371,8 @@ class ics extends CI_model {
 				$this -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
 				return (1);
 				break;
-							
-			default :			
+
+			default :
 				echo '--->' . $ac;
 				break;
 		}
@@ -2380,9 +2407,9 @@ class ics extends CI_model {
 		echo $sx;
 		$user = $this -> usuarios -> le_cracha($prj_data['pj_professor']);
 		$idu = $user['id_us'];
-		
+
 		enviaremail_usuario($idu, 'Submissão de Projeto IC - ' . $proto, $sx, 2);
-		
+
 		enviaremail_usuario(1, 'Submissão de Projeto IC - ' . $proto, $sx, 2);
 	}
 
@@ -3297,7 +3324,7 @@ class ics extends CI_model {
 					$lk = base_url('index.php/ic/submit_PIBIC/A');
 					$lk = '<A href="' . $lk . '" class="link lt6">';
 					$link[2] = $lk;
-					break;																				
+					break;
 				case 'X' :
 					$res[4] = round($res[4]) + $line['total'];
 					$lk = base_url('index.php/ic/submit_PIBIC/X');
@@ -3352,7 +3379,7 @@ class ics extends CI_model {
 					$res[5] = round($res[5]) + $line['total'];
 					$link[5] = '';
 					break;
-				}
+			}
 
 		}
 
@@ -3393,8 +3420,8 @@ class ics extends CI_model {
 		}
 		$sx .= '<tr><td colspan=10><font class="lt1">Clique no número dos projetos para visualizar</font></td><tr>';
 		$sx .= '</table>';
-		
-		return ($sx); 
+
+		return ($sx);
 	}
 
 	function updatex() {

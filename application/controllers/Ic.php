@@ -3084,6 +3084,9 @@ class ic extends CI_Controller {
 			$data_cockpit['dado_coc'] = $line;
 			$this -> load -> view('ic/resumo_cockpit', $data_cockpit);
 
+			$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano);
+			$this -> load -> view('content', $data);
+
 		} else {
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
