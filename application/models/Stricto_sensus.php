@@ -157,19 +157,20 @@ class Stricto_sensus extends CI_model {
 					LEFT JOIN ss_programa_pos on od_programa_id = id_pp
 					LEFT JOIN ss_linha_pesquisa_programa on od_linha_id = id_sslpp
 					WHERE od_programa_id = $pg
-					order by pf_nome, od_ano_ingresso desc, al_nome 
+					order by pf_nome, al_nome, od_ano_ingresso
 					";
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="tabela00 lt1">';
-		$sx .= '<tr><th>#</th>
-						<th>Estudante</th>
-						<th>situação</th>
-						<th>Ano Ingresso</th>
-						<th>Ano Titulação</th>
-						<th>Modalidade</th>
-						<th>Linha de Pesquisa</th>
+		$sx .= '<tr>
+								<th>#</th>
+								<th>Estudante</th>
+								<th>situação</th>
+								<th>Ano Ingresso</th>
+								<th>Ano Titulação</th>
+								<th>Modalidade</th>
+								<th>Linha de Pesquisa</th>
 						</tr>';
 
 		$xprof = '';
@@ -205,6 +206,7 @@ class Stricto_sensus extends CI_model {
 
 		}
 		$sx .= '</table>';
+		
 		return ($sx);
 
 	}
@@ -874,7 +876,12 @@ class Stricto_sensus extends CI_model {
 	function cp_orientacao($programa = 0) {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_od', '', False, True));
-
+		
+		array_push($cp, array('${', '', 'Orientação', False, True));
+		$sqlc = "us_cracha:us_nome:select distinct id_us, us_nome, us_cracha from ss_professor_programa_linha inner join us_usuario on us_usuario_id_us = id_us where programa_pos_id_pp = $programa and sspp_ativo = 1";
+		array_push($cp, array('$Q ' . $sqlc, 'od_professor', 'Orientador', True, True));
+		array_push($cp, array('$}', '', 'Orientação', False, True));
+		
 		array_push($cp, array('${', '', 'Sobre o programa', False, True));
 		$sqla = "sss_cod:sss_descricao:select * from ss_docente_orientacao_situacao order by sss_descricao";
 		array_push($cp, array('$Q ' . $sqla, 'od_status', 'Situação', True, True));
@@ -884,12 +891,17 @@ class Stricto_sensus extends CI_model {
 		$sqlc = "ssm_cod:ssm_nome:select id_ssm, ssm_nome, ssm_cod from ss_modalidade where ssm_ativo = 1";
 		array_push($cp, array('$Q ' . $sqlc, 'od_modalidade', 'Modalidade', True, True));
 
-		array_push($cp, array('$}', '', '', False, True));
+		array_push($cp, array('$}', '', 'Sobre o programa', False, True));
 
 		array_push($cp, array('${', '', 'Datas', False, True));
 		array_push($cp, array('$[1990-' . date("Y") . ']D', 'od_ano_ingresso', 'Ano ingresso', True, True));
 		array_push($cp, array('$[1990-' . (date("Y") + 6) . ']D', 'od_ano_diplomacao', 'Ano titulação (previsão)', False, True));
-		array_push($cp, array('$}', '', 'Ano ingresso', False, True));
+		array_push($cp, array('$}', '', 'Datas', False, True));
+		
+		//array_push($cp, array('${', '', 'Status', False, True));
+		//$sqld = "sss_cod:sss_descricao:select * from ss_docente_orientacao_situacao order by sss_descricao";
+		//array_push($cp, array('$Q ' . $sqld, 'od_status', 'Situação', True, True));
+		//array_push($cp, array('$}', '', 'Status', False, True));
 
 		array_push($cp, array('$B8', '', 'salvar', False, True));
 		return ($cp);
