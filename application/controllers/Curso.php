@@ -69,7 +69,7 @@ class Curso extends CI_Controller {
 		$form = $this -> cursos -> row($form);
 
 		$form -> row_edit = base_url('index.php/curso/edit');
-		$form -> row_view = base_url('index.php/curso/view');
+		//$form -> row_view = base_url('index.php/curso/view');
 		$form -> row = base_url('index.php/curso');
 
 		$tela['tela'] = row($form, $id);
@@ -106,20 +106,6 @@ class Curso extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function view($id = 0, $check = '') {
-		/* Load Models */
-		$this -> load -> model('cursos');
-
-		$this -> cab();
-		$this -> load -> view('header/content_open');
-
-		$data = $this -> unidades -> le($id);
-
-		$this -> load -> view('curso/view', $data);
-
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);
-	}
 
 }
 ?>

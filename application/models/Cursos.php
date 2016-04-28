@@ -18,7 +18,7 @@ class Cursos extends CI_model {
 		array_push($cp, array('$S25', 'c_nome_curso_fr', msg('Label_curso_nome_fr'), false, True));	
 		array_push($cp, array('$S25', 'c_nome_curso_es', msg('Label_curso_nome_esp'), false, True));	
 		
-		$sql = "select * from escola order by es_escola";
+		$sql = "select * from escola where es_ativo = 1 order by es_escola";
 		array_push($cp, array('$Q id_es:es_escola:' . $sql, 'c_escola', msg('lb_curso_escola'), True, False));
 		
 		array_push($cp, array('$O 1:SIM&0:NÃO', 'c_ativo', msg('Label_curso_status'), True, True));
