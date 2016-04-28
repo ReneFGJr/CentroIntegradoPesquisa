@@ -68,6 +68,38 @@ $lang['captacao_bonificacoes'] = 'Bonificações e Isenções';
 $lang['lb_bn_rf_valor'] = 'Valor da parcela de isenção';
 $lang['lb_bn_rf_parcela'] = 'Número de parcelas a isentar';
 
+/* Manutencao Cursos */
+$lang['Label_curso_nome'] = 'Nome do curso';
+$lang['Label_curso_nome_eng'] = 'Nome Inglês';
+$lang['Label_curso_nome_fr'] = 'Nome Francês';
+$lang['Label_curso_nome_esp'] = 'Nome Espanhol';
+$lang['lb_curso_escola'] = 'Vínculo Escola';
+$lang['Label_curso_status'] = 'Status';
+$lang['Label_editar_curso'] = 'Manutenção de Cursos';
+
+/* Declaracao e Certificados */
+$lang['lb_cdm_evento'] = 'Evento';
+$lang['lb_cdm_tipo'] = 'Tipo de Doc.';
+$lang['lb_cdm_background'] = 'Background';
+$lang['lb_cdm_titulo'] = 'Título do Doc.';
+$lang['lb_cdm_body'] = 'Body';
+$lang['lb_cdm_data_evento'] = 'Data do Evento';
+$lang['lb_cdm_data_emissao'] = 'Data de Emissão do Doc.';
+$lang['lb_cdm_data_inicio_bolsa'] = 'Inicio da Bolsa';
+$lang['lb_cdm_data_fim_bolsa'] = 'Final da Bolsa';
+$lang['lb_cdm_ano'] = 'Ano do Evento';
+$lang['lb_cdm_margem_top'] = 'Margin Top';
+$lang['lb_cdm_margem_botton'] = 'Margin Botton';
+$lang['lb_cdm_posicao'] = 'Posição';
+$lang['lb_cdm_body_padrão'] = 'Texto Padrão';
+$lang['lb_cdm_ativar_padrao'] = 'Ativar txt padrão';
+$lang['lb_cdm_cracha_autorizador'] = 'Autor';
+$lang['lb_modelos_cadastrados'] = 'Modelos Cadastrados';
+$lang['lb_cdm_qrcode'] = 'Ativar QRCode';
+
+$lang['lb_gravar_modelo'] = 'Gravar modelo';
+
+
 	
 /* Menu Princicpal */
 $lang['submit_ICMST'] = 'PIBIC MASTER';
@@ -362,6 +394,7 @@ $lang['lb_form_prof_pa4_3'] = 'Adiantado';
 //pergunta 05
 $lang['lb_form_prof_pa5_1'] = 'Sim';
 $lang['lb_form_prof_pa5_2'] = 'Não';
+
 
 
 

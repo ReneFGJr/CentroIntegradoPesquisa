@@ -334,6 +334,8 @@ function usuario_sem_email($xls=''){
 		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
 
 		array_push($menu, array('Inportação', 'Inportação de Dados', 'ITE', '/inport'));
+		
+		array_push($menu, array('Manutenção Cursos', 'Cadastrar/Editar Cursos', 'ITE', '/curso'));		
 
 		/*View principal*/
 		$data['menu'] = $menu;
