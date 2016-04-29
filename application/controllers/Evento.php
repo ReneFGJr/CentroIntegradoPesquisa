@@ -17,77 +17,69 @@ class evento extends CI_controller {
 		date_default_timezone_set('America/Sao_Paulo');
 		/* Security */
 	}
-	
-	function enviar_email_form()
-		{
-			$ev = get("dd1");
-			$ev = 6;
-			$nome = get("Nome");
-			$text = get("mensagem");
-			$email = get("email");
-			
-			//enviaremail('edena.grein@pucpr.br','Feira de Ciências - Dúvida','De:'.$nome.'<br>'.'e-mail:'.$email.'<HR>'.$text,$ev);
-			echo '<script>alert("e-mail enviado com sucesso!");</script>';
-		}
-	
-	function inscricao_cracha($ev=0)
-		{
-			$this->load->model('evento/eventos');
-			$this->load->model('usuarios');
-			
-			$data = $this->eventos->le($ev);
-				
-			$this->load->view('header/header',$data);
 
-			$form = new form;
-			$form-> id = '';
-			
-			/* Validação */
-			$dd1 = get("dd1");
-			$acao = get("acao");
-			$ok = 0;
-			if ((strlen($dd1) > 0) and (strlen($acao) > 0))
-				{
-					$data = $this->usuarios->le_cracha($dd1);
-					if (count($data) > 0)
-						{
-							$ok = 1;
-						} else {
-							$data = $this->usuarios->consulta_cracha($dd1);
-							$data = $this->usuarios->le_cracha($dd1);		
-						}
-					$data['form'] = '';
-					if ($ok == 1)
-						{
-							$id_us = $data['id_us'];
-							$data['form'] = $this->load->view('evento/user_view',$data, true);
-							$data['form'] .= '<h2>'.$this->eventos->insere_inscricao($ev,$id_us).'</h2>';
-							
-							/* Enviar e-mail */
-							$sql = "select * from evento_mailing where ml_ev = ".round($ev)." and ml_query = 'CONFIRMACAO' and ml_status = 1";
-							$rlt = $this->db->query($sql);
-							$rlt = $rlt->result_array();
-							if (count($rlt) > 0)
-								{
-									$line = $rlt[0];
-									$txt = $line['ml_html'];
-									$ass = $line['ml_subject'];
-									enviaremail_usuario($id_us,$ass,$txt,$ev);
-								}
-						}
-					
+	function enviar_email_form() {
+		$ev = get("dd1");
+		$ev = 6;
+		$nome = get("Nome");
+		$text = get("mensagem");
+		$email = get("email");
+
+		//enviaremail('edena.grein@pucpr.br','Feira de Ciências - Dúvida','De:'.$nome.'<br>'.'e-mail:'.$email.'<HR>'.$text,$ev);
+		echo '<script>alert("e-mail enviado com sucesso!");</script>';
+	}
+
+	function inscricao_cracha($ev = 0) {
+		$this -> load -> model('evento/eventos');
+		$this -> load -> model('usuarios');
+
+		$data = $this -> eventos -> le($ev);
+
+		$this -> load -> view('header/header', $data);
+
+		$form = new form;
+		$form -> id = '';
+
+		/* Validação */
+		$dd1 = get("dd1");
+		$acao = get("acao");
+		$ok = 0;
+		if ((strlen($dd1) > 0) and (strlen($acao) > 0)) {
+			$data = $this -> usuarios -> le_cracha($dd1);
+			if (count($data) > 0) {
+				$ok = 1;
+			} else {
+				$data = $this -> usuarios -> consulta_cracha($dd1);
+				$data = $this -> usuarios -> le_cracha($dd1);
+			}
+			$data['form'] = '';
+			if ($ok == 1) {
+				$id_us = $data['id_us'];
+				$data['form'] = $this -> load -> view('evento/user_view', $data, true);
+				$data['form'] .= '<h2>' . $this -> eventos -> insere_inscricao($ev, $id_us) . '</h2>';
+
+				/* Enviar e-mail */
+				$sql = "select * from evento_mailing where ml_ev = " . round($ev) . " and ml_query = 'CONFIRMACAO' and ml_status = 1";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				if (count($rlt) > 0) {
+					$line = $rlt[0];
+					$txt = $line['ml_html'];
+					$ass = $line['ml_subject'];
+					enviaremail_usuario($id_us, $ass, $txt, $ev);
 				}
-			
-			if ($ok == 0)
-				{	
-					$cp = $this->eventos->cp_inscricao_cracha();
-					$data['form'] = $form->editar($cp,'');
-				}
-			
-			
-			$this->load->view('evento/inscricao_abstract',$data);
-			
+			}
+
 		}
+
+		if ($ok == 0) {
+			$cp = $this -> eventos -> cp_inscricao_cracha();
+			$data['form'] = $form -> editar($cp, '');
+		}
+
+		$this -> load -> view('evento/inscricao_abstract', $data);
+
+	}
 
 	/* Eventos Redirecionados */
 	function spsr() {
@@ -133,7 +125,7 @@ class evento extends CI_controller {
 		$data['title_page'] = 'Módulo de Eventos';
 		$this -> load -> view('header/header', $data);
 		$this -> load -> view('header/cab', $data);
-		
+
 		if (perfil('#CPP#SPI#ADM#EVE') != 1) {
 			redirect('index.php/main');
 		}
@@ -162,13 +154,13 @@ class evento extends CI_controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function pecas($tipo='') {
+	function pecas($tipo = '') {
 		/* Load Models */
-		$this -> load -> model('evento/eventos');		
+		$this -> load -> model('evento/eventos');
 		if (!isset($_SESSION['evento'])) {
 			echo 'Evento não selecionado';
 		}
-		$ev = $_SESSION['evento'];		
+		$ev = $_SESSION['evento'];
 		/* Load Models */
 		//$this -> load -> model('ics');
 
@@ -179,23 +171,21 @@ class evento extends CI_controller {
 		$tela['title'] = $this -> lang -> line('title_ic');
 		$tela['tela'] = '';
 
-		switch ($tipo)
-			{
-			case 'botao':
-				$sx = $this->eventos->botao_inscricao($ev);
-				$sx .= '<textarea rows="10" cols="40" style="width: 100%;">'.$sx.'</textarea>';
-				$tela['content'] = '<table width="600" align="right"><tr><td>'.$sx.'</td></TR></TABLE>';
-				$this->load->view('content',$tela);
+		switch ($tipo) {
+			case 'botao' :
+				$sx = $this -> eventos -> botao_inscricao($ev);
+				$sx .= '<textarea rows="10" cols="40" style="width: 100%;">' . $sx . '</textarea>';
+				$tela['content'] = '<table width="600" align="right"><tr><td>' . $sx . '</td></TR></TABLE>';
+				$this -> load -> view('content', $tela);
 				break;
-			case 'email_contato':
-				$sx = $this->eventos->email_contato($ev);
-				$sx .= '<textarea rows="10" cols="40" style="width: 100%;">'.$sx.'</textarea>';
-				$tela['content'] = '<table width="600" align="right"><tr><td>'.$sx.'</td></TR></TABLE>';
-				$this->load->view('content',$tela);
-				break;				
-				
-			}
-		
+			case 'email_contato' :
+				$sx = $this -> eventos -> email_contato($ev);
+				$sx .= '<textarea rows="10" cols="40" style="width: 100%;">' . $sx . '</textarea>';
+				$tela['content'] = '<table width="600" align="right"><tr><td>' . $sx . '</td></TR></TABLE>';
+				$this -> load -> view('content', $tela);
+				break;
+		}
+
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Inscrições', 'Botão de Inscrição', 'ITE', '/evento/pecas/botao'));
@@ -280,11 +270,8 @@ class evento extends CI_controller {
 		$menu = array();
 		array_push($menu, array('Eventos', 'Lista dos Inscritos', 'ITE', '/evento/lista_inscritos/' . $ev));
 		array_push($menu, array('Eventos', 'Lista dos Participantes', 'ITE', '/evento/lista_inscritos_presentes/' . $ev));
-		array_push($menu, array('Eventos', 'Lista dos Ausentes', 'ITE', '/evento/lista_inscritos_ausentes/' . $ev));		
+		array_push($menu, array('Eventos', 'Lista dos Ausentes', 'ITE', '/evento/lista_inscritos_ausentes/' . $ev));
 		array_push($menu, array('Eventos', 'Impressão de Etiquetas', 'ITE', '/evento/etiqueta'));
-		
-		
-		
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -348,7 +335,7 @@ class evento extends CI_controller {
 		$data = array();
 
 		$data['tela'] = $this -> eventos -> enviar_email($id);
-		$this->load->view('content',$data);
+		$this -> load -> view('content', $data);
 		/*
 		 $this->email->attach('img/img_noPhoto.jpg');
 		 $cid = $this->email->attachment_cid('img/img_noPhoto.jpg');
@@ -508,7 +495,7 @@ class evento extends CI_controller {
 		$this -> load -> view('header/content_open');
 
 		$ml = $this -> eventos -> le($id);
-		
+
 		$sql = $ml['ev_query'];
 		$sql = "Select * from evento_inscricao as evento
 						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
@@ -546,7 +533,7 @@ class evento extends CI_controller {
 				$ft = '<font color = red><s>';
 				$ftend = '</s></font>';
 				$totc++;
-			} else {				
+			} else {
 				$ft = '';
 				$ftend = '';
 			}
@@ -622,7 +609,7 @@ class evento extends CI_controller {
 		$sx .= '';
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 
@@ -640,7 +627,7 @@ class evento extends CI_controller {
 		$this -> load -> view('header/content_open');
 
 		$ml = $this -> eventos -> le($id);
-		
+
 		$sql = $ml['ev_query'];
 		$sql = "Select * from evento_inscricao as evento
 						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
@@ -679,7 +666,7 @@ class evento extends CI_controller {
 				$ft = '<font color = red><s>';
 				$ftend = '</s></font>';
 				$totc++;
-			} else {				
+			} else {
 				$ft = '';
 				$ftend = '';
 			}
@@ -755,13 +742,13 @@ class evento extends CI_controller {
 		$sx .= '';
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 
 	}
 
-function lista_inscritos_ausentes($id = 0, $chk = '') {
+	function lista_inscritos_ausentes($id = 0, $chk = '') {
 		/* Load Models */
 		$this -> load -> model('evento/eventos');
 		$this -> load -> model('usuarios');
@@ -773,7 +760,7 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 		$this -> load -> view('header/content_open');
 
 		$ml = $this -> eventos -> le($id);
-		
+
 		$sql = $ml['ev_query'];
 		$sql = "Select * from evento_inscricao as evento
 						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
@@ -812,7 +799,7 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 				$ft = '<font color = red><s>';
 				$ftend = '</s></font>';
 				$totc++;
-			} else {				
+			} else {
 				$ft = '';
 				$ftend = '';
 			}
@@ -888,27 +875,26 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 		$sx .= '';
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 
 	}
-
 
 	function lista_presenca($us = 0, $chk = '', $tp = 0) {
 		/* Load Models */
 		$this -> load -> model('evento/eventos');
 		$this -> load -> model('usuarios');
 		$this -> load -> model('eventos/swb2s');
-		
+
 		$this -> cab();
 
 		$this -> load -> view('header/content_open');
-		
+
 		$sx = '';
 		if (!isset($_SESSION['evento'])) {
 			echo 'Evento não selecionado';
-			exit;
+			exit ;
 		}
 		$id = $_SESSION['evento'];
 
@@ -918,11 +904,10 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 				/* Lanca entrada do estudante */
 				$hora = date("H:i:s");
 				$data = date("Y-m-d");
-				if ($tp == 0)
-					{
-						$hora = '';
-						$data = '0000-00-00';
-					}
+				if ($tp == 0) {
+					$hora = '';
+					$data = '0000-00-00';
+				}
 				$sql = "update evento_inscricao set
 									ei_evento_confirmar = $tp,
 									ei_evento_chegada = '" . $data . "',
@@ -934,27 +919,25 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 			}
 		}
 
-
 		$cp = $this -> eventos -> cp();
 
 		$data = array();
 		$this -> load -> view('header/header', $data);
-		
 
 		/* Titulo do evento */
 		$ml = $this -> eventos -> le($id);
-		$data['content'] = '<h1>evento: '.$ml['ev_nome'].'</h1>';
-		$this->load->view("content",$data);
-		
+		$data['content'] = '<h1>evento: ' . $ml['ev_nome'] . '</h1>';
+		$this -> load -> view("content", $data);
+
 		if (strlen($tp) > 0) {
-		
-		/* Dados do evento */
-		$tela = $this->eventos->resumo_presenca();
+
+			/* Dados do evento */
+			$tela = $this -> eventos -> resumo_presenca();
 		}
-		
+
 		$data['content'] = $tela;
-		$this->load->view("content",$data);		
-				
+		$this -> load -> view("content", $data);
+
 		$sql = $ml['ev_query'];
 		$sql = "Select * from evento_inscricao as evento
 						inner join us_usuario as user on user.id_us = evento.ei_us_usuario_id 
@@ -962,7 +945,6 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 						and ei_status > 0
 						order by ei_evento_confirmar, user.us_nome";
 
-		
 		$sql = troca($sql, '´', "'");
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -995,7 +977,7 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 			if ($ei_evento_confirmar == '1') {
 				$ft = '<font color = green><b>';
 				$ftend = '</b></font>';
-			} 
+			}
 
 			$sx .= '<tr valign="middle" style="height: 50px;">';
 			$sx .= '<td class="borderb1">' . ($r + 1) . '.</td>';
@@ -1044,9 +1026,57 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 		$sx .= '';
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+
+	}
+
+	function importar_inscritos() {
+		$this -> load -> model('usuarios');
+		$this -> load -> model('evento/eventos');
+
+		$this -> cab();
+
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, False));
+		array_push($cp, array('$T80:15', '', 'Informe Lista de Cracha / CPF', True, False));
+
+		$form = new form;
+		$tela = $form -> editar($cp, '');
+		$data['content'] = $tela;
+
+		$this -> load -> view('content', $data);
+
+		if ($form -> saved > 0) {
+			$sx = troca(get("dd1"), chr(13), ';') . ';';
+			$ln = splitx(';', $sx);
+			for ($r = 0; $r < count($ln); $r++) {
+				$cracha = $ln[$r];
+				$cracha = $this -> usuarios -> limpa_cracha($cracha);
+
+				if (strlen($cracha) == 8) {
+					$rlt = $this -> usuarios -> le_cracha($cracha);
+					if (count($rlt) == 0) {
+						$rlt = $this -> usuarios -> consulta_cracha($cracha);
+					}
+					
+					if (isset($rlt['us_cracha'])) 
+						{
+							$id_us = $rlt['id_us'];
+							$evento = $_SESSION['evento'];
+							$this->eventos->insere_inscricao($evento,$id_us);
+						} else {
+							echo ' '.$cracha;
+							echo ' - <font color="red">ERRO</font>';
+						}
+					echo '<br>';
+
+				}
+			}
+		} else {
+
+		}
 
 	}
 
@@ -1083,13 +1113,13 @@ function lista_inscritos_ausentes($id = 0, $chk = '') {
 		}
 
 	}
-	function entre_em_contato($id=0,$chk='')
-		{
-			$id = 0;
-			
-			enviaremail_usuario(11,'teste','teste',1);
-			print_r($_POST);
-		}
+
+	function entre_em_contato($id = 0, $chk = '') {
+		$id = 0;
+
+		enviaremail_usuario(11, 'teste', 'teste', 1);
+		print_r($_POST);
+	}
 
 }
 ?>

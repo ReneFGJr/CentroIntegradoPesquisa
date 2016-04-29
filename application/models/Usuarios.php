@@ -1447,7 +1447,6 @@ class usuarios extends CI_model {
 		array_push($cp, array('$Q ust_id:ust_titulacao_sigla:' . $sql, 'usuario_titulacao_ust_id', msg('us_titulacao'), False, True));
 		array_push($cp, array('$D8', 'us_dt_nascimento', msg('lb_us_dt_nascimento'), True, True));
 		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('Feminino'), 'us_genero', msg('us_genero'), True, True));
-		array_push($cp, array('$S20', 'us_cpf', msg('lb_us_cpf'), False, True));		
 		array_push($cp, array('$}', '', '', False, True));
 
 		array_push($cp, array('${', '', 'Dados no CIP', False, True));
@@ -2060,11 +2059,12 @@ class usuarios extends CI_model {
 
 		array_push($cp, array('$H8', 'id_us', '', False, True));
 		array_push($cp, array('${', '', 'Pessoais', False, False));
-		array_push($cp, array('$S100', 'us_nome', msg('lb_us_nome'), False, True));
-		array_push($cp, array('$S20', 'us_cracha', msg('lb_us_cracha'), False, True));
-		array_push($cp, array('$S20', 'us_cpf', msg('lb_us_cpf'), False, True));
+		array_push($cp, array('$S100', 'us_nome', msg('lb_us_nome'), False, False));
+		array_push($cp, array('$S20', 'us_cracha', msg('lb_us_cracha'), False, False));
+		array_push($cp, array('$S20', 'us_cpf', msg('lb_us_cpf'), False, False));
 		array_push($cp, array('$D20', 'us_dt_nascimento', msg('lb_us_dt_nascimento'), False, True));
-		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('feminino'), 'us_genero', msg('lb_us_genero'), False, True));
+		array_push($cp, array('$O M:' . msg('masculino') . '&F:' . msg('feminino'), 'us_genero', msg('lb_us_genero'), True, True));
+		array_push($cp, array('$O 1:Não definido&2:Professor&3:Aluno&4:Colaborador&5:Externo', 'usuario_tipo_ust_id', msg('lb_usu_tipo'), True, True));
 
 		array_push($cp, array('$}', '', '', False, False));
 

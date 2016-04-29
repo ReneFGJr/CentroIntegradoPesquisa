@@ -448,8 +448,10 @@ class ic extends CI_Controller {
 						break;
 
 					case '5' :
-						$this -> ics -> submit_altera_status($id, 'A');
+						
 						$this -> ics -> submit_enviar_email($id);
+						
+						$this -> ics -> submit_altera_status($id, 'A');
 						redirect(base_url('index.php/ic/submit_finished/' . $id));
 						break;
 				}

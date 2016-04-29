@@ -14,6 +14,8 @@ class Stricto_sensus extends CI_model {
 					$wh = " and od_modalidade = '$mod' ";
 				}
 			$sql = "delete from ss_docente_orientacao where od_status = 'Z' ";
+			echo '====';
+			exit;
 			$rlt = $this->db->query($sql);
 			
 			$sql = "
@@ -685,6 +687,18 @@ class Stricto_sensus extends CI_model {
 		return ($sx);
 	}
 
+	function professores_do_programa_novo($id)
+		{
+			$sx = '';
+			if (perfil("#SEP"))
+				{
+				$sx = '<br>
+						<span class="botao3d back_green_shadown back_green nopr" onclick="newwin(\''.base_url('index.php/stricto_sensu/professor_ss_new/'.$id).'\');">'.msg('novo_professor').'</span>';
+				}
+				return($sx);
+				
+		}
+
 	function professores_do_programa($prog = 0) {
 		$sql = "select * from (
 						select count(*) as linhas, sspp_tipo as situacao, min(sspp_dt_entrada) as entrada, us_usuario_id_us, programa_pos_id_pp from ss_professor_programa_linha where sspp_ativo = 1
@@ -759,6 +773,47 @@ class Stricto_sensus extends CI_model {
 		}
 	}
 
+	function cp_professor_ss($pg='')
+		{
+			$cp = array();
+			
+			$wh = '';
+			$wh2 = '';
+			
+			if (strlen($pg) > 0)
+				{
+					$wh = ' where id_pp = '.$pg;
+					$wh2 = ' where pp_id = '.$pg;
+				}
+			array_push($cp, array('$H8', 'id_pa', '', False, True));
+			
+			array_push($cp, array('${', '', 'Informe o professor', False, True));
+			
+			$sqlc = "id_us:us_nome:select distinct id_us, us_nome, us_cracha from us_usuario  where ((usuario_titulacao_ust_id = 6) or (usuario_titulacao_ust_id = 7) or (us_cracha = '01000000'))  order by us_nome";
+			array_push($cp, array('$Q ' . $sqlc, 'us_usuario_id_us', 'Professor', True, True));
+			
+			$sqlc = "id_pp:pp_nome:select distinct id_pp, pp_nome from ss_programa_pos $wh order by pp_nome";
+			array_push($cp, array('$Q ' . $sqlc, 'programa_pos_id_pp', 'Programa SS', True, True));
+			
+			$sqlc = "id_sslpp:sslpp_nome_linha:select distinct id_sslpp, sslpp_nome_linha from ss_linha_pesquisa_programa $wh2 order by sslpp_nome_linha";
+			array_push($cp, array('$Q ' . $sqlc, 'sslpp_id', 'Linha de Pesquisa', True, True));
+			
+			$op = 'Permanente:Permanente';
+			$op .= '&Colaborador:Colaborador';
+			$op .= '&Visitante:Visitante';
+			array_push($cp, array('$O '.$op, 'sspp_tipo', 'Tipo', True, True));
+			
+			array_push($cp, array('$D8', 'sspp_dt_entrada', 'Entrada no Programa', False, True));
+			
+			array_push($cp, array('$D8', 'sspp_dt_saida', 'Saída do Programa', False, True));
+			
+			$op = '1:SIM';
+			$op .= '&0:NÃO';
+
+			array_push($cp, array('$O '.$op, 'sspp_ativo', 'Ativo', True, True));
+			return($cp);
+			
+		}
 
 	function cp() {
 		$cp = array();
@@ -821,11 +876,17 @@ class Stricto_sensus extends CI_model {
 	function cp_orientacao_nova($programa = 0) {
 		$cp = array();
 		$aluno = $this -> usuarios -> limpa_cracha(get("dd1"));
+		$cracha = $aluno;
 		$aluno_nome = '';
 		if (strlen($aluno) > 0)
 			{
-				$aluno = $this->usuarios->consulta_cracha($aluno);
-				$dt = $this->usuarios->le_cracha($aluno);
+				$dt = $this->usuarios->le_cracha($cracha);				
+				
+				if (count($dt) == 0)
+					{
+						$aluno = $this->usuarios->consulta_cracha($aluno);
+						$dt = $this->usuarios->le_cracha($aluno);
+					}
 				if (isset($dt['us_nome']))
 					{
 						$aluno_nome = $dt['us_nome'];		
@@ -842,8 +903,11 @@ class Stricto_sensus extends CI_model {
 		
 		array_push($cp, array('$M', '', '<h2>'.$aluno_nome.'</h2>', False, True));
 
-		$sqlc = "ssm_cod:ssm_nome:select id_ssm, ssm_nome, ssm_cod from ss_modalidade where ssm_ativo = 1";
-		array_push($cp, array('$Q ' . $sqlc, 'od_modalidade', 'Modalidade', True, True));
+		$sqlc = "ssm_cod:ssm_nome:select id_ssm, ssm_nome, ssm_cod from ss_modalidade where ssm_ativo = 1 order by ssm_nome";
+		array_push($cp, array('$Q ' . $sqlc, 'od_modalidade', 'Modalidade', False, True));
+		
+		$sqlc = "us_cracha:us_nome:select distinct id_us, us_nome, us_cracha from us_usuario  where ((usuario_titulacao_ust_id = 6) or (usuario_titulacao_ust_id = 7) or (us_cracha = '01000000'))  order by us_nome";
+		array_push($cp, array('$Q ' . $sqlc, 'od_coorientador', 'Coorientador', True, True));
 
 		array_push($cp, array('${', '', 'Sobre o programa', False, True));
 		$sqla = "sss_cod:sss_descricao:select * from ss_docente_orientacao_situacao order by sss_descricao";
@@ -877,11 +941,14 @@ class Stricto_sensus extends CI_model {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_od', '', False, True));
 		
-		array_push($cp, array('${', '', 'Orientação', False, True));
-		$sqlc = "us_cracha:us_nome:select distinct id_us, us_nome, us_cracha from ss_professor_programa_linha inner join us_usuario on us_usuario_id_us = id_us where programa_pos_id_pp = $programa and sspp_ativo = 1";
+		array_push($cp, array('${', '', 'Orientação / Coorientação', False, True));
+		$sqlc = "us_cracha:us_nome:select distinct id_us, us_nome, us_cracha from ss_professor_programa_linha inner join us_usuario on us_usuario_id_us = id_us where (programa_pos_id_pp = $programa and sspp_ativo = 1) ";
 		array_push($cp, array('$Q ' . $sqlc, 'od_professor', 'Orientador', True, True));
+
+		$sqlc = "us_cracha:us_nome:select distinct id_us, us_nome, us_cracha from us_usuario where ((usuario_titulacao_ust_id = 6) or (usuario_titulacao_ust_id = 7) or (us_cracha = '01000000')) order by us_nome";
+		array_push($cp, array('$Q ' . $sqlc, 'od_coorientador', 'Coorientador', True, True));
 		array_push($cp, array('$}', '', 'Orientação', False, True));
-		
+
 		array_push($cp, array('${', '', 'Sobre o programa', False, True));
 		$sqla = "sss_cod:sss_descricao:select * from ss_docente_orientacao_situacao order by sss_descricao";
 		array_push($cp, array('$Q ' . $sqla, 'od_status', 'Situação', True, True));
@@ -921,6 +988,8 @@ class Stricto_sensus extends CI_model {
 		$modalidade = troca($modalidade, ';', '/');
 		return ($modalidade);
 	}
+
+
 
 	function alunos_doutorandos($prog = 0) {
 		$pf = array();

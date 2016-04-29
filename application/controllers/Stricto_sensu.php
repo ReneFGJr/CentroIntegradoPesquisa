@@ -62,10 +62,35 @@ class stricto_sensu extends CI_Controller {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
 
+		/* Exclui cancelados */		
+		$sql = "delete from ss_docente_orientacao where od_status = 'Z' ";
+		$rlt = $this->db->query($sql);
+		
+		/* Mostra informacoes */
 		$tela = $this -> stricto_sensus -> fluxo_discente_mostra($pp);
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
 	}
+	
+	function professor_ss_new($id='')
+		{
+		$this -> load -> model('usuarios');
+		$this -> load -> model('stricto_sensus');
+		$this -> load -> view('header/header', null);
+		$form = new form;
+		$form -> id = 0;
+
+		$cp = $this -> stricto_sensus -> cp_professor_ss($id);
+
+		$tela = $form -> editar($cp, 'ss_professor_programa_linha');
+
+		if ($form -> saved > 0) {
+			$this -> load -> view('header/windows_close', null);
+			return ('');
+		}
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+		}	
 
 	function orientacao_new($id = 0, $chk = '') {
 		
@@ -458,6 +483,8 @@ class stricto_sensu extends CI_Controller {
 		}
 	}
 
+
+
 	function ver($id = 0, $chk = '') {
 		$this -> load -> model('stricto_sensus');
 		$this -> cab();
@@ -468,6 +495,9 @@ class stricto_sensu extends CI_Controller {
 
 		$data['content'] = $this -> stricto_sensus -> resumo_programa($id);
 		$this -> load -> view('content', $data);
+		
+		$data['content'] = $this -> stricto_sensus -> professores_do_programa_novo($id);
+		$this -> load -> view('content', $data);		
 
 		$data['content'] = $this -> stricto_sensus -> professores_do_programa($id);
 		$this -> load -> view('content', $data);

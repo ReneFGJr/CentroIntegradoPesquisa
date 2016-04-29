@@ -44,7 +44,11 @@ class mensagens extends CI_model {
 		}
 		if (isset($data['pj_codigo'])) {
 			$txt = troca($txt, '$PROTOCOLO', $data['pj_codigo']);
-		}	
+		}
+		
+		/* DADOS */
+		if (isset($data['dados'])) { $txt = troca($txt, '$DADOS', $data['dados']);
+		}			
 
 		/********** TITULO DO PROJETO & PLANO ***********/	
 

@@ -32,7 +32,7 @@ class ics extends CI_model {
 			$sx .= '<td>' . $line['total'];
 		}
 		$sx .= '</table>';
-		return($sx);
+		return ($sx);
 	}
 
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
@@ -1213,8 +1213,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1279,8 +1278,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -2118,13 +2116,24 @@ class ics extends CI_model {
 				$data['arquivos'] = '<img src="' . base_url('img/icon/icone_exclamation.png') . '" height="50" align="left"><font class="lt2" color="red">N„o foram postados arquivos para este plano</font>';
 			}
 
-			$data['arquivos_submit'] = $botao_file_submit = '
-					<input type="button" id="ged_upload_' . $data['doc_protocolo'] . '" value="enviar arquivo >>>">
+			$data['arquivos_submit'] = '
+					<input type="button" id="ged_upload_' . $data['doc_protocolo'] . '" value="enviar plano aluno >>>">
 					<script>
 					$("#ged_upload_' . $data['doc_protocolo'] . '").click(function() {
 						var $tela = newwin("' . base_url('index.php/ic/ged/' . $data['doc_protocolo']) . '/PLANO",600,400);
 					});
 					</script>';
+
+			/* se PIBITI */
+			if ($data['doc_edital'] == 'PIBITI') {
+				$data['arquivos_submit'] .= '
+					<input type="button" id="ged_upload_' . $data['doc_protocolo'] . 'b" value="enviar question·rio PIBITI >>>">
+					<script>
+					$("#ged_upload_' . $data['doc_protocolo'] . 'b").click(function() {
+						var $tela = newwin("' . base_url('index.php/ic/ged/' . $data['doc_protocolo']) . '/QUEST",600,400);
+					});
+					</script>';
+			}
 
 			$txt = $this -> load -> view('ic/plano_submit', $data, true);
 			array_push($cp, array('$M', '', ($txt), False, True));
@@ -2380,10 +2389,12 @@ class ics extends CI_model {
 	}
 
 	function submit_enviar_email($proto) {
+		$this -> load -> model('Mensagens');
 		$prj_data = $this -> ics -> le_projeto($proto);
 		$proto = '2' . strzero($proto, 6);
 
 		$sx = $this -> load -> view('header/header_email', null, true);
+		$sx = '';
 		$sx .= '<h1>Submiss„o de PIBIC/PIBITI</h1>';
 		$sx .= $this -> load -> view('ic/projeto', $prj_data, true);
 
@@ -2402,15 +2413,22 @@ class ics extends CI_model {
 			$data['arquivos_submit'] = '';
 			$data['bloquear'] = 'SIM';
 			$sx .= '<hr>';
-			$sx .= $this -> load -> view('ic/plano_submit.php', $data, true);
+			$sx .= $this -> load -> view('ic/plano_submit_email.php', $data, true);
 		}
-		echo $sx;
+
+		$data['dados'] = $sx;
+		$txt = $this -> Mensagens -> busca('IC_SUBMITED', $data);
+
+		$own = $txt['nw_own'];
+		/* Enviador */
+
 		$user = $this -> usuarios -> le_cracha($prj_data['pj_professor']);
 		$idu = $user['id_us'];
 
-		enviaremail_usuario($idu, 'Submiss„o de Projeto IC - ' . $proto, $sx, 2);
+		$text = $txt['nw_texto'];
+		$titulo = $txt['nw_titulo'];
 
-		enviaremail_usuario(1, 'Submiss„o de Projeto IC - ' . $proto, $sx, 2);
+		enviaremail_usuario($idu, $titulo . ' - ' . $proto, $text, $own);
 	}
 
 	function submit_altera_status($proto, $para) {
@@ -2545,6 +2563,26 @@ class ics extends CI_model {
 			}
 			$sx .= '<tr><td class="border1">Plano do Aluno - ' . $proto . ' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
 						<td class="border1" align="center">' . $rs . '</tr>';
+
+			/* Question·rio PIBITI */
+			if ($line['doc_edital'] == 'PIBITI') {
+				/* REGRA - arquivos postados */
+				$sql = "select 1 as total from ic_ged_documento 
+					WHERE doc_dd0 = '" . $proto . "' and doc_status <> 'X'
+					and doc_tipo = 'QUEST' and doc_ativo = 1 ";
+
+				$rrr = $this -> db -> query($sql);
+				$rrr = $rrr -> result_array();
+				$rs = $erro;
+				if (count($rrr) > 0) {
+					$rs = $ok;
+				} else {
+					$vd[6] = $erro;
+				}
+
+				$sx .= '<tr><td class="border1">Question·rio PIBITI - ' . $proto . ' - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
+						<td class="border1" align="center">' . $rs . '</tr>';
+			}
 		}
 
 		/********************************** Comit  de Ètica CEUA **********************************/

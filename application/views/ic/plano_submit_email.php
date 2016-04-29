@@ -1,9 +1,7 @@
 <?php
 $edital = lowercase($doc_edital);
 $logo = 'logo_ic_'.$edital.'.png';
-$cancel = '<a href="#" class="link" onclick="cancelar_plano('.$id_doc.');">
-			<font color="red"><font class="lt0">excluir<br>plano</font><br><font class="lt6"><b>X</b></font></font>
-			</a>';
+$cancel = '';
 $arquivos_label = 'Arquivos do Plano:';
 
 $doc_aluno_escola_publica = 'NÃO';
@@ -24,22 +22,6 @@ if (isset($bloquear))
 		$arquivos_label = '';
 	}
 
-if (!isset($fcn))
-	{
-		$sx = '
-		<script>
-		function cancelar_plano($id)
-				{
-					rsp = confirm(\'Confirmar exclusão deste plano?\');
-					if (rsp)
-						{
-							window.location.assign("'.base_url('index.php/ic/submit_edit/'.$tipo.'/' . $id . '/3/3/DEL/').'/" + $id);
-						}
-				}
-			</script>';
-		echo $sx;
-		$fnc=1;
-	}
 ?>
 <table width="100%" class="tabela00 border1" style="border-radius: 10px;">
 	<tr valign="top">
