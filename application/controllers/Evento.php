@@ -18,6 +18,89 @@ class evento extends CI_controller {
 		/* Security */
 	}
 
+	function banner_logo($evento) {
+		/* Area de teste */	
+		//$data['content'] = '<style> body { background-color: #cccccc; } </style>' . cr();
+		//$this -> load -> view('content', $data);	
+		
+		$logo = $evento['ev_logo_img'];
+		if (strlen($logo) > 0) {
+			if (file_exists($logo)) {
+				$img = base_url($logo);
+				$sx = '<div class="container">';
+				$sx .= '<img src="' . $img . '" class="">';
+				$sx .= '</div>';
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+			}
+		}
+		return ('');
+	}
+
+	function submissao($id = '') {
+		$this -> load -> model('evento/eventos');
+		$this -> load -> model('usuarios');
+
+		$this -> cab_evento();
+
+		$evento = $this -> eventos -> le($id);
+		$ev = $evento['ev_model'];
+		$filename = 'application/models/' . $ev . '.php';
+		
+
+
+		/* Mostra Banner de Logo */
+		$this -> banner_logo($evento);
+
+		if (file_exists($filename)) {
+			/*****/
+			$model = $evento['ev_model'];
+			$this -> load -> model($model);
+
+			/* Boas Vindas */
+			$tela = $this -> $model -> welcome();
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+
+			/* Formulário de Inscrição */
+			$tela = $this -> $model -> inscricao($id);
+			$data = array();
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+
+		} else {
+			echo 'Evento não localizado ' . $filename;
+		}
+	}
+
+	function submit($id = '', $ids = '', $chk = '', $pag = 1) {
+		$this -> load -> model('usuarios');
+		$this -> load -> model('evento/eventos');
+
+		$this -> cab_evento();
+
+		$evento = $this -> eventos -> le($id);
+		
+		/* Mostar Banner */
+		$this->banner_logo($evento);
+		
+		$ev = $evento['ev_model'];
+		$filename = 'application/models/' . $ev . '.php';
+		if (file_exists($filename)) {
+			/*****/
+			$model = $evento['ev_model'];
+			$this -> load -> model($model);
+
+			$tela = $this -> $model -> submissao($id, $ids, $pag);
+
+			$data = array();
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+		} else {
+			echo 'Evento não localizado ' . $filename;
+		}
+	}
+
 	function enviar_email_form() {
 		$ev = get("dd1");
 		$ev = 6;
@@ -127,8 +210,31 @@ class evento extends CI_controller {
 		$this -> load -> view('header/cab', $data);
 
 		if (perfil('#CPP#SPI#ADM#EVE') != 1) {
-			redirect('index.php/main');
+			redirect(bse_url('index.php/main'));
 		}
+	}
+
+	function cab_evento() {
+
+		/* Carrega classes adicionais */
+		$css = array();
+		$js = array();
+		array_push($css, 'bootstrap.css');
+		array_push($css, 'form_sisdoc.css');
+
+		array_push($js, 'bootstrap.js');
+
+		/* transfere para variavel do codeigniter */
+		$data['css'] = $css;
+		$data['js'] = $js;
+
+		/* Monta telas */
+		$data['title_page'] = 'Módulo de Eventos';
+		$this -> load -> view('header/header', $data);
+
+		$data['content'] = '<div class="container">';
+		$this -> load -> view('content', $data);
+
 	}
 
 	function index() {
@@ -1060,16 +1166,15 @@ class evento extends CI_controller {
 					if (count($rlt) == 0) {
 						$rlt = $this -> usuarios -> consulta_cracha($cracha);
 					}
-					
-					if (isset($rlt['us_cracha'])) 
-						{
-							$id_us = $rlt['id_us'];
-							$evento = $_SESSION['evento'];
-							$this->eventos->insere_inscricao($evento,$id_us);
-						} else {
-							echo ' '.$cracha;
-							echo ' - <font color="red">ERRO</font>';
-						}
+
+					if (isset($rlt['us_cracha'])) {
+						$id_us = $rlt['id_us'];
+						$evento = $_SESSION['evento'];
+						$this -> eventos -> insere_inscricao($evento, $id_us);
+					} else {
+						echo ' ' . $cracha;
+						echo ' - <font color="red">ERRO</font>';
+					}
 					echo '<br>';
 
 				}

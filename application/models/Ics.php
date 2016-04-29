@@ -2183,11 +2183,12 @@ class ics extends CI_model {
 	}
 
 	function altera_status_projeto_submissao($proto, $sta, $sta_to) {
-		$sql = "update " . $this -> tabela_projetos . " set pj_status = '$sta_to' where pj_status = '$sta' and pj_codigo = '$proto'; " . cr();
+		$sql = "update " . $this -> tabela_projetos . " set pj_status = '$sta_to' where pj_codigo = '$proto'; " . cr();
 		$this -> db -> query($sql);
-
+		//echo '<br>'.$sql;
 		$sql = "update " . $this -> tabela_planos . " set doc_status = '$sta_to' where doc_protocolo_mae = '$proto' and doc_status = '$sta' " . cr();
 		$this -> db -> query($sql);
+		//echo '<br>'.$sql;
 	}
 
 	function mostra_projetos_situacao($cracha, $sta, $ano = '', $edital = '') {
@@ -2431,8 +2432,11 @@ class ics extends CI_model {
 		enviaremail_usuario($idu, $titulo . ' - ' . $proto, $text, $own);
 	}
 
-	function submit_altera_status($proto, $para) {
-		$proto = '2' . strzero($proto, 6);
+	function submit_altera_status($proto, $para,$de='@') {
+		if (strlen($proto) != 7)
+			{
+				$proto = '2' . strzero($proto, 6);
+			}
 
 		$sql = "update ic_submissao_projetos set pj_status = 'A' where pj_codigo = '$proto' ";
 		$rrr = $this -> db -> query($sql);
@@ -2444,13 +2448,173 @@ class ics extends CI_model {
 		for ($r = 0; $r < count($rrr); $r++) {
 			$line = $rrr[$r];
 			$proto_plano = $line['doc_protocolo'];
-			$sql = "update ic_ged_documento set doc_status = 'A' where doc_dd0 = '$proto_plano' and doc_status ='@' ";
+			$sql = "update ic_ged_documento set doc_status = '$para' where doc_dd0 = '$proto_plano' and doc_status ='$de' ";
 			$XXX = $this -> db -> query($sql);
-			$sql = "update ic_submissao_plano set doc_status = 'A' where doc_protocolo = '$proto_plano' and doc_status ='@' ";
+			$sql = "update ic_submissao_plano set doc_status = '$para' where doc_protocolo = '$proto_plano' and doc_status ='$de' ";
 			$XXX = $this -> db -> query($sql);
 		}
 		return (1);
 	}
+	
+	function incluir_membro_na_equipe($proto,$nome,$cpf,$cracha,$escola,$lock=0)
+		{
+			$sql = "select * from ic_submissao_projetos_equipe where ispe_protocolo = '$proto' and ispe_nome = '$nome' and ispe_ativo = 1";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			if (count($rlt) == 0)
+				{
+					if (strlen($cracha) == 0)
+						{
+							$type = "1";
+						} else {
+							$type = "0";
+						}
+						
+					/* Inserir */
+					$cpf = strzero(sonumero($cpf),11);
+					$sql = "insert into ic_submissao_projetos_equipe
+							(
+								ispe_tipo_user, ispe_nome, ispe_cracha,
+								ispe_protocolo, ispe_curso, ispe_cpf,
+								ispe_lock
+							)
+							values
+							(
+								'$type','$nome','$cracha',
+								'$proto','$escola','$cpf',
+								'$lock'
+							)";
+					$xxx = $this->db->query($sql);
+				}
+		}
+		
+	function equipe_membro_excluir($id)
+		{
+			$sql = "update ic_submissao_projetos_equipe set ispe_ativo = 0 where id_ispe = ".round($id);
+			$this->db->query($sql);
+		}
+		
+	function botao_novo_equipe_projeto($proto)
+		{
+			$sx = '<input type="button" value="Incluir membro na equipe >>>" id="novo_estudante">';
+			$sx .= '<br>';
+			$sx .= '<div id="novo_membro" style="display: none;">';
+			$sx .= 'Informe o número do cracha do estudante (Ex: 101882233441): ';
+			$sx .= '<input type="string" value="" name="cracha" id="cracha" size="12">';
+			$sx .= '<input type="button" value="Incluir >>>" id="novo_acao">';			
+			$sx .= '</div>';
+			$sx .= '
+			<script>
+				$("#novo_estudante").click(function() {
+					$("#novo_membro").toggle();
+				});
+				$("#novo_acao").click(function() {
+					var $cracha = $("#cracha").val();
+					$("#cracha").val("");
+						var $url = "' . base_url('index.php/ic/submit_ajax_equipe/'.$proto) . '/" + $cracha;
+						$.ajax({
+							url : $url,
+							type : "post",
+							success : function(data) {
+								$("#list_team").html(data);
+							}
+						});					
+				});				
+			</script>
+			';
+			return($sx);
+		}
+	
+	function lider_de_equipe($proto,$user)
+		{
+			$cracha = $user['us_cracha'];
+			
+			$sql = "select * from ic_submissao_projetos_equipe 
+						where ispe_protocolo = '$proto'
+							and ispe_ativo = 1 and ispe_cracha = '$cracha'
+						order by id_ispe ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			
+			if (count($rlt) == 0)
+				{
+					$lock = 1;
+					$nome = $user['us_nome'];
+					$cpf = $user['us_cpf'];
+					$cracha = $user['us_cracha'];
+					$escola = $user['us_curso_vinculo'];
+					$this->incluir_membro_na_equipe($proto,$nome,$cpf,$cracha,$escola,$lock);
+				}
+		}
+	
+	function lista_equipe_projeto($proto)
+		{
+			$sx = '';
+			$sx .= '<div id="list_team">'.cr();			
+			$sx .= $this->lista_equipe_projeto_lista($proto);			
+			$sx .= '</div>'.cr();
+			$sx .= '
+				<script>
+				function excluir_aluno($id)
+					{
+						var $url = "' . base_url('index.php/ic/submit_ajax_equipe_excluir/'.$proto) . '/" + $id;
+						$.ajax({
+							url : $url,
+							type : "post",
+							success : function(data) {
+								$("#list_team").html(data);
+							}
+						});						
+					}
+				</script>
+			';
+			return($sx);
+		}
+	function lista_equipe_projeto_lista($proto)	
+		{
+			$sx = '';
+			$sql = "select * from ic_submissao_projetos_equipe 
+						where ispe_protocolo = '$proto'
+							and ispe_ativo = 1 
+						order by id_ispe ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+
+			$sx .= '<table class="table">';
+			$sx .= '<tr>';
+			$sx .= '<th width="2%">#</th>
+					<th width="40%">nome</th>
+					<th width="8%">cracha</th>
+					<th width="12%">CPF</th>
+					<th width="33%">Curso / Escola</th>
+					<th width="5%">ação</th>
+					</tr>
+			';
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$link = 'Líder';
+					if ($line['ispe_lock'] != '1')
+						{
+							$link = '<span class="link" style="cursor: handle; color: red;" onclick="excluir_aluno(\''.$line['id_ispe'].'\');">excluir</span>';
+						}
+					$sx .= '<tr>';
+					$sx .= '<td>'.($r+1).'</td>';
+					$sx .= '<td>'.$line['ispe_nome'].'</td>';
+					$sx .= '<td>'.$line['ispe_cracha'].'</td>';
+					$sx .= '<td>'.'<nobr>'.mask_cpf($line['ispe_cpf']).'</nobr></td>';
+					$sx .= '<td>'.$line['ispe_curso'].'</td>';
+					$sx .= '<td align="center">'.$link.'</td>';
+					$sx .= '</tr>';
+				}
+			if (count($rlt)==0)
+				{
+					$sx .= '<tr><td colspan="6"><font color="red">Nenhum membro registrado na equipe</td></tr>';
+				}
+			$sx .= '</table>';
+			return($sx);
+		}
 
 	/*********************** validacao ****************************************************/
 	function valida_entrada($id = '') {
@@ -3467,11 +3631,11 @@ class ics extends CI_model {
 		$rlt = $this -> db -> query($sql);
 	}
 
-	function projeto_novo($cracha) {
+	function projeto_novo($cracha,$modalidade='IC',$redirect=1) {
 		$ano = date("Y");
 		$data = date("Y-m-d");
 
-		$id = $this -> exist_submit($cracha, $ano);
+		$id = $this -> exist_submit($cracha, $ano, $modalidade);
 		if ($id == 0) {
 			$sql = "insert into " . $this -> tabela_projetos . " 
 							(
@@ -3479,22 +3643,26 @@ class ics extends CI_model {
 							pj_ano,	pj_grupo_pesquisa, pj_dt_update,
 							pj_update, pj_status, pj_professor
 							) values (
-							'IC','','',
+							'$modalidade','','',
 							'$ano','','$data',
 							'$data','@','$cracha') ";
 			$rlt = $this -> db -> query($sql);
-			$id = $this -> exist_submit($cracha, $ano);
+			$id = $this -> exist_submit($cracha, $ano, $modalidade);
 		}
 
 		$this -> updatex();
-		$url = base_url('index.php/ic/submit_edit/IC/' . $id . '/' . checkpost_link($id));
-		redirect($url);
+		
+		if ($redirect == 1)
+			{
+				$url = base_url('index.php/ic/submit_edit/'.$modalidade.'/' . $id . '/' . checkpost_link($id));
+				redirect($url);
+			}
 		return ($id);
 	}
 
-	function exist_submit($cracha, $ano) {
+	function exist_submit($cracha, $ano, $modalidade = 'IC') {
 		$sql = "select id_pj from " . $this -> tabela_projetos . " where pj_status = '@' 
-							and pj_edital = 'IC' 
+							and pj_edital = '$modalidade' 
 							and pj_ano = '$ano' 
 							and pj_professor = '$cracha' 
 							LIMIT 1";

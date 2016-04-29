@@ -9,12 +9,12 @@ class Geds extends CI_Model {
 	var $total_files = 0;
 	var $extension = array('.pdf');
 
-	function form_upload($id = 0, $frame) {
+	function form_upload($id = 0, $frame, $type='') {
 		$sx = '
 				<input type="button" value="' . msg('ged_upload') . '" id="ged_upload">
 				<script>
 					$("#ged_upload").click(function() {
-						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged/') . '/' . $id . '",600,400);
+						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged/') . '/' . $id.'/'.$type . '",600,400);
 					});
 					
 				function newwindows(url, xx, yy) {
@@ -384,14 +384,13 @@ class Geds extends CI_Model {
 	function documents_type_form($tipo,$class='') {
 		if (strlen($tipo) > 0)
 			{
-				$wh = " AND doct_codigo = '$tipo' ";
+				$wh = " doct_codigo = '$tipo' ";
 			} else {
-				$wh = '';
+				$wh = ' doct_ativo = 1 ';
 			}
 		
 		$sql = "select * from " . $this -> tabela . "_tipo 
-				WHERE doct_ativo = 1 
-				$wh ";
+				WHERE $wh ";
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);

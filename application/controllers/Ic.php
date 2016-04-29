@@ -23,7 +23,6 @@ class ic extends CI_Controller {
 	}
 
 	function security() {
-
 		/* Seguranca */
 		$this -> load -> model('usuarios');
 		$this -> usuarios -> security();
@@ -75,6 +74,52 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_open');
 		$data['logo'] = base_url('img/logo/logo_ic.png');
 		$this -> load -> view('header/logo', $data);
+	}
+
+	function submit_ajax_equipe_excluir($idp = '', $ida = 0) {
+		$this -> load -> model('ics');
+		$this -> ics -> equipe_membro_excluir($ida);
+
+		$data['content'] = $this -> ics -> lista_equipe_projeto_lista($idp) . ' ' . date("Y:m:d H:i:s");
+		$this -> load -> view('content', $data);
+	}
+
+	function submit_ajax_equipe($proto = '', $cracha) {
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');
+		$sx = '';
+		
+		$user = $this->usuarios->le_cracha($cracha);
+		
+		if (count($user) == 0) {
+			echo '<HR>CONSULTA<hr>';
+			$cracha2 = $this -> usuarios -> consulta_cracha($cracha);
+		} else {
+			$cracha2 = $user['us_cracha'];
+		}
+		
+		if (strlen($cracha2) > 0) {
+			$user = $this -> usuarios -> le_cracha($cracha2);
+			$lock = 0;
+			$nome = $user['us_nome'];
+			$cpf = $user['us_cpf'];
+			$cracha = $user['us_cracha'];
+			$escola = $user['us_curso_vinculo'];
+			
+			$this -> ics->incluir_membro_na_equipe($proto, $nome, $cpf, $cracha, $escola, $lock);
+		} else {
+			$sx .= '
+				<script>
+					alert("Codigo do Aluno não localizado");
+				</script>
+				';
+			$data['content'] = $sx;
+			$this -> load -> view('content', $data);
+		}
+
+		$data['content'] = $this -> ics -> lista_equipe_projeto_lista($proto) . ' ' . date("Y:m:d H:i:s");
+		$this -> load -> view('content', $data);
+
 	}
 
 	function implementacao_manual() {
@@ -150,34 +195,34 @@ class ic extends CI_Controller {
 
 						if ($chk3 == 0) {
 							$sql = "insert into ic
-	(
-	ic_cracha_prof, ic_cracha_aluno, s_id,
-	s_id_char, ic_dt_ativacao, 
-	ic_data, ic_hora, ic_ano,
-	
-	ic_projeto_professor_codigo, ic_projeto_professor_titulo, ic_plano_aluno_codigo,
-	ic_plano_aluno_nome	
-	) values (
-	'$prof','$estudante','1',
-	'A','$data_ativacao',
-	'$data','$hora','$ano',
-	
-	'$proto','$titulo','$proto'
-	,'$titulo'
-	)";
+										(
+										ic_cracha_prof, ic_cracha_aluno, s_id,
+										s_id_char, ic_dt_ativacao, 
+										ic_data, ic_hora, ic_ano,
+										
+										ic_projeto_professor_codigo, ic_projeto_professor_titulo, ic_plano_aluno_codigo,
+										ic_plano_aluno_nome	
+										) values (
+										'$prof','$estudante','1',
+										'A','$data_ativacao',
+										'$data','$hora','$ano',
+										
+										'$proto','$titulo','$proto'
+										,'$titulo'
+										)";
 							$this -> db -> query($sql);
 							$idr = $this -> ics -> recupera_nr_ic($proto);
 							if (count($idr) > 0) {
 								$idp = $idr['id_ic'];
 								$sql = "insert into ic_aluno
-	(aluno_id, ic_aluno_cracha, ic_id,
-	mb_id, 	icas_id, aic_dt_entrada, 
-	aic_dt_inicio_bolsa
-	) values (
-	$aluno,'$aluno_cracha', $idp,
-	$mdo, 1, '$data_ativacao',
-	'$data_ativacao'
-	)";
+											(aluno_id, ic_aluno_cracha, ic_id,
+											mb_id, 	icas_id, aic_dt_entrada, 
+											aic_dt_inicio_bolsa
+											) values (
+											$aluno,'$aluno_cracha', $idp,
+											$mdo, 1, '$data_ativacao',
+											'$data_ativacao'
+											)";
 								$rlt = $this -> db -> query($sql);
 								$this -> load -> view('sucesso');
 								return ('');
@@ -398,7 +443,7 @@ class ic extends CI_Controller {
 		}
 		$data['bp_atual'] = $pag;
 		$tipo = UpperCase($tipo);
-		
+
 		switch ($tipo) {
 			case 'IC' :
 				$bp[1] = 'Projeto do Professor';
@@ -448,10 +493,9 @@ class ic extends CI_Controller {
 						break;
 
 					case '5' :
-						
 						$this -> ics -> submit_enviar_email($id);
-						
-						$this -> ics -> submit_altera_status($id, 'A');
+
+						$this -> ics -> submit_altera_status($id, 'A', '@');
 						redirect(base_url('index.php/ic/submit_finished/' . $id));
 						break;
 				}
@@ -2575,7 +2619,8 @@ class ic extends CI_Controller {
 		if ($form -> saved > 0) {
 			$proto = get('dd1');
 			$pj = $this -> ics -> le_projeto_protocolo($proto);
-			if (($pj['pj_status'] != '@') and ($pj['pj_status'] != 'X')) {
+			echo '===>' . $pj['pj_status'];
+			if (($pj['pj_status'] == 'A')) {
 				if (count($pj) > 0) {
 					$user = $this -> usuarios -> le_cracha($pj['pj_professor']);
 					$us_id = $user['id_us'];
@@ -2593,6 +2638,7 @@ class ic extends CI_Controller {
 					enviaremail_usuario(1, $msg['nw_titulo'], $msg['nw_texto'], 2);
 
 					$this -> ics -> altera_status_projeto_submissao($proto, $pj['pj_status'], '@');
+					$this -> ics -> submit_altera_status($proto, '@', 'A');
 
 					$this -> load -> view('sucesso', null);
 				} else {
@@ -3017,7 +3063,7 @@ class ic extends CI_Controller {
 		$this -> load -> model('geds');
 
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$this -> geds -> page = base_url('index.php/ic/ged/' . $id);
+		$this -> geds -> page = base_url('index.php/ic/ged/' . $id . '/' . $proto . '/' . $tipo . '/' . $check);
 
 		$data['content'] = $this -> geds -> form($id, $proto, $tipo);
 		$this -> load -> view('content', $data);
@@ -3061,7 +3107,7 @@ class ic extends CI_Controller {
 
 	}
 
-	function cockpit($ano='') {
+	function cockpit($ano = '') {
 		$this -> load -> model('ics');
 		$this -> cab();
 		$data = array();
@@ -3076,7 +3122,7 @@ class ic extends CI_Controller {
 
 		if ($form -> saved or (strlen($ano) > 0)) {
 
-			$ano = get("dd1").$ano;
+			$ano = get("dd1") . $ano;
 			$data['content'] = $this -> ics -> cockpit_resumo($ano);
 			$this -> load -> view('content', $data);
 
