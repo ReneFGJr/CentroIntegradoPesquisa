@@ -36,6 +36,22 @@ class evento extends CI_controller {
 		}
 		return ('');
 	}
+	
+	function submit_success($id=0,$idp=0)
+		{
+		$this -> load -> model('evento/eventos');
+		$this -> cab_evento();
+
+		$evento = $this -> eventos -> le($id);
+		$ev = $evento['ev_model'];
+		$filename = 'application/models/' . $ev . '.php';
+
+		/* Mostra Banner de Logo */
+		$this -> banner_logo($evento);
+		
+		$data['volta'] = $evento['ev_logo'];
+		$this->load->view('sucesso',$data);
+		}
 
 	function submissao($id = '') {
 		$this -> load -> model('evento/eventos');

@@ -18,8 +18,6 @@ class ic extends CI_Controller {
 		$this -> load -> library('session');
 
 		date_default_timezone_set('America/Sao_Paulo');
-		/* Security */
-		$this -> security();
 	}
 
 	function security() {
@@ -29,6 +27,9 @@ class ic extends CI_Controller {
 	}
 
 	function cab() {
+		/* Security */
+		$this -> security();
+				
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
@@ -74,52 +75,6 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_open');
 		$data['logo'] = base_url('img/logo/logo_ic.png');
 		$this -> load -> view('header/logo', $data);
-	}
-
-	function submit_ajax_equipe_excluir($idp = '', $ida = 0) {
-		$this -> load -> model('ics');
-		$this -> ics -> equipe_membro_excluir($ida);
-
-		$data['content'] = $this -> ics -> lista_equipe_projeto_lista($idp) . ' ' . date("Y:m:d H:i:s");
-		$this -> load -> view('content', $data);
-	}
-
-	function submit_ajax_equipe($proto = '', $cracha) {
-		$this -> load -> model('ics');
-		$this -> load -> model('usuarios');
-		$sx = '';
-		
-		$user = $this->usuarios->le_cracha($cracha);
-		
-		if (count($user) == 0) {
-			echo '<HR>CONSULTA<hr>';
-			$cracha2 = $this -> usuarios -> consulta_cracha($cracha);
-		} else {
-			$cracha2 = $user['us_cracha'];
-		}
-		
-		if (strlen($cracha2) > 0) {
-			$user = $this -> usuarios -> le_cracha($cracha2);
-			$lock = 0;
-			$nome = $user['us_nome'];
-			$cpf = $user['us_cpf'];
-			$cracha = $user['us_cracha'];
-			$escola = $user['us_curso_vinculo'];
-			
-			$this -> ics->incluir_membro_na_equipe($proto, $nome, $cpf, $cracha, $escola, $lock);
-		} else {
-			$sx .= '
-				<script>
-					alert("Codigo do Aluno não localizado");
-				</script>
-				';
-			$data['content'] = $sx;
-			$this -> load -> view('content', $data);
-		}
-
-		$data['content'] = $this -> ics -> lista_equipe_projeto_lista($proto) . ' ' . date("Y:m:d H:i:s");
-		$this -> load -> view('content', $data);
-
 	}
 
 	function implementacao_manual() {

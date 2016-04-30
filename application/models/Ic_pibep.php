@@ -1,6 +1,8 @@
 <?php
 class ic_pibep extends CI_model {
 	
+	var $validated = False;
+	
 	function welcome()
 		{
 			$txt = '<div class="containter text-left">';
@@ -21,6 +23,15 @@ class ic_pibep extends CI_model {
 
 		$prt = $this -> ics -> le_projeto($ids);
 		$proto = $prt['pj_codigo'];
+		$status = $prt['pj_status'];
+		
+		if ($status <> '@')
+			{
+				$txt = '<div  class="danger text-center">
+							<h1>Projeto não está habilitado para edição</h1>
+						</div>';
+				return($txt);
+			}
 		
 		$cracha = $prt['pj_professor'];
 		$user = $this -> usuarios -> le_cracha($cracha);		
@@ -43,11 +54,6 @@ class ic_pibep extends CI_model {
 		array_push($cp, array('$A', '', 'Título do projeto', False, True));
 		array_push($cp, array('$T80:3', 'pj_titulo', '', False, True));
 
-		$txt = '<br><br><fieldset><legend>Validação da Submissão</legend>';
-		$txt .= $this -> validacao($ids);
-		$txt .= '</fieldset>';
-		array_push($cp, array('$M', '', $txt, False, True));
-		
 		/**************************************************************************** ESTUDANTES */
 
 		$txt = '<br><br><fieldset><legend>Equipe</legend>';
@@ -92,7 +98,20 @@ class ic_pibep extends CI_model {
 
 		$tela .= '<br><br><br>';
 
-		return ($tela);
+		$txt = '<br><br><fieldset><legend>Validação da Submissão</legend>';
+		$txt .= $this -> validacao($ids);
+		$txt .= '</fieldset>';
+		
+		/* VALIDADO */
+		if ($this->validated == 1)
+			{
+				$this->ics->altera_status_projeto_submissao($proto,'@','A');
+				$url = base_url('index.php/evento/submit_success/'.$idp.'/'.$ids);
+				redirect($url);				
+				exit;
+			}
+		
+		return ($txt.$tela);
 	}
 
 	function validacao($proto_id) {
@@ -164,7 +183,10 @@ class ic_pibep extends CI_model {
 			$line = $rlt[$r];
 			$cracha = trim($line['ispe_cracha']);
 			if (strlen($cracha) > 0) {
-				$sql = "select * from ic_submissao_projetos_equipe where ispe_protocolo <> '$proto' and ispe_cracha = '$cracha' ";
+				$sql = "select * from ic_submissao_projetos_equipe
+							inner join ic_submissao_projetos on pj_codigo = ispe_protocolo
+							where ispe_protocolo <> '$proto' and ispe_cracha = '$cracha' 
+									and (pj_status <> '@' and pj_status <> 'X')";
 				$rrr = $this -> db -> query($sql);
 				$rrr = $rrr -> result_array();
 
@@ -220,6 +242,16 @@ class ic_pibep extends CI_model {
 
 		$sx .= '<tr class="' . $vd[6] . '"><td>Membros da equipe (entre 2 e 5 alunos) - ' . count($rlt) . ' as membros registrados</td><td align="center">' . $vdt[6] . '</tr>';
 		$sx .= '</table>';
+		
+		$validated = True;
+		for ($r=0;$r <= 6;$r++)
+			{
+				if ($vdt[$r] != $ok)
+					{
+						$validated = False;
+					}
+			}
+		$this->validated = $validated;
 		return ($sx);
 	}
 

@@ -2512,7 +2512,7 @@ class ics extends CI_model {
 				$("#novo_acao").click(function() {
 					var $cracha = $("#cracha").val();
 					$("#cracha").val("");
-						var $url = "' . base_url('index.php/ic/submit_ajax_equipe/'.$proto) . '/" + $cracha;
+						var $url = "' . base_url('index.php/ajax/submit_ajax_equipe/'.$proto) . '/" + $cracha;
 						$.ajax({
 							url : $url,
 							type : "post",
@@ -2558,7 +2558,7 @@ class ics extends CI_model {
 				<script>
 				function excluir_aluno($id)
 					{
-						var $url = "' . base_url('index.php/ic/submit_ajax_equipe_excluir/'.$proto) . '/" + $id;
+						var $url = "' . base_url('index.php/ajax/submit_ajax_equipe_excluir/'.$proto) . '/" + $id;
 						$.ajax({
 							url : $url,
 							type : "post",
