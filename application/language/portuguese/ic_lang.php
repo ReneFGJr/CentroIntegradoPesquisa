@@ -17,4 +17,12 @@ $lang['ic_cancelar_project'] = 'Canclear projeto e Planos';
 $lang['projeto_titulo'] = 'Título do projeto de pesquisa';
 $lang['area'] = 'Área';
 $lang['em_submetidos'] = 'submetidos';
+
+$lang['status_pj_@'] = 'Projeto em submissão';
+$lang['status_pj_A'] = 'Projeto submetido';
+$lang['status_pj_B'] = 'Projeto validado';
+$lang['status_pj_C'] = 'Projeto em avaliação da comissão científica';
+$lang['status_pj_D'] = 'Projeto aguardando edital';
+$lang['status_pj_F'] = 'Projeto publicado';
+$lang['status_pj_X'] = 'Projeto cancelado';
 ?>

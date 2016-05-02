@@ -7,6 +7,9 @@ switch ($pj_edital)
 	case 'ICMST':
 		$logo = '<img src="'.base_url('img/logo/logo_ic_master.png').'" width="150">';
 		break;
+	case 'PIBEP':
+		$logo = '<img src="'.base_url('img/logo/logo_pibep.png').'" width="150">';
+		break;		
 	}
 ?>
 <table class="captacao_folha border1 black" width="100%" border=0>
@@ -45,10 +48,24 @@ switch ($pj_edital)
 		<td align="left" colspan=2><?php echo $ac_nome_area;?>(<?php echo $pj_area;?>)</td>
 		<td align="left" colspan=3 class="lt2"><b><?php echo $ssi_descricao;?></b></td>
 	</tr>
-	<tr class="lt2" align="left">
+	<tr class="lt1" align="left">
 		<td align="left" colspan=5>
 			<?php echo $ged;?>
 			<?php echo $ged_arquivos;?>			
 		</td>
 	</tr>	
+	<?php if (strlen($pj_coment) > 0) { ?>
+	<tr class="lt1" align="left" >
+		<td colspan=2>Informações: <?php echo $pj_coment; ?></td>
+	</tr>
+	<?php } ?>
+	
+	<?php 
+	if (isset($equipe))
+		{
+	if (strpos($equipe,'Nenhum membro registrado na equipe') == 0) { ?>
+	<tr class="lt1" align="left" >
+		<td colspan=2>Equipe do projeto: <?php echo $equipe; ?></td>
+	</tr>
+	<?php } } ?>	
 </table>

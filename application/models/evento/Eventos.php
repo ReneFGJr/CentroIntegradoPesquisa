@@ -4,6 +4,68 @@ class eventos extends CI_model {
 	var $tabela_mailing = 'evento_mailing';
 	var $tabela_usuario = 'us_usuario';
 	var $tano_evento = '2014';
+	
+	function perfil_presenca($tipo = 1)
+		{
+		if (!isset($_SESSION['evento'])) {
+			echo 'Evento não selecionado';
+			exit ;
+		}
+		$whe = " ei_evento_chegada <> '0000-00-00' ";
+		
+		$id = $_SESSION['evento'];
+		
+		$sql = "select * 
+				from evento_inscricao 
+					inner join us_usuario on ei_us_usuario_id = id_us
+					where ei_evento_id = $id 
+					and ei_status > 0 and $whe
+					order by us_curso_vinculo";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$ps = 0;
+		$au = 0;
+		$curso = array();
+		$sx = '';
+		$aluno = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			
+
+			$line = $rlt[$r];
+
+			$cur = trim($line['us_curso_vinculo']);
+			if (strlen($cur) == 0)
+				{
+					$cur = 'não identificado';
+					$aluno .= $line['us_cracha'].'; ';
+				}
+			if (isset($curso[$cur]))
+				{
+					$curso[$cur] = $curso[$cur] + 1;
+				} else {
+					$curso[$cur] = 1;
+				}
+			$tot++;
+		}
+		$r = 0;
+		foreach ($curso as $key => $value) {
+			
+				$r++;
+				$sx .= '<tr>';
+				$sx .= '<td class="border1">'.$r.'</td>';
+				$sx .= '<td class="border1">'.$key.'</td>';
+				$sx .= '<td class="border1" align="center">'.$value.'</td>';
+				$sx .= '</tr>';
+			}
+
+		$sx = '<table width="640" class="tabela01" align="center">
+				<tr><th>#</th><th>curso</th><th>total</th>'.$sx;
+		$sx .= '<tr><td colspan=2>Total '.$tot;
+		$sx .= '</table>';
+		
+		return ($sx);
+		}
 
 	function insere_inscricao($evento, $us_id) {
 		$sql = "select * from evento_inscricao

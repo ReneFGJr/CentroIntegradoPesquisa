@@ -13,8 +13,14 @@ if (!isset($hd))
 	}
 	
 	$link = '<a href="'.base_url('index.php/ic/projeto_view/'.$id_pj.'/'.checkpost_link($id_pj)).'" target="_new" class="link lt1">';
+	
+	$class = "";
+	if (isset($igual) and $igual == 1)
+		{
+			$class = "danger";
+		}
 ?>
-<tr>
+<tr class="<?php echo $class;?>">
 	<td class="borderb1" align="center"><?php echo $nr;?></td>
 	<td class="borderb1" align="center"><?php echo $link.$pj_codigo.'</a>';?></td>
 	<td class="borderb1"><?php echo $pj_titulo;?></td>

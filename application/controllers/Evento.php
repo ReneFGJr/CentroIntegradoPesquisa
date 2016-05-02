@@ -19,10 +19,10 @@ class evento extends CI_controller {
 	}
 
 	function banner_logo($evento) {
-		/* Area de teste */	
+		/* Area de teste */
 		//$data['content'] = '<style> body { background-color: #cccccc; } </style>' . cr();
-		//$this -> load -> view('content', $data);	
-		
+		//$this -> load -> view('content', $data);
+
 		$logo = $evento['ev_logo_img'];
 		if (strlen($logo) > 0) {
 			if (file_exists($logo)) {
@@ -62,8 +62,6 @@ class evento extends CI_controller {
 		$evento = $this -> eventos -> le($id);
 		$ev = $evento['ev_model'];
 		$filename = 'application/models/' . $ev . '.php';
-		
-
 
 		/* Mostra Banner de Logo */
 		$this -> banner_logo($evento);
@@ -96,10 +94,10 @@ class evento extends CI_controller {
 		$this -> cab_evento();
 
 		$evento = $this -> eventos -> le($id);
-		
+
 		/* Mostar Banner */
-		$this->banner_logo($evento);
-		
+		$this -> banner_logo($evento);
+
 		$ev = $evento['ev_model'];
 		$filename = 'application/models/' . $ev . '.php';
 		if (file_exists($filename)) {
@@ -216,6 +214,7 @@ class evento extends CI_controller {
 			array_push($menus, array('Inscrições', 'index.php/evento/inscricoes'));
 			array_push($menus, array('Lista de presença', 'index.php/evento/lista_presenca'));
 			array_push($menus, array('Peças marketing', 'index.php/evento/pecas'));
+			array_push($menus, array('Relatório', 'index.php/evento/relatorio'));
 		}
 
 		/* Monta telas */
@@ -274,6 +273,35 @@ class evento extends CI_controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	function relatorio() {
+		$this -> cab();
+		
+		/* Load Models */
+		$this -> load -> model('evento/eventos');
+		if (!isset($_SESSION['evento'])) {
+			echo 'Evento não selecionado';
+		}
+		$ev = $_SESSION['evento'];		
+
+		/* Titulo do evento */
+		$ml = $this -> eventos -> le($ev);
+		$data['content'] = '<h1>evento: ' . $ml['ev_nome'] . '</h1>';
+		$this -> load -> view("content", $data);
+
+		//if (strlen($tp) > 0) {
+
+			/* Dados do evento */
+			$tela = $this -> eventos -> resumo_presenca();
+			$data['content'] = $tela;
+			$this -> load -> view("content", $data);
+			
+			/* Dados do evento */
+			$tela = $this -> eventos -> perfil_presenca();
+			$data['content'] = $tela;
+			$this -> load -> view("content", $data);			
+		//}
 	}
 
 	function pecas($tipo = '') {
