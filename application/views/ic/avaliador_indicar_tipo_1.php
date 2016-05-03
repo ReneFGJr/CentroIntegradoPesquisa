@@ -4,8 +4,8 @@
 	<input type="hidden" value="RPAR" name="dd1">
 	<table width="100%">
 		<tr>
-			<th width="50%"><?php echo msg('ic_avaliador_interno');?></th>
-			<th width="50%"><?php echo msg('ic_avaliador_gestor');?></th>
+			<th width="67%"><?php echo msg('ic_avaliador_interno');?></th>
+			<th width="33%"><?php echo msg('ic_avaliador_gestor');?></th>
 		</tr>
 		<tr>
 			<td><?php echo $sa;?></td>

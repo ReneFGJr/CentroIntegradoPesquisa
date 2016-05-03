@@ -1,6 +1,100 @@
 <?php
 class avaliadores extends CI_Model {
 
+	function marcar_para_enviar_convite_externos() {
+		$sql = "select * from us_usuario
+							left join us_avaliador_area on pa_parecerista = id_us
+							left join us_avaliador_situacao on us_avaliador = id_as
+							left join us_titulacao on ust_id = usuario_titulacao_ust_id
+							left join ies_instituicao on ies_instituicao_ies_id = id_ies
+						where (us_avaliador <> 0) and (us_avaliador <> 8) and (us_ativo = 1) 
+								and (ies_instituicao_ies_id <> 1)
+						order by us_nome					
+				";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$id_us = $line['id_us'];
+			$sql = "update us_usuario set us_avaliador = 8 where id_us = " . $id_us . ';' . cr();
+			$rrr = $this -> db -> query($sql);
+		}
+		return ('');
+	}
+
+	function enviar_convite_avaliador($tipo) {
+		$limit = 20;
+		$this -> load -> model('Mensagens');
+		$sql = "select * from us_usuario
+							left join us_avaliador_area on pa_parecerista = id_us
+							left join us_avaliador_situacao on us_avaliador = id_as
+							left join us_titulacao on ust_id = usuario_titulacao_ust_id
+							left join area_conhecimento on ac_cnpq = pa_area
+							left join (select count(*) as emails, usuario_id_us from us_email where usm_ativo = 1 group by usuario_id_us ) as email on id_us = usuario_id_us
+							left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
+						where us_avaliador = 8 and us_ativo = 1 and pa_ativo = 1
+						order by us_nome, ac_cnpq				
+				";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$text = $this -> Mensagens -> busca('AVAL_IC_CONVITE_EXT', null);
+		$xid = 0;
+		$xarea = '';
+		$nome = '';
+		$to = 0;
+		$sx = '';
+		for ($r = 0; $r < (count($rlt) + 1); $r++) {
+			if (isset($rlt[$r])) {
+				$line = $rlt[$r];
+				$id = $line['id_us'];
+			} else {
+				$id = 0;
+			}
+			if ($id != $xid) {
+				if (strlen($nome) > 0) {
+					$link = '<BR><a href="' . base_url('index.php/ajax/aceite/' . $xid . '/1/' . checkpost_link($xid)) . '" 
+												style="border: 1px solid #008000; background-color: #a0ffa0; padding: 5px 20px; text-decoration: none;" 
+											>ACEITAR</A>';
+					$link .= ' | ';
+					$link .= '<a href="' . base_url('index.php/ajax/aceite/' . $xid . '/-1/' . checkpost_link($xid)) . '"" 
+												style="border: 1px solid #FF0000; background-color: #ffa0a0; padding: 5px 20px; text-decoration: none;" 
+											>RECUSAR</A>';
+
+					$ttt = $text['nw_texto'];
+					$ttt = troca($ttt, '$NOME', '<b>' . $nome . '</b>');
+					$ttt = troca($ttt, '$AREAS', $xarea);
+					$ttt = troca($ttt, '$CONFIRMAR', $link);
+
+					$own = $text['nw_own'];
+					$titulo = '[PUCPR]' . ' - ' . $text['nw_titulo'];
+
+					enviaremail_usuario($xid, $titulo, $ttt, $own);
+
+					$sql = "update us_usuario set us_avaliador = 9 where id_us = " . round($xid);
+					$xxx = $this -> db -> query($sql);
+
+					$sx .= '<br>' . $nome . ' <font color="green">Enviado convite</font>';
+					$to++;
+
+					if ($to >= $limit) { $r = count($rlt);
+					}
+				}
+				if ($id > 0) {
+					$nome = $line['us_nome'];
+				}
+				$xid = $id;
+				$xarea = '<h5>Áreas atribuídas para avaliação</h5>';
+			}
+			if ($id > 0) {
+				$xarea .= '<tt>' . $line['ac_cnpq'] . ' - ' . $line['ac_nome_area'] . '</tt><br>';
+			}
+		}
+		if ($to == $limit) {
+			$sx .= cr() . ' <meta http-equiv="refresh" content="5">';
+		}
+		return ($sx);
+	}
+
 	function avaliador_area_impar($id = 0) {
 		$sql = "delete from us_avaliador_area 
 						where pa_ativo = 0 and pa_parecerista = " . round($id);
@@ -9,7 +103,9 @@ class avaliadores extends CI_Model {
 	}
 
 	function zera_avaliadores() {
-		$sql = "update us_usuario set us_avaliador = 0 where us_avaliador <> 0  ";
+		$sql = "update us_usuario set us_avaliador = 0
+					where us_avaliador <> 0  
+					and ies_instituicao_ies_id = 1";
 		$rlt = $this -> db -> query($sql);
 		print_r($rlt);
 	}
@@ -136,6 +232,7 @@ class avaliadores extends CI_Model {
 
 	/*************** áreas do avaliador ****************************************/
 	function avaliador_area($id) {
+
 		$sql = "select * from us_usuario
 						left join us_avaliador_area on pa_parecerista = id_us
 						left join us_avaliador_situacao on us_avaliador = id_as
@@ -196,7 +293,14 @@ class avaliadores extends CI_Model {
 		return ($sx);
 	}
 
-	function avaliadores_area($sem_area = 0) {
+	function avaliadores_area($sem_area = 0, $tipo = '') {
+
+		$wh = '';
+		if ($tipo == 'e') { $wh .= ' and ies_instituicao_ies_id <> 1 ';
+		}
+		if ($tipo == 'i') { $wh .= ' and ies_instituicao_ies_id = 1 ';
+		}
+
 		$sql = "select * from us_usuario
 						left join us_avaliador_area on pa_parecerista = id_us
 						left join us_avaliador_situacao on us_avaliador = id_as
@@ -204,7 +308,8 @@ class avaliadores extends CI_Model {
 						left join area_conhecimento on ac_cnpq = pa_area
 						left join (select count(*) as emails, usuario_id_us from us_email where usm_ativo = 1 group by usuario_id_us ) as email on id_us = usuario_id_us
 						left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
-					where us_avaliador > 0
+						left join ies_instituicao on ies_instituicao_ies_id = id_ies
+					where us_avaliador <> 0 and us_ativo = 1 $wh
 					order by us_nome, ac_cnpq					
 			";
 		$rlt = db_query($sql);
@@ -230,7 +335,8 @@ class avaliadores extends CI_Model {
 				$sx .= '<tr ' . $bg . '>';
 				$sx .= '<td style="padding: 3px;"  class="border1" align="center" width="70">' . $link . $line['us_cracha'] . '</a>' . '</td>';
 				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['ust_titulacao_sigla'] . ' ' . $link . $line['us_nome'] . '</a>' . '</td>';
-				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['us_campus_vinculo'] . '</td>';
+				$sx .= '<td style="padding: 3px;"  class="border1">' . $line['us_campus_vinculo'] . ' ' . $line['ies_sigla'] . '</td>';
+				$sx .= '<td>' . $line['ies_instituicao_ies_id'] . '</td>';
 
 				$msg_email = '<font class="error">' . msg('email_sem') . '</a>';
 				if ($e > 0) {

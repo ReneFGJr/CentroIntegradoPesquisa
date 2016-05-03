@@ -408,7 +408,6 @@ class Ic_pareceres extends CI_model {
 						left join area_conhecimento on ic_semic_area = ac_cnpq					 
 					 WHERE pp_avaliador_id = $id_us 
 					 AND pp_status = 'A' ";
-
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -438,6 +437,32 @@ class Ic_pareceres extends CI_model {
 			$sx .= '<td class="border1">' . $botao . '</td>';
 			$sx .= '</tr>';
 		}
+
+		$sql = "select * from " . $this -> tabela . "
+					 INNER JOIN ic_submissao_projetos on pp_protocolo = pj_codigo
+					 INNER JOIN us_usuario on us_cracha = pj_professor
+					 left join area_conhecimento on pj_area = ac_cnpq
+					 WHERE pp_avaliador_id = $id_us 
+					 AND pp_status = 'A' ";
+		
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$link = base_url('index.php/avaliador/ficha/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp']));
+			$botao = '<a href="' . $link . '" class="botao3d back_green_shadown back_green">Avaliar</a>';
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center">' . ($r + 1) . '</td>';
+			$sx .= '<td class="border1">' . $line['pp_protocolo'] . '</td>';
+			$sx .= '<td class="border1">' . $line['pj_titulo'] . '</td>';
+			$sx .= '<td class="border1">' . $line['us_nome'] . '</td>';
+			$sx .= '<td class="border1">' . $line['ac_nome_area'] . '</td>';
+			$sx .= '<td class="border1" align="center" colspan=2 >' . $line['pj_edital'] . '/'.$line['pj_ano']. '</td>';
+			$sx .= '<td class="border1">' . $botao . '</td>';
+			$sx .= '</tr>';
+		}
+
+
 		$sx .= '</table>';
 		return ($sx);
 	}
@@ -480,7 +505,8 @@ class Ic_pareceres extends CI_model {
 			inner join us_usuario on pa_parecerista = id_us
 			LEFT JOIN area_conhecimento on pa_area = ac_cnpq
 			left join (SELECT COUNT(*) as indicados, pp_avaliador_id as id_av_usuario from pibic_parecer_" . date("Y") . " where pp_tipo = '$tipo' and (pp_status = '@' or pp_status = 'A' or pp_status = 'B') group by pp_avaliador_id ) as indicados on id_us = id_av_usuario
-			left join (SELECT COUNT(*) as declinados, pp_avaliador_id as id_dc_usuario from pibic_parecer_" . date("Y") . " where pp_tipo = '$tipo' and (pp_status = 'D') group by pp_avaliador_id ) as declinados on id_us = id_dc_usuario 
+			left join (SELECT COUNT(*) as declinados, pp_avaliador_id as id_dc_usuario from pibic_parecer_" . date("Y") . " where pp_tipo = '$tipo' and (pp_status = 'D') group by pp_avaliador_id ) as declinados on id_us = id_dc_usuario
+			left join ies_instituicao on ies_instituicao_ies_id = id_ies    
 			WHERE pa_area like '$area%' 
 				/* and substr(pa_area,6,2) = '00' */
 				AND pa_ativo = 1 and us_avaliador = 1
@@ -495,8 +521,14 @@ class Ic_pareceres extends CI_model {
 
 		$xarea = '';
 		$ed = 0;
+		$co1 = '';
+		$co2 = '';
+		$co3 = '';
+		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			$inst = $line['ies_instituicao_ies_id'];
+			
 			$dec = '';
 			$ind = '';
 			if ($line['declinados'] > 0) {
@@ -507,27 +539,49 @@ class Ic_pareceres extends CI_model {
 			}
 			$area = $line['pa_area'];
 			if ($area != $xarea) {
-				$sa .= '<h3>' . $line['pa_area'] . ' - ' . $line['ac_nome_area'] . '</h3>';
+				$co1 .= '<h3>' . $line['pa_area'] . ' - ' . $line['ac_nome_area'] . '</h3>';
+				$co2 .= '<h3>' . $line['pa_area'] . ' - ' . $line['ac_nome_area'] . '</h3>';
 				$xarea = $area;
 			}
 			if ((strlen($dec) > 0) and (strlen($ind) > 0)) {
 				$dec = ', ' . $dec;
 			}
 
-			$nome = link_avaliador($line['us_nome'], $line['id_us']);
-			$sa .= '<input type="checkbox" name="av' . $line['id_us'] . '" value="1"> ' . $nome;
-			$sa .= ' ' . $ind . $dec . ' ';
-			$sa .= '<br>';
+			$nome = link_avaliador($line['us_nome'], $line['id_us']) .'('.$line['ies_sigla'].')';
+			$sq = '<input type="checkbox" name="av' . $line['id_us'] . '" value="1"> ' . $nome;
+			$sq .= ' ' . $ind . $dec . ' ';
+			$sq .= '<br>';
+			
+			if ($inst == 1)
+				{
+					$co1 .= $sq;
+				} else {
+					$co2 .= $sq;
+				}
 
 			if (($ed == 0) and (get("av" . $line['id_us']) == '1')) {
 				$sc .= '<h1>Indicado - ' . $line['us_nome'] . '</h1>';
 				$this -> ic_pareceres -> indicar_avaliador($line['id_us'], $tipo, $proto);
-				$tipom = 'IC_RPAR_INDICACAO';
+				
+				switch($tipo)
+					{
+					case 'RPAR':
+						$tipom = 'IC_RPAR_INDICACAO';
+						break;
+					case 'SUBMI':
+						$tipom = 'IC_SUBMI_INDICACAO';
+						break;						
+					default:
+						echo "OPS - ".$tipo;
+						exit;
+					}
+				
 				$this -> comunicar_avaliador($line['id_us'], $proto, $tipom);
 			}
 			if (strlen($sc) > 0) { $sa = $sc;
 			}
 		}
+		$sa = '<table width="100%" border=1>'.'<tr valign="top"><td with="50%">'.$co1.'</td><td width="50%">'.$co2.'</td></table>';
 		return ($sa);
 	}
 
