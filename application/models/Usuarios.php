@@ -1438,6 +1438,10 @@ class usuarios extends CI_model {
 		array_push($cp, array('${', '', 'Vinculo institucional', False, True));
 		array_push($cp, array('$Q c_campus:c_campus:select * from campus order by c_campus', 'us_campus_vinculo', msg('Campus'), False, True));
 		array_push($cp, array('$Q id_ies:ies_nome:select id_ies, CONCAT(ies_nome,\' (\',ies_sigla,\')\') as ies_nome from ies_instituicao order by ies_nome', 'ies_instituicao_ies_id', msg('instituicao'), True, True));
+		
+		$sql = "select * from escola order by es_escola";
+		array_push($cp, array('$Q id_es:es_escola:' . $sql, 'us_escola_vinculo', msg('lb_curso_escola'), True, False));
+		
 		array_push($cp, array('$S8', 'us_codigo_rh', 'Código do RH', False, True));
 		array_push($cp, array('$O 0:NÃO&1:SIM', 'us_conclusao_em', msg('lb_user_conclusao_em'), False, True));
 		array_push($cp, array('$}', '', '', False, True));

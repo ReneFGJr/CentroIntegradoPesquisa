@@ -8,6 +8,63 @@ class ics extends CI_model {
 	var $tabela_planos = "ic_submissao_plano";
 	var $resumo = array();
 
+   /* Lista Professores sem escola cadastrada*/
+	function professores_sem_escola() {
+		//consulta	
+		$sql = "SELECT us_cracha, us_nome, id_us
+						FROM ic_submissao_plano
+						INNER JOIN ic_submissao_projetos on doc_protocolo_mae = pj_codigo
+						INNER JOIN us_usuario on us_cracha = pj_professor 
+						LEFT JOIN escola on us_escola_vinculo = id_es
+						WHERE pj_ano = '2016'
+						AND (pj_status  <> 'X' AND pj_status  <> '@')
+						AND (doc_status <> 'X' AND doc_status <> '@')
+						AND (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE')
+						AND es_escola = 'Sem Escola Cadastrada'
+						GROUP BY us_nome
+						ORDER BY us_nome		
+		";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		//Colunas da tabela
+		$sx = '<table width="50%" class="tabela00">';
+		$sx .= '<tr><th align="left" class="lt01">#</th>
+							  <th align="left">Nome Professor</th>
+								<th align="left">Crachá Professor</th>
+						</tr>';
+
+		$tot = 0;
+		$id = 0;
+		
+		/*linhas da tabela*/
+		for ($r = 0; $r < count($rlt); $r++) {
+				//contadores
+				$tot++;
+			  $id++;
+				
+				$line = $rlt[$r];
+
+				$sx .= '<tr>';
+				$sx .= '<td align="left">';
+				$sx .= $id ;
+				$sx .= '</td>';
+				$sx .= '<td align="left">';
+				$sx .= link_perfil($line['us_nome'], $line['id_us']);
+				$sx .= '</td>';
+				
+				$sx .= '<td align="left">';
+				$sx .= link_perfil($line['us_cracha'], $line['id_us']);
+				$sx .= '</td>';
+			}
+			//resultado contador
+			$sx .= '<tr><td colspan=3>Total ' . $tot . ' registros</td></tr>';
+			$sx .= '</table>';
+			
+			return ($sx);
+	}
+
 	function ic_submit_resumo_escolas($ano, $tipo = 'IC') {
 		$sql = "select us_escola_vinculo, es_escola, count(*) as total
 						from ic_submissao_plano
@@ -28,9 +85,25 @@ class ics extends CI_model {
 			$line = $rlt[$r];
 
 			$sx .= '<tr>';
-			$sx .= '<td>' . $line['es_escola'] . '</td>';
+
+			$escSemCad = 'Sem Escola Cadastrada';
+
+			if ($line['es_escola'] == $escSemCad) {
+				//$sx .= '<td>' . $line['es_escola'] . '</td>';
+				$link = base_url('index.php/ic/professor_sem_escola/');
+				$link_a = '<a href="' . $link . '" target="_new" class="link">';
+
+				$sx .= '<td align="left">';
+				$sx .= $link_a . $line['es_escola'] . '</a>';
+				$sx .= '</td>';
+
+			} else {
+				$sx .= '<td>' . $line['es_escola'] . '</td>';
+
+			}
 			$sx .= '<td>' . $line['total'];
 		}
+
 		$sx .= '</table>';
 		return ($sx);
 	}
@@ -114,43 +187,40 @@ class ics extends CI_model {
 
 	function lista_projetos($edital, $ano, $status) {
 		if ($status == '0') {
-			 $status = '@';
+			$status = '@';
 		}
 
 		$whe = " pj_edital = '$edital' and pj_ano = '$ano' ";
-		if (strlen($status) > 0)
-			{
-				$whe .= " and pj_status = '$status' ";
-			}
+		if (strlen($status) > 0) {
+			$whe .= " and pj_status = '$status' ";
+		}
 		$sql = "select *
 						from ic_submissao_projetos
 						inner join us_usuario on pj_professor = us_cracha
 						where $whe ";
 		$sql .= ' order by pj_titulo ';
-						
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		$sx = '<table width="100%" class="table tabela01">';
 		$xtitle = '';
-		for ($r=0;$r < count($rlt); $r++)
-			{
-				$line = $rlt[$r];
-				
-				/* */
-				$title = $line['pj_titulo'];
-				if ($title == $xtitle)
-					{
-						$line['igual'] = '1';
-					} else {
-						$line['igual'] = '0';
-					}
-				$line['nr'] = ($r+1);
-				$sx .= $this->load->view('ic/projeto_row',$line,true);
-				$xtitle = $title;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			/* */
+			$title = $line['pj_titulo'];
+			if ($title == $xtitle) {
+				$line['igual'] = '1';
+			} else {
+				$line['igual'] = '0';
 			}
+			$line['nr'] = ($r + 1);
+			$sx .= $this -> load -> view('ic/projeto_row', $line, true);
+			$xtitle = $title;
+		}
 		$sx .= '</table>';
-		return($sx);
+		return ($sx);
 
 	}
 
@@ -1323,8 +1393,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1389,8 +1458,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -2419,7 +2487,7 @@ class ics extends CI_model {
 
 		switch ($ac) {
 			case '6' :
-				/***** VALIDAÇÂO DOCUMENTAL */
+			/***** VALIDAÇÂO DOCUMENTAL */
 				$sta = $pj['pj_status'];
 				$sta_to = 'B';
 				$ac = '234';
@@ -2435,7 +2503,7 @@ class ics extends CI_model {
 				break;
 
 			case '4' :
-				/***** CANECLAR SUBMISSAO */
+			/***** CANECLAR SUBMISSAO */
 				if (strlen(get("dd2")) == 0) {
 					echo alert('campo de comentários é obrigatório');
 					return (0);
@@ -2465,7 +2533,7 @@ class ics extends CI_model {
 				return (1);
 				break;
 			case '5' :
-				/***** CANECLAR SUBMISSAO */
+			/***** CANECLAR SUBMISSAO */
 				if (strlen(get("dd2")) == 0) {
 					echo alert('campo de comentários é obrigatório');
 					return (0);
@@ -2653,10 +2721,10 @@ class ics extends CI_model {
 		}
 	}
 
-	function lista_equipe_projeto($proto,$editar=1) {
+	function lista_equipe_projeto($proto, $editar = 1) {
 		$sx = '';
 		$sx .= '<div id="list_team">' . cr();
-		$sx .= $this -> lista_equipe_projeto_lista($proto,$editar);
+		$sx .= $this -> lista_equipe_projeto_lista($proto, $editar);
 		$sx .= '</div>' . cr();
 		$sx .= '
 				<script>
@@ -2676,7 +2744,7 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-	function lista_equipe_projeto_lista($proto,$editar=1) {
+	function lista_equipe_projeto_lista($proto, $editar = 1) {
 		$sx = '';
 		$sql = "select * from ic_submissao_projetos_equipe 
 						where ispe_protocolo = '$proto'
@@ -2707,10 +2775,9 @@ class ics extends CI_model {
 			$sx .= '<td>' . $line['ispe_cracha'] . '</td>';
 			$sx .= '<td>' . '<nobr>' . mask_cpf($line['ispe_cpf']) . '</nobr></td>';
 			$sx .= '<td>' . $line['ispe_curso'] . '</td>';
-			if ($editar == 1)
-				{
-					$sx .= '<td align="center">' . $link . '</td>';
-				}
+			if ($editar == 1) {
+				$sx .= '<td align="center">' . $link . '</td>';
+			}
 			$sx .= '</tr>';
 		}
 		if (count($rlt) == 0) {

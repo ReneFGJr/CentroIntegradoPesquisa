@@ -3221,5 +3221,19 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+		function professor_sem_escola(){
+		$this -> load -> model('ics');
+		
+		$this -> cab();
+		$data = array();
+		$data['title'] = msg('Professores sem vínculo com escolas da PUCPR');
+		
+		$data['content'] = $this -> ics -> professores_sem_escola();
+		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 }
 ?>
