@@ -18,6 +18,7 @@ class ic extends CI_Controller {
 		$this -> load -> library('session');
 
 		date_default_timezone_set('America/Sao_Paulo');
+
 	}
 
 	function security() {
@@ -76,6 +77,7 @@ class ic extends CI_Controller {
 		$data['logo'] = base_url('img/logo/logo_ic.png');
 		$this -> load -> view('header/logo', $data);
 	}
+
 
 	function implementacao_manual() {
 		$this -> load -> model('ics');
@@ -2574,34 +2576,38 @@ class ic extends CI_Controller {
 		if ($form -> saved > 0) {
 			$proto = get('dd1');
 			$pj = $this -> ics -> le_projeto_protocolo($proto);
-			echo '===>' . $pj['pj_status'];
-			if (($pj['pj_status'] == 'A')) {
-				if (count($pj) > 0) {
-					$user = $this -> usuarios -> le_cracha($pj['pj_professor']);
-					$us_id = $user['id_us'];
-					$ac = '233';
-					$hist = 'Devolução para correção';
-					$aluno1 = 0;
-					$aluno2 = 0;
-					$motivo = $ac;
-					$obs = get("dd2");
-					$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
 
-					$msg = $this -> Mensagens -> busca('PJ_DEVOLVE_PROF', $pj);
+			if (count($pj) > 0) {
+				$user = $this -> usuarios -> le_cracha($pj['pj_professor']);
+				$us_id = $user['id_us'];
+				$ac = '233';
+				$hist = 'Devolução para correção';
+				$aluno1 = 0;
+				$aluno2 = 0;
+				$motivo = $ac;
+				$obs = get("dd2");
+				$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
 
-					enviaremail_usuario($us_id, $msg['nw_titulo'], $msg['nw_texto'], 2);
-					enviaremail_usuario(1, $msg['nw_titulo'], $msg['nw_texto'], 2);
+				$msg = $this -> Mensagens -> busca('PJ_DEVOLVE_PROF', $pj);
 
-					$this -> ics -> altera_status_projeto_submissao($proto, $pj['pj_status'], '@');
-					$this -> ics -> submit_altera_status($proto, '@', 'A');
+				$status = $pj['pj_status'];
 
-					$this -> load -> view('sucesso', null);
-				} else {
-					array_push($cp, array('$M', '', 'Protocolo não localizado', True, True));
-				}
+				$this -> ics -> altera_status_projeto_submissao($proto, 'A', '@');
+				$this -> ics -> altera_status_projeto_submissao($proto, 'B', '@');
+				$this -> ics -> altera_status_projeto_submissao($proto, 'C', '@');
+				$this -> ics -> altera_status_projeto_submissao($proto, 'D', '@');
+				$this -> ics -> altera_status_projeto_submissao($proto, 'E', '@');
+				$this -> ics -> altera_status_projeto_submissao($proto, 'F', '@');
+
+				enviaremail_usuario($us_id, $msg['nw_titulo'], $msg['nw_texto'], 2);
+
+				$this -> load -> view('sucesso', null);
+				return ('');
 			} else {
-				array_push($cp, array('$M', '', 'Protocolo em cadastro ou cancelado', True, True));
+				array_push($cp, array('$M', '', 'Protocolo não localizado', True, True));
 			}
+		} else {
+			array_push($cp, array('$M', '', 'Protocolo em cadastro ou cancelado', True, True));
 		}
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
@@ -2880,8 +2886,7 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();
@@ -3062,7 +3067,19 @@ class ic extends CI_Controller {
 
 	}
 
-	function cockpit($ano = '') {
+	function projetos($edital = '', $ano = '', $status = '') {
+		$this -> load -> model('ics');
+		$this -> cab();
+
+		$simples = true;
+
+		$tela = $this -> ics -> lista_projetos($edital, $ano, $status, $simples);
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+	}
+
+	function cockpit($ano = '', $edital = 'IC') {
 		$this -> load -> model('ics');
 		$this -> cab();
 		$data = array();
@@ -3078,17 +3095,25 @@ class ic extends CI_Controller {
 		if ($form -> saved or (strlen($ano) > 0)) {
 
 			$ano = get("dd1") . $ano;
-			$data['content'] = $this -> ics -> cockpit_resumo($ano);
+
+			$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
+			$this -> load -> view('content', $data);
+
+			$data['content'] = $this -> ics -> cockpit_resumo($ano, $edital);
 			$this -> load -> view('content', $data);
 
 			//carrega grafico de parceiros
 			$data_cockpit = array();
-			$line = $this -> ics -> cockpit_resumo_graf($ano);
-			$data_cockpit['dado_coc'] = $line;
-			$this -> load -> view('ic/resumo_cockpit', $data_cockpit);
+			$line = $this -> ics -> cockpit_resumo_graf($ano, $edital);
 
-			$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano);
-			$this -> load -> view('content', $data);
+			if (count($line) > 0) {
+
+				$data_cockpit['dado_coc'] = $line;
+				$this -> load -> view('ic/resumo_cockpit', $data_cockpit);
+
+				$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano);
+				$this -> load -> view('content', $data);
+			}
 
 		} else {
 			$data['content'] = $tela;
@@ -3117,6 +3142,8 @@ class ic extends CI_Controller {
 
 		$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
 		$dados['ged'] = '<br>Arquivos:';
+		
+		$dados['equipe'] = $this->ics->lista_equipe_projeto($dados['pj_codigo'],false);
 
 		//$this -> load -> view('ic/email_projeto', $dados);
 		$this -> load -> view('ic/projeto', $dados);

@@ -1503,6 +1503,26 @@ class usuarios extends CI_model {
 		return ($rs);
 	}
 
+
+	function le_cpf($cpf) {
+		$cpf = sonumero($cpf);
+		$cpf = strzero($cpf,11);
+		
+		$sql = "select * from us_usuario where us_cpf = '$cpf' ";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+
+		if (count($rlt) == 0) {
+			$rlt = array();
+		} else {
+			$rlt = $rlt[0];
+			$id = $rlt['id_us'];
+			$rlt = $this -> usuarios -> le($id);
+		}
+
+		return ($rlt);
+	}
+
 	/* Consulta Usuario */
 	function consulta_cracha($cracha = '', $source = 'sga') {
 		if (strlen($cracha) == 0) {

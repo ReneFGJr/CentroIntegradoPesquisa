@@ -1,17 +1,15 @@
 <?php
-class ic_pibep extends CI_model {
-	
+class ic_feira extends CI_model {
+
 	var $validated = False;
-	
-	function welcome()
-		{
-			$txt = '<div class="containter text-left">';
-			$txt .= '<h1>Bem vindo!</h1>';
-			$txt .= '<p>Para submeter um projeto para o PIBEP é necessário que você tenha participado do encontro no dia 30/abril/2016 na PUCPR e se inscrito antes desta data.</p>';
-			$txt .= '<p>Para continuar é necessário que informe o número do Cracha do Lider do Grupo e Responsável pelo Projeto</p>';
-			$txt .= '</div>';
-			return($txt);
-		}
+
+	function welcome() {
+		$txt = '<div class="containter text-left">';
+		$txt .= '<h1>Bem vindo!</h1>';
+		$txt .= '<p>Para submeter um projeto para Feira de Ciências Jovens da PUCPR é necessário informar o número do CPF do professor responsável pela equipe.</p>';
+		$txt .= '</div>';
+		return ($txt);
+	}
 
 	function submissao($idp, $ids, $pag) {
 
@@ -24,27 +22,25 @@ class ic_pibep extends CI_model {
 		$prt = $this -> ics -> le_projeto($ids);
 		$proto = $prt['pj_codigo'];
 		$status = $prt['pj_status'];
-		
-		if ($status <> '@')
-			{
-				$txt = '<div  class="danger text-center">
+
+		if ($status <> '@') {
+			$txt = '<div  class="danger text-center">
 							<h1>Projeto não está habilitado para edição</h1>
 						</div>';
-				return($txt);
-			}
-		
+			return ($txt);
+		}
+
 		$cracha = $prt['pj_professor'];
-		$user = $this -> usuarios -> le_cracha($cracha);		
-		
+		$user = $this -> usuarios -> le_cracha($cracha);
+
 		/* Líder do Projeto */
-		$this->ics->lider_de_equipe($proto,$user);
-		
-		
+		$this -> ics -> lider_de_equipe($proto, $user);
+
 		/* Dados */
-		$tela = '<div class="container"><h3>Estudante Líder</h3>'.$this -> load -> view('perfil/user', $user, true).'</div>';
+		$tela = '<div class="container"><h3>Professor Líder</h3>' . $this -> load -> view('perfil/user', $user, true) . '</div>';
 		$data = array();
 		$data['content'] = $tela;
-		$this->load->view('content',$data);
+		$this -> load -> view('content', $data);
 
 		$this -> geds -> tabela = 'ic_ged_documento';
 
@@ -56,7 +52,7 @@ class ic_pibep extends CI_model {
 
 		/**************************************************************************** ESTUDANTES */
 
-		$txt = '<br><br><fieldset><legend>Equipe</legend>';
+	$txt = '<br><br><fieldset><legend>Equipe</legend>';
 		$txt .= '<div id="equipe">';
 		$txt .= $this -> ics -> lista_equipe_projeto($proto);
 		
@@ -65,20 +61,18 @@ class ic_pibep extends CI_model {
 		$txt .= '</div>';
 		$txt .= '</fieldset>';
 		array_push($cp, array('$M', '', $txt, False, True));
-		
-		
+
 		/**************************************************************************** ARQUIVOS */
 
 		$txt = '<br><br><fieldset><legend>Arquivos</legend>';
 
 		$files = $this -> geds -> list_files_table($proto, 'ic');
-		if (strlen($files) == 0)
-			{
-				$files = '<table class="table"><tr><td><font color="red">Nenhum arquivo postado</font></td></tr></table>';
-			}
+		if (strlen($files) == 0) {
+			$files = '<table class="table"><tr><td><font color="red">Nenhum arquivo postado</font></td></tr></table>';
+		}
 		$txt .= $files;
-		
-		$txt .= '<br>'.$this -> geds -> form_upload($proto, 'ic', 'PROJT');
+
+		$txt .= '<br>' . $this -> geds -> form_upload($proto, 'ic', 'PROJT');
 		$txt .= '</fieldset>';
 		$txt .= '<br>';
 		array_push($cp, array('$M', '', $txt, False, True));
@@ -94,24 +88,23 @@ class ic_pibep extends CI_model {
 
 		$form = new form;
 		$form -> id = $ids;
-		$tela = '<table width="960" border=0><tr><td>'.$form -> editar($cp, 'ic_submissao_projetos').'</td></tr></table>';
+		$tela = '<table width="960" border=0><tr><td>' . $form -> editar($cp, 'ic_submissao_projetos') . '</td></tr></table>';
 
 		$tela .= '<br><br><br>';
 
 		$txt = '<br><br><fieldset><legend>Validação da Submissão</legend>';
 		$txt .= $this -> validacao($ids);
 		$txt .= '</fieldset>';
-		
+
 		/* VALIDADO */
-		if ($this->validated == 1)
-			{
-				$this->ics->altera_status_projeto_submissao($proto,'@','A');
-				$url = base_url('index.php/evento/submit_success/'.$idp.'/'.$ids);
-				redirect($url);				
-				exit;
-			}
-		
-		return ($txt.$tela);
+		if ($this -> validated == 1) {
+			$this -> ics -> altera_status_projeto_submissao($proto, '@', 'A');
+			$url = base_url('index.php/evento/submit_success/' . $idp . '/' . $ids);
+			redirect($url);
+			exit ;
+		}
+
+		return ($txt . $tela);
 	}
 
 	function validacao($proto_id) {
@@ -201,7 +194,7 @@ class ic_pibep extends CI_model {
 			$vd[5] = $class_ok;
 			$vdt[5] = $ok;
 		}
-		
+
 		/* Vinculos com Programs de IC */
 		$in_ic = '';
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -211,7 +204,7 @@ class ic_pibep extends CI_model {
 				$sql = "select * from ic_aluno
 							inner join us_usuario on id_us = aluno_id
 							where us_cracha = '$cracha' and icas_id = 1 ";
-							
+
 				$rrr = $this -> db -> query($sql);
 				$rrr = $rrr -> result_array();
 
@@ -225,12 +218,12 @@ class ic_pibep extends CI_model {
 		} else {
 			$vd[1] = $class_ok;
 			$vdt[1] = $ok;
-		}		
+		}
 
 		$sx = '<table class="table">';
 		$sx .= '<tr class="' . $vd[0] . '"><td>Título do projeto</td><td align="center">' . $vdt[0] . '</tr>';
 
-		$sx .= '<tr class="' . $vd[1] . '"><td>Membros da equipe não podem ter vinculos com programa IC/Monitoria.'.$in_ic.'</td><td align="center">' . $vdt[1] . '</tr>';
+		$sx .= '<tr class="' . $vd[1] . '"><td>Membros da equipe não podem ter vinculos com programa IC/Monitoria.' . $in_ic . '</td><td align="center">' . $vdt[1] . '</tr>';
 
 		$sx .= '<tr class="' . $vd[2] . '"><td>Estudantes de Cursos diferentes (mínimo dois cursos) - ' . count($curso) . ' cursos</td><td align="center">' . $vdt[2] . '</tr>';
 
@@ -242,50 +235,105 @@ class ic_pibep extends CI_model {
 
 		$sx .= '<tr class="' . $vd[6] . '"><td>Membros da equipe (entre 3 e 5 alunos) - ' . count($rlt) . ' as membros registrados</td><td align="center">' . $vdt[6] . '</tr>';
 		$sx .= '</table>';
-		
+
 		$validated = True;
-		for ($r=0;$r <= 6;$r++)
-			{
-				if ($vdt[$r] != $ok)
-					{
-						$validated = False;
-					}
+		for ($r = 0; $r <= 6; $r++) {
+			if ($vdt[$r] != $ok) {
+				$validated = False;
 			}
-		$this->validated = $validated;
+		}
+		$this -> validated = $validated;
 		return ($sx);
 	}
 
 	function inscricao($ide = 0) {
 		/* */
 		$this -> load -> model('ics');
-		$cracha = get("dd1");
+		$this -> load -> model('usuarios');
+		
+		$cpf = sonumero(get("dd1"));
 		$erro = '';
+		$ok = 0;
+		if (strlen($cpf) > 0) {
+			$ok = validaCPF($cpf);
+			if ($ok == 1) {
+				$nome = get("dd2");
+				$email = get("dd3");
 
-		if (strlen($cracha) > 0) {
-			$cracha = $this -> usuarios -> limpa_cracha($cracha);
+				if ((strlen($nome) > 5) and (validaemail($email))) {
+					$habilitado = $this -> habilata_inscricao('', $cpf);
 
-			if (strlen($cracha) == 8) {
-				$habilitado = $this -> habilata_inscricao($cracha);
+					if ($habilitado == 0) {
+						$data = array();
+						$this -> usuarios -> $nome = nbr_autor($nome, 7);
+						$data['nome'] = troca($nome, "'", '´');
+						$cpf = $cpf;
+						$data['cpf'] = strzero($cpf, 11);
 
-				if ($habilitado == 1) {
-					/* HABILITADO PARA SUBMISSAO */
-					$redirect = False;
-					$id = $this -> ics -> projeto_novo($cracha, 'PIBEP', $redirect);
+						$data['email1'] = $email;
+						$data['email2'] = '';
 
-					$url = base_url('index.php/evento/submit/' . $ide . '/' . $id . '/' . checkpost_link($id));
-					redirect($url);
+						$data['tel1'] = '';
+						$data['tel2'] = '';
+						$data['nomeCurso'] = '';
+
+						$data['genero'] = '';
+						$data['sexo'] = '';
+						
+						$data['tipo'] = '5';
+						$dtnasc = '00000000';
+						$data['centroAcademico'] = 'Escola de ensino médio';
+						
+						$data['dataNascimento'] = substr($dtnasc, 4, 4) . '-' . substr($dtnasc, 2, 2) . '-' . substr($dtnasc, 0, 2);
+						$data['cracha'] = $this->usuarios->geraCracha();
+						$data['pessoa'] = $data['cracha'];	
+											
+						$this->usuarios->insere_usuario($data);
+						
+					}
+					
+					$dados = $this->usuarios->le_cpf($cpf);
+					$cracha = $dados['us_cracha'];
+					if (count($dados) > 0)
+						{
+							$habilitado = 1;
+						}
+					
+					if ($habilitado == 1) {
+						/* HABILITADO PARA SUBMISSAO */
+						$redirect = False;
+						$id = $this -> ics -> projeto_novo($cracha, 'FEIRA', $redirect);
+
+						$url = base_url('index.php/evento/submit/' . $ide . '/' . $id . '/' . checkpost_link($id));
+						redirect($url);
+					}
+				} else {
+					$erro = '<font color="red">Nome ou e-mail inválidos!</font>';
 				}
+
+			} else {
+				$erro = '<font color="red">CPF Inválido!</font>';
 			}
 		}
 
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, False));
-		array_push($cp, array('$S15', '', 'Informe seu cracha', True, True));
-		array_push($cp, array('$M', '', $erro, False, False));
+
+		if ($ok == 1) {
+			array_push($cp, array('$S15', '', 'Informe seu CPF', False, False));
+			array_push($cp, array('$S80', '', 'Nome completo', False, True));
+			array_push($cp, array('$S80', '', 'Informe seu e-mail', False, True));
+			array_push($cp, array('$M', '', $erro, False, False));
+		} else {
+			array_push($cp, array('$S15', '', 'Informe seu CPF', False, True));
+			array_push($cp, array('$M', '', $erro, False, False));
+			array_push($cp, array('$H', '', '', False, False));
+			array_push($cp, array('$M', '', '', False, False));
+		}
 		array_push($cp, array('$B8', '', 'Iniciar submissão >>', False, True));
 
 		$form = new form;
-		$tela = '<table width="960"><tr><td>'.$form -> editar($cp, '').'</td></tr></table>';
+		$tela = '<table width="960"><tr><td>' . $form -> editar($cp, '') . '</td></tr></table>';
 
 		return ($tela);
 	}
@@ -295,7 +343,7 @@ class ic_pibep extends CI_model {
 	}
 
 	function habilata_inscricao($cracha = '', $cpf = '') {
-		return (1);
+		return (0);
 	}
 
 }
