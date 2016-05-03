@@ -438,16 +438,24 @@ class ics extends CI_model {
 								<th align="right">qtd</th>
 						</tr>';
 
+		$jr = 'PIBICEM';
+		$troca = 'PIBIC jr';
+		
 		for ($r = 0; $r < count($rlt); $r++) {
-
 			$line = $rlt[$r];
 
 			$sx .= '<tr>';
 
-			$sx .= '<td align="left">';
-			$sx .= $line['doc_edital'];
-			$sx .= '</td>';
-
+			if($line['doc_edital'] == $jr){
+				$sx .= '<td align="left">';
+				$sx .= $troca;
+				$sx .= '</td>';
+			}else{
+				$sx .= '<td align="left">';
+				$sx .= $line['doc_edital'];
+				$sx .= '</td>';	
+			}
+			
 			$sx .= '<td align="center">';
 			$sx .= $line['status'];
 			$sx .= '</td>';
