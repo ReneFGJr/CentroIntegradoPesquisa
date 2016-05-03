@@ -3083,11 +3083,11 @@ class ic extends CI_Controller {
 		$this -> load -> model('ics');
 		$this -> cab();
 		$data = array();
-		$data['title'] = msg('Cockpit');
+		//$data_cockpit['title'] = msg('Cockpit');
 
 		$form = new form;
 		$cp = array();
-
+		
 		array_push($cp, array('$H8', '', '', False, False));
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano'), True, TRUE));
 		$tela = $form -> editar($cp, '');
@@ -3095,23 +3095,36 @@ class ic extends CI_Controller {
 		if ($form -> saved or (strlen($ano) > 0)) {
 
 			$ano = get("dd1") . $ano;
-
-			$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
-			$this -> load -> view('content', $data);
-
-			$data['content'] = $this -> ics -> cockpit_resumo($ano, $edital);
-			$this -> load -> view('content', $data);
-
-			//carrega grafico de parceiros
+			
+			//carrega grafico de acompanhameto das submissões
 			$data_cockpit = array();
+			
 			$line = $this -> ics -> cockpit_resumo_graf($ano, $edital);
 
-			if (count($line) > 0) {
 
+			if (count($line) > 0) {
+			
 				$data_cockpit['dado_coc'] = $line;
 				$this -> load -> view('ic/resumo_cockpit', $data_cockpit);
-
+				
+				//Status dos Projetos submetidos	
+				$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
+				$this -> load -> view('content', $data);
+				
+				//Status dos Planos submetidos	
+				$data['content'] = $this -> ics -> cockpit_resumo_plano($ano, $edital);
+				$this -> load -> view('content', $data);
+				
+				//resumo por escolas
 				$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano);
+				$this -> load -> view('content', $data);
+				
+				//resumo professor tipo
+				$data['content'] = $this -> ics -> ic_submit_resumo_professor_tipo($ano);
+				$this -> load -> view('content', $data);
+				
+				//resumo titulação
+				$data['content'] = $this -> ics -> ic_submit_resumo_professor_titulacao($ano);
 				$this -> load -> view('content', $data);
 			}
 

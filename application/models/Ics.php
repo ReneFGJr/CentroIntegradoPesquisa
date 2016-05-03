@@ -19,7 +19,7 @@ class ics extends CI_model {
 						WHERE pj_ano = '2016'
 						AND (pj_status  <> 'X' AND pj_status  <> '@')
 						AND (doc_status <> 'X' AND doc_status <> '@')
-						AND (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE')
+						AND (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM')
 						AND es_escola = 'Sem Escola Cadastrada'
 						GROUP BY us_nome
 						ORDER BY us_nome		
@@ -64,7 +64,8 @@ class ics extends CI_model {
 			
 			return ($sx);
 	}
-
+	
+	//resumo do cockpit por escolas	
 	function ic_submit_resumo_escolas($ano, $tipo = 'IC') {
 		$sql = "select us_escola_vinculo, es_escola, count(*) as total
 						from ic_submissao_plano
@@ -74,18 +75,25 @@ class ics extends CI_model {
 						where pj_ano = '$ano'
 						AND (pj_status  <> 'X' AND pj_status  <> '@')
 						AND (doc_status <> 'X' AND doc_status <> '@')
-						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE')
+						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM')
 						group by us_escola_vinculo
 						order by total desc
 					 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		$sx = '<table>';
+
+		//Colunas da tabela
+		$sx = '<table width="40%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por escolas '.' - ' . $ano . '</b></td></tr>';
+		$sx .= '<tr class="lt3"><th align="Center">Escola</th>
+								<th align="Center">qtd</th>
+						</tr>';
+						
+		$tot = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-
 			$sx .= '<tr>';
-
+		
 			$escSemCad = 'Sem Escola Cadastrada';
 
 			if ($line['es_escola'] == $escSemCad) {
@@ -98,15 +106,124 @@ class ics extends CI_model {
 				$sx .= '</td>';
 
 			} else {
-				$sx .= '<td>' . $line['es_escola'] . '</td>';
-
+				$sx .= '<td align="left">' . $line['es_escola'] . '</td>';
 			}
-			$sx .= '<td>' . $line['total'];
+			$sx .= '<td align="right">' . $line['total'];
 		}
-
+		
 		$sx .= '</table>';
 		return ($sx);
 	}
+	
+	
+	//resumo cockpit por tipo de orientador
+	function ic_submit_resumo_professor_tipo ($ano) {
+		$sql = "select ss, count(*) as total
+							from ic_submissao_plano
+							inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
+							inner join us_usuario on us_cracha = pj_professor
+							left join escola on us_escola_vinculo = id_es
+							left join (select distinct 1 as ss, us_usuario_id_us from ss_professor_programa_linha where sspp_ativo = 1) as ss_prof on us_usuario_id_us = id_us
+							where pj_ano = '$ano'
+							AND (pj_status  <> 'X' AND pj_status  <> '@')
+							AND (doc_status <> 'X' AND doc_status <> '@')
+							and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM')
+							group by ss
+							order by total desc
+					 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		//Colunas da tabela
+		$sx = '<table width="40%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por tipo de professor</b></td></tr>';
+		$sx .= '<tr class="lt3"><th align="center">Tipo</th>
+								<th align="center">qtd</th>
+						</tr>';
+		$tot = 0;
+		$ss = 1;
+		$troca = 'Stricto Sensu';
+		$troca2 = 'Graduação';
+				
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			
+			$sx .= '<tr>';
+			
+			if($line['ss'] == $ss ){
+				
+			$sx .= '<td align="left">';
+			$sx .= $troca;
+			$sx .= '</td>';
+			}else{
+				$sx .= '<td align="left">';
+				$sx .= $troca2;
+				$sx .= '</td>';
+			}
+		
+			$sx .= '<td align="right">';
+			$sx .= $line['total'];
+			$sx .= '</td>';
+
+			$tot = $tot + $line['total'];			
+
+		}
+		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
+		$sx .= '</table>';
+		
+		return ($sx);
+	}	
+
+	//resumo cockpit por tipo de orientador
+	function ic_submit_resumo_professor_titulacao ($ano) {
+		$sql = "select ust_titulacao, count(*) as total
+						from ic_submissao_plano
+						inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
+						inner join us_usuario on us_cracha = pj_professor
+						left join escola on us_escola_vinculo = id_es
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						where pj_ano = '$ano'
+						AND (pj_status  <> 'X' AND pj_status  <> '@')
+						AND (doc_status <> 'X' AND doc_status <> '@')
+						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM')
+						group by ust_titulacao
+						order by total desc
+					 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		//Colunas da tabela
+		$sx = '<table width="40%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por titulação do professor </b></td></tr>';
+		$sx .= '<tr class="lt3"><th align="center">Tipo</th>
+								<th align="center">qtd</th>
+						</tr>';
+		$tot = 0;
+				
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			
+			$sx .= '<tr>';
+			$sx .= '<td align="left">';
+			$sx .= $line['ust_titulacao'];
+			$sx .= '</td>';
+		
+			$sx .= '<td align="right">';
+			$sx .= $line['total'];
+			$sx .= '</td>';
+
+			$tot = $tot + $line['total'];			
+
+		}
+		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
+		$sx .= '</table>';
+		
+		return ($sx);
+	}
+	
+	
 
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
@@ -226,7 +343,7 @@ class ics extends CI_model {
 
 	/** COCKPIT - Projetos */
 	function cockpit_resumo_projeto($ano, $edital = 'IC') {
-		$whe = " and (pj_edital = 'IC' or pj_edital = 'PIBIC' or  pj_edital = 'PIBITI' or  pj_edital = 'IS' or  pj_edital = 'ICI' or  pj_edital = 'PIBICE') ";
+		$whe = " and (pj_edital = 'IC' or pj_edital = 'PIBIC' or  pj_edital = 'PIBITI' or  pj_edital = 'IS' or  pj_edital = 'ICI' or  pj_edital = 'PIBICEM') ";
 		if ($edital != 'IC') {
 			$whe = " and (pj_edital = '$edital' )";
 		}
@@ -241,13 +358,14 @@ class ics extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		$sx = '';
+		$tot = 0;
 
 		$sx .= '<table width="40%" class="tabela00" border=0>';
 		$sx .= '<tr><td class="lt4" colspan=3><b>Situação dos Projetos submetidos para ' . $edital . '/' . $ano . '</b></td></tr>';
 		$sx .= '<tr class="lt3">
 								<th align="left">edital</th>
-								<th align="left">status</th>
-								<th align="center">qtd</th>
+								<th align="center">status</th>
+								<th align="right">qtd</th>
 						</tr>';
 
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -260,7 +378,7 @@ class ics extends CI_model {
 
 			$sx .= '<tr>';
 
-			$sx .= '<td align="center">';
+			$sx .= '<td align="left">';
 			$sx .= $link . $line['pj_edital'] . '</a>';
 			$sx .= '</td>';
 
@@ -268,18 +386,21 @@ class ics extends CI_model {
 			$sx .= $link . msg('status_pj_' . $line['pj_status']) . '</a>';
 			$sx .= '</td>';
 
-			$sx .= '<td align="center">';
+			$sx .= '<td align="right">';
 			$sx .= $link . $line['total'] . '</a>';
 			$sx .= '</td>';
 
+			$tot = $tot + $line['total'];			
+
 		}
+		$sx .= '<tr><td colspan=3 align="right">Total de projetos --> '. $tot .'</td></tr>';
 		$sx .= '</table>';
 		return ($sx);
 	}
 
 	/** COCKPIT - Resumo */
-	function cockpit_resumo($ano, $edital) {
-		$whe = " and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE') ";
+	function cockpit_resumo_plano($ano, $edital) {
+		$whe = " and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM') ";
 		if ($edital != 'IC') {
 			$whe = " and (doc_edital = '$edital' )";
 		}
@@ -307,13 +428,14 @@ class ics extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		$sx = '';
-
+		$tot = 0;
+		
 		$sx .= '<table width="40%" class="tabela00" border=0>';
-		$sx .= '<tr><td class="lt4" colspan=3><b>Planos submetidos para ' . $ano . '</b></td></tr>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Planos submetidos por edital para ' . $edital . '/' . $ano . '</b></td></tr>';
 		$sx .= '<tr class="lt3">
 								<th align="left">edital</th>
-								<th align="left">status</th>
-								<th align="center">qtd</th>
+								<th align="center">status</th>
+								<th align="right">qtd</th>
 						</tr>';
 
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -322,7 +444,7 @@ class ics extends CI_model {
 
 			$sx .= '<tr>';
 
-			$sx .= '<td align="center">';
+			$sx .= '<td align="left">';
 			$sx .= $line['doc_edital'];
 			$sx .= '</td>';
 
@@ -330,17 +452,21 @@ class ics extends CI_model {
 			$sx .= $line['status'];
 			$sx .= '</td>';
 
-			$sx .= '<td align="center">';
+			$sx .= '<td align="right">';
 			$sx .= $line['total'];
 			$sx .= '</td>';
+			
+			$tot = $tot + $line['total'];			
 
 		}
+		$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
 		$sx .= '</table>';
 		return ($sx);
 	}
 
 	function cockpit_resumo_graf($ano, $edital) {
-		$whe = " and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICE') ";
+		$whe = " and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM') ";
+		
 		if ($edital != 'IC') {
 			$whe = " and (doc_edital = '$edital' )";
 		}
