@@ -18,6 +18,48 @@ class avaliador extends CI_Controller {
 		/* Security */
 		$this -> security();
 	}
+	
+	function enviar_convites_externos($chk = '') {
+		$this -> cab();
+
+		if ($chk == 'SIM') {
+			$this -> load -> model('avaliadores');
+			$data['content'] = $this -> avaliadores -> enviar_convite_avaliador(1);
+			$this->load->view('content',$data);
+			
+			$data['voltar'] = base_url('index.php/avaliador/');
+			$this -> load -> view('sucesso', $data);
+		} else {
+			$data = 'Confirma operação';
+			$data .= '<br>';
+			$data .= '<a href="' . base_url('index.php/avaliador/enviar_convites_externos/SIM') . '" class="link">SIM</a>';
+			$data .= ' | ';
+			$data .= '<a href="' . base_url('index.php/avaliador/') . '" class="link">NÃO</a>';
+			$dados['content'] = $data;
+			$dados['title'] = 'Enviar convites para os avaliadores externos';
+			$this -> load -> view('content', $dados);
+		}
+	}
+
+	function convidar_avaliadores_extermos($chk = '') {
+		$this -> cab();
+
+		if ($chk == 'SIM') {
+			$this -> load -> model('avaliadores');
+			$this -> avaliadores -> marcar_para_enviar_convite_externos();
+			$data['voltar'] = base_url('index.php/avaliador/');
+			$this -> load -> view('sucesso', $data);
+		} else {
+			$data = 'Confirma operação';
+			$data .= '<br>';
+			$data .= '<a href="' . base_url('index.php/avaliador/convidar_avaliadores_extermos/SIM') . '" class="link">SIM</a>';
+			$data .= ' | ';
+			$data .= '<a href="' . base_url('index.php/avaliador/') . '" class="link">NÃO</a>';
+			$dados['content'] = $data;
+			$dados['title'] = 'Marcar todos os avaliadores externos como "enviar convite"';
+			$this -> load -> view('content', $dados);
+		}
+	}
 
 	function areas_limpar($id = 0) {
 		$this -> load -> model('avaliadores');
@@ -267,17 +309,58 @@ class avaliador extends CI_Controller {
 
 		/* arquivos */
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$proto_mae = $dados['ic_projeto_professor_codigo'];
-		$data['ged'] = '';
-		if (strlen($proto_mae) > 0)
+		if (isset($dados['ic_projeto_professor_codigo']))
 			{
-				$data['ged'] .= $this -> geds -> list_files_table($proto_mae, 'ic');
-			} 
+				$proto_mae = $dados['ic_projeto_professor_codigo'];
+			} else {
+				$proto_mae = $dados['pp_protocolo_mae'];
+			}
+		$data['ged'] = '';
+		if (strlen($proto_mae) > 0) {
+			$data['ged'] .= $this -> geds -> list_files_table($proto_mae, 'ic');
+		}
 		$data['ged'] .= $this -> geds -> list_files_table($proto, 'ic');
 		$data['plano'] = $this -> load -> view('ic/plano', $dados, true);
 
 		/* VALIDACOES */
 		switch ($tipo) {
+			case 'SUBMI' :
+				if ($ok == 15) {
+					$dados = $this -> ic_pareceres -> le($id);
+					$dados = array_merge($dados, $dados2);
+					$nota = get('dd9');
+					$proto = $dados['pp_protocolo'];
+					$this -> ic_pareceres -> finaliza_nota_ic($proto, $nota);
+
+					$aluno = $this -> usuarios -> le_cracha($dados['ic_cracha_aluno']);
+
+					/* gera PDF */
+					$file_local = $this -> ic_pareceres -> gera_parecer('RPAR', $dados);
+					$anexos = array($file_local);
+
+					/* Envia e-mail */
+					$txt = $this -> mensagens -> busca('RPAR_RESULT_' . get("dd9"), $dados);
+
+					$ass = $txt['nw_titulo'];
+					$texto = $txt['nw_texto'];
+					$prof_id = $dados['prof_id'];
+
+					/* troca */
+					$texto = troca($texto, '$aluno', $aluno['us_nome']);
+					enviaremail_usuario($prof_id, $ass, $texto, 2, $anexos);
+
+					/* Finaliza avaliacao */
+					$this -> ic_pareceres -> finaliza_avaliacao($id);
+
+					$data['volta'] = base_url('index.php/avaliador');
+					$this -> load -> view('sucesso', $data);
+					return ('');
+				} else {
+					if (strlen($acao) > 0) {
+						echo '<script> alert("Existe campos não preenchidos!"); </script>';
+					}
+				}
+				break;			
 			case 'RPAR' :
 				if ($ok == 15) {
 					$dados = $this -> ic_pareceres -> le($id);
@@ -321,7 +404,7 @@ class avaliador extends CI_Controller {
 					$dados = array_merge($dados, $dados2);
 					$nota = get('dd9');
 					$proto = $dados['pp_protocolo'];
-					$this -> ic_pareceres -> finaliza_nota_ic($proto, $nota,'RPRC');
+					$this -> ic_pareceres -> finaliza_nota_ic($proto, $nota, 'RPRC');
 
 					$aluno = $this -> usuarios -> le_cracha($dados['ic_cracha_aluno']);
 
@@ -351,9 +434,9 @@ class avaliador extends CI_Controller {
 						echo '<script> alert("Existe campos não preenchidos!"); </script>';
 					}
 				}
-				break;				
+				break;
 			default :
-				echo 'OPS - '.$tipo;
+				echo 'OPS - ' . $tipo;
 				exit ;
 		}
 
@@ -363,6 +446,19 @@ class avaliador extends CI_Controller {
 				break;
 			case 'RPRC' :
 				$this -> load -> view('ic/avaliacao_rprc', $data);
+				break;
+			case 'SUBMI' :
+				$proj = $this->ics->le_projeto_protocolo($proto);
+				$prof = $proj['pj_professor'];
+				
+				/* Dados do orientador */
+				$prof = $this->usuarios->le_cracha($prof);
+				$this -> load -> view('perfil/docente', $prof);
+				
+				/* Projeto */
+				
+				//$this -> load -> view('ic/avaliacao_submi', $data);
+				//$this -> load -> view('ic/avaliacao_submi_plano', $data);
 				break;				
 		}
 	}

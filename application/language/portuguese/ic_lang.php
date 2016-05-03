@@ -25,4 +25,6 @@ $lang['status_pj_C'] = 'Projeto em avaliação da comissão científica';
 $lang['status_pj_D'] = 'Projeto aguardando edital';
 $lang['status_pj_F'] = 'Projeto publicado';
 $lang['status_pj_X'] = 'Projeto cancelado';
+
+$lang['ic_tipo_SUBMI'] = 'Submissão Edital';
 ?>

@@ -16,6 +16,41 @@ class Ajax extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 	}
 	
+	function aceite($id='',$rsp='',$chk='')
+		{
+			$this->load->model('usuarios');
+			$this->load->model('avaliadores');
+			
+			$this->load->view('header/header',null);
+			
+			$chk2 = checkpost_link($id);
+			if ($chk2 == $chk)
+				{
+					$txt = '<center>';
+					$data['content'] = $txt;
+					
+					$this->load->view('content',$data);
+					
+					$data = $this->usuarios->le($id);
+					$this->load->view('perfil/user',$data);
+					
+					$sql = "update us_usuario set us_avaliador = '".$rsp."' where id_us = ".round($id);
+					$rlt = $this->db->query($sql);
+					
+					if ($rsp == 1)
+						{
+							$txt = '<h1><font color="green">Obrigado pelo aceite! Em breve entraremos em contato!</font></h1>';
+							$data['content'] = $txt;					
+							$this->load->view('content',$data);							
+						} else {
+							$txt = '<h1><font color="blue">Obrigado pela resposta!</font></h1>';
+							$txt .= '<p>Esperamos que nos próximos anos possamos contar com sua participação!</p>';
+							$data['content'] = $txt;					
+							$this->load->view('content',$data);							
+						}
+				}
+		}	
+	
 	function index()
 		{
 			echo "MODULO AJAX";
