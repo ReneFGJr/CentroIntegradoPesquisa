@@ -11,9 +11,6 @@ $us_nada = '<font color="blue">[em construção]</font>';
 				<B><?php echo $us_nome;?>&nbsp;</B>
 			</li>
 			<li>
-				CPF: <?php echo $us_cpf;?>
-			</li>
-			<li>
 				<?php echo $email;?>
 				<BR>
 			<li></li>

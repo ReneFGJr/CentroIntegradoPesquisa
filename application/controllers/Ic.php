@@ -1931,7 +1931,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function avaliadores($sem_area = 0) {
+	function avaliadores($sem_area = 0, $tipo = '') {
 		/* Load Models */
 		$this -> load -> model('avaliadores');
 
@@ -1941,12 +1941,16 @@ class ic extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('novo_avaliador', 'ic/avaliador_ativar'));
 		array_push($menu, array('zera_avaliador', 'avaliador/zera_convite_avaliador'));
+		array_push($menu, array('zera_externos', 'avaliador/convidar_avaliadores_extermos'));
+		array_push($menu, array('enviar_convites', 'avaliador/enviar_convites_externos'));
 		$data['menu'] = $menu;
 		$this -> load -> view('header/menu_mini', $data);
 
-		$data['content'] = $this -> avaliadores -> avaliadores_area($sem_area);
+		$data['content'] = $this -> avaliadores -> avaliadores_area($sem_area, $tipo);
 		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');
 		$data['submenu'] = '<a href="' . base_url('index.php/ic/avaliadores/1') . '" class="lt0 link">sem áreas</a>';
+		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/avaliadores/0/e') . '" class="lt0 link">externos</a>';
+		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/avaliadores/0/i') . '" class="lt0 link">internos</a>';
 
 		$this -> load -> view('content', $data);
 

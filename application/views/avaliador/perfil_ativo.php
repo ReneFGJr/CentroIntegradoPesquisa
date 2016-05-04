@@ -24,6 +24,10 @@
 					$ds = mst('desativar_como_avaliador');
 					$ida = 'desativar_avaliador';
 					break;
+				case '9':
+					$ds = mst('desativar_como_avaliador');
+					$ida = 'desativar_avaliador';
+					break;					
 				default:
 					$ds = 'Não localizado: '.$st;
 					$ida = 'xxx';
