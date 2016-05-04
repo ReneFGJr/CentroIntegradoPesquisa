@@ -61,6 +61,19 @@ class ic_feira extends CI_model {
 		$op .= '&Ensino Médio e Técnico - 1. ano:Ensino Médio e Técnico - 1. ano';
 		$op .= '&Ensino Médio e Técnico - Livre:Ensino Médio e Técnico - Livre';
 		array_push($cp, array('$R ' . $op, 'pj_gr2_local', 'Categoria da inscrição', False, True));
+		
+		
+		/**************************************************************************** TEMA */
+		
+		$op = '';
+		$op .= 'Cidades e Comunidade Sustentáveis:Cidades e Comunidade Sustentáveis';
+		$op .= '&Inovação e Infraestrutura:Inovação e Infraestrutura';
+		$op .= '&Consumo responsável:Consumo responsável';
+		$op .= '&Combate às mudanças climáticas:Combate às mudanças climáticas';
+		$op .= '&Energias renováveis:Energias renováveis';
+		$op .= '&Água limpa e saneamento:Água limpa e saneamento';
+		
+		array_push($cp, array('$R ' . $op, 'pj_resumo', 'Tema a ser submetido', False, True));
 
 		/**************************************************************************** ESTUDANTES */
 
@@ -190,29 +203,11 @@ class ic_feira extends CI_model {
 		}
 
 		/* Vinculos com Outros Projetos */
-		$in = '';
-		for ($r = 0; $r < count($rlt); $r++) {
-			$line = $rlt[$r];
-			$cracha = trim($line['ispe_cracha']);
-			if (strlen($cracha) > 0) {
-				$sql = "select * from ic_submissao_projetos_equipe
-							inner join ic_submissao_projetos on pj_codigo = ispe_protocolo
-							where ispe_protocolo <> '$proto' and ispe_cracha = '$cracha' 
-									and (pj_status <> '@' and pj_status <> 'X')";
-				$rrr = $this -> db -> query($sql);
-				$rrr = $rrr -> result_array();
-
-				if (count($rrr) > 0) {
-					$in .= '<li>' . $line['ispe_nome'] . ' está vinculado ao protocolo ' . $rrr[0]['ispe_protocolo'] . '</li>';
-				}
-			}
-		}
-		if (strlen($in) > 0) {
-			$in = '<ul>' . $in . '</ul>';
-		} else {
+		if (strlen($projeto['pj_resumo']) >= 2) {
 			$vd[5] = $class_ok;
 			$vdt[5] = $ok;
 		}
+		
 
 		/* Vinculos com Programs de IC */
 		if (strlen($projeto['pj_ext_local']) >= 2) {
@@ -231,8 +226,7 @@ class ic_feira extends CI_model {
 
 		$sx .= '<tr class="' . $vd[4] . '"><td>Arquivo do Projeto em PDF</td><td align="center">' . $vdt[4] . '</tr>';
 
-		//$sx .= '<tr class="' . $vd[5] . '"><td>Membros da equipe, vinculo com outros projetos (o estudante pode somente estar vinculado a um projeto)' . $in . '</td><td align="center">' . $vdt[5] . '</tr>';
-		$vdt[5] = $ok;
+		$sx .= '<tr class="' . $vd[5] . '"><td>Tema da submissão</td><td align="center">' . $vdt[5] . '</tr>';
 
 		$sx .= '<tr class="' . $vd[6] . '"><td>Membros da equipe (entre 3 e 5 alunos) - ' . count($rlt) . ' as membros registrados</td><td align="center">' . $vdt[6] . '</tr>';
 		$sx .= '</table>';
