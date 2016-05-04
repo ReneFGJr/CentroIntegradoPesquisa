@@ -262,6 +262,9 @@ class stricto_sensu extends CI_Controller {
 			case 'artigo' :
 				$tela = $this -> phplattess -> producao_ss_artigos($ppg);
 				break;
+			case 'artigo_docente' :
+				$tela = $this -> phplattess -> producao_ss_artigos_docente($ppg);
+				break;				
 			case 'livros' :
 				$tela = $this -> phplattess -> producao_ss_bibliografica($ppg, 'LIVRO');
 				break;
@@ -294,6 +297,7 @@ class stricto_sensu extends CI_Controller {
 		/************* MENU */
 		$menu = array();
 		array_push($menu, array('Produção', 'Artigos Científicos', 'ITE', '/stricto_sensu/producoes/artigo/' . $id));
+		array_push($menu, array('Produção', 'Artigos Científicos por docente', 'ITE', '/stricto_sensu/producoes/artigo_docente/' . $id));
 		array_push($menu, array('Produção', 'Anais eventos', 'ITE', '/stricto_sensu/producoes/anais/' . $id));
 		array_push($menu, array('Produção', 'Livros', 'ITE', '/stricto_sensu/producoes/livros/' . $id));
 		array_push($menu, array('Produção', 'Livros Organizados', 'ITE', '/stricto_sensu/producoes/organizado/' . $id));

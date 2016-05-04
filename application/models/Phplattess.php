@@ -3,6 +3,188 @@ class phpLattess extends CI_Model {
 	var $qualis = '2014';
 	var $dados = array();
 
+	function producao_ss_artigos_docente($prppg = 0, $ano = '', $grafico = 1, $sigla = '') {
+		if (strlen($ano) == 0) {
+			$ano = $this -> qualis;
+		}
+		if ($prppg > 0) {
+			$wh = " programa_pos_id_pp = $prppg and ";
+		} else {
+			$wh = '';
+		}
+
+		// , min(sjr_quartile) as estrato
+
+		$sql = "
+			select distinct acpp_ano, acpp_autores, acpp_titulo, acpp_periodico, us_nome,
+				acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, estrato					
+				FROM (
+				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha, programa_pos_id_pp FROM `ss_professor_programa_linha` 
+					inner join us_usuario on id_us = us_usuario_id_us
+					where $wh sspp_ativo = 1
+				) as tabela
+				inner join cnpq_acpp on acpp_autor = us_nome_lattes
+				left join ss_programa_pos on programa_pos_id_pp = id_pp
+				left join webqualis on issn = concat(substr(acpp_issn,1,4),'-',substr(acpp_issn,5,4)) and pp_area = area_id and ano = '$ano'				
+				order by us_nome, acpp_ano, acpp_autores
+			";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela01 lt1">';
+		$tot = 0;
+		$toti = 0;
+		$xano = 0;
+		$xnome = '';
+
+		$rs = array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$nome = $line['us_nome'];
+
+			$ano = $line['acpp_ano'];
+			
+			if ($nome != $xnome) {
+				$sx .= '<tr><td class="lt4" colspan=10><b>' . $nome . '</b></td></tr>';
+				$xnome = $nome;
+				$toti = 0;
+			}
+						
+			if ($ano != $xano) {
+				$sx .= '<tr><td class="lt3" colspan=10><b>' . $ano . '</b></td></tr>';
+				$xano = $ano;
+				$toti = 0;
+			}
+
+			$tot++;
+			$toti++;
+
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center">';
+			$sx .= $toti;
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= $line['acpp_ano'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['acpp_autores'] . '. ';
+			$sx .= $line['acpp_titulo'] . '. ';
+			$sx .= $line['acpp_periodico'];
+			if (strlen($line['acpp_volume']) > 0) { $sx .= ', v. ' . $line['acpp_volume'];
+			}
+			if (strlen($line['acpp_fasciculo']) > 0) { $sx .= ', n. ' . $line['acpp_fasciculo'];
+			}
+			if (strlen($line['acpp_pg_ini']) > 0) {
+				$sx .= ', p. ' . $line['acpp_pg_ini'];
+			}
+			$sx .= '</td>';
+
+			$sx .= '<td><nobr>';
+			$sx .= substr($line['acpp_issn_link'], 0, 4) . '-' . substr($line['acpp_issn_link'], 4, 4);
+			$sx .= '</nobr></td>';
+
+			$sx .= '<td align="center">' . $line['estrato'] . '</td>';
+
+			/* Monta Matrix */
+			$estrato = $line['estrato'];
+			if ($estrato == '') { $estrato = 'nc';
+			}
+
+			if (isset($rs[$nome][$ano][$estrato])) {
+				$rs[$nome][$ano][$estrato] = $rs[$nome][$ano][$estrato] + 1;
+			} else {
+				$rs[$nome][$ano][$estrato] = 1;
+			}
+			$sx .= cr();
+		}
+		$sx .= '</table>';
+
+		/* Quartil */
+		$sql = "
+			select distinct acpp_ano, acpp_autores, acpp_titulo, acpp_periodico, us_nome,
+				acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, quartil as estrato					
+				FROM (
+				SELECT distinct us_usuario_id_us, us_nome, us_nome_lattes, us_cracha, programa_pos_id_pp FROM `ss_professor_programa_linha` 
+					inner join us_usuario on id_us = us_usuario_id_us
+					where $wh sspp_ativo = 1
+				) as tabela
+				inner join cnpq_acpp on acpp_autor = us_nome_lattes
+				left join (SELECT min(sjr_quartile) as quartil, issn_l as sc_issn_l FROM scimago WHERE 1 group by issn_l) as scimago on sc_issn_l = acpp_issn_link				
+				group by acpp_ano, acpp_autores, acpp_titulo, acpp_periodico, us_nome, 
+							acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, quartil
+				order by us_nome, acpp_ano, acpp_autores
+			";
+		
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$tot = 0;
+		$toti = 0;
+		$xano = 0;
+		
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$nome = $line['us_nome'];
+
+			$ano = $line['acpp_ano'];
+
+			if ($ano != $xano) {
+				$xano = $ano;
+				$toti = 0;
+			}
+
+			$tot++;
+			$toti++;
+
+			/* Monta Matrix */
+			$estrato = $line['estrato'];
+			if ($estrato == '') { $estrato = 'qnc';
+			}
+			
+			if (isset($rs[$nome][$ano][$estrato])) {
+				$rs[$nome][$ano][$estrato] = $rs[$nome][$ano][$estrato] + 1;
+			} else {
+				$rs[$nome][$ano][$estrato] = 1;
+			}
+
+		}
+
+		$sa = '';
+		$sh = '<tr><th></th>';
+		$sl = '<tr><th></th>';
+		$rd = 0;
+		foreach ($rs as $key => $value) {
+			$sa .= '<tr>';
+			$sa .= '<td>' . $key . '</td>';
+
+			$eq = array('Q1', 'A1', 'A2', 'B1', 'B2', 'B3', 'B4', 'B5', 'C', 'nc');
+
+			for ($r = 2013; $r <= date("Y"); $r++) {
+				if ($rd == 0) { $sh .= '<th colspan="' . count($eq) . '">' . $r . '</th>';
+				}
+
+				$dados = $rs[$key];
+				for ($q = 0; $q < count($eq); $q++) {
+					$v = $eq[$q];
+					if ($rd == 0) { $sl .= '<th>' . $v . '</th>';
+					}
+					if (isset($dados[$r][$v])) {
+						$sa .= '<td align="center">' . $dados[$r][$v] . '</td>';
+					} else {
+						$sa .= '<td align="center">-</td>';
+					}
+				}
+			}
+			$rd = 1;
+		}
+		$sa = '<table border=0 class="tabela00" width="100%">' . $sh . $sl . $sa . '</table>';
+
+		return ($sa . $sx);
+	}
+
 	function producao_ss_artigos($prppg = 0, $ano = '') {
 		$sx = $this -> producao_ss_artigos_calc($prppg, $ano, 1);
 		return ($sx);
@@ -136,7 +318,6 @@ class phpLattess extends CI_Model {
 		$rs = array();
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			
 
 			$ano = $line['acpp_ano'];
 			if ($ano != $xano) {
@@ -194,7 +375,6 @@ class phpLattess extends CI_Model {
 		$sx = $this -> monta_tabela_dados_quartil($rs, $grafico, $sigla) . $sx;
 		return ($sx);
 	}
-
 
 	function monta_tabela_dados_qualis($rs, $grafico = 1, $sigla = '') {
 		$gr1 = '';
@@ -363,6 +543,7 @@ class phpLattess extends CI_Model {
 		}
 		return ($sx);
 	}
+
 	function producao_ss_eventos($prppg = 0, $tipo = '') {
 		$wh = " where ev_tipo = '$tipo' ";
 		$sql = "
