@@ -8,9 +8,9 @@ class ics extends CI_model {
 	var $tabela_planos = "ic_submissao_plano";
 	var $resumo = array();
 
-   /* Lista Professores sem escola cadastrada*/
+	/* Lista Professores sem escola cadastrada*/
 	function professores_sem_escola() {
-		//consulta	
+		//consulta
 		$sql = "SELECT us_cracha, us_nome, id_us
 						FROM ic_submissao_plano
 						INNER JOIN ic_submissao_projetos on doc_protocolo_mae = pj_codigo
@@ -27,7 +27,7 @@ class ics extends CI_model {
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		//Colunas da tabela
 		$sx = '<table width="50%" class="tabela00">';
 		$sx .= '<tr><th align="left" class="lt01">#</th>
@@ -37,35 +37,35 @@ class ics extends CI_model {
 
 		$tot = 0;
 		$id = 0;
-		
+
 		/*linhas da tabela*/
 		for ($r = 0; $r < count($rlt); $r++) {
-				//contadores
-				$tot++;
-			  $id++;
-				
-				$line = $rlt[$r];
+			//contadores
+			$tot++;
+			$id++;
 
-				$sx .= '<tr>';
-				$sx .= '<td align="left">';
-				$sx .= $id ;
-				$sx .= '</td>';
-				$sx .= '<td align="left">';
-				$sx .= link_perfil($line['us_nome'], $line['id_us']);
-				$sx .= '</td>';
-				
-				$sx .= '<td align="left">';
-				$sx .= link_perfil($line['us_cracha'], $line['id_us']);
-				$sx .= '</td>';
-			}
-			//resultado contador
-			$sx .= '<tr><td colspan=3>Total ' . $tot . ' registros</td></tr>';
-			$sx .= '</table>';
-			
-			return ($sx);
+			$line = $rlt[$r];
+
+			$sx .= '<tr>';
+			$sx .= '<td align="left">';
+			$sx .= $id;
+			$sx .= '</td>';
+			$sx .= '<td align="left">';
+			$sx .= link_perfil($line['us_nome'], $line['id_us']);
+			$sx .= '</td>';
+
+			$sx .= '<td align="left">';
+			$sx .= link_perfil($line['us_cracha'], $line['id_us']);
+			$sx .= '</td>';
+		}
+		//resultado contador
+		$sx .= '<tr><td colspan=3>Total ' . $tot . ' registros</td></tr>';
+		$sx .= '</table>';
+
+		return ($sx);
 	}
-	
-	//resumo do cockpit por escolas	
+
+	//resumo do cockpit por escolas
 	function ic_submit_resumo_escolas($ano, $tipo = 'IC') {
 		$sql = "select us_escola_vinculo, es_escola, count(*) as total
 						from ic_submissao_plano
@@ -84,16 +84,16 @@ class ics extends CI_model {
 
 		//Colunas da tabela
 		$sx = '<table width="40%" class="tabela00" border=0>';
-		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por escolas '.' - ' . $ano . '</b></td></tr>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por escolas ' . ' - ' . $ano . '</b></td></tr>';
 		$sx .= '<tr class="lt3"><th align="Center">Escola</th>
 								<th align="Center">qtd</th>
 						</tr>';
-						
+
 		$tot = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$sx .= '<tr>';
-		
+
 			$escSemCad = 'Sem Escola Cadastrada';
 
 			if ($line['es_escola'] == $escSemCad) {
@@ -110,14 +110,13 @@ class ics extends CI_model {
 			}
 			$sx .= '<td align="right">' . $line['total'];
 		}
-		
+
 		$sx .= '</table>';
 		return ($sx);
 	}
-	
-	
+
 	//resumo cockpit por tipo de orientador
-	function ic_submit_resumo_professor_tipo ($ano) {
+	function ic_submit_resumo_professor_tipo($ano) {
 		$sql = "select ss, count(*) as total
 							from ic_submissao_plano
 							inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
@@ -133,7 +132,7 @@ class ics extends CI_model {
 					 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		//Colunas da tabela
 		$sx = '<table width="40%" class="tabela00" border=0>';
 		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por tipo de professor</b></td></tr>';
@@ -144,39 +143,39 @@ class ics extends CI_model {
 		$ss = 1;
 		$troca = 'Stricto Sensu';
 		$troca2 = 'Graduação';
-				
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
-			
+
 			$sx .= '<tr>';
-			
-			if($line['ss'] == $ss ){
-				
-			$sx .= '<td align="left">';
-			$sx .= $troca;
-			$sx .= '</td>';
-			}else{
+
+			if ($line['ss'] == $ss) {
+
+				$sx .= '<td align="left">';
+				$sx .= $troca;
+				$sx .= '</td>';
+			} else {
 				$sx .= '<td align="left">';
 				$sx .= $troca2;
 				$sx .= '</td>';
 			}
-		
+
 			$sx .= '<td align="right">';
 			$sx .= $line['total'];
 			$sx .= '</td>';
 
-			$tot = $tot + $line['total'];			
+			$tot = $tot + $line['total'];
 
 		}
 		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
 		$sx .= '</table>';
-		
+
 		return ($sx);
-	}	
+	}
 
 	//resumo cockpit por tipo de orientador
-	function ic_submit_resumo_professor_titulacao ($ano) {
+	function ic_submit_resumo_professor_titulacao($ano) {
 		$sql = "select ust_titulacao, count(*) as total
 						from ic_submissao_plano
 						inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
@@ -192,7 +191,7 @@ class ics extends CI_model {
 					 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		//Colunas da tabela
 		$sx = '<table width="40%" class="tabela00" border=0>';
 		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por titulação do professor </b></td></tr>';
@@ -200,30 +199,28 @@ class ics extends CI_model {
 								<th align="center">qtd</th>
 						</tr>';
 		$tot = 0;
-				
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
-			
+
 			$sx .= '<tr>';
 			$sx .= '<td align="left">';
 			$sx .= $line['ust_titulacao'];
 			$sx .= '</td>';
-		
+
 			$sx .= '<td align="right">';
 			$sx .= $line['total'];
 			$sx .= '</td>';
 
-			$tot = $tot + $line['total'];			
+			$tot = $tot + $line['total'];
 
 		}
 		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
 		$sx .= '</table>';
-		
+
 		return ($sx);
 	}
-	
-	
 
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
@@ -390,10 +387,10 @@ class ics extends CI_model {
 			$sx .= $link . $line['total'] . '</a>';
 			$sx .= '</td>';
 
-			$tot = $tot + $line['total'];			
+			$tot = $tot + $line['total'];
 
 		}
-		$sx .= '<tr><td colspan=3 align="right">Total de projetos --> '. $tot .'</td></tr>';
+		$sx .= '<tr><td colspan=3 align="right">Total de projetos --> ' . $tot . '</td></tr>';
 		$sx .= '</table>';
 		return ($sx);
 	}
@@ -429,7 +426,7 @@ class ics extends CI_model {
 
 		$sx = '';
 		$tot = 0;
-		
+
 		$sx .= '<table width="40%" class="tabela00" border=0>';
 		$sx .= '<tr><td class="lt4" colspan=3><b>Planos submetidos por edital para ' . $edital . '/' . $ano . '</b></td></tr>';
 		$sx .= '<tr class="lt3">
@@ -440,22 +437,22 @@ class ics extends CI_model {
 
 		$jr = 'PIBICEM';
 		$troca = 'PIBIC jr';
-		
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 
 			$sx .= '<tr>';
 
-			if($line['doc_edital'] == $jr){
+			if ($line['doc_edital'] == $jr) {
 				$sx .= '<td align="left">';
 				$sx .= $troca;
 				$sx .= '</td>';
-			}else{
+			} else {
 				$sx .= '<td align="left">';
 				$sx .= $line['doc_edital'];
-				$sx .= '</td>';	
+				$sx .= '</td>';
 			}
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $line['status'];
 			$sx .= '</td>';
@@ -463,18 +460,18 @@ class ics extends CI_model {
 			$sx .= '<td align="right">';
 			$sx .= $line['total'];
 			$sx .= '</td>';
-			
-			$tot = $tot + $line['total'];			
+
+			$tot = $tot + $line['total'];
 
 		}
-		$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
+		$sx .= '<tr><td colspan=3 align="right">Total de planos --> ' . $tot . '</td></tr>';
 		$sx .= '</table>';
 		return ($sx);
 	}
 
 	function cockpit_resumo_graf($ano, $edital) {
 		$whe = " and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM') ";
-		
+
 		if ($edital != 'IC') {
 			$whe = " and (doc_edital = '$edital' )";
 		}
@@ -714,57 +711,74 @@ class ics extends CI_model {
 	}
 
 	function ic_seguro($tipo = 1) {
-		$vlr = 10000;
+		$vlr = 0;
 		$custo = '0.0662';
+		$sub = '76659820000313';
+		$areaIC = 'PIBIC';
+		$cr = '103.646';
 		$ano = date("Y");
-		if (date("m") < 7) { $ano = $ano - 1;
+
+		if (date("m") < 7) {
+			$ano = $ano - 1;
 		}
 
 		$data1 = date("Y-m-d");
 		$wh = "((icas_id = 1) and (ic_ano = '$ano'))";
+
 		if ($tipo == 1) {
+			$vlr = 10000;
+			$custo = '0.28';
 			$wh .= " AND (al_campus = 'Curitiba' or al_campus = 'São José dos Pinhais' or al_campus='')";
 		} else {
-			$custo = '0.2645';
+			$vlr = 12000;
+			$custo = '2.39';
 			$wh .= "  AND NOT (al_campus = 'Curitiba' or al_campus = 'São José dos Pinhais' or al_campus='')";
 		}
+
 		$sql = $this -> table_view($wh, 0, 9999999, 'al_nome');
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
+		
 		$seq = 0;
+		
 		$sx = '<table width="100%" class="lt1 tabela00">';
-		$sx .= '<tr><th>#</th>
-					<th>Nome</th>
-					<th>Genero</th>
-					<th>Tipo</th>
-					<th>Dt.Nascimento</th>
-					<th>CPF Matricula</th>
-					<th>Capital Segurado</th>
-					<th>Custo</th>
-					<th>Modalidade</th>
-					<th>Campus</th>
-					<th>Cracha</th>
-				</tr>';
+		$sx .= '<tr class="lt2"><th>#</th>
+						<th class="lt2">Nome</th>
+						<th class="lt2">CPF</th>					
+						<th class="lt2">Dt.Nascimento</th>					
+						<th class="lt2">Custo</th>				
+						<th class="lt2">Salário/Capital</th>
+						<th class="lt2">Sub</th>			
+						<th class="lt2">Área demandante</th>
+						<th class="lt2">CR</th>
+						<th class="lt2">Cidade</th>
+					</tr>';
 
 		for ($r = 0; $r < count($rlt); $r++) {
+
 			$line = $rlt[$r];
 			$seq++;
+
 			$sx .= '<tr>';
 			$sx .= '<td align="center">' . $seq . '.</td>';
 			$sx .= '<td align="left">' . $line['al_nome'] . '</td>';
-			$sx .= '<td align="center">' . $line['al_genero'] . '</td>';
-			$sx .= '<td align="center">' . 'T' . '</td>';
+			$sx .= '<td align="center">' . $line['al_cpf'] . '</td>';
 			$sx .= '<td align="center">' . stodbr($line['al_nasc']) . '</td>';
-			$sx .= '<td align="center">' . mask_cpf($line['al_cpf']) . '</td>';
-			$sx .= '<td align="right">' . number_format($vlr, 2, ',', '.') . '</td>';
 			$sx .= '<td align="right">' . number_format($custo, 4, ',', '.') . '</td>';
-			$sx .= '<td>' . $line['mb_descricao'] . '</td>';
-			$sx .= '<td>' . $line['al_campus_vinculo'] . '</td>';
-			$sx .= '<td align="center">' . $line['al_cracha'] . '</td>';
+			$sx .= '<td align="right">' . number_format($vlr, 2, ',', '.') . '</td>';
+			$sx .= '<td align="center">' . $sub . '</td>';
+			$sx .= '<td align="center">' . $areaIC . '</td>';
+			$sx .= '<td align="center">' . $cr . '</td>';
+			$sx .= '<td align="right">' . $line['al_campus_vinculo'] . '</td>';
+
+			//$sx .= '<td align="center">' . $line['al_genero'] . '</td>';
+			//$sx .= '<td align="center">' . 'T' . '</td>';
+			//$sx .= '<td>' . $line['mb_descricao'] . '</td>';
+			//$sx .= '<td align="center">' . $line['al_cracha'] . '</td>';
 
 		}
+
 		$sx .= '</table>';
-		//print_r($line);
 		return ($sx);
 	}
 
@@ -1527,7 +1541,8 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1592,7 +1607,8 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
