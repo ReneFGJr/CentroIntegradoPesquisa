@@ -3099,36 +3099,36 @@ class ic extends CI_Controller {
 		if ($form -> saved or (strlen($ano) > 0)) {
 
 			$ano = get("dd1") . $ano;
-			
 			//carrega grafico de acompanhameto das submissões
 			$data_cockpit = array();
 			
 			$line = $this -> ics -> cockpit_resumo_graf($ano, $edital);
 
-
+				//Status dos Projetos submetidos	
+				$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
+				$this -> load -> view('content', $data);
+				
 			if (count($line) > 0) {
 			
 				$data_cockpit['dado_coc'] = $line;
 				$this -> load -> view('ic/resumo_cockpit', $data_cockpit);
 				
-				//Status dos Projetos submetidos	
-				$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
-				$this -> load -> view('content', $data);
+
 				
 				//Status dos Planos submetidos	
 				$data['content'] = $this -> ics -> cockpit_resumo_plano($ano, $edital);
 				$this -> load -> view('content', $data);
 				
 				//resumo por escolas
-				$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano);
+				$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano, $edital);
 				$this -> load -> view('content', $data);
 				
 				//resumo professor tipo
-				$data['content'] = $this -> ics -> ic_submit_resumo_professor_tipo($ano);
+				$data['content'] = $this -> ics -> ic_submit_resumo_professor_tipo($ano, $edital);
 				$this -> load -> view('content', $data);
 				
 				//resumo titulação
-				$data['content'] = $this -> ics -> ic_submit_resumo_professor_titulacao($ano);
+				$data['content'] = $this -> ics -> ic_submit_resumo_professor_titulacao($ano, $edital);
 				$this -> load -> view('content', $data);
 			}
 

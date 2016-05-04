@@ -351,6 +351,7 @@ class ics extends CI_model {
 						$whe
 						group by pj_edital, pj_ano, pj_status
 					 ";
+					 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -485,7 +486,6 @@ class ics extends CI_model {
 						$whe
 						group by doc_edital, pj_ano
 					 ";
-
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 
@@ -2853,6 +2853,56 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
+
+	function botao_novo_equipe_projeto_por_nome($proto) {
+		$sx = '<input type="button" value="Incluir membro na equipe >>>" id="novo_estudante">';
+		$sx .= '<br>';
+		$sx .= '<div id="novo_membro" style="display: none;">';
+		
+		$sx .= '<table>';
+		$sx .= '<tr><td align="right">Nome completo do estudante: ';
+		$sx .= '</td><td><input type="string" value="" name="nome" id="nome" size="90">';
+		
+		$sx .= '<tr><td align="right"><br>';
+
+		$sx .= '<tr><td align="right">CPF: ';
+		$sx .= '</td><td><input type="string" value="" name="cpf" id="cpf" size="15">';
+		
+		$sx .= '<tr><td align="right"><br>';
+
+		$sx .= '<tr><td align="right">E-mail do estudante: ';
+		$sx .= '</td><td><input type="string" value="" name="email" id="email" size="50">';
+		
+		$sx .= '<tr><td align="right"><br>';
+
+		$sx .= '<tr><td align="right"><input type="button" value="Incluir >>>" id="novo_acao">';
+		$sx .= '</table>';
+		$sx .= '</div>';
+		$sx .= '
+			<script>
+				$("#novo_estudante").click(function() {
+					$("#novo_membro").toggle();
+				});
+				$("#novo_acao").click(function() {
+					var $nome = $("#nome").val();
+					var $cpf = $("#cpf").val();
+					var $email = $("#email").val();
+					$("#cracha").val("");
+						var $url = "' . base_url('index.php/ajax/submit_ajax_equipe_nome/' . $proto) .'";
+						$.ajax({
+							url : $url,
+							type : "post",
+							data: { name: $nome, cpf: $cpf, email: $email }, 
+							success : function(data) {
+								$("#list_team").html(data);
+							}
+						});					
+				});				
+			</script>
+			';
+		return ($sx);
+	}
+
 	function lider_de_equipe($proto, $user) {
 		$cracha = $user['us_cracha'];
 
@@ -2911,7 +2961,7 @@ class ics extends CI_model {
 					<th width="40%">nome</th>
 					<th width="8%">cracha</th>
 					<th width="12%">CPF</th>
-					<th width="33%">Curso / Escola</th>
+					<th width="33%">Curso / Escola / E-mail</th>
 					<th width="5%">ação</th>
 					</tr>
 			';

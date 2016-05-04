@@ -64,6 +64,24 @@ class Ajax extends CI_Controller {
 		$this -> load -> view('content', $data);
 	}
 
+	function submit_ajax_equipe_nome($proto='')
+		{
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');
+		$sx = '';
+
+		$lock = 0;
+		$nome = utf8_decode(get("name"));
+		$cpf = get("cpf");
+		$escola = utf8_decode(get("email"));
+		$cracha = '';
+
+		$this -> ics -> incluir_membro_na_equipe($proto, $nome, $cpf, $cracha, $escola, $lock);
+
+		$data['content'] = $this -> ics -> lista_equipe_projeto_lista($proto) . ' ' . date("Y:m:d H:i:s");
+		$this -> load -> view('content', $data);			
+		}
+
 	function submit_ajax_equipe($proto = '', $cracha) {
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
