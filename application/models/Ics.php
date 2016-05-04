@@ -742,6 +742,8 @@ class ics extends CI_model {
 		$seq = 0;
 		
 		$sx = '<table width="100%" class="lt1 tabela00">';
+		$sx .= '<tr><td align="left"><img src="' . base_url('img/logo_seguradora.png') . '" height="60"></td></tr>';
+		$sx .= '<tr></tr>';
 		$sx .= '<tr class="lt2"><th>#</th>
 						<th class="lt2">Nome</th>
 						<th class="lt2">CPF</th>					
