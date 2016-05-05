@@ -1945,18 +1945,57 @@ class ic extends CI_Controller {
 		array_push($menu, array('enviar_convites', 'avaliador/enviar_convites_externos'));
 		$data['menu'] = $menu;
 		$this -> load -> view('header/menu_mini', $data);
+		
+		/* Resumo dos convites */
+		$tela = $this -> avaliadores -> resumo_convites_avaliadores();
+
+		$data['content'] = $tela;
+		$this -> load -> view("content", $data);
 
 		$data['content'] = $this -> avaliadores -> avaliadores_area($sem_area, $tipo);
 		$data['title'] = msg('Avaliadores') . ' ' . msg('e') . ' ' . msg('Areas');
 		$data['submenu'] = '<a href="' . base_url('index.php/ic/avaliadores/1') . '" class="lt0 link">sem áreas</a>';
 		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/avaliadores/0/e') . '" class="lt0 link">externos</a>';
 		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/avaliadores/0/i') . '" class="lt0 link">internos</a>';
+		
+		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/convite_resumo_internos') . '" class="lt0 link">Convites á internos</a>';
+		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/convite_resumo_externos') . '" class="lt0 link">Convite á externos</a>';
 
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function convite_resumo_internos(){
+				/* Load Models */
+		$this -> load -> model('avaliadores');
+
+		$this -> cab();
+		$data = array();
+		
+		$data['content'] = $this -> avaliadores -> resumo_convite_avaliadores_internos();
+	
+		$this -> load -> view('content', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);	
+	}
+	
+	function convite_resumo_externos(){
+				/* Load Models */
+		$this -> load -> model('avaliadores');
+
+		$this -> cab();
+		$data = array();
+		
+		$data['content'] = $this -> avaliadores -> resumo_convite_avaliadores_externos();
+		
+		$this -> load -> view('content', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);	
+	}
+
+
 
 	function protocolo_view($id = '', $chk = '') {
 		/* Load Models */

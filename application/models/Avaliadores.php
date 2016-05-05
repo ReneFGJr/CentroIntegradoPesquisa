@@ -1,6 +1,178 @@
 <?php
 class avaliadores extends CI_Model {
 
+	//Situacao Geral dos convites de avaliadores
+	function resumo_convites_avaliadores() {
+		$sql = "select distinct 'Externos' as tipo, as_situacao, id_as, count(*) as total
+							from us_usuario
+							left join us_avaliador_situacao on us_avaliador = id_as
+							where us_avaliador <> 0 
+							and us_ativo = 1
+							and ies_instituicao_ies_id <> 1
+							group by as_situacao
+							union
+							select distinct 'Internos' as tipo, as_situacao, id_as, count(*) as total
+							from us_usuario
+							left join us_avaliador_situacao on us_avaliador = id_as
+							where us_avaliador <> 0 
+							and us_ativo = 1
+							and ies_instituicao_ies_id = 1
+							group by as_situacao
+							order by tipo desc, as_situacao
+					";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		//array para os cabecalhos
+		$desc = array('1' =>  'Convite aceito', 
+		              '8' =>  'Enviar convite', 
+		              '9' =>  'Aguardando aceite', 
+		              '-1' => 'Convite não aceito');
+		//divide em porcentagem os tamonhos das colunas
+		$size = round(80 / count($desc)) .'%';
+		$dados = array();
+
+		$sx = '<table width="60%" align="center" class="lt1">';
+		$sx .= '<tr>';
+		$sx .= '<tr><td class="lt6" colspan=5 align="center"><b>Resumo dos convites</b></td></tr>';
+		$sx .= '<th align="right">Tipo avaliador</th>';
+		
+		foreach ($desc as $id => $descricao) {
+			$sx .= '<th width="' . $size . '">' . $descricao . '</th>';
+		}
+		
+		$xtipo = '';
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tipo = $line['tipo'];
+			$total = $line['total'];
+			$id_as = $line['id_as'];
+
+			$dados[$tipo][$id_as] = $total;
+
+		}
+
+		foreach ($dados as $key => $value) {
+			$sx .= '<tr>';
+			$sx .= '<td class="lt2" align="right">' . $key . '</td>';
+
+			foreach ($desc as $id => $descricao) {
+				if (isset($value[$id])) {
+					$sx .= '<td  class="border1 lt3" align="center">' . $value[$id] . '</td>';
+				} else {
+					$sx .= '<td class="border1 lt3" align="center"> - </td>';
+				}
+
+			}
+
+		}
+
+		$sx .= '</table>';
+
+		return ($sx);
+	}
+
+	//Situacao convites dos avaliadores PUCPR
+	function resumo_convite_avaliadores_internos() {
+		$sql = "select *
+							from us_usuario
+							left join us_avaliador_area on pa_parecerista = id_us
+							left join us_avaliador_situacao on us_avaliador = id_as
+							left join us_titulacao on ust_id = usuario_titulacao_ust_id
+							left join area_conhecimento on ac_cnpq = pa_area
+							left join (select count(*) as emails, usuario_id_us from us_email where usm_ativo = 1 group by usuario_id_us ) as email on id_us = usuario_id_us
+							left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
+							left join ies_instituicao on ies_instituicao_ies_id = id_ies
+							where us_avaliador <> 0 
+							and us_ativo = 1
+							and ies_instituicao_ies_id = 1
+							group by us_nome, as_situacao
+							order by as_situacao, us_nome
+			";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		//Colunas da tabela
+		$sx = '<table width="60%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=1><b>Resumo dos convites dos avaliadores internos</b></td></tr>';
+		$sx .= '<tr class="lt3"><th align="Center">Avaliador</th>
+								<th align="Center">Situação</th>
+						</tr>';
+
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			$sx .= '<tr>';
+
+			$link = base_url('index.php/avaliador/view/' . $line['id_us'] . '/' . checkpost_link($line['us_nome']));
+			$link = '<a href="' . $link . '" target="_new" class="link lt1">';
+
+			$sx .= '<td align="left">';
+			$sx .= $link . $line['us_nome'] . '</a>';
+			$sx .= '</td>';
+
+			$sx .= '<td align="left">';
+			$sx .= $line['as_situacao'];
+			$sx .= '</td>';
+
+		}
+		$sx .= '<tr><td colspan=3>Total ' . $tot . ' registros</td></tr>';
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function resumo_convite_avaliadores_externos() {
+		$sql = "select *
+							from us_usuario
+							left join us_avaliador_area on pa_parecerista = id_us
+							left join us_avaliador_situacao on us_avaliador = id_as
+							left join us_titulacao on ust_id = usuario_titulacao_ust_id
+							left join area_conhecimento on ac_cnpq = pa_area
+							left join (select count(*) as emails, usuario_id_us from us_email where usm_ativo = 1 group by usuario_id_us ) as email on id_us = usuario_id_us
+							left join us_titulacao as t on t.ust_id = us_usuario.usuario_titulacao_ust_id
+							left join ies_instituicao on ies_instituicao_ies_id = id_ies
+							where us_avaliador <> 0 
+							and us_ativo = 1
+							and ies_instituicao_ies_id <> 1
+							group by us_nome, as_situacao
+							order by as_situacao, us_nome
+			";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		//Colunas da tabela
+		$sx = '<table width="60%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=1><b>Resumo dos convites dos avaliadores internos</b></td></tr>';
+		$sx .= '<tr class="lt3"><th align="Center">Avaliador</th>
+								<th align="Center">Situação</th>
+						</tr>';
+
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			$sx .= '<tr>';
+
+			$link = base_url('index.php/avaliador/view/' . $line['id_us'] . '/' . checkpost_link($line['us_nome']));
+			$link = '<a href="' . $link . '" target="_new" class="link lt1">';
+
+			$sx .= '<td align="left">';
+			$sx .= $link . $line['us_nome'] . '</a>';
+			$sx .= '</td>';
+
+			$sx .= '<td align="left">';
+			$sx .= $line['as_situacao'];
+			$sx .= '</td>';
+
+		}
+		$sx .= '<tr><td colspan=3>Total ' . $tot . ' registros</td></tr>';
+		$sx .= '</table>';
+		return ($sx);
+	}
+
 	function marcar_para_enviar_convite_externos() {
 		$sql = "select * from us_usuario
 							left join us_avaliador_area on pa_parecerista = id_us

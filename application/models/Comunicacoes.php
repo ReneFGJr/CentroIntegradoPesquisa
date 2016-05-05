@@ -234,6 +234,29 @@ class comunicacoes extends CI_Model
 						$email .= 'cleybe.vieira@pucpr.br'.cr();
 				}
 				
+			//* IC - Alunos PIBIC E PIBITI com IC  */
+			if ($gr == 20)
+				{
+					$ano = date("Y");
+					if (date("m") < 8) { $ano = ($ano -1); }
+					$sql = "SELECT DISTINCT usm_email
+									FROM ic_aluno
+									INNER JOIN us_usuario ON id_us = aluno_id
+									INNER JOIN us_email on id_us = usuario_id_us
+									WHERE usm_ativo = 1
+									AND icas_id = 1
+									ORDER BY usm_email
+								 ";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$email = '';
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$email .= $line['usm_email'].cr();
+						}
+						$email .= 'cleybe.vieira@pucpr.br'.cr();
+				}				
 				
 			return($email);
 		}
