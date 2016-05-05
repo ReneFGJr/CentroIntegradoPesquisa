@@ -1,5 +1,17 @@
 <?php
 global $hd;
+if (!isset($agrupar)) { $agrupar = 0; }
+
+$agrupar_td = '';
+if ($agrupar == '1')
+	{
+		$agrupar_td = '<td>';
+		$agrupar_td .= '<a href="#" title="agrupar" onclick="newwin(\''.base_url('index.php/ic/agrupar_projetos/'.$pj_codigo).'\',600,600);">';
+		$agrupar_td .= '<img src="'.base_url('img/icon/icone_group.png').'" height="16">';
+		$agrupar_td .= '</a>';
+		$agrupar_td .= '</td>';
+	}
+
 if (!isset($hd))
 	{
 		$hd = true;
@@ -26,4 +38,5 @@ if (!isset($hd))
 	<td class="borderb1"><?php echo $pj_titulo;?></td>
 	<td class="borderb1"><?php echo $us_nome;?></td>
 	<td class="borderb1" align="center"><?php echo msg('situacao_'.$pj_status);?></td>
+	<?php echo $agrupar_td;?>
 </tr>

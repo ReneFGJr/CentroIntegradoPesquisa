@@ -3070,6 +3070,26 @@ class ic extends CI_Controller {
 		$this -> load -> view('ic/mostra_acompanhamento_prof', $data);
 
 	}
+	
+	function agrupar_projetos($protocolo)
+		{
+			$this->load->model('ics');
+			
+			$acao = get("acao");
+			$proto = get("dd2");
+			if ((strlen($acao) > 0) and (strlen($proto) > 0))
+				{
+					$this->ics->projeto_unificar($protocolo,$proto);
+					echo '<h1>Unificar '.$proto.' com '.$protocolo.'</h1>';
+					$this->load->view('sucesso',NULL);
+					return('');
+				}
+
+			
+			$data['content'] = $this->ics->busca_projetos_mesmo_titulo($protocolo);
+			$this->load->view('content',$data);
+			
+		}
 
 	function projetos($edital = '', $ano = '', $status = '') {
 		$this -> load -> model('ics');
@@ -3082,6 +3102,47 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
+	
+	function projeto_alterar_titulo($id=0,$chk='')
+		{
+			$this->load->view('header/header',null);
+			$this -> load -> model('ics');
+			
+			$pj1 = $this->ics->le_projeto($id);
+			$proto = $pj1['pj_codigo'];
+			$tit1 = $pj1['pj_titulo'];
+			$tit2 = get("dd1");	
+			
+			$cp = array();
+			array_push($cp,array('$H8','id_pj','',False,False));
+			array_push($cp,array('$T80:5','pj_titulo','',True,True));
+			
+			$form = new form;
+			$form->id = $id;
+			$tabela = $this->ics->tabela_projetos;
+			$tela = $form->editar($cp,$tabela);
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+			
+			if ($form->saved > 0)
+				{
+					if (trim($tit1) != trim($tit2))
+						{					
+							$ac = '114';
+							$hist = 'Troca de título do projeto principal';
+							$aluno1 = '';
+							$aluno2 = '';
+							$motivo = '114';
+							$obs = 'Substituíção de título de "<b>'.$tit1.'</b>" para "<b>'.$tit2.'</b>"';
+							$us_id = $obj['prof_id'];
+					
+							/*********************************/
+							/* Lancar historico              */
+							$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);					
+						}
+					$this->load->view('header/windows_close',null);
+				}
+		}
 
 	function cockpit($ano = '', $edital = 'IC') {
 		$this -> load -> model('ics');

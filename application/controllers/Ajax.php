@@ -16,6 +16,34 @@ class Ajax extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 	}
 	
+	function edital($id,$chk='',$id_us=0)
+		{			
+			$this -> load -> model('fomento_editais');
+			$id = round($id);
+			$id_us = round($id_us);
+					
+			$edital = $this->fomento_editais->le($id);			
+			$this->fomento_editais->incrementa_download($id,$id_us);
+			
+			$url_externa = $edital['ed_url_externa'];
+			redirect($url_externa);			
+		}	
+	function edital_lido($id,$chk='',$id_us=0)
+		{			
+			$this -> load -> model('fomento_editais');
+			$id = round($id);
+			$id_us = round($id_us);
+			
+			$edital = $this->fomento_editais->le($id);			
+			$this->fomento_editais->incrementa_leitura($id,$id_us);
+			
+			$im = imagecreatefrompng('img/sele_email.png');
+			
+			header('Content-Type: image/png');
+			imagepng($im);
+			imagedestroy($im);		
+		}
+	
 	function aceite($id='',$rsp='',$chk='')
 		{
 			$this->load->model('usuarios');

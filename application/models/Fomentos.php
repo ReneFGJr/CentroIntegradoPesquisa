@@ -4,7 +4,7 @@ class Fomentos extends CI_model {
 	var $tabela  = 'fomento_editais';
 	var $tabela1 = 'idioma';
 	var $tabela2 = 'fomento_status';
-	var $tabela3 = 'fomento_disseminador';
+	var $tabela3 = 'mensagem_own';
 	var $tabela4 = 'fomento_tipo';
 	var $tabela5 = 'fomento_agencia';
 	
@@ -21,7 +21,7 @@ class Fomentos extends CI_model {
 			$sql_tipo 			 = 'select * from '.$this->tabela.'  where ed_status 	= 1 order by ed_edital_tipo';
 			$sql_idioma 		 = 'select * from '.$this->tabela1.' where i_ativo 		= 1 order by i_nome';
 			$sql_fomento_status  = 'select * from '.$this->tabela2.' where fs_ativo 	= 1 order by fs_nome';
-			$sql_dissiminador 	 = 'select * from '.$this->tabela3.' where fdis_ativo	= 1 order by fdis_nome';
+			$sql_dissiminador 	 = 'select * from '.$this->tabela3.' where m_ativo		= 1 order by m_descricao';
 			$sql_fomento_tipo 	 = 'select * from '.$this->tabela4.' where ftp_ativo 	= 1 order by ftp_nome';
 			$sql_fomento_agencia = 'select * from '.$this->tabela5.' where agf_ativo 	= 1 order by agf_nome';
 			
@@ -32,7 +32,7 @@ class Fomentos extends CI_model {
 				array_push($cp,array('$S20','ed_chamada', msg('fm_chamada'), True, True));
 				array_push($cp,array('$Q id_agf:agf_nome:'.$sql_fomento_agencia,'ed_agencia',msg('fm_agencia'),true,True));
 				array_push($cp,array('$Q id_ftp:ftp_nome:'.$sql_fomento_tipo,'ed_idioma',msg('fm_tipo_edital'),true,True));
-				array_push($cp,array('$Q id_fdis:fdis_nome:'.$sql_dissiminador, 'ed_local', msg('fm_disseminador'), False, True));
+				array_push($cp,array('$Q id_m:m_descricao:'.$sql_dissiminador, 'ed_local', msg('fm_disseminador'), False, True));
 				array_push($cp,array('$Q id_i:i_nome:'.$sql_idioma,'ed_edital_tipo',msg('fm_idioma'),true,True));
 				array_push($cp,array('$S70','ed_titulo_email',msg('fm_titulo_email'),false,True));
 				array_push($cp,array('$HV', 'ed_dt_create', date("Y-m-d"), False, True));
@@ -53,18 +53,18 @@ class Fomentos extends CI_model {
 			//array_push($cp,array('$}', '', 'Datas', False, True));
 			
 			//array_push($cp,array('${', '', 'Observações', False, True));
-				array_push($cp,array('$T70:3','ed_texto_1', msg('fm_texto_1'),false,True));
-				array_push($cp,array('$T70:3','ed_texto_2', msg('fm_texto_2'),false,True));
-				array_push($cp,array('$T70:3','ed_texto_3', msg('fm_texto_3'),false,True));
-				array_push($cp,array('$T70:3','ed_texto_4', msg('fm_texto_4'),false,True));
-				//array_push($cp,array('$T70:3','ed_texto_5', msg('fm_texto_5'),false,True));
-				array_push($cp,array('$T70:3','ed_texto_6', msg('fm_texto_6'),false,True));
+				array_push($cp,array('$T70:6','ed_texto_1', msg('fm_texto_1'),false,True));
+				array_push($cp,array('$T70:6','ed_texto_2', msg('fm_texto_2'),false,True));
+				array_push($cp,array('$T70:6','ed_texto_3', msg('fm_texto_3'),false,True));
+				array_push($cp,array('$T70:6','ed_texto_4', msg('fm_texto_4'),false,True));
+				array_push($cp,array('$T70:6','ed_texto_5', msg('fm_texto_5'),false,True));
+				array_push($cp,array('$T70:6','ed_texto_6', msg('fm_texto_6'),false,True));
 				//array_push($cp,array('$T70:3','ed_texto_7', msg('fm_texto_7'),false,True));
 				//array_push($cp,array('$T70:3','ed_texto_8', msg('fm_texto_8'),false,True));			
 				//array_push($cp,array('$T70:3','ed_texto_9', msg('fm_texto_9'),false,True));
 				//array_push($cp,array('$T70:3','ed_texto_10',msg('fm_texto_10'),false,True));
-				array_push($cp,array('$T70:3','ed_texto_11',msg('fm_texto_11'),false,True));
-				array_push($cp,array('$T70:3','ed_texto_12',msg('fm_texto_12'),false,True));
+				array_push($cp,array('$T70:6','ed_texto_11',msg('fm_texto_11'),false,True));
+				array_push($cp,array('$T70:6','ed_texto_12',msg('fm_texto_12'),false,True));
 			//array_push($cp,array('$}', '', 'Observações', False, True));
 				
 			//button

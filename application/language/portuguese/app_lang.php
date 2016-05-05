@@ -509,17 +509,18 @@ $lang['fm_fluxo_continuo'] 	= 'Fluxo continuo';
 $lang['fm_assinatura'] 		= 'Requer assinatura de documento';
 $lang['fm_login'] 			= 'Responsável (LOGIN)';
 $lang['fm_texto_1'] 		= 'Objetivo(s)';
-$lang['fm_texto_2'] 		= 'Recursos';
-$lang['fm_texto_3'] 		= 'Elegibilidade';
-$lang['fm_texto_4'] 		= 'Contato';
-$lang['fm_texto_5'] 		= '';
-$lang['fm_texto_6'] 		= 'Áreas e categorias';
+$lang['fm_texto_2'] 		= 'Áreas e categorias';
+$lang['fm_texto_3'] 		= 'Recursos';
+$lang['fm_texto_4'] 		= 'Elegibilidade';
+$lang['fm_texto_5'] 		= 'Submissão da proposta';
+$lang['fm_texto_6'] 		= '&nbsp;';
 $lang['fm_texto_7'] 		= '';
 $lang['fm_texto_8'] 		= '';
-$lang['fm_texto_9'] 		= '';
+
 $lang['fm_texto_10'] 		= '';
-$lang['fm_texto_11'] 		= 'Submissão da proposta';
+$lang['fm_texto_11'] 		= 'Contato';
 $lang['fm_texto_12'] 		= 'Contato na instituição';
+
 $lang['fm_data_01'] 		= 'Deadline para submissão da proposta';
 $lang['fm_data_02'] 		= 'Deadline (envio da documentação)';
 $lang['fm_data_03'] 		= 'Previsão de divulgação dos resultados';

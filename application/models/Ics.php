@@ -329,6 +329,12 @@ class ics extends CI_model {
 			} else {
 				$line['igual'] = '0';
 			}
+
+			if (($status == 'B') and ($line['igual'] == '1')) {
+				$line['agrupar'] = '1';
+			} else {
+				$line['agrupar'] = '0';
+			}
 			$line['nr'] = ($r + 1);
 			$sx .= $this -> load -> view('ic/projeto_row', $line, true);
 			$xtitle = $title;
@@ -351,7 +357,7 @@ class ics extends CI_model {
 						$whe
 						group by pj_edital, pj_ano, pj_status
 					 ";
-					 
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -738,9 +744,9 @@ class ics extends CI_model {
 		$sql = $this -> table_view($wh, 0, 9999999, 'al_nome');
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		$seq = 0;
-		
+
 		$sx = '<table width="100%" class="lt1 tabela00">';
 		$sx .= '<tr><td align="left"><img src="' . base_url('img/logo_seguradora.png') . '" height="60"></td></tr>';
 		$sx .= '<tr></tr>';
@@ -1543,8 +1549,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1609,8 +1614,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -2254,6 +2258,70 @@ class ics extends CI_model {
 		return (1);
 	}
 
+	function projeto_unificar($proto1, $proto2) {
+		$sql = "select * from " . $this -> tabela_planos . " where doc_protocolo_mae = '$proto2' and doc_status <> 'X' and doc_status <> '@' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sql = "update " . $this -> tabela_planos . " set doc_protocolo_mae = '$proto1' where id_doc = " . $line['id_doc'];
+			$xrlt = $this -> db -> query($sql);
+			echo '.';
+		}
+		$sql = "update " . $this -> tabela_projetos . " set pj_status = 'X' where pj_codigo = '$proto2' ";
+		$xrlt = $this -> db -> query($sql);
+
+		$ac = '993';
+		$motivo = '993';
+		$hist = 'Unificado o protocolo ' . $proto2 . ' junto com protocolo ' . $proto1;
+		$aluno1 = 0;
+		$aluno2 = 0;
+		$motivo = '';
+		$obs = '';
+		$this -> inserir_historico($proto2, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '');
+		$this -> inserir_historico($proto1, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '');
+		return ('');
+	}
+
+	function busca_projetos_mesmo_titulo($proto) {
+		$sql = "select * from " . $this -> tabela_projetos . " where pj_codigo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$title = $line['pj_titulo'];
+			$ano = $line['pj_ano'];
+			$edital = $line['pj_edital'];
+
+			$sql = "select pj_codigo, planos from " . $this -> tabela_projetos . "
+							left join (select count(*) as planos, doc_protocolo_mae 
+									from " . $this -> tabela_planos . " 
+									where (doc_status <> '@' and doc_status <> 'X') 
+									group by doc_protocolo_mae ) as planos on doc_protocolo_mae = pj_codigo 
+							where pj_codigo <> '$proto' and
+								pj_titulo = '$title' AND
+								pj_ano = '$ano' AND
+								pj_status <> 'X' AND pj_status <> '@' AND
+								pj_edital = '$edital'";
+			$xrlt = $this -> db -> query($sql);
+			$xrlt = $xrlt -> result_array();
+
+			$sx = '<form method="post">';
+			$sx .= '<div>' . $title . '</div><br>';
+			for ($r = 0; $r < count($xrlt); $r++) {
+				$line = $xrlt[$r];
+				$readonly = '';
+				if ($line['planos'] < 2) {
+					$sx .= '<input type="radio" name="dd2" value="' . $line['pj_codigo'] . '" ' . $readonly . '>Unificar com o protolo ' . $line['pj_codigo'] . ' (' . $line['planos'] . ' Planos)<br>';
+				}
+
+			}
+			$sx .= '<br><input type="submit" name="acao" value="' . msg('btn_unificar') . '"><br>';
+			$sx .= '</form>';
+			return ($sx);
+		}
+	}
+
 	function le_projeto_protocolo($proto) {
 		$sql = "select *, 
 					aluno.us_nome as al_nome, aluno.id_us as id_al,
@@ -2639,7 +2707,7 @@ class ics extends CI_model {
 
 		switch ($ac) {
 			case '6' :
-			/***** VALIDAÇÂO DOCUMENTAL */
+				/***** VALIDAÇÂO DOCUMENTAL */
 				$sta = $pj['pj_status'];
 				$sta_to = 'B';
 				$ac = '234';
@@ -2655,7 +2723,7 @@ class ics extends CI_model {
 				break;
 
 			case '4' :
-			/***** CANECLAR SUBMISSAO */
+				/***** CANECLAR SUBMISSAO */
 				if (strlen(get("dd2")) == 0) {
 					echo alert('campo de comentários é obrigatório');
 					return (0);
@@ -2685,7 +2753,7 @@ class ics extends CI_model {
 				return (1);
 				break;
 			case '5' :
-			/***** CANECLAR SUBMISSAO */
+				/***** CANECLAR SUBMISSAO */
 				if (strlen(get("dd2")) == 0) {
 					echo alert('campo de comentários é obrigatório');
 					return (0);
@@ -2853,26 +2921,25 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-
 	function botao_novo_equipe_projeto_por_nome($proto) {
 		$sx = '<input type="button" value="Incluir membro na equipe >>>" id="novo_estudante">';
 		$sx .= '<br>';
 		$sx .= '<div id="novo_membro" style="display: none;">';
-		
+
 		$sx .= '<table>';
 		$sx .= '<tr><td align="right">Nome completo do estudante: ';
 		$sx .= '</td><td><input type="string" value="" name="nome" id="nome" size="90">';
-		
+
 		$sx .= '<tr><td align="right"><br>';
 
 		$sx .= '<tr><td align="right">CPF: ';
 		$sx .= '</td><td><input type="string" value="" name="cpf" id="cpf" size="15">';
-		
+
 		$sx .= '<tr><td align="right"><br>';
 
 		$sx .= '<tr><td align="right">E-mail do estudante: ';
 		$sx .= '</td><td><input type="string" value="" name="email" id="email" size="50">';
-		
+
 		$sx .= '<tr><td align="right"><br>';
 
 		$sx .= '<tr><td align="right"><input type="button" value="Incluir >>>" id="novo_acao">';
@@ -2888,7 +2955,7 @@ class ics extends CI_model {
 					var $cpf = $("#cpf").val();
 					var $email = $("#email").val();
 					$("#cracha").val("");
-						var $url = "' . base_url('index.php/ajax/submit_ajax_equipe_nome/' . $proto) .'";
+						var $url = "' . base_url('index.php/ajax/submit_ajax_equipe_nome/' . $proto) . '";
 						$.ajax({
 							url : $url,
 							type : "post",
