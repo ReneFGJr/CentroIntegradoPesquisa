@@ -144,15 +144,16 @@ class fomento_editais extends CI_model {
 		$deadline = date("Y-m-d");
 		//$deadline = '2010-01-01';
 		if ($abertos == 1) {
-			$wh = " ed_data_1 >= '" . $deadline . "' or ed_fluxo_continuo = '1' ";
+			$wh = " ((ed_data_1 >= '" . $deadline . "') or (ed_fluxo_continuo = '1') ";
+			$wh .= " or (ed_dt_deadline_elet >= '".$deadline."'))";
 		} else {
-			$wh = " ed_data_1 <= '" . $deadline . "' ";
+			$wh = " (ed_data_1 <= '" . $deadline . "') ";
 		}
 
 		$sql = "select * from fomento_editais
 					LEFT JOIN fomento_agencia on id_agf = ed_agencia
 					LEFT JOIN fomento_tipo on id_ftp = ed_edital_tipo
-					WHERE $wh
+					WHERE $wh AND (ed_status = '1' OR ed_status = 'A')
 					ORDER BY ed_edital_tipo, ed_dt_deadline_elet 
 					";
 
