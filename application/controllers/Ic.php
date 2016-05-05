@@ -3109,6 +3109,26 @@ class ic extends CI_Controller {
 		$this -> load -> view('ic/mostra_acompanhamento_prof', $data);
 
 	}
+	
+	function agrupar_projetos($protocolo)
+		{
+			$this->load->model('ics');
+			
+			$acao = get("acao");
+			$proto = get("dd2");
+			if ((strlen($acao) > 0) and (strlen($proto) > 0))
+				{
+					$this->ics->projeto_unificar($protocolo,$proto);
+					echo '<h1>Unificar '.$proto.' com '.$protocolo.'</h1>';
+					$this->load->view('sucesso',NULL);
+					return('');
+				}
+
+			
+			$data['content'] = $this->ics->busca_projetos_mesmo_titulo($protocolo);
+			$this->load->view('content',$data);
+			
+		}
 
 	function projetos($edital = '', $ano = '', $status = '') {
 		$this -> load -> model('ics');
@@ -3121,6 +3141,47 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
+	
+	function projeto_alterar_titulo($id=0,$chk='')
+		{
+			$this->load->view('header/header',null);
+			$this -> load -> model('ics');
+			
+			$pj1 = $this->ics->le_projeto($id);
+			$proto = $pj1['pj_codigo'];
+			$tit1 = $pj1['pj_titulo'];
+			$tit2 = get("dd1");	
+			
+			$cp = array();
+			array_push($cp,array('$H8','id_pj','',False,False));
+			array_push($cp,array('$T80:5','pj_titulo','',True,True));
+			
+			$form = new form;
+			$form->id = $id;
+			$tabela = $this->ics->tabela_projetos;
+			$tela = $form->editar($cp,$tabela);
+			$data['content'] = $tela;
+			$this->load->view('content',$data);
+			
+			if ($form->saved > 0)
+				{
+					if (trim($tit1) != trim($tit2))
+						{					
+							$ac = '114';
+							$hist = 'Troca de título do projeto principal';
+							$aluno1 = '';
+							$aluno2 = '';
+							$motivo = '114';
+							$obs = 'Substituíção de título de "<b>'.$tit1.'</b>" para "<b>'.$tit2.'</b>"';
+							$us_id = $obj['prof_id'];
+					
+							/*********************************/
+							/* Lancar historico              */
+							$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);					
+						}
+					$this->load->view('header/windows_close',null);
+				}
+		}
 
 	function cockpit($ano = '', $edital = 'IC') {
 		$this -> load -> model('ics');
@@ -3138,36 +3199,36 @@ class ic extends CI_Controller {
 		if ($form -> saved or (strlen($ano) > 0)) {
 
 			$ano = get("dd1") . $ano;
-			
 			//carrega grafico de acompanhameto das submissões
 			$data_cockpit = array();
 			
 			$line = $this -> ics -> cockpit_resumo_graf($ano, $edital);
 
-
+				//Status dos Projetos submetidos	
+				$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
+				$this -> load -> view('content', $data);
+				
 			if (count($line) > 0) {
 			
 				$data_cockpit['dado_coc'] = $line;
 				$this -> load -> view('ic/resumo_cockpit', $data_cockpit);
 				
-				//Status dos Projetos submetidos	
-				$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
-				$this -> load -> view('content', $data);
+
 				
 				//Status dos Planos submetidos	
 				$data['content'] = $this -> ics -> cockpit_resumo_plano($ano, $edital);
 				$this -> load -> view('content', $data);
 				
 				//resumo por escolas
-				$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano);
+				$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano, $edital);
 				$this -> load -> view('content', $data);
 				
 				//resumo professor tipo
-				$data['content'] = $this -> ics -> ic_submit_resumo_professor_tipo($ano);
+				$data['content'] = $this -> ics -> ic_submit_resumo_professor_tipo($ano, $edital);
 				$this -> load -> view('content', $data);
 				
 				//resumo titulação
-				$data['content'] = $this -> ics -> ic_submit_resumo_professor_titulacao($ano);
+				$data['content'] = $this -> ics -> ic_submit_resumo_professor_titulacao($ano, $edital);
 				$this -> load -> view('content', $data);
 			}
 

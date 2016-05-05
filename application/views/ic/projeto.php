@@ -1,5 +1,11 @@
 <?php
 /* */
+$editar_titulo = '';
+if (perfil('#ADM#SPI'))
+	{
+		$editar_titulo = '<br><a href="#" onclick="newwin(\''.base_url('index.php/ic/projeto_alterar_titulo/'.$id_pj.'/'.checkpost_link($id_pj)).'\',600,600);" class="lt0 link"">editar título</a>';
+	}
+
 $logo = '';
 if (!isset($ged)) { $ged = ''; $ged_arquivos = '';}
 switch ($pj_edital)
@@ -19,7 +25,7 @@ switch ($pj_edital)
 		<td align="right" rowspan=5 width="150"><?php echo $logo;?></td>
 	</tr>
 	<tr class="lt2">
-		<td align="left" colspan=3 class="lt4"><b><?php echo $pj_titulo;?></b></td>
+		<td align="left" colspan=3 class="lt4"><b><?php echo $pj_titulo;?></b><?php echo $editar_titulo;?></td>
 		<td align="right"><?php echo $pj_codigo;?></td>
 	</tr>
 	<tr class="lt0" align="left">

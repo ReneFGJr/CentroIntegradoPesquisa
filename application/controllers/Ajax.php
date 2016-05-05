@@ -16,6 +16,34 @@ class Ajax extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 	}
 	
+	function edital($id,$chk='',$id_us=0)
+		{			
+			$this -> load -> model('fomento_editais');
+			$id = round($id);
+			$id_us = round($id_us);
+					
+			$edital = $this->fomento_editais->le($id);			
+			$this->fomento_editais->incrementa_download($id,$id_us);
+			
+			$url_externa = $edital['ed_url_externa'];
+			redirect($url_externa);			
+		}	
+	function edital_lido($id,$chk='',$id_us=0)
+		{			
+			$this -> load -> model('fomento_editais');
+			$id = round($id);
+			$id_us = round($id_us);
+			
+			$edital = $this->fomento_editais->le($id);			
+			$this->fomento_editais->incrementa_leitura($id,$id_us);
+			
+			$im = imagecreatefrompng('img/sele_email.png');
+			
+			header('Content-Type: image/png');
+			imagepng($im);
+			imagedestroy($im);		
+		}
+	
 	function aceite($id='',$rsp='',$chk='')
 		{
 			$this->load->model('usuarios');
@@ -63,6 +91,24 @@ class Ajax extends CI_Controller {
 		$data['content'] = $this -> ics -> lista_equipe_projeto_lista($idp) . ' ' . date("Y:m:d H:i:s");
 		$this -> load -> view('content', $data);
 	}
+
+	function submit_ajax_equipe_nome($proto='')
+		{
+		$this -> load -> model('ics');
+		$this -> load -> model('usuarios');
+		$sx = '';
+
+		$lock = 0;
+		$nome = utf8_decode(get("name"));
+		$cpf = get("cpf");
+		$escola = utf8_decode(get("email"));
+		$cracha = '';
+
+		$this -> ics -> incluir_membro_na_equipe($proto, $nome, $cpf, $cracha, $escola, $lock);
+
+		$data['content'] = $this -> ics -> lista_equipe_projeto_lista($proto) . ' ' . date("Y:m:d H:i:s");
+		$this -> load -> view('content', $data);			
+		}
 
 	function submit_ajax_equipe($proto = '', $cracha) {
 		$this -> load -> model('ics');

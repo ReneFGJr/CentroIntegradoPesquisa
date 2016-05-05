@@ -18,6 +18,7 @@ class ic_feira extends CI_model {
 		$this -> load -> model('geds');
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
+		$this -> load -> model('mensagens');
 
 		$prt = $this -> ics -> le_projeto($ids);
 		$proto = $prt['pj_codigo'];
@@ -50,14 +51,38 @@ class ic_feira extends CI_model {
 		array_push($cp, array('$A', '', 'Título do projeto', False, True));
 		array_push($cp, array('$T80:3', 'pj_titulo', '', False, True));
 
+		array_push($cp, array('$M', '', '<h3>Dados da escola</h3>', False, True));
+		array_push($cp, array('$M', '', 'Informe o nome da escola, telefone, endereço e formas de contato', False, True));
+		array_push($cp, array('$T80:3', 'pj_ext_local', '', False, True));
+
+		/*************************************************************************** CATEGORIAS */
+		$op = '';
+		$op .= 'Ensino Fundamental II:Ensino Fundamental II';
+		$op .= '&Ensino Médio e Técnico - 1. ano:Ensino Médio e Técnico - 1. ano';
+		$op .= '&Ensino Médio e Técnico - Livre:Ensino Médio e Técnico - Livre';
+		array_push($cp, array('$R ' . $op, 'pj_gr2_local', 'Categoria da inscrição', False, True));
+		
+		
+		/**************************************************************************** TEMA */
+		
+		$op = '';
+		$op .= 'Cidades e Comunidade Sustentáveis:Cidades e Comunidade Sustentáveis';
+		$op .= '&Inovação e Infraestrutura:Inovação e Infraestrutura';
+		$op .= '&Consumo responsável:Consumo responsável';
+		$op .= '&Combate às mudanças climáticas:Combate às mudanças climáticas';
+		$op .= '&Energias renováveis:Energias renováveis';
+		$op .= '&Água limpa e saneamento:Água limpa e saneamento';
+		
+		array_push($cp, array('$R ' . $op, 'pj_resumo', 'Tema a ser submetido', False, True));
+
 		/**************************************************************************** ESTUDANTES */
 
-	$txt = '<br><br><fieldset><legend>Equipe</legend>';
+		$txt = '<br><br><fieldset><legend>Equipe</legend>';
 		$txt .= '<div id="equipe">';
 		$txt .= $this -> ics -> lista_equipe_projeto($proto);
-		
-		$txt .= '<br>'.$this -> ics -> botao_novo_equipe_projeto($proto);
-		
+
+		$txt .= '<br>' . $this -> ics -> botao_novo_equipe_projeto_por_nome($proto);
+
 		$txt .= '</div>';
 		$txt .= '</fieldset>';
 		array_push($cp, array('$M', '', $txt, False, True));
@@ -98,6 +123,21 @@ class ic_feira extends CI_model {
 
 		/* VALIDADO */
 		if ($this -> validated == 1) {
+
+			/* Enviar e-mail */
+			$sql = "select * from evento_mailing where ml_ev = " . round($idp) . " and ml_query = 'CONFIRMACAO' and ml_status = 1";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			if (count($rlt) > 0) {
+				$line = $rlt[0];
+				$txt = $line['ml_html'];
+				$ass = $line['ml_subject'];
+				$id_us = $user['id_us'];
+				$txt = troca($txt,'$NOME',$user['us_nome']);
+				$txt = troca($txt,'$PROTOCOLO',$proto);
+				$txt .= '<BR><BR><BR><BR>';
+				enviaremail_usuario($id_us, $ass, $txt, 2);
+			}
 			$this -> ics -> altera_status_projeto_submissao($proto, '@', 'A');
 			$url = base_url('index.php/evento/submit_success/' . $idp . '/' . $ids);
 			redirect($url);
@@ -157,65 +197,20 @@ class ic_feira extends CI_model {
 		}
 
 		/* Cursos diferentes */
-		$curso = array();
-		for ($r = 0; $r < count($rlt); $r++) {
-			$line = $rlt[$r];
-			if (strlen(trim($line['ispe_curso']))) {
-				$nome_curso = UpperCaseSql($line['ispe_curso']);
-				$curso[$nome_curso] = 1;
-			}
-		}
-		if (count($curso) >= 2) {
+		if (strlen($projeto['pj_gr2_local']) >= 2) {
 			$vd[2] = $class_ok;
 			$vdt[2] = $ok;
 		}
 
 		/* Vinculos com Outros Projetos */
-		$in = '';
-		for ($r = 0; $r < count($rlt); $r++) {
-			$line = $rlt[$r];
-			$cracha = trim($line['ispe_cracha']);
-			if (strlen($cracha) > 0) {
-				$sql = "select * from ic_submissao_projetos_equipe
-							inner join ic_submissao_projetos on pj_codigo = ispe_protocolo
-							where ispe_protocolo <> '$proto' and ispe_cracha = '$cracha' 
-									and (pj_status <> '@' and pj_status <> 'X')";
-				$rrr = $this -> db -> query($sql);
-				$rrr = $rrr -> result_array();
-
-				if (count($rrr) > 0) {
-					$in .= '<li>' . $line['ispe_nome'] . ' está vinculado ao protocolo ' . $rrr[0]['ispe_protocolo'] . '</li>';
-				}
-			}
-		}
-		if (strlen($in) > 0) {
-			$in = '<ul>' . $in . '</ul>';
-		} else {
+		if (strlen($projeto['pj_resumo']) >= 2) {
 			$vd[5] = $class_ok;
 			$vdt[5] = $ok;
 		}
+		
 
 		/* Vinculos com Programs de IC */
-		$in_ic = '';
-		for ($r = 0; $r < count($rlt); $r++) {
-			$line = $rlt[$r];
-			$cracha = trim($line['ispe_cracha']);
-			if (strlen($cracha) > 0) {
-				$sql = "select * from ic_aluno
-							inner join us_usuario on id_us = aluno_id
-							where us_cracha = '$cracha' and icas_id = 1 ";
-
-				$rrr = $this -> db -> query($sql);
-				$rrr = $rrr -> result_array();
-
-				if (count($rrr) > 0) {
-					$in_ic .= '<li>' . $line['ispe_nome'] . ' está vinculado a IC</li>';
-				}
-			}
-		}
-		if (strlen($in_ic) > 0) {
-			$in_ic = '<ul>' . $in_ic . '</ul>';
-		} else {
+		if (strlen($projeto['pj_ext_local']) >= 2) {
 			$vd[1] = $class_ok;
 			$vdt[1] = $ok;
 		}
@@ -223,15 +218,15 @@ class ic_feira extends CI_model {
 		$sx = '<table class="table">';
 		$sx .= '<tr class="' . $vd[0] . '"><td>Título do projeto</td><td align="center">' . $vdt[0] . '</tr>';
 
-		$sx .= '<tr class="' . $vd[1] . '"><td>Membros da equipe não podem ter vinculos com programa IC/Monitoria.' . $in_ic . '</td><td align="center">' . $vdt[1] . '</tr>';
+		$sx .= '<tr class="' . $vd[1] . '"><td>Informações sobre a Escola / Colégio</td><td align="center">' . $vdt[1] . '</tr>';
 
-		$sx .= '<tr class="' . $vd[2] . '"><td>Estudantes de Cursos diferentes (mínimo dois cursos) - ' . count($curso) . ' cursos</td><td align="center">' . $vdt[2] . '</tr>';
+		$sx .= '<tr class="' . $vd[2] . '"><td>Categoria da submissão</td><td align="center">' . $vdt[2] . '</tr>';
 
 		$sx .= '<tr class="' . $vd[3] . '"><td>Link do projeto no Youtube</td><td align="center">' . $vdt[3] . '</tr>';
 
 		$sx .= '<tr class="' . $vd[4] . '"><td>Arquivo do Projeto em PDF</td><td align="center">' . $vdt[4] . '</tr>';
 
-		$sx .= '<tr class="' . $vd[5] . '"><td>Membros da equipe, vinculo com outros projetos (o estudante pode somente estar vinculado a um projeto)' . $in . '</td><td align="center">' . $vdt[5] . '</tr>';
+		$sx .= '<tr class="' . $vd[5] . '"><td>Tema da submissão</td><td align="center">' . $vdt[5] . '</tr>';
 
 		$sx .= '<tr class="' . $vd[6] . '"><td>Membros da equipe (entre 3 e 5 alunos) - ' . count($rlt) . ' as membros registrados</td><td align="center">' . $vdt[6] . '</tr>';
 		$sx .= '</table>';
@@ -250,18 +245,19 @@ class ic_feira extends CI_model {
 		/* */
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
-		
+
 		$cpf = sonumero(get("dd1"));
 		$erro = '';
 		$ok = 0;
 		if (strlen($cpf) > 0) {
 			$ok = validaCPF($cpf);
+
 			if ($ok == 1) {
 				$nome = get("dd2");
 				$email = get("dd3");
 
-				if ((strlen($nome) > 5) and (validaemail($email))) {
-					$habilitado = $this -> habilata_inscricao('', $cpf);
+				$habilitado = $this -> habilata_inscricao('', $cpf);
+				if (((strlen($nome) > 5) and (validaemail($email))) or ($habilitado == 1)) {
 
 					if ($habilitado == 0) {
 						$data = array();
@@ -279,26 +275,25 @@ class ic_feira extends CI_model {
 
 						$data['genero'] = '';
 						$data['sexo'] = '';
-						
+
 						$data['tipo'] = '5';
 						$dtnasc = '00000000';
 						$data['centroAcademico'] = 'Escola de ensino médio';
-						
+
 						$data['dataNascimento'] = substr($dtnasc, 4, 4) . '-' . substr($dtnasc, 2, 2) . '-' . substr($dtnasc, 0, 2);
-						$data['cracha'] = $this->usuarios->geraCracha();
-						$data['pessoa'] = $data['cracha'];	
-											
-						$this->usuarios->insere_usuario($data);
-						
+						$data['cracha'] = $this -> usuarios -> geraCracha();
+						$data['pessoa'] = $data['cracha'];
+
+						$this -> usuarios -> insere_usuario($data);
+
 					}
-					
-					$dados = $this->usuarios->le_cpf($cpf);
+
+					$dados = $this -> usuarios -> le_cpf($cpf);
 					$cracha = $dados['us_cracha'];
-					if (count($dados) > 0)
-						{
-							$habilitado = 1;
-						}
-					
+					if (count($dados) > 0) {
+						$habilitado = 1;
+					}
+
 					if ($habilitado == 1) {
 						/* HABILITADO PARA SUBMISSAO */
 						$redirect = False;
@@ -343,6 +338,10 @@ class ic_feira extends CI_model {
 	}
 
 	function habilata_inscricao($cracha = '', $cpf = '') {
+		$usr = $this -> usuarios -> le_cpf($cpf);
+		if (count($usr) > 0) {
+			return (1);
+		}
 		return (0);
 	}
 
