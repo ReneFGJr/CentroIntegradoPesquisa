@@ -311,17 +311,26 @@ class ics extends CI_model {
 		$sql = "select *
 						from ic_submissao_projetos
 						inner join us_usuario on pj_professor = us_cracha
+						inner join area_conhecimento on pj_area = ac_cnpq
 						where $whe ";
-		$sql .= ' order by pj_titulo ';
+		$sql .= ' order by pj_area, pj_titulo ';
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
 		$sx = '<table width="100%" class="table tabela01">';
 		$xtitle = '';
+		$xarea = '';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 
+			$area = $line['pj_area'];
+			if ($area != $xarea)
+				{
+					$sx .= '<tr><td colspan=5 class="lt5"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
+					$xarea = $area;
+				}
+			
 			/* */
 			$title = $line['pj_titulo'];
 			if ($title == $xtitle) {

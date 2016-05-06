@@ -2855,6 +2855,7 @@ class ic extends CI_Controller {
 					$area = $data['ic_semic_area'];
 					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'RPAR', $area, $data);
 					$data['sa'] = $tela;
+					$data['tipo'] = 'RPAR';
 					$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
 					if (get("dd1") > 0) {
 						redirect(base_url('index.php/ic/view/' . $id . '/' . $check));
@@ -3244,6 +3245,8 @@ class ic extends CI_Controller {
 	function projeto_view($id, $chk, $act = '') {
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
+		$this -> load -> model('ic_pareceres');
+		
 
 		$this -> cab();
 		$dados = $this -> ics -> le_projeto($id);
@@ -3265,6 +3268,7 @@ class ic extends CI_Controller {
 		//$this -> load -> view('ic/email_projeto', $dados);
 		$this -> load -> view('ic/projeto', $dados);
 
+		$dados_projeto = $dados;
 		$dados = $this -> ics -> mostra_planos($dados['pj_codigo'], $dados['pj_status']);
 		$data['content'] = $dados;
 		$this -> load -> view('content', $data);
@@ -3324,6 +3328,18 @@ class ic extends CI_Controller {
 					redirect(base_url('index.php/ic/projeto_view/' . $id . '/' . checkpost_link($id)));
 				}
 			}
+			
+			/* INDICAR AVALIACAO */
+			if ($status == 'B') {
+				$area = $dados_projeto['pj_area'];
+				$protocolo = $dados_projeto['pj_codigo'];
+				$dados_projeto['ic_cracha_prof'] = $dados_projeto['pj_professor'];
+				$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'SUBMI', $area, $dados_projeto);
+				$data['sa'] = $tela;
+				$data['tipo'] = 'SUBMI';
+				$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
+				//$this -> load -> view('ic/form_indicar_avaliacao', $dados_pj);
+			}			
 
 			/* EM CADASTRO */
 			if ($status == 'A') {

@@ -492,6 +492,8 @@ class Ic_pareceres extends CI_model {
 
 		$data = $this -> ics -> le_protocolo($proto);
 		$data['link'] = $this -> usuarios -> link_acesso($id_us);
+		$user = $this->usuarios->le($id_us);
+		$data = array_merge($data,$user);
 		$txt = $this -> mensagens -> busca($tipo, $data);
 		$texto = mst($txt['nw_texto']);
 		$ass = mst($txt['nw_titulo']);

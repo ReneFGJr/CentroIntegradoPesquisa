@@ -1,51 +1,43 @@
 <div id="chamadas_pdi">
-	<h1>Editais abertos</h1>
-	<br>
-	<br>
-	<a href="<?php echo base_url('index.php/' . 'edital/abertos');?>">ver todos</a>
-	<div class="banner">
-		<ul>
-			<li>
-				Chamada 0
-			</li>
-			<li>
-				Chamada 2
-			</li>
-		</ul>
+	<h1>Editais abertos<br>
+	<a href="<?php echo base_url('index.php/' . 'edital/abertos'); ?>" class="link lt0">ver todos</a>
+	</h1>
+
+	<div id="chamadas">
+		<div id="calls">
+			<?php 
+			for ($r=0;$r < count($editais); $r++)
+				{
+					$edital = $editais[$r];
+					echo '
+						<a href="'.base_url('index.php/edital/ver/'.$edital['id_ed']).'" target="_blank" style="display: none;"> 
+						<img src="'.$edital['agf_imagem'].'" 
+								alt="'.$edital['ed_titulo'].'" width="100%" />
+						<span class="lt2"><b>'.$edital['ed_titulo'].'</b>
+						<hr size=1 width="80%">
+						<span class="lt1">'.$edital['ed_texto_1'].'</span></span> </a>'.cr();					
+				}
+			?>
+		</div>
 	</div>
 </div>
-<script>
-	$(function() {
-		$('.banner').unslider()
-	})
-</script>
+
+<link rel="stylesheet" href="<?php echo base_url('/css/coin-slider-styles.css'); ?>">
+<script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/coin-slider.js'); ?>"></script>
+
 <style>
-	.banner {
-		position: relative;
-		width: 100%;
-		overflow: auto;
-		padding: 0px;
-		margin: 0px;
+	#chamadas {
+		padding: 1px;
+		margin-top: 10px;
+		width: 280px;
+		border: 0px solid #000000;
 	}
-	.banner ul {
-		padding: 0px;
-		margin: 0px;
-	}
-	.banner li {
-		padding: 0px;
-		margin: 0px;
-	}
-	.banner ul li {
-		float: left;
-		padding: 0px;
-		margin: 0px;
-		min-height: 200px;
-		-webkit-background-size: 100% auto;
-		-moz-background-size: 100% auto;
-		-o-background-size: 100% auto;
-		-ms-background-size: 100% auto;
-		background-size: 100% auto;
-		background-position-y: -75px;
-		box-shadow: inset 0 -3px 6px rgba(0,0,0,.1);
-	}
 </style>
+
+<script>
+	$(document).ready(function() {
+		$('#calls').coinslider({
+			hoverPause : false
+		});
+	}); 
+</script>

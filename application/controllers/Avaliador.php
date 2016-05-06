@@ -5,6 +5,7 @@ class avaliador extends CI_Controller {
 		parent::__construct();
 
 		$this -> lang -> load("app", "portuguese");
+		$this -> lang -> load("ic", "portuguese");
 
 		$this -> load -> library('form_validation');
 		$this -> load -> helper('links_users_helper');
@@ -448,17 +449,72 @@ class avaliador extends CI_Controller {
 				$this -> load -> view('ic/avaliacao_rprc', $data);
 				break;
 			case 'SUBMI' :
+				/*************************************************************************** SUBMI 
+				 *********************************************************************************
+				 *********************************************************************************/
+				
 				$proj = $this->ics->le_projeto_protocolo($proto);
 				$prof = $proj['pj_professor'];
+							
+				/* Area estratégica */
+				$area_estrategica = $proj['pj_area_estra'];
+				$data['area_estrategica'] = $area_estrategica;
+				$sql = "select * from area_conhecimento where ac_cnpq = '$area_estrategica' ";
+				$ttt = $this->db->query($sql);
+				$ttt = $ttt->result_array();
+				if (count($ttt) > 0)
+					{
+						$data['area_estrategica_nome'] = $ttt[0]['ac_nome_area'];
+					} else {
+						$data['area_estrategica_nome'] = '-não aplicado-';
+					}
+				$area_estrategica_nome = $data['area_estrategica_nome'];
 				
 				/* Dados do orientador */
 				$prof = $this->usuarios->le_cracha($prof);
-				$this -> load -> view('perfil/docente', $prof);
+				$prefil = $this -> load -> view('perfil/docente', $prof,true);
 				
 				/* Projeto */
+				$data['projeto'] = '';
+				$data['projeto'] .= $prefil;
+				$data['projeto'] .= '<h1>Projeto de pesquisa do professor</h1>';
+				$data['projeto'] .= $this->load->view('ic/projeto',$proj,true);				
+				$this -> geds -> tabela = 'ic_ged_documento';
+				$data['projeto'] .= '<b>Arquivos do projeto do professor</b><br>'.$this->geds->list_files($proto,'ic');
+				$data['projeto'] .= '<h3>Ficha de avaliação - Projeto do professor</h3>';
 				
-				//$this -> load -> view('ic/avaliacao_submi', $data);
-				//$this -> load -> view('ic/avaliacao_submi_plano', $data);
+				$texto = $this->mensagens->busca('AVAL_INSTRUCOES',array());
+				$data['texto_introducao'] = mst($texto['nw_texto']); 
+				
+				$this -> load -> view('ic/avaliacao_submi', $data);
+				
+				$sql = "select * from ic_submissao_plano 
+								where doc_protocolo_mae = '$proto'  
+								AND (doc_status <> '@' and doc_status <> 'X') ";
+				$rrr = $this->db->query($sql);
+				$rrr = $rrr-> result_array();
+				for ($r=0;$r < count($rrr);$r++)
+					{
+						$plano = $rrr[$r];
+						
+						$plano['area_estrategica'] = $area_estrategica;
+						$plano['area_estrategica_nome'] = $area_estrategica_nome;
+						$plano['nrplano'] = ($r+1);
+						$plano['tipo'] = 'ic';
+						$plano['ddx'] = (40+10*$r);
+						$plano['arquivos'] = 'Arquivos do plano';
+						$plano['bloquear'] = 'SIM';
+						$plano['arquivos_submit'] = $this->geds->list_files($plano['doc_protocolo'],'ic');;
+						$plano['projeto'] = $this->load->view('ic/plano_submit',$plano,True);
+
+						$this -> load -> view('ic/avaliacao_submi_plano', $plano);		
+					}
+					
+				$txt = '<input type="submit" name="acao" value="Finalizar avaliação >>>" class="botao3d back_green_shadown back_green">';
+				$txt .= '</form>';
+				$data['content'] = $txt;
+				$this->load->view('content',$data);
+				
 				break;				
 		}
 	}

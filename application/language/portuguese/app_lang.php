@@ -13,6 +13,8 @@ if (!function_exists(('msg')))
 			}
 	}
 	
+/* IC */
+	
 $lang['situacao_@'] = 'Em submissão';
 $lang['situacao_A'] = 'Submetido';
 $lang['situacao_B'] = 'Em validação';

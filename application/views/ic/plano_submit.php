@@ -24,7 +24,7 @@ if (isset($bloquear))
 		$arquivos_label = '';
 	}
 
-if (!isset($fcn))
+if (!isset($fcn) and !isset($bloquear))
 	{
 		$sx = '
 		<script>

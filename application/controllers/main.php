@@ -53,6 +53,7 @@ class main extends CI_Controller {
 	}
 
 	function index() {
+		$this->load->model('fomento_editais');
 		$cracha = $_SESSION['cracha'];
 		/* Carrega classes adicionais */
 		$this -> cab();
@@ -71,6 +72,7 @@ class main extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 
 		/* Chamadas editais */
+		$data['editais'] = $this->fomento_editais->editais_abertos_resumo();
 		$this -> load -> view('fomento/chamadas_resumo', $data);
 
 		/* Stricto Sensu */
