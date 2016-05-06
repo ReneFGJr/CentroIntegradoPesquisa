@@ -608,6 +608,78 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
+/* orientações por escola */
+function orientaoes_ativas_escola($ano = '') {
+	$sx = '';
+	$mod = '';
+	$ano = '2015';
+	$ano1 = $ano;
+	$ano2 = ($ano + 1);
+	
+	$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
+	$wh .= ' and (icas_id = 1)';
+	$ob = 'pf_cracha, pf_nome, us_campus_vinculo, es_escola, mb_tipo';
+	
+	if (strlen($mod) > 0) {
+		$wh .= ' and id_mb = ' . $mod;
+	}
+
+	$sql = "SELECT pf_cracha, pf_nome, us_campus_vinculo, es_escola, mb_tipo, count(*) as total
+					FROM (select * from ic
+					      left join ic_aluno as pa on ic_id = id_ic
+					      left join (select us_campus_vinculo, us_escola_vinculo, us_cracha as id_pf, 
+					                        id_us as prof_id, us_nome as pf_nome, us_cracha as pf_cracha 
+					                 from us_usuario) AS us_prof on ic.ic_cracha_prof = us_prof.id_pf
+					                 left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
+					                 left join ic_situacao on id_s = icas_id
+					                 where $wh
+					                 and (icas_id = 1)) as resultado
+					INNER JOIN escola ON us_escola_vinculo = id_es
+					GROUP BY $ob";
+	
+	$rlt = $this -> db -> query($sql);
+	$rlt = $rlt -> result_array();
+	
+	$tot = 0;
+	$totp = 0;
+	
+	$class_2 = ' style="border-bottom: 1px #000000 solid" ';
+	$class_2 = '';
+	
+	$sx .= '<table width="100%" class="tabela00">';
+	$sx .= '<tr ' . $class_2 . '><th width="5%">Cod.Crachá</th>
+							<th width="43%">Nome Prof.</th>
+							<th width="12%">Campus</th>
+							<th width="25%">Escola</th>
+							<th width="10%">Modalidade</th>
+							<th width="3%">Orientações</th>
+					</tr>';
+	
+	$class = ' style="border-bottom: 1px #000000 solid" ';
+	$class = '';
+	
+	for ($r = 0; $r < count($rlt); $r++) {
+				
+			$line = $rlt[$r];
+			$tot = $tot + $line['total'];
+			$totp++;
+			
+			$sx .= '<tr>';
+			$sx .= '<td ' . $class . ' align="center" >' . $line['pf_cracha'] . '</td>';
+			$sx .= '<td ' . $class . '>' . $line['pf_nome'] . '</td>';
+			$sx .= '<td>' . $line['us_campus_vinculo'] . '</td>';
+			$sx .= '<td>' . $line['es_escola'] . '</td>';
+			$sx .= '<td>' . $line['mb_tipo'] . '</td>';
+			$sx .= '<td ' . $class . ' align="center" >' . $line['total'] . '</td>';
+
+		}
+		
+	$sx .= '<tr><td colspan="3">Total de ' . $totp . ' orientadores, com ' . $tot . ' orientações.</td></tr>';
+	$sx .= '</table>';
+	
+	return ($sx);
+}
+
 	function docentes_em_pesquisa($ano) {
 
 		$wh = '((icas_id = 1) and (pf_tipo < 4))';
@@ -1032,13 +1104,17 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-	/** Gera guia do estudante em excel */
-	function report_guia_estudante_xls($ano1 = 0, $ano2 = 0, $mod = '') {
+/** Gera guia do estudante em excel */
+	function report_guia_estudante_xls($ano1 = 0, $ano2 = 0, $mod = '', $esc = '') {
 		$sx = '';
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
 		if (strlen($mod) > 0) {
 			$wh .= ' and id_mb = ' . $mod;
+			
+		}elseif(strlen($esc) > 0){
+			$wh .= ' and us_escola_vinculo = ' . $esc;
 		}
+		
 		$sql = $this -> table_view_2($wh, 0, 9999999, 'al_nome');
 		//$sql .= " order by al_nome ";
 

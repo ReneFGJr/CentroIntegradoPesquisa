@@ -1259,6 +1259,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Relatórios', 'Guia do Estudante (Excel)', 'ITE', '/ic/report_guia_excel'));
 
 		array_push($menu, array('Relatórios', 'Número de orientações por professor (Excel)', 'ITE', '/ic/report_drh'));
+		array_push($menu, array('Relatórios', 'Número de orientações por Escola (Excel)', 'ITE', '/ic/report_drh_escola'));
 
 		array_push($menu, array('Orientadores', 'Dados dos orientadores', 'ITE', '/ic/report_orientadores'));
 
@@ -1335,9 +1336,33 @@ class ic extends CI_Controller {
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
 	}
+	
+	/* Reports orientações por escola */
+	function report_drh_escola($xls = '') {
+		$ano = '';
+		$this -> load -> model('ics');
+		
+		if ($xls == '') {
+			$this -> cab();
+			$data = array();
+			//$this -> load -> view('header/content_open');
+			$data['submenu'] = '<a href="' . base_url('index.php/ic/report_drh_escola/xls') . '" class="lt0 link">exportar para excel</a>';
+		} else {
+			xls('orientacoes-ic-' . date("Y-m") . '.xls');
+		}
+	
+		$data['content'] = $this -> ics -> orientaoes_ativas_escola($ano);
+		$data['title'] = 'Orientações por escola';
+	
+		$this -> load -> view('content', $data);
+	
+		if ($xls == '') {
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
+		}
+	}
 
 	/* Reports */
-
 	function report_orientadores($ano = 0) {
 		$this -> load -> model('ics');
 
@@ -1434,6 +1459,7 @@ class ic extends CI_Controller {
 		$ano_ini = get("dd2");
 		$ano_fim = get("dd3");
 		$modalidade = get("dd4");
+		$escola = get("dd5");
 
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -1442,7 +1468,7 @@ class ic extends CI_Controller {
 			$this -> cab();
 			$data = array();
 
-			$data['submenu'] = '<a href="' . base_url('index.php/ic/report_guia_excel/xls?dd2=' . $ano_ini . '&dd3=' . $ano_fim . '&dd4=' . $modalidade . '&acao=xls') . '" class="lt0 link">exportar para excel</a>';
+			$data['submenu'] = '<a href="' . base_url('index.php/ic/report_guia_excel/xls?dd2=' . $ano_ini . '&dd3=' . $ano_fim . '&dd4=' . $modalidade . '&dd5='.$escola.'&acao=xls') . '" class="lt0 link">exportar para excel</a>';
 		} else {
 			xls('Guia_do_estudante ' . $ano_ini . ' até ' . $ano_fim . '.xls');
 		}
@@ -1453,14 +1479,19 @@ class ic extends CI_Controller {
 		array_push($cp, array('$A', '', msg('Guia do Estudante'), False, true));
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('lb_ano_inicio'), True, TRUE));
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('lb_ano_final'), True, True));
+		
 		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
 		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('lb_ic_modalidade'), False, False));
+		
+		$sql = "select * from escola where es_ativo = 1 order by es_escola";
+		array_push($cp, array('$Q id_es:es_escola:' . $sql, '', msg('Escola'), False, False));
+		
 		$tela = $form -> editar($cp, '');
 
 		if ($form -> saved) {
 
 			$data['title'] = 'Orientações de Iniciação Científica de ' . $ano_ini . ' até ' . $ano_fim . ' ';
-			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade);
+			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade, $escola);
 			$this -> load -> view('content', $data);
 
 		} else {
