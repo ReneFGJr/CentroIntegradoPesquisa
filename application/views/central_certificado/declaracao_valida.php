@@ -7,7 +7,7 @@
 			</b>
 		</td>
 		<td>
-			<?php echo $cde_nome;?>
+			<?php echo $cdm_nome;?>
 			
 		</td>
 	</tr>
@@ -28,7 +28,7 @@
 		</td>
 		<td>
 			<?php 
-			if (isset($ic_projeto_professor_titulo)) { echo $ic_projeto_professor_titulo; }
+			if (isset($dc_data)) { echo 'Emitido em '.stodbr($dc_data); }
 			?>
 		</td>
 	</tr>

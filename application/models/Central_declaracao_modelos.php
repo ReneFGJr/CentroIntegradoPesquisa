@@ -40,6 +40,7 @@ class Central_declaracao_modelos extends CI_model {
 		$this -> load -> model('central_declaracao_modelos');
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
+		
 
 		$body = $data['cdm_body'];
 
@@ -56,13 +57,18 @@ class Central_declaracao_modelos extends CI_model {
 		if (isset($data['ic_projeto_professor_titulo'])) {	
 			$body = troca($body, '$titulo_projeto', $data['ic_projeto_professor_titulo']);
 		}
-		/* coordenadoria */
-		$body = troca($body, '$nome_coordenadora', 'Profa. Dra. Cleybe Vieira');
-		$body = troca($body, '$cargo', 'Coordenadora da Iniciação Científica');
+
 		if (isset($data['mb_tipo'])) {
 			$body = troca($body, '$mb_bolsa_tipo', $data['mb_tipo']);
 			$body = troca($body, '$mb_bolsa_desc', $data['mb_descricao']);
 		}
+		
+		if ($data['dc_data1'] > '2000-01-01') {
+			$body = troca($body, '$data1', stodbr($data['dc_data1']));
+		}	
+		if ($data['dc_data2'] > '2000-01-01') {
+			$body = troca($body, '$data2', stodbr($data['dc_data2']));
+		}				
 		/**
 		 $date_2 = sonumero($ic['cdm_data_evento']);
 		 $date = round(substr($date_2, 6, 2));
@@ -101,12 +107,21 @@ class Central_declaracao_modelos extends CI_model {
 		";
 
 		$rlt = $this -> db -> query($sql);
-
-		$rlt = $rlt -> result_array();
+		$rlt = $rlt -> result_array();	
 		if (count($rlt) == 0) {
 			return array();
 		}
-		return ($rlt[0]);
+		
+		/* dados adicionais */
+		$line = $rlt[0];
+		if ($line['cdm_tipo'] == 'IC')
+			{
+				$this->load->model('ics');
+				$proto = $line['dc_protocolo'];
+				$line2 = $this-> ics ->le_protocolo($proto);
+				$line = array_merge($line,$line2);				
+			}
+		return ($line);
 
 	}
 
