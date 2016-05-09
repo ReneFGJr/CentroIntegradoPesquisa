@@ -311,10 +311,10 @@ class ics extends CI_model {
 		$sql = "select *
 						from ic_submissao_projetos
 						inner join us_usuario on pj_professor = us_cracha
-						inner join area_conhecimento on pj_area = ac_cnpq
+						left join area_conhecimento on pj_area = ac_cnpq
 						where $whe ";
 		$sql .= ' order by pj_area, pj_titulo ';
-
+				
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
