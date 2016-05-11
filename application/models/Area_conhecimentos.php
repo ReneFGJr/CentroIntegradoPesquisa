@@ -1,5 +1,7 @@
 <?php
 Class Area_conhecimentos extends CI_Model {
+	var $tabela = 'area_conhecimento';
+	
 	function form_areas($v = '', $area = '') {
 		$sql = "SELECT * from area_conhecimento
 						WHERE  not ((ac_cnpq like '9%') or (ac_cnpq like '0%'))
@@ -48,6 +50,26 @@ Class Area_conhecimentos extends CI_Model {
 		$sx = $sa.$sx.'</select>';
 		return ($sx);
 	}
+
+	function cp()
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_ac','',False,True));
+			array_push($cp,array('$S50','ac_nome_area','Nome da área',True,True));
+			array_push($cp,array('$S11','ac_cnpq','Código CNPq',True,True));
+			array_push($cp,array('$O 1:SIM&0:NÃO','ac_semic','Semic',True,True));
+			array_push($cp,array('$O 1:SIM&0:NÃO','ac_submit','Submissão',True,True));
+			array_push($cp,array('$T80:5','ac_texto','Texto',True,True));
+			return($cp);			
+		}
+
+	function row($obj) {
+		$obj -> fd = array('id_ac', 'ac_cnpq', 'ac_nome_area', 'ac_ativo');
+		$obj -> lb = array('ID', 'Código', 'Descrição', 'Ativo');
+		$obj -> mk = array('', 'L', 'L', 'C');
+		return ($obj);
+	}
+
 
 }
 ?>

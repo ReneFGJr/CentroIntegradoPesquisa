@@ -64,6 +64,13 @@ function link_ic($id=0,$page='ic')
 		$href = '<a href="'.base_url('index.php/'.$page.'/view/'.$id.'/'.checkpost_link($id)).'" class="link">';
 		return($href);
 	}
+function link_projeto($id=0,$page='ic')
+	{
+		$id = sonumero($id);
+		if (strlen($id) == 7) { $id = round(substr($id,1,6)); }
+		$href = '<a href="'.base_url('index.php/'.$page.'/projeto_view/'.$id.'/'.checkpost_link($id)).'" class="link">';
+		return($href);
+	}	
 function link_user($nome,$id,$ln=array())
 	{
 		return(link_perfil($nome='',$id,$ln=array()));

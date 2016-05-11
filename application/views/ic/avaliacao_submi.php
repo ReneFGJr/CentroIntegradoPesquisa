@@ -5,6 +5,7 @@ $chk = array();
 $ob = array();
 $obtr = array();
 $ddx = 0;
+if (!isset($ac_texto)) { $ac_texto = ''; }
 
 for ($r=0;$r < (40);$r++)
 	{
@@ -118,6 +119,93 @@ $size = round(100/count($resposta)).'%';
 	</tr>
 </table>
 <!---------------------------------------------------------------- AREA ESTRATÉGICA ---------------->
+<style>
+HTML  CSS   Result
+Edit on 
+/**
+ * Demo styles
+ * Not needed for tooltips to work
+ */
+
+/* `border-box`... ALL THE THINGS! */
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+
+/**
+ * Tooltip Styles
+ */
+
+/* Add this attribute to the element that needs a tooltip */
+[data-tooltip] {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* Hide the tooltip content by default */
+[data-tooltip]:before,
+[data-tooltip]:after {
+  visibility: hidden;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Position tooltip above the element */
+[data-tooltip]:before {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  margin-bottom: 5px;
+  margin-left: -80px;
+  padding: 7px;
+  width: 360px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #000;
+  background-color: hsla(0, 0%, 20%, 0.9);
+  color: #fff;
+  content: attr(data-tooltip);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Triangle hack to make tooltip look like a speech bubble */
+[data-tooltip]:after {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -5px;
+  width: 0;
+  border-top: 5px solid #000;
+  border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  content: " ";
+  font-size: 0;
+  line-height: 0;
+}
+
+/* Show tooltip content on hover */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  visibility: visible;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1;
+}	
+</style>
 <?php
 		$r = ($ddx + 4);
 		$resposta = array('11'=>'SIM','10'=>'NÃO');
@@ -125,11 +213,12 @@ $size = round(100/count($resposta)).'%';
 		
 		if (substr($area_estrategica,0,4) != '9.00')
 		{
+		echo '<br><br>';
 		echo '<table cellpadding="5">'.cr();
 		echo '<tr '.$obtr[$r].'>'.cr();
 		echo '4) '.$ob[$r].' <b>Critério 4:</b> ';
 		echo 'Este projeto foi assinalado pelo professor proponente para concorrer as bolsas de IC de ';
-		echo ' áreas estratégicas (<B>'.trim($area_estrategica_nome).'</B>) da PUCPR. O projeto se enquadra na área assinalada?';
+		echo ' áreas estratégicas (<B><a href="#" data-tooltip="'.$ac_texto.'" class="link">'.trim($area_estrategica_nome).'</a></B>) da PUCPR. O projeto se enquadra na área assinalada?';
 		foreach ($resposta as $item => $valor) {
 			$checked = '';
 			$bg = '';
@@ -140,6 +229,8 @@ $size = round(100/count($resposta)).'%';
 			}
 		echo '</tr></table>';
 		} else {
+			echo '<br><br>';
+			echo '4) <b>Critério 4:</b> Área estratégica (Não aplicável).<br>';
 			echo '<input name="dd'.$r.'" type="hidden" value="12">';
 		}
 ?>
@@ -184,13 +275,19 @@ $r = 6; /* numero da questão */
 			}
 		echo '</tr></table>';
 
+$r = 9; /* numero da questão */
+if (strlen(get("dd".$r)) == 0)
+	{
+		$bg = ' background-color: #FFe0e0 ';
+	} else {
+		$bg = '';
+	}
 ?>
 <br>
 <br>
-Comentários sobre sua avaliação do projeto do professor:
+Comentários sobre sua avaliação do projeto do professor (obrigatório):
 <br>
-<textarea name="dd21" cols=80 rows=4 style="width: 100%"><?php echo $dd21; ?>
-</textarea>
+<textarea name="dd<?php echo $r;?>" cols=80 rows=4 style="width: 100%; <?php echo $bg; ?> " ><?php echo get("dd".$r); ?></textarea>
 </td>
 </tr>
 </table>

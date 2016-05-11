@@ -121,13 +121,13 @@ switch ($doc_edital)
 		
 	case 'PIBITI':
 		
-		$resposta = array('1'=>'SIM','2'=>'NÃO','3'=>'Tenho dúvidas');
+		$resposta = array('1'=>'SIM, deve migrar para o PIBITI','2'=>'NÃO','3'=>'Tenho dúvidas');
 		$size = "33%";
 		
 		echo '<table cellpadding="5">'.cr();
 		echo '<tr '.$obtr[$r].'>'.cr();
 		echo '5) '.$ob[$r].' <b>Critério 4:</b> ';
-		echo 'Este projeto apresenta inovação tecnológica para ser desenvolvido no PIBITI?';
+		echo 'Este projeto apresenta inovação tecnológica ?';
 		foreach ($resposta as $item => $valor) {
 			$checked = '';
 			$bg = '';
@@ -142,13 +142,24 @@ switch ($doc_edital)
 		echo '<input name="dd'.$r.'" type="hidden" value="0">';
 		break;
 	}
-	?>
+	
+$r=($ddx+5);	
+echo '<input name="dd'.$r.'" type="hidden" value="0">';
+
+
+$r = ($ddx + 9);
+if (strlen(get("dd".$r)) == 0)
+	{
+		$bg = ' background-color: #FFe0e0 ';
+	} else {
+		$bg = '';
+	}
+?>
 <!---------------------------------------------------------------- CEP / CEUA ----------------------->
-<?php $r = ($ddx + 5); ?>
+
 <br>
-Comentários sobre sua avaliação referente a este plano do estudante:<br>
-<textarea name="dd<?php echo $r;?>" cols=80 rows=4 style="width: 100%"><?php echo get("dd".$r); ?>
-</textarea>
+Comentários sobre sua avaliação referente a este plano do estudante: (obrigatório)<br>
+<textarea name="dd<?php echo $r;?>" cols=80 rows=4 style="width: 100%; <?php echo $bg; ?> " ><?php echo get("dd".$r); ?></textarea>
 </td>
 </tr>
 </table>

@@ -575,9 +575,6 @@ class eventos extends CI_model {
 			$line = $rlt[0];
 			$line['mailing'] = $this -> le_mailing($line['id_ev']);
 			
-			print_r($line);
-			exit;
-			
 			return ($line);
 		} else {
 			return ( array());

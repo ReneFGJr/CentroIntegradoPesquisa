@@ -2409,7 +2409,7 @@ function orientaoes_ativas_escola($ano = '') {
 	function le_projeto_protocolo($proto) {
 		$sql = "select *, 
 					aluno.us_nome as al_nome, aluno.id_us as id_al,
-					prof.us_nome as pf_nome, prof.id_us as id_pf
+					prof.us_nome as pf_nome, prof.id_us as id_pf, ac_texto
 				FROM " . $this -> tabela_projetos . "
 					LEFT JOIN us_usuario as prof  on prof.us_cracha = pj_professor
 					LEFT JOIN us_usuario as aluno on aluno.us_cracha = pj_aluno
@@ -2871,7 +2871,6 @@ function orientaoes_ativas_escola($ano = '') {
 				echo '--->' . $ac;
 				break;
 		}
-		print_r($_POST);
 	}
 
 	function submit_enviar_email($proto) {

@@ -178,6 +178,9 @@ class main extends CI_Controller {
 		if (perfil('#CEP#TST') == 1) {
 			array_push($menu, array('CEP', 'Comitê de Ética em Pesquisa com Seres Humanos', 'BTA', '/cep'));
 		}
+		if (perfil('#CEU#TST') == 1) {
+			array_push($menu, array('CEUA', 'Comitê de Ética em Pesquisa no Uso de Animais', 'BTA', '/ceua'));
+		}
 		if (perfil('#TST') == 1) {
 			array_push($menu, array('Central Certificados e Declarações', 'Emissão de Certificados e Declarações de participastes de eventos', 'BTA', '/Central_declaracao_modelo'));
 		}

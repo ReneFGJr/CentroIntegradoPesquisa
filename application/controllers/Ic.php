@@ -2475,6 +2475,15 @@ class ic extends CI_Controller {
 				$sem_idicacao = 1;
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano, $sem_idicacao);
 				break;
+			case 'IC_SUBMI' :
+				$fld = '';
+				$tit = 'Análise Projeto Submetidos';
+				$ano = date("Y");
+				if (date("m") <= 4) { $ano = $ano - 1;
+				}
+				$sem_idicacao = 1;
+				$tela01 = $this -> ics_acompanhamento -> avaliacao_submissao_entregue($ano, $sem_idicacao);
+				break;				
 			default :
 				$fld = '';
 				$tit = '';
@@ -2565,6 +2574,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Submissão de Projetos e Planos', 'Cockpit (Resumo)', 'ITE', '/ic/cockpit'));
 		array_push($menu, array('Submissão de Projetos e Planos', 'Validar submissão', 'ITE', '/ic/submit_mostrar_status/A'));
 		array_push($menu, array('Submissão de Projetos e Planos', 'Devolver projeto para professor', 'ITE', '/ic/submit_devolver'));
+		array_push($menu, array('Submissão de Projetos e Planos', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_SUBMI'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -3362,14 +3372,30 @@ class ic extends CI_Controller {
 			
 			/* INDICAR AVALIACAO */
 			if ($status == 'B') {
-				$area = $dados_projeto['pj_area'];
-				$protocolo = $dados_projeto['pj_codigo'];
-				$dados_projeto['ic_cracha_prof'] = $dados_projeto['pj_professor'];
-				$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'SUBMI', $area, $dados_projeto);
-				$data['sa'] = $tela;
-				$data['tipo'] = 'SUBMI';
-				$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
-				//$this -> load -> view('ic/form_indicar_avaliacao', $dados_pj);
+				
+								/* avaliacoes abertas */
+				$av_aberta = $this->ic_pareceres->avaliacoes_abertas($proto,'SUBMI');
+				
+				if ($av_aberta > 0)
+					{
+						$comt['content'] = '<div class="danger border1 lt4" style="border-radius: 10px; padding: 10px;">
+											<img src="'.base_url('img/icon/icone_exclamation.png').'" height="30" align="left">
+											Já existe(m) a(s) indicação(ões) de '.$av_aberta.' avaliador(es) para este projeto
+											</div>';
+						$this->load->view('content',$comt);
+					}
+				
+				if ($av_aberta <= 1)
+					{
+					$area = $dados_projeto['pj_area'];
+					$protocolo = $dados_projeto['pj_codigo'];
+					$dados_projeto['ic_cracha_prof'] = $dados_projeto['pj_professor'];
+					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'SUBMI', $area, $dados_projeto);
+					$data['sa'] = $tela;
+					$data['tipo'] = 'SUBMI';
+					$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
+					//$this -> load -> view('ic/form_indicar_avaliacao', $dados_pj);
+					}
 			}			
 
 			/* EM CADASTRO */

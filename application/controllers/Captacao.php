@@ -390,6 +390,9 @@ class Captacao extends CI_Controller {
 			if ($data['ca_status'] == 80) {
 				$this -> load -> view('captacao/form_secretaria_validacao', $data);
 			}
+			if ($data['ca_status'] == 0) {
+				$this -> load -> view('captacao/form_secretaria_validacao', $data);
+			}			
 			/* Gerar bonificaçoes e isenções pela secretaria */
 			if ($data['ca_status'] == 81) {
 				$data['isencao'] = 0;

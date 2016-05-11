@@ -6,6 +6,54 @@ class ics_acompanhamento extends CI_model {
 	var $tabela = 'ic';
 	var $tabela_2 = "ic_modalidade_bolsa";
 	
+	function avaliacao_submissao_entregue($ano = 0,$sem_indicacao=0)
+		{
+			$wh = " (pj_status = 'A' or pj_status = 'B') ";
+			$wh .= " and (pj_edital = 'IC')";
+			$wh .= " and (pj_ano = '$ano')";
+			
+			$cp = 'id_pj, pj_area, us_nome, pj_titulo, ac_nome_area, pj_codigo, pj_status ';
+			$sql = "select $cp,  count(*) as total, max(parecers) as parecers from ic_submissao_projetos  
+						left join us_usuario on pj_professor = us_cracha 
+						left join area_conhecimento on ac_cnpq = pj_area
+						"; 
+			/* sem indicacao */
+			if ($sem_indicacao == 1)
+				{
+					$sql .= " LEFT JOIN (select count(*) as parecers, pp_protocolo from pibic_parecer_".$ano." where (pp_status <> 'D')  AND (pp_tipo = 'SUBMI') group by pp_protocolo) as parecer on pp_protocolo = pj_codigo ";
+				}
+			$sql .= " where $wh AND (parecers < 2 or parecers is null) ";
+			$sql .= " group by ".$cp;
+			$sql .= " order by pj_area, us_nome ";
+			
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="tabela00">';
+			$xarea = '';
+			$tot = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$tot++;
+					$line = $rlt[$r];
+					$area = $line['pj_area'];
+					if ($area != $xarea)
+						{
+							$sx .= '<tr><td colspan=10 class="lt3"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
+							$xarea = $area;
+						}
+					$line['page'] = 'ic';
+					$line['nr'] = $tot;
+					if ($line['parecers'] > 0)
+						{
+							$line['nr'] .= '<font color="green"><b>('.$line['parecers'].')</b>';
+						}
+					$sx .= $this->load->view('ic/projeto_row.php',$line,true);
+				}
+			$sx .= '</table>';
+			$sx .= '</br><font class="red"><strong>'.$tot . '</strong></font> protocolos entregues';
+			return($sx);
+		}	
+	
 	function relatorio_parcial_entregue($ano = 0,$sem_indicacao=0)
 		{
 			$wh = " (ic_ano = '$ano') ";

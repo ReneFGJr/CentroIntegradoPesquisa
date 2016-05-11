@@ -71,32 +71,30 @@ class admin extends CI_Controller {
 		}
 	}
 
-function usuario_sem_email($xls=''){
-	
-	$this -> load -> model('usuarios');
-		
-		if ($xls == '')
-			{
-				$this -> cab();
-				$data = array();
-				//$this -> load -> view('header/content_open');
-				$data['submenu'] = '<a href="'.base_url('index.php/admin/usuario_sem_email/xls').'" class="lt0 link">exportar para excel</a>';
-			} else {
-				xls('lista-usu-sem-email-cadastrado.xls');
-			}
-		
+	function usuario_sem_email($xls = '') {
+
+		$this -> load -> model('usuarios');
+
+		if ($xls == '') {
+			$this -> cab();
+			$data = array();
+			//$this -> load -> view('header/content_open');
+			$data['submenu'] = '<a href="' . base_url('index.php/admin/usuario_sem_email/xls') . '" class="lt0 link">exportar para excel</a>';
+		} else {
+			xls('lista-usu-sem-email-cadastrado.xls');
+		}
+
 		$data['content'] = $this -> usuarios -> sem_email();
 		$data['title'] = 'Usuários se email';
-		
+
 		$this -> load -> view('content', $data);
 
-		if ($xls == '')
-			{
+		if ($xls == '') {
 			$this -> load -> view('header/content_close');
 			$this -> load -> view('header/foot', $data);
-			}
-	
-}
+		}
+
+	}
 
 	function ultimos_acessos() {
 		$this -> load -> model('usuarios');
@@ -286,7 +284,7 @@ function usuario_sem_email($xls=''){
 		$data['title_menu'] = 'Menu Administração';
 		$this -> load -> view('header/main_menu', $data);
 
-		/*Fecha */ 		/*Gera rodapé*/
+		/*Fecha */	/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
@@ -302,6 +300,7 @@ function usuario_sem_email($xls=''){
 
 		array_push($menu, array('Cadastros', 'IC - Manutenção de Bolsas por modalidade', 'ITE', '/admin/ic_modal_bolsas'));
 		array_push($menu, array('Cadastros', 'Usuários do sistema', 'ITE', '/admin/usuarios'));
+		array_push($menu, array('Cadastros', 'Área do conhecimento (CNPq/CAPES)', 'ITE', '/admin/area_conhecimento'));
 
 		array_push($menu, array('Usuários', 'Integração SGA/CIP Estudantes', 'ITE', '/usuario/integracao_sga'));
 		array_push($menu, array('Usuários', 'Perfil de usuário do Sistema', 'ITE', '/perfil'));
@@ -334,15 +333,15 @@ function usuario_sem_email($xls=''){
 		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
 
 		array_push($menu, array('Inportação', 'Inportação de Dados', 'ITE', '/inport'));
-		
-		array_push($menu, array('Manutenção Cursos', 'Cadastrar/Editar Cursos', 'ITE', '/curso'));		
+
+		array_push($menu, array('Manutenção Cursos', 'Cadastrar/Editar Cursos', 'ITE', '/curso'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
 		$this -> load -> view('header/main_menu', $data);
 
-		/*Fecha */ 		/*Gera rodapé*/
+		/*Fecha */	/*Gera rodapé*/
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
@@ -755,5 +754,61 @@ function usuario_sem_email($xls=''){
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function area_conhecimento($id = 0, $chk = '') {
+		/* Load Models */
+		$this -> load -> model('area_conhecimentos');
+
+		$this -> cab();
+		$data = array();
+		$data['content'] = '<A href="' . base_url('index.php/usuario/consulta_usuario/') . '">' . msg('consulta') . ' ' . msg('cracha') . '</a>';
+		$this -> load -> view('content', $data);
+
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = $this -> area_conhecimentos -> tabela;
+		$form -> see = true;
+		$form -> edit = true;
+		$form -> novo = true;
+		$form = $this -> area_conhecimentos -> row($form);
+
+		$form -> row_edit = base_url('index.php/admin/area_conhecimento_edit');
+		$form -> row_view = base_url('index.php/admin/area_conhecimento');
+		$form -> row = base_url('index.php/admin/area_conhecimento/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('page_docentes');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	function area_conhecimento_edit($id=0,$chk='')
+		{
+		/* Load Models */
+		$this -> load -> model('area_conhecimentos');
+		$cp = $this -> area_conhecimentos -> cp();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> area_conhecimentos -> tabela);
+		$data['title'] = msg('ic');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/admin/area_conhecimento'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+			
+		}
 
 }

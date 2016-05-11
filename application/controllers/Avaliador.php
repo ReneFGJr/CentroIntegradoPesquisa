@@ -19,15 +19,15 @@ class avaliador extends CI_Controller {
 		/* Security */
 		$this -> security();
 	}
-	
+
 	function enviar_convites_externos($chk = '') {
 		$this -> cab();
 
 		if ($chk == 'SIM') {
 			$this -> load -> model('avaliadores');
 			$data['content'] = $this -> avaliadores -> enviar_convite_avaliador(1);
-			$this->load->view('content',$data);
-			
+			$this -> load -> view('content', $data);
+
 			$data['voltar'] = base_url('index.php/avaliador/');
 			$this -> load -> view('sucesso', $data);
 		} else {
@@ -188,7 +188,29 @@ class avaliador extends CI_Controller {
 		$this -> load -> view('header/foot_modelo_2', $data);
 	}
 
-	function ficha($id = 0) {
+	function ficha_salva($id = 0, $chk = '') {
+		$this -> load -> model('ics');
+		$this -> load -> model('geds');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('mensagens');
+		$this -> load -> model('ic_pareceres');
+
+		$this -> cab_avaliador();
+
+		$data = array();
+
+		$dados = $this -> ic_pareceres -> le($id);
+		$proto = $dados['pp_protocolo'];
+		$tipo = $dados['pp_tipo'];
+		$sta = $dados['pp_status'];
+		/* Avaliação não disponível */
+		$data['volta'] = base_url('index.php/avaliador');
+		
+		$this->load->view('sucesso',$data);
+
+	}
+
+	function ficha($id = 0, $chk = '') {
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
 		$this -> load -> model('usuarios');
@@ -205,7 +227,9 @@ class avaliador extends CI_Controller {
 		$sta = $dados['pp_status'];
 		/* Avaliação não disponível */
 		if ($sta != 'A') {
-			$txt = '<center><h1 color="red">Parecer já avaliador, cancelado ou declinado</h1></center>';
+			$txt = '<center><h1 color="red">Avaliação não disponível</h1></center>';
+			$data['content'] = $txt;
+			$this->load->view('content',$data);
 			return ('');
 		}
 
@@ -310,12 +334,11 @@ class avaliador extends CI_Controller {
 
 		/* arquivos */
 		$this -> geds -> tabela = 'ic_ged_documento';
-		if (isset($dados['ic_projeto_professor_codigo']))
-			{
-				$proto_mae = $dados['ic_projeto_professor_codigo'];
-			} else {
-				$proto_mae = $dados['pp_protocolo_mae'];
-			}
+		if (isset($dados['ic_projeto_professor_codigo'])) {
+			$proto_mae = $dados['ic_projeto_professor_codigo'];
+		} else {
+			$proto_mae = $dados['pp_protocolo_mae'];
+		}
 		$data['ged'] = '';
 		if (strlen($proto_mae) > 0) {
 			$data['ged'] .= $this -> geds -> list_files_table($proto_mae, 'ic');
@@ -326,42 +349,8 @@ class avaliador extends CI_Controller {
 		/* VALIDACOES */
 		switch ($tipo) {
 			case 'SUBMI' :
-				if ($ok == 15) {
-					$dados = $this -> ic_pareceres -> le($id);
-					$dados = array_merge($dados, $dados2);
-					$nota = get('dd9');
-					$proto = $dados['pp_protocolo'];
-					$this -> ic_pareceres -> finaliza_nota_ic($proto, $nota);
-
-					$aluno = $this -> usuarios -> le_cracha($dados['ic_cracha_aluno']);
-
-					/* gera PDF */
-					$file_local = $this -> ic_pareceres -> gera_parecer('RPAR', $dados);
-					$anexos = array($file_local);
-
-					/* Envia e-mail */
-					$txt = $this -> mensagens -> busca('RPAR_RESULT_' . get("dd9"), $dados);
-
-					$ass = $txt['nw_titulo'];
-					$texto = $txt['nw_texto'];
-					$prof_id = $dados['prof_id'];
-
-					/* troca */
-					$texto = troca($texto, '$aluno', $aluno['us_nome']);
-					enviaremail_usuario($prof_id, $ass, $texto, 2, $anexos);
-
-					/* Finaliza avaliacao */
-					$this -> ic_pareceres -> finaliza_avaliacao($id);
-
-					$data['volta'] = base_url('index.php/avaliador');
-					$this -> load -> view('sucesso', $data);
-					return ('');
-				} else {
-					if (strlen($acao) > 0) {
-						echo '<script> alert("Existe campos não preenchidos!"); </script>';
-					}
-				}
-				break;			
+				/* validado pela checa_dados_pareceres */
+				break;
 			case 'RPAR' :
 				if ($ok == 15) {
 					$dados = $this -> ic_pareceres -> le($id);
@@ -449,73 +438,98 @@ class avaliador extends CI_Controller {
 				$this -> load -> view('ic/avaliacao_rprc', $data);
 				break;
 			case 'SUBMI' :
-				/*************************************************************************** SUBMI 
+				/*************************************************************************** SUBMI
 				 *********************************************************************************
 				 *********************************************************************************/
-				
-				$proj = $this->ics->le_projeto_protocolo($proto);
+
+				$proj = $this -> ics -> le_projeto_protocolo($proto);
 				$prof = $proj['pj_professor'];
-							
+
 				/* Area estratégica */
 				$area_estrategica = $proj['pj_area_estra'];
 				$data['area_estrategica'] = $area_estrategica;
 				$sql = "select * from area_conhecimento where ac_cnpq = '$area_estrategica' ";
-				$ttt = $this->db->query($sql);
-				$ttt = $ttt->result_array();
-				if (count($ttt) > 0)
-					{
-						$data['area_estrategica_nome'] = $ttt[0]['ac_nome_area'];
-					} else {
-						$data['area_estrategica_nome'] = '-não aplicado-';
-					}
+				$ttt = $this -> db -> query($sql);
+				$ttt = $ttt -> result_array();
+				if (count($ttt) > 0) {
+					$data['area_estrategica_nome'] = $ttt[0]['ac_nome_area'];
+					$data['ac_texto'] = $ttt[0]['ac_texto'];
+				} else {
+					$data['area_estrategica_nome'] = '-não aplicado-';
+				}
 				$area_estrategica_nome = $data['area_estrategica_nome'];
-				
+
 				/* Dados do orientador */
-				$prof = $this->usuarios->le_cracha($prof);
-				$prefil = $this -> load -> view('perfil/docente', $prof,true);
-				
+				$prof = $this -> usuarios -> le_cracha($prof);
+				$prefil = $this -> load -> view('perfil/docente_ic', $prof, true);
+
 				/* Projeto */
 				$data['projeto'] = '';
 				$data['projeto'] .= $prefil;
 				$data['projeto'] .= '<h1>Projeto de pesquisa do professor</h1>';
-				$data['projeto'] .= $this->load->view('ic/projeto',$proj,true);				
+				$data['projeto'] .= $this -> load -> view('ic/projeto', $proj, true);
 				$this -> geds -> tabela = 'ic_ged_documento';
-				$data['projeto'] .= '<b>Arquivos do projeto do professor</b><br>'.$this->geds->list_files($proto,'ic');
+				$data['projeto'] .= '<b>Arquivos do projeto do professor</b><br>' . $this -> geds -> list_files($proto, 'ic');
 				$data['projeto'] .= '<h3>Ficha de avaliação - Projeto do professor</h3>';
-				
-				$texto = $this->mensagens->busca('AVAL_INSTRUCOES',array());
-				$data['texto_introducao'] = mst($texto['nw_texto']); 
-				
+
+				$texto = $this -> mensagens -> busca('AVAL_INSTRUCOES', array());
+				$data['texto_introducao'] = mst($texto['nw_texto']);
+
 				$this -> load -> view('ic/avaliacao_submi', $data);
-				
+
 				$sql = "select * from ic_submissao_plano 
 								where doc_protocolo_mae = '$proto'  
 								AND (doc_status <> '@' and doc_status <> 'X') ";
-				$rrr = $this->db->query($sql);
-				$rrr = $rrr-> result_array();
-				for ($r=0;$r < count($rrr);$r++)
-					{
-						$plano = $rrr[$r];
-						
-						$plano['area_estrategica'] = $area_estrategica;
-						$plano['area_estrategica_nome'] = $area_estrategica_nome;
-						$plano['nrplano'] = ($r+1);
-						$plano['tipo'] = 'ic';
-						$plano['ddx'] = (40+10*$r);
-						$plano['arquivos'] = 'Arquivos do plano';
-						$plano['bloquear'] = 'SIM';
-						$plano['arquivos_submit'] = $this->geds->list_files($plano['doc_protocolo'],'ic');;
-						$plano['projeto'] = $this->load->view('ic/plano_submit',$plano,True);
+				$rrr = $this -> db -> query($sql);
+				$rrr = $rrr -> result_array();
+				for ($r = 0; $r < count($rrr); $r++) {
+					$plano = $rrr[$r];
 
-						$this -> load -> view('ic/avaliacao_submi_plano', $plano);		
+					$plano['area_estrategica'] = $area_estrategica;
+					$plano['area_estrategica_nome'] = $area_estrategica_nome;
+					$plano['nrplano'] = ($r + 1);
+					$plano['tipo'] = 'ic';
+					$plano['ddx'] = (40 + 10 * $r);
+					$plano['arquivos'] = 'Arquivos do plano';
+					$plano['bloquear'] = 'SIM';
+					$plano['arquivos_submit'] = $this -> geds -> list_files($plano['doc_protocolo'], 'ic');
+					;
+					$plano['projeto'] = $this -> load -> view('ic/plano_submit', $plano, True);
+
+					switch ($plano['doc_edital']) {
+						case 'PIBIC' :
+							$this -> load -> view('ic/avaliacao_submi_plano', $plano);
+							break;
+						case 'PIBITI' :
+							$this -> load -> view('ic/avaliacao_submi_plano', $plano);
+							break;
+						case 'PIBICEM' :
+							$this -> load -> view('ic/avaliacao_submi_plano_jr', $plano);
+							break;
+						default :
+							echo $plano['doc_edital'];
+							break;
 					}
-					
+
+					$avaliador = $_SESSION['id_us'];
+					$this -> ic_pareceres -> salva_pareceres($plano['doc_protocolo'], $proto, $plano['ddx'], $avaliador, 'SUBMP');
+				}
+
+				/* Valida submissao */
+				$ok = $this -> ic_pareceres -> checa_dados_pareceres($proto, $avaliador);
+
+				if ($ok == 1) {
+					$this -> ic_pareceres -> fecha_avaliacao($proto, $avaliador);
+					redirect(base_url('index.php/avaliador/ficha_salva/' . $id . '/' . $check));
+					return ('');
+				}
+
 				$txt = '<input type="submit" name="acao" value="Finalizar avaliação >>>" class="botao3d back_green_shadown back_green">';
 				$txt .= '</form>';
 				$data['content'] = $txt;
-				$this->load->view('content',$data);
-				
-				break;				
+				$this -> load -> view('content', $data);
+
+				break;
 		}
 	}
 

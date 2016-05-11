@@ -69,7 +69,6 @@ class Ic_pareceres extends CI_model {
 		}
 	}
 
-
 	function resumo_parecer() {
 		$sql = "select count(*) as total, pp_tipo, pp_status from " . $this -> tabela . " 
 						group by pp_tipo, pp_status 
@@ -87,26 +86,26 @@ class Ic_pareceres extends CI_model {
 			$sta = $line['pp_status'];
 			$rs[$tipo][$sta] = $line['total'];
 		}
-		
+
 		$sx = '<table width="700">';
 		$sx .= '<tr class="lt1"><th>Tipo</th><th>Abertos</th><th>Avaliados</th><th>Declinados</th></tr>';
-		
+
 		foreach ($rs as $key => $value) {
 			$tp = array('A', 'B', 'D');
 			$sx .= '<tr>';
 			$sx .= '<td>' . msg('ic_tipo_' . $key) . '</td>';
-			
+
 			for ($r = 0; $r < count($tp); $r++) {
-				
-				//variaveis	
+
+				//variaveis
 				$tt = $tp[$r];
 				$link0 = '';
 				$vr = '';
-				
+
 				if (isset($rs[$key][$tt])) {
-						
-					$link0 = '<a href="' . base_url('index.php/ic/avaliacoes_situacao/'.$key.'/'.$tt) . '" class="link lt6">';	
-					$vr = $link0.$rs[$key][$tt].'</a>';
+
+					$link0 = '<a href="' . base_url('index.php/ic/avaliacoes_situacao/' . $key . '/' . $tt) . '" class="link lt6">';
+					$vr = $link0 . $rs[$key][$tt] . '</a>';
 
 				} else {
 					$vr = '-';
@@ -118,7 +117,7 @@ class Ic_pareceres extends CI_model {
 		return ($sx);
 	}
 
-	function resumo_parecer_mostrar($tipo = '', $status='') {
+	function resumo_parecer_mostrar($tipo = '', $status = '') {
 		$sql = "select * 
 						from pibic_parecer_2016
 						left join us_usuario on pp_avaliador_id = id_us
@@ -130,13 +129,13 @@ class Ic_pareceres extends CI_model {
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		for ($r = 0; $r < count($rlt); $r++) {
-			
-		$line = $rlt[$r];
-		$sta = trim($line['pp_status']);
-		
-		$sx = '<table width="100%" class="tabela00">';
+
+			$line = $rlt[$r];
+			$sta = trim($line['pp_status']);
+
+			$sx = '<table width="100%" class="tabela00">';
 
 			//Troca de titulo conforme status
 			switch($sta) {
@@ -148,7 +147,7 @@ class Ic_pareceres extends CI_model {
 					break;
 				case 'D' :
 					$sx .= '<tr><td class="lt6" colspan=4> Avaliações declinadas </tr>';
-					break;	
+					break;
 			}
 		}
 		//titulos tabela
@@ -160,10 +159,10 @@ class Ic_pareceres extends CI_model {
 								<th width="10%">Observação</th>
 								<th width="10%">Resultado da avaliação</th>
 						</tr>';
-						
+
 		$tot = 0;
-		
-			for ($r = 0; $r < count($rlt); $r++) {
+
+		for ($r = 0; $r < count($rlt); $r++) {
 			//variaveis
 			$line = $rlt[$r];
 			$tot++;
@@ -173,6 +172,17 @@ class Ic_pareceres extends CI_model {
 			$resultado = trim($line['pp_p09']);
 			$link_ic = link_ic($line['id_ic']);
 			
+			/********** LINK */
+			switch ($line['pp_tipo'])
+				{
+				case 'SUBMI':
+					$link_ic = link_projeto($line['pp_protocolo']);
+					break;
+				case 'SUBMP':
+					$link_ic = link_projeto($line['pp_protocolo_mae']);
+					break;
+				}
+
 			//Resultado das avaliações
 			switch($sta) {
 				case 'A' :
@@ -186,9 +196,9 @@ class Ic_pareceres extends CI_model {
 					break;
 				case 'D' :
 					$acao = '<font color="#A0001F">Declinou<font>';
-					break;	
+					break;
 			}
-			
+
 			//acao resultado RP
 			switch($resultado) {
 				case '1' :
@@ -199,7 +209,7 @@ class Ic_pareceres extends CI_model {
 					break;
 				case '' :
 					$acao2 = '<font color="#A0001F"> - <font>';
-					break;	
+					break;
 			}
 			//indice
 			$sx .= '<tr>';
@@ -214,19 +224,18 @@ class Ic_pareceres extends CI_model {
 			$sx .= '<td class="lt2" align="rigth">';
 			$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
 			$sx .= '</td>';
-			
+
 			/* Aletar */
-			if (($tipo = 'RPAR') and ($line['pp_p06'] == '1'))
-				{
-					$sx .= '<td align="center"><font color="red">Alerta</font>';
-				} else {
-					$sx .= '<td></td>';
-				}
+			if (($tipo = 'RPAR') and ($line['pp_p06'] == '1')) {
+				$sx .= '<td align="center"><font color="red">Alerta</font>';
+			} else {
+				$sx .= '<td></td>';
+			}
 			//resultado do RP
 			$sx .= '<td class="lt2" align="center">' . $acao2 . '</td>';
 		}
-		
-		$sx .= '<tr><td colspan=10>Total de ' . $tot . ' registros</td></tr>';	
+
+		$sx .= '<tr><td colspan=10>Total de ' . $tot . ' registros</td></tr>';
 		$sx .= '</table>';
 		return ($sx);
 
@@ -238,7 +247,7 @@ class Ic_pareceres extends CI_model {
 
 		switch($tipo) {
 			case 'RPRC' :
-			/* Background */
+				/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rprc_pdf', $dados, true);
 
 				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
@@ -285,8 +294,7 @@ class Ic_pareceres extends CI_model {
 				$this -> geds -> file_type = 'PRC';
 				$this -> geds -> file_name = $file;
 				$this -> geds -> file_status = 'A';
-				$this -> geds -> file_data = date("Ymd");
-				;
+				$this -> geds -> file_data = date("Ymd"); ;
 				$this -> geds -> file_time = date("H:is");
 				$this -> geds -> file_saved = $file_local;
 				$this -> geds -> file_extensao($this -> geds -> file_name) . "'";
@@ -297,7 +305,7 @@ class Ic_pareceres extends CI_model {
 				return ($file_local);
 				break;
 			case 'RPAR' :
-			/* Background */
+				/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);
 
 				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
@@ -347,8 +355,7 @@ class Ic_pareceres extends CI_model {
 				$this -> geds -> file_type = 'PRP';
 				$this -> geds -> file_name = $file;
 				$this -> geds -> file_status = 'A';
-				$this -> geds -> file_data = date("Ymd");
-				;
+				$this -> geds -> file_data = date("Ymd"); ;
 				$this -> geds -> file_time = date("H:is");
 				$this -> geds -> file_saved = $file_local;
 				$this -> geds -> file_extensao($this -> geds -> file_name) . "'";
@@ -444,7 +451,7 @@ class Ic_pareceres extends CI_model {
 					 left join area_conhecimento on pj_area = ac_cnpq
 					 WHERE pp_avaliador_id = $id_us 
 					 AND pp_status = 'A' ";
-		
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -457,11 +464,10 @@ class Ic_pareceres extends CI_model {
 			$sx .= '<td class="border1">' . $line['pj_titulo'] . '</td>';
 			$sx .= '<td class="border1">' . $line['us_nome'] . '</td>';
 			$sx .= '<td class="border1">' . $line['ac_nome_area'] . '</td>';
-			$sx .= '<td class="border1" align="center" colspan=2 >' . $line['pj_edital'] . '/'.$line['pj_ano']. '</td>';
+			$sx .= '<td class="border1" align="center" colspan=2 >' . $line['pj_edital'] . '/' . $line['pj_ano'] . '</td>';
 			$sx .= '<td class="border1">' . $botao . '</td>';
 			$sx .= '</tr>';
 		}
-
 
 		$sx .= '</table>';
 		return ($sx);
@@ -492,12 +498,24 @@ class Ic_pareceres extends CI_model {
 
 		$data = $this -> ics -> le_protocolo($proto);
 		$data['link'] = $this -> usuarios -> link_acesso($id_us);
-		$user = $this->usuarios->le($id_us);
-		$data = array_merge($data,$user);
+		$user = $this -> usuarios -> le($id_us);
+		$data = array_merge($data, $user);
 		$txt = $this -> mensagens -> busca($tipo, $data);
 		$texto = mst($txt['nw_texto']);
 		$ass = mst($txt['nw_titulo']);
+
 		enviaremail_usuario($id_us, $ass, $texto, 2);
+	}
+
+	function avaliacoes_abertas($proto, $tipo = '') {
+		$sql = "select count(*) as total from pibic_parecer_" . date("Y") . " where pp_protocolo = '$proto' and pp_tipo = '$tipo' and pp_status <> 'D' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			return ($rlt[0]['total']);
+		} else {
+			return (0);
+		}
 	}
 
 	function mostra_indicacoes_interna($proto = '', $tipo = 'RPAR', $ic_semic_area = '', $data) {
@@ -526,11 +544,11 @@ class Ic_pareceres extends CI_model {
 		$co1 = '';
 		$co2 = '';
 		$co3 = '';
-		
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$inst = $line['ies_instituicao_ies_id'];
-			
+
 			$dec = '';
 			$ind = '';
 			if ($line['declinados'] > 0) {
@@ -543,47 +561,71 @@ class Ic_pareceres extends CI_model {
 			if ($area != $xarea) {
 				$co1 .= '<h3>' . $line['pa_area'] . ' - ' . $line['ac_nome_area'] . '</h3>';
 				$co2 .= '<h3>' . $line['pa_area'] . ' - ' . $line['ac_nome_area'] . '</h3>';
+				$co3 .= '<h3>' . $line['pa_area'] . ' - ' . $line['ac_nome_area'] . '</h3>';
 				$xarea = $area;
 			}
 			if ((strlen($dec) > 0) and (strlen($ind) > 0)) {
 				$dec = ', ' . $dec;
 			}
 
-			$nome = link_avaliador($line['us_nome'], $line['id_us']) .'('.$line['ies_sigla'].')';
+			$nome = link_avaliador($line['us_nome'], $line['id_us']) . ' (' . $line['ies_sigla'] . ')';
 			$sq = '<input type="checkbox" name="av' . $line['id_us'] . '" value="1"> ' . $nome;
 			$sq .= ' ' . $ind . $dec . ' ';
 			$sq .= '<br>';
-			
-			if ($inst == 1)
-				{
-					$co1 .= $sq;
+
+			if ($inst == 1) {
+				$prl = trim($line['us_perfil']);
+				if (strpos($prl, '#PIB')) {
+					$co3 .= $sq;
 				} else {
-					$co2 .= $sq;
+					$co1 .= $sq;
 				}
 
+			} else {
+				$co2 .= $sq;
+			}
+
 			if (($ed == 0) and (get("av" . $line['id_us']) == '1')) {
-				$sc .= '<h1>Indicado - ' . $line['us_nome'] . '</h1>';
-				$this -> ic_pareceres -> indicar_avaliador($line['id_us'], $tipo, $proto);
-				
-				switch($tipo)
-					{
-					case 'RPAR':
-						$tipom = 'IC_RPAR_INDICACAO';
-						break;
-					case 'SUBMI':
-						$tipom = 'IC_SUBMI_INDICACAO';
-						break;						
-					default:
-						echo "OPS - ".$tipo;
-						exit;
+				$av_aberta = $this -> ic_pareceres -> avaliacoes_abertas($proto, 'SUBMI');
+
+				if ($av_aberta <= 1) {
+					$this -> ic_pareceres -> indicar_avaliador($line['id_us'], $tipo, $proto);
+
+					switch($tipo) {
+						case 'RPAR' :
+							$tipom = 'IC_RPAR_INDICACAO';
+							break;
+						case 'SUBMI' :
+							$tipom = 'IC_SUBMI_INDICACAO';
+							break;
+						default :
+							echo "OPS - " . $tipo;
+							exit ;
 					}
-				
-				$this -> comunicar_avaliador($line['id_us'], $proto, $tipom);
+					$this -> comunicar_avaliador($line['id_us'], $proto, $tipom);
+					$sc .= '<h3>Enviado indicação de avaliação para :' . $line['us_nome'] . '</h3>';
+				} else {
+					$sa .= '<font color="red">Não foi enviado indicação de avaliação para :' . $line['us_nome'] . ' por ja ter dois avaliadores</font><br>';
+				}
+
 			}
 			if (strlen($sc) > 0) { $sa = $sc;
 			}
 		}
-		$sa = '<table width="100%" border=1>'.'<tr valign="top"><td with="50%">'.$co1.'</td><td width="50%">'.$co2.'</td></table>';
+		if (strlen($sa) == 0) {
+			$sa = '<table width="100% lt1" border=1>' . '<tr>
+							<th>Professores Internos</th>
+							<th>Professores Externos</th>
+							<th>Comitê Gestor</th>
+						</tr>' . '<tr valign="top" class="lt1">
+						<td with="33%">' . $co1 . '</td>
+						<td width="33%">' . $co2 . '</td>
+						<td width="33%">' . $co3 . '</td>
+					</tr>
+				</table>';
+		} else {
+			$sa .= $this -> load -> view('sucesso', null, true);
+		}
 		return ($sa);
 	}
 
@@ -672,6 +714,129 @@ class Ic_pareceres extends CI_model {
 		}
 		return (1);
 	}
+
+	function checa_dados_pareceres($proto_mae, $avaliador) {
+		$tipo1 = 'SUBMI';
+		$tipo2 = 'SUBMP';
+
+		$sql = "select * from " . $this -> tabela . " 
+						where (pp_protocolo = '$proto_mae' or pp_protocolo_mae = '$proto_mae')
+							AND pp_avaliador_id = $avaliador
+							AND (pp_tipo = '$tipo1' or pp_tipo = '$tipo2')
+							AND (pp_status = '@' or pp_status = 'A')";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$ok = 1;
+		for ($q = 0; $q < count($rlt); $q++) {
+			$line = $rlt[$q];
+
+			if ($line['pp_tipo'] == 'SUBMI') {
+				for ($r = 1; $r <= 6; $r++) {
+					if (strlen($line['pp_p' . strzero($r, 2)]) == 0) { $ok = 0;
+					}
+				}
+				if (strlen($line['pp_abe_01']) == 0) { $ok = 0;
+				}
+			}
+
+			if ($line['pp_tipo'] == 'SUBMP') {
+				for ($r = 11; $r <= 15; $r++) {
+					if (strlen($line['pp_p' . strzero($r, 2)]) == 0) { $ok = 0;
+					}
+				}
+				if (strlen($line['pp_abe_11']) == 0) { $ok = 0;
+				}
+			}
+		}
+		return($ok);
+	}
+
+	function salva_pareceres($proto, $proto_mae, $ddx, $avaliador, $tipo) {
+		$data = date("Ymd");
+		$hora = date("H:i:s");
+
+		$sql = "select * from " . $this -> tabela . " 
+						where pp_protocolo = '$proto' 
+							AND pp_tipo = '$tipo'
+							AND pp_avaliador_id = $avaliador
+						limit 50";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) == 0) {
+
+			$xsql = "insert into " . $this -> tabela . " 
+							(pp_protocolo, pp_protocolo_mae, pp_tipo, pp_avaliador_id, pp_status, pp_data, pp_hora)
+							values
+							('$proto','$proto_mae', '$tipo','$avaliador','A', '$data','$hora')";
+			$rlt = $this -> db -> query($xsql);
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			$line = $rlt[0];
+			$id = $line['id_pp'];
+		} else {
+			$line = $rlt[0];
+			$id = $line['id_pp'];
+		}
+
+		$sql = "update " . $this -> tabela . " set
+			
+							pp_p01 = '" . get("dd" . (1)) . "',
+							pp_p02 = '" . get("dd" . (2)) . "', 
+							pp_p03 = '" . get("dd" . (3)) . "', 
+							pp_p04 = '" . get("dd" . (4)) . "', 
+							pp_p05 = '" . get("dd" . (5)) . "', 
+							pp_p06 = '" . get("dd" . (6)) . "', 
+							pp_p07 = '" . get("dd" . (7)) . "',						
+			
+							pp_p11 = '" . get("dd" . (1 + $ddx)) . "',
+							pp_p12 = '" . get("dd" . (2 + $ddx)) . "', 
+							pp_p13 = '" . get("dd" . (3 + $ddx)) . "', 
+							pp_p14 = '" . get("dd" . (4 + $ddx)) . "', 
+							pp_p15 = '" . get("dd" . (5 + $ddx)) . "', 
+							pp_p16 = '" . get("dd" . (6 + $ddx)) . "', 
+							pp_p17 = '" . get("dd" . (7 + $ddx)) . "',
+							pp_p18 = '" . get("dd" . (8 + $ddx)) . "',
+							
+							
+							pp_abe_01 = '" . get("dd9") . "',
+							pp_abe_11 = '" . get("dd" . (9 + $ddx)) . "',						 
+							
+							pp_parecer_data = '$data',
+							pp_parecer_hora = '$hora'
+							
+					where id_pp = " . $id;
+		$rrr = $this -> db -> query($sql);
+		/* Parecer do projeto */
+		$sql = "update " . $this -> tabela . " set
+			
+							pp_p01 = '" . get("dd" . (1)) . "',
+							pp_p02 = '" . get("dd" . (2)) . "', 
+							pp_p03 = '" . get("dd" . (3)) . "', 
+							pp_p04 = '" . get("dd" . (4)) . "', 
+							pp_p05 = '" . get("dd" . (5)) . "', 
+							pp_p06 = '" . get("dd" . (6)) . "', 
+							pp_p07 = '" . get("dd" . (7)) . "',						
+										
+							pp_abe_01 = '" . get("dd9") . "',
+							pp_abe_11 = '" . get("dd9") . "',						 
+							
+							pp_parecer_data = '$data',
+							pp_parecer_hora = '$hora'
+							
+					where pp_protocolo = '$proto_mae' and pp_avaliador_id = " . $avaliador;
+		$rrr = $this -> db -> query($sql);
+	}
+
+	function fecha_avaliacao($proto,$avaliador)
+		{
+			$sql = "update ".$this->tabela." 
+						set pp_status = 'B'
+					where (pp_protocolo = '$proto' or pp_protocolo_mae = '$proto')
+						and pp_avaliador_id = $avaliador ";
+			$rlt = $this->db->query($sql);
+			return(1);
+		}
 
 }
 ?>

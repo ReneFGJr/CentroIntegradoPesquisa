@@ -1,5 +1,34 @@
 <?php
 /* */
+/* CEP */
+$cep = $pj_cep_status;
+switch ($cep)
+	{
+	case '1':
+		$cep = 'Não aplicado';
+		break;
+	case '2':
+		$cep = 'Em submissão';
+		break;
+	case '3':
+		$cep = 'Aprovado';
+		break;
+	}
+
+$ceua = $pj_ceua_status;
+switch ($ceua)
+	{
+	case '1':
+		$ceua = 'Não aplicado';
+		break;
+	case '2':
+		$ceua = 'Em submissão';
+		break;
+	case '3':
+		$ceua = 'Aprovado';
+		break;
+	}
+
 $editar_titulo = '';
 if (perfil('#ADM#SPI'))
 	{
@@ -45,6 +74,11 @@ switch ($pj_edital)
 		<td colspan=5><?php echo link_perfil($al_nome, $id_al);?></td>
 	</tr>
 	<?php } ?>
+	
+	<tr class="lt0">
+		<td align="left">Avaliação do Comitê de Ética com Seres Humanos (CEP): <b><?php echo $cep;?></b></td>
+		<td>Avaliação do Comitê de Ética no Uso de Animais (CEUA): <b><?php echo $ceua;?></b></td>
+	</tr>
 	
 	<tr class="lt0" align="left">
 		<td colspan=2><?php echo msg('area');?></td>

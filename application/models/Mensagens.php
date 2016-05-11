@@ -35,6 +35,7 @@ class mensagens extends CI_model {
 		/************* LINK **************/
 		if (isset($data['link'])) {
 			$botao = '<button ><a href="' . $data['link'] . '">Link de acesso</a></button>';
+			$botao .= '<br><br>ou pelo link <a href="' . $data['link'] . '">'.$data['link'] . '</a>';
 			$txt = troca($txt, '$LINK', $botao);
 		}
 		
