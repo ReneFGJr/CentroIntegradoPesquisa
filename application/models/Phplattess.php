@@ -44,13 +44,13 @@ class phpLattess extends CI_Model {
 			$nome = $line['us_nome'];
 
 			$ano = $line['acpp_ano'];
-			
+
 			if ($nome != $xnome) {
 				$sx .= '<tr><td class="lt4" colspan=10><b>' . $nome . '</b></td></tr>';
 				$xnome = $nome;
 				$toti = 0;
 			}
-						
+
 			if ($ano != $xano) {
 				$sx .= '<tr><td class="lt3" colspan=10><b>' . $ano . '</b></td></tr>';
 				$xano = $ano;
@@ -116,14 +116,14 @@ class phpLattess extends CI_Model {
 							acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, quartil
 				order by us_nome, acpp_ano, acpp_autores
 			";
-		
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
 		$tot = 0;
 		$toti = 0;
 		$xano = 0;
-		
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 
@@ -143,7 +143,7 @@ class phpLattess extends CI_Model {
 			$estrato = $line['estrato'];
 			if ($estrato == '') { $estrato = 'qnc';
 			}
-			
+
 			if (isset($rs[$nome][$ano][$estrato])) {
 				$rs[$nome][$ano][$estrato] = $rs[$nome][$ano][$estrato] + 1;
 			} else {
@@ -153,13 +153,18 @@ class phpLattess extends CI_Model {
 		}
 
 		$sa = '';
-		$sh = '<tr><th></th>';
-		$sl = '<tr><th></th>';
+		$sh = '<tr><th></th>	<th>Total</th>		<th>Total</th>';
+		$sl = '<tr><th></th>	<th>A1+A2+B1</th>	<th>Publicações</th>';
 		$rd = 0;
+
 		foreach ($rs as $key => $value) {
+			$tot1 = 0;
+			$tot2 = 0;
+
 			$sa .= '<tr>';
 			$sa .= '<td>' . $key . '</td>';
-
+			$sa .= '<td align="center">$tot1</td>';
+			$sa .= '<td align="center">$tot2</td>';
 			$eq = array('Q1', 'A1', 'A2', 'B1', 'B2', 'B3', 'B4', 'B5', 'C', 'nc');
 
 			for ($r = 2013; $r <= date("Y"); $r++) {
@@ -168,16 +173,24 @@ class phpLattess extends CI_Model {
 
 				$dados = $rs[$key];
 				for ($q = 0; $q < count($eq); $q++) {
+					$style = '';
+					if ($q == 0) { $style = ' style="border-left: 2px solid #000000;" ';
+					}
 					$v = $eq[$q];
 					if ($rd == 0) { $sl .= '<th>' . $v . '</th>';
 					}
 					if (isset($dados[$r][$v])) {
-						$sa .= '<td align="center">' . $dados[$r][$v] . '</td>';
+						$sa .= '<td align="center" ' . $style . '>' . $dados[$r][$v] . '</td>';
+						if (($v == 'A1') OR ($v == 'A2') OR ($v == 'B1')) { $tot1 = $tot1 + $dados[$r][$v];
+						} else { $tot2 = $tot2 + $dados[$r][$v];
+						}
 					} else {
-						$sa .= '<td align="center">-</td>';
+						$sa .= '<td align="center" ' . $style . '>-</td>';
 					}
 				}
 			}
+			$sa = troca($sa, '$tot1', $tot1);
+			$sa = troca($sa, '$tot2', $tot2);
 			$rd = 1;
 		}
 		$sa = '<table border=0 class="tabela00" width="100%">' . $sh . $sl . $sa . '</table>';

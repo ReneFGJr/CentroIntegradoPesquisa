@@ -529,7 +529,7 @@ class Ic_pareceres extends CI_model {
 			left join ies_instituicao on ies_instituicao_ies_id = id_ies    
 			WHERE pa_area like '$area%' 
 				/* and substr(pa_area,6,2) = '00' */
-				AND pa_ativo = 1 and us_avaliador = 1
+				AND pa_ativo = 1 and us_avaliador = 1 and us_ativo = 1
 				AND us_cracha <> '$cracha'			
 			ORDER BY pa_area, us_nome";
 		$rlt = $this -> db -> query($sql);
