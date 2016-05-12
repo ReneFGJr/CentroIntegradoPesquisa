@@ -11,8 +11,6 @@ class Stricto_sensus extends CI_model {
 			$wh = " and od_modalidade = '$mod' ";
 		}
 		$sql = "delete from ss_docente_orientacao where od_status = 'Z' ";
-		echo '====';
-		exit ;
 		$rlt = $this -> db -> query($sql);
 
 		$sql = "
@@ -531,7 +529,7 @@ class Stricto_sensus extends CI_model {
 						LEFT JOIN us_usuario ON us_usuario_id_us = id_us
 						LEFT JOIN escola on us_escola_vinculo = id_es
 						LEFT JOIN ss_programa_pos on id_pp = programa_pos_id_pp
-						where  sspp_ativo = 1 and sspp_tipo = 'Permanente'
+						where  sspp_ativo = 1 and sspp_tipo = 'Permanente' 
 						order by pp_nome, us_nome ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -708,12 +706,12 @@ class Stricto_sensus extends CI_model {
 		               prof.us_nome as pf_nome, 
 		               prof.id_us as pf_id,
 		               id_pa
-						from ss_professor_programa_linha
+				from ss_professor_programa_linha
 						left join ss_linha_pesquisa_programa  on sslpp_id = id_sslpp
 						left join us_usuario as prof on id_us = us_usuario_id_us
 						where sslpp_ativo = 1 
 						and sspp_ativo = 1
-						and pp_id = 3 
+						and pp_id = $prog 
 						order by sslpp_nome_linha, pf_nome";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -754,12 +752,14 @@ class Stricto_sensus extends CI_model {
 			$sx .= '<td>' . $line['sspp_tipo'] . '</td>';
 
 			//edicao para perfil admin
-			if (perfil("#ADM") == 1) {
+			$edit = '';
+
+			if (perfil("#ADM#SEP") == 1) {
 				$link = base_url('index.php/stricto_sensu/editar_professor/' . $line['id_pa'] . '/' . checkpost_link($line['id_pa']));
 				$edit = '<span class="link lt1" onclick="newwin(\'' . $link . '\')">editar</span>';
 			}
 
-			if (strlen($edit) > 0) {
+			if (isset($edit) and strlen($edit) > 0) {
 				$sx .= '<td class="nopr">' . $edit . '</td>';
 			}
 		}
@@ -772,7 +772,7 @@ class Stricto_sensus extends CI_model {
 
 	function professores_do_programa_novo($id) {
 		$sx = '';
-		if (perfil("#SEP")) {
+		if (perfil("#SEP#ADM")) {
 			$sx = '<br>
 						<span class="botao3d back_green_shadown back_green nopr" onclick="newwin(\'' . base_url('index.php/stricto_sensu/professor_ss_new/' . $id) . '\');">' . msg('novo_professor') . '</span>';
 		}
@@ -782,13 +782,17 @@ class Stricto_sensus extends CI_model {
 
 	function professores_do_programa($prog = 0, $id = 0) {
 		$sql = "select * from (
-						select count(*) as linhas, sspp_tipo as situacao, min(sspp_dt_entrada) as entrada, us_usuario_id_us, programa_pos_id_pp from ss_professor_programa_linha where sspp_ativo = 1
+						select count(*) as linhas, sspp_tipo as situacao, min(sspp_dt_entrada) as entrada, 
+							us_usuario_id_us, programa_pos_id_pp 
+						from ss_professor_programa_linha 
+							where sspp_ativo = 1 and programa_pos_id_pp = $prog
 							group by us_usuario_id_us, programa_pos_id_pp, situacao
 					) as professor
 					inner join us_usuario on us_usuario_id_us = id_us
 					where programa_pos_id_pp = $prog
 					order by us_nome
 					";
+					
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<h2>Professores do Programa</h2>';
@@ -804,6 +808,7 @@ class Stricto_sensus extends CI_model {
 
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+
 			$sx .= '<tr class="borderb1">';
 			$sx .= '<td width="20" align="center" class="borderb1"> ';
 			$sx .= ($r + 1);

@@ -507,6 +507,13 @@ class stricto_sensu extends CI_Controller {
 
 		$data['content'] = $this -> stricto_sensus -> linhas_do_programa_docentes($id);
 		$this -> load -> view('content', $data);
+		
+		if (perfil("#ADM") == 1)
+			{
+				$sx = '<a href="'.base_url('index.php/cnpq_ws/harvesting_ppg/'.$id.'/1/0').'" target="_new" class="link lt1">Coletar Lattes</a>';
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+			}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

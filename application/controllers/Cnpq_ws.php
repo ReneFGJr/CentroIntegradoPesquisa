@@ -106,13 +106,12 @@ class cnpq_ws extends CI_Controller {
 		$this -> load -> model('webservice/ws_cnpq');
 
 		$ss = $this -> stricto_sensus -> le($id);
-		
 		if ($force == 1)
 			{
 				$sql = " select distinct us_nome, id_us, us_lattes_update, us_link_lattes, us_ativo, us_cpf, us_nome_lattes
 					 FROM ss_professor_programa_linha 
 						LEFT JOIN us_usuario ON us_usuario_id_us = id_us
- 					where programa_pos_id_pp = $id and us_ativo = 1 and sspp_ativo = 1 and us_lattes_update = '0000-00-00'
+ 					where programa_pos_id_pp = $id and us_ativo = 1 and sspp_ativo = 1
  					order by us_nome, id_us
  					 ";
 				$rlt = $this -> db -> query($sql);
