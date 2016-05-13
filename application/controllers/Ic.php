@@ -1647,8 +1647,8 @@ class ic extends CI_Controller {
 			}
 			$data['search'] .= '<br>Metodo: ' . $mt;
 		} else {
-			$data['search'] .= '<center>' . $this -> resumo_entrega($fld, $ano, $tit) . '</center>';
-
+			
+			/* $data['search'] .= '<center>' . $this -> resumo_entrega($fld, $ano, $tit) . '</center>'; */
 			$data['search'] .= $this -> load -> view('ic/_short_url', null, true);
 		}
 
@@ -2575,6 +2575,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Submissão de Projetos e Planos', 'Validar submissão', 'ITE', '/ic/submit_mostrar_status/A'));
 		array_push($menu, array('Submissão de Projetos e Planos', 'Devolver projeto para professor', 'ITE', '/ic/submit_devolver'));
 		array_push($menu, array('Submissão de Projetos e Planos', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_SUBMI'));
+		array_push($menu, array('Submissão de Projetos e Planos', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
 
 		/*View principal*/
 		$data['menu'] = $menu;

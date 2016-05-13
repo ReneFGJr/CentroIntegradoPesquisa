@@ -519,6 +519,11 @@ class Ic_pareceres extends CI_model {
 	}
 
 	function mostra_indicacoes_interna($proto = '', $tipo = 'RPAR', $ic_semic_area = '', $data) {
+		
+		/* avaliadores */
+		$sav = $this->lista_de_avaliacoes_protocolo($proto);
+		
+		
 		$cracha = $data['ic_cracha_prof'];
 		$area = substr($ic_semic_area, 0, 5);
 		$sql = "select * from us_avaliador_area
@@ -626,7 +631,56 @@ class Ic_pareceres extends CI_model {
 		} else {
 			$sa .= $this -> load -> view('sucesso', null, true);
 		}
-		return ($sa);
+		return ($sav.'<br>'.$sa);
+	}
+
+	function lista_de_avaliacoes_protocolo($proto) {
+		$sql = "select * from " . $this -> tabela . "
+					left JOIN us_usuario on pp_avaliador_id = id_us 
+					where pp_protocolo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		$sx .= '<table width="100%"><tr><td><br></tr></table>';
+		$sx .= '<table width="100%" class="lt2 border1 shadown pad5">';
+		$sx .= '<tr><td colspan="15" class="lt4">';
+		$sx .= 'Avaliações Indicadas';
+		$sx .= '</td></tr>';
+		$sx .= '<tr><th width="2%">#</th>
+						<th width="5%">protocolo</th>
+						<th width="100">acao</th>
+						<th width="20%">tipo</th>
+						<th width="10%">indicação</th>
+						<th width="60%">avaliador</th>						
+					</tr>';
+		$pos = 0;
+		for ($ri = 0; $ri < count($rlt); $ri++) {
+			$line = $rlt[$ri];
+			$pos++;
+			$acao = '-';
+			$sta = trim($line['pp_status']);
+			switch($sta) {
+				case 'A' :
+					$url = base_url('index.php/ic/indicacao_declinar/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp']));
+					$click = ' onclick="newwin2(\'' . $url . '\',300,100);" ';
+					$acao = '<font color="#808000">declinar<font>';
+					$acao = '<span class="link" style="cursor: pointer;" ' . $click . '>' . $acao . '</span>';
+					break;
+				case 'D' :
+					$acao = '<font color="#A0001F">Declinou<font>';
+					break;
+			}
+
+			$sx .= '<tr>';
+			$sx .= '<td align="center">' . $pos . '</td>';
+			$sx .= '<td align="center">' . $line['pp_protocolo'] . '</td>';
+			$sx .= '<td align="center">' . $acao . '</td>';
+			$sx .= '<td>' . msg('ic_tipo_' . $line['pp_tipo']) . '</td>';
+			$sx .= '<td align="center">' . stodbr($line['pp_data']) . '</td>';
+			$sx .= '<td align="left">' . $line['us_nome'] . '</td>';
+		}
+		$sx .= '</table>';
+		return ($sx);
 	}
 
 	function lista_de_avaliacoes($id_us) {

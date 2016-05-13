@@ -27,4 +27,6 @@ $lang['status_pj_F'] = 'Projeto publicado';
 $lang['status_pj_X'] = 'Projeto cancelado';
 
 $lang['ic_tipo_SUBMI'] = 'Submissão Edital';
+$lang['ic_tipo_SUBMP'] = 'Submissão Edital - Plano de aluno';
+$lang['avaliacao_SUBMI'] = 'Submissão para o Edital';
 ?>

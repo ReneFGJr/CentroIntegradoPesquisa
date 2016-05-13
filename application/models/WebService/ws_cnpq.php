@@ -106,7 +106,7 @@ class ws_cnpq extends CI_model {
 			return ('');
 		}
 		$sql = "delete from cnpq_lattes_artigos_publicados where a_cpf = '$cpf' ";
-		$rlt = $this -> db -> query($sql);
+		//$rlt = $this -> db -> query($sql);
 
 		$sql = "delete from cnpq_acpp where acpp_autor = '$nome' ";
 		$rlt = $this -> db -> query($sql);
@@ -338,7 +338,7 @@ class ws_cnpq extends CI_model {
 								'" . $dd['area1'] . "','" . $dd['area2'] . "','" . $dd['area3'] . "'	
 							)";
 				$sql = utf8_decode($sql);
-				$rrx = $this -> db -> query($sql);
+				//$rrx = $this -> db -> query($sql);
 
 				/* base 2 */
 				$sql = "insert into cnpq_acpp 

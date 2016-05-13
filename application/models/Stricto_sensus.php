@@ -800,7 +800,7 @@ class Stricto_sensus extends CI_model {
 		$sx .= '<tr><th>Pos</th>
 						<th>Professor</th>
 						<th>Lattes</th>
-						<th>Área de formação</th>
+						<th>Atualização do Lattes</th>
 						<th>Situação no programa</th>
 						<th>Ano de entrada</th>
 						<th>Linhas de Pesquisa</th>
@@ -826,7 +826,8 @@ class Stricto_sensus extends CI_model {
 				$sx .= '</a>';
 			}
 			$sx .= '</td>';
-			$sx .= '<td class="borderb1">';
+			$sx .= '<td class="borderb1" align="center">';
+			$sx .= stodbr($line['us_lattes_update']);
 			$sx .= '</td>';
 			$sx .= '<td align="center" class="borderb1">' . $line['situacao'] . '</td>';
 			$sx .= '<td align="center" class="borderb1">' . $line['entrada'] . '</td>';
