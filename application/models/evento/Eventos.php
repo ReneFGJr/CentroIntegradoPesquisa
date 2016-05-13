@@ -15,33 +15,40 @@ class eventos extends CI_model {
 		
 		$sx = '<table class="tabela00 lt1" align="center" width="800">';
 		$sx .= '<tr>';
-		$sx .= '<th align="left" class="lt2">Declaração/Certificado</th>';
-		$sx .= '<th align="left" class="lt2">Data</th>';
-		$sx .= '<th align="left" class="lt2">ação</th>';
+		$sx .= 	'<th align="left" class="lt2">Declaração/Certificado</th>';
+		$sx .= 	'<th align="center" class="lt2">Data</th>';
+		$sx .= 	'<th align="center" class="lt2">ação</th>';
 		$sx .= '</tr>';
-			
+		
+		$tot = 0;	
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			$tot++;
 
 			$link = '<a href="' . base_url('index.php/central_declaracao/emitir/' . $line['id_dc'] . '/' . checkpost_link($line['id_dc'])) . '" target="_new">imprimir</a>';
 			$sx .= '<tr>';
 			$sx .= '<td>';
-			$sx .= $line['cdm_nome'];
+			$sx .= $line['cdm_titulo'];
 			$sx .= '</td>' . cr();
 
-			$sx .= '<td>';
+			$sx .= '<td align="center">';
 			$sx .= stodbr($line['dc_data']);
 			$sx .= '</td>' . cr();
 			
-			$sx .= '<td>';
+			$sx .= '<td align="center">';
 			$sx .= $link;
 			$sx .= '</td>' . cr();	
 
 		}
+		
+		//resultado contador
+		$sx .= '<tr><td colspan=3>Total ' . $tot . ' registros</td></tr>';
 		$sx .= '</tr>';
 		$sx .= '</table>';
+		
 		return($sx);			
-		}
+	
+	}
 
 	function perfil_presenca($tipo = 1) {
 		if (!isset($_SESSION['evento'])) {
@@ -282,12 +289,14 @@ class eventos extends CI_model {
 		/* GERA CERTIFICADOS *******************************************************************/
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$modelo = $line['Id_cdm'];
+			$modelo = $line['id_cdm'];
 
 			$sql = $line['cdm_query'];
 			if (strlen($sql) > 0) {
 				$sql = troca($sql, '$id_us', $id_us);
 				$sql = troca($sql, '$CRACHA', $us_cracha);
+				$sql = troca($sql,"´", "'");
+				
 				$rrr = $this -> db -> query($sql);
 				
 				$rrr = $rrr -> result_array();

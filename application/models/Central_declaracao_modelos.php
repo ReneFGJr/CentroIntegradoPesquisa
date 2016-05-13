@@ -4,8 +4,8 @@ class Central_declaracao_modelos extends CI_model {
 	var $tabela_2 = "ic_modalidade_bolsa";
 
 	function row($obj) {
-		$obj -> fd = array('id_cdm', 'cdm_nome', 'cdm_nome');
-		$obj -> lb = array('id', msg('lb_cdm_nome'), msg('lb_cdm_nome_evento'));
+		$obj -> fd = array('id_cdm', 'cdm_titulo', 'cdm_nome');
+		$obj -> lb = array('id', msg('lb_cdm_titulo'), msg('lb_cdm_nome_evento'));
 		$obj -> mk = array('', 'L', 'C');
 		return ($obj);
 	}
@@ -13,23 +13,31 @@ class Central_declaracao_modelos extends CI_model {
 	function cp() {
 		$cp = array();
 		array_push($cp, array('$H20', 'id_cdm', '', False, True));
-		
+		//Dados do evento
+		array_push($cp, array('${', '', 'Dados do Evento', false, True));
 		$sql = "select * from evento_nome order by ev_nome";
-		array_push($cp, array('$Q id_ev:ev_nome:' . $sql, 'cdm_nome', msg('lb_cdm_nome_evento'), True, False));
-
-		array_push($cp, array('$S50', 'cdm_tipo', msg('lb_cdm_tipo'), True, True));
+		array_push($cp, array('$Q ev_nome:ev_nome:' . $sql, 'cdm_nome', msg('lb_cdm_nome_evento'), false, False));
+		array_push($cp, array('$[2009-' . date("Y") . ']D', 'cdm_ano', msg('lb_cdm_ano'), false, True));
+		array_push($cp, array('$S10', 'cdm_tipo', msg('lb_cdm_tipo'), false, True));
+		array_push($cp, array('$}', '', 'Evento', false, True));
+		//dados da declaracao
+		array_push($cp, array('${', '', 'Dados da Declaração', false, True));
+		array_push($cp, array('$S80', 'cdm_titulo', msg('lb_cdm_titulo'), false, True));
 		array_push($cp, array('$S100', 'cdm_background', msg('lb_cdm_background'), false, True));
-		array_push($cp, array('$S80', 'cdm_titulo', msg('lb_cdm_titulo'), True, True));
-		array_push($cp, array('$T50:7', 'cdm_body', msg('lb_cdm_body'), false, True));
-		array_push($cp, array('$D', 'cdm_data_evento', msg('lb_cdm_data_evento'), false, True));
-		array_push($cp, array('$D', 'cdm_data_emissao', msg('lb_cdm_data_emissao'), false, True));
-		array_push($cp, array('$[2009-' . date("Y") . ']D', 'cdm_ano', msg('lb_cdm_ano'), True, True));
-		array_push($cp, array('$S10', 'cdm_marginTop', msg('lb_cdm_margem_top'), True, True));
-		array_push($cp, array('$S10', 'cdm_marginBotton', msg('lb_cdm_margem_botton'), True, True));
-		array_push($cp, array('$O P:Retrato&L:Paisagem', 'cdm_posicao', msg('lb_cdm_posicao'), True, True));
-		array_push($cp, array('$T50:7', 'cdm_body_padrao', msg('lb_cdm_body_padrão'), false, True));
-		array_push($cp, array('$O 1:SIM&0:NÃO', 'cdm_ativar_boryPadrao', msg('lb_cdm_ativar_padrao'), True, True));
-		array_push($cp, array('$S12', 'cdm_autorizador_cracha', msg('lb_cdm_cracha_autorizador'), True, True));
+		array_push($cp, array('$T50:20', 'cdm_body', msg('lb_cdm_body'), false, True));
+		array_push($cp, array('$T30:5', 'cdm_assinaturas', msg('lb_cdm_assinatura'), false, false));
+		array_push($cp, array('$}', '', 'Dados da Declaração', false, True));
+		//Técnico
+		array_push($cp, array('${', '', 'Técnico', false, True));
+		array_push($cp, array('$T50:15', 'cdm_query', msg('lb_cdm_query'), false, false));
+		array_push($cp, array('$S5', 'cdm_marginTop', msg('lb_cdm_margem_top'), false, True));
+		array_push($cp, array('$S5', 'cdm_marginBotton', msg('lb_cdm_margem_botton'), false, True));
+		array_push($cp, array('$O P:Retrato&L:Paisagem', 'cdm_posicao', msg('lb_cdm_posicao'), false, True));
+		array_push($cp, array('$S5', 'cdm_assinaturas_x', msg('lb_cdm_assinatura_posicao_x'), false, True));
+		array_push($cp, array('$S5', 'cdm_assinaturas_y', msg('lb_cdm_assinatura_posicao_y'), false, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', 'cdm_qrcode', msg('lb_cdm_ativar_qrcode'), false, True));
+		array_push($cp, array('$}', '', 'Dados Técnicos', false, True));
+
 		array_push($cp, array('$B', '', msg('gravar modelo'), false, True));
 
 		return ($cp);

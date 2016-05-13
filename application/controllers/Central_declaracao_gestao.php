@@ -42,7 +42,7 @@ class Central_declaracao_gestao extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus,array('home',''));
+		array_push($menus,array('Início','index.php/Central_declaracao_gestao'));
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
@@ -87,14 +87,14 @@ class Central_declaracao_gestao extends CI_Controller {
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
 		$form -> tabela = $this -> central_declaracao_modelos -> tabela;
-		$form -> see = false;
+		$form -> see = true;
 		$form -> edit = true;
 		$form -> novo = true;
 		$form -> order = ' id_cdm ';
 		$form =  $this -> central_declaracao_modelos -> row($form);
 
 		$form -> row_edit = base_url('index.php/central_declaracao_gestao/edit');
-		$form -> row_view = base_url('index.php/central_declaracao_gestao/modelo_declaracao_view');
+		$form -> row_view = base_url('index.php/central_declaracao_modelos/modelo_declaracao_view');
 		$form -> row = base_url('index.php/central_declaracao_gestao');
 
 		$this -> load -> view('header/content_open');
@@ -126,8 +126,23 @@ class Central_declaracao_gestao extends CI_Controller {
 
 		/* Salva */
 		if ($form -> saved > 0) {
-			redirect(base_url('index.php/#'));
+			redirect(base_url('index.php/central_declaracao_gestao/criar_modelo'));
 		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+	
+	function view($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('central_declaracao_modelos');
+
+		$this -> cab();
+		$this -> load -> view('header/content_open');
+		
+		$data = $this->central_declaracao_modelos->le($id);
+
+		$this -> load -> view('central_declaracao_modelo/view', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
