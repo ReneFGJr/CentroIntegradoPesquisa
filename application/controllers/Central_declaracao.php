@@ -40,6 +40,9 @@ class central_declaracao extends CI_Controller {
 
 		/* Monta telas */
 		$this -> load -> view('header/header', $data);
+		$data['title_page'] = 'Central de Declarações e Certificados';
+		$data['menu'] = 1;
+		$this -> load -> view('header/cab', $data);
 	}
 
 	function perfil() {
@@ -48,6 +51,9 @@ class central_declaracao extends CI_Controller {
 		$this -> load -> model('evento/eventos');
 
 		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+		
 		$id = $this -> session -> userdata('cc_user');
 		$id = round('0' . $id);
 		if ($id == 0) {
@@ -73,6 +79,9 @@ class central_declaracao extends CI_Controller {
 		$data = array();
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
 	}
 
 	function index($id = 0) {

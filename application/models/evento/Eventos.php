@@ -12,7 +12,14 @@ class eventos extends CI_model {
 					where dc_us_usuario_id = $id_us ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		$sx = '<table class="tabela0 lt1" align="center" width="800">';
+		
+		$sx = '<table class="tabela00 lt1" align="center" width="800">';
+		$sx .= '<tr>';
+		$sx .= '<th align="left" class="lt2">Declaração/Certificado</th>';
+		$sx .= '<th align="left" class="lt2">Data</th>';
+		$sx .= '<th align="left" class="lt2">ação</th>';
+		$sx .= '</tr>';
+			
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 
@@ -22,13 +29,16 @@ class eventos extends CI_model {
 			$sx .= $line['cdm_nome'];
 			$sx .= '</td>' . cr();
 
-			$sx .= '<td>' . stodbr($line['dc_data']) . '</td>' . cr();
-
+			$sx .= '<td>';
+			$sx .= stodbr($line['dc_data']);
+			$sx .= '</td>' . cr();
+			
 			$sx .= '<td>';
 			$sx .= $link;
-			$sx .= '</td>' . cr();		
-			//print_r($line);
+			$sx .= '</td>' . cr();	
+
 		}
+		$sx .= '</tr>';
 		$sx .= '</table>';
 		return($sx);			
 		}

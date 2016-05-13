@@ -4,18 +4,18 @@ class Central_declaracao_modelos extends CI_model {
 	var $tabela_2 = "ic_modalidade_bolsa";
 
 	function row($obj) {
-		$obj -> fd = array('id_cdm', 'cdm_nome', 'cdm_titulo');
-		$obj -> lb = array('id', msg('lb_cdm_nome'), msg('lb_cdm_titulo'));
+		$obj -> fd = array('id_cdm', 'cdm_nome', 'cdm_nome');
+		$obj -> lb = array('id', msg('lb_cdm_nome'), msg('lb_cdm_nome_evento'));
 		$obj -> mk = array('', 'L', 'C');
 		return ($obj);
 	}
 
-
 	function cp() {
 		$cp = array();
 		array_push($cp, array('$H20', 'id_cdm', '', False, True));
+		
 		$sql = "select * from evento_nome order by ev_nome";
-		array_push($cp, array('$Q id_ev:ev_nome:' . $sql, 'cdm_nome', msg('lb_cdm_nome'), True, False));
+		array_push($cp, array('$Q id_ev:ev_nome:' . $sql, 'cdm_nome', msg('lb_cdm_nome_evento'), True, False));
 
 		array_push($cp, array('$S50', 'cdm_tipo', msg('lb_cdm_tipo'), True, True));
 		array_push($cp, array('$S100', 'cdm_background', msg('lb_cdm_background'), false, True));
@@ -40,7 +40,6 @@ class Central_declaracao_modelos extends CI_model {
 		$this -> load -> model('central_declaracao_modelos');
 		$this -> load -> model('ics');
 		$this -> load -> model('usuarios');
-		
 
 		$body = $data['cdm_body'];
 
