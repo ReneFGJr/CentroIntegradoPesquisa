@@ -1,6 +1,6 @@
 <?php
 
-class main extends CI_Controller {
+class Main extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -181,7 +181,7 @@ class main extends CI_Controller {
 		if (perfil('#CEU#TST') == 1) {
 			array_push($menu, array('CEUA', 'Comitê de Ética em Pesquisa no Uso de Animais', 'BTA', '/ceua'));
 		}
-		if (perfil('#TST') == 1) {
+		if (perfil('#ADM') == 1) {
 			array_push($menu, array('Central Certificados e Declarações', 'Emissão de Certificados e Declarações de participantes de eventos', 'BTA', '/Central_declaracao_gestao'));
 		}
 		
