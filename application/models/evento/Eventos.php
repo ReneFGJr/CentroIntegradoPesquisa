@@ -347,7 +347,17 @@ class eventos extends CI_model {
 														$ok = 1;
 														break;	
 														
-													//Default	
+													//quando Avaliador Externo	
+													case'AVALEXT':
+														$ok = 1;
+														break;
+
+													//quando Avaliador Interno	
+													case'AVALINT':
+														$ok = 1;
+														break;																												
+														
+													/**Default*/	
 													default;
 														$ok = 0;
 														break;		
