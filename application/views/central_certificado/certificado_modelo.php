@@ -27,7 +27,7 @@ if (strlen($image_file) > 0) {
 	//$pdf->Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
 	$pdf -> Image($image_file, 0, 0, $bg_w, $bg_h, '', '', '', false, 300, '', false, false, 0);
 }
-$pdf -> setxy(25, 55);
+$pdf -> setxy($cdm_marginBotton, $cdm_marginTop);
 
 // Texto do certificado
 $pdf -> SetFont('helvetica', '', 12);

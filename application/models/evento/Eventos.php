@@ -8,19 +8,22 @@ class eventos extends CI_model {
 	function mostra($id_us)
 		{
 		$sql = "select * from central_declaracao
-					INNER JOIN central_declaracao_modelo on id_cdm = dc_tipo
-					where dc_us_usuario_id = $id_us ";
+						INNER JOIN central_declaracao_modelo on id_cdm = dc_tipo
+						where dc_us_usuario_id = $id_us ";
+		
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
+		
+		$tot = 0;
 		
 		$sx = '<table class="tabela00 lt1" align="center" width="800">';
 		$sx .= '<tr>';
 		$sx .= 	'<th align="left" class="lt2">Declaração/Certificado</th>';
 		$sx .= 	'<th align="center" class="lt2">Data</th>';
-		$sx .= 	'<th align="center" class="lt2">ação</th>';
+		$sx .= 	'<th align="center" class="lt2">Ano</th>';
+		$sx .= 	'<th align="center" class="lt1">ação</th>';
 		$sx .= '</tr>';
-		
-		$tot = 0;	
+			
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
@@ -36,13 +39,17 @@ class eventos extends CI_model {
 			$sx .= '</td>' . cr();
 			
 			$sx .= '<td align="center">';
+			$sx .= $line['cdm_ano'];
+			$sx .= '</td>' . cr();			
+			
+			$sx .= '<td align="center">';
 			$sx .= $link;
 			$sx .= '</td>' . cr();	
 
 		}
 		
 		//resultado contador
-		$sx .= '<tr><td colspan=3>Total ' . $tot . ' registros</td></tr>';
+		$sx .= '<tr><td colspan=4 align="left"><font color = red> ' . $tot . ' registro(s)</font></td></tr>';
 		$sx .= '</tr>';
 		$sx .= '</table>';
 		
@@ -278,7 +285,7 @@ class eventos extends CI_model {
 
 	}
 
-	/*################>> EMITIR DECLARACOES E CERTIFICADOS DE IC <<###########################*/
+	/*################>> EMITIR DECLARACOES E CERTIFICADOS<<###########################*/
 	function emitir($data) {
 		$id_us = $data['id_us'];
 		$us_cracha = $data['us_cracha'];		
@@ -289,30 +296,62 @@ class eventos extends CI_model {
 		/* GERA CERTIFICADOS *******************************************************************/
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			
+			$tipo = $line['cdm_tipo'];
 			$modelo = $line['id_cdm'];
-
 			$sql = $line['cdm_query'];
+			
 			if (strlen($sql) > 0) {
+					
 				$sql = troca($sql, '$id_us', $id_us);
 				$sql = troca($sql, '$CRACHA', $us_cracha);
 				$sql = troca($sql,"´", "'");
 				
 				$rrr = $this -> db -> query($sql);
-				
 				$rrr = $rrr -> result_array();
+				
 				for ($n = 0; $n < count($rrr); $n++) {
 					$ln = $rrr[$n];
+					
 					$ok = 1;
-					/* VALIDACOES */
-					if (!isset($ln['protocolo'])) { echo 'Campo <b>$proto</b> não informado<br>';
-						$ok = 0;
-					}
-					if (!isset($ln['protocolo'])) { echo 'Campo <b>$user_1</b> não informado<br>';
-						$ok = 0;
-					}
-					if (!isset($ln['protocolo'])) { echo 'Campo <b>$user_2</b> não informado<br>';
-						$ok = 0;
-					}
+					
+					switch ($tipo)
+												{
+													//quando IC 
+													case 'IC':
+															/* VALIDACOES */
+															if (!isset($ln['protocolo'])) { echo 'Campo <b>$proto</b> não informado<br>';
+																$ok = 0;
+															}
+															if (!isset($ln['protocolo'])) { echo 'Campo <b>$user_1</b> não informado<br>';
+																$ok = 0;
+															}
+															if (!isset($ln['protocolo'])) { echo 'Campo <b>$user_2</b> não informado<br>';
+																$ok = 0;
+															}
+															break;
+															
+													//quando Evento Editage 		
+													case'EVENTO':
+														$ok = 1;
+														break;
+													
+													//quando Evento SWB2	
+													case'SWB2':
+														$ok = 1;
+														break;	
+													
+													//quando Evento SWB3	
+													case'SWB3':
+														$ok = 1;
+														break;	
+														
+													//Default	
+													default;
+														$ok = 0;
+														break;		
+												}
+
 					if ($ok == 1) {
 						$user_1 = $ln['id_user_1'];
 						$user_2 = $ln['id_user_2'];
@@ -321,13 +360,14 @@ class eventos extends CI_model {
 						$data2 = $ln['data2'];
 						$xdata = date("Y-m-d");
 						$xhora = date("H:i:s");
-
 						$proto = $ln['protocolo'];
 
 						/***/
 						$sql = "select * from central_declaracao 
-											where dc_us_usuario_id = $user_1 and dc_us_usuario_id_2 = $user_2
-													AND dc_protocolo = '$proto' and dc_tipo = '$modelo' ";
+										where dc_us_usuario_id = $user_1 
+										and dc_us_usuario_id_2 = $user_2
+										AND dc_protocolo = '$proto' 
+										and dc_tipo = '$modelo' ";
 						$xxx = $this -> db -> query($sql);
 						$xxx = $xxx -> result_array();
 
@@ -346,6 +386,7 @@ class eventos extends CI_model {
 						}
 					}
 				}
+
 			}
 		}
 		return (1);

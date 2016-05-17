@@ -75,14 +75,7 @@ class Central_declaracao_modelos extends CI_model {
 		}	
 		if ($data['dc_data2'] > '2000-01-01') {
 			$body = troca($body, '$data2', stodbr($data['dc_data2']));
-		}				
-		/**
-		 $date_2 = sonumero($ic['cdm_data_evento']);
-		 $date = round(substr($date_2, 6, 2));
-		 $date .= ' de '.meses(substr($date_2, 4, 2));
-		 $date .= ' de '.substr($date_2, 0, 4);
-		 $body = troca($body,'cdm_data_emissao', $date);
-		 **/
+		}
 
 		$data['certificado'] = $body;
 

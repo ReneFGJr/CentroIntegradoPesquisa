@@ -83,11 +83,12 @@ class Central_declaracao_gestao extends CI_Controller {
 
 		$this -> cab();
 		$data = array();
+		$this -> load -> view('header/content_open');
 
 		/* Lista de comunicacoes anteriores */
 		$form = new form;
 		$form -> tabela = $this -> central_declaracao_modelos -> tabela;
-		$form -> see = true;
+		//$form -> see = true;
 		$form -> edit = true;
 		$form -> novo = true;
 		$form -> order = ' id_cdm ';
@@ -95,13 +96,15 @@ class Central_declaracao_gestao extends CI_Controller {
 
 		$form -> row_edit = base_url('index.php/central_declaracao_gestao/edit');
 		$form -> row_view = base_url('index.php/central_declaracao_modelos/modelo_declaracao_view');
-		$form -> row = base_url('index.php/central_declaracao_gestao');
+		$form -> row      = base_url('index.php/central_declaracao_gestao');
 
-		$this -> load -> view('header/content_open');
-		$data['content'] = row($form, $id);
-		$data['title'] = msg('Modelos Cadastrados');
+		
+		
+		$tela['tela'] = row($form, $id);
+		$tela['title'] = msg('Modelos Cadastrados');
+		$this -> load -> view('form/form', $tela);
+		//$this -> load -> view('header/content_open');
 
-		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -117,7 +120,9 @@ class Central_declaracao_gestao extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 		$form = new form;
+		if($id > 0){
 		$form -> id = $id;
+		}
 
 		$tela = $form -> editar($cp, $this -> central_declaracao_modelos -> tabela);
 		$data['title'] = msg('Editar Modelo');

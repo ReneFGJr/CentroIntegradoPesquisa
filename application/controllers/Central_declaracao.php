@@ -55,7 +55,7 @@ class central_declaracao extends CI_Controller {
 		$this -> load -> view('header/content_open');
 		
 		$id = $this -> session -> userdata('cc_user');
-		$id = round('0' . $id);
+		$id = round('0' . $id); 
 		if ($id == 0) {
 			redirect(base_url('index.php/central_declaracao'));
 		}
@@ -72,7 +72,7 @@ class central_declaracao extends CI_Controller {
 		 ******************************* Gera declarações **************************************************
 		 ***************************************************************************************************/
 		$this->eventos->emitir($data);
-
+		
 		/* Mostra certificados */
 		$tela = $this->eventos->mostra($id_us);
 

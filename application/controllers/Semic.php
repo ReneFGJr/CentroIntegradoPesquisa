@@ -908,9 +908,7 @@ class semic extends CI_Controller {
 		$form -> row = base_url('index.php/semic/trabalhos_row');
 
 		$tela['tela'] = row($form, $id);
-
 		$tela['title'] = msg('title_semic_trabalho');
-
 		$this -> load -> view('form/form', $tela);
 
 		$this -> load -> view('header/content_close');

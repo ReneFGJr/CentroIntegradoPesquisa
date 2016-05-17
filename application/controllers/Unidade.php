@@ -77,7 +77,7 @@ class Unidade extends CI_Controller {
 
 		$form -> row_edit = base_url('index.php/unidade/edit');
 		$form -> row_view = base_url('index.php/unidade/view');
-		$form -> row = base_url('index.php/unidade');
+		$form -> row      = base_url('index.php/unidade');
 
 		$tela['tela'] = row($form, $id);
 
