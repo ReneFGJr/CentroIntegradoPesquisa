@@ -64,8 +64,8 @@ class Central_declaracao_gestao extends CI_Controller {
 		$menu = array();
 		/* Libera Menus */
 		if (perfil('#ADM') == 1) {
-			array_push($menu, array('Declarações', 'Manutenção de Declarações', 'BTA', '/central_declaracao_gestao/criar_modelo'));
-			array_push($menu, array('Declarações', 'Imprimir Declaração ou certificado', 'BTA', '/central_declaracao'));
+			array_push($menu, array('Declarações', 'Manutenção de Declarações', 'ITE', '/central_declaracao_gestao/criar_modelo'));
+			array_push($menu, array('Declarações', 'Imprimir Declaração ou certificado', 'ITE', '/central_declaracao'));
 		}
 		
 		$data['menu'] = $menu;
@@ -96,7 +96,7 @@ class Central_declaracao_gestao extends CI_Controller {
 
 		$form -> row_edit = base_url('index.php/central_declaracao_gestao/edit');
 		$form -> row_view = base_url('index.php/central_declaracao_modelos/modelo_declaracao_view');
-		$form -> row      = base_url('index.php/central_declaracao_gestao');
+		$form -> row      = base_url('index.php/central_declaracao_gestao/criar_modelo');
 
 		
 		

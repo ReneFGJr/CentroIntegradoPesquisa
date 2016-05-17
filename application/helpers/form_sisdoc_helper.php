@@ -1175,10 +1175,12 @@ function npag($obj, $blank = 1, $tot = 10, $offset = 20) {
 
 	$data = array('name' => 'dd1', 'id' => 'dd1', 'value' => $vlr, 'maxlength' => '100', 'size' => '100', 'style' => 'width:150px', );
 	$sx .= form_input($data);
-	$sx .= form_submit('acao', msg('bt_search'));
+	//$sx .= form_submit('acao', msg('bt_search'));
+	$sx .= '<a href="'.($link).'"><input type="submit" name="acao" value="'.msg('bt_search').'" class="btn">';
 
 	if (strlen($term) > 0) {
-		$sx .= form_submit('acao', msg('bt_clear'));
+		//$sx .= form_submit('acao', msg('bt_clear'));
+		$sx .= '<a href="'.($link).'"><input type="submit" name="acao" value="'.msg('bt_clear').'" class="btn">';
 	}
 	$sx .= '</nobr>';
 
@@ -1188,7 +1190,7 @@ function npag($obj, $blank = 1, $tot = 10, $offset = 20) {
 	} else {
 		$dd5 = 1;
 	}
-	$sx .= '</td><td>';
+	$sx .= '</td><td><nobr>';
 	$sx .= 'em: <select name="dd5" id="dd5">' . cr();
 	for ($rt = 1; $rt < count($fd); $rt++) {
 		$sel = '';
@@ -1196,17 +1198,17 @@ function npag($obj, $blank = 1, $tot = 10, $offset = 20) {
 		}
 		$sx .= '<option value="' . $rt . '" ' . $sel . '>' . msg($fd[$rt]) . '</option>' . cr();
 	}
-	$sx .= '</select>' . cr();
+	$sx .= '</select></nobr>' . cr();
 
 	$sx .= form_hidden('dd2', 'search');
 	/* ************************** action ************************/
 	$sx .= form_close();
 	$sx .= '</td><td align="right">';
-	$link = $obj -> row_edit;
-	$sx .= form_open($link . '/0/0');
-	$sx .= '</td><td align="right">';
+	$link = $obj -> row_edit. '/0/0';
+		$sx .= '</td><td align="right">';
 	if ($obj -> novo == true) {
-		$sx .= form_submit('acao', msg('bt_new'));
+		//$sx .= form_submit('acao', msg('bt_new'));
+		$sx .= '<a href="'.($link).'"><input type="button" value="'.msg('bt_new').'" class="btn">';
 	}
 	$sx .= form_close();
 	$sx .= '

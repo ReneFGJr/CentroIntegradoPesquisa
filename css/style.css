@@ -136,10 +136,10 @@
 	-moz-border-radius: 6px;
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
-	border: 1px solid #dcdcdc;
+	border: 1px solid #888888;
 	display: inline-block;
 	cursor: pointer;
-	color: #777777;
+	color: #111111;
 	font-family: Arial;
 	font-size: 12px;
 	/* font-weight:bold; */

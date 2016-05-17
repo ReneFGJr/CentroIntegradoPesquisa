@@ -9,28 +9,29 @@ class eventos extends CI_model {
 		{
 		$sql = "select * from central_declaracao
 						INNER JOIN central_declaracao_modelo on id_cdm = dc_tipo
-						where dc_us_usuario_id = $id_us ";
+						where dc_us_usuario_id = $id_us 
+						order by cdm_ano desc";
 		
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		
 		$tot = 0;
 		
-		$sx = '<table class="tabela00 lt1" align="center" width="800">';
+		$sx = '<table class="tabela00 lt2 captacao_folha border1 black" align="center" width="800" align="center">';
 		$sx .= '<tr>';
-		$sx .= 	'<th align="left" class="lt2">Declaração/Certificado</th>';
-		$sx .= 	'<th align="center" class="lt2">Data</th>';
-		$sx .= 	'<th align="center" class="lt2">Ano</th>';
-		$sx .= 	'<th align="center" class="lt1">ação</th>';
+		$sx .= 	'<th align="left" class="lt0">Declaração/Certificado</th>';
+		$sx .= 	'<th align="center" class="lt0">Emissão</th>';
+		$sx .= 	'<th align="center" class="lt0">Ano</th>';
+		$sx .= 	'<th align="center" class="lt0">ação</th>';
 		$sx .= '</tr>';
 			
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
 
-			$link = '<a href="' . base_url('index.php/central_declaracao/emitir/' . $line['id_dc'] . '/' . checkpost_link($line['id_dc'])) . '" target="_new">imprimir</a>';
+			$link = '<a href="' . base_url('index.php/central_declaracao/emitir/' . $line['id_dc'] . '/' . checkpost_link($line['id_dc'])) . '" target="_new" class="lt1 link">imprimir</a>';
 			$sx .= '<tr>';
-			$sx .= '<td>';
+			$sx .= '<td class="lt2" align="left">';
 			$sx .= $line['cdm_titulo'];
 			$sx .= '</td>' . cr();
 
@@ -49,7 +50,7 @@ class eventos extends CI_model {
 		}
 		
 		//resultado contador
-		$sx .= '<tr><td colspan=4 align="left"><font color = red> ' . $tot . ' registro(s)</font></td></tr>';
+		$sx .= '<tr><td colspan=4 align="left">Total de ' . $tot . ' certificados/declarações disponíveis</font></td></tr>';
 		$sx .= '</tr>';
 		$sx .= '</table>';
 		

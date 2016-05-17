@@ -43,6 +43,39 @@ class central_declaracao extends CI_Controller {
 		$data['title_page'] = 'Central de Declarações e Certificados';
 		$data['menu'] = 1;
 		$this -> load -> view('header/cab', $data);
+		$this -> load -> view('header/content_open');
+	}
+
+	function certificados($id = 0, $chk = '') {
+		$this -> load -> model('evento/eventos');
+		$this -> load -> model('usuarios');		
+		$this -> cab();
+		$this -> usuarios -> security();
+		$id = $_SESSION['id_us'];
+		$data = $this -> usuarios -> le($id);
+
+		$xdata = date("Y-m-d");
+		$xhora = date("H:i:s");
+		$id_us = $data['id_us'];
+		$us_cracha = $data['us_cracha'];
+		/*********************************************************************************************/
+		/*********************************************************************************************/
+		//$this -> load -> view("perfil/user", $data);
+
+		/***************************************************************************************************
+		 ******************************* Gera declarações **************************************************
+		 ***************************************************************************************************/
+		$this -> eventos -> emitir($data);
+
+		/* Mostra certificados */
+		$tela = $this -> eventos -> mostra($id_us);
+
+		$data = array();
+		$data['content'] = '<center>'.$tela;
+		$data['title'] = 'Declarações disponíveis';
+		$this -> load -> view('content', $data);
+		
+		$this -> load -> view('header/content_close');
 	}
 
 	function perfil() {
@@ -53,9 +86,9 @@ class central_declaracao extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$this -> load -> view('header/content_open');
-		
+
 		$id = $this -> session -> userdata('cc_user');
-		$id = round('0' . $id); 
+		$id = round('0' . $id);
 		if ($id == 0) {
 			redirect(base_url('index.php/central_declaracao'));
 		}
@@ -71,15 +104,15 @@ class central_declaracao extends CI_Controller {
 		/***************************************************************************************************
 		 ******************************* Gera declarações **************************************************
 		 ***************************************************************************************************/
-		$this->eventos->emitir($data);
-		
+		$this -> eventos -> emitir($data);
+
 		/* Mostra certificados */
-		$tela = $this->eventos->mostra($id_us);
+		$tela = $this -> eventos -> mostra($id_us);
 
 		$data = array();
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
-		
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
@@ -180,17 +213,16 @@ class central_declaracao extends CI_Controller {
 	function emitir($id = 0, $check = '') {
 		/* Load Models */
 		$this -> load -> model('central_declaracao_modelos');
-		
-		if ($check = checkpost_link($id))
-			{
-				$data = $this -> central_declaracao_modelos -> le($id);
-				$this -> central_declaracao_modelos -> modelo_declaracao_view($id, $data);
-			} else {
-				$this->view('header/505',null);
-			}
+
+		if ($check = checkpost_link($id)) {
+			$data = $this -> central_declaracao_modelos -> le($id);
+			$this -> central_declaracao_modelos -> modelo_declaracao_view($id, $data);
+		} else {
+			$this -> view('header/505', null);
+		}
 
 	}
-	
+
 	function validador($id = 0, $chk = '') {
 		/* Carrega Modelos */
 		$this -> load -> model('evento/eventos');
@@ -208,7 +240,7 @@ class central_declaracao extends CI_Controller {
 				$this -> load -> view('central_certificado/declaracao_invalida', $data);
 			}
 		}
-	}	
+	}
 
 }
 ?>

@@ -182,8 +182,9 @@ class Main extends CI_Controller {
 			array_push($menu, array('CEUA', 'Comitê de Ética em Pesquisa no Uso de Animais', 'BTA', '/ceua'));
 		}
 		if (perfil('#ADM') == 1) {
-			array_push($menu, array('Central Certificados e Declarações', 'Emissão de Certificados e Declarações de participantes de eventos', 'BTA', '/Central_declaracao_gestao'));
+			array_push($menu, array('Central Certificados e Declarações', 'Configurações dos certificados!', 'BTA', '/Central_declaracao_gestao'));
 		}
+		array_push($menu, array('Central de Certificados e Declarações', 'Emita suas declarações e certificados!', 'BTN', '/Central_declaracao/certificados/'.$_SESSION['id_us'].'/'.checkpost_link($_SESSION['id_us'])));
 		
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Principal';
