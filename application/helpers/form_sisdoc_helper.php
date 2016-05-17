@@ -261,6 +261,7 @@ function meses($id = 0) {
 
 function meses_short() {
 	$mes = array('', 'Jan.', 'Fev.', 'Mar.', 'Abr.', 'Maio', 'Jun.', 'Jul.', 'Ago.', 'Set.', 'Out.', 'Nov.', 'Dez.');
+	return($mes);
 }
 
 function enviaremail($para, $assunto, $texto, $de, $anexos = array()) {

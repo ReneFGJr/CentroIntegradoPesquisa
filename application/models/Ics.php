@@ -176,7 +176,7 @@ class ics extends CI_model {
 
 	//resumo cockpit por tipo de orientador
 	function ic_submit_resumo_professor_titulacao($ano) {
-		$sql = "select ust_titulacao, count(*) as total
+		$sql = "select ust_id, ust_titulacao, count(*) as total
 						from ic_submissao_plano
 						inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
 						inner join us_usuario on us_cracha = pj_professor
@@ -186,7 +186,7 @@ class ics extends CI_model {
 						AND (pj_status  <> 'X' AND pj_status  <> '@')
 						AND (doc_status <> 'X' AND doc_status <> '@')
 						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM')
-						group by ust_titulacao
+						group by ust_titulacao, ust_id
 						order by total desc
 					 ";
 		$rlt = $this -> db -> query($sql);
@@ -204,9 +204,11 @@ class ics extends CI_model {
 			$line = $rlt[$r];
 			$tot++;
 
+			$link = '<a href="'.base_url('index.php/ic/cockpit_titulacao/'.$ano.'/'.$line['ust_id']).'" target="_new" class="lt1 link">';
+			
 			$sx .= '<tr>';
 			$sx .= '<td align="left">';
-			$sx .= $line['ust_titulacao'];
+			$sx .= $link.$line['ust_titulacao'].'</a>';
 			$sx .= '</td>';
 
 			$sx .= '<td align="right">';
@@ -222,6 +224,171 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
+	//resumo cockpit por tipo de orientador
+	function ic_submit_resumo_campus($ano) {
+		$sql = "select us_campus_vinculo, count(*) as total
+						from ic_submissao_plano
+						inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
+						inner join us_usuario on us_cracha = pj_professor
+						where pj_ano = '$ano'
+						AND (pj_status  <> 'X' AND pj_status  <> '@')
+						AND (doc_status <> 'X' AND doc_status <> '@')
+						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM')
+						group by us_campus_vinculo
+						order by total desc
+					 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		//Colunas da tabela
+		$sx = '<table width="40%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por <i>campi</i></b></td></tr>';
+		$sx .= '<tr class="lt3"><th align="center">Campus</th>
+								<th align="center">qtd</th>
+						</tr>';
+		$tot = 0;
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			
+			
+
+			$sx .= '<tr>';
+			$sx .= '<td align="left">';
+			$nome = $line['us_campus_vinculo'];
+			if (strlen($nome) == 0)
+				{
+					$nome = '-não identificado-';
+				}
+				
+			$link = '<a href="'.base_url('index.php/ic/cockpit_campus/'.$ano.'/'.$nome).'" target="_new" class="lt1 link">';
+			$sx .= $link;
+			$sx .= $nome;
+			$sx .= '</a>';
+			
+			$sx .= '</td>';
+
+			$sx .= '<td align="right">';
+			$sx .= $line['total'];
+			$sx .= '</td>';
+
+			$tot = $tot + $line['total'];
+
+		}
+		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
+		$sx .= '</table>';
+
+		return ($sx);
+	}
+
+	function ic_submit_resumo_campus_detalhe($ano,$campus) {
+		if (substr($campus,0,1) == '-')
+		{
+			$wh = " AND (us_campus_vinculo = '' or us_campus_vinculo is null ) ";
+		} else {
+			$wh = " AND us_campus_vinculo = '$campus' ";	
+		}
+		
+		$sql = "select *
+						from ic_submissao_plano
+						inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
+						inner join us_usuario on us_cracha = pj_professor
+						where pj_ano = '$ano'
+						AND (pj_status  <> 'X' AND pj_status  <> '@')
+						AND (doc_status <> 'X' AND doc_status <> '@')
+						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM')
+						$wh
+						order by us_nome
+					 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		//Colunas da tabela
+		$sx = '<table width="100%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por <i>campi</i></b></td></tr>';
+		$sx .= '<tr class="lt0"><th align="center">#</th>
+								<th align="center" width="20%">Professor</th>
+								<th width="65%">Projeto</th>
+								<th>Protocolo</th>
+								<th>Projeto</th>
+								<th width="10%">Campus</th>
+						</tr>';
+		$tot = 0;
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center" width="20">'.$tot.'</td>';
+			$sx .= '<td>'.link_user($line['us_nome'],$line['id_us']).'</td>';
+			$sx .= '<td>'.$line['doc_1_titulo'].'</td>';
+			$sx .= '<td>'.$line['doc_protocolo'].'</td>';
+			$sx .= '<td>'.$line['doc_protocolo_mae'].'</td>';
+			$sx .= '<td width="10%">'.$line['us_campus_vinculo'].'</td>';
+			$sx .= '</tr>';
+		}
+		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
+		$sx .= '</table>';
+
+		return ($sx);
+	}
+
+	function ic_submit_resumo_titulacao_detalhe($ano,$titulacao) {
+		if (substr($titulacao,0,1) == '-')
+		{
+			$wh = " AND (ust_id = '' or ust_id is null ) ";
+		} else {
+			$wh = " AND ust_id = '$titulacao' ";	
+		}
+		$sql = "select *
+						from ic_submissao_plano
+						inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
+						inner join us_usuario on us_cracha = pj_professor
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						where pj_ano = '$ano'
+						AND (pj_status  <> 'X' AND pj_status  <> '@')
+						AND (doc_status <> 'X' AND doc_status <> '@')
+						and (doc_edital = 'PIBIC' or  doc_edital = 'PIBITI' or  doc_edital = 'IS' or  doc_edital = 'ICI' or  doc_edital = 'PIBICEM')
+						$wh
+						order by us_nome
+					 ";
+					 
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		//Colunas da tabela
+		$sx = '<table width="100%" class="tabela00" border=0>';
+		$sx .= '<tr><td class="lt4" colspan=3><b>Resumo de submissões por <i>campi</i></b></td></tr>';
+		$sx .= '<tr class="lt0"><th align="center">#</th>
+								<th align="center" width="20%">Professor</th>
+								<th width="65%">Projeto</th>
+								<th>Protocolo</th>
+								<th>Projeto</th>
+								<th width="10%">Campus</th>
+						</tr>';
+		$tot = 0;
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center" width="20">'.$tot.'</td>';
+			$sx .= '<td>'.link_user($line['us_nome'],$line['id_us']).'</td>';
+			$sx .= '<td>'.$line['doc_1_titulo'].'</td>';
+			$sx .= '<td>'.$line['doc_protocolo'].'</td>';
+			$sx .= '<td>'.$line['doc_protocolo_mae'].'</td>';
+			$sx .= '<td width="10%">'.$line['us_campus_vinculo'].'</td>';
+			$sx .= '</tr>';
+		}
+		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
+		$sx .= '</table>';
+
+		return ($sx);
+	}	
+	
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
 			$wh = 'where (' . $wh . ') ';
@@ -2147,6 +2314,9 @@ function orientaoes_ativas_escola($ano = '') {
 			case 'SENAI' :
 				$img = base_url('img/logo/logo_ic_senai.png');
 				break;
+			case 'PIBEP' :
+				$img = base_url('img/logo/logo_ic_pibep.png');
+				break;				
 			default :
 				$img = base_url('img/logo/logo_ic_semimagem.png');
 				break;

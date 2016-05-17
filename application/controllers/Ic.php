@@ -116,14 +116,18 @@ class ic extends CI_Controller {
 				array_push($cp, array('$T80:3', '', '`Informe título do plano', True, True));
 				array_push($cp, array('$Q us_cracha:us_nome:select * from us_usuario where usuario_tipo_ust_id=2 and us_ativo = 1 order by us_nome ', '', 'Nome do orientador', True, True));
 				array_push($cp, array('$D8', '', 'Início da vigência', True, True));
+				array_push($cp, array('$D8', '', 'Fim da vigência', True, True));
 				array_push($cp, array('$[' . (date("Y") - 2) . '-' . date("Y") . ']', '', 'Ano do edital', True, True));
+				array_push($cp, array('$S8', '', 'Informe o protocolo do projeto', True, True));
 			} else {
 				$plano = $this -> ics -> le_plano_submit(get("dd1"));
 				//print_r($plano);
 				array_push($cp, array('$HV', '', $plano['doc_1_titulo'], True, True));
 				array_push($cp, array('$HV', '', $plano['doc_autor_principal'], True, True));
 				array_push($cp, array('$D8', '', 'Início da vigência', True, True));
+				array_push($cp, array('$D8', '', 'Fim da vigência', True, True));
 				array_push($cp, array('$HV', '', $plano['doc_ano'], True, True));
+				array_push($cp, array('$HV', '', $plano['doc_protocolo_mae'], True, True));
 			}
 			$tela = $form -> editar($cp, '');
 
@@ -132,10 +136,12 @@ class ic extends CI_Controller {
 
 				if ($form -> saved > 0) {
 					$data_ativacao = brtod(get("dd6"));
+					$data_desativacao = brtod(get("dd7"));
 					$prof = get("dd5");
 					$hora = date("H:i:s");
 					$proto = get("dd1");
-					$ano = get("dd7");
+					$proto_mae = get("dd9");
+					$ano = get("dd8");
 					$titulo = get("dd4");
 					$mdo = get("dd2");
 					$ida = $this -> usuarios -> le_cracha($estudante);
@@ -158,28 +164,30 @@ class ic extends CI_Controller {
 										ic_data, ic_hora, ic_ano,
 										
 										ic_projeto_professor_codigo, ic_projeto_professor_titulo, ic_plano_aluno_codigo,
-										ic_plano_aluno_nome	
+										ic_plano_aluno_nome		
 										) values (
 										'$prof','$estudante','1',
 										'A','$data_ativacao',
 										'$data','$hora','$ano',
 										
-										'$proto','$titulo','$proto'
+										'$proto_mae','$titulo','$proto'
 										,'$titulo'
 										)";
+																
 							$this -> db -> query($sql);
 							$idr = $this -> ics -> recupera_nr_ic($proto);
 							if (count($idr) > 0) {
 								$idp = $idr['id_ic'];
 								$sql = "insert into ic_aluno
 											(aluno_id, ic_aluno_cracha, ic_id,
-											mb_id, 	icas_id, aic_dt_entrada, 
-											aic_dt_inicio_bolsa
+											mb_id, 	icas_id, aic_dt_entrada, aic_dt_saida,
+											aic_dt_inicio_bolsa, aic_dt_fim_bolsa
 											) values (
 											$aluno,'$aluno_cracha', $idp,
-											$mdo, 1, '$data_ativacao',
-											'$data_ativacao'
+											$mdo, 1, '$data_ativacao', '$data_desativacao',
+											'$data_ativacao', '$data_desativacao'
 											)";
+								
 								$rlt = $this -> db -> query($sql);
 								$this -> load -> view('sucesso');
 								return ('');
@@ -1766,6 +1774,96 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function pagamento_planilha_compromisso_rateados($date = '', $action = '') {
+		$ano1 = date("Y");
+		if (date("m") < 10) {
+			$ano1--;
+		}
+		$ano2 = $ano1 + 2;
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		$this -> load -> model('bancos');
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$A', '', 'Pagamento por Rateio', False, True));
+		array_push($cp, array('$S9', '', 'Nº protocolo do projeto', True, True));
+		array_push($cp, array('$N12', '', 'Valor TOTAL a creditar', True, True));
+		array_push($cp, array('$D8', '', 'Data de vencimento', True, True));
+
+		$form = new form;
+		$tela = $form -> editar($cp, '');
+		$data['content'] = '<div class="nopr">' . $tela . '</div>';
+		$this -> load -> view('content', $data);
+
+		if ($form -> saved > 0) {
+			$proto = get('dd2');
+			$valor = get('dd3');
+			$date  = brtos(get('dd4'));
+			$valor = troca($valor,'.','');
+			$valor = troca($valor,',','.');
+
+			$tela = $this -> pagamentos -> pagamento_por_rateio($proto,$valor,$date);
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+
+			$this -> load -> view('ic/assinatura_ic');
+		}
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function pagamento_planilha_compromisso_avulso($date = '', $action = '') {
+		$ano1 = date("Y");
+		if (date("m") < 10) {
+			$ano1--;
+		}
+		$ano2 = $ano1 + 2;
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		$this -> load -> model('bancos');
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$data = array();
+
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, True));
+		array_push($cp, array('$A', '', 'Pagamento Avulso', False, True));
+		array_push($cp, array('$S9', '', 'Nº protocolo do aluno', True, True));
+		array_push($cp, array('$N12', '', 'Valor TOTAL a creditar', True, True));
+		array_push($cp, array('$D8', '', 'Data de vencimento', True, True));
+
+		$form = new form;
+		$tela = $form -> editar($cp, '');
+		$data['content'] = '<div class="nopr">' . $tela . '</div>';
+		$this -> load -> view('content', $data);
+
+		if ($form -> saved > 0) {
+			$proto = get('dd2');
+			$valor = get('dd3');
+			$date  = brtos(get('dd4'));
+			$valor = troca($valor,'.','');
+			$valor = troca($valor,',','.');
+
+			$tela = $this -> pagamentos -> pagamento_avulso($proto,$valor,$date);
+			$data['content'] = $tela;
+			$this -> load -> view('content', $data);
+
+			$this -> load -> view('ic/assinatura_ic');
+		}
+
+		/*Fecha */	/*Gera rodapé*/
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function pagamento_planilha_hsbc($modalidade = '', $edital = '', $venc = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
@@ -1804,6 +1902,82 @@ class ic extends CI_Controller {
 
 	}
 
+	function pagamento_planilha_hsbc_rateio($proto = '', $valor = '', $venc = '') {
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		$this -> load -> model('bancos');
+		$this -> load -> model('ics');
+
+		$data = array();
+
+		/* seta variavel de erro como nada*/
+		$err = '';
+		$tela = '';
+
+		/* Data invalda */
+		if (strlen($venc) < 10) {
+			$err = 'Data de pagamento inválida';
+		}
+
+		if (strlen($err) > 0) {
+			$tela = '<center><h1><font color="red">' . $err . '</font></h1></center>';
+			echo $tela;
+			exit ;
+		} else {
+			$fl = $this -> pagamentos -> gerar_pagamento_bolsa_arquivo_rateio($proto, $valor, $venc);
+			$tela = $fl;
+		}
+		$file = $this -> pagamentos -> filename;
+
+		//header("Content-Type: plain/pdf");
+		header('Content-Type: text/plain');
+		header("Content-type: application-download");
+		header("Content-disposition: attachment; filename=$file");
+		header("Content-Transfer-Encoding: binary");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		echo $tela;
+
+	}
+
+	function pagamento_planilha_hsbc_avulso($proto = '', $valor = '', $venc = '') {
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		$this -> load -> model('bancos');
+		$this -> load -> model('ics');
+
+		$data = array();
+
+		/* seta variavel de erro como nada*/
+		$err = '';
+		$tela = '';
+
+		/* Data invalda */
+		if (strlen($venc) < 10) {
+			$err = 'Data de pagamento inválida';
+		}
+
+		if (strlen($err) > 0) {
+			$tela = '<center><h1><font color="red">' . $err . '</font></h1></center>';
+			echo $tela;
+			exit ;
+		} else {
+			$fl = $this -> pagamentos -> gerar_pagamento_bolsa_arquivo_avulso($proto, $valor, $venc);
+			$tela = $fl;
+		}
+		$file = $this -> pagamentos -> filename;
+
+		//header("Content-Type: plain/pdf");
+		header('Content-Type: text/plain');
+		header("Content-type: application-download");
+		header("Content-disposition: attachment; filename=$file");
+		header("Content-Transfer-Encoding: binary");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		echo $tela;
+
+	}
+	
 	function pagamentos($date = '', $action = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
@@ -1813,9 +1987,13 @@ class ic extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
+		array_push($menu, array('Pagamentos - Realizado', 'Consolidado de Pagamentos', 'ITE', '/ic/pagamento_consolidado'));
 		array_push($menu, array('Pagamentos', 'Gerar planilha de pagamento', 'ITE', '/ic/pagamento_planilha'));
 		array_push($menu, array('Pagamentos', 'Importar arquivo de pagamento (.seq)', 'ITE', '/ic/pagamento_planilha_inport'));
 		array_push($menu, array('Pagamentos', 'Identifica No. do compromisso', 'ITE', '/ic/pagamento_planilha_compromisso'));
+		
+		array_push($menu, array('Pagamentos Rateado', 'Pagamentos por Projeto', 'ITE', '/ic/pagamento_planilha_compromisso_rateados'));
+		array_push($menu, array('Pagamentos Avulso', 'Gerar Pagamento', 'ITE', '/ic/pagamento_planilha_compromisso_avulso'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -1826,6 +2004,44 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function pagamento_detalhado($ano='',$mes='',$valor='')
+		{
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		if (strlen($ano) == 0)
+			{ $ano = date("Y"); }
+
+		$this -> cab();
+		$data = array();
+		
+		$sx = $this->pagamentos->detalhado($ano,$mes,$valor);
+		$data['content'] = $sx;
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}
+
+	function pagamento_consolidado($ano='')
+		{
+		/* Load Models */
+		$this -> load -> model('pagamentos');
+		if (strlen($ano) == 0)
+			{ $ano = date("Y"); }
+
+		$this -> cab();
+		$data = array();
+		
+		$sx = $this->pagamentos->consolidado($ano);
+		$data['content'] = $sx;
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);		
+		}
 
 	function pagamentos_realizados($date = '', $action = '') {
 		/* Load Models */
@@ -2841,7 +3057,12 @@ class ic extends CI_Controller {
 
 		/* arquivos */
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$data['ged'] = $this -> geds -> list_files_table($data['ic_plano_aluno_codigo'], 'ic');
+		$data['ged'] = '';		
+		if (strlen(trim($data['ic_projeto_professor_codigo'])) > 0)
+			{
+				$data['ged'] = $this -> geds -> list_files_table($data['ic_projeto_professor_codigo'], 'ic');
+			}
+		$data['ged'] .= $this -> geds -> list_files_table($data['ic_plano_aluno_codigo'], 'ic');			
 		$data['ged_arquivos'] = $this -> geds -> form_upload($data['ic_plano_aluno_codigo'], 'ic');
 		$this -> load -> view('ged/list_files', $data);
 
@@ -3273,6 +3494,10 @@ class ic extends CI_Controller {
 				//resumo titulação
 				$data['content'] = $this -> ics -> ic_submit_resumo_professor_titulacao($ano, $edital);
 				$this -> load -> view('content', $data);
+				
+				//resumo titulação
+				$data['content'] = $this -> ics -> ic_submit_resumo_campus($ano, $edital);
+				$this -> load -> view('content', $data);				
 			}
 
 		} else {
@@ -3283,6 +3508,36 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function cockpit_campus($ano='',$campus='')
+		{
+		$this -> load -> model('ics');
+		$this -> cab();
+		
+		$sx = '<h1>Submissão por campus - '.$campus.'</h1>';
+		$sx .= $this->ics->ic_submit_resumo_campus_detalhe($ano,$campus);
+		
+		$data['content'] = $sx;
+		$this->load->view('content',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}
+		
+	function cockpit_titulacao($ano='',$titulo='')
+		{
+		$this -> load -> model('ics');
+		$this -> cab();
+		
+		$sx = '<h1>Submissão por titulacao - '.$titulo.'</h1>';
+		$sx .= $this->ics->ic_submit_resumo_titulacao_detalhe($ano,$titulo);
+		
+		$data['content'] = $sx;
+		$this->load->view('content',$data);
+		
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+		}		
 
 	function projeto_view($id, $chk, $act = '') {
 		$this -> load -> model('ics');

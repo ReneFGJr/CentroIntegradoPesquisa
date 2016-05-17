@@ -191,7 +191,7 @@ class ic_feira extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		/* Total de membros */
-		if ((count($rlt) >= 3) and (count($rlt) <= 5)) {
+		if ((count($rlt) >= 1) and (count($rlt) <= 5)) {
 			$vd[6] = $class_ok;
 			$vdt[6] = $ok;
 		}
@@ -228,7 +228,7 @@ class ic_feira extends CI_model {
 
 		$sx .= '<tr class="' . $vd[5] . '"><td>Tema da submissão</td><td align="center">' . $vdt[5] . '</tr>';
 
-		$sx .= '<tr class="' . $vd[6] . '"><td>Membros da equipe (entre 3 e 5 alunos) - ' . count($rlt) . ' as membros registrados</td><td align="center">' . $vdt[6] . '</tr>';
+		$sx .= '<tr class="' . $vd[6] . '"><td>Membros da equipe (entre 1 e 5 alunos) - ' . count($rlt) . ' as membros registrados</td><td align="center">' . $vdt[6] . '</tr>';
 		$sx .= '</table>';
 
 		$validated = True;

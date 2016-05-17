@@ -94,7 +94,7 @@ class Main extends CI_Controller {
 		$subm = $this -> ics -> submissoes_abertas(1);
 
 		/* Submissão PIBIC MASTER */
-		if ($subm['sw_01'] == '1') {
+		if (($subm['sw_01'] == '1') and ($ss == 1)) {
 			$mod = $subm['sw_tipo'];
 			array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit_' . $mod));
 		}

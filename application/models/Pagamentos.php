@@ -2,7 +2,7 @@
 class pagamentos extends CI_Model {
 	var $tabela = 'ic_pagamentos';
 	var $filename = '';
-	
+
 	function dir($dir) {
 		$ok = 0;
 		if (is_dir($dir)) { $ok = 1;
@@ -13,38 +13,36 @@ class pagamentos extends CI_Model {
 			fclose($rlt);
 		}
 		return ($ok);
-	}	
+	}
 
 	/* PAGAMENTOS HSBC
 	 *
 	 *
 	 */
-	function save_file($txt,$modalidade, $edital, $venc)
-		{
-			$data = date("Y-m-d");
-			$seq = 1;
-			$file = date("ym").strzero($modalidade,3).$seq.'.seq';
-			while (file_exists($file))
-				{
-					$seq++;
-					$file = date("ym").strzero($modalidade,3).$seq.'.seq';
-				}
-			$this->filename = $file;
-			$this->pagamentos->dir('_document');
-			$this->pagamentos->dir('_document/_pagamento/');
-			$this->pagamentos->dir('_document/_pagamento/'.date("Y"));
-			$this->pagamentos->dir('_document/_pagamento/'.date("Y").'/'.date("m"));
-			
-			$path = '_document/_pagamento/'.date("Y").'/'.date("m").'/';
-			$file = $path.$file;
-			
-			$fl = fopen($file,'w+');
-			fwrite($fl,$txt);
-			fclose($fl);
-			$user = round($_SESSION['id_us']);
-			$venc = sonumero($venc);
-			$venc = substr($venc,0,4).'-'.substr($venc,4,2).'-'.substr($venc,6,2);
-			$sql = "insert into ic_pagamentos_arquivo
+	function save_file($txt, $modalidade, $edital, $venc) {
+		$data = date("Y-m-d");
+		$seq = 1;
+		$file = date("ym") . strzero($modalidade, 3) . $seq . '.seq';
+		while (file_exists($file)) {
+			$seq++;
+			$file = date("ym") . strzero($modalidade, 3) . $seq . '.seq';
+		}
+		$this -> filename = $file;
+		$this -> pagamentos -> dir('_document');
+		$this -> pagamentos -> dir('_document/_pagamento/');
+		$this -> pagamentos -> dir('_document/_pagamento/' . date("Y"));
+		$this -> pagamentos -> dir('_document/_pagamento/' . date("Y") . '/' . date("m"));
+
+		$path = '_document/_pagamento/' . date("Y") . '/' . date("m") . '/';
+		$file = $path . $file;
+
+		$fl = fopen($file, 'w+');
+		fwrite($fl, $txt);
+		fclose($fl);
+		$user = round($_SESSION['id_us']);
+		$venc = sonumero($venc);
+		$venc = substr($venc, 0, 4) . '-' . substr($venc, 4, 2) . '-' . substr($venc, 6, 2);
+		$sql = "insert into ic_pagamentos_arquivo
 						(
 							paa_arquivo, paa_data, paa_user,
 							paa_ativo, paa_modalidade, paa_vencimento
@@ -53,102 +51,93 @@ class pagamentos extends CI_Model {
 							1,$modalidade,$venc
 						)
 					";
-			$this->db->query($sql);
-			return($file);
-		}
+		$this -> db -> query($sql);
+		return ($file);
+	}
 
-		function pagamento_compromisso_mostra($id)
-			{
-				$sql = "select * from ic_pagamentos
+	function pagamento_compromisso_mostra($id) {
+		$sql = "select * from ic_pagamentos
 						WHERE pg_nrdoc = '$id'
 				";
-				$rlt = $this->db->query($sql);
-				$rlt = $rlt->result_array();
-				$sx = '';
-				if (count($rlt) > 0)
-					{
-						$data = $rlt[0];
-						$sx = $this->load->view('ic/ic_pagamento',$data,true);
-					}
-				return($sx);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		if (count($rlt) > 0) {
+			$data = $rlt[0];
+			$sx = $this -> load -> view('ic/ic_pagamento', $data, true);
+		}
+		return ($sx);
+	}
+
+	function processa_seq($file) {
+		/* Verifica se arquivo não existe */
+		if (!(file_exists($file))) {
+			return (0);
+		}
+
+		$rd = load_file_local($file);
+
+		$rd = troca($rd, chr(13), ';');
+		$lns = splitx(';', $rd);
+		$sx = '<table width="100%" class="tabela01">';
+		$vlrt = 0;
+		$tot = 0;
+		for ($rn = 0; $rn < count($lns); $rn++) {
+			$l = $lns[$rn];
+			$tp = substr($l, 13, 1);
+
+			if ($tp == '0') {
+				$cnpj = substr($l, 18, 14);
+				$ctr = substr($l, 32, 6);
 			}
 
-		function processa_seq($file)
-			{
-				/* Verifica se arquivo não existe */
-				if (!(file_exists($file)))
-					{
-						return(0);
-					}
-					
-				$rd = load_file_local($file);
-			
-				$rd = troca($rd,chr(13),';');
-				$lns = splitx(';',$rd);
-				$sx = '<table width="100%" class="tabela01">';
-				$vlrt= 0;
-				$tot = 0;
-				for ($rn = 0;$rn < count($lns);$rn++)
-				{
-					$l = $lns[$rn];
-					$tp = substr($l,13,1);
-					
-					if ($tp == '0')
-						{
-							$cnpj = substr($l,18,14);
-							$ctr = substr($l,32,6);
-						}
-						
-					if ($tp == 'A')
-						{/*
-3990146300145A00070000102187 0000000013471 CHRISTOFER KOK                01401600010145      05012016R$                  0000000040000N                                                                                              0
- * */          							
-							$banco = substr($l,20,3);
-							$seq = substr($l,3,4);
-							$op = substr($l,7,1);
-							$nrdoc = trim(substr($l,73,18));
-							$venc = substr($l,93,8);
-							$vc = substr($venc,4,4).substr($venc,2,2).substr($venc,0,2);
-							$vlr = round(substr($l,121,13))/100;
-							$nome = substr($l,43,30);
-							$bco = $banco;
-					
-							$ccag = substr($l,23,5);
-							$ccc = substr($l,35,7);
-							$ccac = substr($l,30,12);
-							$id1 = $lns[$rn];
-							
-							$vlrt = $vlrt + $vlr;
-							$tot++;
-							echo '<br>'.$nrdoc;
-						}
-					
-					if ($tp == 'B')
-						{
-							$cpf = substr($l,21,14);
-							$tp = 'I';
-							$id2 = $lns[$rn];
-							
-						$sx .= '<tr>';
-						$sx .= '<td align="center">'.$tot.'</td>';
-						$sx .= '<td align="center">'.$bco.'</td>';
-						$sx .= '<td align="center">'.$ccag.'-'.$ccc.'</td>';
-						$sx .= '<td align="center">'.$seq.'-'.$op.'-'.$tp.'</td>';
-						$sx .= '<td align="right">'.number_format($vlr,2,',','.').'</td>';
-						$sx .= '<td align="left">'.$nome.'</td>';
-						$sx .= '<td align="center">'.$cpf.'</td>';
-						$sx .= '<td align="center">'.stodbr($vc).'</td>';
-						
-						$sql = "select * from ic_pagamentos 
+			if ($tp == 'A') {/*
+				 3990146300145A00070000102187 0000000013471 CHRISTOFER KOK                01401600010145      05012016R$                  0000000040000N                                                                                              0
+				 * */
+				$banco = substr($l, 20, 3);
+				$seq = substr($l, 3, 4);
+				$op = substr($l, 7, 1);
+				$nrdoc = trim(substr($l, 73, 18));
+				$venc = substr($l, 93, 8);
+				$vc = substr($venc, 4, 4) . substr($venc, 2, 2) . substr($venc, 0, 2);
+				$vlr = round(substr($l, 121, 13)) / 100;
+				$nome = substr($l, 43, 30);
+				$bco = $banco;
+
+				$ccag = substr($l, 23, 5);
+				$ccc = substr($l, 35, 7);
+				$ccac = substr($l, 30, 12);
+				$id1 = $lns[$rn];
+
+				$vlrt = $vlrt + $vlr;
+				$tot++;
+				echo '<br>' . $nrdoc;
+			}
+
+			if ($tp == 'B') {
+				$cpf = substr($l, 21, 14);
+				$tp = 'I';
+				$id2 = $lns[$rn];
+
+				$sx .= '<tr>';
+				$sx .= '<td align="center">' . $tot . '</td>';
+				$sx .= '<td align="center">' . $bco . '</td>';
+				$sx .= '<td align="center">' . $ccag . '-' . $ccc . '</td>';
+				$sx .= '<td align="center">' . $seq . '-' . $op . '-' . $tp . '</td>';
+				$sx .= '<td align="right">' . number_format($vlr, 2, ',', '.') . '</td>';
+				$sx .= '<td align="left">' . $nome . '</td>';
+				$sx .= '<td align="center">' . $cpf . '</td>';
+				$sx .= '<td align="center">' . stodbr($vc) . '</td>';
+
+				$sql = "select * from ic_pagamentos 
 								where pg_nrdoc = '$nrdoc'
 								and pg_cpf = '$cpf' and pg_vencimento = $vc
 						";
-						$rlt2 = $this->db->query($sql);
-						$rlt2 = $rlt2->result_array();
-						
-						if (count($rlt2) == 0)
-							{						
-							$sql = "insert into ic_pagamentos
+				$rlt2 = $this -> db -> query($sql);
+				$rlt2 = $rlt2 -> result_array();
+
+				if (count($rlt2) == 0) {
+					$sql = "insert into ic_pagamentos
 							(pg_ctr, pg_cnpj, pg_nrdoc,
 								pg_valor, pg_vencimento, pg_cpf,
 								pg_tipo, pg_nome,pg_banco,
@@ -160,24 +149,25 @@ class pagamentos extends CI_Model {
 								'$tp','$nome','$banco',
 						
 								'$ccag','$ccc','$ccac')
-								";	
-								$rlt2 = $this->db->query($sql);
-								$sx .= '<td align="center"><font color="green">Inserido</font></td>';
-							} else {
-								$sx .= '<td align="center"><font color="orange">Já registrado</font></td>';
-							}												
-						}
+								";
+					$rlt2 = $this -> db -> query($sql);
+					$sx .= '<td align="center"><font color="green">Inserido</font></td>';
+				} else {
+					$sx .= '<td align="center"><font color="orange">Já registrado</font></td>';
 				}
-				$sx .= '</table>';
-				
-				/* Resumo */
-				$sa = '<table width="100%" class="tabela01 border1">';
-				$sa .= '<tr><th>total de pagamentos</th><th>valor processado</th></tr>';
-				$sa .= '<tr class="lt6" align="center"><td>'.$tot.'</td><td>'.number_format($vlrt,2,',','.').'</th></td>';
-				$sa .= '</table></br></br>';
-				
-				return($sa.$sx);				
 			}
+		}
+		$sx .= '</table>';
+
+		/* Resumo */
+		$sa = '<table width="100%" class="tabela01 border1">';
+		$sa .= '<tr><th>total de pagamentos</th><th>valor processado</th></tr>';
+		$sa .= '<tr class="lt6" align="center"><td>' . $tot . '</td><td>' . number_format($vlrt, 2, ',', '.') . '</th></td>';
+		$sa .= '</table></br></br>';
+
+		return ($sa . $sx);
+	}
+
 	function gerar_pagamento_bolsa_arquivo($modalidade, $edital, $venc) {
 		$fl = $this -> pagamentos -> header_rq();
 		$fl .= $this -> pagamentos -> header_rq2();
@@ -207,8 +197,171 @@ class pagamentos extends CI_Model {
 			$fl .= $this -> req_pagamento($line, $venc);
 		}
 		$fl .= $this -> pagamentos -> req_fim();
-		
-		$file = $this->pagamentos->save_file($fl,$modalidade, $edital, $venc);
+
+		$file = $this -> pagamentos -> save_file($fl, $modalidade, $edital, $venc);
+		//$fl = '<a href="'.base_url($file).'">Download do Arquivo</a>';
+		return ($fl);
+	}
+
+	function gerar_pagamento_bolsa_arquivo_rateio($proto, $valor, $venc) {
+		$fl = $this -> pagamentos -> header_rq();
+		$fl .= $this -> pagamentos -> header_rq2();
+		/*
+		 $fl .= $this->req_pagamento($ln,$venc);
+		 */
+
+		$data = date("Y-m-d");
+		$venc = sonumero($venc);
+		$venc = substr($venc, 0, 4) . '-' . substr($venc, 4, 2) . '-' . substr($venc, 6, 2);
+
+		$sql = "select * from ic_aluno
+					left join us_usuario on us_cracha = ic_aluno_cracha
+					left join ic on ic_id = id_ic  
+					left join ic_modalidade_bolsa on id_mb = mb_id
+					left join us_conta on id_us = us_usuario_id_us
+						where ic_projeto_professor_codigo = '$proto' 
+						and icas_id = 1 
+					order by us_nome ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$vlr = round($valor / count($rlt) * 100) / 100;
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$line['mb_valor'] = $vlr;
+			$fl .= $this -> req_pagamento($line, $venc);
+		}
+		$fl .= $this -> pagamentos -> req_fim();
+
+		$file = $this -> pagamentos -> save_file($fl, $proto, date("Y-m"), $venc);
+		//$fl = '<a href="'.base_url($file).'">Download do Arquivo</a>';
+		return ($fl);
+	}
+
+	function detalhado($ano, $mes,$valor='') {
+		$mes = strzero($mes, 2);
+		$wh = '';
+		if (strlen($valor) > 0) { $wh = ' AND pg_valor = '.$valor; }
+		$sql = "select * from ic_pagamentos
+						left join (select distinct us_nome, us_cpf from us_usuario) as usuario on us_cpf = pg_cpf
+						where substr(pg_vencimento,1,4) = '$ano'
+							AND substr(pg_vencimento,5,2) = '$mes'
+							$wh
+						order by us_nome";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$dados = array();
+		$sa = '';
+
+		$sx = '<table class="tabela00 lt2" width="100%">';
+		$tot = 0;
+		$tot1 = 0;
+		$xcpf = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$cpf = $line['pg_cpf'];
+			$bg = '';
+			$tot1++;
+			$cor = '';
+			$xcor = '';
+			if ($cpf == $xcpf) { $bg = ' class="danger" style="color: red;" '; $cor = '<font color="red">'; $xcor = '</font>'; }
+			
+			$sx .= '<tr '.$bg.'>';
+			$sx .= '<td align="center" width="30">'.$tot1.'</td>';
+			$sx .= '<td>' . $line['us_nome'] . '</td>';
+			$sx .= '<td align="center">' . stodbr($line['pg_vencimento']) . '</td>';
+			$sx .= '<td>' . mask_cpf($line['pg_cpf']) . '</td>';
+			$sx .= '<td>' . mask_cpf($line['us_cpf']) . '</td>';
+			$sx .= '<td align="right">' . number_format($line['pg_valor'],2,',','.') . '</td>';
+			$sx .= '</tr>';
+			$tot = $tot + $line['pg_valor'];
+			$xcpf = $cpf;
+			
+		}
+		$sx .= '<tr><td colspan=10>Total '.$tot1.' pagamento(s), no valor de '.number_format($tot,2,',','.').'</td></tr>';
+		$sx .= '</table>';
+		return($sx);
+	}
+
+	function consolidado($ano) {
+		$sql = "select substr(pg_vencimento,1,4) as ano, substr(pg_vencimento,5,2) as mes, sum(pg_valor) as valor from ic_pagamentos
+						where substr(pg_vencimento,1,4) > 2000
+						group by ano, mes";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$dados = array();
+		$sa = '';
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$vlr = $line['valor'];
+			$ano = $line['ano'];
+			$mes = round($line['mes']);
+			$dados[$ano][$mes] = $vlr;
+		}
+
+		for ($x = 2010; $x <= date("Y"); $x++) {
+			$sa .= '<tr><td align="center"><b>' . $x . '</b></td>';
+
+			for ($r = 1; $r <= 12; $r++) {
+				if (isset($dados[$x][$r])) {
+					$link = '<a href="' . base_url('index.php/ic/pagamento_detalhado/' . $x . '/' . $r) . '" class="lt2 link">';
+					$sa .= '<td align="right" class="border1 lt3">' . $link . number_format($dados[$x][$r], 2, ',', '.') . '</a>' . '</td>';
+				} else {
+					$sa .= '<td align="center" class="border1 lt3">-</td>';
+				}
+			}
+			$sa .= '</tr>';
+		}
+		$sx = '<h1>Desenbolso consolidado PIBIC</h1>';
+		$sx .= '<table width="100%" class="tabela00">';
+		$sx .= '<tr><th>ano</th>';
+		$mes = meses_short();
+
+		for ($r = 1; $r <= 12; $r++) { $sx .= '<th width="' . round(100 / 12) . '%">' . $mes[$r] . '</th>';
+		}
+		$sx .= '</tr>';
+		$sx .= '' . $sa . '';
+		$sx .= '</table>';
+		return ($sx);
+
+	}
+
+	function gerar_pagamento_bolsa_arquivo_avulso($proto, $valor, $venc) {
+		$fl = $this -> pagamentos -> header_rq();
+		$fl .= $this -> pagamentos -> header_rq2();
+		/*
+		 $fl .= $this->req_pagamento($ln,$venc);
+		 */
+
+		$data = date("Y-m-d");
+		$venc = sonumero($venc);
+		$venc = substr($venc, 0, 4) . '-' . substr($venc, 4, 2) . '-' . substr($venc, 6, 2);
+
+		$sql = "select * from ic_aluno
+					left join us_usuario on us_cracha = ic_aluno_cracha
+					left join ic on ic_id = id_ic  
+					left join ic_modalidade_bolsa on id_mb = mb_id
+					left join us_conta on id_us = us_usuario_id_us
+						where ic_plano_aluno_codigo = '$proto' 
+						and icas_id = 1 
+					order by us_nome ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$vlr = round($valor / count($rlt) * 100) / 100;
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$line['mb_valor'] = $vlr;
+			$fl .= $this -> req_pagamento($line, $venc);
+		}
+		$fl .= $this -> pagamentos -> req_fim();
+
+		$file = $this -> pagamentos -> save_file($fl, $proto, date("Y-m"), $venc);
 		//$fl = '<a href="'.base_url($file).'">Download do Arquivo</a>';
 		return ($fl);
 	}
@@ -383,12 +536,12 @@ class pagamentos extends CI_Model {
 		$sx .= $nome;
 
 		$sx .= strzero($line['mb_id'], 3);
-		
+
 		$vvv = substr($data_nr, 2, 1) . substr($data_nr, 6, 2);
 		//$vvv .= date("Hi");
 		$vvv .= '0' . trim($line['usc_banco']);
 		//$sx .= '1       ';
-		
+
 		$sx .= $vvv . strz($ln, 4);
 		/* Nr. DOC */
 		$sx .= '      ';
@@ -428,7 +581,7 @@ class pagamentos extends CI_Model {
 		 */
 		// Verifiva se o número digitado contém todos os digitos
 
-		$cpf = strzero(sonumero($cpf),11);
+		$cpf = strzero(sonumero($cpf), 11);
 
 		// Verifica se nenhuma das sequências abaixo foi digitada, caso seja, retorna falso
 		if (strlen($cpf) != 11 || $cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
@@ -448,8 +601,279 @@ class pagamentos extends CI_Model {
 		}
 	}
 
-
 	/**************************************************************************************************/
+	function pagamento_por_rateio($proto, $valor, $venc) {
+		$data = date("Y-m-d");
+		$venc = sonumero($venc);
+		$venc = substr($venc, 0, 4) . '-' . substr($venc, 4, 2) . '-' . substr($venc, 6, 2);
+
+		$sql = "select * from ic_aluno
+					left join us_usuario on us_cracha = ic_aluno_cracha
+					left join ic on ic_id = id_ic  
+					left join ic_modalidade_bolsa on id_mb = mb_id
+					left join us_conta on id_us = us_usuario_id_us
+						where ic_projeto_professor_codigo = '$proto' 
+						and icas_id = 1 
+					order by us_nome ";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$to1 = 0;
+		$to2 = 0;
+		$to3 = 0;
+		$to4 = 0;
+		$to1v = 0;
+		$to2v = 0;
+		$to3v = 0;
+
+		$sx = '<br>';
+		$sx .= '<table width="100%" class="lt2 border1" border=0>';
+		$sx .= '<tr>
+						<th width="60%">beneficiário</th>
+						<th width="80">CPF</th>
+						<th width="80">Valor</th>
+						<th width="30">Banco</th>
+						<th width="50">Ag.</th>
+						<th width="30">Mod.</th>
+						<th width="80">CC</th>
+						<th swith="20">Situação</th>
+				</tr>';
+		$xcpf = '';
+
+		$vlr = $valor / count($rlt);
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$cpf = $line['us_cpf'];
+			$cor = '<font>';
+			if ($cpf == $xcpf) {
+				$cor = '<font color="red">';
+				$to4++;
+			}
+			$xcpf = $cpf;
+
+			$sx .= '<tr>';
+			$sx .= '<td class="borderb1">';
+			$sx .= $cor . $line['us_nome'] . '</font>';
+			//$sx .= '('.$line['id_us'].')';
+			$sx .= ' (' . $line['ic_aluno_cracha'] . ')';
+			$sx .= '</td>';
+
+			$sx .= '<td class="borderb1" align="center" width="110"><nobr>';
+			$sx .= $cor . mask_cpf($line['us_cpf']) . '</font>';
+			$sx .= '</nobr></td>';
+
+			$sx .= '<td align="right" class="borderb1" width="110"><nobr>';
+			$sx .= $cor . $line['mb_moeda'] . ' ';
+			$sx .= number_format($vlr, 2, ',', '.') . '</font></nobr>';
+			$sx .= '</td>';
+
+			$ccv = trim($line['usc_conta_corrente']);
+			if ($ccv == '0000000') {$ccv = '<font color="green"><b>ORDEM</b></font>';
+				$to3++;
+				$to3v = $to3v + $vlr;
+			}
+
+			$sx .= '<td class="borderb1" align="center">' . $line['usc_banco'] . '</td>';
+			$sx .= '<td class="borderb1" align="center">' . $line['usc_agencia'] . '</td>';
+			$sx .= '<td class="borderb1" align="center">' . $line['usc_modo'] . '</td>';
+			$sx .= '<td class="borderb1" align="center">' . $ccv . '</td>';
+
+			$banco = $line['usc_banco'];
+			$mod = $line['usc_modo'];
+			$cc = trim($line['usc_conta_corrente']);
+
+			$ag = $line['usc_agencia'];
+
+			$situacao = $this -> bancos -> checadv($ag, $cc, $banco, $mod);
+			$sx .= '<td align="center" class="borderb1">' . $situacao . '</td>';
+
+			$sx .= '</tr>';
+
+			/* */
+			if ($situacao == 'ok') {
+				$to1++;
+				$to1v = $to1v + $vlr;
+			} else {
+				$to2++;
+				$to2v = $to2v + $vlr;
+			}
+		}
+		$sx .= '</table>';
+
+		/* Resumo */
+		$sa = '<table width="100%" class="lt2 border1" border=0>';
+		$sa .= '<tr>';
+		if (isset($rlt[0])) {
+			$sa .= '<td colspan="10" class="lt5">' . $rlt[0]['mb_descricao'] . '</td>';
+		}
+		$sa .= '<td class="lt0" align="center">Total de bolsas<br><font class="lt5">' . ($to1 + $to2) . '</font></td>';
+		$sa .= '<td class="lt0" align="center" class="border1">Total de bolsas válidas<br><font class="lt5">' . ($to1) . '</font></td>';
+		$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5">' . number_format($to1v, 2, ',', '.') . '</font></td>';
+		if ($to4 > 0) {
+			$sa .= '<td class="lt0" align="center" bgcolor="#ffe0e0">Pagamento duplicado<br><font class="lt5" color="red">' . ($to4) . '</font></font></td>';
+		}
+		if ($to3 > 0) {
+			$sa .= '<td class="lt0" align="center">Total de Ordem de Pagamento<br><font class="lt5" color="green">' . ($to3) . '</font></font></td>';
+			$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5" color="green"><b>' . number_format($to3v, 2, ',', '.') . '</b></font></font></td>';
+		}
+		$cor = '<font>';
+		if ($to2 > 0) {
+			$sa .= '<td class="lt0" align="center">Total de bolsas inválidas<br><font class="lt5" color="red">' . ($to2) . '</font></font></td>';
+			$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5" color="red"><b>' . number_format($to2v, 2, ',', '.') . '</b></font></font></td>';
+		}
+		if ($to1 > 0) {
+			$sa .= '<td width="80" class="nopr">';
+			$sa .= '<form method="get" action="' . base_url('index.php/ic/pagamento_planilha_hsbc_rateio/' . $proto . '/' . $valor . '/' . $venc) . '">';
+			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="botao3d back_green_shadown back_green" >';
+			$sa .= '</form>';
+			$sa .= '</td>';
+		}
+		$sa .= '</tr>';
+		$sa .= '</table>';
+
+		return ($sa . $sx);
+	}
+
+	function pagamento_avulso($proto, $valor, $venc) {
+		$data = date("Y-m-d");
+
+		$venc = sonumero($venc);
+		$venc = substr($venc, 0, 4) . '-' . substr($venc, 4, 2) . '-' . substr($venc, 6, 2);
+
+		$sql = "select * from ic_aluno
+					left join us_usuario on us_cracha = ic_aluno_cracha
+					left join ic on ic_id = id_ic  
+					left join ic_modalidade_bolsa on id_mb = mb_id
+					left join us_conta on id_us = us_usuario_id_us
+						where ic_plano_aluno_codigo = '$proto' 
+						and icas_id = 1 
+					order by us_nome ";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) == 0) {
+			return ('<div class="danger">PROTOCOLO NÃO LOCALIZADO</div>');
+		}
+		$to1 = 0;
+		$to2 = 0;
+		$to3 = 0;
+		$to4 = 0;
+		$to1v = 0;
+		$to2v = 0;
+		$to3v = 0;
+
+		$sx = '<br>';
+		$sx .= '<table width="100%" class="lt2 border1" border=0>';
+		$sx .= '<tr>
+						<th width="60%">beneficiário</th>
+						<th width="80">CPF</th>
+						<th width="80">Valor</th>
+						<th width="30">Banco</th>
+						<th width="50">Ag.</th>
+						<th width="30">Mod.</th>
+						<th width="80">CC</th>
+						<th swith="20">Situação</th>
+				</tr>';
+		$xcpf = '';
+
+		$vlr = $valor / count($rlt);
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$cpf = $line['us_cpf'];
+			$cor = '<font>';
+			if ($cpf == $xcpf) {
+				$cor = '<font color="red">';
+				$to4++;
+			}
+			$xcpf = $cpf;
+
+			$sx .= '<tr>';
+			$sx .= '<td class="borderb1">';
+			$sx .= $cor . $line['us_nome'] . '</font>';
+			//$sx .= '('.$line['id_us'].')';
+			$sx .= ' (' . $line['ic_aluno_cracha'] . ')';
+			$sx .= '</td>';
+
+			$sx .= '<td class="borderb1" align="center" width="110"><nobr>';
+			$sx .= $cor . mask_cpf($line['us_cpf']) . '</font>';
+			$sx .= '</nobr></td>';
+
+			$sx .= '<td align="right" class="borderb1" width="110"><nobr>';
+			$sx .= $cor . $line['mb_moeda'] . ' ';
+			$sx .= number_format($vlr, 2, ',', '.') . '</font></nobr>';
+			$sx .= '</td>';
+
+			$ccv = trim($line['usc_conta_corrente']);
+			if ($ccv == '0000000') {$ccv = '<font color="green"><b>ORDEM</b></font>';
+				$to3++;
+				$to3v = $to3v + $vlr;
+			}
+
+			$sx .= '<td class="borderb1" align="center">' . $line['usc_banco'] . '</td>';
+			$sx .= '<td class="borderb1" align="center">' . $line['usc_agencia'] . '</td>';
+			$sx .= '<td class="borderb1" align="center">' . $line['usc_modo'] . '</td>';
+			$sx .= '<td class="borderb1" align="center">' . $ccv . '</td>';
+
+			$banco = $line['usc_banco'];
+			$mod = $line['usc_modo'];
+			$cc = trim($line['usc_conta_corrente']);
+
+			$ag = $line['usc_agencia'];
+
+			$situacao = $this -> bancos -> checadv($ag, $cc, $banco, $mod);
+			$sx .= '<td align="center" class="borderb1">' . $situacao . '</td>';
+
+			$sx .= '</tr>';
+
+			/* */
+			if ($situacao == 'ok') {
+				$to1++;
+				$to1v = $to1v + $vlr;
+			} else {
+				$to2++;
+				$to2v = $to2v + $vlr;
+			}
+		}
+		$sx .= '</table>';
+
+		/* Resumo */
+		$sa = '<table width="100%" class="lt2 border1" border=0>';
+		$sa .= '<tr>';
+		if (isset($rlt[0])) {
+			$sa .= '<td colspan="10" class="lt5">' . $rlt[0]['mb_descricao'] . '</td>';
+		}
+		$sa .= '<td class="lt0" align="center">Total de bolsas<br><font class="lt5">' . ($to1 + $to2) . '</font></td>';
+		$sa .= '<td class="lt0" align="center" class="border1">Total de bolsas válidas<br><font class="lt5">' . ($to1) . '</font></td>';
+		$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5">' . number_format($to1v, 2, ',', '.') . '</font></td>';
+		if ($to4 > 0) {
+			$sa .= '<td class="lt0" align="center" bgcolor="#ffe0e0">Pagamento duplicado<br><font class="lt5" color="red">' . ($to4) . '</font></font></td>';
+		}
+		if ($to3 > 0) {
+			$sa .= '<td class="lt0" align="center">Total de Ordem de Pagamento<br><font class="lt5" color="green">' . ($to3) . '</font></font></td>';
+			$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5" color="green"><b>' . number_format($to3v, 2, ',', '.') . '</b></font></font></td>';
+		}
+		$cor = '<font>';
+		if ($to2 > 0) {
+			$sa .= '<td class="lt0" align="center">Total de bolsas inválidas<br><font class="lt5" color="red">' . ($to2) . '</font></font></td>';
+			$sa .= '<td class="lt0" align="center" class="border1">Valor pago<br><font class="lt5" color="red"><b>' . number_format($to2v, 2, ',', '.') . '</b></font></font></td>';
+		}
+		if ($to1 > 0) {
+			$sa .= '<td width="80" class="nopr">';
+			$sa .= '<form method="get" action="' . base_url('index.php/ic/pagamento_planilha_hsbc_avulso/' . $proto . '/' . $valor . '/' . $venc) . '">';
+			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="botao3d back_green_shadown back_green" >';
+			$sa .= '</form>';
+			$sa .= '</td>';
+		}
+		$sa .= '</tr>';
+		$sa .= '</table>';
+
+		return ($sa . $sx);
+	}
 
 	function gerar_pagamento_bolsa($bolsa = 0, $ano = 0, $venc = 0) {
 		$data = date("Y-m-d");
@@ -938,7 +1362,7 @@ class pagamentos extends CI_Model {
 		$sql .= " order by pg_vencimento desc ";
 		$rlt = db_query($sql);
 		$sx = '<table width="100%" class="tabela01">';
-		
+
 		$sx .= '<TR>';
 		$sx .= '<TD colspan=10>';
 		$sx .= '<H3>' . msg('pagamento') . '</h3>';

@@ -153,17 +153,19 @@ class phpLattess extends CI_Model {
 		}
 
 		$sa = '';
-		$sh = '<tr><th></th>	<th>Total</th>		<th>Total</th>';
-		$sl = '<tr><th></th>	<th>A1+A2+B1</th>	<th>Publicações</th>';
+		$sh = '<tr><th></th>	<th>Total</th>		<th>Total</th>		<th>Total</th>';
+		$sl = '<tr><th></th>	<th>A1+A2+B1</th>	<th>Q1</th>			<th>Publicações</th>';
 		$rd = 0;
 
 		foreach ($rs as $key => $value) {
 			$tot1 = 0;
 			$tot2 = 0;
+			$tot3 = 0;
 
 			$sa .= '<tr>';
 			$sa .= '<td>' . $key . '</td>';
 			$sa .= '<td align="center">$tot1</td>';
+			$sa .= '<td align="center">$tot3</td>';
 			$sa .= '<td align="center">$tot2</td>';
 			$eq = array('Q1', 'A1', 'A2', 'B1', 'B2', 'B3', 'B4', 'B5', 'C', 'nc');
 
@@ -182,6 +184,7 @@ class phpLattess extends CI_Model {
 					if (isset($dados[$r][$v])) {
 						$sa .= '<td align="center" ' . $style . '>' . $dados[$r][$v] . '</td>';
 						if (($v == 'A1') OR ($v == 'A2') OR ($v == 'B1')) { $tot1 = $tot1 + $dados[$r][$v];
+						if (($v == 'Q1')) { $tot3 = $tot3 + $dados[$r][$v]; }
 						} else { $tot2 = $tot2 + $dados[$r][$v];
 						}
 					} else {
@@ -191,6 +194,7 @@ class phpLattess extends CI_Model {
 			}
 			$sa = troca($sa, '$tot1', $tot1);
 			$sa = troca($sa, '$tot2', $tot2);
+			$sa = troca($sa, '$tot3', $tot3);
 			$rd = 1;
 		}
 		$sa = '<table border=0 class="tabela00" width="100%">' . $sh . $sl . $sa . '</table>';
