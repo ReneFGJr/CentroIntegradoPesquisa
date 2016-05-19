@@ -241,6 +241,62 @@ class usuarios extends CI_model {
 
 	}
 
+	function lista_docentes_escola()
+		{
+			$sql = "select * from us_usuario 
+						LEFT JOIN escola ON us_escola_vinculo = id_es
+						LEFT JOIN us_titulacao on usuario_titulacao_ust_id	= ust_id
+					WHERE usuario_tipo_ust_id  = 2 
+						and us_ativo = 1
+						order by es_escola, us_nome ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$tot = 0;
+			$tot2 = 0;
+			$sx = '<table width="100%" class="tabela00 lt1 table">';
+			$sh = ' <tr>
+						<th width="3%">#</th>
+						<th width="3%">##</th>
+						<th width="34%">Nome do docente</th>						
+						<th width="5%">Titulação</th>
+						<th width="15%">Campus</th>
+						<th width="30%">Link Lattes</th>
+						<th width="10%">Lattes Atualização</th>
+					</tr>
+					';
+			$xescola = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					$escola = $line['us_escola_vinculo'];
+					if ($escola != $xescola)
+						{
+							$sx .= '</table>';
+							$sx .= '<br>';
+							$sx .= '<table width="100%" class="tabela00 lt1 table">';
+							$sx .= '<tr>';
+							$sx .= '<td class="lt3" colspan="6">'.$line['es_escola'].'</td></tr>';
+							$sx .= $sh;
+							$xescola = $escola;
+							$tot2 = 0;
+						}
+					$tot++;
+					$tot2++;
+					
+					$sx .= '<tr>';
+					$sx .= '<td align="center">'.$tot.'</td>';
+					$sx .= '<td align="center">'.$tot2.'</td>';
+					$sx .= '<td align="left">'.link_user($line['us_nome'],$line['id_us']).'</td>';
+					$sx .= '<td align="left">'.$line['ust_titulacao_sigla'].'</td>';
+					$sx .= '<td align="left">'.$line['us_campus_vinculo'].'</td>';
+					$sx .= '<td align="left">'.$line['us_link_lattes'].'</td>';
+					$sx .= '<td align="center">'.stodbr($line['us_lattes_update']).'</td>';
+				}
+			$sx .= '</table>';
+			return($sx);
+			
+		}
+
 	function aluno_sem_email() {
 		//$ano_ver = (date("Y") - 1);
 		$ano = date("Y");

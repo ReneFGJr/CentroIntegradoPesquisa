@@ -3,9 +3,12 @@ class phpLattess extends CI_Model {
 	var $qualis = '2014';
 	var $dados = array();
 
-	function producao_ss_artigos_docente($prppg = 0, $ano = '', $grafico = 1, $sigla = '', $detalhado=0) {
-		if (strlen($ano) == 0) {
+	function producao_ss_artigos_docente($prppg = 0, $parm=array() ) {
+		if (isset($parm['detalhado'])) { $detalhado = $parm['detalhado']; }
+		if (!isset($parm['ano'])) {
 			$ano = $this -> qualis;
+		} else {
+			$ano = $parm['ano'];
 		}
 		if ($prppg > 0) {
 			$wh = " programa_pos_id_pp = $prppg and ";
@@ -23,7 +26,7 @@ class phpLattess extends CI_Model {
 					inner join us_usuario on id_us = us_usuario_id_us
 					where $wh sspp_ativo = 1
 				) as tabela
-				inner join cnpq_acpp on acpp_autor = us_nome_lattes
+				left join cnpq_acpp on acpp_autor = us_nome_lattes
 				left join ss_programa_pos on programa_pos_id_pp = id_pp
 				left join webqualis on issn = concat(substr(acpp_issn,1,4),'-',substr(acpp_issn,5,4)) and pp_area = area_id and ano = '$ano'				
 				order by us_nome, acpp_ano, acpp_autores
@@ -31,7 +34,7 @@ class phpLattess extends CI_Model {
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		$sx = '<table width="100%" class="tabela01 lt1">';
+		$sx = '<br><br><hr><br><table width="100%" class="tabela01 lt1">';
 		$tot = 0;
 		$toti = 0;
 		$xano = 0;
@@ -110,7 +113,7 @@ class phpLattess extends CI_Model {
 					inner join us_usuario on id_us = us_usuario_id_us
 					where $wh sspp_ativo = 1
 				) as tabela
-				inner join cnpq_acpp on acpp_autor = us_nome_lattes
+				left join cnpq_acpp on acpp_autor = us_nome_lattes
 				left join (SELECT min(sjr_quartile) as quartil, issn_l as sc_issn_l FROM scimago WHERE 1 group by issn_l) as scimago on sc_issn_l = acpp_issn_link				
 				group by acpp_ano, acpp_autores, acpp_titulo, acpp_periodico, us_nome, 
 							acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, quartil
@@ -193,7 +196,217 @@ class phpLattess extends CI_Model {
 				}
 			}
 			$sa = troca($sa, '$tot1', $tot1);
-			$sa = troca($sa, '$tot2', $tot2);
+			$sa = troca($sa, '$tot2', ($tot1+$tot2));
+			$sa = troca($sa, '$tot3', $tot3);
+			$rd = 1;
+		}
+		$sa = '<div style="page-break-after: always"></div>'.
+			  '<table border=0 class="tabela00" width="100%">' . $sh . $sl . $sa . '</table>';
+		$sa .= '<font style="font-size: 8px">Dados gerados pelo CIP em '.date("d/m/Y");
+		$sx = '<div style="page-break-after: always"></div>' . $sx;
+		
+		/* detalhado */
+		if ($detalhado==1) { $sa .= $sx; }
+			
+		return ($sa);
+	}
+
+	function producao_escola_docente($escola = 0, $parm=array() ) {
+		if (isset($parm['detalhado'])) { $detalhado = $parm['detalhado']; }
+		if (!isset($parm['ano'])) {
+			$ano = $this -> qualis;
+		} else {
+			$ano = $parm['ano'];
+		}
+		if ($escola > 0) {
+			$wh = " us_escola_vinculo = $escola and usuario_tipo_ust_id = 2 and ";
+		} else {
+			$wh = '';
+		}
+
+		// , min(sjr_quartile) as estrato
+
+		$sql = "
+			select distinct acpp_ano, acpp_autores, acpp_titulo, acpp_periodico, us_nome,
+				acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, estrato					
+				FROM (
+				SELECT distinct id_us, us_nome, us_nome_lattes, us_cracha, us_area_conhecimento 
+					FROM us_usuario 
+					where $wh us_ativo = 1
+				) as tabela
+				left join cnpq_acpp on acpp_autor = us_nome_lattes
+				left join webqualis on issn = concat(substr(acpp_issn,1,4),'-',substr(acpp_issn,5,4)) 
+					and us_area_conhecimento = area_id and ano = '$ano'				
+				order by us_nome, acpp_ano, acpp_autores
+			";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<br><br><hr><br><table width="100%" class="tabela01 lt1">';
+		$tot = 0;
+		$toti = 0;
+		$xano = 0;
+		$xnome = '';
+
+		$rs = array();
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$nome = $line['us_nome'];
+
+			$ano = $line['acpp_ano'];
+
+			if ($nome != $xnome) {
+				$sx .= '<tr><td class="lt4" colspan=10><b>' . $nome . '</b></td></tr>';
+				$xnome = $nome;
+				$toti = 0;
+			}
+
+			if ($ano != $xano) {
+				$sx .= '<tr><td class="lt3" colspan=10><b>' . $ano . '</b></td></tr>';
+				$xano = $ano;
+				$toti = 0;
+			}
+
+			$tot++;
+			$toti++;
+
+			$sx .= '<tr valign="top">';
+			$sx .= '<td align="center">';
+			$sx .= $toti;
+			$sx .= '</td>';
+			$sx .= '<td>';
+			$sx .= $line['acpp_ano'];
+			$sx .= '</td>';
+
+			$sx .= '<td>';
+			$sx .= $line['acpp_autores'] . '. ';
+			$sx .= $line['acpp_titulo'] . '. ';
+			$sx .= $line['acpp_periodico'];
+			if (strlen($line['acpp_volume']) > 0) { $sx .= ', v. ' . $line['acpp_volume'];
+			}
+			if (strlen($line['acpp_fasciculo']) > 0) { $sx .= ', n. ' . $line['acpp_fasciculo'];
+			}
+			if (strlen($line['acpp_pg_ini']) > 0) {
+				$sx .= ', p. ' . $line['acpp_pg_ini'];
+			}
+			$sx .= '</td>';
+
+			$sx .= '<td><nobr>';
+			$sx .= substr($line['acpp_issn_link'], 0, 4) . '-' . substr($line['acpp_issn_link'], 4, 4);
+			$sx .= '</nobr></td>';
+
+			$sx .= '<td align="center">' . $line['estrato'] . '</td>';
+
+			/* Monta Matrix */
+			$estrato = $line['estrato'];
+			if ($estrato == '') { $estrato = 'nc';
+			}
+
+			if (isset($rs[$nome][$ano][$estrato])) {
+				$rs[$nome][$ano][$estrato] = $rs[$nome][$ano][$estrato] + 1;
+			} else {
+				$rs[$nome][$ano][$estrato] = 1;
+			}
+			$sx .= cr();
+		}
+		$sx .= '</table>';
+
+		/* Quartil */
+		$sql = "
+			select distinct acpp_ano, acpp_autores, acpp_titulo, acpp_periodico, us_nome,
+				acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, quartil as estrato					
+				FROM (
+				SELECT distinct id_us, us_nome, us_nome_lattes, us_cracha, us_area_conhecimento
+					FROM us_usuario 
+					where $wh us_ativo = 1
+				) as tabela
+				left join cnpq_acpp on acpp_autor = us_nome_lattes
+				left join (SELECT min(sjr_quartile) as quartil, issn_l as sc_issn_l FROM scimago WHERE 1 group by issn_l) as scimago on sc_issn_l = acpp_issn_link				
+				group by acpp_ano, acpp_autores, acpp_titulo, acpp_periodico, us_nome, 
+							acpp_volume, acpp_fasciculo, acpp_pg_ini, acpp_issn_link, quartil
+				order by us_nome, acpp_ano, acpp_autores
+			";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$tot = 0;
+		$toti = 0;
+		$xano = 0;
+
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+
+			$nome = $line['us_nome'];
+
+			$ano = $line['acpp_ano'];
+
+			if ($ano != $xano) {
+				$xano = $ano;
+				$toti = 0;
+			}
+
+			$tot++;
+			$toti++;
+
+			/* Monta Matrix */
+			$estrato = $line['estrato'];
+			if ($estrato == '') { $estrato = 'qnc';
+			}
+
+			if (isset($rs[$nome][$ano][$estrato])) {
+				$rs[$nome][$ano][$estrato] = $rs[$nome][$ano][$estrato] + 1;
+			} else {
+				$rs[$nome][$ano][$estrato] = 1;
+			}
+
+		}
+
+		$sa = '';
+		$sh = '<tr class="lt0"><th></th><th></th>	<th>Total</th>		<th>Total</th>		<th>Total</th>';
+		$sl = '<tr class="lt0"><th>#</th><th>docente</th>	<th>A1+A2+B1</th>	<th>Q1</th>			<th>Publicações</th>';
+		$rd = 0;
+		$tot4 = 0;
+		foreach ($rs as $key => $value) {
+			$tot1 = 0;
+			$tot2 = 0;
+			$tot3 = 0;
+			$tot4++;
+
+			$sa .= '<tr>';
+			$sa .= '<td>' . $tot4 . '</td>';
+			$sa .= '<td>' . $key . '</td>';			
+			$sa .= '<td align="center">$tot1</td>';
+			$sa .= '<td align="center">$tot3</td>';
+			$sa .= '<td align="center">$tot2</td>';
+			$eq = array('Q1', 'A1', 'A2', 'B1', 'B2', 'B3', 'B4', 'B5', 'C', 'nc');
+
+			for ($r = (date("Y")-3); $r <= date("Y"); $r++) {
+				if ($rd == 0) { $sh .= '<th colspan="' . count($eq) . '">' . $r . '</th>';
+				}
+
+				$dados = $rs[$key];
+				for ($q = 0; $q < count($eq); $q++) {
+					$style = '';
+					if ($q == 0) { $style = ' style="border-left: 2px solid #000000;" ';
+					}
+					$v = $eq[$q];
+					if ($rd == 0) { $sl .= '<th>' . $v . '</th>';
+					}
+					if (isset($dados[$r][$v])) {
+						$sa .= '<td align="center" ' . $style . '>' . $dados[$r][$v] . '</td>';
+						if (($v == 'Q1')) { $tot3 = $tot3 + $dados[$r][$v]; }
+						if (($v == 'A1') OR ($v == 'A2') OR ($v == 'B1')) { $tot1 = $tot1 + $dados[$r][$v];						
+						} else { $tot2 = $tot2 + $dados[$r][$v];
+						}
+					} else {
+						$sa .= '<td align="center" ' . $style . '>-</td>';
+					}
+				}
+			}
+			$sa = troca($sa, '$tot1', $tot1);
+			$sa = troca($sa, '$tot2', ($tot1+$tot2));
 			$sa = troca($sa, '$tot3', $tot3);
 			$rd = 1;
 		}

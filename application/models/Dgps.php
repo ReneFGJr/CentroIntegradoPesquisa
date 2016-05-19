@@ -329,7 +329,10 @@ class dgps extends CI_model {
 	}
 
 	function resumo($data) {
-		$sql = "select count(*) as total from " . $this -> tabela . " where 1=1 ";
+		$sql = "select count(*) as total 
+					from " . $this -> tabela . " 
+					INNER JOIN gp_situacao on id_gps = gps_id
+					WHERE gpd_contabiliza = 1 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -343,9 +346,11 @@ class dgps extends CI_model {
 
 		$sql = "SELECT count(*) as total, gprh_gp_id, gprh_recurso_humano
 						FROM gp_usuario 
+						inner join " . $this -> tabela . " on gp_id = id_gp
 						inner join gp_recursos_humanos on gprh_gp_id = id_gprh
 						inner join gpus_cnpq on id_gpus_cnpq = gp_usuario.us_id
-						WHERE gpus_test = 0
+						INNER JOIN gp_situacao on id_gps = gps_id
+						WHERE gpus_test = 0 and gpd_contabiliza = 1						
 						group by gprh_gp_id
 					";
 		$rlt = $this -> db -> query($sql);
@@ -355,6 +360,28 @@ class dgps extends CI_model {
 			$data['total_' . $line['gprh_gp_id']] = $line['total'];
 		}
 		return ($data);
+	}
+	
+	function resumo_situacao() {
+		$sql = "select count(*) as total , gps_situacao
+					from " . $this -> tabela . " 
+					INNER JOIN gp_situacao on id_gps = gps_id 
+					group by gps_situacao ";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<br><table class="captacao_folha lt1 border1 black" width="100%">';
+		for ($r=0;$r < count($rlt);$r++)
+			{
+				$line = $rlt[$r];
+				$sx .= '<tr>';
+				$sx .= '<td align="left" class="borderb1">'.$line['gps_situacao'].'</td>';
+				$sx .= '<td align="center" class="borderb1 lt4"><b>'.$line['total'].'</b></td>';
+				$sx .= '</tr>';
+			}
+		$sx .= '</table>';
+		return ($sx);
 	}
 
 	function grava_dados_importados($dt, $id, $link) {

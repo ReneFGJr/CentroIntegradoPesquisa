@@ -263,6 +263,10 @@ class stricto_sensu extends CI_Controller {
 			case 'artigo_docente' :
 				$tela = $this -> phplattess -> producao_ss_artigos_docente($ppg);
 				break;
+			case 'artigo_docente_detalhe' :
+				$parm = array('detalhado'=>'1');
+				$tela = $this -> phplattess -> producao_ss_artigos_docente($ppg, $parm);
+				break;
 			case 'livros' :
 				$tela = $this -> phplattess -> producao_ss_bibliografica($ppg, 'LIVRO');
 				break;
@@ -274,6 +278,50 @@ class stricto_sensu extends CI_Controller {
 				break;
 			case 'eventos' :
 				$tela = $this -> phplattess -> producao_ss_eventos($ppg, 'EVENC');
+				break;
+			case 'escola' :
+				$parm = array('detalhado'=>'1');
+				$tela = $this -> phplattess -> producao_escola_docente($ppg, $parm);
+				break;				
+		}
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+	}
+
+	function producoes_escola($tipo = '', $escola = 0) {
+		$this -> load -> model('phplattess');
+		$this -> load -> model('escolas');
+		$this -> cab();
+
+		if ($escola > 0) {
+			$data = $this -> escolas -> le($escola);
+			$this -> load -> view('escola/detalhes', $data);
+		}
+
+		$tela = $tipo;
+		switch($tipo) {
+			case 'escola' :
+				//$tela = $this -> phplattess -> producao_ss_artigos($ppg);
+				break;
+			case 'artigo_docente' :
+				$parm = array('detalhado'=>'0');
+				$tela = $this -> phplattess -> producao_escola_docente($escola, $parm);
+				break;
+			case 'artigo_docente_detalhe' :
+				$parm = array('detalhado'=>'1');
+				$tela = $this -> phplattess -> producao_escola_docente($escola, $parm);
+				break;
+			case 'livros' :
+				//$tela = $this -> phplattess -> producao_ss_bibliografica($ppg, 'LIVRO');
+				break;
+			case 'capitulos' :
+				//$tela = $this -> phplattess -> producao_ss_bibliografica($ppg, 'CAPIT');
+				break;
+			case 'organizado' :
+				//$tela = $this -> phplattess -> producao_ss_bibliografica($ppg, 'ORGAN');
+				break;
+			case 'eventos' :
+				//$tela = $this -> phplattess -> producao_ss_eventos($ppg, 'EVENC');
 				break;
 		}
 		$data['content'] = $tela;
@@ -296,6 +344,7 @@ class stricto_sensu extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Produção', '<b>Artigos Científicos</b>', 'ITE', '/stricto_sensu/producoes/artigo/' . $id));
 		array_push($menu, array('Produção', '__Consolidado da produção docente', 'ITE', '/stricto_sensu/producoes/artigo_docente/' . $id));
+		array_push($menu, array('Produção', '__Detalhado da produção docente', 'ITE', '/stricto_sensu/producoes/artigo_docente_detalhe/' . $id));
 		//array_push($menu, array('Produção', '__Distribuição anual do programa', 'ITE', '/stricto_sensu/producoes/artigo_docente_anual/' . $id));
 		array_push($menu, array('Produção', 'Anais eventos', 'ITE', '/stricto_sensu/producoes/anais/' . $id));
 		array_push($menu, array('Produção', 'Livros', 'ITE', '/stricto_sensu/producoes/livros/' . $id));
@@ -508,13 +557,12 @@ class stricto_sensu extends CI_Controller {
 
 		$data['content'] = $this -> stricto_sensus -> linhas_do_programa_docentes($id);
 		$this -> load -> view('content', $data);
-		
-		if (perfil("#ADM") == 1)
-			{
-				$sx = '<a href="'.base_url('index.php/cnpq_ws/harvesting_ppg/'.$id.'/1/0').'" target="_new" class="link lt1">Coletar Lattes</a>';
-				$data['content'] = $sx;
-				$this -> load -> view('content', $data);
-			}
+
+		if (perfil("#ADM") == 1) {
+			$sx = '<a href="' . base_url('index.php/cnpq_ws/harvesting_ppg/' . $id . '/1/0') . '" target="_new" class="link lt1">Coletar Lattes</a>';
+			$data['content'] = $sx;
+			$this -> load -> view('content', $data);
+		}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -556,7 +604,7 @@ class stricto_sensu extends CI_Controller {
 			$tabela = 'ss_professor_programa_linha';
 
 			$this -> load -> model('stricto_sensus');
-			$this -> load -> view ('header/header', null);
+			$this -> load -> view('header/header', null);
 			$data = array();
 
 			$form = new form;

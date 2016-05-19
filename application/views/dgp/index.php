@@ -85,7 +85,10 @@
 					<td align="right">Total de egressos em grupos de pesquisa</td>
 					<td class="lt6">' . ($total_9 + $total_11) . '</td>
 				</tr>												
-			</table></td>
+			</table>
+			
+			'.$resumo_situacao.'
+			</td>
 			<td style="width:10px; border-left:1px solid #333333;"></td>
 			<td width="78%">Últimos grupos atualizados';
 

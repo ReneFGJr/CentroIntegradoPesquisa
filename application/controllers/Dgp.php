@@ -146,6 +146,7 @@ class dgp extends CI_Controller {
 		$data = array();
 		$data['acoes'] = $this -> dgps -> acoes();
 		$data = $this -> dgps -> resumo($data);
+		$data['resumo_situacao'] = $this -> dgps -> resumo_situacao();
 		$this -> load -> view('dgp/index', $data);
 		$this -> load -> view('dgp/view_mygroups', $data);
 		$this -> load -> view('dgp/view_indicadores', $data);
@@ -356,7 +357,7 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function lista_grupos() {
+	function lista_grupos($id=0) {
 		/* Load Models */
 		$this -> load -> model('dgps');
 
@@ -365,7 +366,8 @@ class dgp extends CI_Controller {
 		$this -> load -> view('header/content_open');
 
 		$form = new form;
-		$form -> tabela = $this -> dgps -> tabela;
+		$tabela = "(select * from ".$this -> dgps -> tabela." inner join gp_situacao on id_gps = gps_id) as dgp"; 
+		$form -> tabela = $tabela;
 		$form -> see = true;
 		$form -> novo = true;
 		$form -> edit = true;
@@ -373,7 +375,7 @@ class dgp extends CI_Controller {
 
 		$form -> row_edit = base_url('index.php/dgp/edit');
 		$form -> row_view = base_url('index.php/dgp/view');
-		$form -> row = base_url('index.php/dgp');
+		$form -> row = base_url('index.php/dgp/lista_grupos');
 
 		$tela['tela'] = row($form, $id);
 

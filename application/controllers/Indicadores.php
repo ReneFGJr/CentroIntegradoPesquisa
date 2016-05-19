@@ -138,6 +138,7 @@ class indicadores extends CI_Controller {
 
 	function docente($tipo = '', $fmt = '') {
 		$this -> load -> model('produtividades');
+		$this -> load -> model('usuarios');
 		$this -> load -> model('ics');
 		$editar = 1;
 
@@ -188,6 +189,10 @@ class indicadores extends CI_Controller {
 				$data['submenu'] = '<A href="' . base_url('index.php/stricto_sensu/docente/' . $tipo . '/xls') . '" class="link lt0">' . msg('export_to_excel') . '</a>';
 				$data['content'] = $this -> stricto_sensus -> lista_docentes();
 				break;
+			case 'escola':
+				$data['title'] = 'Docentes por Escola<i>stricto sensu</i>';
+				$data['submenu'] = '<A href="' . base_url('index.php/indicadores/docente/' . $tipo . '/xls') . '" class="link lt0">' . msg('export_to_excel') . '</a>';
+				$data['content'] = $this -> usuarios -> lista_docentes_escola();				
 		}
 
 		$this -> load -> view('content', $data);
@@ -294,9 +299,11 @@ class indicadores extends CI_Controller {
 
 		/* Menu de botões na tela Admin*/
 		$menu = array();
-		array_push($menu, array('Pesquisa', 'Docentes atuantes em Pesquisa', 'ITE', '/indicadores/docente/pesquisa/'));
+		
 		array_push($menu, array('Pesquisa', 'Bolsista Produtividade', 'ITE', '/indicadores/docente/produtividade/'));
-		array_push($menu, array('Pesquisa', 'Professores stricto sensu', 'ITE', '/indicadores/docente/ss/'));
+		array_push($menu, array('Pesquisa', '__Docentes atuantes em Pesquisa', 'ITE', '/indicadores/docente/pesquisa/'));
+		array_push($menu, array('Pesquisa', '__Docentes stricto sensu', 'ITE', '/indicadores/docente/ss/'));
+		array_push($menu, array('Pesquisa', '__Docentes por escolas', 'ITE', '/indicadores/docente/escola/'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
