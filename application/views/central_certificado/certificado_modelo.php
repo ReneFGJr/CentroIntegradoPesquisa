@@ -38,12 +38,20 @@ $certificado = mst($certificado);
 $certificado = utf8_encode($certificado);
 $pdf -> writeHTMLCell(0, 0, '', '', $certificado, 0, 2, 0, true, 'J', true);
 
-/* Assinatura */
+/* Assinatura 1*/
 if (strlen($cdm_assinaturas) > 0) {
 	$x = $cdm_assinaturas_y;
 	$y = $cdm_assinaturas_x;
 	$pdf -> setxy($x, $y);
 	$pdf -> writeHTMLCell(0, 0, '', '', $cdm_assinaturas, 0, 2, 0, true, 'J', true);
+}
+
+/* Assinatura 2*/
+if (strlen($cdm_assinatura_2) > 0) {
+	$a2_x = $cdm_set_x_ass_2;
+	$a2_y = $cdm_set_y_ass_2;
+	$pdf -> setxy($a2_x, $a2_y);
+	$pdf -> writeHTMLCell(0, 0, '', '', $cdm_assinatura_2, 0, 2, 0, true, 'J', true);
 }
 
 // QRCODE,L : QR-CODE Low error correction
@@ -61,9 +69,12 @@ $style = array(
 
 if ($cdm_qrcode == '1')
 {
-	$pdf->write2DBarcode(base_url('index.php/central_declaracao/validador/'.$id_dc.'/'.substr(checkpost_link($id_dc.'certificado'),4,6)), 'QRCODE,L', 170, 250, 30, 30, $style, 'N');
+	$x_qrc = $cdm_set_qrcode_x;
+	$y_qrc = $cdm_set_qrcode_y;
+	
+	$pdf->write2DBarcode(base_url('index.php/central_declaracao/validador/'.$id_dc.'/'.substr(checkpost_link($id_dc.'certificado'),4,6)), 'QRCODE,L', $x_qrc, $y_qrc, 30, 30, $style, 'N');
 	$pdf -> SetFont('helvetica', '', 6);
-	$pdf->Text(174, 281, utf8_encode('LINK DE VALIDAÇÂO'));
+	$pdf->Text(174, $y_qrc+31, utf8_encode('LINK DE VALIDAÇÂO'));
 }
 
 $pdf -> SetFont('helvetica', '', 6);
