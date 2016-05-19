@@ -31,9 +31,9 @@ class Fomentos extends CI_model {
 				array_push($cp,array('$T70:3','ed_titulo',msg('fm_titulo'),True,True));
 				array_push($cp,array('$S20','ed_chamada', msg('fm_chamada'), True, True));
 				array_push($cp,array('$Q id_agf:agf_nome:'.$sql_fomento_agencia,'ed_agencia',msg('fm_agencia'),true,True));
-				array_push($cp,array('$Q id_ftp:ftp_nome:'.$sql_fomento_tipo,'ed_idioma',msg('fm_tipo_edital'),true,True));
+				array_push($cp,array('$Q id_ftp:ftp_nome:'.$sql_fomento_tipo,'ed_edital_tipo',msg('fm_tipo_edital'),true,True));
 				array_push($cp,array('$Q id_m:m_descricao:'.$sql_dissiminador, 'ed_local', msg('fm_disseminador'), False, True));
-				array_push($cp,array('$Q id_i:i_nome:'.$sql_idioma,'ed_edital_tipo',msg('fm_idioma'),true,True));
+				array_push($cp,array('$Q id_i:i_nome:'.$sql_idioma,'ed_idioma',msg('fm_idioma'),true,True));
 				array_push($cp,array('$S70','ed_titulo_email',msg('fm_titulo_email'),false,True));
 				array_push($cp,array('$HV', 'ed_dt_create', date("Y-m-d"), False, True));
 				array_push($cp,array('$S70','ed_url_externa',msg('fm_url_externa'),false,True));

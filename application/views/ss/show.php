@@ -75,24 +75,22 @@
 	<!---- AREAS --->
 	<tr><td style="height: 10px;"></td></tr>
 	<tr class="lt0">
-		<td colspan=2>Escola / Centro</td>		
-		<td colspan=1>Secretaria</td>
-		<td colspan=2>Contatos</td>
+		<td colspan=2>Escola</td>		
+		<td colspan=2>Secretaria</td>
+		<td colspan=1>Contatos</td>
 	</tr>
 	
-	<tr>
+	<tr valign="top">
 		<td colspan=2>
-			<?php echo $area_avaliacao_nome; ?>
+			<?php /*echo $area_avaliacao_nome; */ ?>
 		</td>
-		<td colspan=1>
+		<td colspan=2>
 			<?php echo $us_secretaria_1; ?><br>
 			<?php echo $us_secretaria_2; ?><br>
 		</td>
-		<td colspan=2>
-			<?php echo $pp_fone1  ?><br>
-			<?php echo $pp_fone2  ?><br>
-			<?php echo $pp_email1 ?><br>
-			<?php echo $pp_email2 ?>
+		<td colspan=1>
+			<?php echo $pp_fone1  ?> <?php echo $pp_fone2  ?><br>
+			<?php echo $pp_email1 ?> <?php echo $pp_email2 ?>
 		</td>		
 	</tr>	
 </table>

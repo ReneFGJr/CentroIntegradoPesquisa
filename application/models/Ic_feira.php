@@ -168,6 +168,8 @@ class ic_feira extends CI_model {
 		if (strlen($projeto['pj_coment']) > 0) { $vd[3] = $class_ok;
 			$vdt[3] = $ok;
 		}
+		$vd[3] = $class_ok;
+		$vdt[3] = $ok;
 
 		/* REGRA - arquivos postados */
 		$proto = $projeto['pj_codigo'];

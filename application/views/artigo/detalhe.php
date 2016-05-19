@@ -35,6 +35,24 @@
 	<tr><td colspan=4>publicação</td></tr>
 	<tr><td colspan=4 class="lt4"><?php echo $ar_journal;?></td></tr>	
 
-	<tr><td colspan=4>DOI</td></tr>
-	<tr><td colspan=4 class="lt4"><?php echo $ar_doi;?>&nbsp;</td></tr>	
+	<tr><td colspan=2>DOI</td>
+		<td colspan=1>Indicado como:</td>
+		<?php if (perfil("#ADM")==1) { echo '<td colspan=1>Bonificar como:</td>'; } ?>
+	</tr>
+	<tr valign="top">
+		<td colspan=2 class="lt4"><?php echo $ar_doi;?>&nbsp;</td>
+		<td colspan=1 class="lt4"><?php echo $ar_q. ' '.$ar_a.' '.$ar_er;?> &nbsp;</td>
+		<?php if (perfil("#ADM")==1) {
+			echo '<td colspan=1 class="lt2">';
+			echo 'A1: '.number_format($ar_v1,2,',','.').'<br>';
+			echo 'A2: '.number_format($ar_v2,2,',','.').'<br>';
+			echo 'Q1: '.number_format($ar_v3,2,',','.').'<br>';
+			//echo 'ExR: '.number_format($ar_v4,2,',','.').'<br>';
+			//echo 'Colaboração: '.number_format($ar_v5,2,',','.').'<br>';
+			echo 'Total: <b>'.number_format($ar_v1+$ar_v2+$ar_v3+$ar_v4+$ar_v5,2,',','.').'</b><br>';
+			echo '<a href="#" onclick="newwin(\''.base_url('index.php/artigo/editar_valor/'.$id_ar.'/'.checkpost_link($id_ar)).'\',600,600);" class="link lt1">editar</a>';
+			echo '</td>'; 
+			} 
+		?>		
+	</tr>	
 </table>

@@ -51,7 +51,7 @@ class artigos extends CI_Model {
 				
 				select * from captacao_historico 
 						left join cip_artigo_status on cas_status = bnh_ope
-						LEFT JOIN us_usuario ON bnh_log = id_us
+						LEFT JOIN us_usuario ON id_us = 0
 						WHERE bnh_protocolo = '$prot2'
 						
 				ORDER BY bnh_data desc, bnh_hora desc ";
@@ -247,7 +247,11 @@ class artigos extends CI_Model {
 	}
 
 	function acao_artigo($proto, $tp) {
+		$this->load->model('mensagens');
 		$data = date("Y-m-d");
+		
+		$artigo = $this->le($proto);
+		$user = $this->usuarios->le_cracha($artigo['ar_professor']);
 		
 		switch ($tp) {
 			case '0' :
@@ -280,6 +284,14 @@ class artigos extends CI_Model {
 
 			case '4' :
 				// Devolver ao professor para correção  COORDENADOR OU SECRETARIA//
+				
+				/* Enviar e-mail para professor */
+				$dados = array_merge($user,$artigo);
+				$dados['motivo'] = get("dd2");
+				$msg = $this->mensagens->busca('artigo_devolver_professor',$dados);
+				enviaremail_usuario(1,$msg['nw_titulo'],$msg['nw_texto'],$msg['nw_own']);
+				enviaremail_usuario($dados['id_us'],$msg['nw_titulo'],$msg['nw_texto'],$msg['nw_own']);
+
 				$sql = "update cip_artigo set 
 								ar_bonificacao = 0,
 								ar_status = 1,
@@ -291,6 +303,8 @@ class artigos extends CI_Model {
 				} else {
 					$desc = '';
 				}
+				
+				
 
 				$this -> artigos -> insere_historico($proto, '1', $desc);
 				return (1);
@@ -862,7 +876,7 @@ class artigos extends CI_Model {
 						left join cip_artigo_status on ar_status = cas_status 
 						left join us_usuario on us_cracha = ar_professor
 					where ar_status = $sit
-					order by ar_update desc
+					order by ar_issn, ar_titulo, ar_update desc
 					";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -938,6 +952,37 @@ class artigos extends CI_Model {
 		$sx .= '</table>';
 		return ($sx);
 	}
+	function cp_tipo_pagamento()
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_ar','',False,True));
+			array_push($cp,array('$C1','ar_c1','Artigo A1',False,True));
+			array_push($cp,array('$C1','ar_c2','Artigo A2',False,True));
+			array_push($cp,array('$C1','ar_c3','Artigo Q1',False,True));
+			array_push($cp,array('$C1','ar_c4','Artigo ExR',False,True));
+			array_push($cp,array('$C1','ar_c5','Artigo Colaboração Internacional',False,True));
+			return($cp);			
+		}
+	function atualiza_valores_bonificacao($id)
+		{
+			$vlr = array(0,1200,1000,1500,0,0);
+			$sql = "select * from cip_artigo where id_ar = ".$id;
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			if (count($rlt) > 0)
+				{
+					$line = $rlt[0];
+					$sql = "update cip_artigo set
+								ar_v1 = ".($vlr[1] * round($line['ar_c1'])).",
+								ar_v2 = ".($vlr[2] * round($line['ar_c2'])).",
+								ar_v3 = ".($vlr[3] * round($line['ar_c3'])).",
+								ar_v4 = ".($vlr[4] * round($line['ar_c4'])).",
+								ar_v5 = ".($vlr[5] * round($line['ar_c5']))."								
+							where id_ar = ".$id;
+					$this->db->query($sql);					
+				}
+			return('');
+		}
 
 }
 ?>

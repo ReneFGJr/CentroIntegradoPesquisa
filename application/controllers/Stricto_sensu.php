@@ -294,8 +294,9 @@ class stricto_sensu extends CI_Controller {
 
 		/************* MENU */
 		$menu = array();
-		array_push($menu, array('Produção', 'Artigos Científicos', 'ITE', '/stricto_sensu/producoes/artigo/' . $id));
-		array_push($menu, array('Produção', 'Artigos Científicos por docente', 'ITE', '/stricto_sensu/producoes/artigo_docente/' . $id));
+		array_push($menu, array('Produção', '<b>Artigos Científicos</b>', 'ITE', '/stricto_sensu/producoes/artigo/' . $id));
+		array_push($menu, array('Produção', '__Consolidado da produção docente', 'ITE', '/stricto_sensu/producoes/artigo_docente/' . $id));
+		//array_push($menu, array('Produção', '__Distribuição anual do programa', 'ITE', '/stricto_sensu/producoes/artigo_docente_anual/' . $id));
 		array_push($menu, array('Produção', 'Anais eventos', 'ITE', '/stricto_sensu/producoes/anais/' . $id));
 		array_push($menu, array('Produção', 'Livros', 'ITE', '/stricto_sensu/producoes/livros/' . $id));
 		array_push($menu, array('Produção', 'Livros Organizados', 'ITE', '/stricto_sensu/producoes/organizado/' . $id));

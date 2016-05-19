@@ -356,12 +356,17 @@ class Artigo extends CI_Controller {
 		}
 				
 		if (perfil($data['cas_perfil'] . '#ADM') == 1) {
-			
+
 			/* EM CADASTRO */
 			if ($data['ar_status'] == 1) {
 				$this -> load -> view('artigo/form_secretaria_validacao', $data);
 			}			
 			
+			/* CORREÇÂO DO PROFESSOR */
+			if ($data['ar_status'] == 8) {
+				$this -> load -> view('artigo/form_secretaria_validacao', $data);
+			}			
+
 			/* Validacao da secretaria */
 			if ($data['ar_status'] == 80) {
 				$this -> load -> view('artigo/form_secretaria_validacao', $data);
@@ -396,6 +401,30 @@ class Artigo extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', null);
 	}
+
+	function editar_valor($id=0,$chk='')
+		{
+			if ($chk != checkpost_link($id))
+				{
+					echo 'ERRO DE POST';
+					exit;
+				}
+			$this->load->model('artigos');
+			$artigo = $this->artigos->le($id);
+			
+			$cp = $this->artigos->cp_tipo_pagamento();
+			$form = new form;
+			$form->id = $id;
+			$tela = $form->editar($cp,'cip_artigo');
+			$data['content'] = $tela;
+			$this->load->view('content',$data);	
+			
+			if ($form->saved > 0)
+				{
+					$this->artigos->atualiza_valores_bonificacao($id);
+					$this->load->view('header/windows_close',null);
+				}			
+		}
 
 }
 ?>

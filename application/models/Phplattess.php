@@ -3,7 +3,7 @@ class phpLattess extends CI_Model {
 	var $qualis = '2014';
 	var $dados = array();
 
-	function producao_ss_artigos_docente($prppg = 0, $ano = '', $grafico = 1, $sigla = '') {
+	function producao_ss_artigos_docente($prppg = 0, $ano = '', $grafico = 1, $sigla = '', $detalhado=0) {
 		if (strlen($ano) == 0) {
 			$ano = $this -> qualis;
 		}
@@ -153,8 +153,8 @@ class phpLattess extends CI_Model {
 		}
 
 		$sa = '';
-		$sh = '<tr><th></th>	<th>Total</th>		<th>Total</th>		<th>Total</th>';
-		$sl = '<tr><th></th>	<th>A1+A2+B1</th>	<th>Q1</th>			<th>Publicações</th>';
+		$sh = '<tr class="lt0"><th></th>	<th>Total</th>		<th>Total</th>		<th>Total</th>';
+		$sl = '<tr class="lt0"><th></th>	<th>A1+A2+B1</th>	<th>Q1</th>			<th>Publicações</th>';
 		$rd = 0;
 
 		foreach ($rs as $key => $value) {
@@ -169,7 +169,7 @@ class phpLattess extends CI_Model {
 			$sa .= '<td align="center">$tot2</td>';
 			$eq = array('Q1', 'A1', 'A2', 'B1', 'B2', 'B3', 'B4', 'B5', 'C', 'nc');
 
-			for ($r = 2013; $r <= date("Y"); $r++) {
+			for ($r = (date("Y")-3); $r <= date("Y"); $r++) {
 				if ($rd == 0) { $sh .= '<th colspan="' . count($eq) . '">' . $r . '</th>';
 				}
 
@@ -183,8 +183,8 @@ class phpLattess extends CI_Model {
 					}
 					if (isset($dados[$r][$v])) {
 						$sa .= '<td align="center" ' . $style . '>' . $dados[$r][$v] . '</td>';
-						if (($v == 'A1') OR ($v == 'A2') OR ($v == 'B1')) { $tot1 = $tot1 + $dados[$r][$v];
 						if (($v == 'Q1')) { $tot3 = $tot3 + $dados[$r][$v]; }
+						if (($v == 'A1') OR ($v == 'A2') OR ($v == 'B1')) { $tot1 = $tot1 + $dados[$r][$v];						
 						} else { $tot2 = $tot2 + $dados[$r][$v];
 						}
 					} else {
@@ -197,9 +197,15 @@ class phpLattess extends CI_Model {
 			$sa = troca($sa, '$tot3', $tot3);
 			$rd = 1;
 		}
-		$sa = '<table border=0 class="tabela00" width="100%">' . $sh . $sl . $sa . '</table>';
-
-		return ($sa . $sx);
+		$sa = '<div style="page-break-after: always"></div>'.
+			  '<table border=0 class="tabela00" width="100%">' . $sh . $sl . $sa . '</table>';
+		$sa .= '<font style="font-size: 8px">Dados gerados pelo CIP em '.date("d/m/Y");
+		$sx = '<div style="page-break-after: always"></div>' . $sx;
+		
+		/* detalhado */
+		if ($detalhado==1) { $sa .= $sx; }
+			
+		return ($sa);
 	}
 
 	function producao_ss_artigos($prppg = 0, $ano = '') {

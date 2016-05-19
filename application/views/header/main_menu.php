@@ -6,6 +6,7 @@
 	for ($r = 0; $r < count($menu); $r++) {
 		$tipo = $menu[$r][2];
 
+
 		switch ($tipo) {
 			case 'BOX' :
 				echo '
@@ -77,9 +78,11 @@
 					$xtit = $tit;
 					$div = 1;
 				}
+				$nome = $menu[$r][1];
+				$nome = troca($nome,'_','<span style="margin-right: 20px"></span>');
 				echo '
 				<a href="' . base_url('index.php' . $menu[$r][3]) . '" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="link no-undeline">     
-					<span class="menu_item_li">' . $menu[$r][1] . '</span><BR>
+					<span class="menu_item_li">' . $nome . '</span><BR>
 				</a>
 			';
 				break;

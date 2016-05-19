@@ -46,6 +46,9 @@ class mensagens extends CI_model {
 		if (isset($data['pj_codigo'])) {
 			$txt = troca($txt, '$PROTOCOLO', $data['pj_codigo']);
 		}
+		if (isset($data['ar_protocolo'])) {
+			$txt = troca($txt, '$PROTOCOLO', $data['ar_protocolo']);
+		}		
 		
 		/* DADOS */
 		if (isset($data['dados'])) { $txt = troca($txt, '$DADOS', $data['dados']);

@@ -106,7 +106,6 @@ class Stricto_sensus extends CI_model {
 			$pp = $line['id_sslpp'];
 			$sql = "update ss_docente_orientacao set od_linha_id = $pp where id_od = $od ";
 			$xxx = $this -> db -> query($sql);
-			echo $sql . '<BR>';
 		}
 
 		$sql = "select * from ss_docente_orientacao 
@@ -709,9 +708,8 @@ class Stricto_sensus extends CI_model {
 				from ss_professor_programa_linha
 						left join ss_linha_pesquisa_programa  on sslpp_id = id_sslpp
 						left join us_usuario as prof on id_us = us_usuario_id_us
-						where sslpp_ativo = 1 
-						and sspp_ativo = 1
-						and pp_id = $prog 
+						where sspp_ativo = 1
+						and programa_pos_id_pp = $prog 
 						order by sslpp_nome_linha, pf_nome";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();

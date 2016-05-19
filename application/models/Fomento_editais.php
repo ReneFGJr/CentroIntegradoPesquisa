@@ -169,7 +169,7 @@ class fomento_editais extends CI_model {
 					WHERE $wh AND (ed_status = '1' OR ed_status = 'A')
 					ORDER BY ed_edital_tipo, ed_dt_deadline_elet 
 					";
-
+		
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
 		if (count($rlt) == 0) {
