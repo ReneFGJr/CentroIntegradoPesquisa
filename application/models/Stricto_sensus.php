@@ -429,11 +429,11 @@ class Stricto_sensus extends CI_model {
 		$sx .= '<th width="' . $size . '" align="center">Captações ' . (date("Y") - 1) . '/' . (date("Y")) . '</th>';
 
 		$sx .= '<tr class="lt6" align="center">';
-		$sx .= '<th width="' . $size . '" align="center">' . $profs . '</th>';
-		$sx .= '<th width="' . $size . '" align="center">' . $linhas . '</th>';
-		$sx .= '<th width="' . $size . '" align="center">-</th>';
-		$sx .= '<th width="' . $size . '" align="center">-</th>';
-		$sx .= '<th width="' . $size . '" align="center">-</th>';
+		$sx .= '<td width="' . $size . '" align="center">' . $profs . '</td>';
+		$sx .= '<td width="' . $size . '" align="center">' . $linhas . '</td>';
+		$sx .= '<td width="' . $size . '" align="center">-</td>';
+		$sx .= '<td width="' . $size . '" align="center">-</td>';
+		$sx .= '<td width="' . $size . '" align="center">-</td>';
 
 		$sx .= '</tr>';
 		$sx .= '</table>';

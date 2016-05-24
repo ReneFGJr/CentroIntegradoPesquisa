@@ -9,7 +9,7 @@ if (isset($ver_perfil)) {
 			</li>';
 	}
 }
-
+if (!isset($lattes_link_update)) { $lattes_link_update = ''; }
 if (!isset($area_avaliacao_nome)) { $area_avaliacao_nome = 'não definida';
 }
 ?>
@@ -34,9 +34,10 @@ if (!isset($area_avaliacao_nome)) { $area_avaliacao_nome = 'não definida';
 			<li>
 				<?php
 				if (strlen($us_link_lattes) > 0) {
-					echo '<a href="' . $us_link_lattes . '" target="new"><img src="' . base_url('img/icon/icone_lattes.png') . '" height="26" border=0></a>';
+					echo '<a href="' . $us_link_lattes . '" target="new" title="Atualizado em '.stodbr($us_lattes_update).'"><img src="' . base_url('img/icon/icone_lattes.png') . '" height="26" border=0></a>';
 				}
 				?>
+				<?php echo $lattes_link_update; ?>				
 			</li>
 			<?php echo $perfil_completo_ver;?>
 		</div><TD width="300">

@@ -2,18 +2,39 @@
 class fomento_editais extends CI_model {
 	var $tabela = 'fomento_editais';
 	var $tabela_agencia = 'fomento_agencia';
+	
+	function cp_fomento_categoria()
+		{
+			$cp = array();
+			array_push($cp,array('$H8','id_ct','',False,True));
+			array_push($cp,array('$S60','ct_descricao','Descrição',True,True));
+			array_push($cp,array('$O 0:Não&1:Sim','ct_main','Categoria (Principal)',True,True));
+			array_push($cp,array('$Q id_ct:ct_descricao:select * from fomento_categoria where ct_main = 1 and ct_ativo = 1','ct_auto_ref','Categoria (Principal)',True,True));
+			array_push($cp,array('$[1-99]','ct_ordem','Ordem',True,True));
+			array_push($cp,array('$O 1:SIM&0:NÃO','ct_ativo','Ativo',True,True));
+			array_push($cp,array('$T80:6','ct_sql','Query',False,True));
+			return($cp);
+		}
 
 	function row($obj) {
-		$obj -> fd = array('id_ed', 'ed_titulo', 'ed_chamada', 'ed_status');
-		$obj -> lb = array('ID', 'nome da chamada', 'edital', 'estatus');
-		$obj -> mk = array('', 'L', 'L', 'L');
+		$obj -> fd = array('id_ed', 'ed_titulo', 'ed_chamada', 'ed_status', 'ed_dt_insercao');
+		$obj -> lb = array('ID', 'nome da chamada', 'edital', 'ativo','inserido');
+		$obj -> mk = array('', 'L', 'L', 'SN','D');
 		return ($obj);
 	}
+	
+	function row_fomento_categoria($obj)
+		{
+		$obj -> fd = array('id_ct', 'ct_descricao', 'ct_main', 'ct_ativo', 'ct_sql');
+		$obj -> lb = array('ID', 'categororia', 'principal', 'ativo','query');
+		$obj -> mk = array('', 'L', 'C', 'C','C','C');
+		return ($obj);			
+		}
 
 	function row_ag($obj) {
 		$obj -> fd = array('id_agf', 'agf_nome', 'agf_sigla', 'agf_ordem');
 		$obj -> lb = array('ID', 'nome da agencia', 'sigla', 'ordem');
-		$obj -> mk = array('', 'L', 'L', 'C', 'C');
+		$obj -> mk = array('', 'L', 'C', 'C', 'C');
 		return ($obj);
 	}
 
@@ -109,6 +130,12 @@ class fomento_editais extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$sql = $line['ct_sql'];
+			$sql = troca($sql,"´","'");
+			if ((strpos(UpperCaseSql($sql),'UPDATE')) or (strpos(UpperCaseSql($sql),'DELETE')))
+				{
+					echo 'Comandos proibidos!';
+					return('');
+				}
 			if (strlen($sql) > 0) {
 				$rll = $this -> db -> query($sql);
 				$rll = $rll -> result_array();
@@ -298,9 +325,13 @@ class fomento_editais extends CI_model {
 			$sx .= '<tr><td class="lt1">';
 			$sx .= '<input type="checkbox" name="da' . $idr . '" value="1" ' . $checked . ' > ';
 			if ($line['qw_sql'] == '') { $sx .= '<font color="#cccccc">';
+			} else {
+				$sx .= '<a href="'.base_url('index.php/edital/fomento_categoria_view/'.$line['id_ct'].'/'.checkpost_link($line['id_ct'])).'" class="link black">';
 			}
 			$sx .= $line['slave'];
 			if ($line['qw_sql'] == '') { $sx .= '(*)';
+			} else {
+				$sx .= '</a>';
 			}
 			$sx .= '</td></tr>';
 		}
@@ -470,5 +501,76 @@ class fomento_editais extends CI_model {
 				</table>';
 		return ($sx);
 	}
+function le_categoria($id)
+	{
+		$sql = "select * from fomento_categoria where id_ct = ".round($id);
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		
+		if (count($rlt) > 0)
+			{
+				$line = $rlt[0];
+				return($line);
+			} else {
+				return(array());
+			}
+	}
+function le_nome_categoria($id)
+	{
+		$sql = "select * from fomento_categoria where id_ct = ".round($id);
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		
+		if (count($rlt) > 0)
+			{
+				$line = $rlt[0];
+				$sql = $line['ct_sql'];
+				if (strlen($sql) > 0)
+					{
+						$sql = troca($sql,"´","'");
+						$sql = "SELECT * FROM us_usuario as user 
+								INNER JOIN (".$sql.") as selecao
+								LEFT JOIN (
+									SELECT count(*) as total, usuario_id_us FROM us_email where usm_ativo = 1 group by usuario_id_us
+								) as email ON user.id_us = usuario_id_us
+								WHERE user.id_us = selecao.id_us order by us_nome";
+						$rlt = $this->db->query($sql);
+						$rlt = $rlt->result_array();
+						$tot = 0;
+						$sx = '<table class="tabela00" width="100%">';
+						$sx .= '<tr>
+									<th>#</th>
+									<th>situação</th>
+									<th>nome</th>
+								</tr>';
+						for ($r=0;$r < count($rlt);$r++)
+							{
+								$line = $rlt[$r];
+								
+								if (round($line['total']) == 0)
+									{
+										$email = '<font color="red">Sem e-mail</font>';
+									} else {
+										$email = '<font color="green">E-mail ok! ('.$line['total'].')</font>';
+									}
+																	
+								$tot++;
+								$sx .= '<tr>';
+								$sx .= '<td width="2%">'.$tot.'</td>';
+								$sx .= '<td width="10%" align="center">'.$email.'</td>';
+								$sx .= '<td>'.link_user($line['us_nome'],$line['id_us']).'</td>';
+
+								
+							}
+						$sx .= '</table>';
+					} else {
+						$sx = '';
+					}
+				return($sx);
+			} else {
+				return(msg('empty'));
+			}		
+	}	
+	
 
 }

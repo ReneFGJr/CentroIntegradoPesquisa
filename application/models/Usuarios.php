@@ -91,6 +91,24 @@ class usuarios extends CI_model {
 				/* Iniciacao cientifica */
 				$ic_ativo = $this -> ics -> is_ic($id_us);
 				break;
+			/* Externo */
+			case '5' :
+				$data['logo'] = base_url('img/logo/logo_docentes.jpg');
+				$this -> load -> view('header/logo', $data);
+				$this -> load -> view('perfil/docente', $data);
+
+				/* Captacoes */
+				$captacoes_ativo = 0;
+				/* Producao */
+				$producao_ativo = 1;
+				/* Carga Horaria */
+				$carga_horaria_ativo = 0;
+				/* Iniciacao científica */
+				$ic_ativo = $this -> ics -> is_ic($cracha);
+				/* Stricto sensu */
+				$stricto_sensu = $this -> is_ss($id_us);
+
+				break;				
 			default :
 				$data['logo'] = base_url('img/logo/logo_discente.jpg');
 				$this -> load -> view('header/logo', $data);
@@ -869,13 +887,42 @@ class usuarios extends CI_model {
 	}
 
 	function mostra_idade($data) {
+		$data = sonumero($data);
+		
+		if (strlen($data) == 8)
+			{
+			$data = strtotime($data);
+			$now = strtotime(date("Ymd"));
+			
+			// data de nascimento
+			$interval = $now - $data;
+			$interval = round($interval / 60 / 60 / 24 / 365);
+			// data definida
+	
+			$idade = $interval . ' anos';
+			} else {
+				$idade = '';
+			}
+		return ($idade);
+	}
 
-		$date = new DateTime($data);
-		// data de nascimento
-		$interval = $date -> diff(new DateTime('2011-12-14'));
-		// data definida
-
-		$idade = $interval -> format('%Y') . ' anos';
+	function idade($data) {
+		$data = sonumero($data);
+		
+		if (strlen($data) == 8)
+			{
+			$data = strtotime($data);
+			$now = strtotime(date("Ymd"));
+			
+			// data de nascimento
+			$interval = $now - $data;
+			$interval = round($interval / 60 / 60 / 24 / 365);
+			// data definida
+	
+			$idade = $interval;
+			} else {
+				$idade = '0';
+			}
 		return ($idade);
 	}
 
@@ -1656,6 +1703,17 @@ class usuarios extends CI_model {
 		$line['editar_blacklist'] = '';
 		$line['editar'] = '';
 		$line['img_blacklist'] = '';
+		
+		/* Lattes Update */
+		$line['lattes_link_update'] = '';
+		
+		if (strpos($line['us_link_lattes'],'lattes.cnpq.br'))
+			{
+		$line['lattes_link_update'] = '
+					<a href="'.base_url('index.php/cnpq_ws/harvesting/'.$line['id_us']).'" title="coletar dados do Lattes" target="_blank">
+					<img src="'.base_url('img/icon/img_update.png').'" border=0 height="24">
+					</a>';
+			} 
 
 		if (function_exists('perfil')) {
 			/*perfil editar user*/

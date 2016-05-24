@@ -1,5 +1,14 @@
 <?php
 $us_nada = '<font color="grey">[em construção]</font>';
+if (!isset($lattes_link_update)) { $lattes_link_update = ''; }
+if (isset($ver_perfil)) {
+	if ($ver_perfil == 1) {
+		$perfil_completo_ver = '
+			<li class="nopr">
+				<a href="' . base_url('index.php/usuario/profile/' . $id_us . '/' . checkpost_link($id_us)) . '" class="btn">ver perfil completo</a>
+			</li>';
+	}
+}
 if (!isset($us_nome))
 	{
 		echo 'Código inválido ou não localizado';
@@ -34,9 +43,10 @@ if (!isset($us_nome))
 			<li>
 				<?php
 				if (strlen($us_link_lattes) > 0) {
-					echo '<a href="' . $us_link_lattes . '" target="new"><img src="' . base_url('img/icon/icone_lattes.png') . '" height="26" border=0></a>';
+					echo '<a href="' . $us_link_lattes . '" target="new" title="Atualizado em '.stodbr($us_lattes_update).'"><img src="' . base_url('img/icon/icone_lattes.png') . '" height="26" border=0></a>';
 				}
 				?>
+				<?php echo $lattes_link_update; ?>
 			</li>
 			<li>
 				<?php echo $us_cc;?>

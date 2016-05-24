@@ -30,7 +30,7 @@ class ic extends CI_Controller {
 	function cab() {
 		/* Security */
 		$this -> security();
-				
+
 		/* Carrega classes adicionais */
 		$css = array();
 		$js = array();
@@ -77,7 +77,6 @@ class ic extends CI_Controller {
 		$data['logo'] = base_url('img/logo/logo_ic.png');
 		$this -> load -> view('header/logo', $data);
 	}
-
 
 	function implementacao_manual() {
 		$this -> load -> model('ics');
@@ -173,7 +172,7 @@ class ic extends CI_Controller {
 										'$proto_mae','$titulo','$proto'
 										,'$titulo'
 										)";
-																
+
 							$this -> db -> query($sql);
 							$idr = $this -> ics -> recupera_nr_ic($proto);
 							if (count($idr) > 0) {
@@ -187,7 +186,7 @@ class ic extends CI_Controller {
 											$mdo, 1, '$data_ativacao', '$data_desativacao',
 											'$data_ativacao', '$data_desativacao'
 											)";
-								
+
 								$rlt = $this -> db -> query($sql);
 								$this -> load -> view('sucesso');
 								return ('');
@@ -1344,12 +1343,12 @@ class ic extends CI_Controller {
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
 	}
-	
+
 	/* Reports orientações por escola */
 	function report_drh_escola($xls = '') {
 		$ano = '';
 		$this -> load -> model('ics');
-		
+
 		if ($xls == '') {
 			$this -> cab();
 			$data = array();
@@ -1358,12 +1357,12 @@ class ic extends CI_Controller {
 		} else {
 			xls('orientacoes-ic-' . date("Y-m") . '.xls');
 		}
-	
+
 		$data['content'] = $this -> ics -> orientaoes_ativas_escola($ano);
 		$data['title'] = 'Orientações por escola';
-	
+
 		$this -> load -> view('content', $data);
-	
+
 		if ($xls == '') {
 			$this -> load -> view('header/content_close');
 			$this -> load -> view('header/foot', $data);
@@ -1476,7 +1475,7 @@ class ic extends CI_Controller {
 			$this -> cab();
 			$data = array();
 
-			$data['submenu'] = '<a href="' . base_url('index.php/ic/report_guia_excel/xls?dd2=' . $ano_ini . '&dd3=' . $ano_fim . '&dd4=' . $modalidade . '&dd5='.$escola.'&acao=xls') . '" class="lt0 link">exportar para excel</a>';
+			$data['submenu'] = '<a href="' . base_url('index.php/ic/report_guia_excel/xls?dd2=' . $ano_ini . '&dd3=' . $ano_fim . '&dd4=' . $modalidade . '&dd5=' . $escola . '&acao=xls') . '" class="lt0 link">exportar para excel</a>';
 		} else {
 			xls('Guia_do_estudante ' . $ano_ini . ' até ' . $ano_fim . '.xls');
 		}
@@ -1487,13 +1486,13 @@ class ic extends CI_Controller {
 		array_push($cp, array('$A', '', msg('Guia do Estudante'), False, true));
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('lb_ano_inicio'), True, TRUE));
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('lb_ano_final'), True, True));
-		
+
 		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
 		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('lb_ic_modalidade'), False, False));
-		
+
 		$sql = "select * from escola where es_ativo = 1 order by es_escola";
 		array_push($cp, array('$Q id_es:es_escola:' . $sql, '', msg('Escola'), False, False));
-		
+
 		$tela = $form -> editar($cp, '');
 
 		if ($form -> saved) {
@@ -1655,7 +1654,7 @@ class ic extends CI_Controller {
 			}
 			$data['search'] .= '<br>Metodo: ' . $mt;
 		} else {
-			
+
 			/* $data['search'] .= '<center>' . $this -> resumo_entrega($fld, $ano, $tit) . '</center>'; */
 			$data['search'] .= $this -> load -> view('ic/_short_url', null, true);
 		}
@@ -1803,11 +1802,11 @@ class ic extends CI_Controller {
 		if ($form -> saved > 0) {
 			$proto = get('dd2');
 			$valor = get('dd3');
-			$date  = brtos(get('dd4'));
-			$valor = troca($valor,'.','');
-			$valor = troca($valor,',','.');
+			$date = brtos(get('dd4'));
+			$valor = troca($valor, '.', '');
+			$valor = troca($valor, ',', '.');
 
-			$tela = $this -> pagamentos -> pagamento_por_rateio($proto,$valor,$date);
+			$tela = $this -> pagamentos -> pagamento_por_rateio($proto, $valor, $date);
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
 
@@ -1848,11 +1847,11 @@ class ic extends CI_Controller {
 		if ($form -> saved > 0) {
 			$proto = get('dd2');
 			$valor = get('dd3');
-			$date  = brtos(get('dd4'));
-			$valor = troca($valor,'.','');
-			$valor = troca($valor,',','.');
+			$date = brtos(get('dd4'));
+			$valor = troca($valor, '.', '');
+			$valor = troca($valor, ',', '.');
 
-			$tela = $this -> pagamentos -> pagamento_avulso($proto,$valor,$date);
+			$tela = $this -> pagamentos -> pagamento_avulso($proto, $valor, $date);
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
 
@@ -1977,7 +1976,7 @@ class ic extends CI_Controller {
 		echo $tela;
 
 	}
-	
+
 	function pagamentos($date = '', $action = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
@@ -1991,7 +1990,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Pagamentos', 'Gerar planilha de pagamento', 'ITE', '/ic/pagamento_planilha'));
 		array_push($menu, array('Pagamentos', 'Importar arquivo de pagamento (.seq)', 'ITE', '/ic/pagamento_planilha_inport'));
 		array_push($menu, array('Pagamentos', 'Identifica No. do compromisso', 'ITE', '/ic/pagamento_planilha_compromisso'));
-		
+
 		array_push($menu, array('Pagamentos Rateado', 'Pagamentos por Projeto', 'ITE', '/ic/pagamento_planilha_compromisso_rateados'));
 		array_push($menu, array('Pagamentos Avulso', 'Gerar Pagamento', 'ITE', '/ic/pagamento_planilha_compromisso_avulso'));
 
@@ -2005,43 +2004,41 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function pagamento_detalhado($ano='',$mes='',$valor='')
-		{
+	function pagamento_detalhado($ano = '', $mes = '', $valor = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
-		if (strlen($ano) == 0)
-			{ $ano = date("Y"); }
+		if (strlen($ano) == 0) { $ano = date("Y");
+		}
 
 		$this -> cab();
 		$data = array();
-		
-		$sx = $this->pagamentos->detalhado($ano,$mes,$valor);
+
+		$sx = $this -> pagamentos -> detalhado($ano, $mes, $valor);
 		$data['content'] = $sx;
 
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}
+	}
 
-	function pagamento_consolidado($ano='')
-		{
+	function pagamento_consolidado($ano = '') {
 		/* Load Models */
 		$this -> load -> model('pagamentos');
-		if (strlen($ano) == 0)
-			{ $ano = date("Y"); }
+		if (strlen($ano) == 0) { $ano = date("Y");
+		}
 
 		$this -> cab();
 		$data = array();
-		
-		$sx = $this->pagamentos->consolidado($ano);
+
+		$sx = $this -> pagamentos -> consolidado($ano);
 		$data['content'] = $sx;
 
 		$this -> load -> view('content', $data);
 
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);		
-		}
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function pagamentos_realizados($date = '', $action = '') {
 		/* Load Models */
@@ -2192,7 +2189,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('enviar_convites', 'avaliador/enviar_convites_externos'));
 		$data['menu'] = $menu;
 		$this -> load -> view('header/menu_mini', $data);
-		
+
 		/* Resumo dos convites */
 		$tela = $this -> avaliadores -> resumo_convites_avaliadores();
 
@@ -2204,7 +2201,7 @@ class ic extends CI_Controller {
 		$data['submenu'] = '<a href="' . base_url('index.php/ic/avaliadores/1') . '" class="lt0 link">sem áreas</a>';
 		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/avaliadores/0/e') . '" class="lt0 link">externos</a>';
 		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/avaliadores/0/i') . '" class="lt0 link">internos</a>';
-		
+
 		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/convite_resumo_internos') . '" class="lt0 link">Convites á internos</a>';
 		$data['submenu'] .= '<span class="lt0">&nbsp;|&nbsp;</span><a href="' . base_url('index.php/ic/convite_resumo_externos') . '" class="lt0 link">Convite á externos</a>';
 
@@ -2214,35 +2211,33 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function convite_resumo_internos(){
-				/* Load Models */
+	function convite_resumo_internos() {
+		/* Load Models */
 		$this -> load -> model('avaliadores');
 
 		$this -> cab();
 		$data = array();
-		
+
 		$data['content'] = $this -> avaliadores -> resumo_convite_avaliadores_internos();
-	
+
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);	
+		$this -> load -> view('header/foot', $data);
 	}
-	
-	function convite_resumo_externos(){
-				/* Load Models */
+
+	function convite_resumo_externos() {
+		/* Load Models */
 		$this -> load -> model('avaliadores');
 
 		$this -> cab();
 		$data = array();
-		
+
 		$data['content'] = $this -> avaliadores -> resumo_convite_avaliadores_externos();
-		
+
 		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);	
+		$this -> load -> view('header/foot', $data);
 	}
-
-
 
 	function protocolo_view($id = '', $chk = '') {
 		/* Load Models */
@@ -2699,7 +2694,7 @@ class ic extends CI_Controller {
 				}
 				$sem_idicacao = 1;
 				$tela01 = $this -> ics_acompanhamento -> avaliacao_submissao_entregue($ano, $sem_idicacao);
-				break;				
+				break;
 			default :
 				$fld = '';
 				$tit = '';
@@ -2792,6 +2787,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Submissão de Projetos e Planos', 'Devolver projeto para professor', 'ITE', '/ic/submit_devolver'));
 		array_push($menu, array('Submissão de Projetos e Planos', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_SUBMI'));
 		array_push($menu, array('Submissão de Projetos e Planos', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
+		array_push($menu, array('Submissão de Projetos e Planos', '__Comunicar avaliadores', 'ITE', '/ic/avaliacoes_abertas/SUBMI'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -3057,12 +3053,11 @@ class ic extends CI_Controller {
 
 		/* arquivos */
 		$this -> geds -> tabela = 'ic_ged_documento';
-		$data['ged'] = '';		
-		if (strlen(trim($data['ic_projeto_professor_codigo'])) > 0)
-			{
-				$data['ged'] = $this -> geds -> list_files_table($data['ic_projeto_professor_codigo'], 'ic');
-			}
-		$data['ged'] .= $this -> geds -> list_files_table($data['ic_plano_aluno_codigo'], 'ic');			
+		$data['ged'] = '';
+		if (strlen(trim($data['ic_projeto_professor_codigo'])) > 0) {
+			$data['ged'] = $this -> geds -> list_files_table($data['ic_projeto_professor_codigo'], 'ic');
+		}
+		$data['ged'] .= $this -> geds -> list_files_table($data['ic_plano_aluno_codigo'], 'ic');
 		$data['ged_arquivos'] = $this -> geds -> form_upload($data['ic_plano_aluno_codigo'], 'ic');
 		$this -> load -> view('ged/list_files', $data);
 
@@ -3193,7 +3188,8 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO'; ;
+			$msg = 'REMOVIDO';
+			;
 		}
 
 		$data = array();
@@ -3373,26 +3369,23 @@ class ic extends CI_Controller {
 		$this -> load -> view('ic/mostra_acompanhamento_prof', $data);
 
 	}
-	
-	function agrupar_projetos($protocolo)
-		{
-			$this->load->model('ics');
-			
-			$acao = get("acao");
-			$proto = get("dd2");
-			if ((strlen($acao) > 0) and (strlen($proto) > 0))
-				{
-					$this->ics->projeto_unificar($protocolo,$proto);
-					echo '<h1>Unificar '.$proto.' com '.$protocolo.'</h1>';
-					$this->load->view('sucesso',NULL);
-					return('');
-				}
 
-			
-			$data['content'] = $this->ics->busca_projetos_mesmo_titulo($protocolo);
-			$this->load->view('content',$data);
-			
+	function agrupar_projetos($protocolo) {
+		$this -> load -> model('ics');
+
+		$acao = get("acao");
+		$proto = get("dd2");
+		if ((strlen($acao) > 0) and (strlen($proto) > 0)) {
+			$this -> ics -> projeto_unificar($protocolo, $proto);
+			echo '<h1>Unificar ' . $proto . ' com ' . $protocolo . '</h1>';
+			$this -> load -> view('sucesso', NULL);
+			return ('');
 		}
+
+		$data['content'] = $this -> ics -> busca_projetos_mesmo_titulo($protocolo);
+		$this -> load -> view('content', $data);
+
+	}
 
 	function projetos($edital = '', $ano = '', $status = '') {
 		$this -> load -> model('ics');
@@ -3405,47 +3398,44 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
-	
-	function projeto_alterar_titulo($id=0,$chk='')
-		{
-			$this->load->view('header/header',null);
-			$this -> load -> model('ics');
-			
-			$pj1 = $this->ics->le_projeto($id);
-			$proto = $pj1['pj_codigo'];
-			$tit1 = $pj1['pj_titulo'];
-			$tit2 = get("dd1");	
-			
-			$cp = array();
-			array_push($cp,array('$H8','id_pj','',False,False));
-			array_push($cp,array('$T80:5','pj_titulo','',True,True));
-			
-			$form = new form;
-			$form->id = $id;
-			$tabela = $this->ics->tabela_projetos;
-			$tela = $form->editar($cp,$tabela);
-			$data['content'] = $tela;
-			$this->load->view('content',$data);
-			
-			if ($form->saved > 0)
-				{
-					if (trim($tit1) != trim($tit2))
-						{					
-							$ac = '114';
-							$hist = 'Troca de título do projeto principal';
-							$aluno1 = '';
-							$aluno2 = '';
-							$motivo = '114';
-							$obs = 'Substituíção de título de "<b>'.$tit1.'</b>" para "<b>'.$tit2.'</b>"';
-							$us_id = $obj['prof_id'];
-					
-							/*********************************/
-							/* Lancar historico              */
-							$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);					
-						}
-					$this->load->view('header/windows_close',null);
-				}
+
+	function projeto_alterar_titulo($id = 0, $chk = '') {
+		$this -> load -> view('header/header', null);
+		$this -> load -> model('ics');
+
+		$pj1 = $this -> ics -> le_projeto($id);
+		$proto = $pj1['pj_codigo'];
+		$tit1 = $pj1['pj_titulo'];
+		$tit2 = get("dd1");
+
+		$cp = array();
+		array_push($cp, array('$H8', 'id_pj', '', False, False));
+		array_push($cp, array('$T80:5', 'pj_titulo', '', True, True));
+
+		$form = new form;
+		$form -> id = $id;
+		$tabela = $this -> ics -> tabela_projetos;
+		$tela = $form -> editar($cp, $tabela);
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+		if ($form -> saved > 0) {
+			if (trim($tit1) != trim($tit2)) {
+				$ac = '114';
+				$hist = 'Troca de título do projeto principal';
+				$aluno1 = '';
+				$aluno2 = '';
+				$motivo = '114';
+				$obs = 'Substituíção de título de "<b>' . $tit1 . '</b>" para "<b>' . $tit2 . '</b>"';
+				$us_id = $obj['prof_id'];
+
+				/*********************************/
+				/* Lancar historico              */
+				$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+			}
+			$this -> load -> view('header/windows_close', null);
 		}
+	}
 
 	function cockpit($ano = '', $edital = 'IC') {
 		$this -> load -> model('ics');
@@ -3455,7 +3445,7 @@ class ic extends CI_Controller {
 
 		$form = new form;
 		$cp = array();
-		
+
 		array_push($cp, array('$H8', '', '', False, False));
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('Ano'), True, TRUE));
 		$tela = $form -> editar($cp, '');
@@ -3465,39 +3455,37 @@ class ic extends CI_Controller {
 			$ano = get("dd1") . $ano;
 			//carrega grafico de acompanhameto das submissões
 			$data_cockpit = array();
-			
+
 			$line = $this -> ics -> cockpit_resumo_graf($ano, $edital);
 
-				//Status dos Projetos submetidos	
-				$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
-				$this -> load -> view('content', $data);
-				
+			//Status dos Projetos submetidos
+			$data['content'] = $this -> ics -> cockpit_resumo_projeto($ano, $edital);
+			$this -> load -> view('content', $data);
+
 			if (count($line) > 0) {
-			
+
 				$data_cockpit['dado_coc'] = $line;
 				$this -> load -> view('ic/resumo_cockpit', $data_cockpit);
-				
 
-				
-				//Status dos Planos submetidos	
+				//Status dos Planos submetidos
 				$data['content'] = $this -> ics -> cockpit_resumo_plano($ano, $edital);
 				$this -> load -> view('content', $data);
-				
+
 				//resumo por escolas
 				$data['content'] = $this -> ics -> ic_submit_resumo_escolas($ano, $edital);
 				$this -> load -> view('content', $data);
-				
+
 				//resumo professor tipo
 				$data['content'] = $this -> ics -> ic_submit_resumo_professor_tipo($ano, $edital);
 				$this -> load -> view('content', $data);
-				
+
 				//resumo titulação
 				$data['content'] = $this -> ics -> ic_submit_resumo_professor_titulacao($ano, $edital);
 				$this -> load -> view('content', $data);
-				
+
 				//resumo titulação
 				$data['content'] = $this -> ics -> ic_submit_resumo_campus($ano, $edital);
-				$this -> load -> view('content', $data);				
+				$this -> load -> view('content', $data);
 			}
 
 		} else {
@@ -3509,41 +3497,38 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function cockpit_campus($ano='',$campus='')
-		{
+	function cockpit_campus($ano = '', $campus = '') {
 		$this -> load -> model('ics');
 		$this -> cab();
-		
-		$sx = '<h1>Submissão por campus - '.$campus.'</h1>';
-		$sx .= $this->ics->ic_submit_resumo_campus_detalhe($ano,$campus);
-		
+
+		$sx = '<h1>Submissão por campus - ' . $campus . '</h1>';
+		$sx .= $this -> ics -> ic_submit_resumo_campus_detalhe($ano, $campus);
+
 		$data['content'] = $sx;
-		$this->load->view('content',$data);
-		
+		$this -> load -> view('content', $data);
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}
-		
-	function cockpit_titulacao($ano='',$titulo='')
-		{
+	}
+
+	function cockpit_titulacao($ano = '', $titulo = '') {
 		$this -> load -> model('ics');
 		$this -> cab();
-		
-		$sx = '<h1>Submissão por titulacao - '.$titulo.'</h1>';
-		$sx .= $this->ics->ic_submit_resumo_titulacao_detalhe($ano,$titulo);
-		
+
+		$sx = '<h1>Submissão por titulacao - ' . $titulo . '</h1>';
+		$sx .= $this -> ics -> ic_submit_resumo_titulacao_detalhe($ano, $titulo);
+
 		$data['content'] = $sx;
-		$this->load->view('content',$data);
-		
+		$this -> load -> view('content', $data);
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-		}		
+	}
 
 	function projeto_view($id, $chk, $act = '') {
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
 		$this -> load -> model('ic_pareceres');
-		
 
 		$this -> cab();
 		$dados = $this -> ics -> le_projeto($id);
@@ -3559,8 +3544,8 @@ class ic extends CI_Controller {
 
 		$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
 		$dados['ged'] = '<br>Arquivos:';
-		
-		$dados['equipe'] = $this->ics->lista_equipe_projeto($dados['pj_codigo'],false);
+
+		$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
 
 		//$this -> load -> view('ic/email_projeto', $dados);
 		$this -> load -> view('ic/projeto', $dados);
@@ -3625,24 +3610,22 @@ class ic extends CI_Controller {
 					redirect(base_url('index.php/ic/projeto_view/' . $id . '/' . checkpost_link($id)));
 				}
 			}
-			
+
 			/* INDICAR AVALIACAO */
 			if ($status == 'B') {
-				
-								/* avaliacoes abertas */
-				$av_aberta = $this->ic_pareceres->avaliacoes_abertas($proto,'SUBMI');
-				
-				if ($av_aberta > 0)
-					{
-						$comt['content'] = '<div class="danger border1 lt4" style="border-radius: 10px; padding: 10px;">
-											<img src="'.base_url('img/icon/icone_exclamation.png').'" height="30" align="left">
-											Já existe(m) a(s) indicação(ões) de '.$av_aberta.' avaliador(es) para este projeto
+
+				/* avaliacoes abertas */
+				$av_aberta = $this -> ic_pareceres -> avaliacoes_abertas($proto, 'SUBMI');
+
+				if ($av_aberta > 0) {
+					$comt['content'] = '<div class="danger border1 lt4" style="border-radius: 10px; padding: 10px;">
+											<img src="' . base_url('img/icon/icone_exclamation.png') . '" height="30" align="left">
+											Já existe(m) a(s) indicação(ões) de ' . $av_aberta . ' avaliador(es) para este projeto
 											</div>';
-						$this->load->view('content',$comt);
-					}
-				
-				if ($av_aberta <= 1)
-					{
+					$this -> load -> view('content', $comt);
+				}
+
+				if ($av_aberta <= 1) {
 					$area = $dados_projeto['pj_area'];
 					$protocolo = $dados_projeto['pj_codigo'];
 					$dados_projeto['ic_cracha_prof'] = $dados_projeto['pj_professor'];
@@ -3651,8 +3634,8 @@ class ic extends CI_Controller {
 					$data['tipo'] = 'SUBMI';
 					$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
 					//$this -> load -> view('ic/form_indicar_avaliacao', $dados_pj);
-					}
-			}			
+				}
+			}
 
 			/* EM CADASTRO */
 			if ($status == 'A') {
@@ -3667,16 +3650,117 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-		function professor_sem_escola(){
+	function professor_sem_escola() {
 		$this -> load -> model('ics');
-		
+
 		$this -> cab();
 		$data = array();
 		$data['title'] = msg('Professores sem vínculo com escolas da PUCPR');
-		
+
 		$data['content'] = $this -> ics -> professores_sem_escola();
 		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function avaliacoes_abertas($tipo,$acao='') {
+		$this -> load -> model('mensagens');
+		$this -> load -> model('ic_pareceres');
+
+		$this -> cab();
+		$users = $this -> ic_pareceres -> pareceres_aberto($tipo);
+		$sx = '<table width="100% class="tabela00 lt0">';
+		$sx .= '<tr class="lt0"><th>#</th><th>tipo</th><th align="left">Avaliador</th></tr>';
+		$tot = 0;
+		$tot1 = 0;
+		$tot2 = 0;
 		
+		/* recupera mensagens */
+		$txt = $this->mensagens->busca('AVAL_AVISO_'.$tipo,array());
+		
+		if (!isset($txt['nw_texto']))
+		{
+			return('');
+		}
+		
+		$texto = $txt['nw_texto'];
+		$title = $txt['nw_titulo'];
+		$own = mst($txt['nw_own']);
+		$idm = $txt['id_nw'];
+		
+		
+		
+		for ($r = 0; $r < count($users); $r++) {
+			$line = $users[$r];
+			$status = '<font color="orange">enviar aviso</font>';
+			
+			switch ($acao)
+				{
+				case 'send':
+					$status = '<font color="blue">enviado aviso</font>';
+					$link_avaliador = $this->usuarios->link_acesso($line['id_us']);
+					$link_avaliador = '<a href="'.$link_avaliador.'" target="_new">'.$link_avaliador.'</a>';
+					$txt = troca($texto,'$nome',$line['us_nome']);
+					$txt = troca($txt,'$link_avaliador',$link_avaliador);
+					enviaremail_usuario($line['id_us'],$title.' : '.$line['us_nome'],$txt,$own);
+					break;
+				case 'test':
+					if ($r < 5)
+						{
+							$idu = $_SESSION['id_us'];
+							$status = '<font color="blue">enviado teste</font>';
+							$link_avaliador = $this->usuarios->link_acesso($line['id_us']);
+							$link_avaliador = '<a href="'.$link_avaliador.'" target="_new">'.$link_avaliador.'</a>';
+							$txt = troca($texto,'$nome',$line['us_nome']);
+							$txt = troca($txt,'$link_avaliador',$link_avaliador);
+							enviaremail_usuario($idu,$title.' : '.$line['us_nome'],$txt,$own);
+							break;
+						} else {
+							$status = '<font color="green">ignorado envio</font>';
+						}				
+				}
+				
+			if ($line['ies_instituicao_ies_id'] != 1)
+				{
+					$xtipo = 'Externo';
+					$tot1++;
+				} else {
+					$xtipo = 'Interno';
+					$tot2++;
+				}
+			$tot++;
+			$sx .= '<tr class="lt1">';
+			$sx .= '<td align="center" width="3%" class="borderb1">'.$tot.'</td>';
+			$sx .= '<td align="center" width="5%" class="borderb1">'.$xtipo.'</td>';
+			$sx .= '<td class="borderb1">'.link_avaliador($line['us_nome'],$line['pp_avaliador_id']).'</td>';
+			$sx .= '<td class="borderb1" align="right">'.$status.'</td>';			
+			$sx .= '</tr>';
+		}
+		$sx .= '</table>';
+		
+		/* Envio */
+		$btn = '<a href="'.base_url('index.php/ic/avaliacoes_abertas/'.$tipo).'/send" class="botao3d back_green_shadown back_green">enviar e-mail</a>';
+		$btn3 = '<a href="'.base_url('index.php/ic/avaliacoes_abertas/'.$tipo).'/test" class="botao3d back_blue_shadown back_blue">enviar e-mail</a>';
+		$btn2 = '<a href="'.base_url('index.php//ic/mensagens_edit/'.$idm.'/'.checkpost_link($idm)).'/send" class="botao3d back_grey_shadown back_grey">editar e-mail</a>';
+		$data = array();
+		$sa = '<table width="500" align="left" cellspacing=5>';
+		$sa .= '<tr class="lt0"><th width="35%"h>Avaliadores Internos</th>
+								<th width="35%">Avaliadores Externos</th>
+								<th width="10%">Ação</th>
+								<th width="10%">Teste</th>
+								<th width="10%">Mensagens</th>
+				</tr>';
+		$sa .= '<tr class="lt6" align="center">
+						<td class="border1">'.$tot2.'</td>
+						<td class="border1">'.$tot1.'</td>
+						<td class="lt1">'.$btn.'</td>
+						<td class="lt1">'.$btn3.'</td>
+						<td class="lt1">'.$btn2.'</td>
+				</tr>';
+		$sa .= '</table><br>';
+		$data['content'] = $sa.$sx;
+		$this->load->view('content',$data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}

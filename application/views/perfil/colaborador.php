@@ -1,5 +1,15 @@
 <?php
 $us_nada = '<font color="grey">[em construção]</font>';
+if (!isset($lattes_link_update)) { $lattes_link_update = ''; }
+if (!isset($perfil_completo_ver)) { $perfil_completo_ver = ''; }
+if (isset($ver_perfil)) {
+	if ($ver_perfil == 1) {
+		$perfil_completo_ver = '
+			<li class="nopr">
+				<a href="' . base_url('index.php/usuario/profile/' . $id_us . '/' . checkpost_link($id_us)) . '" class="btn">ver perfil completo</a>
+			</li>';
+	}
+}
 ?>
 <table id="cabecalho-user-perfil" class="info-pessoais" border=0>
 			<TR valign="top">
@@ -14,9 +24,11 @@ $us_nada = '<font color="grey">[em construção]</font>';
 				<li><?php echo $ies_sigla; ?></li>
 				<?php
 				if (strlen($us_link_lattes) > 0) {
-					echo '<a href="' . $us_link_lattes . '" target="new"><img src="' . base_url('img/icon/icone_lattes.png') . '" height="26" border=0></a>';
+					echo '<a href="' . $us_link_lattes . '" target="new" title="Atualizado em '.stodbr($us_lattes_update).'"><img src="' . base_url('img/icon/icone_lattes.png') . '" height="26" border=0></a>';
 				}
-				?>			
+				?>	
+				<?php echo $lattes_link_update; ?>
+				<?php echo $perfil_completo_ver;?>		
 			</div>
 			<TD width="300">
 			<div id="info-pesquisador" class="info-pesquisador lt1">

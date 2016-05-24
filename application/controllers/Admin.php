@@ -332,6 +332,8 @@ class admin extends CI_Controller {
 		array_push($menu, array('SEMIC', 'Trabalhos', 'ITE', '/semic/trabalhos_row'));
 		array_push($menu, array('SEMIC', 'Correção UTF8', 'ITE', '/semic/trabalhos_correcao'));
 
+		array_push($menu, array('Fomento', 'Cadastro de Grupos de Disseminação', 'ITE', '/admin/fomento_categoria'));
+
 		array_push($menu, array('Inportação', 'Inportação de Dados', 'ITE', '/inport'));
 
 		array_push($menu, array('Manutenção Cursos', 'Cadastrar/Editar Cursos', 'ITE', '/curso'));
@@ -784,8 +786,8 @@ class admin extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	function area_conhecimento_edit($id=0,$chk='')
-		{
+
+	function area_conhecimento_edit($id = 0, $chk = '') {
 		/* Load Models */
 		$this -> load -> model('area_conhecimentos');
 		$cp = $this -> area_conhecimentos -> cp();
@@ -808,7 +810,76 @@ class admin extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-			
+
+	}
+
+	function fomento_categoria($id = '') {
+		/* Load Models */
+		$this -> load -> model('fomento_editais');
+
+		$this -> cab();
+		$data = array();
+
+		/* Lista de comunicacoes anteriores */
+		$form = new form;
+		$form -> tabela = 'fomento_categoria';
+		$form -> see = true;
+		$form -> edit = true;
+		$form -> novo = true;
+		$form = $this -> fomento_editais -> row_fomento_categoria($form);
+
+		$form -> row_edit = base_url('index.php/admin/fomento_categoria_ed');
+		$form -> row_view = base_url('index.php/admin/fomento_categoria_view');
+		$form -> row = base_url('index.php/admin/fomento_categoria/');
+
+		$data['content'] = row($form, $id);
+		$data['title'] = msg('lb_fomento_categoria');
+
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function fomento_categoria_ed($id = 0, $check = '') {
+		/* Load Models */
+		$this -> load -> model('fomento_editais');
+		$cp = $this -> fomento_editais -> cp_fomento_categoria();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, 'fomento_categoria');
+		$data['title'] = msg('lb_fomento_categoria');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/admin/fomento_categoria'));
 		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function fomento_categoria_view($id = 0, $chk = '') {
+		$this -> load -> model('fomento_editais');
+		$cat = $this -> fomento_editais -> le_categoria($id);
+
+		$this -> cab();
+		
+		$cat['ct_selected'] = $this->fomento_editais->le_nome_categoria($id);
+		$cat['ct_selective'] = '';
+		
+		$this->load->view('fomento/categoria',$cat);
+
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', null);
+	}
 
 }

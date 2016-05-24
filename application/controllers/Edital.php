@@ -93,6 +93,7 @@ class edital extends CI_Controller {
 		$form -> row_edit = base_url('index.php/edital/edit/');
 		$form -> row_view = base_url('index.php/edital/view/');
 		$form -> row = base_url('index.php/edital/row/');
+		$form -> order = 'ed_dt_insercao desc';
 
 		$tela['content'] = row($form, $id);
 		$url = base_url('author');
@@ -331,6 +332,23 @@ class edital extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function fomento_categoria_view($id=0,$chk='')
+		{
+		$this -> load -> model('fomento_editais');
+		$cat = $this -> fomento_editais -> le_categoria($id);
+
+		$this -> cab();
+		
+		$cat['ct_selected'] = $this->fomento_editais->le_nome_categoria($id);
+		$cat['ct_selective'] = '';
+		
+		$this->load->view('fomento/categoria',$cat);
+
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', null);
+		}
 
 }
 ?>

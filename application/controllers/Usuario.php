@@ -328,6 +328,7 @@ class usuario extends CI_Controller {
 		$data['ver_perfil'] = 1;
 
 		$tipo = $data['usuario_tipo_ust_id'];
+		
 		switch ($tipo) {
 			/* Docente */
 			case '2' :
@@ -357,6 +358,14 @@ class usuario extends CI_Controller {
 				$this -> load -> view('content', $data);
 
 				break;
+			/* Externo */
+			case '5' :
+				$data['logo'] = base_url('img/logo/logo_docentes.jpg');
+				$this -> load -> view('header/logo', $data);
+				$this -> load -> view('perfil/docente', $data);
+				$cpf = strzero(sonumero($data['us_cpf']), 11);
+
+				break;				
 			default :
 				$data['logo'] = base_url('img/logo/logo_discente.jpg');
 				$this -> load -> view('header/logo', $data);

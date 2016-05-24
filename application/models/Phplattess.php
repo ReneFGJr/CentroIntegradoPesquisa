@@ -188,7 +188,9 @@ class phpLattess extends CI_Model {
 						$sa .= '<td align="center" ' . $style . '>' . $dados[$r][$v] . '</td>';
 						if (($v == 'Q1')) { $tot3 = $tot3 + $dados[$r][$v]; }
 						if (($v == 'A1') OR ($v == 'A2') OR ($v == 'B1')) { $tot1 = $tot1 + $dados[$r][$v];						
-						} else { $tot2 = $tot2 + $dados[$r][$v];
+						} else {
+							if (($v != 'Q1')) { $tot2 = $tot2 + $dados[$r][$v]; }
+							 
 						}
 					} else {
 						$sa .= '<td align="center" ' . $style . '>-</td>';
@@ -206,7 +208,7 @@ class phpLattess extends CI_Model {
 		$sx = '<div style="page-break-after: always"></div>' . $sx;
 		
 		/* detalhado */
-		if ($detalhado==1) { $sa .= $sx; }
+		if (isset($detalhado) AND ($detalhado==1)) { $sa .= $sx; }
 			
 		return ($sa);
 	}

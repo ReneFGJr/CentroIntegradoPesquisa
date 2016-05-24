@@ -6,11 +6,13 @@ header ('Content-type: text/html; charset=ISO-8859-1');
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" type="image/x-icon" href="https://cip.pucpr.br/favicon.ico" />
 <link rel="stylesheet" href="<?php echo base_url('css/jquery-ui.min.css');?>">
+<link rel="stylesheet" href="<?php echo base_url('css/bootstrap.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/fonts_cicpg.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style_form.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style_font-awesome.css');?>">
 <link rel="stylesheet" href="<?php echo base_url('css/style_table.css');?>">
+
 
 
 
@@ -29,6 +31,7 @@ header ('Content-type: text/html; charset=ISO-8859-1');
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/jquery.mask.js');?>"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/jquery-ui.min.js');?>"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/sisdoc_form.js');?>"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo base_url('js/bootstrap.js');?>"></script>
 
 <?php
 		/* BIBLIOTECAS JAVA SCRIPT

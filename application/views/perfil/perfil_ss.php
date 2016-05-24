@@ -36,6 +36,22 @@ for ($r=0;$r < $orientacoes[2][1];$r++)
 		array_push($boneco_finalizado,'P');
 		$total_ic_finalizado++;
 	}
+	
+for ($r=0;$r < $orientacoes[0][3];$r++)
+	{
+		array_push($boneco_finalizado,'D');
+		$total_ic_finalizado++;
+	}
+for ($r=0;$r < $orientacoes[1][3];$r++)
+	{
+		array_push($boneco_finalizado,'M');
+		$total_ic_finalizado++;
+	}
+for ($r=0;$r < $orientacoes[2][3];$r++)
+	{
+		array_push($boneco_finalizado,'P');
+		$total_ic_finalizado++;
+	}	
 
 
 /* Bonecos */

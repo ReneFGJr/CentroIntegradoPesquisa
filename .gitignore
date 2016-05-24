@@ -18,6 +18,11 @@ $RECYCLE.BIN/
 *.lnk
 
 # =========================
+# XML File
+# =========================
+*.xml
+
+# =========================
 # Operating System Files
 # =========================
 
@@ -43,3 +48,4 @@ Temporary Items
 .apdisk
 _document/scimago.sql
 _document/temp.xml
+

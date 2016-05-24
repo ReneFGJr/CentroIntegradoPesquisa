@@ -193,7 +193,7 @@ class ic_feira extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		/* Total de membros */
-		if ((count($rlt) >= 1) and (count($rlt) <= 5)) {
+		if ((count($rlt) >= 1) and (count($rlt) <= 6)) {
 			$vd[6] = $class_ok;
 			$vdt[6] = $ok;
 		}

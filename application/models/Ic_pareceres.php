@@ -891,6 +891,18 @@ class Ic_pareceres extends CI_model {
 			$rlt = $this->db->query($sql);
 			return(1);
 		}
+	function pareceres_aberto($tipo='')
+		{
+			$sql = "select distinct pp_avaliador_id, ies_instituicao_ies_id, us_nome, id_us
+						FROM ".$this->tabela." 
+						INNER JOIN us_usuario on pp_avaliador_id = id_us
+						WHERE pp_tipo = '$tipo'
+						AND pp_status = 'A'
+						ORDER BY us_nome";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			return($rlt);
+		}
 
 }
 ?>
