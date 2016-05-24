@@ -184,6 +184,11 @@ class Main extends CI_Controller {
 		if (perfil('#ADM') == 1) {
 			array_push($menu, array('Central Certificados e Declarações', 'Configurações dos certificados!', 'BTA', '/Central_declaracao_gestao'));
 		}
+		
+		if (perfil('#TST') == 1) {
+			array_push($menu, array('FCA', 'Fator de correção de Avaliações', 'BTA', '/fca'));
+		}
+		
 		array_push($menu, array('Central de Certificados e Declarações', 'Emita suas declarações e certificados!', 'BTN', '/Central_declaracao/certificados/'.$_SESSION['id_us'].'/'.checkpost_link($_SESSION['id_us'])));
 		
 		$data['menu'] = $menu;
