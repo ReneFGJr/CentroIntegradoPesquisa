@@ -1013,7 +1013,7 @@ class Stricto_sensus extends CI_model {
 		array_push($cp, array('$Q ' . $sqlc, 'od_modalidade', 'Modalidade', False, True));
 
 		$sqlc = "us_cracha:us_nome:select distinct id_us, us_nome, us_cracha from us_usuario  where ((usuario_titulacao_ust_id = 6) or (usuario_titulacao_ust_id = 7) or (us_cracha = '01000000'))  order by us_nome";
-		array_push($cp, array('$Q ' . $sqlc, 'od_coorientador', 'Coorientador', True, True));
+		array_push($cp, array('$Q ' . $sqlc, 'od_coorientador', 'Coorientador', False, True));
 
 		array_push($cp, array('${', '', 'Sobre o programa', False, True));
 		$sqla = "sss_cod:sss_descricao:select * from ss_docente_orientacao_situacao order by sss_descricao";
