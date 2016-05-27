@@ -132,6 +132,47 @@ class ics_acompanhamento extends CI_model {
 			return($sx);
 		}
 
+	function relatorio_correcao_parcial_nao_entregue($ano = 0,$sem_indicacao=0)
+		{
+			$wh = " (ic_ano = '$ano') ";
+			$wh .= " and (icas_id = 1)";
+			$wh .= " and (s_id = 1)";
+			$wh .= " and (ic_nota_rp = 2) ";
+			$wh .= " and (ic_rpc_data <= '2000-01-01')";
+	
+			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
+			
+			/* sem indicacao */
+			if ($sem_indicacao == 1)
+				{
+					$sqla = " LEFT JOIN pibic_parecer_".date("Y")." on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAC') AND (pp_status = 'A' or pp_status = 'B')) ";
+					$sqla .= ' WHERE (pp_protocolo is null ) AND ';
+					$sql = troca($sql,'where',$sqla);
+				}
+			
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			$sx = '<table width="100%" class="tabela00">';
+			$xarea = '';
+			$tot = 0;
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$tot++;
+					$line = $rlt[$r];
+					$area = $line['ic_semic_area'];
+					if ($area != $xarea)
+						{
+							$sx .= '<tr><td colspan=10 class="lt3"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
+							$xarea = $area;
+						}
+					$line['page'] = 'ic';
+					$sx .= $this->load->view('ic/plano-row.php',$line,true);
+				}
+			$sx .= '</table>';
+			$sx .= '</br> Total de <font class="red"><strong>'.$tot . '</strong></font> protocolos não entregues';
+			return($sx);
+		}
+
 function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		{
 			$wh = " (ic_ano = '$ano') ";

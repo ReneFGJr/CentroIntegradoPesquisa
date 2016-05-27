@@ -1,81 +1,127 @@
 <?php
 class issns extends CI_Model {
-	
-	function issn_ajuste()
-		{
-			$sql = "update scimago set issn_l = concat(substr(issn,1,4),substr(issn,6,4)) 
+
+	function issn_ajuste() {
+		$sql = "update scimago set issn_l = concat(substr(issn,1,4),substr(issn,6,4)) 
 						where issn_l = '' ";
-			//or issn_l like '%-%'";
-			$rlt = $this->db->query($sql);
-			
-			/***************** SCIMAGO ********************************/
-			$sql = "SELECT * FROM issn_l 
+		//or issn_l like '%-%'";
+		$rlt = $this -> db -> query($sql);
+
+		/***************** SCIMAGO ********************************/
+		$sql = "SELECT * FROM issn_l 
 						INNER JOIN scimago on il_issn2 = issn_l
 						WHERE issn_l <> il_issn_l2";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$id = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$id++;
-					$line = $rlt[$r];
-					$issn = $line['il_issn_l2'];
-					$issn_old = $line['issn_l'];
-					$sql = "update scimago set issn_l = '$issn' where issn_l = '$issn_old' ";
-					$rrr = $this->db->query($sql);
-				}
-			
-			/***************** LATTES ********************************/
-			$sql = "update cnpq_acpp  set acpp_issn_link = acpp_issn 
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$id = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$id++;
+			$line = $rlt[$r];
+			$issn = $line['il_issn_l2'];
+			$issn_old = $line['issn_l'];
+			$sql = "update scimago set issn_l = '$issn' where issn_l = '$issn_old' ";
+			$rrr = $this -> db -> query($sql);
+		}
+
+		/***************** LATTES ********************************/
+		$sql = "update cnpq_acpp  set acpp_issn_link = acpp_issn 
 						where acpp_issn_link = '' ";
-			//or not (acpp_issn_link like '%-%')";
-			$rlt = $this->db->query($sql);
-						
-			
-			$sql = "SELECT * FROM issn_l 
+		//or not (acpp_issn_link like '%-%')";
+		$rlt = $this -> db -> query($sql);
+
+		$sql = "SELECT * FROM issn_l 
 						INNER JOIN cnpq_acpp on il_issn2 = acpp_issn_link
 						WHERE acpp_issn_link <> il_issn_l2";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$ie = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$ie++;
-					$line = $rlt[$r];
-					$issn = $line['il_issn_l2'];
-					$issn_old = $line['acpp_issn_link'];
-					$sql = "update cnpq_acpp set acpp_issn_link = '$issn' where acpp_issn_link = '$issn_old' ";
-					$rrr = $this->db->query($sql);
-				}
-				
-				
-			/************** WEB QUALIS *******************************/
-			$sql = "update webqualis  set wq_issn_l = concat(substr(issn,1,4), substr(issn,6,4))
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$ie = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$ie++;
+			$line = $rlt[$r];
+			$issn = $line['il_issn_l2'];
+			$issn_old = $line['acpp_issn_link'];
+			$sql = "update cnpq_acpp set acpp_issn_link = '$issn' where acpp_issn_link = '$issn_old' ";
+			$rrr = $this -> db -> query($sql);
+		}
+		
+		/************** WEB QUALIS *******************************/
+		$sql = "update webqualis  set wq_issn_l = concat(substr(issn,1,4), substr(issn,6,4))
 							where wq_issn_l = '' ";
-			//or wq_issn_l like '%-%' ";
-			$rlt = $this->db->query($sql);
-			
-			$sql = "SELECT * FROM issn_l 
+		//or wq_issn_l like '%-%' ";
+		$rlt = $this -> db -> query($sql);
+
+		$sql = "SELECT * FROM issn_l 
 						INNER JOIN webqualis on il_issn2 = wq_issn_l
 						WHERE wq_issn_l <> il_issn_l2";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$if = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$if++;
-					$line = $rlt[$r];
-					$issn = $line['il_issn_l2'];
-					$issn_old = $line['wq_issn_l'];
-					$sql = "update webqualis set wq_issn_l = '$issn' where wq_issn_l = '$issn_old' ";
-					$rrr = $this->db->query($sql);
-				}				
-			$sx = '<h1>Processamento do ISSN-L</h1>';
-			$sx .= 'Total de registros processados do SCIMAGO: '.$id.'<br>';
-			$sx .= 'Total de registros processados do LATTES: '.$ie.'<br>';
-			$sx .= 'Total de registros processados do QUALIS: '.$if.'<br>';
-			return($sx);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$if = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$if++;
+			$line = $rlt[$r];
+			$issn = $line['il_issn_l2'];
+			$issn_old = $line['wq_issn_l'];
+			$sql = "update webqualis set wq_issn_l = '$issn' where wq_issn_l = '$issn_old' ";
+			$rrr = $this -> db -> query($sql);
+		}		
+		$sa = $this -> wequalis_duplicados();
+
+		$sx = '<h1>Processamento do ISSN-L</h1>';
+		$sx .= 'Total de registros processados do SCIMAGO: ' . $id . '<br>';
+		$sx .= 'Total de registros processados do LATTES: ' . $ie . '<br>';
+		$sx .= 'Total de registros processados do QUALIS: ' . $if . '<br>';
+		
+		$sx .= $sa;
+		return ($sx);
+	}
+
+	function wequalis_duplicados() {
+
+
+		/* Estratos duplicados */
+		$sql = "select * from ( 
+							SELECT count(*) as total, wq_issn_l, area_id 
+							FROM webqualis group by wq_issn_l, area_id 
+						) as tabela where total > 1";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$tot4 = 0;
+		$sa = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$issn = $line['wq_issn_l'];
+			$area = $line['area_id'];
+
+			$sql = "select * from webqualis where wq_issn_l = '$issn' and 
+							area_id = $area 
+							order by estrato desc 
+							limit 50";
+			$rrr = $this -> db -> query($sql);
+			$rrr = $rrr -> result_array();
+
+			if (count($rrr) > 0) {
+				$y = 0;
+				$lll = $rrr[$y];
+				$idl = $lll['id_issn'];
+				$sql = "delete from webqualis where id_issn = " . $idl;
+				//$xxx = $this->db->query($sql);
+				$tot4++;
+
+				$sa .= '<br><tt>' . $lll['issn'] . ' - ' . $lll['ano'] . ' - ' . $lll['estrato'] . ' - ' . $lll['titulo'] . ' - ' . $lll['area_id'];
+				$y = 1;
+				$lll = $rrr[$y];
+				$idl = $lll['id_issn'];
+				$sql = "delete from webqualis where id_issn = " . $idl;
+				$xxx = $this -> db -> query($sql);
+				$tot4++;
+
+				$sa .= '<br><tt>' . $lll['issn'] . ' - ' . $lll['ano'] . ' - ' . $lll['estrato'] . ' - ' . $lll['titulo'] . ' - ' . $lll['area_id'];
+				$sa .= '<hr>';
+			}
 		}
+		$sa = 'Total de registros processados do DUPLICADOS: ' . $tot4 . '<br>'.$sa;
+		return($sa);
+	}
 
 	function row_scimago($obj) {
 		$obj -> fd = array('id_sc', 'issn', 'titulo', 'assunto', 'sjr_quartile', 'h_index', 'pais');
@@ -104,7 +150,7 @@ class issns extends CI_Model {
 		} else {
 			$temp = '';
 		}
-		
+
 		if (strlen($temp) == 0) {
 			$sx = '
 					<center>
@@ -130,34 +176,32 @@ class issns extends CI_Model {
 
 			$ln = 0;
 			/* segurança */
-			if ((strpos($sData, 'ISSN-L')) and (strpos($sData,'[wejioc20]')) and (strpos($sData,'[break]'))) {
-				$sData = troca($sData,'[wejioc20]','');
-				$sData = troca($sData,'"',"'");
-				
+			if ((strpos($sData, 'ISSN-L')) and (strpos($sData, '[wejioc20]')) and (strpos($sData, '[break]'))) {
+				$sData = troca($sData, '[wejioc20]', '');
+				$sData = troca($sData, '"', "'");
+
 				/* Excluir anteriores */
 				$sql = "delete from issn_l where il_manual <> 1";
-				$rlt = $this->db->query($sql);
+				$rlt = $this -> db -> query($sql);
 
-				while (strpos($sData,'[break]'))
-					{
-						$pos = strpos($sData,'[break]');
-						$sql = substr($sData,0,$pos);
-						$sData = substr($sData,$pos+strlen('[break]'),strlen($sData));
-						
-						if (strpos($sql,'il_issn'))
-							{
-								$sql = troca($sql,';','');
-								$this->db->query($sql);
-								$sx .= '. ';
-							}
-					} 
+				while (strpos($sData, '[break]')) {
+					$pos = strpos($sData, '[break]');
+					$sql = substr($sData, 0, $pos);
+					$sData = substr($sData, $pos + strlen('[break]'), strlen($sData));
+
+					if (strpos($sql, 'il_issn')) {
+						$sql = troca($sql, ';', '');
+						$this -> db -> query($sql);
+						$sx .= '. ';
+					}
+				}
 				/* Atualiza tabela de ISSN sem os tracos */
 				$sql = "update issn_l set
 						il_issn2 = concat(substr(il_issn,1,4),substr(il_issn,6,4)), 
 						il_issn_l2 = concat(substr(il_issn_l,1,4),substr(il_issn_l,6,4)) 
 						where 1=1";
-				$rlt = $this->db->query($sql);		
-									
+				$rlt = $this -> db -> query($sql);
+
 			} else {
 				$sx .= '<br><font color="red">Arquivo inválido</font>';
 			}

@@ -514,6 +514,7 @@ class avaliador extends CI_Controller {
 					$avaliador = $_SESSION['id_us'];
 					$this -> ic_pareceres -> salva_pareceres($plano['doc_protocolo'], $proto, $plano['ddx'], $avaliador, 'SUBMP');
 				}
+				$avaliador = $_SESSION['id_us'];
 
 				/* Valida submissao */
 				$ok = $this -> ic_pareceres -> checa_dados_pareceres($proto, $avaliador);

@@ -106,6 +106,8 @@ class cnpq_ws extends CI_Controller {
 	function harvesting_ppg($id = 0, $force = 0, $page = 0) {
 		$this -> load -> model("stricto_sensus");
 		$this -> load -> model('webservice/ws_cnpq');
+		$date = date("Y-m-d");
+		
 
 		$ss = $this -> stricto_sensus -> le($id);
 		if ($force == 1)
@@ -114,6 +116,7 @@ class cnpq_ws extends CI_Controller {
 					 FROM ss_professor_programa_linha 
 						LEFT JOIN us_usuario ON us_usuario_id_us = id_us
  					where programa_pos_id_pp = $id and us_ativo = 1 and sspp_ativo = 1
+ 						and us_lattes_hasvesting <> '$date'
  					order by us_nome, id_us
  					 ";
 				$rlt = $this -> db -> query($sql);
@@ -142,6 +145,7 @@ class cnpq_ws extends CI_Controller {
  					 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
+		
 
 		$sx = '<table class="tabela01 lt1" width="100%">';
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -171,7 +175,8 @@ class cnpq_ws extends CI_Controller {
 				if ($ok == 1) {
 					$file = '_document/lattes/' . $lattes . '.xml';
 					$this -> ws_cnpq -> xml_artigos($file, $cpf, $nome_lattes);
-					$sql = "update us_usuario set us_lattes_update = '" . $situacao . "' where id_us = " . $id_us;
+					$sql = "update us_usuario set us_lattes_update = '" . $situacao . "',
+									us_lattes_hasvesting = '$date' where id_us = " . $id_us;
 					$this -> db -> query($sql);
 					
 					$data['content'] = '<h3>Atualizado <b>'.$nome_lattes.'</b></h3><br>Aguarde ....';
@@ -194,43 +199,20 @@ class cnpq_ws extends CI_Controller {
 	function harvesting_ppgs($id = 0, $force = 0, $page = 0) {
 		$this -> load -> model("stricto_sensus");
 		$this -> load -> model('webservice/ws_cnpq');
-
-		if ($force == 1)
-			{
-				$sql = " select distinct us_nome, id_us, us_lattes_update, us_link_lattes, us_ativo, us_cpf, us_nome_lattes
-					 FROM ss_professor_programa_linha 
-						LEFT JOIN us_usuario ON us_usuario_id_us = id_us
- 					where us_ativo = 1 and sspp_ativo = 1
- 					order by us_nome, id_us
- 					 ";
-				$rlt = $this -> db -> query($sql);
-				$rlt = $rlt -> result_array();
-				
-				for ($r=0;$r < count($rlt);$r++)
-					{
-						$line = $rlt[$r];
-						$id_us = $line['id_us'];
-						$situacao = '0000-00-00';
-						$sql = "update us_usuario set us_lattes_update = '" . $situacao . "' where id_us = " . $id_us;
-						$this -> db -> query($sql);
-						
-					}	
-				$page = '1';
-				$force = '0';
-				redirect(base_url('index.php/cnpq_ws/harvesting_ppgs/'.$id.'/'.$force.'/'.$page));			
-			}
 		
+		$date = date("Y-m-d");
+
 		$this -> cab();
 		$sql = " select distinct us_nome, id_us, us_lattes_update, us_link_lattes, us_ativo, us_cpf, us_nome_lattes
 					 FROM ss_professor_programa_linha 
 						LEFT JOIN us_usuario ON us_usuario_id_us = id_us
- 					where us_ativo = 1 and sspp_ativo = 1
- 					order by us_nome, id_us
+ 					where us_ativo = 1 and sspp_ativo = 1 and us_lattes_hasvesting <> '$date'
+ 					order by us_lattes_hasvesting, us_nome, id_us
  					 ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
-		$sx = '<table class="tabela01 lt1" width="100%">';
+		$sx = '<table class="tabela01 lt1" width="100%">';		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$lattes = sonumero($line['us_link_lattes']);
@@ -244,6 +226,7 @@ class cnpq_ws extends CI_Controller {
 			$id_us = $line['id_us'];
 			$situacao = $this -> ws_cnpq -> getDataAtualizacaoCV($lattes);
 			$cpf = $line['us_cpf'];
+			//echo '<br>'.$line['us_nome'];
 
 			$sx .= '<tr>';
 			$sx .= '<td>' . link_perfil($nome_lattes, $id_us, $line) . '</td>';
@@ -258,7 +241,8 @@ class cnpq_ws extends CI_Controller {
 				if ($ok == 1) {
 					$file = '_document/lattes/' . $lattes . '.xml';
 					$this -> ws_cnpq -> xml_artigos($file, $cpf, $nome_lattes);
-					$sql = "update us_usuario set us_lattes_update = '" . $situacao . "' where id_us = " . $id_us;
+					$sql = "update us_usuario set us_lattes_update = '" . $situacao . "',
+									us_lattes_hasvesting = '$date' where id_us = " . $id_us;
 					$this -> db -> query($sql);
 					
 					$data['content'] = '<h3>Atualizado <b>'.$nome_lattes.'</b></h3><br>Aguarde ....';

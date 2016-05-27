@@ -223,7 +223,7 @@ class bancos extends CI_model
 
 	function DV44($nr)
 		{
-			$va = array(8,7,6,5,4,3,2,9,8,7,6,5,4,3,2);			
+			$va = array(8,7,6,5,4,3,2,9,8,7,6,5,4,3,2,0,0,0,0,0,0,0,0);			
 			$tot = 0;
 			$this->calc = '';
 			for ($r=0;$r < strlen($nr);$r++)
@@ -244,7 +244,7 @@ class bancos extends CI_model
 		}
 	function DV33($nr)
 		{
-			$va = array(9,7,3,1,0,0,9,7,1,3,1,9,7,3);			
+			$va = array(9,7,3,1,0,0,9,7,1,3,1,9,7,3,0,0,0,0,0,0,0,0,0);			
 			$tot = 0;
 			$this->calc = '';
 			for ($r=0;$r < strlen($nr);$r++)

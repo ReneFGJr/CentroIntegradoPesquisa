@@ -26,3 +26,9 @@ if (!isset($link_form)) {
 		<BR>
 	</form>
 </div>
+
+<br>
+<br>
+<br>
+<br>
+<br>

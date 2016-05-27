@@ -316,7 +316,7 @@ class pagamentos extends CI_Model {
 			}
 			$sa .= '</tr>';
 		}
-		$sx = '<h1>Desenbolso consolidado PIBIC</h1>';
+		$sx = '<h1>Desembolso consolidado PIBIC</h1>';
 		$sx .= '<table width="100%" class="tabela00">';
 		$sx .= '<tr><th>ano</th>';
 		$mes = meses_short();

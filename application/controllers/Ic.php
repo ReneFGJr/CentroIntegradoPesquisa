@@ -2533,6 +2533,42 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+	
+	function rpc_nao_entregue($tipo = '') {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$this -> load -> model('ics_acompanhamento');
+		$cp = $this -> ics -> cp_switch();
+		$data = array();
+		$tela01 = '';
+		$this -> cab();
+		switch ($tipo) {
+			case 'IC_FORM_RPC' :
+				$fld = 'ic_rp_data';
+				$tit = 'Correção do Relatório Parcial';
+				$ano = date("Y");
+				if (date("m") < 8) {
+					$ano = $ano - 1;
+				}
+				$tela01 = $this -> ics_acompanhamento -> relatorio_correcao_parcial_nao_entregue($ano);
+				break;
+			default :
+				$fld = '';
+				$tit = '';
+				break;
+		}
+
+		$sx = '';
+		if (strlen($fld) > 0) {
+			/* Resumo de Entrega */
+			$sx .= $this -> resumo_entrega($fld, $ano, $tit);
+		}
+		$data['content'] = $sx . $tela01;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}	
 
 	function entrega($tipo = '') {
 		$sx = $this -> rp_entregue($tipo);
@@ -2777,6 +2813,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Relatório Parcial', 'RP Entregues', 'ITE', '/ic/rp_entregue/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'RP Não Entregues', 'ITE', '/ic/rp_nao_entregue/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'RP cancelados', 'ITE', '/ic/rp_cancelados/IC_FORM_RP'));
+		array_push($menu, array('Relatório Parcial', 'RP correção não entregues', 'ITE', '/ic/rpc_nao_entregue/IC_FORM_RPC'));
 
 		array_push($menu, array('Relatório Parcial', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RP'));
