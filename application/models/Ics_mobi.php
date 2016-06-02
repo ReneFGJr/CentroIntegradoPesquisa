@@ -1,13 +1,13 @@
 <?php
-class ics_master extends CI_model {
+class ics_mobi extends CI_model {
 	var $tabela = "ic_submissao_projetos";
-	var $tipo = 'ICMST';
+	var $tipo = 'MOBI';
 
 	function documentos() {
 		$opc = 'success';
 		$obr = 'danger';
 
-		$tipos = array('PROJ' => $obr, 'CARTA' => $obr, 'HISTO' => $obr, 'CARTB' => $obr, 'PLANO' => $obr, 'TOEFO' => $obr, 'PROU' => $opc, 'OUTRO' => $opc, 'PLANM'=> $obr);
+		$tipos = array('PROJ' => $obr, 'CARTA' => $obr, 'HISTO' => $obr, 'CARTB' => $obr, 'PLANO' => $obr, 'TOEFO' => $obr, 'PROU' => $opc, 'OUTRO' => $opc);
 		return ($tipos);
 	}
 
@@ -494,7 +494,7 @@ class ics_master extends CI_model {
 
 		$sx = $this -> load -> view('header/header_email', null, true);
 		$sx = '';
-		$sx .= '<h1>Submissão de PIBIC Master</h1>';
+		$sx .= '<h1>Submissão de Mobilidade Nacional / Internacional</h1>';
 		$sx .= $this -> load -> view('ic/projeto', $prj_data, true);
 
 		/* Planos */

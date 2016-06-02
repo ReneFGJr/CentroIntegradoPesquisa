@@ -3806,6 +3806,20 @@ function orientaoes_ativas_escola($ano = '') {
 		array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
 	}
+	
+	function cp_switch_ic_mobi() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_sw', '', False, True));
+		array_push($cp, array('$SW', 'sw_01', 'Submissão para Mobilidade Nacional / Internacional', False, True));
+		array_push($cp, array('$SW', 'sw_02', 'Entrega de relatório parcial', False, True));
+		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_mst_form_acompanhamento'), False, True));
+		array_push($cp, array('$SW', 'sw_04', 'Entrega de relatório final', False, True));
+		//array_push($cp, array('$SW', 'sw_05', msg('sw_ic_mst_resumo'), False, True));
+		//array_push($cp, array('$SW', 'sw_06', msg('sw_ic_validacao'), False, True));
+		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_rel_final'), False, True));
+		array_push($cp, array('$B', '', msg('update'), False, True));
+		return ($cp);
+	}	
 
 	function cp_switch() {
 		$cp = array();

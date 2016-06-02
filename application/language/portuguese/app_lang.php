@@ -30,9 +30,14 @@ $lang['situacao_bp_9'] = '<font color="orange"><b>Cancelado</b></font>';
 $lang['captacao_outras'] = 'Bolsas previstas no projeto de pesquisa';
 $lang['titulo_pesquisa'] = 'Título do projeto do professor';
 $lang['submit_PIBIC'] = 'Submissão IC';
+$lang['submit_IC'] = 'Submissão IC';
+$lang['submit_IC_text'] = 'Submissão IC';
+$lang['submit_MOBI'] = 'Submissão Mobilidade Nacional/Internacional';
+$lang['submit_MOBI_text'] = 'Projetos e Planos de Alunos';
 $lang['area_conhecimento'] = 'Área do conhecimento';
 $lang['area_estrategica'] = 'Área do estratégica (se aplicado)';
 $lang['submit_PIBIC_text'] = 'Submissão de projetos e planos do PIBIC, PIBITI e PIBIC (jr)';
+$lang['submit_IC_text'] = 'Submissão de projetos e planos do PIBIC, PIBITI e PIBIC (jr)';
 $lang['editar_impedimento'] = 'inpedimento do perfil';
 $lang['shortcuts'] = 'Acesso rápido';
 $lang['bt_search'] = 'Busca';
@@ -105,7 +110,7 @@ $lang['lb_gravar_modelo'] = 'Gravar modelo';
 
 	
 /* Menu Princicpal */
-$lang['submit_ICMST'] = 'PIBIC MASTER';
+$lang['submit_ICMST'] = 'Submissão para PIBIC MASTER';
 $lang['submit_ICMST_text'] = 'Submissão para o Edital do PIBIC Master';
 $lang['pj_aluno'] = 'Estudante';
 $lang['submit_'] = 'Submissão';

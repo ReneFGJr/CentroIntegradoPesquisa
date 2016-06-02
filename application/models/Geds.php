@@ -116,29 +116,15 @@ class Geds extends CI_Model {
 		return ($sx);
 	}
 
-	function list_files($protocolo = '', $frame = '', $type = '') {
-		$sql = "select * from " . $this -> tabela . " 
-						where doc_dd0 = '$protocolo' 
-								and doc_ativo = 1 
-						";
-		$rlt = $this -> db -> query($sql);
-		$rlt = $rlt -> result_array($rlt);
-		$this -> total_files = count($rlt);
-
-		$sx = '';
-		if (count($rlt) > 0) {
-
-			$sx = '<table border=0 class="lt1">';
-			for ($r = 0; $r < count($rlt); $r++) {
-				$line = $rlt[$r];
+	function show_simple_file($line,$confirm=1)
+		{
 				$link = '<span onclick="ged_download(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
-				$sx .= '<tr>';
-				$sx .= '<td>';
+				$sx = '';
 				$sx .= $link . $line['doc_filename'];
 				$sx .= ' | ';
 				$sx .= stodbr($line['doc_data']);
-				$sx .= ' | ';
-				$sx .= $line['doc_tipo'];
+				//$sx .= ' | ';
+				//$sx .= $line['doc_tipo'];
 				$sx .= ' | ';
 				$sx .= $line['doc_hora'];
 				$sx .= ' | ';
@@ -148,16 +134,19 @@ class Geds extends CI_Model {
 					$linkd = '<span onclick="ged_excluir(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;">';
 					$sx .= ' | ';
 					$sx .= $linkd . '<font color="red">excluir</font>' . '</span>';
-					$linkd = '<span onclick="ged_lock(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;"  title="Confirmando, o arquivo não poderá mais ser excluído!">';
-					$sx .= ' | ';
-					$sx .= $linkd . '<font color="blue">confirmar</font>' . '</span>';
+					if ($confirm == 1)
+						{
+						$linkd = '<span onclick="ged_lock(\'' . $line['id_doc'] . '\');" class="link" style="cursor: pointer;"  title="Confirmando, o arquivo não poderá mais ser excluído!">';
+						$sx .= ' | ';
+						$sx .= $linkd . '<font color="blue">confirmar</font>' . '</span>';
+						}
 				}
-				$sx .= '</td>';
-				$sx .= '</tr>';
-			}
-			$sx .= '</table>';
-
-			$sx .= '
+			return($sx);			
+		}
+		
+	function script($frame='')
+		{
+			$sx = '
 				<script>
 					function ged_excluir($id) {
 						var $tela = newwindows("' . base_url('index.php/' . $frame . '/ged_excluir/') . '/" + $id,600,400);
@@ -176,6 +165,33 @@ class Geds extends CI_Model {
 				}					
 				</script>
 			';
+			return($sx);			
+		}
+
+	function list_files($protocolo = '', $frame = '', $type = '') {
+		$sql = "select * from " . $this -> tabela . " 
+						where doc_dd0 = '$protocolo' 
+								and doc_ativo = 1 
+						";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$this -> total_files = count($rlt);
+
+		$sx = '';
+		if (count($rlt) > 0) {
+
+			$sx = '<table border=0 class="lt1">';
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				$sx .= '<tr>';
+				$sx .= '<td>';
+				$sx .= $this->show_simple_file($line);
+				$sx .= '</td>';
+				$sx .= '</tr>';
+			}
+			$sx .= '</table>';
+			$sx .= $this->script($frame);
+	
 		}
 		return ($sx);
 	}
@@ -306,7 +322,7 @@ class Geds extends CI_Model {
 				}
 
 			if (strlen($erro) == 0) {
-				$compl = $proto . '-' . substr(md5($nome . date("His")), 0, 5) . '-';
+				$compl = $id . '-' . substr(md5($nome . date("His")), 0, 5) . '-';
 				//$compl = troca($compl, '/', '-');
 
 				if (!move_uploaded_file($temp, $path . $compl . $nome)) { $erro = msg('erro_save');

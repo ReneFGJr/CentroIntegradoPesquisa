@@ -1,5 +1,4 @@
 <?php
-
 class Main extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
@@ -92,23 +91,34 @@ class Main extends CI_Controller {
 
 		/***************************************** PIBIC *********************************/
 		$subm = $this -> ics -> submissoes_abertas(1);
-
 		/* Submissão PIBIC MASTER */
-		if (($subm['sw_01'] == '1') and ($ss == 1)) {
+		if (($subm['sw_01'] == '1')) {
 			$mod = $subm['sw_tipo'];
-			array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit_' . $mod));
+			array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit/' . $mod));
 		}
 
 		/***************************************** PIBIC MASTER **************************/
 		$subm = $this -> ics -> submissoes_abertas(2);
-
 		/* Submissão PIBIC MASTER */
-		if ($subm['sw_01'] == '1') {
+		if (($subm['sw_01'] == '1') and (($ss == 1) or (perfil("#ADM")))) {
 			if ((strlen($ss) > 0) or (perfil("#CPI#SPI#ADM") > 0)) {
 				$mod = $subm['sw_tipo'];
-				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit_' . $mod));
+				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit/' . $mod));
 			}
 		}
+		
+		/***************************************** PIBIC MOBILIDADE **************************/
+		$subm = $this -> ics -> submissoes_abertas(3);		
+
+		/* Submissão PIBIC Mobilidade */
+		if (($subm['sw_01'] == '1') and (($ss == 1) or (perfil("#ADM")))) {
+			if ((strlen($ss) > 0) or (perfil("#CPI#SPI#ADM") > 0)) {
+				$mod = $subm['sw_tipo'];
+				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit/' . $mod));
+			}
+		}
+
+
 		/* AVALIACOES IC */
 		if ((strlen($idu) > 0) and ($this -> ics -> existe_avaliacoes($idu) == 1)) {
 			array_push($menu, array('Avaliação IC', '<img src="' . base_url('img/icon/icon_avaliacoes.png') . '" align="right" width="48">Indicações para sua avaliação', 'BTS', '/avaliador'));

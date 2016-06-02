@@ -349,10 +349,10 @@ class ic extends CI_Controller {
 	/*************************************************************************************************
 	 *************************************************************************** SUBMISSAO MASTER ****
 	 *************************************************************************************************/
-	function submit_new() {
+	function submit_new($tipo) {
 		$this -> load -> model('ics');
 		$cracha = $_SESSION['cracha'];
-		$this -> ics -> projeto_novo($cracha);
+		$this -> ics -> projeto_novo($cracha, $tipo);
 	}
 
 	function submit_finished() {
@@ -467,62 +467,151 @@ class ic extends CI_Controller {
 				if ($form -> saved > 0) {
 					redirect(base_url('index.php/ic/submit_edit/IC/' . $id . '/' . $chk . '/' . ($pag + 1)));
 				}
+				break;
+			case 'MOBI' :
+				$this -> load -> model('ics_mobi');
+				
+				$bp[1] = 'Projeto do Professor';
+				$bp[2] = 'Documentos do projeto';
+				$bp[3] = 'Confirmação';
+				$data['bp'] = $bp;
+				$data['bp_link'] = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . $chk . '/');
+				$this -> load -> view('gadget/progessbar_horizontal.php', $data);
+
+				$form = new form;
+				$form -> id = $id;
+
+				switch ($pag) {
+					case '1' :
+						$cp = $this -> ics_mobi -> cp_subm_01();
+
+						$tela = $form -> editar($cp, 'ic_submissao_projetos');
+
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+						break;
+					case '2' :
+						$cp = $this -> ics_mobi -> cp_subm_02($id);
+						$tela = $form -> editar($cp, 'ic_submissao_projetos');
+
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+						break;
+					case '3' :
+						$this -> load -> view('ic/projeto', $prj_data);
+						$cp = $this -> ics_mobi -> valida_entrada($id);
+
+						$tela = $form -> editar($cp, 'ic_submissao_projetos');
+
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+						break;
+
+					case '4' :
+						$this -> ics_mobi -> submit_enviar_email($id);
+						$this -> ics -> submit_altera_status($id, 'A', '@');
+						redirect(base_url('index.php/ic/submit_finished/' . $id));
+						break;
+				}
+
+				if ($form -> saved > 0) {
+					redirect(base_url('index.php/ic/submit_edit/'.$tipo.'/' . $id . '/' . $chk . '/' . ($pag + 1)));
+				}
+				break;	
+			case 'ICMST' :
+				$this -> load -> model('ics_master');
+				
+				$bp[1] = 'Projeto do Professor';
+				$bp[2] = 'Documentos da Proposta';
+				$bp[3] = 'Validação';
+				$data['bp'] = $bp;
+				$data['bp_link'] = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . $chk . '/');
+				$this -> load -> view('gadget/progessbar_horizontal.php', $data);
+
+				$form = new form;
+				$form -> id = $id;
+
+				switch ($pag) {
+					case '1' :
+						$cp = $this -> ics_master -> cp_subm_01();
+
+						$tela = $form -> editar($cp, 'ic_submissao_projetos');
+
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+						break;
+					case '2' :
+						$cp = $this -> ics_master -> cp_subm_02($id);
+						$tela = $form -> editar($cp, 'ic_submissao_projetos');
+
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+						break;
+					case '3' :
+						$this -> load -> view('ic/projeto', $prj_data);
+						$cp = $this -> ics_master -> valida_entrada($id);
+
+						$tela = $form -> editar($cp, 'ic_submissao_projetos');
+
+						$data['content'] = $tela;
+						$this -> load -> view('content', $data);
+						break;
+
+					case '4' :
+						$this -> ics_master -> submit_enviar_email($id);
+
+						$this -> ics -> submit_altera_status($id, 'A', '@');
+						redirect(base_url('index.php/ic/submit_finished/' . $id));
+						break;
+				}
+
+				if ($form -> saved > 0) {
+					redirect(base_url('index.php/ic/submit_edit/'.$tipo.'/' . $id . '/' . $chk . '/' . ($pag + 1)));
+				}
+				break;							
 		}
 
 	}
 
-	function submit_ICMST() {
-		$this -> load -> model('ics_master');
+	function submit($tipo = 'IC', $sta = '') {
+		switch ($tipo) {
+			case 'IC' :
+				$tipom = 'ics';
+				$model = 'ics';
+				break;
+			case 'ICMST' :
+				$tipom = 'icmst';
+				$model = 'ics_master';
+				break;
+			case 'MOBI' :
+				$tipom = 'mobi';
+				$model = 'ics_mobi';
+				break;
+			default :
+				echo 'Invalid type:' . $tipo;
+				return ('');
+		}
+
+		$this -> load -> model($model);
 		$this -> cab();
 
 		$id_us = $_SESSION['id_us'];
 		$cracha = $_SESSION['cracha'];
 		$ano = date("Y");
-		$tela = $this -> ics_master -> resumo_submit($cracha, $ano);
+		$tela = $this -> $model -> resumo_submit($cracha, $ano);
 
 		/* Habilita botão de submissão */
-		$prj = $this -> ics_master -> exist_submit($cracha, $ano);
+		$prj = $this -> $model -> exist_submit($cracha, $ano);
 		/* se 0, não existe projeto cadastrado */
-		if ($prj > 0) {
-			$chk = checkpost_link($prj);
-			$tipo = 'ICMST';
-			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $prj . '/' . $chk . '/');
-			$botao = '<a href="' . $botao . '" class="botao3d back_green_shadown back_green">';
-			$botao .= msg('ic_submit_edit_project');
-			$botao .= '</a>';
-		} else {
-			$botao = '<a href="' . base_url('index.php/ic/submit_new/ICMST') . '" class="botao3d back_green_shadown back_green">';
-			$botao .= msg('ic_submit_new_project');
-			$botao .= '</a>';
-		}
-		$tela .= '<br>' . $botao;
-
-		$data['content'] = $tela;
-		$this -> load -> view('content', $data);
-
-	}
-
-	function submit_PIBIC($sta = '') {
-		$this -> load -> model('ics');
-		$this -> cab();
-
-		$id_us = $_SESSION['id_us'];
-		$cracha = $_SESSION['cracha'];
-		$ano = date("Y");
-		$tela = $this -> ics -> resumo_submit($cracha, $ano);
-
-		/* Habilita botão de submissão */
-		$prj = $this -> ics -> exist_submit($cracha, $ano);
-		/* se 0, não existe projeto cadastrado */
-		$tipo = 'ic';
+		//$tipo = lowerCase($tipo);
 		if ($prj > 0) {
 			$chk = checkpost_link($prj);
 			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $prj . '/' . $chk . '/');
-			$botao = '<a href="' . $botao . '" class="botao3d back_green_shadown back_green">';
+			$botao = '<a href="' . $botao . '" class="btn btn-primary">';
 			$botao .= msg('ic_submit_edit_project');
 			$botao .= '</a>';
 		} else {
-			$botao = '<a href="' . base_url('index.php/' . $tipo . '/submit_new/' . $tipo . '') . '" class="botao3d back_green_shadown back_green">';
+			$botao = '<a href="' . base_url('index.php/ic/submit_new/' . $tipo . '') . '" class="btn btn-primary">';
 			$botao .= msg('ic_submit_new_project');
 			$botao .= '</a>';
 		}
@@ -535,7 +624,7 @@ class ic extends CI_Controller {
 		if (strlen($sta) > 0) {
 			if ($sta == '0') { $sta = '@';
 			}
-			$tela = $this -> ics -> mostra_projetos_situacao($cracha, $sta, date("Y"), 'IC');
+			$tela = $this -> $model -> mostra_projetos_situacao($cracha, $sta, date("Y"), $tipo);
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
 		}
@@ -2533,7 +2622,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
+
 	function rpc_nao_entregue($tipo = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -2568,7 +2657,7 @@ class ic extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
-	}	
+	}
 
 	function entrega($tipo = '') {
 		$sx = $this -> rp_entregue($tipo);
@@ -2807,6 +2896,7 @@ class ic extends CI_Controller {
 		$menu = array();
 		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (IC)', 'ITE', '/ic/acompanhamento_sw'));
 		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (PIBIC MASTER)', 'ITE', '/ic/acompanhamento_ic_master_sw'));
+		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (Mobilidade)', 'ITE', '/ic/acompanhamento_ic_mobi_sw'));
 		array_push($menu, array('Acompanhamento', 'Calendário de Entregas', 'ITE', '/ic/acompanhamento_data'));
 		array_push($menu, array('Formulário de acompanhamento', 'Entrega de formlários', 'ITE', '/ic/entrega/FORM_PROF'));
 
@@ -3006,6 +3096,33 @@ class ic extends CI_Controller {
 
 		$form = new form;
 		$form -> id = 2;
+		/* IC */
+
+		$tela = $form -> editar($cp, $this -> ics -> tabela_acompanhamento);
+
+		$data['title'] = msg('ic_acomanhamento_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/ic/acompanhamento'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function acompanhamento_ic_mobi_sw() {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this -> ics -> cp_switch_ic_mobi();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = 3;
 		/* IC */
 
 		$tela = $form -> editar($cp, $this -> ics -> tabela_acompanhamento);
@@ -3225,8 +3342,7 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();
@@ -3701,7 +3817,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function avaliacoes_abertas($tipo,$acao='') {
+	function avaliacoes_abertas($tipo, $acao = '') {
 		$this -> load -> model('mensagens');
 		$this -> load -> model('ic_pareceres');
 
@@ -3712,74 +3828,68 @@ class ic extends CI_Controller {
 		$tot = 0;
 		$tot1 = 0;
 		$tot2 = 0;
-		
+
 		/* recupera mensagens */
-		$txt = $this->mensagens->busca('AVAL_AVISO_'.$tipo,array());
-		
-		if (!isset($txt['nw_texto']))
-		{
-			return('');
+		$txt = $this -> mensagens -> busca('AVAL_AVISO_' . $tipo, array());
+
+		if (!isset($txt['nw_texto'])) {
+			return ('');
 		}
-		
+
 		$texto = $txt['nw_texto'];
 		$title = $txt['nw_titulo'];
 		$own = mst($txt['nw_own']);
 		$idm = $txt['id_nw'];
-		
-		
-		
+
 		for ($r = 0; $r < count($users); $r++) {
 			$line = $users[$r];
 			$status = '<font color="orange">enviar aviso</font>';
-			
-			switch ($acao)
-				{
-				case 'send':
+
+			switch ($acao) {
+				case 'send' :
 					$status = '<font color="blue">enviado aviso</font>';
-					$link_avaliador = $this->usuarios->link_acesso($line['id_us']);
-					$link_avaliador = '<a href="'.$link_avaliador.'" target="_new">'.$link_avaliador.'</a>';
-					$txt = troca($texto,'$nome',$line['us_nome']);
-					$txt = troca($txt,'$link_avaliador',$link_avaliador);
-					enviaremail_usuario($line['id_us'],$title.' : '.$line['us_nome'],$txt,$own);
+					$link_avaliador = $this -> usuarios -> link_acesso($line['id_us']);
+					$link_avaliador = '<a href="' . $link_avaliador . '" target="_new">' . $link_avaliador . '</a>';
+					$txt = troca($texto, '$nome', $line['us_nome']);
+					$txt = troca($txt, '$link_avaliador', $link_avaliador);
+					enviaremail_usuario($line['id_us'], $title . ' : ' . $line['us_nome'], $txt, $own);
 					break;
-				case 'test':
-					if ($r < 5)
-						{
-							$idu = $_SESSION['id_us'];
-							$status = '<font color="blue">enviado teste</font>';
-							$link_avaliador = $this->usuarios->link_acesso($line['id_us']);
-							$link_avaliador = '<a href="'.$link_avaliador.'" target="_new">'.$link_avaliador.'</a>';
-							$txt = troca($texto,'$nome',$line['us_nome']);
-							$txt = troca($txt,'$link_avaliador',$link_avaliador);
-							enviaremail_usuario($idu,$title.' : '.$line['us_nome'],$txt,$own);
-							break;
-						} else {
-							$status = '<font color="green">ignorado envio</font>';
-						}				
-				}
-				
-			if ($line['ies_instituicao_ies_id'] != 1)
-				{
-					$xtipo = 'Externo';
-					$tot1++;
-				} else {
-					$xtipo = 'Interno';
-					$tot2++;
-				}
+				case 'test' :
+					if ($r < 5) {
+						$idu = $_SESSION['id_us'];
+						$status = '<font color="blue">enviado teste</font>';
+						$link_avaliador = $this -> usuarios -> link_acesso($line['id_us']);
+						$link_avaliador = '<a href="' . $link_avaliador . '" target="_new">' . $link_avaliador . '</a>';
+						$txt = troca($texto, '$nome', $line['us_nome']);
+						$txt = troca($txt, '$link_avaliador', $link_avaliador);
+						enviaremail_usuario($idu, $title . ' : ' . $line['us_nome'], $txt, $own);
+						break;
+					} else {
+						$status = '<font color="green">ignorado envio</font>';
+					}
+			}
+
+			if ($line['ies_instituicao_ies_id'] != 1) {
+				$xtipo = 'Externo';
+				$tot1++;
+			} else {
+				$xtipo = 'Interno';
+				$tot2++;
+			}
 			$tot++;
 			$sx .= '<tr class="lt1">';
-			$sx .= '<td align="center" width="3%" class="borderb1">'.$tot.'</td>';
-			$sx .= '<td align="center" width="5%" class="borderb1">'.$xtipo.'</td>';
-			$sx .= '<td class="borderb1">'.link_avaliador($line['us_nome'],$line['pp_avaliador_id']).'</td>';
-			$sx .= '<td class="borderb1" align="right">'.$status.'</td>';			
+			$sx .= '<td align="center" width="3%" class="borderb1">' . $tot . '</td>';
+			$sx .= '<td align="center" width="5%" class="borderb1">' . $xtipo . '</td>';
+			$sx .= '<td class="borderb1">' . link_avaliador($line['us_nome'], $line['pp_avaliador_id']) . '</td>';
+			$sx .= '<td class="borderb1" align="right">' . $status . '</td>';
 			$sx .= '</tr>';
 		}
 		$sx .= '</table>';
-		
+
 		/* Envio */
-		$btn = '<a href="'.base_url('index.php/ic/avaliacoes_abertas/'.$tipo).'/send" class="botao3d back_green_shadown back_green">enviar e-mail</a>';
-		$btn3 = '<a href="'.base_url('index.php/ic/avaliacoes_abertas/'.$tipo).'/test" class="botao3d back_blue_shadown back_blue">enviar e-mail</a>';
-		$btn2 = '<a href="'.base_url('index.php//ic/mensagens_edit/'.$idm.'/'.checkpost_link($idm)).'/send" class="botao3d back_grey_shadown back_grey">editar e-mail</a>';
+		$btn = '<a href="' . base_url('index.php/ic/avaliacoes_abertas/' . $tipo) . '/send" class="botao3d back_green_shadown back_green">enviar e-mail</a>';
+		$btn3 = '<a href="' . base_url('index.php/ic/avaliacoes_abertas/' . $tipo) . '/test" class="botao3d back_blue_shadown back_blue">enviar e-mail</a>';
+		$btn2 = '<a href="' . base_url('index.php//ic/mensagens_edit/' . $idm . '/' . checkpost_link($idm)) . '/send" class="botao3d back_grey_shadown back_grey">editar e-mail</a>';
 		$data = array();
 		$sa = '<table width="500" align="left" cellspacing=5>';
 		$sa .= '<tr class="lt0"><th width="35%"h>Avaliadores Internos</th>
@@ -3789,15 +3899,15 @@ class ic extends CI_Controller {
 								<th width="10%">Mensagens</th>
 				</tr>';
 		$sa .= '<tr class="lt6" align="center">
-						<td class="border1">'.$tot2.'</td>
-						<td class="border1">'.$tot1.'</td>
-						<td class="lt1">'.$btn.'</td>
-						<td class="lt1">'.$btn3.'</td>
-						<td class="lt1">'.$btn2.'</td>
+						<td class="border1">' . $tot2 . '</td>
+						<td class="border1">' . $tot1 . '</td>
+						<td class="lt1">' . $btn . '</td>
+						<td class="lt1">' . $btn3 . '</td>
+						<td class="lt1">' . $btn2 . '</td>
 				</tr>';
 		$sa .= '</table><br>';
-		$data['content'] = $sa.$sx;
-		$this->load->view('content',$data);
+		$data['content'] = $sa . $sx;
+		$this -> load -> view('content', $data);
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
