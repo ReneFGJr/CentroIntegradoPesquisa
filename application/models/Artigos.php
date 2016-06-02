@@ -507,7 +507,11 @@ class artigos extends CI_Model {
 			if ($editar == 1) {
 				if ($line['ar_status'] == 1) {
 					$acao = base_url('index.php/artigo/editar/' . $line['id_ar'] . '/' . checkpost_link($line['id_ar']));
-					$acao = '<a href="' . $acao . '" class="link lt1">editar</a>';
+					$acao = '<a href="' . $acao . '"class="btn btn-danger">';
+					//$acao .= '<button class="btn btn-danger" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">';
+					$acao .= 'editar';
+					//$acao .= '</button>';
+					$acao .= '</a>';
 				}
 				$sx .= '<td class="border1" align="center">' . $acao . '</td>';
 			} else {
