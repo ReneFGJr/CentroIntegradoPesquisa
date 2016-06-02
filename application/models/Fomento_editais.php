@@ -239,11 +239,11 @@ class fomento_editais extends CI_model {
 			$titulo = troca($titulo, '</BR>', '');
 			$sx .= '<td>';
 			/* Logo */
-			$sx .= '<img src="' . $line['agf_imagem'] . '" width="140" align="right">';
+			$sx .= '<img src="' . $line['agf_imagem'] . '" height="60" align="right">';
 
 			/* Numero do Edital */
 			$sx .= '<span class="edital_chamada">Edital / Chamada: <b>' . $line['ed_chamada'] . '</b></span>';
-			$sx .= '</br></br>';
+			$sx .= '</br>';
 
 			/* Nome do Edital */
 			$sx .= '<span class="edital_titulo">' . $link . $titulo . '</a>' . '</span>';

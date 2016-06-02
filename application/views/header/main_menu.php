@@ -1,4 +1,4 @@
-<div id="main_menu" class="2colunas">
+<div id="main_menu" class="row">
 	<h1><?php echo $title_menu;?></h1>
 	<?php
 	$xtit = '';
@@ -73,7 +73,7 @@
 				if ($tit != $xtit) {
 					if ($div == 1) { echo '</div>';
 					}
-					echo '<div class="menu_item">';
+					echo '<div class="col-md-4">';
 					echo '<span class="lt3"><B>' . $tit . '</B></span><BR>';
 					$xtit = $tit;
 					$div = 1;
@@ -91,7 +91,7 @@
 				if ($tit != $xtit) {
 					if ($div == 1) { echo '</div>';
 					}
-					echo '<div class="menu_item">';
+					echo '<div class="menu_item col-md-3">';
 					echo '<span class="lt3"><B>' . $tit . '</B></span><BR>';
 					$xtit = $tit;
 					$div = 1;
