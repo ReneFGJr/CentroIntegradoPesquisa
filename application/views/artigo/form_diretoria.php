@@ -5,8 +5,8 @@ if (strlen(get("dd1") > 0)) {
 	$dd1 = round(get("dd1"));
 	$chk[$dd1] = 'checked';
 }
-$ops[10] = 'Com bonificação';
-$ops[13] = 'Sem bonificação';
+$ops[15] = 'Encaminhar <font color="blue">para gratificação</font>';
+$ops[16] = 'Encaminhar <font color="red">sem gratificação</font>';
 $ops[4] = 'Devolver para o professor para correções';
 $ops[5] = 'Cancelar protocolo, justificando o motivo';
 $ops[7] = 'Finalizar processo';
@@ -29,10 +29,10 @@ $erro = '';
 	</tr>
 	<tr class="lt2" align="left" valign="top">
 		<td>
-		<input type="radio" name="dd1" value="10" <?php echo $chk[0];?> >
-		<?php echo $ops[10];?><br>
-		<input type="radio" name="dd1" value="11" <?php echo $chk[1];?> >
-		<?php echo $ops[13];?><br>
+		<input type="radio" name="dd1" value="15" <?php echo $chk[0];?> >
+		<?php echo $ops[15];?><br>
+		<input type="radio" name="dd1" value="16" <?php echo $chk[1];?> >
+		<?php echo $ops[16];?><br>
 		<hr>
 		<input type="radio" name="dd1" value="4" <?php echo $chk[4];?> >
 		<?php echo $ops[4];?><br>

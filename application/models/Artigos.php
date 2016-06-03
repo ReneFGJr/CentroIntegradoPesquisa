@@ -163,6 +163,7 @@ class artigos extends CI_Model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$perf = $line['cas_perfil'];
+			echo '=>' . $perf;
 			switch ($perf) {
 				case '#COP' :
 					$id = 0;
@@ -247,12 +248,12 @@ class artigos extends CI_Model {
 	}
 
 	function acao_artigo($proto, $tp) {
-		$this->load->model('mensagens');
+		$this -> load -> model('mensagens');
 		$data = date("Y-m-d");
-		
-		$artigo = $this->le($proto);
-		$user = $this->usuarios->le_cracha($artigo['ar_professor']);
-		
+
+		$artigo = $this -> le($proto);
+		$user = $this -> usuarios -> le_cracha($artigo['ar_professor']);
+
 		switch ($tp) {
 			case '0' :
 				// Com isenção e com bonificação pelo COORDENADOR //
@@ -264,9 +265,9 @@ class artigos extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Indicado com <b>bonificação</b><br>' . get("dd2");
 				$this -> artigos -> insere_historico($proto, '80', $desc);
-				
-				echo '==>'.$sql;
-				exit;
+
+				echo '==>' . $sql;
+				exit ;
 				return (1);
 				break;
 			case '1' :
@@ -284,13 +285,13 @@ class artigos extends CI_Model {
 
 			case '4' :
 				// Devolver ao professor para correção  COORDENADOR OU SECRETARIA//
-				
+
 				/* Enviar e-mail para professor */
-				$dados = array_merge($user,$artigo);
+				$dados = array_merge($user, $artigo);
 				$dados['motivo'] = get("dd2");
-				$msg = $this->mensagens->busca('artigo_devolver_professor',$dados);
-				enviaremail_usuario(1,$msg['nw_titulo'],$msg['nw_texto'],$msg['nw_own']);
-				enviaremail_usuario($dados['id_us'],$msg['nw_titulo'],$msg['nw_texto'],$msg['nw_own']);
+				$msg = $this -> mensagens -> busca('artigo_devolver_professor', $dados);
+				enviaremail_usuario(1, $msg['nw_titulo'], $msg['nw_texto'], $msg['nw_own']);
+				enviaremail_usuario($dados['id_us'], $msg['nw_titulo'], $msg['nw_texto'], $msg['nw_own']);
 
 				$sql = "update cip_artigo set 
 								ar_bonificacao = 0,
@@ -303,8 +304,6 @@ class artigos extends CI_Model {
 				} else {
 					$desc = '';
 				}
-				
-				
 
 				$this -> artigos -> insere_historico($proto, '1', $desc);
 				return (1);
@@ -369,6 +368,35 @@ class artigos extends CI_Model {
 				$this -> db -> query($sql);
 				$desc = 'Indicado com <b>bonificação</b><br>' . get("dd2");
 				$this -> artigos -> insere_historico($proto, '81', $desc);
+				return (1);
+				break;
+
+			case '15' :
+				// Com isenção e com bonificação pelo COORDENADOR //
+				$sql = "update cip_artigo set 
+								ar_bonificacao = 1,
+								ar_status = 15,
+								ar_lastupdate = $data
+							where ar_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <b>para gratificação</b><br>' . get("dd2");
+				$this -> artigos -> insere_historico($proto, '15', $desc);
+				return (1);
+				break;
+
+			case '16' :
+				// Com isenção e com bonificação pelo COORDENADOR //
+				$sql = "update cip_artigo set 
+								ar_bonificacao = 1,
+								ar_status = 90,
+								ar_v1 = 0, ar_v2 = 0, ar_v3 = 0, ar_v4 = 0, ar_v5 = 0,
+								ar_lastupdate = $data
+							where ar_protocolo = '" . $proto . "'";
+				$this -> db -> query($sql);
+				$desc = 'Indicado <font color="red"><b>sem gratificação</b></font><br>' . get("dd2");
+
+				/****** ERLI - TEXTO ****/
+				$this -> artigos -> insere_historico($proto, '16', $desc);
 				return (1);
 				break;
 			case '25' :
@@ -738,7 +766,7 @@ class artigos extends CI_Model {
 		}
 		$sx .= '<tr><td class="border1">Copia da Tela do Qualis - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
 						<td class="border1" align="center">' . $vd[4] . '</tr>';
-						
+
 		/***********************************************************
 		 ********************************* REGRA - arquivos postados - COPIA DO SCIMAGO
 		 ***********************************************************/
@@ -755,7 +783,7 @@ class artigos extends CI_Model {
 			$vd[5] = $ok;
 		}
 		$sx .= '<tr><td class="border1">Copia da Tela do Scimago - ' . count($rrr) . ' ' . msg('file_posted') . '' . '</td>
-						<td class="border1" align="center">' . $vd[5] . '</tr>';						
+						<td class="border1" align="center">' . $vd[5] . '</tr>';
 
 		/*********************************************************************************
 		 ********************************* REGRA - Vinculo ao programa de Pós-Graduação
@@ -800,41 +828,40 @@ class artigos extends CI_Model {
 		return ($cp);
 	}
 
-	function arquivos_parecidos($id)
-		{
-			$dt = $this->le($id);
-			
-			$issn = $dt['ar_issn'];
-			$ano = $dt['ar_ano'];
-			$vol = $dt['ar_vol'];
-			$tit = $dt['ar_titulo'];
-			
-			$sql = "select * from cip_artigo 
+	function arquivos_parecidos($id) {
+		$dt = $this -> le($id);
+
+		$issn = $dt['ar_issn'];
+		$ano = $dt['ar_ano'];
+		$vol = $dt['ar_vol'];
+		$tit = $dt['ar_titulo'];
+
+		$sql = "select * from cip_artigo 
 						left join cip_artigo_status on ar_status = cas_status
 					where 
 					(ar_issn = '$issn') 
 					AND ar_ano = '$ano' 
 					and id_ar <> $id ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			
-			$sx = '<table class="tabela01 lt1" width="100%">';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$sx .= $this->load->view('artigo/artigo_row.php',$line,true);
-				}
-				
-			if (count($rlt) == 0)
-				{
-					$sx .= '<tr><td ><font color="green">Nenhum artigo1 parecido foi localizado!</font></td></tr>';
-				} else {
-					$sx .= '<img src="'.base_url('img/icon/icone_exclamation.png').'" height="60" align="left">';
-					$sx .= '<h3><font color="red">Existem arquivos publicados na mesma revista neste ano, deste ou de outros autores, valide com cuidado!</font></h3>';
-				}
-			$sx .= '</table>';
-			return($sx);			
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$sx = '<table class="tabela01 lt1" width="100%">';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= $this -> load -> view('artigo/artigo_row.php', $line, true);
 		}
+		/*** ERLI - LIberar para o cooredandor */
+		if (perfil("#ADM#CPS#DIP")) {
+			if (count($rlt) == 0) {
+				$sx .= '<tr><td ><font color="green">Nenhum artigo1 parecido foi localizado!</font></td></tr>';
+			} else {
+				$sx .= '<img src="' . base_url('img/icon/icone_exclamation.png') . '" height="60" align="left">';
+				$sx .= '<h3><font color="red">Existem arquivos publicados na mesma revista neste ano, deste ou de outros autores, valide com cuidado!</font></h3>';
+			}
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
 
 	function resumo_processos($id = '') {
 		$it = 6;
@@ -855,15 +882,15 @@ class artigos extends CI_Model {
 		$sz = round(100 / count($rlt));
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			$link = base_url('index.php/cip/artigos/'.$line['ar_status']);
-			$link = '<a href="'.$link.'" class="link lt6">';
-			$sa .= '<td align="center" class="lt1" width="'.$sz.'%">'.$line['cas_descricao'].'('.$line['cas_status'].')</td>';
-			$sb .= '<td align="center" class="lt6 border1">'.$link.$line['total'].'</a>'.'</td>';
+			$link = base_url('index.php/cip/artigos/' . $line['ar_status']);
+			$link = '<a href="' . $link . '" class="link lt6">';
+			$sa .= '<td align="center" class="lt1" width="' . $sz . '%">' . $line['cas_descricao'] . '(' . $line['cas_status'] . ')</td>';
+			$sb .= '<td align="center" class="lt6 border1">' . $link . $line['total'] . '</a>' . '</td>';
 		}
 
 		$sx = '<table class="lt2 border1" width="100%">';
-		$sx .= '<tr>'.$sa.'</tr>';
-		$sx .= '<tr>'.$sb.'</tr>';
+		$sx .= '<tr>' . $sa . '</tr>';
+		$sx .= '<tr>' . $sb . '</tr>';
 		$sx .= '</table>';
 
 		if (strlen($id) > 0) {
@@ -956,37 +983,36 @@ class artigos extends CI_Model {
 		$sx .= '</table>';
 		return ($sx);
 	}
-	function cp_tipo_pagamento()
-		{
-			$cp = array();
-			array_push($cp,array('$H8','id_ar','',False,True));
-			array_push($cp,array('$C1','ar_c1','Artigo A1',False,True));
-			array_push($cp,array('$C1','ar_c2','Artigo A2',False,True));
-			array_push($cp,array('$C1','ar_c3','Artigo Q1',False,True));
-			array_push($cp,array('$C1','ar_c4','Artigo ExR',False,True));
-			array_push($cp,array('$C1','ar_c5','Artigo Colaboração Internacional',False,True));
-			return($cp);			
+
+	function cp_tipo_pagamento() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ar', '', False, True));
+		array_push($cp, array('$C1', 'ar_c1', 'Artigo A1', False, True));
+		array_push($cp, array('$C1', 'ar_c2', 'Artigo A2', False, True));
+		array_push($cp, array('$C1', 'ar_c3', 'Artigo Q1', False, True));
+		array_push($cp, array('$C1', 'ar_c4', 'Artigo ExR', False, True));
+		array_push($cp, array('$C1', 'ar_c5', 'Artigo Colaboração Internacional', False, True));
+		return ($cp);
+	}
+
+	function atualiza_valores_bonificacao($id) {
+		$vlr = array(0, 1200, 1000, 1500, 0, 0);
+		$sql = "select * from cip_artigo where id_ar = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$sql = "update cip_artigo set
+								ar_v1 = " . ($vlr[1] * round($line['ar_c1'])) . ",
+								ar_v2 = " . ($vlr[2] * round($line['ar_c2'])) . ",
+								ar_v3 = " . ($vlr[3] * round($line['ar_c3'])) . ",
+								ar_v4 = " . ($vlr[4] * round($line['ar_c4'])) . ",
+								ar_v5 = " . ($vlr[5] * round($line['ar_c5'])) . "								
+							where id_ar = " . $id;
+			$this -> db -> query($sql);
 		}
-	function atualiza_valores_bonificacao($id)
-		{
-			$vlr = array(0,1200,1000,1500,0,0);
-			$sql = "select * from cip_artigo where id_ar = ".$id;
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					$sql = "update cip_artigo set
-								ar_v1 = ".($vlr[1] * round($line['ar_c1'])).",
-								ar_v2 = ".($vlr[2] * round($line['ar_c2'])).",
-								ar_v3 = ".($vlr[3] * round($line['ar_c3'])).",
-								ar_v4 = ".($vlr[4] * round($line['ar_c4'])).",
-								ar_v5 = ".($vlr[5] * round($line['ar_c5']))."								
-							where id_ar = ".$id;
-					$this->db->query($sql);					
-				}
-			return('');
-		}
+		return ('');
+	}
 
 }
 ?>

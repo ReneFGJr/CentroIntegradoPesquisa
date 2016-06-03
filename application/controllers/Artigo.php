@@ -310,9 +310,6 @@ class Artigo extends CI_Controller {
 				case 'LIBERACAO_PROCESSO' :
 					$ok = $this -> artigos -> acao_artigo($proto, $tp);
 					break;
-				case 'LIBERACAO_PROCESSO' :
-					$ok = $this -> artigos -> acao_artigo($proto, $tp);
-					break;
 				case 'LIBERACAO_ADMIN' :
 					$ok = $this -> artigos -> acao_artigo($proto, $tp);
 					break;
@@ -371,6 +368,12 @@ class Artigo extends CI_Controller {
 			if ($data['ar_status'] == 80) {
 				$this -> load -> view('artigo/form_secretaria_validacao', $data);
 			}
+			
+			/* Validacao da secretaria */
+			if ($data['ar_status'] == 91) {
+				$this -> load -> view('artigo/form_diretoria', $data);
+			}
+						
 			/* Gerar bonificaçoes e isenções pela secretaria */
 			if ($data['ar_status'] == 81) {
 				/*
