@@ -117,10 +117,10 @@ class Fcas extends CI_model {
 			$sx .= '</td>';
 
 			/**
-			$sx .= '<td align="center">';
-			$sx .= $fc_us;
-			$sx .= '</td>';
-			*/	
+			 $sx .= '<td align="center">';
+			 $sx .= $fc_us;
+			 $sx .= '</td>';
+			 */
 			$sx .= '<td align="center">';
 			$sx .= $line['qtd'];
 			$sx .= '</td>';
@@ -134,11 +134,18 @@ class Fcas extends CI_model {
 		return ($sx);
 	}
 
-
-	function calc_media_notas_protocolo($tipo = '', $ano = ''){
-		if($ano == ''){
+	function calc_media_notas_protocolo($tipo = '', $ano = '') {
+		if ($ano == '') {
 			$ano = date('Y');
 		}
+
+		if ($tipo == 'SUBMP') {
+			$sql = "delete from ic_edital 
+							where (ed_edital = 'PIBIC' or ed_edital = 'PIBITI' or ed_edital = 'PIBICEM')
+							and (ed_ano = '' or ed_ano = '$ano') ";
+			$rlt = $this -> db -> query($sql);
+		}
+
 		$sql = "select pp_protocolo_mae, pp_protocolo, count(*) as avaliacoes,
 						                round(1000* avg(pp_p01))/1000 as pp1,
 						                round(1000* avg(pp_p02))/1000 as pp2,
@@ -150,7 +157,7 @@ class Fcas extends CI_model {
 						                round(1000* avg(pp_p13))/1000 as pp13,
 						                round(1000* avg(pp_p14))/1000 as pp14,
 						                round(1000* avg(pp_p15))/1000 as pp15              
-						        from pibic_parecer_".$ano."
+						        from pibic_parecer_" . $ano . "
 						        where pp_tipo = '$tipo' 
 						        and pp_status = 'B'
 						        and pp_p01 <> ''
@@ -181,14 +188,14 @@ class Fcas extends CI_model {
 							<th align="rigth">total avaliações</th>					
 						</tr>';
 
-		$tot = 0;				
+		$tot = 0;
 		/*linhas da tabela*/
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			
+
 			$tot++;
 			//variaveis
-			$proto   = $line['pp_protocolo'];
+			$proto = $line['pp_protocolo'];
 			$proto_mae = $line['pp_protocolo_mae'];
 			$total_av = $line['avaliacoes'];
 
@@ -202,97 +209,99 @@ class Fcas extends CI_model {
 			$nt_p13 = $line['pp13'];
 			$nt_p14 = $line['pp14'];
 			$nt_p15 = $line['pp15'];
+			$line['ano'] = $ano;
 
 			$sx .= '<tr>';
 
 			$sx .= '<td align="center">';
 			$sx .= $r + 1;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $proto;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $proto_mae;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p01, 3, '.', ',');
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p02, 3, '.', ',');
-			$sx .= '</td>';			
+			$sx .= '</td>';
 
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p03, 3, '.', ',');
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p04, 3, '.', ',');
-			$sx .= '</td>';		
-			
+			$sx .= '</td>';
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p05, 3, '.', ',');
-			$sx .= '</td>';	
-			
+			$sx .= '</td>';
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p11, 3, '.', ',');
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p12, 3, '.', ',');
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p13, 3, '.', ',');
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p14, 3, '.', ',');
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= number_format($nt_p15, 3, '.', ',');
-			$sx .= '</td>';	
-			
+			$sx .= '</td>';
+
 			$sx .= '<td align="center">';
 			$sx .= $total_av;
-			$sx .= '</td>';		
-			
+			$sx .= '</td>';
+
 			//passa o array() $line para o metodo insert
-			$this -> inserir_notas_protocolo($line);	
+			$this -> inserir_notas_protocolo($line);
 
 		}
 		$sx .= '<tr><td colspan=15 align="right">Total de ' . $tot . ' registros</td></tr>';
-		
+
 		$sx .= '</table>';
 		return ($sx);
-		
+
 	}
 
-	function inserir_notas_protocolo($line){
-			//variaveis
-			$proto   = $line['pp_protocolo'];
-			$proto_mae = $line['pp_protocolo_mae'];
-			$total_av = $line['avaliacoes'];
+	function inserir_notas_protocolo($line) {
+		//variaveis
+		$ano = $line['ano'];
+		$proto = $line['pp_protocolo'];
+		$proto_mae = $line['pp_protocolo_mae'];
+		$total_av = $line['avaliacoes'];
 
-			$nt_p01 = $line['pp1'];
-			$nt_p02 = $line['pp2'];
-			$nt_p03 = $line['pp3'];
-			$nt_p04 = $line['pp4'];
-			$nt_p05 = $line['pp5'];
-			$nt_p11 = $line['pp11'];
-			$nt_p12 = $line['pp12'];
-			$nt_p13 = $line['pp13'];
-			$nt_p14 = $line['pp14'];
-			$nt_p15 = $line['pp15'];
-		
+		$nt_p01 = $line['pp1'];
+		$nt_p02 = $line['pp2'];
+		$nt_p03 = $line['pp3'];
+		$nt_p04 = $line['pp4'];
+		$nt_p05 = $line['pp5'];
+		$nt_p11 = $line['pp11'];
+		$nt_p12 = $line['pp12'];
+		$nt_p13 = $line['pp13'];
+		$nt_p14 = $line['pp14'];
+		$nt_p15 = $line['pp15'];
+
 		//grava notas na tabela ic_edital
-			$sql_inst2 = "insert into ic_edital 
+		$sql_inst2 = "insert into ic_edital 
 										(
-										 ed_protocolo,
+										 ed_protocolo, ed_ano,
 										 ed_protocolo_mae,
 										 ed_c1, ed_c2, 
 										 ed_c3, ed_c4,
@@ -300,26 +309,197 @@ class Fcas extends CI_model {
 										 ed_c7, ed_c8,
 										 ed_c9, ed_c10 
 										) values (
-										'$proto', '$proto_mae',
+										'$proto', '$ano', 
+										'$proto_mae',
 										'$nt_p01', '$nt_p02', '$nt_p03',
 										'$nt_p04', '$nt_p05', '$nt_p11',
 										'$nt_p12', '$nt_p13', '$nt_p14',
 										'$nt_p15')
 									";
-			$this -> db -> query($sql_inst2);
-		
+		$this -> db -> query($sql_inst2);
+
 		return ('');
-		
+
 	}
 
-	function atualizar_notas_protocolo($tipo = '', $ano = ''){
-		if($ano == ''){
+	function atualizar_produtividade() {
+		$sql = "select distinct us_id, us_nome, id_us from us_bolsa_produtividade
+					INNER JOIN us_usuario on id_us = us_id 
+					where usb_ativo = 1
+					order by us_nome ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<h1>Pontos para Bolsistas Produtividade</h1>';
+		$sx .= '<table class="tabela00 lt1" width="100%">';
+		$sx .= '<tr><th>#</th>
+					<th>Pesquisador</th>
+					<th>atribuição</th>
+				</tr>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			//atualiza tabela ic_edital
+			$sql_update = "update ic_edital set ed_bn_produtividade = 4
+						   where ed_professor = " . $line['us_id'] . cr();
+			$this -> db -> query($sql_update);
+			$sx .= '<tr>';
+			$sx .= '<td width="20" align="center">' . ($r + 1) . '</td>';
+			$sx .= '<td>' . link_user($line['us_nome'], $line['id_us']) . '</td>';
+			$sx .= '<td width="20" align="center" style="color: blue;">+4 pontos</td>';
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function atualizar_nota_aprovado_externamente() {
+		$ano = date("Y");
+		$sql = "SELECT * FROM `ic_submissao_projetos` 
+					where pj_ext_sn = 1 and pj_ano = '$ano' and pj_status <> 'X' and pj_status <> '@' and pj_status <> '!' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<h1>Pontos para Projetos Junior</h1>';
+		$sx .= '<table class="tabela00 lt1" width="100%">';
+		$sx .= '<tr><th>#</th>
+					<th>Pesquisador</th>
+					<th>atribuição</th>
+				</tr>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			
+			$area = $line['pj_area'];
+			switch($area)
+				{
+					case '1':
+						$area = 'E'; /* Exatas */
+						break;
+					case '2':
+						$area = 'V'; /* Exatas */
+						break;
+					case '3':
+						$area = 'E'; /* Exatas */
+						break;
+					case '4':
+						$area = 'V'; /* Exatas */
+						break;
+					case '5':
+						$area = 'A'; /* Exatas */
+						break;
+					case '6':
+						$area = 'S'; /* Exatas */
+						break;
+					case '7':
+						$area = 'H'; /* Exatas */
+						break;
+					case '8':
+						$area = 'H'; /* Exatas */
+						break;						
+					case '9':
+						$area = 'E'; /* Exatas */
+						break;						
+			}
+
+			//atualiza tabela ic_edital
+			$sql_update = "update ic_edital set ed_bn_externo = 2, ed_area = '$area'
+						   where ed_protocolo_mae = '" . $line['pj_codigo']."'" . cr();
+			$this -> db -> query($sql_update);
+			$sx .= '<tr>';
+			$sx .= '<td width="20" align="center">' . ($r + 1) . '</td>';
+			$sx .= '<td>' . $line['pj_codigo'] . '</td>';
+			$sx .= '<td>' . $line['pj_titulo'] . '</td>';
+			$sx .= '<td width="20" align="center" style="color: blue;"><nobr>+2 pontos</nobr></td>';
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function atualizar_projeto_jr() {
+		$sql = "SELECT distinct us_nome, id_us FROM ic_submissao_plano
+					INNER JOIN us_usuario on doc_autor_principal = us_cracha
+				WHERE doc_edital = 'PIBICEM' 
+					and doc_ano = '" . date("Y") . "'
+					and doc_status <> 'X'
+					and doc_status <> '@'
+					and doc_status <> '!'
+				ORDER BY us_nome
+				";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<h1>Pontos para Projetos Junior</h1>';
+		$sx .= '<table class="tabela00 lt1" width="100%">';
+		$sx .= '<tr><th>#</th>
+					<th>Pesquisador</th>
+					<th>atribuição</th>
+				</tr>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			//atualiza tabela ic_edital
+			$sql_update = "update ic_edital set ed_bn_jr = 3
+						   where ed_professor = " . $line['id_us'] . cr();
+			$this -> db -> query($sql_update);
+			$sx .= '<tr>';
+			$sx .= '<td width="20" align="center">' . ($r + 1) . '</td>';
+			$sx .= '<td>' . link_user($line['us_nome'], $line['id_us']) . '</td>';
+			$sx .= '<td width="20" align="center" style="color: blue;">+3 pontos</td>';
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function normaliza_nota() {
+		$ano = date("Y");
+		$sql = "SELECT max(ed_nota) as max FROM ic_edital
+				WHERE ed_ano = '" . date("Y") . "'";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		$max = $rlt[0]['max'];
+		
+		$fc_max = 100 / $max;
+		
+		$sql = "select * from ic_edital
+					INNER JOIN us_usuario on id_us = ed_professor
+					where ed_ano = '$ano' 
+					order by us_nome";
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+
+		$sx = '<h1>Normalização das notas</h1>';
+		$sx .= '<table class="tabela00 lt1" width="100%">';
+		$sx .= '<tr><th width="20">#</th>
+					<th width="80">Protocolo</th>
+					<th>Pesquisador</th>
+					<th width="80">Nota</th>
+				</tr>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$notaB = $line['ed_nota'];
+			$nota = round($notaB * $fc_max * 100)/100;
+			
+			//atualiza tabela ic_edital
+			$sql_update = "UPDATE ic_edital 
+								SET ed_nota_normalizada = $nota
+						   WHERE id_ed = " . $line['id_ed'] . cr();
+			$this -> db -> query($sql_update);
+			$sx .= '<tr>';
+			$sx .= '<td width="20" align="center">' . ($r + 1) . '</td>';
+			$sx .= '<td>' . $line['ed_protocolo'] . '</td>';
+			$sx .= '<td>' . link_user($line['us_nome'], $line['id_us']) . '</td>';
+			$cor = 'blue';
+			if ($nota < 70) { $cor = 'red'; }
+			$sx .= '<td width="20" align="center" style="color: '.$cor.';">'.number_format($nota,2,',','.').'</td>';
+		}
+		$sx .= '</table>';
+		return ($sx);
+	}
+
+	function atualizar_notas_protocolo($tipo = '', $ano = '') {
+		if ($ano == '') {
 			$ano = date('Y');
 		}
-		$sql = "select pp_protocolo, round(1000 * avg(media_notas + us_fc))/1000 as nota 
+		$sql = "select doc_edital, pp_protocolo, round(1000 * avg(media_notas + resultado.us_fc))/1000 as nota, count(*) as avaliacoes,
+				prof.us_cracha as pf_cracha, prof.id_us as id_pf, prof.us_nome as pf_nome, prof.us_professor_tipo as pf_ss, usuario_titulacao_ust_id	 as pf_tit 
 						from (select  pp_protocolo, pp_protocolo_mae, media_notas, us_fc, pp_avaliador_id 
 						      from (select pp_protocolo_mae, pp_protocolo, round(1000 * AVG((pp_p01+pp_p02+pp_p03+pp_p04+pp_p05+pp_p11+pp_p12+pp_p13+pp_p14+pp_p15)/10))/1000 as media_notas, us_fc, pp_avaliador_id
-								        from pibic_parecer_".$ano."
+								        from pibic_parecer_" . $ano . "
 								        inner join us_usuario on id_us = pp_avaliador_id
 								        where pp_tipo = '$tipo'  
 								        AND pp_status = 'B'
@@ -327,56 +507,99 @@ class Fcas extends CI_model {
 								        group by pp_protocolo, pp_avaliador_id
 						           ) as media
 						       ) as resultado
-						group by pp_protocolo        
-						order by pp_protocolo
+				INNER JOIN ic_submissao_plano ON doc_protocolo = pp_protocolo
+				INNER JOIN us_usuario as prof ON prof.us_cracha = doc_autor_principal
+						group by pp_protocolo, doc_edital, id_pf, prof.us_professor_tipo      
+						order by pp_protocolo, doc_edital, id_pf
 		";
-		
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
-		
+
 		//cabecalho
-		$sx = '<table class="tabela00 lt1" width="30%">';
+		$sx = '<table class="tabela00 lt1" width="100%">';
 		$sx .= '<tr class="lt3"><b>Notas individuais atualizadas por protocolo</b></tr>';
 		$sx .= '<tr>
-							<th>#</th>
-							<th align="right">Protocolo</th>
-							<th align="right">Nota atualizada</th>
+							<th width="2%">#</th>
+							<th width="8%" align="right">Protocolo</th>
+							<th width="5%" align="right">Nota atualizada</th>
+							<th width="5%">avaliações</th>
+							<th width="8%">edital</th>
+							<th width="62%">professor</th>
+							<th width="5%">tit.</th>
+							<th width="5%">mest./doutor.</th>
 						</tr>';
-		
+
 		$tot = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
-			
+
 			$proto = $line['pp_protocolo'];
-			$nota  = $line['nota'];
-			
+			$nota = $line['nota'];
+			$avali = $line['avaliacoes'];
+			$edital = $line['doc_edital'];
+			$us_prof = $line['pf_nome'] . ' (' . $line['pf_cracha'] . ')';
+			$id_pf = $line['id_pf'];
+			$titulacao = $line['pf_tit'];
+			$ss = $line['pf_ss'];
+			$pt_titu = 0;
+			$pt_ss = 0;
+			if ($titulacao == 6) { $pt_titu = 2;
+			}
+			if ($ss == 2) { $pt_ss = 2;
+			}
+
 			$sx .= '<tr>';
 
 			$sx .= '<td align="center">';
 			$sx .= $r + 1;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="right">';
 			$sx .= $proto;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="right">';
 			$sx .= number_format($nota, 3, '.', ',');
 			$sx .= '</td>';
-			
+
+			$sx .= '<td align="center">';
+			$sx .= number_format($avali, 0, '.', ',');
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $edital;
+			$sx .= '</td>';
+
+			$sx .= '<td align="left">';
+			$sx .= $us_prof;
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $pt_titu;
+			$sx .= '</td>';
+
+			$sx .= '<td align="center">';
+			$sx .= $pt_ss;
+			$sx .= '</td>';
+
 			//atualiza tabela ic_edital
-			$sql_update = "update ic_edital set ed_nota = '$nota' where ed_protocolo = '$proto'; ".cr();
-			$this -> db -> query($sql_update);			
-			}
-			
-			$sx .= '<tr><td colspan=15 align="right">Total de ' . $tot . ' registros</td></tr>';
-			$sx .= '</table>';
-		
+			$sql_update = "update ic_edital set ed_nota = '$nota', 
+									ed_avaliacoes = $avali,
+									ed_edital = '$edital',
+									ed_professor = '$id_pf',
+									ed_bn_titulacao = $pt_titu,
+									ed_bn_ss = $ss
+						   where ed_protocolo = '$proto'; " . cr();
+			$this -> db -> query($sql_update);
+		}
+
+		$sx .= '<tr><td colspan=15 align="right">Total de ' . $tot . ' registros</td></tr>';
+		$sx .= '</table>';
+
 		return ($sx);
 	}
-
-
 
 }
 ?>

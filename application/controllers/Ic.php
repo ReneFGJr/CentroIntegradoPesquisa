@@ -470,7 +470,7 @@ class ic extends CI_Controller {
 				break;
 			case 'MOBI' :
 				$this -> load -> model('ics_mobi');
-				
+
 				$bp[1] = 'Projeto do Professor';
 				$bp[2] = 'Documentos do projeto';
 				$bp[3] = 'Confirmação';
@@ -491,6 +491,25 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '2' :
+						$dados = $this -> ics -> le_projeto($id);
+						$dados_pj = $dados;
+
+						$status = $dados['pj_status'];
+						$proto = $dados['pj_codigo'];
+						$tipo = $dados['pj_edital'];
+						$us_cracha = $dados['pj_professor'];
+
+						$this -> geds -> tabela = 'ic_ged_documento';
+						$this -> geds -> file_lock_all($dados['pj_codigo']);
+
+						$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+						$dados['ged'] = '<br>Arquivos:';
+
+						$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
+
+						//$this -> load -> view('ic/email_projeto', $dados);
+						$this -> load -> view('ic/projeto', $dados);
+
 						$cp = $this -> ics_mobi -> cp_subm_02($id);
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
@@ -498,6 +517,25 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '3' :
+						$dados = $this -> ics -> le_projeto($id);
+						$dados_pj = $dados;
+
+						$status = $dados['pj_status'];
+						$proto = $dados['pj_codigo'];
+						$tipo = $dados['pj_edital'];
+						$us_cracha = $dados['pj_professor'];
+
+						$this -> geds -> tabela = 'ic_ged_documento';
+						$this -> geds -> file_lock_all($dados['pj_codigo']);
+
+						$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+						$dados['ged'] = '<br>Arquivos:';
+
+						$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
+
+						//$this -> load -> view('ic/email_projeto', $dados);
+						$this -> load -> view('ic/projeto', $dados);						
+						
 						$this -> load -> view('ic/projeto', $prj_data);
 						$cp = $this -> ics_mobi -> valida_entrada($id);
 
@@ -515,12 +553,12 @@ class ic extends CI_Controller {
 				}
 
 				if ($form -> saved > 0) {
-					redirect(base_url('index.php/ic/submit_edit/'.$tipo.'/' . $id . '/' . $chk . '/' . ($pag + 1)));
+					redirect(base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . $chk . '/' . ($pag + 1)));
 				}
-				break;	
+				break;
 			case 'ICMST' :
 				$this -> load -> model('ics_master');
-				
+
 				$bp[1] = 'Projeto do Professor';
 				$bp[2] = 'Documentos da Proposta';
 				$bp[3] = 'Validação';
@@ -541,6 +579,25 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '2' :
+						$dados = $this -> ics -> le_projeto($id);
+						$dados_pj = $dados;
+
+						$status = $dados['pj_status'];
+						$proto = $dados['pj_codigo'];
+						$tipo = $dados['pj_edital'];
+						$us_cracha = $dados['pj_professor'];
+
+						$this -> geds -> tabela = 'ic_ged_documento';
+						$this -> geds -> file_lock_all($dados['pj_codigo']);
+
+						$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+						$dados['ged'] = '<br>Arquivos:';
+
+						$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
+
+						//$this -> load -> view('ic/email_projeto', $dados);
+						$this -> load -> view('ic/projeto', $dados);
+
 						$cp = $this -> ics_master -> cp_subm_02($id);
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
 
@@ -548,7 +605,25 @@ class ic extends CI_Controller {
 						$this -> load -> view('content', $data);
 						break;
 					case '3' :
-						$this -> load -> view('ic/projeto', $prj_data);
+						$dados = $this -> ics -> le_projeto($id);
+						$dados_pj = $dados;
+
+						$status = $dados['pj_status'];
+						$proto = $dados['pj_codigo'];
+						$tipo = $dados['pj_edital'];
+						$us_cracha = $dados['pj_professor'];
+
+						$this -> geds -> tabela = 'ic_ged_documento';
+						$this -> geds -> file_lock_all($dados['pj_codigo']);
+
+						$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+						$dados['ged'] = '<br>Arquivos:';
+
+						$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
+
+						//$this -> load -> view('ic/email_projeto', $dados);
+						$this -> load -> view('ic/projeto', $dados);
+						
 						$cp = $this -> ics_master -> valida_entrada($id);
 
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
@@ -566,9 +641,9 @@ class ic extends CI_Controller {
 				}
 
 				if ($form -> saved > 0) {
-					redirect(base_url('index.php/ic/submit_edit/'.$tipo.'/' . $id . '/' . $chk . '/' . ($pag + 1)));
+					redirect(base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . $chk . '/' . ($pag + 1)));
 				}
-				break;							
+				break;
 		}
 
 	}
@@ -621,13 +696,11 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 		/***** Mostra Protoclos ****/
-		if (strlen($sta) > 0) {
-			if ($sta == '0') { $sta = '@';
+		if (($sta == '0') or ($sta=='')) { $sta = '@';
 			}
 			$tela = $this -> $model -> mostra_projetos_situacao($cracha, $sta, date("Y"), $tipo);
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);
-		}
 
 	}
 
@@ -2916,6 +2989,13 @@ class ic extends CI_Controller {
 		array_push($menu, array('Submissão de Projetos e Planos', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
 		array_push($menu, array('Submissão de Projetos e Planos', '__Comunicar avaliadores', 'ITE', '/ic/avaliacoes_abertas/SUBMI'));
 
+		array_push($menu, array('Montagem Edital (Pré)', 'Cria dados Edital', 'ITE', '/ic/avaliacoes/fator_correcao'));
+		array_push($menu, array('Montagem Edital (Pré)', 'Atualiza FC e Edital (I)', 'ITE', '/ic/avaliacoes/fator_correcao_atualiza'));
+		array_push($menu, array('Montagem Edital (Pré)', 'Atualiza Produtividade (II)', 'ITE', '/ic/avaliacoes/produtividade'));
+		array_push($menu, array('Montagem Edital (Pré)', 'Pontos para Proj. Jr (III)', 'ITE', '/ic/avaliacoes/projeto_jr'));
+		array_push($menu, array('Montagem Edital (Pré)', 'Pontos Apr. Externa (IV)', 'ITE', '/ic/avaliacoes/projeto_externo'));
+		array_push($menu, array('Montagem Edital (Pré)', 'Normaliza Notas (V)', 'ITE', '/ic/avaliacoes/normaliza_nota'));
+
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
@@ -2923,6 +3003,93 @@ class ic extends CI_Controller {
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
+	}
+
+	function avaliacoes($acao = '') {
+
+		$this -> cab();
+
+		/************************************************ acao fator de correcao *************************/
+		switch($acao) {
+			case 'fator_correcao' :
+				$txt = 'O obetivo do Fator de Correção é tentar normalizar as avaliações dos pareceristas, de forma a equiparar área e perfis de cada um.';
+				$txt .= 'É calculado como a diferente entra a média de avaliação de todos com a média individual.';
+				$form = new form;
+				$cp = array();
+				array_push($cp, array('$H8', '', '', False, True));
+				array_push($cp, array('$M', '', $txt, False, True));
+				array_push($cp, array('$O 1:SIM', '', msg('confirm_action'), False, True));
+
+				$tela = $form -> editar($cp, '');
+
+				if ($form -> saved > 0) {
+					/* Load Models */
+					$tipo = 'SUBMP';
+					$this -> load -> model('fcas');
+					$media_notas = 0;
+					$media_avaliadores = 0;
+					$fca = 0;
+
+					$media_notas = $this -> fcas -> calc_media_notas($tipo);
+					$media_notas_proto = $this -> fcas -> calc_media_notas_protocolo($tipo);
+					$media_avaliadores = $this -> fcas -> calc_media_notas_avaliador($tipo);
+
+					if (count($media_avaliadores) > 0) {
+						$media_avaliador = $media_avaliadores;
+
+						$data['content'] = ($media_avaliador);
+					}
+					$this -> load -> view('content', $data);
+				} else {
+					$data['content'] = $tela;
+					$this -> load -> view('content', $data);
+				}
+				break;
+			case 'fator_correcao_atualiza' :
+				$this -> load -> model('fcas');
+				$tipo = 'SUBMP';
+				$media_notas_proto = 0;
+				$media_notas_proto = $this -> fcas -> atualizar_notas_protocolo($tipo);
+
+				if (count($media_notas_proto) > 0) {
+					$media_ind = $media_notas_proto;
+
+					$data['content'] = ($media_ind);
+				}
+
+				$this -> load -> view('content', $data);
+				break;
+			case 'produtividade' :
+				$this -> load -> model('fcas');
+				$sx = $this -> fcas -> atualizar_produtividade();
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+				break;
+			case 'projeto_jr' :
+				$this -> load -> model('fcas');
+				$sx = $this -> fcas -> atualizar_projeto_jr();
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+				break;
+			case 'projeto_externo' :
+				$this -> load -> model('fcas');
+				$sx = $this -> fcas -> atualizar_nota_aprovado_externamente();
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+				break;
+			case 'normaliza_nota' :
+				$this -> load -> model('fcas');
+				$sx = $this -> fcas -> normaliza_nota();
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+				break;
+
+			default :
+				$data['content'] = 'Ação não localizada ' . $acao;
+				$this -> load -> view('content', $data);
+				break;
+		}
+
 	}
 
 	function devolver_para_submissao($tipo = '') {
@@ -3342,7 +3509,8 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO'; ;
+			$msg = 'REMOVIDO';
+			;
 		}
 
 		$data = array();

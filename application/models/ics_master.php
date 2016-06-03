@@ -7,7 +7,7 @@ class ics_master extends CI_model {
 		$opc = 'success';
 		$obr = 'danger';
 
-		$tipos = array('PROJ' => $obr, 'CARTA' => $obr, 'HISTO' => $obr, 'CARTB' => $obr, 'PLANO' => $obr, 'TOEFO' => $obr, 'PROU' => $opc, 'OUTRO' => $opc, 'PLANM'=> $obr);
+		$tipos = array('PROJ' => $obr, 'CARTA' => $opc, 'HISTO' => $obr, 'CARTB' => $obr, 'CARTC'=>$obr, 'PLANO' => $obr, 'TOEFO' => $opc, 'PROU' => $opc, 'OUTRO' => $opc, 'PLANM'=> $opc, 'CEP'=>$opc, 'CEU'=>$opc);
 		return ($tipos);
 	}
 
@@ -288,7 +288,6 @@ class ics_master extends CI_model {
 		/* Campos para validacao */
 		for ($r = 0; $r <= $cps; $r++) {
 			if ($vd[$r] == $erro) { $ok = 0;
-			echo $r;
 			}
 		}
 		if ($ok == 1) {
@@ -469,11 +468,11 @@ class ics_master extends CI_model {
 			$sx .= '</td>';
 
 			$sx .= '<td class="border1">';
-			$sx .= $line['pj_titulo'];
+			$sx .= $link.$line['pj_titulo'].'</a>';
 			$sx .= '</td>';
 
 			$sx .= '<td align="center" class="border1">';
-			$sx .= $line['pj_edital'];
+			$sx .= $link.$line['pj_edital'].'</a>';
 			$sx .= '</td>';
 
 			$sx .= '<td align="center" class="border1">';

@@ -7,7 +7,7 @@ class ics_mobi extends CI_model {
 		$opc = 'success';
 		$obr = 'danger';
 
-		$tipos = array('PROJ' => $obr, 'CARTA' => $obr, 'HISTO' => $obr, 'CARTB' => $obr, 'PLANO' => $obr, 'TOEFO' => $obr, 'PROU' => $opc, 'OUTRO' => $opc);
+		$tipos = array('PROJ' => $obr, 'CARTA' => $obr, 'HISTO' => $obr, 'CARTB' => $obr, 'CARTC' => $obr, 'PLANO' => $obr, 'TOEFO' => $obr, 'PROU' => $opc, 'OUTRO' => $opc, 'CEP'=>$opc, 'CEU'=>$opc);
 		return ($tipos);
 	}
 
@@ -288,7 +288,6 @@ class ics_mobi extends CI_model {
 		/* Campos para validacao */
 		for ($r = 0; $r <= $cps; $r++) {
 			if ($vd[$r] == $erro) { $ok = 0;
-			echo $r;
 			}
 		}
 		if ($ok == 1) {
