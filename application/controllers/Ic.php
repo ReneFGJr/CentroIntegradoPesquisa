@@ -534,8 +534,8 @@ class ic extends CI_Controller {
 						$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
 
 						//$this -> load -> view('ic/email_projeto', $dados);
-						$this -> load -> view('ic/projeto', $dados);						
-						
+						$this -> load -> view('ic/projeto', $dados);
+
 						$this -> load -> view('ic/projeto', $prj_data);
 						$cp = $this -> ics_mobi -> valida_entrada($id);
 
@@ -623,7 +623,7 @@ class ic extends CI_Controller {
 
 						//$this -> load -> view('ic/email_projeto', $dados);
 						$this -> load -> view('ic/projeto', $dados);
-						
+
 						$cp = $this -> ics_master -> valida_entrada($id);
 
 						$tela = $form -> editar($cp, 'ic_submissao_projetos');
@@ -696,11 +696,11 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 		/***** Mostra Protoclos ****/
-		if (($sta == '0') or ($sta=='')) { $sta = '@';
-			}
-			$tela = $this -> $model -> mostra_projetos_situacao($cracha, $sta, date("Y"), $tipo);
-			$data['content'] = $tela;
-			$this -> load -> view('content', $data);
+		if (($sta == '0') or ($sta == '')) { $sta = '@';
+		}
+		$tela = $this -> $model -> mostra_projetos_situacao($cracha, $sta, date("Y"), $tipo);
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
 
 	}
 
@@ -2996,6 +2996,8 @@ class ic extends CI_Controller {
 		array_push($menu, array('Montagem Edital (Pré)', 'Pontos Apr. Externa (IV)', 'ITE', '/ic/avaliacoes/projeto_externo'));
 		array_push($menu, array('Montagem Edital (Pré)', 'Normaliza Notas (V)', 'ITE', '/ic/avaliacoes/normaliza_nota'));
 
+		array_push($menu, array('Montagem Edital', 'Indicar Bolsas', 'ITE', '/ic/indicar_bolsa'));
+
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
@@ -4076,6 +4078,21 @@ class ic extends CI_Controller {
 		$sa .= '</table><br>';
 		$data['content'] = $sa . $sx;
 		$this -> load -> view('content', $data);
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function indicar_bolsa($edital='PIBIC', $area='7') {
+		/*carrega model */
+		$this -> load -> model('fcas');
+		$this -> cab();
+		$data = array();
+		$data['title'] = msg('Indicar Bolsas');
+
+		$sx = $this -> fcas -> indicar_bolsas($edital, $area);
+		$data['content'] = $sx;
+		$this -> load -> view('content', $data);
+
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}

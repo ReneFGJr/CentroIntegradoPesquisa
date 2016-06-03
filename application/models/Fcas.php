@@ -1,5 +1,159 @@
 <?php
 class Fcas extends CI_model {
+	
+	
+	function indicar_bolsas($edital = '', $area = ''){
+		$ano = date("Y");
+		//consulta
+		$sql = "select * from ic_edital
+						left join us_usuario on id_us = ed_professor
+						left join us_titulacao on ust_id = usuario_titulacao_ust_id
+						left join us_bolsa_produtividade on us_id = id_us
+						left join us_bolsa_prod_nome on id_bpn = bpn_id
+						where ed_edital = '$edital'
+						and ed_area = '$area'
+						and ed_ano = '$ano'
+						order by ed_edital
+					";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		//Colunas da tabela
+		$sx = '<table class="tabela00 lt1" width="100%">';
+		$sx .= '<tr class="lt3"><b>>>>></b></tr>';
+		$sx .= '<tr><th align="center" class="lt01">#</th>
+							  <th align="center">ant</th>
+								<th align="center">edital</th>
+								<th align="center">atual</th>
+								<th align="center">Professor</th>
+								<th align="center">Centro</th>
+								<th align="center">SS</th>
+								<th align="center">Produ</th>
+								<th align="center">Estudante</th>
+								<th align="center">ICV</th>
+								<th align="center">Estrat.</th>
+								<th align="center">Nota</th>
+								<th align="center">DR.</th>
+								<th align="center">Aval.</th>
+								<th align="center">Protocolo mãe</th>
+								<th align="center">Protocolo</th>
+								<th align="center">ação</th>
+						</tr>';
+
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			$edit = '';
+			$nota = $line['ed_nota_normalizada'];
+			$cor = '';
+			
+			if ((perfil("#ADM") == 1)) {
+				$link = base_url('');
+				$edit = '<span class="link lt1" onclick="newwin(\'' . $link . '\')">editar</span>';
+			}
+			$sx .= '<tr>';
+			$sx .= '<td align="center">';
+			$sx .= $r + 1;
+			$sx .= '</td>';
+			//bolsa anterior
+			$sx .= '<td align="center">';
+			if(strlen($edit) < 0)
+				{
+					$sx .= '<img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="10" border=0 >';
+				}else {
+					$sx .= '<img src="' . base_url('img/icon/proibido.png') . '" height="10" border=0 >';
+				}
+			$sx .= '</td>';
+			//bolsas do edital
+			$sx .= '<td align="center">';
+			$edital_ico = $line['ed_edital'];
+			if(strlen($edital_ico) > 0)
+				{				
+					switch ($edital_ico) {
+							case 'PIBIC' :
+								$sx .= '<img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="15" border=0 >';
+							break;
+							case 'PIBITI' :
+								$sx .= '<img src="' . base_url('img/logo/logo_ic_pibiti.png') . '" height="15" border=0 >';
+							break;
+							case 'PIBICEM' :
+								$sx .= '<img src="' . base_url('img/logo/logo_ic_pibic_em.png') . '" height="15" border=0 >';
+							break;							
+					}
+				}else {
+					$sx .= '<img src="' . base_url('img/icon/proibido.png') . '" height="10" border=0 >';
+				}
+			$sx .= '</td>';
+			//bolsa atual
+			$sx .= '<td align="center">';
+			if(strlen($edit) < 0)
+				{
+					$sx .= '<img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="10" border=0 >';
+				}else {
+					$sx .= '<img src="' . base_url('img/icon/proibido.png') . '" height="10" border=0 >';
+				}
+			$sx .= '</td>';
+			//professor
+			$sx .= '<td align="left">';
+			$sx .= $line['ust_titulacao_sigla'].' '.link_user($line['us_nome'], $line['id_us']);
+			$sx .= '</td>';
+			//Centro
+			$sx .= '<td align="left">';
+			$sx .= $line['us_campus_vinculo'];
+			$sx .= '</td>';
+			//Stricto
+			$sx .= '<td align="center">';
+			$sx .= '-';
+			$sx .= '</td>';
+			//Produtividade
+			$sx .= '<td align="center">';
+			$sx .= $line['bpn_bolsa_descricao'];
+			$sx .= '</td>';
+			//Estudante
+			$sx .= '<td align="center">';
+			$sx .= $line['ed_estudante'];
+			$sx .= '</td>';
+			//ICV
+			$sx .= '<td align="center">';
+			$sx .= '-';
+			$sx .= '</td>';
+			//Estrat
+			$sx .= '<td align="center">';
+			$sx .= '-';
+			$sx .= '</td>';
+			//Nota
+			//$sx .= $line['ed_nota_normalizada'];
+			if ($nota < 70) { $cor = 'red'; }
+				$sx .= '<td width="20" align="center" style="color: '.$cor.';">'.number_format($nota,2,',','.').'</td>';
+			//DR
+			$sx .= '<td align="center">';
+			$sx .= $line['ust_titulacao_sigla'];
+			$sx .= '</td>';
+			//Aval
+			$sx .= '<td align="center">';
+			$sx .= '-';
+			$sx .= '</td>';
+			//Protocolo mae
+			$sx .= '<td align="right">';
+			$sx .= $line['ed_protocolo_mae'];
+			$sx .= '</td>';
+			//Protocolo
+			$sx .= '<td align="right">';
+			$sx .= $line['ed_protocolo'];
+			$sx .= '</td>';
+			//acao
+			if (strlen($edit) > 0) {
+				$sx .= '<td class="nopr" align="right">' . $edit . '</td>';
+			}
+		}
+		$sx .= '<tr><td colspan=16 align="right">Total de ' . $tot . ' registros</td></tr>';
+		$sx .= '</table>';
+
+		return ($sx);	
+		
+	}
 
 	//calcula mgn (média das notas geral)
 	function calc_media_notas($tipo = '') {
