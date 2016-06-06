@@ -2993,7 +2993,7 @@ class ic extends CI_Controller {
 		array_push($menu, array('Montagem Edital (Pré)', 'Atualiza FC e Edital (I)', 'ITE', '/ic/avaliacoes/fator_correcao_atualiza'));
 		array_push($menu, array('Montagem Edital (Pré)', 'Atualiza Produtividade (II)', 'ITE', '/ic/avaliacoes/produtividade'));
 		array_push($menu, array('Montagem Edital (Pré)', 'Pontos para Proj. Jr (III)', 'ITE', '/ic/avaliacoes/projeto_jr'));
-		array_push($menu, array('Montagem Edital (Pré)', 'Pontos Apr. Externa (IV)', 'ITE', '/ic/avaliacoes/projeto_externo'));
+		array_push($menu, array('Montagem Edital (Pré)', 'Pontos Apr. Externa / Área (IV)', 'ITE', '/ic/avaliacoes/projeto_externo'));
 		array_push($menu, array('Montagem Edital (Pré)', 'Normaliza Notas (V)', 'ITE', '/ic/avaliacoes/normaliza_nota'));
 
 		array_push($menu, array('Montagem Edital', 'Indicar Bolsas', 'ITE', '/ic/indicar_bolsa'));
@@ -3002,7 +3002,6 @@ class ic extends CI_Controller {
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Administração';
 		$this -> load -> view('header/main_menu', $data);
-
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
@@ -4082,20 +4081,57 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function indicar_bolsa($edital='PIBIC', $area='7') {
+	function indicar_bolsa($edital='', $area='') {
 		/*carrega model */
 		$this -> load -> model('fcas');
 		$this -> cab();
 		$data = array();
 		$data['title'] = msg('Indicar Bolsas');
 
-		$sx = $this -> fcas -> indicar_bolsas($edital, $area);
-		$data['content'] = $sx;
-		$this -> load -> view('content', $data);
+		if (strlen($edital) > 0)
+			{
+				$sx = $this -> fcas -> indicar_bolsas($edital, $area);
+				$data['content'] = $sx;
+				$this -> load -> view('content', $data);
+			} else  {
+				$this->load->view('ic_edital/edital_areas',null);				
+			}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function indicar_bolsa_ed($id=0,$chk='')
+		{
+			$this->load->model("fcas");
+			$this->load->view('header/header',null);
+			
+			$data = $this->fcas->le($id);
+			$ano = $data['ed_ano'];
+			$prof = $data['ed_professor'];
+			$edital = $data['ed_edital'];
+			
+			$sx = '<table width="100%" class="table lt1">';
+			$sx .= '<tr valign="top">';
+			$sx .= '	<th width="70%">INDICAR</td>';
+			$sx .= '	<th width="30%">INDICADAS</td>';
+			$sx .= '</tr>';
+			
+			$sx .= '<tr valign="top">';
+			$sx .= '<td>';
+			$sx .= 		$this->fcas->mostra_modalidades($data);
+			$sx .= '</td>';
+			
+			$sx .= '<td>';
+			$sx .= 		$this->fcas->mostra_indicacoes_professor($prof,$edital,$ano);
+			$sx .= '</td>';
+			$sx .= '</tr>';
+			
+			$sx .= '</table>';
+			
+			$data['content'] = $sx;
+			$this->load->view('content',$data);
+			
+		}
 }
 ?>

@@ -111,7 +111,7 @@ class Main extends CI_Controller {
 		$subm = $this -> ics -> submissoes_abertas(3);		
 
 		/* Submissão PIBIC Mobilidade */
-		if (($subm['sw_01'] == '1') and (($ss == 1) or (perfil("#ADM")))) {
+		if (($subm['sw_01'] == '1') and (($this -> ics -> is_ic($cracha)) or ($ss == 1) or (perfil("#ADM")))) {
 			if ((strlen($ss) > 0) or (perfil("#CPI#SPI#ADM") > 0)) {
 				$mod = $subm['sw_tipo'];
 				array_push($menu, array(msg('submit_' . $mod), msg('submit_' . $mod . '_text'), 'BTS', '/ic/submit/' . $mod));
