@@ -1173,7 +1173,7 @@ class Stricto_sensus extends CI_model {
 
 			$sx .= '<td align="left" width="25%" class="border1">' . link_perfil($line['us_nome'], $line['id_us']) . '</td>';
 
-			if (perfil('#CPP#SPI#ADM') == 1) {
+			if (perfil('#CPP#SPI#ADM#SPG') == 1) {
 				$link = '<A href="' . base_url('index.php/stricto_sensu/editar/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp'])) . '" class="link lt1">editar</A>';
 				$sx .= '<td align="center" class="border1">' . $link . '</td>';
 			}

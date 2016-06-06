@@ -346,11 +346,11 @@ class stricto_sensu extends CI_Controller {
 		array_push($menu, array('Produção', '__Consolidado da produção docente', 'ITE', '/stricto_sensu/producoes/artigo_docente/' . $id));
 		array_push($menu, array('Produção', '__Detalhado da produção docente', 'ITE', '/stricto_sensu/producoes/artigo_docente_detalhe/' . $id));
 		//array_push($menu, array('Produção', '__Distribuição anual do programa', 'ITE', '/stricto_sensu/producoes/artigo_docente_anual/' . $id));
-		array_push($menu, array('Produção', 'Anais eventos', 'ITE', '/stricto_sensu/producoes/anais/' . $id));
-		array_push($menu, array('Produção', 'Livros', 'ITE', '/stricto_sensu/producoes/livros/' . $id));
-		array_push($menu, array('Produção', 'Livros Organizados', 'ITE', '/stricto_sensu/producoes/organizado/' . $id));
-		array_push($menu, array('Produção', 'Capítulos de livros', 'ITE', '/stricto_sensu/producoes/capitulos/' . $id));
-		array_push($menu, array('Produção', 'Eventos', 'ITE', '/stricto_sensu/producoes/eventos/' . $id));
+		//array_push($menu, array('Produção', 'Anais eventos', 'ITE', '/stricto_sensu/producoes/anais/' . $id));
+		//array_push($menu, array('Produção', 'Livros', 'ITE', '/stricto_sensu/producoes/livros/' . $id));
+		//array_push($menu, array('Produção', 'Livros Organizados', 'ITE', '/stricto_sensu/producoes/organizado/' . $id));
+		//array_push($menu, array('Produção', 'Capítulos de livros', 'ITE', '/stricto_sensu/producoes/capitulos/' . $id));
+		//array_push($menu, array('Produção', 'Eventos', 'ITE', '/stricto_sensu/producoes/eventos/' . $id));
 		$data['menu'] = $menu;
 
 		$data['title_menu'] = '';
@@ -569,7 +569,7 @@ class stricto_sensu extends CI_Controller {
 	}
 
 	function editar($id = 0, $check = '') {
-		if (perfil('#CPP#SPI#ADM') == 1) {
+		if (perfil('#CPP#SPI#ADM#SPG') == 1) {
 			$tabela = 'ss_programa_pos';
 
 			$this -> load -> model('stricto_sensus');

@@ -290,11 +290,21 @@ class cnpq_ws extends CI_Controller {
 		$nome = $user['us_nome'];
 		$cpf = $user['us_cpf'];
 		$ok = $this -> ws_cnpq -> getCurriculoCompactado($lattes);
+		
+		$data['content'] = 'Phase I - Harvesting<br>';
+		$this->load->view('content',$data);
+
 		if ($ok == 1) {
+			$data['content'] = 'Phase II - Reading<br>';
+			$this->load->view('content',$data);
+
 			$this -> ws_cnpq -> xml_artigos('_document/lattes/' . $lattes . '.xml', $cpf, $nome);
-			echo "OK!";
+			$data['content'] = 'Phase III - Finished<br>';
+			$this->load->view('content',$data);
+
 		} else {
-			echo 'OPS '.$user['us_link_lattes'];
+			$data['content'] = '<font color="red">OPS '.$user['us_link_lattes'].'</font><br>';
+			$this->load->view('content',$data);
 		}
 	}	
 }

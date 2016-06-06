@@ -82,7 +82,7 @@
 				$nome = troca($nome,'_','<span style="margin-right: 20px"></span>');
 				echo '
 				<a href="' . base_url('index.php' . $menu[$r][3]) . '" onclick="parent.location=\'' . $menu[$r][3] . '\'" class="link no-undeline">     
-					<span class="menu_item_li">' . $nome . '</span><BR>
+					<span class="menu_item_li"><nobr>' . $nome . '</nobr></span><BR>
 				</a>
 			';
 				break;

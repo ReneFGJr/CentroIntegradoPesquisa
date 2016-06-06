@@ -132,17 +132,16 @@ class inport extends CI_Controller {
 
 		switch ($id) {
 			case 'arquivo' :
-				$txt = array('Artigos Completos Publicados em Periódicos', 'Trabalhos Completos Publicados em Eventos', 'Livros Publicados', 'Capítulos de Livros Publicados', 'Organização de Obra Publicada', 'Patentes', 'Orientações Concluídas - Iniciação Científica', 'Orientações Concluídas - Dissertação de Mestrado', 'Orientações Concluídas - Tese de Doutorado', 'Orientações Concluídas - Supervisão de Pós-Doutorado', 'Co-Orientações Concluídas - Dissertação de Mestrado', 'Co-Orientações Concluídas - Tese de Doutorado');
 				$sx = '<h1>Tipos de documentos compatíveis</h1>
 				<ul>';
-				for ($r = 0; $r < count($txt); $r++) {
-					$sx .= '<li>' . $txt[$r] . '</li>' . cr();
-				}
+					$link = '<a href="'.base_url('index.php/cnpq_ws/harvesting_ppgs').'">';
+					$sx .= '<li>' . $link . 'Lattes dos professores dos programas' .'</a>'. '</li>' . cr();
 				$sx .= '</ul>';
 				$data['content'] = $sx;
 				$this -> load -> view('content', $data);
 
-				$data['content'] = $this -> phplattess -> inport_lattes_acpp($off);
+				
+				$data['content'] = '<hr>'.$this -> phplattess -> inport_lattes_acpp($off);
 				break;
 			case 'processar' :
 				/* Artigos do professor */

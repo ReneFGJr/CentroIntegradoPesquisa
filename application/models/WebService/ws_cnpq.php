@@ -46,7 +46,8 @@ class ws_cnpq extends CI_model {
 		return ('0000-00-00');
 	}
 
-	function getCurriculoCompactado($id = '') {
+	function getCurriculoCompactado($id = '',$debug=0) {
+		$debug = 0;
 		if (strlen($id) > 0) {
 
 			/* create the client for my rpc/encoded web service */
@@ -65,11 +66,13 @@ class ws_cnpq extends CI_model {
 			$endpoint = "http://servicosweb.cnpq.br/srvcurriculo/WSCurriculo";
 			$client = new soapclient($wsdl, true);
 			$client -> setEndpoint($endpoint);
-
+			if ($debug==1) { echo date("d/m/Y H:i:s").' - Call WebService<br>'; }
 			$param = array('id' => $id);
 			//print_r($client);
+			if ($debug==1) { echo date("d/m/Y H:i:s").' - Get Service<br>'; }
 			$response = $client -> call('getCurriculoCompactado', $param);
 
+			//if ($debug==1) { echo date("d/m/Y H:i:s"); print_r($response); }		
 			if (strlen($response) > 0) {
 				$response = base64_decode($response);
 				$filename = '_document/lattes/xml-lattes-' . $id . '.zip';
