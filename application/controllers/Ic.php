@@ -3851,6 +3851,7 @@ class ic extends CI_Controller {
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
 		$this -> load -> model('ic_pareceres');
+		$this -> load -> model('fcas');
 
 		$this -> cab();
 		$dados = $this -> ics -> le_projeto($id);
@@ -3945,6 +3946,12 @@ class ic extends CI_Controller {
 											Já existe(m) a(s) indicação(ões) de ' . $av_aberta . ' avaliador(es) para este projeto
 											</div>';
 					$this -> load -> view('content', $comt);
+					
+					//mostra notas da avaliacao do projeto 
+					$sx = '';
+					$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
+					$data['content'] = $sx;
+					$this -> load -> view('content', $data);
 				}
 
 				if ($av_aberta <= 1) {
@@ -3968,6 +3975,7 @@ class ic extends CI_Controller {
 			}
 		}
 
+		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
@@ -4095,7 +4103,7 @@ class ic extends CI_Controller {
 				$this -> load -> view('content', $data);
 			} else  {
 				$this->load->view('ic_edital/edital_areas',null);				
-			}
+		}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
