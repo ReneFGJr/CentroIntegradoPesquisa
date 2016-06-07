@@ -1,14 +1,13 @@
 <?php
 class Fcas extends CI_model {
-	
-	function indicar_bolsas($edital = '', $area = ''){
+
+	function indicar_bolsas($edital = '', $area = '') {
 		$ano = date("Y");
-		if (strlen($area) > 0)
-			{
-				$wh = " and ed_area = '$area' ";
-			} else {
-				$wh = "";
-			}
+		if (strlen($area) > 0) {
+			$wh = " and ed_area = '$area' ";
+		} else {
+			$wh = "";
+		}
 		//consulta
 		$sql = "select distinct id_ed, ed_nota_normalizada, ed_edital, ust_titulacao_sigla,us_nome,
 						id_us, us_campus_vinculo, bpn_bolsa_descricao, ed_protocolo, ed_estudante,
@@ -29,7 +28,7 @@ class Fcas extends CI_model {
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		//Colunas da tabela
 		$sx = '<table class="tabela00 lt1" width="100%">';
 		$sx .= '<tr class="lt3"><b>>>>></b></tr>';
@@ -55,17 +54,17 @@ class Fcas extends CI_model {
 			$line = $rlt[$r];
 			$tot++;
 			$edit = '';
-			$proto = round(substr($line['ed_protocolo_mae'],1,6));
-			$link_projeto = '<a href="'.base_url('index.php/ic/projeto_view/'.$proto.'/'.checkpost_link($proto)).'" class="link nopr">';
+			$proto = round(substr($line['ed_protocolo_mae'], 1, 6));
+			$link_projeto = '<a href="' . base_url('index.php/ic/projeto_view/' . $proto . '/' . checkpost_link($proto)) . '" class="link nopr">';
 			//$nota = $line['ed_nota_normalizada'];
 			$nota = $line['nota'];
 			$cor = '';
-			
+
 			if ((perfil("#ADM") == 1)) {
-				$link = base_url('index.php/ic/indicar_bolsa_ed/'.$line['id_ed'].'/'.checkpost_link($line['id_ed']));
+				$link = base_url('index.php/ic/indicar_bolsa_ed/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 				$edit = '<span class="link lt1" onclick="newwin(\'' . $link . '\')">indicar</span>';
-				
-				$link2 = base_url('index.php/ic/indicar_bolsa_ed/'.$line['id_ed'].'/'.checkpost_link($line['id_ed']));
+
+				$link2 = base_url('index.php/ic/indicar_bolsa_ed/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 				$edit2 = '<span class="link lt1" onclick="newwin(\'' . $link . '\')">indicado</span>';
 			}
 			//indice
@@ -79,44 +78,44 @@ class Fcas extends CI_model {
 			$sx .= '</td>';
 			//professor
 			$sx .= '<td align="left">';
-			$sx .= $line['ust_titulacao_sigla'].' '.link_user($line['us_nome'], $line['id_us']);
+			$sx .= $line['ust_titulacao_sigla'] . ' ' . link_user($line['us_nome'], $line['id_us']);
 			$sx .= '</td>';
-			
+
 			//area do professor
 			$area_prof = $line['ed_area'];
 			switch ($area_prof) {
-				case 'V':
+				case 'V' :
 					$sx .= '<td align="left">';
 					$sx .= msg("Vida");
 					$sx .= '</td>';
-				break;
-				case 'E':
+					break;
+				case 'E' :
 					$sx .= '<td align="left">';
 					$sx .= msg("Exatas");
 					$sx .= '</td>';
-				break;
-				case 'H':
+					break;
+				case 'H' :
 					$sx .= '<td align="left">';
 					$sx .= msg("Humanas");
 					$sx .= '</td>';
-				break;		
-				case 'A':
+					break;
+				case 'A' :
 					$sx .= '<td align="left">';
 					$sx .= msg("Agrárias");
 					$sx .= '</td>';
-				break;
-				case 'S':
+					break;
+				case 'S' :
 					$sx .= '<td align="left">';
 					$sx .= msg("Sociais aplicadas");
 					$sx .= '</td>';
-				break;
-				default:
+					break;
+				default :
 					$sx .= '<td align="left">';
 					$sx .= msg("Não indicada");
 					$sx .= '</td>';
-				break;
+					break;
 			}
-			
+
 			//Centro
 			$sx .= '<td align="left">';
 			$sx .= $line['us_campus_vinculo'];
@@ -124,12 +123,11 @@ class Fcas extends CI_model {
 			//Stricto
 			$sx .= '<td align="center">';
 			$ss = $line['us_professor_tipo'];
-			if ($ss == '2')
-				{
-					$sx .= 'SIM';
-				} else {
-					$sx .= '-';
-				}
+			if ($ss == '2') {
+				$sx .= 'SIM';
+			} else {
+				$sx .= '-';
+			}
 			$sx .= '</td>';
 			//Produtividade
 			$sx .= '<td align="center">';
@@ -144,19 +142,20 @@ class Fcas extends CI_model {
 			$sx .= '-';
 			$sx .= '</td>';
 			//Nota normalizada
-			$sx .= '<td width="50" align="center" style="color: '.$cor.';">'.number_format($line['ed_nota_normalizada'],2,',','.').'</td>';		
+			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($line['ed_nota_normalizada'], 2, ',', '.') . '</td>';
 			//Nota bonificação
-			$sx .= '<td width="50" align="center" style="color: '.$cor.';">'.number_format($line['nota_bn'],2,',','.').'</td>';		
+			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($line['nota_bn'], 2, ',', '.') . '</td>';
 			//$sx .= $line['ed_nota_normalizada'];
-			if ($nota < 70) { $cor = 'red'; }
-				$sx .= '<td width="50" align="center" style="color: '.$cor.';">'.number_format($nota,2,',','.').'</td>';
+			if ($nota < 70) { $cor = 'red';
+			}
+			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($nota, 2, ',', '.') . '</td>';
 			//Protocolo mae
 			$sx .= '<td align="center">';
-			$sx .= $link_projeto.$line['ed_protocolo_mae'].'</a>';
+			$sx .= $link_projeto . $line['ed_protocolo_mae'] . '</a>';
 			$sx .= '</td>';
 			//Protocolo
 			$sx .= '<td align="center">';
-			$sx .= $link_projeto.$line['ed_protocolo'].'</a>';
+			$sx .= $link_projeto . $line['ed_protocolo'] . '</a>';
 			$sx .= '</td>';
 			//acao
 			//diferencia indicações em aberto
@@ -172,17 +171,17 @@ class Fcas extends CI_model {
 			}
 			//verifica status das indicacoes
 			if (strlen($var) == 0) {
-				$sx .= '<td class="nopr" align="center">'.$sf.''.$edit.''.$sf2.'</td>';
-			}else{
-				$sx .= '<td class="nopr" align="center">'.$sf.''.$edit2.''.$sf2.'</td>';
+				$sx .= '<td class="nopr" align="center">' . $sf . '' . $edit . '' . $sf2 . '</td>';
+			} else {
+				$sx .= '<td class="nopr" align="center">' . $sf . '' . $edit2 . '' . $sf2 . '</td>';
 			}
 		}
 		//qtd de registros
 		$sx .= '<tr><td colspan=16 align="right">Total de ' . $tot . ' registros</td></tr>';
 		$sx .= '</table>';
 
-		return ($sx);	
-		
+		return ($sx);
+
 	}
 
 	//calcula mgn (média das notas geral)
@@ -550,47 +549,56 @@ class Fcas extends CI_model {
 			$line = $rlt[$r];
 			$pt = 0;
 			$externo = $line['pj_ext_sn'];
-			if ($externo > 0) { $pt = 2; }
-			
-			$area = substr($line['pj_area'],0,1);
+			if ($externo > 0) { $pt = 2;
+			}
+
+			$area = substr($line['pj_area'], 0, 1);
 			$xarea = '?';
-			switch($area)
-				{
-					case '1':
-						$xarea = 'E'; /* Exatas */
-						break;
-					case '2':
-						$xarea = 'V'; /* Exatas */
-						break;
-					case '3':
-						$xarea = 'E'; /* Exatas */
-						break;
-					case '4':
-						$xarea = 'V'; /* Exatas */
-						break;
-					case '5':
-						$xarea = 'A'; /* Exatas */
-						break;
-					case '6':
-						$xarea = 'S'; /* Exatas */
-						break;
-					case '7':
-						$xarea = 'H'; /* Exatas */
-						break;
-					case '8':
-						$xarea = 'H'; /* Exatas */
-						break;						
-					case '9':
-						$xarea = 'E'; /* Exatas */
-						break;
-					default:
-						$xarea = 'N';
-						break;						
+			switch($area) {
+				case '1' :
+					$xarea = 'E';
+					/* Exatas */
+					break;
+				case '2' :
+					$xarea = 'V';
+					/* Exatas */
+					break;
+				case '3' :
+					$xarea = 'E';
+					/* Exatas */
+					break;
+				case '4' :
+					$xarea = 'V';
+					/* Exatas */
+					break;
+				case '5' :
+					$xarea = 'A';
+					/* Exatas */
+					break;
+				case '6' :
+					$xarea = 'S';
+					/* Exatas */
+					break;
+				case '7' :
+					$xarea = 'H';
+					/* Exatas */
+					break;
+				case '8' :
+					$xarea = 'H';
+					/* Exatas */
+					break;
+				case '9' :
+					$xarea = 'E';
+					/* Exatas */
+					break;
+				default :
+					$xarea = 'N';
+					break;
 			}
 
 			//atualiza tabela ic_edital
 			$sql_update = "update ic_edital set ed_bn_externo = $pt, ed_area = '$xarea'
-						   where ed_protocolo_mae = '" . $line['pj_codigo']."'" . cr();
+						   where ed_protocolo_mae = '" . $line['pj_codigo'] . "'" . cr();
 			$this -> db -> query($sql_update);
 			$sx .= '<tr>';
 			$sx .= '<td width="20" align="center">' . ($r + 1) . '</td>';
@@ -636,8 +644,8 @@ class Fcas extends CI_model {
 		$sx .= '</table>';
 		return ($sx);
 	}
-	
-	function avaliacao_notas_projetos($proto){
+
+	function avaliacao_notas_projetos($proto) {
 		$ano = date("Y");
 		$sql = "select pp_protocolo_mae, pp_protocolo,
 	                 pp_p01, pp_p02, pp_p03,
@@ -652,9 +660,10 @@ class Fcas extends CI_model {
 	                 pp_abe_16, pp_abe_17, pp_abe_18,
 	                 pp_abe_19
 		        from pibic_parecer_" . $ano . "
-		        where pp_protocolo = ". $proto ."
+		        where pp_protocolo_mae = " . $proto . "
+		        and pp_tipo <> 'SUBMI'
 		        and pp_status = 'B'
-						"; 
+						";
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array($rlt);
@@ -676,13 +685,14 @@ class Fcas extends CI_model {
 							<th align="center">13</th>
 							<th align="center">14</th>
 							<th align="center">15</th>
+							<th align="center">Obs.</th>
 										
 						</tr>';
-						
+
 		/*linhas da tabela*/
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
-			
+
 			//notas
 			$nt_p01 = $line['pp_p01'];
 			$nt_p02 = $line['pp_p02'];
@@ -694,130 +704,118 @@ class Fcas extends CI_model {
 			$nt_p13 = $line['pp_p13'];
 			$nt_p14 = $line['pp_p14'];
 			$nt_p15 = $line['pp_p15'];
-			
+
 			//observacoes
-			$obs_ab1  = $line['pp_abe_01'];
-			$obs_ab2  = $line['pp_abe_02'];
-			$obs_ab3  = $line['pp_abe_03'];
-			$obs_ab4  = $line['pp_abe_04'];
-			$obs_ab5  = $line['pp_abe_05'];
-			$obs_ab6  = $line['pp_abe_06'];
-			$obs_ab7  = $line['pp_abe_07'];
-			$obs_ab8  = $line['pp_abe_08'];
-			$obs_ab9  = $line['pp_abe_09'];
-			$obs_ab10 = $line['pp_abe_10'];
-			$obs_ab11 = $line['pp_abe_11'];
-			$obs_ab12 = $line['pp_abe_12'];
-			$obs_ab13 = $line['pp_abe_13'];
-			$obs_ab14 = $line['pp_abe_14'];
-			$obs_ab15 = $line['pp_abe_15'];
-			$obs_ab16 = $line['pp_abe_16'];
-			$obs_ab17 = $line['pp_abe_17'];
-			$obs_ab18 = $line['pp_abe_18'];
-			$obs_ab19 = $line['pp_abe_19'];
-							
 
 			//variaveis
 			$proto = $line['pp_protocolo'];
 			$proto_mae = $line['pp_protocolo_mae'];
-			
-			
-			
 			$observacoes = '';
-			
-			for ($i=0; $i < $observacoes; $i++) { 
-				
+			$obsv = '';
+
+			for ($i = 1; $i < 15; $i++) {
+				if ($i == 6) {
+					$i = 11;
+				}
+				//echo "$i -";
+				$obs_ab = $line['pp_abe_' . strzero($i, 2)];
+				if (strlen($obs_ab) > 0) {
+					//echo "$obs_ab</br>";
+					$observacoes .= $line['pp_protocolo'] . ': ' . $obs_ab . cr(). cr();
+				}
 			}
-			
-			
-			$observacoes2 = 'Sem observações';							 
+
+			$observacoes2 = 'Sem observações';
 
 			$sx .= '<tr>';
-
+			
 			$sx .= '<td align="center">';
 			$sx .= $r + 1;
 			$sx .= '</td>';
 			
-			if(strlen($obs_ab1)>0){
-					
-				$sx .= '<td align="center" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="'.$observacoes .'">';
-				$sx .= $proto;
-				$sx .= '</td>';
-				 }else{
-						$sx .= '<td align="center" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="'. $observacoes2 .'">';
-						$sx .= $proto;
-						$sx .= '</td>';
-				 }
+			$sx .= '<td align="center">';
+			$sx .= $proto;
+			$sx .= '</td>';
 
-			$sx .= '<td align="left">';
+			$sx .= '<td align="center">';
 			$sx .= $proto_mae;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p01;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p02;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p03;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p04;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p05;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p11;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p12;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p13;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p14;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $nt_p15;
 			$sx .= '</td>';
+			
+			
+			if (strlen($observacoes) > 0) {
+					$sx .= '<td align="center"  class="glyphicon glyphicon-comment btn btn-warning" data-toggle="tooltip" data-placement="top" title="' . $observacoes . '">';
+					$sx .= '';
+					$sx .= '</td>';
+			} else {
+					$sx .= '<td align="center"  class="glyphicon glyphicon-comment btn btn-success" data-toggle="tooltip" data-placement="top" title="' . $observacoes2 . '">';
+					$sx .= '';
+					$sx .= '</td>';
+			}
 
 		}
 		$sx .= '</table>';
-		
+
 		return ($sx);
-		
+
 	}
 
-	
 	function normaliza_nota() {
 		$ano = date("Y");
 		$sql = "SELECT max(ed_nota) as max FROM ic_edital
 				WHERE ed_ano = '" . date("Y") . "'";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		$max = $rlt[0]['max'];
-		
+
 		$fc_max = 100 / $max;
-		
+
 		$sql = "select * from ic_edital
 					INNER JOIN us_usuario on id_us = ed_professor
 					where ed_ano = '$ano' 
 					order by us_nome";
-		$rlt = $this->db->query($sql);
-		$rlt = $rlt->result_array();
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
 
 		$sx = '<h1>Normalização das notas</h1>';
 		$sx .= '<table class="tabela00 lt1" width="100%">';
@@ -829,8 +827,8 @@ class Fcas extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$notaB = $line['ed_nota'];
-			$nota = round($notaB * $fc_max * 100)/100;
-			
+			$nota = round($notaB * $fc_max * 100) / 100;
+
 			//atualiza tabela ic_edital
 			$sql_update = "UPDATE ic_edital 
 								SET ed_nota_normalizada = $nota
@@ -841,8 +839,9 @@ class Fcas extends CI_model {
 			$sx .= '<td>' . $line['ed_protocolo'] . '</td>';
 			$sx .= '<td>' . link_user($line['us_nome'], $line['id_us']) . '</td>';
 			$cor = 'blue';
-			if ($nota < 70) { $cor = 'red'; }
-			$sx .= '<td width="20" align="center" style="color: '.$cor.';">'.number_format($nota,2,',','.').'</td>';
+			if ($nota < 70) { $cor = 'red';
+			}
+			$sx .= '<td width="20" align="center" style="color: ' . $cor . ';">' . number_format($nota, 2, ',', '.') . '</td>';
 		}
 		$sx .= '</table>';
 		return ($sx);
@@ -957,76 +956,71 @@ class Fcas extends CI_model {
 
 		return ($sx);
 	}
-	function le($id)
-		{
-			$sql = "select * from ic_edital
-					WHERE id_ed = ".round($id);
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					return($line);
-				} else {
-					result(array());
-				}
+
+	function le($id) {
+		$sql = "select * from ic_edital
+					WHERE id_ed = " . round($id);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			return ($line);
+		} else {
+			result(array());
 		}
-		
-	function mostra_modalidades($data)
-		{
-			$edital = $data['ed_edital'];
-			$idx = $data['ed_modalidade'];
-			$id = $data['id_ed'];
-			
-			
-			/* Salvar */
-			$rs = get("dd20");
-			if ($rs > 0)
-				{
-					$sql = "update ic_edital set ed_modalidade = $rs where id_ed = ".$id;
-					$this->db->query($sql);
-					$this->load->view('header/windows_close_only',null);
-					return('');
-				}
-			
-			switch ($edital)
-				{
-				case 'PIBIC':
-					$sql = "select * from ic_modalidade_bolsa WHERE (mb_tipo = '$edital' and mb_ativo = 1) order by mb_descricao ";
-					break;
-				default:
-					$sql = "select * from ic_modalidade_bolsa WHERE (mb_tipo = '$edital' and mb_ativo = 1) order by mb_descricao ";
-					break;					
-				}
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<form method="post" action="'.base_url('index.php/ic/indicar_bolsa_ed/'.$data['id_ed'].'/'.checkpost_link($data['id_ed'])).'">';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$chk = '';
-					if ($idx == $line['id_mb']) { $chk = 'checked'; }
-					$sx .= '<input type="radio" name="dd20" value="'.$line['id_mb'].'" '.$chk.'>'.$line['mb_descricao'].'<br>';
-				}
-			$sx .= '<input type="submit" class="btn btn-primary" value="indicar">';
-			return($sx);
+	}
+
+	function mostra_modalidades($data) {
+		$edital = $data['ed_edital'];
+		$idx = $data['ed_modalidade'];
+		$id = $data['id_ed'];
+
+		/* Salvar */
+		$rs = get("dd20");
+		if ($rs > 0) {
+			$sql = "update ic_edital set ed_modalidade = $rs where id_ed = " . $id;
+			$this -> db -> query($sql);
+			$this -> load -> view('header/windows_close_only', null);
+			return ('');
 		}
-	function mostra_indicacoes_professor($id_us,$edital,$ano)
-		{
-			$sql = "SELECT * from ic_edital
+
+		switch ($edital) {
+			case 'PIBIC' :
+				$sql = "select * from ic_modalidade_bolsa WHERE (mb_tipo = '$edital' and mb_ativo = 1) order by mb_descricao ";
+				break;
+			default :
+				$sql = "select * from ic_modalidade_bolsa WHERE (mb_tipo = '$edital' and mb_ativo = 1) order by mb_descricao ";
+				break;
+		}
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<form method="post" action="' . base_url('index.php/ic/indicar_bolsa_ed/' . $data['id_ed'] . '/' . checkpost_link($data['id_ed'])) . '">';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$chk = '';
+			if ($idx == $line['id_mb']) { $chk = 'checked';
+			}
+			$sx .= '<input type="radio" name="dd20" value="' . $line['id_mb'] . '" ' . $chk . '>' . $line['mb_descricao'] . '<br>';
+		}
+		$sx .= '<input type="submit" class="btn btn-primary" value="indicar">';
+		return ($sx);
+	}
+
+	function mostra_indicacoes_professor($id_us, $edital, $ano) {
+		$sql = "SELECT * from ic_edital
 					 	INNER JOIN ic_modalidade_bolsa ON id_mb = ed_modalidade
 						WHERE ed_ano = '$ano' and ed_professor = $id_us and ed_edital = '$edital' ";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '';
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$line = $rlt[$r];
-					$sx .= '<div class="btn btn-info" style="width: 100%; margin-bottom: 5px;">';
-					$sx .= $line['mb_descricao'];
-					$sx .= '</div>';
-				}
-			return($sx);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$sx .= '<div class="btn btn-info" style="width: 100%; margin-bottom: 5px;">';
+			$sx .= $line['mb_descricao'];
+			$sx .= '</div>';
 		}
+		return ($sx);
+	}
+
 }
 ?>
