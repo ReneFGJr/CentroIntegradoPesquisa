@@ -627,9 +627,9 @@ class Fcas extends CI_model {
 		$sx = '<h1>Pontos para Projetos Junior</h1>';
 		$sx .= '<table class="tabela00 lt1" width="100%">';
 		$sx .= '<tr><th>#</th>
-					<th>Pesquisador</th>
-					<th>atribuição</th>
-				</tr>';
+							<th>Pesquisador</th>
+							<th>atribuição</th>
+						</tr>';
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			//atualiza tabela ic_edital
@@ -685,8 +685,7 @@ class Fcas extends CI_model {
 							<th align="center">13</th>
 							<th align="center">14</th>
 							<th align="center">15</th>
-							<th align="center">Obs.</th>
-										
+							<th align="center">Observações</th>
 						</tr>';
 
 		/*linhas da tabela*/
@@ -705,90 +704,130 @@ class Fcas extends CI_model {
 			$nt_p14 = $line['pp_p14'];
 			$nt_p15 = $line['pp_p15'];
 
-			//observacoes
-
+			
 			//variaveis
 			$proto = $line['pp_protocolo'];
 			$proto_mae = $line['pp_protocolo_mae'];
 			$observacoes = '';
 			$obsv = '';
-
+			
+			//chama observacoes
 			for ($i = 1; $i < 15; $i++) {
 				if ($i == 6) {
 					$i = 11;
 				}
-				//echo "$i -";
+				//variavel
 				$obs_ab = $line['pp_abe_' . strzero($i, 2)];
+				
 				if (strlen($obs_ab) > 0) {
-					//echo "$obs_ab</br>";
 					$observacoes .= $line['pp_protocolo'] . ': ' . $obs_ab . cr(). cr();
 				}
 			}
-
+			
+			//variavel	
 			$observacoes2 = 'Sem observações';
 
 			$sx .= '<tr>';
-			
+			//indice
 			$sx .= '<td align="center">';
 			$sx .= $r + 1;
 			$sx .= '</td>';
-			
+			//protocolo
 			$sx .= '<td align="center">';
 			$sx .= $proto;
 			$sx .= '</td>';
-
+			////protocolo mae
 			$sx .= '<td align="center">';
 			$sx .= $proto_mae;
 			$sx .= '</td>';
-
+			//nota 01
 			$sx .= '<td align="center">';
 			$sx .= $nt_p01;
 			$sx .= '</td>';
-
+			//nota 02
 			$sx .= '<td align="center">';
 			$sx .= $nt_p02;
 			$sx .= '</td>';
-
+			//nota 03
 			$sx .= '<td align="center">';
 			$sx .= $nt_p03;
 			$sx .= '</td>';
-
+			//nota 04	
 			$sx .= '<td align="center">';
 			$sx .= $nt_p04;
 			$sx .= '</td>';
-
+			//nota 05
 			$sx .= '<td align="center">';
 			$sx .= $nt_p05;
 			$sx .= '</td>';
-
+			//nota 11
 			$sx .= '<td align="center">';
 			$sx .= $nt_p11;
 			$sx .= '</td>';
-
+			//nota 12
 			$sx .= '<td align="center">';
 			$sx .= $nt_p12;
 			$sx .= '</td>';
-
+			//nota 13
 			$sx .= '<td align="center">';
 			$sx .= $nt_p13;
 			$sx .= '</td>';
-
+			//nota 14
 			$sx .= '<td align="center">';
 			$sx .= $nt_p14;
 			$sx .= '</td>';
-
+			//nota 15
 			$sx .= '<td align="center">';
 			$sx .= $nt_p15;
 			$sx .= '</td>';
-			
-			
+			//observações
 			if (strlen($observacoes) > 0) {
-					$sx .= '<td align="center"  class="glyphicon glyphicon-comment btn btn-warning" data-toggle="tooltip" data-placement="top" title="' . $observacoes . '">';
-					$sx .= '';
+					$sx .= '<td align="center">';
+					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-warning" data-toggle="modal" data-target="#myModal">
+									  Verificar
+									</button>
+
+									<!-- Modal -->
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+									  <div class="modal-dialog" role="document">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									        <h4 class="modal-title" id="myModalLabel">Observações do avaliador</h4>
+									      </div>
+									      <div class="modal-body text-left">
+									        '.mst($observacoes).'
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+									      </div>
+									    </div>
+									  </div>
+									</div>';
 					$sx .= '</td>';
 			} else {
-					$sx .= '<td align="center"  class="glyphicon glyphicon-comment btn btn-success" data-toggle="tooltip" data-placement="top" title="' . $observacoes2 . '">';
-					$sx .= '';
+					$sx .= '<td align="center">';
+					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-success" data-toggle="modal" data-target="#myModal">
+									  Verificar
+									</button>
+
+									<!-- Modal -->
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+									  <div class="modal-dialog" role="document">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									        <h4 class="modal-title" id="myModalLabel">Observações do avaliador</h4>
+									      </div>
+									      <div class="modal-body">
+									        '.mst($observacoes2).'
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+									      </div>
+									    </div>
+									  </div>
+									</div>';
 					$sx .= '</td>';
 			}
 
@@ -1002,7 +1041,7 @@ class Fcas extends CI_model {
 			}
 			$sx .= '<input type="radio" name="dd20" value="' . $line['id_mb'] . '" ' . $chk . '>' . $line['mb_descricao'] . '<br>';
 		}
-		$sx .= '<input type="submit" class="btn btn-primary" value="indicar">';
+		$sx .= '</br><input type="submit" class="btn btn-primary" value="indicar">';
 		return ($sx);
 	}
 
