@@ -59,13 +59,18 @@ class ics extends CI_model {
 		$sql = "select * from ic_historico
 					where bh_protocolo = '$proto'
 					and bh_data = $data
-					and bh_acao = $ac
+					order by id_bh desc
 				";
-		$rlt = db_query($sql);
-
-		if ($line = db_read($rlt)) {
-
-		} else {
+		$rlt = $this->db->query($sql);
+		$rlt = $rlt->result_array();
+		if (count($rlt) > 0)
+			{
+				$line = $rlt[0];
+				if ($line['bh_acao'] == $ac)
+					{
+						return('');
+					}
+			}
 			$sql = "insert into ic_historico 
 						(bh_protocolo, bh_data, bh_hora,
 						bh_log, bh_acao, bh_historico,
@@ -78,7 +83,6 @@ class ics extends CI_model {
 						'$obs')
 				";
 			$rlt = $this -> db -> query($sql);
-		}
 		return ('');
 	}
 

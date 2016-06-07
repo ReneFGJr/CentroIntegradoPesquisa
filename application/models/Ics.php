@@ -204,11 +204,11 @@ class ics extends CI_model {
 			$line = $rlt[$r];
 			$tot++;
 
-			$link = '<a href="'.base_url('index.php/ic/cockpit_titulacao/'.$ano.'/'.$line['ust_id']).'" target="_new" class="lt1 link">';
-			
+			$link = '<a href="' . base_url('index.php/ic/cockpit_titulacao/' . $ano . '/' . $line['ust_id']) . '" target="_new" class="lt1 link">';
+
 			$sx .= '<tr>';
 			$sx .= '<td align="left">';
-			$sx .= $link.$line['ust_titulacao'].'</a>';
+			$sx .= $link . $line['ust_titulacao'] . '</a>';
 			$sx .= '</td>';
 
 			$sx .= '<td align="right">';
@@ -251,22 +251,19 @@ class ics extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
-			
-			
 
 			$sx .= '<tr>';
 			$sx .= '<td align="left">';
 			$nome = $line['us_campus_vinculo'];
-			if (strlen($nome) == 0)
-				{
-					$nome = '-não identificado-';
-				}
-				
-			$link = '<a href="'.base_url('index.php/ic/cockpit_campus/'.$ano.'/'.$nome).'" target="_new" class="lt1 link">';
+			if (strlen($nome) == 0) {
+				$nome = '-não identificado-';
+			}
+
+			$link = '<a href="' . base_url('index.php/ic/cockpit_campus/' . $ano . '/' . $nome) . '" target="_new" class="lt1 link">';
 			$sx .= $link;
 			$sx .= $nome;
 			$sx .= '</a>';
-			
+
 			$sx .= '</td>';
 
 			$sx .= '<td align="right">';
@@ -282,14 +279,13 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-	function ic_submit_resumo_campus_detalhe($ano,$campus) {
-		if (substr($campus,0,1) == '-')
-		{
+	function ic_submit_resumo_campus_detalhe($ano, $campus) {
+		if (substr($campus, 0, 1) == '-') {
 			$wh = " AND (us_campus_vinculo = '' or us_campus_vinculo is null ) ";
 		} else {
-			$wh = " AND us_campus_vinculo = '$campus' ";	
+			$wh = " AND us_campus_vinculo = '$campus' ";
 		}
-		
+
 		$sql = "select *
 						from ic_submissao_plano
 						inner join ic_submissao_projetos on doc_protocolo_mae = pj_codigo
@@ -319,14 +315,14 @@ class ics extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
-			
+
 			$sx .= '<tr valign="top">';
-			$sx .= '<td align="center" width="20">'.$tot.'</td>';
-			$sx .= '<td>'.link_user($line['us_nome'],$line['id_us']).'</td>';
-			$sx .= '<td>'.$line['doc_1_titulo'].'</td>';
-			$sx .= '<td>'.$line['doc_protocolo'].'</td>';
-			$sx .= '<td>'.$line['doc_protocolo_mae'].'</td>';
-			$sx .= '<td width="10%">'.$line['us_campus_vinculo'].'</td>';
+			$sx .= '<td align="center" width="20">' . $tot . '</td>';
+			$sx .= '<td>' . link_user($line['us_nome'], $line['id_us']) . '</td>';
+			$sx .= '<td>' . $line['doc_1_titulo'] . '</td>';
+			$sx .= '<td>' . $line['doc_protocolo'] . '</td>';
+			$sx .= '<td>' . $line['doc_protocolo_mae'] . '</td>';
+			$sx .= '<td width="10%">' . $line['us_campus_vinculo'] . '</td>';
 			$sx .= '</tr>';
 		}
 		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
@@ -335,12 +331,11 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-	function ic_submit_resumo_titulacao_detalhe($ano,$titulacao) {
-		if (substr($titulacao,0,1) == '-')
-		{
+	function ic_submit_resumo_titulacao_detalhe($ano, $titulacao) {
+		if (substr($titulacao, 0, 1) == '-') {
 			$wh = " AND (ust_id = '' or ust_id is null ) ";
 		} else {
-			$wh = " AND ust_id = '$titulacao' ";	
+			$wh = " AND ust_id = '$titulacao' ";
 		}
 		$sql = "select *
 						from ic_submissao_plano
@@ -354,7 +349,7 @@ class ics extends CI_model {
 						$wh
 						order by us_nome
 					 ";
-					 
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -373,22 +368,22 @@ class ics extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
-			
+
 			$sx .= '<tr valign="top">';
-			$sx .= '<td align="center" width="20">'.$tot.'</td>';
-			$sx .= '<td>'.link_user($line['us_nome'],$line['id_us']).'</td>';
-			$sx .= '<td>'.$line['doc_1_titulo'].'</td>';
-			$sx .= '<td>'.$line['doc_protocolo'].'</td>';
-			$sx .= '<td>'.$line['doc_protocolo_mae'].'</td>';
-			$sx .= '<td width="10%">'.$line['us_campus_vinculo'].'</td>';
+			$sx .= '<td align="center" width="20">' . $tot . '</td>';
+			$sx .= '<td>' . link_user($line['us_nome'], $line['id_us']) . '</td>';
+			$sx .= '<td>' . $line['doc_1_titulo'] . '</td>';
+			$sx .= '<td>' . $line['doc_protocolo'] . '</td>';
+			$sx .= '<td>' . $line['doc_protocolo_mae'] . '</td>';
+			$sx .= '<td width="10%">' . $line['us_campus_vinculo'] . '</td>';
 			$sx .= '</tr>';
 		}
 		//$sx .= '<tr><td colspan=3 align="right">Total de planos --> '. $tot .'</td></tr>';
 		$sx .= '</table>';
 
 		return ($sx);
-	}	
-	
+	}
+
 	function table_view($wh = '', $offset = 0, $limit = 9999999, $orderby = '') {
 		if (strlen($wh) > 0) {
 			$wh = 'where (' . $wh . ') ';
@@ -481,7 +476,7 @@ class ics extends CI_model {
 						left join area_conhecimento on pj_area = ac_cnpq
 						where $whe ";
 		$sql .= ' order by pj_area, pj_titulo ';
-				
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
@@ -492,12 +487,11 @@ class ics extends CI_model {
 			$line = $rlt[$r];
 
 			$area = $line['pj_area'];
-			if ($area != $xarea)
-				{
-					$sx .= '<tr><td colspan=5 class="lt5"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
-					$xarea = $area;
-				}
-			
+			if ($area != $xarea) {
+				$sx .= '<tr><td colspan=5 class="lt5"><b>' . $area . ' - ' . $line['ac_nome_area'] . '</b></td></tr>';
+				$xarea = $area;
+			}
+
 			/* */
 			$title = $line['pj_titulo'];
 			if ($title == $xtitle) {
@@ -775,23 +769,23 @@ class ics extends CI_model {
 		return ($sx);
 	}
 
-/* orientações por escola */
-function orientaoes_ativas_escola($ano = '') {
-	$sx = '';
-	$mod = '';
-	$ano = '2015';
-	$ano1 = $ano;
-	$ano2 = ($ano + 1);
-	
-	$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
-	$wh .= ' and (icas_id = 1)';
-	$ob = 'pf_cracha, pf_nome, us_campus_vinculo, es_escola, mb_tipo';
-	
-	if (strlen($mod) > 0) {
-		$wh .= ' and id_mb = ' . $mod;
-	}
+	/* orientações por escola */
+	function orientaoes_ativas_escola($ano = '') {
+		$sx = '';
+		$mod = '';
+		$ano = '2015';
+		$ano1 = $ano;
+		$ano2 = ($ano + 1);
 
-	$sql = "SELECT pf_cracha, pf_nome, us_campus_vinculo, es_escola, mb_tipo, count(*) as total
+		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
+		$wh .= ' and (icas_id = 1)';
+		$ob = 'pf_cracha, pf_nome, us_campus_vinculo, es_escola, mb_tipo';
+
+		if (strlen($mod) > 0) {
+			$wh .= ' and id_mb = ' . $mod;
+		}
+
+		$sql = "SELECT pf_cracha, pf_nome, us_campus_vinculo, es_escola, mb_tipo, count(*) as total
 					FROM (select * from ic
 					      left join ic_aluno as pa on ic_id = id_ic
 					      left join (select us_campus_vinculo, us_escola_vinculo, us_cracha as id_pf, 
@@ -803,34 +797,34 @@ function orientaoes_ativas_escola($ano = '') {
 					                 and (icas_id = 1)) as resultado
 					INNER JOIN escola ON us_escola_vinculo = id_es
 					GROUP BY $ob";
-	
-	$rlt = $this -> db -> query($sql);
-	$rlt = $rlt -> result_array();
-	
-	$tot = 0;
-	$totp = 0;
-	
-	$class_2 = ' style="border-bottom: 1px #000000 solid" ';
-	$class_2 = '';
-	
-	$sx .= '<table width="100%" class="tabela00">';
-	$sx .= '<tr ' . $class_2 . '><th width="5%">Cod.Crachá</th>
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+
+		$tot = 0;
+		$totp = 0;
+
+		$class_2 = ' style="border-bottom: 1px #000000 solid" ';
+		$class_2 = '';
+
+		$sx .= '<table width="100%" class="tabela00">';
+		$sx .= '<tr ' . $class_2 . '><th width="5%">Cod.Crachá</th>
 							<th width="43%">Nome Prof.</th>
 							<th width="12%">Campus</th>
 							<th width="25%">Escola</th>
 							<th width="10%">Modalidade</th>
 							<th width="3%">Orientações</th>
 					</tr>';
-	
-	$class = ' style="border-bottom: 1px #000000 solid" ';
-	$class = '';
-	
-	for ($r = 0; $r < count($rlt); $r++) {
-				
+
+		$class = ' style="border-bottom: 1px #000000 solid" ';
+		$class = '';
+
+		for ($r = 0; $r < count($rlt); $r++) {
+
 			$line = $rlt[$r];
 			$tot = $tot + $line['total'];
 			$totp++;
-			
+
 			$sx .= '<tr>';
 			$sx .= '<td ' . $class . ' align="center" >' . $line['pf_cracha'] . '</td>';
 			$sx .= '<td ' . $class . '>' . $line['pf_nome'] . '</td>';
@@ -840,12 +834,12 @@ function orientaoes_ativas_escola($ano = '') {
 			$sx .= '<td ' . $class . ' align="center" >' . $line['total'] . '</td>';
 
 		}
-		
-	$sx .= '<tr><td colspan="3">Total de ' . $totp . ' orientadores, com ' . $tot . ' orientações.</td></tr>';
-	$sx .= '</table>';
-	
-	return ($sx);
-}
+
+		$sx .= '<tr><td colspan="3">Total de ' . $totp . ' orientadores, com ' . $tot . ' orientações.</td></tr>';
+		$sx .= '</table>';
+
+		return ($sx);
+	}
 
 	function docentes_em_pesquisa($ano) {
 
@@ -1091,16 +1085,17 @@ function orientaoes_ativas_escola($ano = '') {
 		$sql = "select * from ic_historico
 					where bh_protocolo = '$proto'
 					and bh_data = $data
-					and bh_acao = $ac
-					and bh_aluno_1 = '$aluno1'
-					and bh_aluno_2 = '$aluno2'
+					order by id_bh desc
 				";
-		$rlt = db_query($sql);
-
-		if ($line = db_read($rlt)) {
-
-		} else {
-			$sql = "insert into ic_historico 
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			if ($line['bh_acao'] == $ac) {
+				return ('');
+			}
+		}
+		$sql = "insert into ic_historico 
 						(bh_protocolo, bh_data, bh_hora,
 						bh_log, bh_acao, bh_historico,
 						bh_aluno_1, bh_aluno_2, bh_motivo,
@@ -1111,8 +1106,7 @@ function orientaoes_ativas_escola($ano = '') {
 						'$aluno2','$aluno1','$motivo',
 						'$obs')
 				";
-			$rlt = $this -> db -> query($sql);
-		}
+		$rlt = $this -> db -> query($sql);
 		return ('');
 	}
 
@@ -1271,17 +1265,17 @@ function orientaoes_ativas_escola($ano = '') {
 		return ($sx);
 	}
 
-/** Gera guia do estudante em excel */
+	/** Gera guia do estudante em excel */
 	function report_guia_estudante_xls($ano1 = 0, $ano2 = 0, $mod = '', $esc = '') {
 		$sx = '';
 		$wh = "(ic_ano >= $ano1 and ic_ano <= $ano2) ";
 		if (strlen($mod) > 0) {
 			$wh .= ' and id_mb = ' . $mod;
-			
-		}elseif(strlen($esc) > 0){
+
+		} elseif (strlen($esc) > 0) {
 			$wh .= ' and us_escola_vinculo = ' . $esc;
 		}
-		
+
 		$sql = $this -> table_view_2($wh, 0, 9999999, 'al_nome');
 		//$sql .= " order by al_nome ";
 
@@ -1800,7 +1794,8 @@ function orientaoes_ativas_escola($ano = '') {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1865,7 +1860,8 @@ function orientaoes_ativas_escola($ano = '') {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital); ;
+			$line['img'] = $this -> logo_modalidade($edital);
+			;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -2316,7 +2312,7 @@ function orientaoes_ativas_escola($ano = '') {
 				break;
 			case 'PIBEP' :
 				$img = base_url('img/logo/logo_ic_pibep.png');
-				break;				
+				break;
 			default :
 				$img = base_url('img/logo/logo_ic_semimagem.png');
 				break;
@@ -3038,7 +3034,7 @@ function orientaoes_ativas_escola($ano = '') {
 				break;
 
 			default :
-				echo '--->' . $ac;
+				//echo '--->' . $ac;
 				break;
 		}
 	}
@@ -3558,7 +3554,7 @@ function orientaoes_ativas_escola($ano = '') {
 		return (1);
 	}
 
-	function insere_plano_submissao($protocolo_mae, $titulo, $aluno, $escola_publica, $modalidade) {
+	function insere_plano_submissao($protocolo_mae, $titulo, $aluno, $escola_publica, $modalidade, $tabalha = 0) {
 		$escola_publica = round($escola_publica);
 
 		/* CONSULTA ALUNO */
@@ -3607,7 +3603,7 @@ function orientaoes_ativas_escola($ano = '') {
 						doc_ano, doc_aluno_original,
 						doc_dt_atualizado, doc_autor_principal, doc_tipo,
 						doc_journal_id, doc_edital, doc_update,
-						doc_icv
+						doc_escola_publica, doc_icv
 						)
 						values
 						('$titulo','pt_BR','$aluno',
@@ -3616,7 +3612,7 @@ function orientaoes_ativas_escola($ano = '') {
 						'$ano','$aluno',
 						'$dt', '$autor', 'PLANO',
 						20, '$modalidade', '$dt',
-						$escola_publica
+						$escola_publica, $tabalha
 						)";
 		$this -> db -> query($sql);
 
@@ -3806,7 +3802,7 @@ function orientaoes_ativas_escola($ano = '') {
 		array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
 	}
-	
+
 	function cp_switch_ic_mobi() {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_sw', '', False, True));
@@ -3819,12 +3815,12 @@ function orientaoes_ativas_escola($ano = '') {
 		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_rel_final'), False, True));
 		array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
-	}	
+	}
 
 	function cp_switch() {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_sw', '', False, True));
-		array_push($cp, array('$SW', 'sw_01', msg('sw_ic_submissao'), False, True));
+		array_push($cp, array('$SW', 'sw_01', 'sem uso', False, True));
 		array_push($cp, array('$SW', 'sw_02', msg('sw_ic_rel_pacial'), False, True));
 		array_push($cp, array('$SW', 'sw_07', msg('sw_ic_rel_pacial_correcao'), False, True));
 		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_form_acompanhamento'), False, True));
@@ -3833,6 +3829,22 @@ function orientaoes_ativas_escola($ano = '') {
 		array_push($cp, array('$SW', 'sw_05', msg('sw_ic_resumo'), False, True));
 		array_push($cp, array('$SW', 'sw_06', msg('sw_ic_validacao'), False, True));
 		array_push($cp, array('$B', '', msg('update'), False, True));
+		return ($cp);
+	}
+
+	function cp_switch_2() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_sw', '', False, True));
+		array_push($cp, array('$SW', 'sw_01', msg('sw_ic_submissao'), False, True));
+		array_push($cp, array('$SW', 'sw_02', msg('sw_ic_submissao_enable'), False, True));
+		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_indicacao_estudante'), False, True));
+		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_implementacao'), False, True));
+		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_form_acompanhamento'), False, True));
+		//array_push($cp, array('$SW', 'sw_04', msg('sw_ic_rel_final'), False, True));
+		//array_push($cp, array('$SW', 'sw_08', msg('sw_ic_rel_final_correcao'), False, True));
+		//array_push($cp, array('$SW', 'sw_05', msg('sw_ic_resumo'), False, True));
+		//array_push($cp, array('$SW', 'sw_06', msg('sw_ic_validacao'), False, True));
+		//array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
 	}
 
@@ -4175,6 +4187,29 @@ function orientaoes_ativas_escola($ano = '') {
 		return ($sx);
 	}
 
+	function mostra_plano($proto) {
+		$this -> load -> model('geds');
+
+		$sql = "select * from " . $this -> tabela_planos . "
+						LEFT JOIN us_usuario on us_cracha = doc_aluno 
+						where doc_protocolo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$line['nrplano'] = ($r + 1);
+			$line['arquivos'] = '';
+			$line['arquivos_submit'] = '';
+			$protocolo = $line['doc_protocolo'];
+
+			$line['arquivos'] = $this -> geds -> list_files($protocolo, 'ic');
+			$sx .= $this -> load -> view('ic/email_plano_submit', $line, true);
+
+		}
+		return ($sx);
+	}
+
 	function resumo_submit($cracha = '', $ano = '') {
 		$res = array('0', '-', '-', '-', '-', '-');
 		$link = array('', '', '', '', '', '');
@@ -4378,6 +4413,73 @@ function orientaoes_ativas_escola($ano = '') {
 			return ($rlt[0]['id_pj']);
 		} else {
 			return (0);
+		}
+	}
+
+	function substitui_estutando_plano_submissao($proto, $cracha, $icv, $escola_publica) {
+		$icv_vlr = '0';
+		if ($icv == '1') { $icv_vlr = $icv;
+		}
+		$esp_vlr = '0';
+		if ($escola_publica == '1') { $esp_vlr = $escola_publica;
+		}
+
+		$sql = "select * from " . $this -> tabela_planos . " where doc_protocolo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			$titulo = $line['doc_1_titulo'];
+			$proto = $line['doc_protocolo'];
+			$cracha_old = $line['doc_aluno'];
+			$cracha_prof = $line['doc_autor_principal'];
+			if ($line['doc_aluno'] != $cracha) {
+				$sql = "update " . $this -> tabela_planos . " set
+										doc_aluno = '$cracha',
+										doc_icv = $icv_vlr,
+										doc_escola_publica = $esp_vlr
+									where doc_protocolo = '$proto' ";
+				$rlx = $this -> db -> query($sql);
+				
+				/* Fase I - Recupera nomes dos alunos */
+				/*************************************/
+				$prof = $this->usuarios->le_cracha($cracha_prof);
+				$prof_nome = $prof['us_nome'];
+				$prof_cracha = $prof['us_cracha'];
+				$prof_id = $prof['id_us'];				
+				
+				$aluno = $this->usuarios->le_cracha($cracha_old);
+				$estudante_original = $aluno['us_nome'];
+				$estudante_original_cracha = $aluno['us_cracha'];
+				
+				$aluno = $this->usuarios->le_cracha($cracha);								
+				$estudante_novo = $aluno['us_nome'];
+				$estudante_novo_cracha = $aluno['us_cracha'];
+
+				/* Fase II - Inserir histórico */
+				/******************************/
+				$aluno1 = '';
+				$aluno2 = '';
+				$hist = 'Substituição de Estudante';
+				$motivo = '000';
+				$obs = 'de: '.$estudante_original.' ('.$estudante_original_cracha.')';
+				$obs .= '<br>para: '.$estudante_novo.' ('.$estudante_novo_cracha.')';
+				$ac = '066';
+				$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+				
+				/* Fase III - Comunicar e-mail */
+				/******************************/
+				$prof['motivo'] = $obs;
+				$prof['pj_codigo'] = $proto;
+				$prof['pj_titulo'] = $titulo;
+				$prof['pf_nome'] = $prof_nome;
+				$mmm = $this->mensagens->busca('IC_SUBST_ALUNO',$prof);
+				$assunto = $mmm['nw_titulo'];
+				$texto = $mmm['nw_texto'];
+				$de = $mmm['nw_own'];
+				enviaremail_usuario($prof_id, $assunto, $texto, $de);
+								
+			}
 		}
 	}
 

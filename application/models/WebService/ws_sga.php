@@ -101,7 +101,6 @@ class ws_sga extends CI_model {
 				$this -> inser_sga($DadoAluno[$r]);
 
 				$situacao = substr(UpperCaseSql($DadoAluno[$r]['situacao']), 0, 4);
-				echo '-->' . $situacao;
 				switch ($situacao) {
 					case 'NORM' :
 						array_push($pref1, $DadoAluno[$r]);

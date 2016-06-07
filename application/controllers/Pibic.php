@@ -571,6 +571,14 @@ class pibic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		switch($tipo) {
+			case 'IC_SUBM_EST':
+				$data['title'] = 'Substituição de Estudante para o Edital IC';				
+				$tp = 'form_pre';
+				$prof = $_SESSION['cracha'];
+				$bt = msg('protocolo_botao_' . $tp);
+				$data['content'] = $this -> protocolos_ic -> substituicao_de_indicacao_submissao($prof);
+				$this -> load -> view('content', $data);
+				break;
 			case 'IC_FORM_PROF' :
 				$data['content'] = '<h2>Formulário de acompanhamento</h2>';
 				$this -> load -> view('content', $data);

@@ -653,14 +653,17 @@ class ic extends CI_Controller {
 			case 'IC' :
 				$tipom = 'ics';
 				$model = 'ics';
+				$enable_new = 0;
 				break;
 			case 'ICMST' :
 				$tipom = 'icmst';
 				$model = 'ics_master';
+				$enable_new = 1;
 				break;
 			case 'MOBI' :
 				$tipom = 'mobi';
 				$model = 'ics_mobi';
+				$enable_new = 1;
 				break;
 			default :
 				echo 'Invalid type:' . $tipo;
@@ -679,18 +682,21 @@ class ic extends CI_Controller {
 		$prj = $this -> $model -> exist_submit($cracha, $ano);
 		/* se 0, não existe projeto cadastrado */
 		//$tipo = lowerCase($tipo);
-		if ($prj > 0) {
-			$chk = checkpost_link($prj);
-			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $prj . '/' . $chk . '/');
-			$botao = '<a href="' . $botao . '" class="btn btn-primary">';
-			$botao .= msg('ic_submit_edit_project');
-			$botao .= '</a>';
-		} else {
-			$botao = '<a href="' . base_url('index.php/ic/submit_new/' . $tipo . '') . '" class="btn btn-primary">';
-			$botao .= msg('ic_submit_new_project');
-			$botao .= '</a>';
+		if ($enable_new == 1) {
+
+			if ($prj > 0) {
+				$chk = checkpost_link($prj);
+				$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $prj . '/' . $chk . '/');
+				$botao = '<a href="' . $botao . '" class="btn btn-primary">';
+				$botao .= msg('ic_submit_edit_project');
+				$botao .= '</a>';
+			} else {
+				$botao = '<a href="' . base_url('index.php/ic/submit_new/' . $tipo . '') . '" class="btn btn-primary">';
+				$botao .= msg('ic_submit_new_project');
+				$botao .= '</a>';
+			}
+			$tela .= '<br>' . $botao;
 		}
-		$tela .= '<br>' . $botao;
 
 		$data['content'] = $tela;
 		$this -> load -> view('content', $data);
@@ -2968,6 +2974,7 @@ class ic extends CI_Controller {
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (IC)', 'ITE', '/ic/acompanhamento_sw'));
+		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (IC-Submissão)', 'ITE', '/ic/acompanhamento_sw2'));
 		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (PIBIC MASTER)', 'ITE', '/ic/acompanhamento_ic_master_sw'));
 		array_push($menu, array('Acompanhamento', 'Abrir / fechar sistemas (Mobilidade)', 'ITE', '/ic/acompanhamento_ic_mobi_sw'));
 		array_push($menu, array('Acompanhamento', 'Calendário de Entregas', 'ITE', '/ic/acompanhamento_data'));
@@ -3254,6 +3261,33 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function acompanhamento_sw2() {
+		/* Load Models */
+		$this -> load -> model('ics');
+		$cp = $this -> ics -> cp_switch_2();
+		$data = array();
+
+		$this -> cab();
+
+		$form = new form;
+		$form -> id = 4;
+		/* IC */
+
+		$tela = $form -> editar($cp, $this -> ics -> tabela_acompanhamento);
+
+		$data['title'] = msg('ic_acomanhamento_title');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/ic/acompanhamento'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 	function acompanhamento_ic_master_sw() {
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -3510,8 +3544,7 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
+			$msg = 'REMOVIDO'; ;
 		}
 
 		$data = array();
@@ -3946,8 +3979,8 @@ class ic extends CI_Controller {
 											Já existe(m) a(s) indicação(ões) de ' . $av_aberta . ' avaliador(es) para este projeto
 											</div>';
 					$this -> load -> view('content', $comt);
-					
-					//mostra notas da avaliacao do projeto 
+
+					//mostra notas da avaliacao do projeto
 					$sx = '';
 					$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
 					$data['content'] = $sx;
@@ -3975,7 +4008,6 @@ class ic extends CI_Controller {
 			}
 		}
 
-		
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
@@ -4089,57 +4121,176 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function indicar_bolsa($edital='', $area='') {
+	function indicar_bolsa($edital = '', $area = '') {
 		/*carrega model */
 		$this -> load -> model('fcas');
 		$this -> cab();
 		$data = array();
 		$data['title'] = msg('Indicar Bolsas');
 
-		if (strlen($edital) > 0)
-			{
-				$sx = $this -> fcas -> indicar_bolsas($edital, $area);
-				$data['content'] = $sx;
-				$this -> load -> view('content', $data);
-			} else  {
-				$this->load->view('ic_edital/edital_areas',null);				
+		if (strlen($edital) > 0) {
+			$sx = $this -> fcas -> indicar_bolsas($edital, $area);
+			$data['content'] = $sx;
+			$this -> load -> view('content', $data);
+		} else {
+			$this -> load -> view('ic_edital/edital_areas', null);
 		}
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function indicar_bolsa_ed($id=0,$chk='')
-		{
-			$this->load->model("fcas");
-			$this->load->view('header/header',null);
-			
-			$data = $this->fcas->le($id);
-			$ano = $data['ed_ano'];
-			$prof = $data['ed_professor'];
-			$edital = $data['ed_edital'];
-			
-			$sx = '<table width="100%" class="table lt1">';
-			$sx .= '<tr valign="top">';
-			$sx .= '	<th width="70%">INDICAR</td>';
-			$sx .= '	<th width="30%">INDICADAS</td>';
-			$sx .= '</tr>';
-			
-			$sx .= '<tr valign="top">';
-			$sx .= '<td>';
-			$sx .= 		$this->fcas->mostra_modalidades($data);
-			$sx .= '</td>';
-			
-			$sx .= '<td>';
-			$sx .= 		$this->fcas->mostra_indicacoes_professor($prof,$edital,$ano);
-			$sx .= '</td>';
-			$sx .= '</tr>';
-			
-			$sx .= '</table>';
-			
-			$data['content'] = $sx;
-			$this->load->view('content',$data);
-			
+	function indicar_bolsa_ed($id = 0, $chk = '') {
+		$this -> load -> model("fcas");
+		$this -> load -> view('header/header', null);
+
+		$data = $this -> fcas -> le($id);
+		$ano = $data['ed_ano'];
+		$prof = $data['ed_professor'];
+		$edital = $data['ed_edital'];
+
+		$sx = '<table width="100%" class="table lt1">';
+		$sx .= '<tr valign="top">';
+		$sx .= '	<th width="70%">INDICAR</td>';
+		$sx .= '	<th width="30%">INDICADAS</td>';
+		$sx .= '</tr>';
+
+		$sx .= '<tr valign="top">';
+		$sx .= '<td>';
+		$sx .= $this -> fcas -> mostra_modalidades($data);
+		$sx .= '</td>';
+
+		$sx .= '<td>';
+		$sx .= $this -> fcas -> mostra_indicacoes_professor($prof, $edital, $ano);
+		$sx .= '</td>';
+		$sx .= '</tr>';
+
+		$sx .= '</table>';
+
+		$data['content'] = $sx;
+		$this -> load -> view('content', $data);
+
+	}
+
+	function substituir_estudante($id = 0, $chk = '') {
+		/*carrega model */
+		$this -> load -> model('ics');
+		$this -> load -> model('geds');
+		$this -> load -> model('usuarios');
+		$this -> load -> model('mensagens');
+
+		$this -> cab();
+		$dados = $this -> ics -> le_plano_submit($id);
+
+		if (count($dados) == 0) {
+			return ("");
 		}
+		$proto_plano = $dados['doc_protocolo'];
+		$proto_projeto = $dados['doc_protocolo_mae'];
+		$ano = $dados['doc_ano'];
+
+		$dados = $this -> ics -> le_projeto_protocolo($proto_projeto);
+		if (count($dados) == 0) {
+			return ("");
+		}
+		$dados_pj = $dados;
+
+		$status = $dados['pj_status'];
+		$proto = $dados['pj_codigo'];
+		$tipo = $dados['pj_edital'];
+		$us_cracha = $dados['pj_professor'];
+
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> geds -> file_lock_all($dados['pj_codigo']);
+
+		$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+		$dados['ged'] = '<br>Arquivos:';
+
+		$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
+
+		//$this -> load -> view('ic/email_projeto', $dados);
+		$this -> load -> view('ic/projeto', $dados);
+
+		$dados = $this -> ics -> mostra_plano($proto_plano);
+		$data['content'] = $dados;
+		$this -> load -> view('content', $data);
+
+		/* Formulario */
+		$form = new form;
+		$cp = array();
+		$txt = 'Código do estudante não informado';
+		$cracha = $this -> usuarios -> limpa_cracha(get("dd1"));
+		$estudante = array();
+		$ok = '';
+		if (strlen($cracha) == 8) {
+			$this -> usuarios -> consulta_cracha($cracha);
+			$estudante = $this -> usuarios -> le_cracha($cracha);
+
+			if (count($estudante) > 0) {
+				$txt = $this -> load -> view('usuario/view_super_simple', $estudante, true);
+				/* regras */
+				/* # na esta em outro plano */
+				/************ Busca Aluno em Outro Plano *********/
+				$sql = "select * from ic_submissao_plano 
+							WHERE
+								doc_aluno = '$cracha' 
+								AND doc_ano = '$ano' 
+								AND doc_status <> 'X' ";
+				$rlt = $this -> db -> query($sql);
+				$rlt = $rlt -> result_array();
+				if (count($rlt) > 0) {
+					$lll = $rlt[0];
+					$txt = '
+						<div class="alert alert-danger" role="alert">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							<span class="sr-only">Error:</span>
+							Este estudante já está em outro plano (' . $lll['doc_protocolo_mae'] . ')
+						</div>
+						';
+				} else {
+					$ok = '1';
+				}
+			} else {
+				$txt = '
+						<div class="alert alert-danger" role="alert">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							<span class="sr-only">Error:</span>
+							Código do Aluno inválido (' . $cracha . ')
+						</div>
+						';
+				$ok = '';
+			}
+		}
+		array_push($cp, array('$H8', '', '', False, False));
+		array_push($cp, array('$S12', '', 'Informe o Cracha do Estudante', True, True));
+		array_push($cp, array('$HV', '', $ok, True, True));
+		array_push($cp, array('$M', '', $txt, False, True));
+		if (count($estudante) > 0) {
+			array_push($cp, array('$C1', '', msg('estudante_trabalha'), False, True));
+			array_push($cp, array('$C1', '', msg('estudante_esc_publica'), False, True));
+		}
+
+		$tela = $form -> editar($cp, '');
+		$data['title'] = 'Substituição de Estudante';
+
+		if ($form -> saved > 0) {
+			$icv = get("dd4");
+			$esp = get("dd5");
+			$this -> ics -> substitui_estutando_plano_submissao($proto_plano, $cracha, $icv, $esp);
+
+			$data['volta'] = base_url('index.php/pibic/entrega/IC_SUBM_EST');
+			$this -> load -> view('sucesso', $data);
+			$data['title'] = '';
+			$tela = '';
+
+		}
+
+		$data['content'] = $tela;
+		$this -> load -> view('content', $data);
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', null);
+	}
+
 }
 ?>

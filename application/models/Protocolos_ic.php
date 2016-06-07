@@ -79,13 +79,13 @@ class protocolos_ic extends CI_Model {
 
 		/* Situação */
 		$resolucao = get("dd4");
-		
+
 		/* Cancelado*/
 		if ($resolucao == 'C') {
 			/*****************************************/
 			/* Fechar protocolo                      */
-			$this->fechamento_protocolo($obj);
-				
+			$this -> fechamento_protocolo($obj);
+
 			/*  Acoes ******************************************************************************
 			 ***************************************************************************************
 			 */
@@ -101,7 +101,7 @@ class protocolos_ic extends CI_Model {
 			/*********************************/
 			/* Lancar historico              */
 			$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
-			
+
 			/* recupera dados atuais aluno */
 			$data = $this -> protocolos_ic -> le($id);
 			$data2 = $this -> ics -> le_protocolo($proto);
@@ -110,9 +110,9 @@ class protocolos_ic extends CI_Model {
 			$txt .= '<h2>De:</h2>';
 			$txt .= $this -> load -> view('ic/plano-email', $data_antigo, true);
 			$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
-			
+
 			enviaremail_usuario($us_id, 'Substituicao de orientação CANCELADA/INDEFIRIDA', $txt, 2);
-			return (1);								
+			return (1);
 		}
 
 		/* Finalizado*/
@@ -149,14 +149,14 @@ class protocolos_ic extends CI_Model {
 			$cracha_novo = $obj['pr_beneficiador'];
 			$protocolo = $obj['pr_protocolo_original'];
 			$data = $obj['pr_data'];
-			$this->ics->substituicao_aluno($cracha_antigo, $protocolo, $cracha_novo, $data);
+			$this -> ics -> substituicao_aluno($cracha_antigo, $protocolo, $cracha_novo, $data);
 			/*****************************************/
 			/* Fechar protocolo                      */
-			$this->fechamento_protocolo($obj);
+			$this -> fechamento_protocolo($obj);
 
 			/****************************************/
 			/* Enviar e-mail de cancelamento        */
-			
+
 			/* recupera novo aluno */
 			$data = $this -> protocolos_ic -> le($id);
 			$data2 = $this -> ics -> le_protocolo($proto);
@@ -169,7 +169,7 @@ class protocolos_ic extends CI_Model {
 			$txt .= '<hr>' . $this -> load -> view('ic/protocolo.php', $data, true);
 			//enviaremail_usuario($us_id, 'Substituicao de orientação', $txt, 2);
 			return (1);
-		} 
+		}
 	}
 
 	function cp_CAN() {
@@ -278,19 +278,18 @@ class protocolos_ic extends CI_Model {
 			$wh = ' and (s_id = 1) ';
 		}
 		/* Pré-relatorio parcial */
-		switch ($tp)
-			{
-			case 'form_pre':
+		switch ($tp) {
+			case 'form_pre' :
 				$wh = ' and ((s_id = 1) and (ic_pre_data = \'0000-00-00\'))';
 				break;
-			case 'form_ic_rp':
+			case 'form_ic_rp' :
 				$wh = ' and ((s_id = 1) and (ic_rp_data = \'0000-00-00\'))';
 				break;
-			case 'form_ic_rpc':
+			case 'form_ic_rpc' :
 				$wh = ' and ((s_id = 1) and (ic_rpc_data = \'0000-00-00\' and ic_nota_rp = 2))';
-				break;									
-			}
-		
+				break;
+		}
+
 		/* Relatorio parcial */
 
 		$sql = "select * from ic 
@@ -305,7 +304,7 @@ class protocolos_ic extends CI_Model {
 						$wh and id_s = 1
 						order by ic_ano desc, ic_plano_aluno_codigo, pf_nome, al_nome
 						";
-		
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%">';
@@ -349,11 +348,10 @@ class protocolos_ic extends CI_Model {
 
 	/** ABRIR PROTOCOLO **/
 	function protocolo_inserir($cracha, $proto, $motivo, $just, $tipo, $estu = '', $local = 'IC') {
-		if (strlen($estu) > 0)
-			{
-				$estu = $this -> usuarios -> limpa_cracha($estu);
-			}
-		
+		if (strlen($estu) > 0) {
+			$estu = $this -> usuarios -> limpa_cracha($estu);
+		}
+
 		$sql = "select * from ic_protocolos 
 					where pr_tipo = '$tipo' and
 					pr_solicitante = '$cracha' and
@@ -495,31 +493,30 @@ class protocolos_ic extends CI_Model {
 	function acoes_abertas() {
 		$sx = '';
 		$id_us = $_SESSION['id_us'];
-		$data = $this->usuarios->le($id_us);
-		if ($data['usuario_tipo_ust_id'] == 2)
-		{		
-		$sx = '<h3>' . msg('request') . ':</h3>';
-		$sx .= '<ul>';
-		/* */
-		$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/SBS/') . '" class="link lt2">';
-		$sx .= '<li>' . $linka . 'Substituição do aluno' . '</a>' . '</li>';
+		$data = $this -> usuarios -> le($id_us);
+		if ($data['usuario_tipo_ust_id'] == 2) {
+			$sx = '<h3>' . msg('request') . ':</h3>';
+			$sx .= '<ul>';
+			/* */
+			$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/SBS/') . '" class="link lt2">';
+			$sx .= '<li>' . $linka . 'Substituição do aluno' . '</a>' . '</li>';
 
-		/* cancelamento de orientação */
-		$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/CAN/') . '" class="link lt2">';
-		$sx .= '<li>' . $linka . 'Cancelamento de Orientação' . '</a>' . '</li>';
+			/* cancelamento de orientação */
+			$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/CAN/') . '" class="link lt2">';
+			$sx .= '<li>' . $linka . 'Cancelamento de Orientação' . '</a>' . '</li>';
 
-		/* */
-		//$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/ALT/') . '" class="link lt2">';
-		//$sx .= '<li>' . $linka . 'Alteração de título do Plano do Aluno' . '</a>' . '</li>';
+			/* */
+			//$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/ALT/') . '" class="link lt2">';
+			//$sx .= '<li>' . $linka . 'Alteração de título do Plano do Aluno' . '</a>' . '</li>';
 
-		/* */
-		//$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/REC/') . '" class="link lt2">';
-		//$sx .= '<li>' . $linka . 'Recurso' . '</a>' . '</li>';
-		/* */
-		$linka = '<a href="'.base_url('index.php/pibic/carta_horas_eventuais').'" class="link lt2">';
-		$sx .= '<li>'.$linka.'Impressão do Convite Horas Eventuais IC'.'</a>'.'</li>';
+			/* */
+			//$linka = '<a href="' . base_url('index.php/pibic/proto_abrir/REC/') . '" class="link lt2">';
+			//$sx .= '<li>' . $linka . 'Recurso' . '</a>' . '</li>';
+			/* */
+			$linka = '<a href="' . base_url('index.php/pibic/carta_horas_eventuais') . '" class="link lt2">';
+			$sx .= '<li>' . $linka . 'Impressão do Convite Horas Eventuais IC' . '</a>' . '</li>';
 
-		$sx .= '</ul>';
+			$sx .= '</ul>';
 		}
 		return ($sx);
 	}
@@ -629,6 +626,73 @@ class protocolos_ic extends CI_Model {
 			$total = 0;
 		}
 		return ($total);
+	}
+
+	function substituicao_de_indicacao_submissao($prof) {
+		/* professor */
+		$ano = date("Y");
+		if (date("m") < 4) {
+			$ano--;
+		}
+		/* reliza consulta */
+		$cracha = $_SESSION['cracha'];
+		$sql = "select * from ic_submissao_plano
+					left join us_usuario on doc_aluno = us_cracha
+						where doc_autor_principal = '$cracha' 
+						and doc_ano = '" . $ano . "'
+						and (doc_status <> '!' and doc_status <> '@' and doc_status <> 'X')
+			 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table class="table lt2" width="100%">';
+		$sx .= '<tr><th>Protocolo</th><th>Título do Plano do Estudante</th><th>Estudante Indicado</th></tr>';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$chk1 = '';
+			$chk2 = '';
+
+			$icv = $line['doc_icv'];
+			$esc = $line['doc_escola_publica'];
+			if ($icv == 1) { $chk1 = 'checked';
+			}
+			if ($esc == 1) { $chk2 = 'checked';
+			}
+			$proto = trim($line['doc_protocolo']);
+			
+			$sx .= '<tr valign="top" style="background-color: #efefef;">';
+			$sx .= '<td width="5%" align="center">';
+			$sx .= $line['doc_protocolo'];
+			$sx .= '<img src="'.base_url('img/logo/logo_ic_'.lowercase($line['doc_edital']).'.png').'" height="50">'.cr();
+			$sx .= '</td>';
+			$sx .= '<td width="40%">';
+			$sx .= $line['doc_1_titulo'];
+			
+			$sx .= '<br>';
+			$sx .= '<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true" onclick="mostra_div(\''.$proto.'\');"></span>';
+			$sx .= '</td>';
+			$sx .= '<td width="45%">';
+			$sx .= '<b>' . $line['us_nome'] . '</b><br>';
+			
+			if ($line['doc_aluno'] != '00000000') {
+				$sx .= '<input type="checkbox" name="dd' . $proto . 'A" id="dd' . $proto . 'A" ' . $chk1 . ' value="1" onclick="muda_situacao_trabalho(\'' . $proto . 'A\');"> ' . msg('estudante_trabalha') . '<br>';
+				$sx .= '<input type="checkbox" name="dd' . $proto . 'B" id="dd' . $proto . 'B" ' . $chk2 . ' value="1" onclick="muda_situacao_publico(\'' . $proto . 'B\');"> ' . msg('estudante_esc_publica') . '<br>';
+			}
+			$sx .= '<a href="'.base_url('index.php/ic/substituir_estudante/'.$line['doc_protocolo'].'/'.checkpost_link($line['doc_protocolo'])).'" class="btn btn-primary">' . msg('estudante_substituir') . '</a>';
+			$sx .= '</td>';
+			$sx .= '</tr>';
+
+			$sx .= '<tr valign="top">';
+			$sx .= '<td colspan=3>';
+			$sx .= '<div id="dd' . $proto . 'i" style="display: none;">';
+			$data['ic_plano_aluno_codigo'] = $proto;
+			$sx .= $this -> load -> view('ic/plano_historico', $data, true);
+			$sx .= '</div>';
+			$sx .= '</td></tr>';
+		}
+		$sx .= '</table>';
+
+		$sx .= '<script language="JavaScript" type="text/javascript" src="' . base_url('js/ic/ajax_estudante.js') . '"></script>';
+		return ($sx);
 	}
 
 }

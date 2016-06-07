@@ -32,6 +32,8 @@ $lang['titulo_pesquisa'] = 'Título do projeto do professor';
 $lang['submit_PIBIC'] = 'Submissão IC';
 $lang['submit_IC'] = 'Submissão IC';
 $lang['submit_IC_text'] = 'Submissão IC';
+$lang['submit_IC2'] = 'Submissão IC';
+$lang['submit_IC2_text'] = 'Submissão IC';
 $lang['submit_MOBI'] = 'Submissão Mobilidade Nacional/Internacional';
 $lang['submit_MOBI_text'] = 'Projetos e Planos de Alunos';
 $lang['area_conhecimento'] = 'Área do conhecimento';
@@ -74,6 +76,10 @@ $lang['captacao_bonificacoes'] = 'Bonificações e Isenções';
 
 $lang['lb_bn_rf_valor'] = 'Valor da parcela de isenção';
 $lang['lb_bn_rf_parcela'] = 'Número de parcelas a isentar';
+
+$lang['estudante_substituir'] = 'Substituir estudante';
+$lang['estudante_esc_publica'] = 'Estudante de escola pública';
+$lang['estudante_trabalha'] = 'Estudante trabalha (ou tem estágio remunerado)';
 
 /* Manutencao Cursos */
 $lang['Label_curso_nome'] = 'Nome do curso';
@@ -291,12 +297,13 @@ $lang['lb_form_prof_inf'] = '<p class="lt3">Prezado orientador, este questionári
 							 <p class="lt3">Destacamos que este formulário não será encaminhado para seu orientando.</p><BR><BR>';
 
 /***************************** PIBIC */
-$lang['ic_atividade_aberta'] = 'Atividades para entrega';
+$lang['ic_atividade_aberta'] = 'Atividades';
 $lang['IC_FORM_RP'] = 'Entrega do Relatório Parcial (professor)';
 $lang['IC_FORM_RPC'] = 'Entrega das Correções do Relatório Parcial (professor)';
 $lang['IC_FORM_PROF'] = 'Formulário de acompanhamento (professor)';
 $lang['IC_FORM_ESTU'] = 'Formulário de acompanhamento (estudante)';
-$lang['bt_entregar'] = 'Entregar Atividade';
+$lang['IC_SUBM_EST'] = 'Alteração de Indicação de Estudante para o Edital PIBIC/PIBIT/PIBICEM';
+$lang['bt_entregar'] = 'Visualizar';
 
 $lang['protocolo_F'] = 'Finalizados';
 $lang['protocolo_A'] = 'Abertos';

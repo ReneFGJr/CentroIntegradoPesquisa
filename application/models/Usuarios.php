@@ -1641,6 +1641,7 @@ class usuarios extends CI_model {
 		$this -> load -> model('webservice/ws_sga');
 
 		if ($source == 'cs') {
+			
 		} else {
 			$rs = $this -> ws_sga -> findStudentByCracha($cracha);
 		}

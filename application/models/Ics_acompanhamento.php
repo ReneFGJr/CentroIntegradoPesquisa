@@ -5,211 +5,190 @@ class ics_acompanhamento extends CI_model {
 	var $tabela_acompanhamento = 'switch';
 	var $tabela = 'ic';
 	var $tabela_2 = "ic_modalidade_bolsa";
-	
-	function avaliacao_submissao_entregue($ano = 0,$sem_indicacao=0)
-		{
-			$wh = " (pj_status = 'A' or pj_status = 'B') ";
-			$wh .= " and (pj_edital = 'IC')";
-			$wh .= " and (pj_ano = '$ano')";
-			
-			$cp = 'id_pj, pj_area, us_nome, pj_titulo, ac_nome_area, pj_codigo, pj_status ';
-			$sql = "select $cp,  count(*) as total, max(parecers) as parecers from ic_submissao_projetos  
+
+	function avaliacao_submissao_entregue($ano = 0, $sem_indicacao = 0) {
+		$wh = " (pj_status = 'A' or pj_status = 'B') ";
+		$wh .= " and (pj_edital = 'IC')";
+		$wh .= " and (pj_ano = '$ano')";
+
+		$cp = 'id_pj, pj_area, us_nome, pj_titulo, ac_nome_area, pj_codigo, pj_status ';
+		$sql = "select $cp,  count(*) as total, max(parecers) as parecers from ic_submissao_projetos  
 						left join us_usuario on pj_professor = us_cracha 
 						left join area_conhecimento on ac_cnpq = pj_area
-						"; 
-			/* sem indicacao */
-			if ($sem_indicacao == 1)
-				{
-					$sql .= " LEFT JOIN (select count(*) as parecers, pp_protocolo from pibic_parecer_".$ano." where (pp_status <> 'D')  AND (pp_tipo = 'SUBMI') group by pp_protocolo) as parecer on pp_protocolo = pj_codigo ";
-				}
-			$sql .= " where $wh AND (parecers < 2 or parecers is null) ";
-			$sql .= " group by ".$cp;
-			$sql .= " order by pj_area, us_nome ";
-			
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="tabela00">';
-			$xarea = '';
-			$tot = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$tot++;
-					$line = $rlt[$r];
-					$area = $line['pj_area'];
-					if ($area != $xarea)
-						{
-							$sx .= '<tr><td colspan=10 class="lt3"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
-							$xarea = $area;
-						}
-					$line['page'] = 'ic';
-					$line['nr'] = $tot;
-					if ($line['parecers'] > 0)
-						{
-							$line['nr'] .= '<font color="green"><b>('.$line['parecers'].')</b>';
-						}
-					$sx .= $this->load->view('ic/projeto_row.php',$line,true);
-				}
-			$sx .= '</table>';
-			$sx .= '</br><font class="red"><strong>'.$tot . '</strong></font> protocolos entregues';
-			return($sx);
-		}	
-	
-	function relatorio_parcial_entregue($ano = 0,$sem_indicacao=0)
-		{
-			$wh = " (ic_ano = '$ano') ";
-			$wh .= " and (ic_rp_data > '2000-01-01')";
-			$wh .= " and (icas_id = 1)";
-			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
-			
-			/* sem indicacao */
-			if ($sem_indicacao == 1)
-				{
-					$sqla = " LEFT JOIN pibic_parecer_".date("Y")." on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
-					$sqla .= ' WHERE (pp_protocolo is null ) AND ';
-					$sql = troca($sql,'where',$sqla);
-				}
-			
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="tabela00">';
-			$xarea = '';
-			$tot = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$tot++;
-					$line = $rlt[$r];
-					$area = $line['ic_semic_area'];
-					if ($area != $xarea)
-						{
-							$sx .= '<tr><td colspan=10 class="lt3"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
-							$xarea = $area;
-						}
-					$line['page'] = 'ic';
-					$sx .= $this->load->view('ic/plano-row.php',$line,true);
-				}
-			$sx .= '</table>';
-			$sx .= '</br><font class="red"><strong>'.$tot . '</strong></font> protocolos entregues';
-			return($sx);
+						";
+		/* sem indicacao */
+		if ($sem_indicacao == 1) {
+			$sql .= " LEFT JOIN (select count(*) as parecers, pp_protocolo from pibic_parecer_" . $ano . " where (pp_status <> 'D')  AND (pp_tipo = 'SUBMI') group by pp_protocolo) as parecer on pp_protocolo = pj_codigo ";
+		}
+		$sql .= " where $wh AND (parecers < 2 or parecers is null) ";
+		$sql .= " group by " . $cp;
+		$sql .= " order by pj_area, us_nome ";
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00">';
+		$xarea = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$area = $line['pj_area'];
+			if ($area != $xarea) {
+				$sx .= '<tr><td colspan=10 class="lt3"><b>' . $area . ' - ' . $line['ac_nome_area'] . '</b></td></tr>';
+				$xarea = $area;
+			}
+			$line['page'] = 'ic';
+			$line['nr'] = $tot;
+			if ($line['parecers'] > 0) {
+				$line['nr'] .= '<font color="green"><b>(' . $line['parecers'] . ')</b>';
+			}
+			$sx .= $this -> load -> view('ic/projeto_row.php', $line, true);
+		}
+		$sx .= '</table>';
+		$sx .= '</br><font class="red"><strong>' . $tot . '</strong></font> protocolos entregues';
+		return ($sx);
+	}
+
+	function relatorio_parcial_entregue($ano = 0, $sem_indicacao = 0) {
+		$wh = " (ic_ano = '$ano') ";
+		$wh .= " and (ic_rp_data > '2000-01-01')";
+		$wh .= " and (icas_id = 1)";
+		$sql = $this -> ics -> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
+
+		/* sem indicacao */
+		if ($sem_indicacao == 1) {
+			$sqla = " LEFT JOIN pibic_parecer_" . date("Y") . " on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
+			$sqla .= ' WHERE (pp_protocolo is null ) AND ';
+			$sql = troca($sql, 'where', $sqla);
 		}
 
-	function relatorio_parcial_nao_entregue($ano = 0,$sem_indicacao=0)
-		{
-			$wh = " (ic_ano = '$ano') ";
-			$wh .= " and (icas_id = 1)";
-			$wh .= " and (s_id = 1)";
-			$wh .= " and (ic_rp_data <= '2000-01-01')";
-	
-			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
-			
-			/* sem indicacao */
-			if ($sem_indicacao == 1)
-				{
-					$sqla = " LEFT JOIN pibic_parecer_".date("Y")." on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
-					$sqla .= ' WHERE (pp_protocolo is null ) AND ';
-					$sql = troca($sql,'where',$sqla);
-				}
-			
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="tabela00">';
-			$xarea = '';
-			$tot = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$tot++;
-					$line = $rlt[$r];
-					$area = $line['ic_semic_area'];
-					if ($area != $xarea)
-						{
-							$sx .= '<tr><td colspan=10 class="lt3"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
-							$xarea = $area;
-						}
-					$line['page'] = 'ic';
-					$sx .= $this->load->view('ic/plano-row.php',$line,true);
-				}
-			$sx .= '</table>';
-			$sx .= '</br> Total de <font class="red"><strong>'.$tot . '</strong></font> protocolos não entregues';
-			return($sx);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00">';
+		$xarea = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$area = $line['ic_semic_area'];
+			if ($area != $xarea) {
+				$sx .= '<tr><td colspan=10 class="lt3"><b>' . $area . ' - ' . $line['ac_nome_area'] . '</b></td></tr>';
+				$xarea = $area;
+			}
+			$line['page'] = 'ic';
+			$sx .= $this -> load -> view('ic/plano-row.php', $line, true);
+		}
+		$sx .= '</table>';
+		$sx .= '</br><font class="red"><strong>' . $tot . '</strong></font> protocolos entregues';
+		return ($sx);
+	}
+
+	function relatorio_parcial_nao_entregue($ano = 0, $sem_indicacao = 0) {
+		$wh = " (ic_ano = '$ano') ";
+		$wh .= " and (icas_id = 1)";
+		$wh .= " and (s_id = 1)";
+		$wh .= " and (ic_rp_data <= '2000-01-01')";
+
+		$sql = $this -> ics -> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
+
+		/* sem indicacao */
+		if ($sem_indicacao == 1) {
+			$sqla = " LEFT JOIN pibic_parecer_" . date("Y") . " on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
+			$sqla .= ' WHERE (pp_protocolo is null ) AND ';
+			$sql = troca($sql, 'where', $sqla);
 		}
 
-	function relatorio_correcao_parcial_nao_entregue($ano = 0,$sem_indicacao=0)
-		{
-			$wh = " (ic_ano = '$ano') ";
-			$wh .= " and (icas_id = 1)";
-			$wh .= " and (s_id = 1)";
-			$wh .= " and (ic_nota_rp = 2) ";
-			$wh .= " and (ic_rpc_data <= '2000-01-01')";
-	
-			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
-			
-			/* sem indicacao */
-			if ($sem_indicacao == 1)
-				{
-					$sqla = " LEFT JOIN pibic_parecer_".date("Y")." on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAC') AND (pp_status = 'A' or pp_status = 'B')) ";
-					$sqla .= ' WHERE (pp_protocolo is null ) AND ';
-					$sql = troca($sql,'where',$sqla);
-				}
-			
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="tabela00">';
-			$xarea = '';
-			$tot = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$tot++;
-					$line = $rlt[$r];
-					$area = $line['ic_semic_area'];
-					if ($area != $xarea)
-						{
-							$sx .= '<tr><td colspan=10 class="lt3"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
-							$xarea = $area;
-						}
-					$line['page'] = 'ic';
-					$sx .= $this->load->view('ic/plano-row.php',$line,true);
-				}
-			$sx .= '</table>';
-			$sx .= '</br> Total de <font class="red"><strong>'.$tot . '</strong></font> protocolos não entregues';
-			return($sx);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00">';
+		$xarea = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$area = $line['ic_semic_area'];
+			if ($area != $xarea) {
+				$sx .= '<tr><td colspan=10 class="lt3"><b>' . $area . ' - ' . $line['ac_nome_area'] . '</b></td></tr>';
+				$xarea = $area;
+			}
+			$line['page'] = 'ic';
+			$sx .= $this -> load -> view('ic/plano-row.php', $line, true);
+		}
+		$sx .= '</table>';
+		$sx .= '</br> Total de <font class="red"><strong>' . $tot . '</strong></font> protocolos não entregues';
+		return ($sx);
+	}
+
+	function relatorio_correcao_parcial_nao_entregue($ano = 0, $sem_indicacao = 0) {
+		$wh = " (ic_ano = '$ano') ";
+		$wh .= " and (icas_id = 1)";
+		$wh .= " and (s_id = 1)";
+		$wh .= " and (ic_nota_rp = 2) ";
+		$wh .= " and (ic_rpc_data <= '2000-01-01')";
+
+		$sql = $this -> ics -> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
+
+		/* sem indicacao */
+		if ($sem_indicacao == 1) {
+			$sqla = " LEFT JOIN pibic_parecer_" . date("Y") . " on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAC') AND (pp_status = 'A' or pp_status = 'B')) ";
+			$sqla .= ' WHERE (pp_protocolo is null ) AND ';
+			$sql = troca($sql, 'where', $sqla);
 		}
 
-function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
-		{
-			$wh = " (ic_ano = '$ano') ";
-			$wh .= " and (ic_rp_data <= '2000-01-01')";
-			$wh .= " and(icas_id = 2)";
-			$sql = $this -> ics-> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
-			
-			/* sem indicacao */
-			if ($sem_indicacao == 1)
-				{
-					$sqla = " LEFT JOIN pibic_parecer_".date("Y")." on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
-					$sqla .= ' WHERE (pp_protocolo is null ) AND ';
-					$sql = troca($sql,'where',$sqla);
-				}
-			
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt->result_array();
-			$sx = '<table width="100%" class="tabela00">';
-			$xarea = '';
-			$tot = 0;
-			for ($r=0;$r < count($rlt);$r++)
-				{
-					$tot++;
-					$line = $rlt[$r];
-					$area = $line['ic_semic_area'];
-					if ($area != $xarea)
-						{
-							$sx .= '<tr><td colspan=10 class="lt3"><b>'.$area.' - '.$line['ac_nome_area'].'</b></td></tr>';
-							$xarea = $area;
-						}
-					$line['page'] = 'ic';
-					$sx .= $this->load->view('ic/plano-row.php',$line,true);
-				}
-			$sx .= '</table>';
-			$sx .= '</br> Total de <font class="red"><strong>'.$tot . '</strong></font> protocolos não entregues';
-			return($sx);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00">';
+		$xarea = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$area = $line['ic_semic_area'];
+			if ($area != $xarea) {
+				$sx .= '<tr><td colspan=10 class="lt3"><b>' . $area . ' - ' . $line['ac_nome_area'] . '</b></td></tr>';
+				$xarea = $area;
+			}
+			$line['page'] = 'ic';
+			$sx .= $this -> load -> view('ic/plano-row.php', $line, true);
 		}
+		$sx .= '</table>';
+		$sx .= '</br> Total de <font class="red"><strong>' . $tot . '</strong></font> protocolos não entregues';
+		return ($sx);
+	}
+
+	function relatorio_parcial_cancelados($ano = 0, $sem_indicacao = 0) {
+		$wh = " (ic_ano = '$ano') ";
+		$wh .= " and (ic_rp_data <= '2000-01-01')";
+		$wh .= " and(icas_id = 2)";
+		$sql = $this -> ics -> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
+
+		/* sem indicacao */
+		if ($sem_indicacao == 1) {
+			$sqla = " LEFT JOIN pibic_parecer_" . date("Y") . " on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
+			$sqla .= ' WHERE (pp_protocolo is null ) AND ';
+			$sql = troca($sql, 'where', $sqla);
+		}
+
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<table width="100%" class="tabela00">';
+		$xarea = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$tot++;
+			$line = $rlt[$r];
+			$area = $line['ic_semic_area'];
+			if ($area != $xarea) {
+				$sx .= '<tr><td colspan=10 class="lt3"><b>' . $area . ' - ' . $line['ac_nome_area'] . '</b></td></tr>';
+				$xarea = $area;
+			}
+			$line['page'] = 'ic';
+			$sx .= $this -> load -> view('ic/plano-row.php', $line, true);
+		}
+		$sx .= '</table>';
+		$sx .= '</br> Total de <font class="red"><strong>' . $tot . '</strong></font> protocolos não entregues';
+		return ($sx);
+	}
 
 	function form_acompanhamento_prof($ano = 0) {
 		$ano = date("Y");
@@ -277,7 +256,7 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		/* Pergunta 4 */
 		$link03a = '<a href="' . base_url('index.php/ic/entrega/FORM_PROF/?dd1=pa_p03&dd2=2') . '">';
 		$sx .= '<tr><td width="30%"><b>' . msg('lb_form_prof_pa4') . '</b> ';
-		$sx .= ' em dia (' . $pa03[1] . ') x atrasado (' . $link03a. $pa03[2] . '</a>), adiantado (' . $pa03[3] . '), Não opinado (' . $pa02[0] . ')';
+		$sx .= ' em dia (' . $pa03[1] . ') x atrasado (' . $link03a . $pa03[2] . '</a>), adiantado (' . $pa03[3] . '), Não opinado (' . $pa02[0] . ')';
 
 		/* Pergunta 5 */
 		$link04a = '<a href="' . base_url('index.php/ic/entrega/FORM_PROF/?dd1=pa_p04&dd2=1') . '">';
@@ -306,44 +285,41 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 				$line = $rlt[$r];
 				$link_ic = link_ic($line['id_ic']);
 				$sx .= '<tr valign="top">';
-				$sx .= '<td width="15" class="borderb1">'.($r+1).'</td>';
+				$sx .= '<td width="15" class="borderb1">' . ($r + 1) . '</td>';
 				$sx .= '<td class="borderb1">';
 				$sx .= $link_ic . $line['pa_protocolo'] . '</a>';
 				$sx .= '</td>';
 
 				$sx .= '<td class="borderb1">';
-				$sx .= link_perfil($line['us_nome'], $line['id_us'],$line);
+				$sx .= link_perfil($line['us_nome'], $line['id_us'], $line);
 				$sx .= '</td>';
-				
+
 				$sx .= '<td width="60%" class="borderb1">';
 				$sx .= $line['ic_projeto_professor_titulo'];
-				$sx .= '</td>';		
-				
+				$sx .= '</td>';
+
 			}
 			$sx .= '</table>';
 		}
 		return ($sx);
 	}
-	
-	function form_entregue($proto='',$tipo='')
-		{
-			$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' limit 1";
-			$rlt = $this->db->query($sql);
-			$rlt = $rlt -> result_array();
-			if (count($rlt) > 0)
-				{
-					$line = $rlt[0];
-					if ($line[$tipo] != '0000-00-00')
-					{
-						return(1);
-					} else {
-						return(0);
-					}
-				} else {
-					return(0);
-				}
-			print_r($rlt);
+
+	function form_entregue($proto = '', $tipo = '') {
+		$sql = "select * from ic where ic_plano_aluno_codigo = '$proto' limit 1";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+			$line = $rlt[0];
+			if ($line[$tipo] != '0000-00-00') {
+				return (1);
+			} else {
+				return (0);
+			}
+		} else {
+			return (0);
 		}
+		print_r($rlt);
+	}
 
 	function form_acompanhamento_exist($proto = '', $tipo = '') {
 		$sql = "select * from ic_acompanhamento 
@@ -368,8 +344,38 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		return ($rlt[0]);
 	}
 
+	function submissao_ajuste_indicacao_estudante() {
+		/* professor */
+		$ano = date("Y");
+		if (date("m") < 4) {
+			$ano--;
+		}
+		/* reliza consulta */
+		$cracha = $_SESSION['cracha'];
+		$sql = "select * from ic_submissao_plano
+						where doc_autor_principal = '$cracha' 
+						and doc_ano = '" . $ano . "'
+						and (doc_status <> '!' and doc_status <> '@' and doc_status <> 'X')
+			 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+
+			$line = $rlt[$r];
+			$tot++;
+		}
+		if ($tot > 0) {
+			$it = array('IC_SUBM_EST' => $tot);
+		} else {
+			$it = array();
+		}
+		return ($it);
+	}
+
 	function entregas_abertas() {
-		$sis = $this -> sistemas_abertos_para_submissao('PIBIC');
+		$sis = $this -> sistemas_abertos_para_submissao('IC');
 		$sx = '';
 
 		/* Ações abertas */
@@ -390,7 +396,16 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		if (trim($sis['sw_07']) == '1') {
 			$f1 = $this -> submissao_relatorio_parcial_correcoes();
 			$action = array_merge($f1, $action);
-		}		
+		}
+
+		/* submissao */
+		$sis = $this -> sistemas_abertos_para_submissao('IC2');
+		/* Entrega do Relatório Parcial */
+		if (trim($sis['sw_01']) == '1') {
+			$f1 = $this -> submissao_ajuste_indicacao_estudante();
+			$action = array_merge($f1, $action);
+		}
+
 		/* Mostra atividades */
 		if (count($action) > 0) {
 			$size = round(250 + 60);
@@ -428,10 +443,11 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		return ($sx);
 	}
 
-	function periodo_atividade($n,$ano=0) {
-		if ($ano==0) {
+	function periodo_atividade($n, $ano = 0) {
+		if ($ano == 0) {
 			$ano = date("Y");
-			if (date("m") < 7) { $ano--; } 
+			if (date("m") < 7) { $ano--;
+			}
 		}
 		$sql = "select * from ic_atividade where at_atividade = '$n' and at_ano = '$ano' ";
 		$rlt = $this -> db -> query($sql);
@@ -447,15 +463,13 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 	}
 
 	/* Submissoes */
-	
 
 	function submissao_relatorio_parcial() {
 		/* professor */
 		$ano = date("Y");
-		if (date("m") < 7)
-			{
-				$ano--;
-			}
+		if (date("m") < 7) {
+			$ano--;
+		}
 		/* reliza consulta */
 		$cracha = $_SESSION['cracha'];
 		$sql = "select * from ic
@@ -484,13 +498,13 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		return ($it);
 
 	}
+
 	function submissao_relatorio_parcial_correcoes() {
 		/* professor */
 		$ano = date("Y");
-		if (date("m") < 7)
-			{
-				$ano--;
-			}
+		if (date("m") < 7) {
+			$ano--;
+		}
 		/* reliza consulta */
 		$cracha = $_SESSION['cracha'];
 		$sql = "select * from ic
@@ -520,14 +534,14 @@ function relatorio_parcial_cancelados($ano = 0,$sem_indicacao=0)
 		}
 		return ($it);
 
-	}	
+	}
+
 	function submissao_questionarios_professor() {
 		/* professor */
 		$ano = date("Y");
-		if (date("m") < 7)
-			{
-				$ano--;
-			}		
+		if (date("m") < 7) {
+			$ano--;
+		}
 		/* professor */
 		$cracha = $_SESSION['cracha'];
 		$sql = "select * from ic
