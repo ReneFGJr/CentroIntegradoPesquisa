@@ -1,6 +1,13 @@
 <?php
 class Ic_pareceres extends CI_model {
 	var $tabela = "pibic_parecer_2016";
+	
+	function __construct() {
+		global $dd, $acao;
+		parent::__construct();
+
+		$this->tabela = "pibic_parecer_".date("Y");
+	}
 
 	function que_foi_avaliador($proto, $tipo) {
 		$sql = "select * from " . $this -> tabela . " where pp_protocolo = '$proto' and pp_tipo = '$tipo' and pp_status = 'B' ";
@@ -41,6 +48,19 @@ class Ic_pareceres extends CI_model {
 
 		}
 	}
+
+	function salva_parecer_generico($is,$notas)
+		{
+			$sql = "update ".$this->tabela." set ";
+			$r = 0;
+			foreach ($notas as $key => $value) {
+				if ($r > 0) { $sql .= ', ';}
+				$sql .= $key . " = '$value' ".cr();
+				$r++;				
+			}
+			$sql .= ' where id_pp = '.round($is);
+			$rlt = $this->db->query($sql);
+		}
 
 	function existe_documento($proto, $tipo) {
 		$sql = "select * from ic_ged_documento 
@@ -523,6 +543,8 @@ class Ic_pareceres extends CI_model {
 		/* avaliadores */
 		$sav = $this->lista_de_avaliacoes_protocolo($proto);
 		
+		$indicados = array();
+		
 		
 		$cracha = $data['ic_cracha_prof'];
 		$area = substr($ic_semic_area, 0, 5);
@@ -604,11 +626,16 @@ class Ic_pareceres extends CI_model {
 							$tipom = 'IC_SUBMI_INDICACAO';
 							break;
 						default :
-							echo "OPS - " . $tipo;
-							exit ;
+							$tipom = 'IC_SUBMI_INDICACAO';
+							break;							
 					}
-					$this -> comunicar_avaliador($line['id_us'], $proto, $tipom);
-					$sc .= '<h3>Enviado indicação de avaliação para :' . $line['us_nome'] . '</h3>';
+					$idus = $line['id_us'];
+					if (!isset($indicados[$idus]))
+						{
+							$this -> comunicar_avaliador($line['id_us'], $proto, $tipom);
+							$sc .= '<h3>Enviado indicação de avaliação para :' . $line['us_nome'] . '</h3>';
+							$indicados[$idus] = 1;							
+						}
 				} else {
 					$sa .= '<font color="red">Não foi enviado indicação de avaliação para :' . $line['us_nome'] . ' por ja ter dois avaliadores</font><br>';
 				}

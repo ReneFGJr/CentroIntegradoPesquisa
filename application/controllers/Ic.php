@@ -3988,12 +3988,23 @@ class ic extends CI_Controller {
 				}
 
 				if ($av_aberta <= 1) {
+					$TIPO_AV = 'SUBMI';
+					switch ($dados_projeto['pj_edital'])
+						{
+						case 'IC':
+							$TIPO_AV = 'SUBMI';
+							break;
+						default:
+							$TIPO_AV = substr($dados_projeto['pj_edital'],0,5);
+							break;		
+						}
+
 					$area = $dados_projeto['pj_area'];
 					$protocolo = $dados_projeto['pj_codigo'];
 					$dados_projeto['ic_cracha_prof'] = $dados_projeto['pj_professor'];
-					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'SUBMI', $area, $dados_projeto);
+					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, $TIPO_AV, $area, $dados_projeto);
 					$data['sa'] = $tela;
-					$data['tipo'] = 'SUBMI';
+					$data['tipo'] = $TIPO_AV;
 					$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
 					//$this -> load -> view('ic/form_indicar_avaliacao', $dados_pj);
 				}

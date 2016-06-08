@@ -36,8 +36,10 @@ $erro = '';
 		<?php echo $ops[4];?><br>
 		<input type="radio" name="dd1" value="5" <?php echo $chk[5];?> >
 		<?php echo $ops[5];?><br>
+		<hr>
+		<input type="checkbox" name="dd10" value="1"> Enviar e-mail de confirmação de validação
 		</td>
-		<td>		<textarea cols=40 rows=5 name="dd2"><?php echo get("dd2");?></textarea></td>
+		<td><textarea cols=40 rows=5 name="dd2"><?php echo get("dd2");?></textarea></td>
 		<td>
 			<input type="submit" name="acao" value="<?php echo $acao;?>" class="botao3d back_green_shadown back_green">
 			<input type="hidden" name="xacao" value="<?php echo $xacao; ?>">

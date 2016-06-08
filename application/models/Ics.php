@@ -2949,15 +2949,15 @@ class ics extends CI_model {
 	}
 
 	function projeto_xacao($pj) {
-		$this -> load -> model('Mensagens');
-		$this -> load -> model('Usuarios');
+		$this -> load -> model('mensagens');
+		$this -> load -> model('usuarios');
 
 		$ac = get("dd1");
 		$proto = $pj['pj_codigo'];
 
 		switch ($ac) {
+			/***** VALIDAÇÂO DOCUMENTAL */
 			case '6' :
-				/***** VALIDAÇÂO DOCUMENTAL */
 				$sta = $pj['pj_status'];
 				$sta_to = 'B';
 				$ac = '234';
@@ -2967,6 +2967,17 @@ class ics extends CI_model {
 				$aluno2 = 0;
 				$motivo = '';
 				$obs = '';
+				$email_comunicar = get("dd10");
+				$motivo = get("dd2");
+				if ($email_comunicar == 1) {
+					$para = $pj['id_pf'];
+					$pj['motivo'] = $motivo;
+					$nw = $this -> mensagens -> busca('IC_DOC_VALIDACAO', $pj);
+					$assunto = $nw['nw_titulo'];
+					$texto = $nw['nw_texto'];
+					$de = $nw['nw_own'];
+					enviaremail_usuario($para, $assunto, $texto, $de);
+				}
 				$this -> altera_status_projeto_submissao($proto, $sta, $sta_to);
 				$this -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs = '');
 				return (1);
@@ -4440,19 +4451,19 @@ class ics extends CI_model {
 										doc_escola_publica = $esp_vlr
 									where doc_protocolo = '$proto' ";
 				$rlx = $this -> db -> query($sql);
-				
+
 				/* Fase I - Recupera nomes dos alunos */
 				/*************************************/
-				$prof = $this->usuarios->le_cracha($cracha_prof);
+				$prof = $this -> usuarios -> le_cracha($cracha_prof);
 				$prof_nome = $prof['us_nome'];
 				$prof_cracha = $prof['us_cracha'];
-				$prof_id = $prof['id_us'];				
-				
-				$aluno = $this->usuarios->le_cracha($cracha_old);
+				$prof_id = $prof['id_us'];
+
+				$aluno = $this -> usuarios -> le_cracha($cracha_old);
 				$estudante_original = $aluno['us_nome'];
 				$estudante_original_cracha = $aluno['us_cracha'];
-				
-				$aluno = $this->usuarios->le_cracha($cracha);								
+
+				$aluno = $this -> usuarios -> le_cracha($cracha);
 				$estudante_novo = $aluno['us_nome'];
 				$estudante_novo_cracha = $aluno['us_cracha'];
 
@@ -4462,23 +4473,23 @@ class ics extends CI_model {
 				$aluno2 = '';
 				$hist = 'Substituição de Estudante';
 				$motivo = '000';
-				$obs = 'de: '.$estudante_original.' ('.$estudante_original_cracha.')';
-				$obs .= '<br>para: '.$estudante_novo.' ('.$estudante_novo_cracha.')';
+				$obs = 'de: ' . $estudante_original . ' (' . $estudante_original_cracha . ')';
+				$obs .= '<br>para: ' . $estudante_novo . ' (' . $estudante_novo_cracha . ')';
 				$ac = '066';
 				$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
-				
+
 				/* Fase III - Comunicar e-mail */
 				/******************************/
 				$prof['motivo'] = $obs;
 				$prof['pj_codigo'] = $proto;
 				$prof['pj_titulo'] = $titulo;
 				$prof['pf_nome'] = $prof_nome;
-				$mmm = $this->mensagens->busca('IC_SUBST_ALUNO',$prof);
+				$mmm = $this -> mensagens -> busca('IC_SUBST_ALUNO', $prof);
 				$assunto = $mmm['nw_titulo'];
 				$texto = $mmm['nw_texto'];
 				$de = $mmm['nw_own'];
 				enviaremail_usuario($prof_id, $assunto, $texto, $de);
-								
+
 			}
 		}
 	}

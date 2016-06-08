@@ -205,8 +205,8 @@ class avaliador extends CI_Controller {
 		$sta = $dados['pp_status'];
 		/* Avaliação não disponível */
 		$data['volta'] = base_url('index.php/avaliador');
-		
-		$this->load->view('sucesso',$data);
+
+		$this -> load -> view('sucesso', $data);
 
 	}
 
@@ -229,7 +229,7 @@ class avaliador extends CI_Controller {
 		if ($sta != 'A') {
 			$txt = '<center><h1 color="red">Avaliação não disponível</h1></center>';
 			$data['content'] = $txt;
-			$this->load->view('content',$data);
+			$this -> load -> view('content', $data);
 			return ('');
 		}
 
@@ -425,12 +425,83 @@ class avaliador extends CI_Controller {
 					}
 				}
 				break;
+			case 'FEIRA' :
+				/* AVALIACA FEIRA DE CIENCIAS JOVEM */
+				break;
+
 			default :
-				echo 'OPS - ' . $tipo;
+				echo 'OPS - Ficha não localizada - ' . $tipo;
 				exit ;
 		}
 
 		switch ($tipo) {
+			case 'FEIRA' :
+				/* AVALIACA FEIRA DE CIENCIAS JOVEM */
+				$dados = $this -> ics -> le_projeto_protocolo($proto);
+				$this -> geds -> tabela = 'ic_ged_documento';
+				$this -> geds -> file_lock_all($dados['pj_codigo']);
+
+				$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+				$dados['ged'] = '<br>Arquivos:';
+
+				$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
+
+				$this -> load -> view('ic/projeto', $dados);
+				$prof = $dados['pj_professor'];
+
+				$ref = 'AVAL_INSTRUCOES_FEIRA';
+				$texto = $this -> mensagens -> busca($ref, array());
+				if (isset($texto['nw_titulo'])) {
+					$dados['texto_introducao'] = mst($texto['nw_texto']);
+				} else {
+					$dados['texto_introducao'] = 'Texto não localizado ' . $ref;
+				}
+
+				$this -> load -> view('ic/avaliacao_feira', $dados);
+
+				/* Valida submissao */
+				//$ok = $this -> ic_pareceres -> checa_dados_pareceres($proto, $avaliador);
+				$dt = array(
+						'pp_p01' => get("dd1"),
+						'pp_p02' => get("dd2"),
+						'pp_p03' => get("dd3"),
+						'pp_p04' => get("dd4"),
+						'pp_p05' => get("dd5"),
+						'pp_p11' => get("dd6"),
+						'pp_p12' => get("dd7"),
+						'pp_p13' => get("dd8"),
+						'pp_p14' => get("dd9"),
+						'pp_p15' => get("dd10"),
+						'pp_p16' => get("dd11"),
+						'pp_abe_01' => get("dd20")
+				);
+				$ok = 0;
+				$avaliador = $_SESSION['id_us'];
+				$this->ic_pareceres->salva_parecer_generico($id,$dt);
+				
+				/* Valida */
+				$ok = 1;
+				if (strlen(get("dd1")) == 0) { $ok = 0; }
+				if (strlen(get("dd2")) == 0) { $ok = 0; }
+				if (strlen(get("dd3")) == 0) { $ok = 0; }
+				if (strlen(get("dd4")) == 0) { $ok = 0; }
+				if (strlen(get("dd5")) == 0) { $ok = 0; }
+				if (strlen(get("dd6")) == 0) { $ok = 0; }
+				if (strlen(get("dd7")) == 0) { $ok = 0; }
+				if (strlen(get("dd20")) == 0) { $ok = 0; }
+				
+				
+				if ($ok == 1) {
+					$this -> ic_pareceres -> fecha_avaliacao($proto, $avaliador);
+					redirect(base_url('index.php/avaliador/ficha_salva/' . $id . '/' . $check));
+					return ('');
+				}
+
+				$txt = '<input type="submit" name="acao" value="Finalizar avaliação >>>" class="btn btn-primary">';
+				$txt .= '</form>';
+				$data['content'] = $txt;
+				$this -> load -> view('content', $data);
+				break;
 			case 'RPAR' :
 				$this -> load -> view('ic/avaliacao_rpar', $data);
 				break;
