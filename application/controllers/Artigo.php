@@ -326,6 +326,7 @@ class Artigo extends CI_Controller {
 		$this -> cab();
 		$data = $this -> artigos -> le($id);
 
+		/* Mostra detalhes */
 		$this -> load -> view('artigo/detalhe', $data);
 		
 		/************************ BONIFICACOES ************/

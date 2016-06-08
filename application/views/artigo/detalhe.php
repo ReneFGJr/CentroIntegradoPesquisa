@@ -37,12 +37,12 @@
 
 	<tr><td colspan=2>DOI</td>
 		<td colspan=1>Indicado como:</td>
-		<?php if (perfil("#ADM")==1) { echo '<td colspan=1>Bonificar como:</td>'; } ?>
+		<?php if (perfil("#ADM#DIP#CPS")==1) { echo '<td colspan=1>Bonificar como:</td>'; } ?>
 	</tr>
 	<tr valign="top">
 		<td colspan=2 class="lt4"><?php echo $ar_doi;?>&nbsp;</td>
 		<td colspan=1 class="lt4"><?php echo $ar_q. ' '.$ar_a.' '.$ar_er;?> &nbsp;</td>
-		<?php if (perfil("#ADM")==1) {
+		<?php if (perfil("#ADM#DIP#CPS")==1) {
 			echo '<td colspan=1 class="lt2">';
 			echo 'A1: '.number_format($ar_v1,2,',','.').'<br>';
 			echo 'A2: '.number_format($ar_v2,2,',','.').'<br>';
