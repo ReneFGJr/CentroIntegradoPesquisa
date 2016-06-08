@@ -86,7 +86,7 @@ switch ($pj_edital)
 	</tr>	
 	<tr class="lt2" align="left">
 		<td align="left" colspan=2><?php echo $ac_nome_area;?>(<?php echo $pj_area;?>)</td>
-		<td align="left" colspan=3 class="lt2"><b><?php echo $ssi_descricao;?></b></td>
+		<td align="left" colspan=3 class="lt2"><font color="#FF8C00"><b><?php echo $ssi_descricao;?></b></font></td>
 	</tr>
 	<tr class="lt1" align="left">
 		<td align="left" colspan=5>
@@ -94,11 +94,108 @@ switch ($pj_edital)
 			<?php echo $ged_arquivos;?>			
 		</td>
 	</tr>	
-	<?php if (strlen($pj_coment) > 0) { ?>
+	<!--Informacoes extra do projeto -->
 	<tr class="lt1" align="left" >
-		<td colspan=2>Informações: <?php echo $pj_coment; ?></td>
+		<td >Informações: </td>
 	</tr>
-	<?php } ?>
+		<tr class="lt1" align="left">
+			<td align="left" colspan=5> 
+				<ul>
+					<?php if ((strlen($pj_coment) > 0)){
+						echo "<li>$pj_coment</li>";
+					}?>	
+					
+					<?php if ((strlen($pj_ss_programa) > 0)){
+						echo "<li>$pj_ss_programa</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ss_linha) > 0)){
+						echo "<li>$pj_ss_linha</li>";
+					}?>
+					
+					<?php if ((strlen($pj_cep) > 0)){
+						echo "<li>$pj_cep</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ceua) > 0)){
+						echo "<li>$pj_ceua</li>";
+					}?>
+					
+					<?php if ((strlen($pj_cep_status) > 0)){
+						echo "<li>$pj_cep_status</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ceua_status) > 0)){
+						echo "<li>$pj_ceua_status</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ext_sn) > 0)){
+						echo "<li>$pj_ext_sn</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ext_local) > 0)){
+						echo "<li>$pj_ext_local</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ext_edital) > 0)){
+						echo "<li>$pj_ext_edital</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ext_chamada) > 0)){
+						echo "<li>$pj_ext_chamada</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ext_valor) > 0)){
+						echo "<li>$pj_ext_valor</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ext_vjini) > 0)){
+						echo "<li>$pj_ext_vjini</li>";
+					}?>
+					
+					<?php if ((strlen($pj_est_vjfim) > 0)){
+						echo "<li>$pj_est_vjfim</li>";
+					}?>
+					
+					<?php if ((strlen($pj_gr2_sn) > 0)){
+						echo "<li>$pj_gr2_sn</li>";
+					}?>
+					
+					<?php if ((strlen($pj_gr2_local) > 0)){
+						echo "<li>$pj_gr2_local</li>";
+					}?>
+					
+					<?php if ((strlen($pj_gr2_cnpj) > 0)){
+						echo "<li>$pj_gr2_cnpj</li>";
+					}?>
+					
+					<?php if ((strlen($pj_gr2_valor) > 0)){
+						echo "<li>$pj_gr2_valor</li>";
+					}?>	
+					
+					<?php if ((strlen($pj_gr2_vjini) > 0)){
+						echo "<li>$pj_gr2_vjini</li>";
+					}?>	
+					
+					<?php if ((strlen($pj_gr2_vjfim) > 0)){
+						echo "<li>$pj_gr2_vjfim</li>";
+					}?>	
+					
+					<?php if ((strlen($pj_bp) > 0)){
+						echo "<li>$pj_bp</li>";
+					}?>	
+					
+					<?php if ((strlen($pj_professor) > 0)){
+						echo "<li>Cracha professor: $pj_professor</li>";
+					}?>	
+					
+					<?php if ((strlen($pj_aluno) > 0)){
+						echo "<li>Cracha aluno: $pj_aluno</li>";
+					}?>	
+						
+				</ul>
+			</td>
+		</tr>		
 	
 	<?php 
 	if (isset($equipe))
