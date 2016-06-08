@@ -45,5 +45,9 @@ $img = base_url('img/icon/icone_label_3percente_green.png');
 		<td class="lt0" align="right">Situação:</td>
 		<td class="lt2" colspan=4 align="left"><?php echo $bns_descricao;?></td>
 	</tr>
+	<tr valign="top">
+		<td class="lt0" align="right">Arquivos:</td>
+		<td class="lt2" colspan=4 align="left"><?php echo $bns_arquivos;?></td>
+	</tr>	
 </table>
 <BR><BR>

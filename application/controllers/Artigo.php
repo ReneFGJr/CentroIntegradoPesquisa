@@ -279,7 +279,10 @@ class Artigo extends CI_Controller {
 		$id_us = $_SESSION['id_us'];
 		
 		$proto= strzero($id,7);
+		$proto_ar = 'AR'.strzero($id,5);
+		
 		$this -> load -> model('stricto_sensus');
+		$this -> load -> model('bonificacoes');
 		$this -> load -> model('usuarios');
 		$this -> load -> model('artigos');
 		$this -> load -> model('geds');
@@ -324,6 +327,11 @@ class Artigo extends CI_Controller {
 		$data = $this -> artigos -> le($id);
 
 		$this -> load -> view('artigo/detalhe', $data);
+		
+		/************************ BONIFICACOES ************/
+		$data['content'] = $this->bonificacoes->mostra_bonificacoes($proto_ar);
+		$this->load->view('content',$data);
+		
 		
 		/* Histórico */
 		$data['content'] = '<fieldset class="captacao_folha black border1"><legend>' . msg('artigo_historico') . '</legend>' . $this -> artigos -> mostra_historico($id) . '</fieldset>';

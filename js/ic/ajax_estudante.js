@@ -4,7 +4,7 @@ function muda_situacao_trabalho($proto) {
 	$chk = $($fld).is(":checked");
 
 	var $url = "https://cip.pucpr.br/index.php/ajax/ic/ic_set_trabalha/" + $proto + "/" + $chk;
-	var $url = "http://localhost/projeto/CentroIntegradoPesquisa/index.php/ajax/ic/ic_set_trabalha/" + $proto + "/" + $chk;
+	/* var $url = "http://localhost/projeto/CentroIntegradoPesquisa/index.php/ajax/ic/ic_set_trabalha/" + $proto + "/" + $chk; */
 	$.ajax({
 		url : $url,
 		type : "post",
@@ -21,7 +21,7 @@ function muda_situacao_publico($proto) {
 	$chk = $($fld).is(":checked");
 
 	var $url = "https://cip.pucpr.br/index.php/ajax/ic/ic_set_publico/" + $proto + "/" + $chk;
-	var $url = "http://localhost/projeto/CentroIntegradoPesquisa/index.php/ajax/ic/ic_set_publico/" + $proto + "/" + $chk;
+	/* var $url = "http://localhost/projeto/CentroIntegradoPesquisa/index.php/ajax/ic/ic_set_publico/" + $proto + "/" + $chk; */
 	$.ajax({
 		url : $url,
 		type : "post",

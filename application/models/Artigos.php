@@ -163,7 +163,6 @@ class artigos extends CI_Model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$perf = $line['cas_perfil'];
-			echo '=>' . $perf;
 			switch ($perf) {
 				case '#COP' :
 					$id = 0;
