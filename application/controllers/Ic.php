@@ -3899,6 +3899,7 @@ class ic extends CI_Controller {
 		$this -> geds -> file_lock_all($dados['pj_codigo']);
 
 		$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+		$dados['ged_arquivos'] .= $this -> geds ->form_upload($dados['pj_codigo'], 'ic', $type='');
 		$dados['ged'] = '<br>Arquivos:';
 
 		$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
