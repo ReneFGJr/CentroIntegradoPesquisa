@@ -101,87 +101,91 @@ switch ($pj_edital)
 		<tr class="lt1" align="left">
 			<td align="left" colspan=5> 
 				<ul>
-					<?php if ((strlen($pj_coment) > 0)){
+					<?php if ((strlen($pj_coment) > 2)){
 						echo "<li>$pj_coment</li>";
 					}?>	
 					
-					<?php if ((strlen($pj_ss_programa) > 0)){
+					<?php if ((strlen($pj_ss_programa) > 2)){
 						echo "<li>$pj_ss_programa</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ss_linha) > 0)){
+					<?php if ((strlen($pj_ss_linha) > 2)){
 						echo "<li>$pj_ss_linha</li>";
 					}?>
 					
-					<?php if ((strlen($pj_cep) > 0)){
+					<?php if ((strlen($pj_cep) > 2)){
 						echo "<li>$pj_cep</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ceua) > 0)){
+					<?php if ((strlen($pj_ceua) > 2)){
 						echo "<li>$pj_ceua</li>";
 					}?>
 					
-					<?php if ((strlen($pj_cep_status) > 0)){
+					<?php if ((strlen($pj_cep_status) > 2)){
 						echo "<li>$pj_cep_status</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ceua_status) > 0)){
+					<?php if ((strlen($pj_ceua_status) > 2)){
 						echo "<li>$pj_ceua_status</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ext_sn) > 0)){
+					<?php if ((strlen($pj_ext_sn) > 2)){
 						echo "<li>$pj_ext_sn</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ext_local) > 0)){
+					<?php if ((strlen($pj_ext_local) > 2)){
 						echo "<li>$pj_ext_local</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ext_edital) > 0)){
+					<?php if ((strlen($pj_ext_edital) > 2)){
 						echo "<li>$pj_ext_edital</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ext_chamada) > 0)){
+					<?php if ((strlen($pj_resumo) > 2)){
+						echo "<li>$pj_resumo</li>";
+					}?>
+					
+					<?php if ((strlen($pj_ext_chamada) > 2)){
 						echo "<li>$pj_ext_chamada</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ext_valor) > 0)){
+					<?php if ((strlen($pj_ext_valor) > 2)){
 						echo "<li>$pj_ext_valor</li>";
 					}?>
 					
-					<?php if ((strlen($pj_ext_vjini) > 0)){
+					<?php if ((strlen($pj_ext_vjini) > 2)){
 						echo "<li>$pj_ext_vjini</li>";
 					}?>
 					
-					<?php if ((strlen($pj_est_vjfim) > 0)){
+					<?php if ((strlen($pj_est_vjfim) > 2)){
 						echo "<li>$pj_est_vjfim</li>";
 					}?>
 					
-					<?php if ((strlen($pj_gr2_sn) > 0)){
+					<?php if ((strlen($pj_gr2_sn) > 2)){
 						echo "<li>$pj_gr2_sn</li>";
 					}?>
 					
-					<?php if ((strlen($pj_gr2_local) > 0)){
+					<?php if ((strlen($pj_gr2_local) > 2)){
 						echo "<li>$pj_gr2_local</li>";
 					}?>
 					
-					<?php if ((strlen($pj_gr2_cnpj) > 0)){
+					<?php if ((strlen($pj_gr2_cnpj) > 2)){
 						echo "<li>$pj_gr2_cnpj</li>";
 					}?>
 					
-					<?php if ((strlen($pj_gr2_valor) > 0)){
+					<?php if ((strlen($pj_gr2_valor) > 2)){
 						echo "<li>$pj_gr2_valor</li>";
 					}?>	
 					
-					<?php if ((strlen($pj_gr2_vjini) > 0)){
+					<?php if ((strlen($pj_gr2_vjini) > 2)){
 						echo "<li>$pj_gr2_vjini</li>";
 					}?>	
 					
-					<?php if ((strlen($pj_gr2_vjfim) > 0)){
+					<?php if ((strlen($pj_gr2_vjfim) > 2)){
 						echo "<li>$pj_gr2_vjfim</li>";
 					}?>	
 					
-					<?php if ((strlen($pj_bp) > 0)){
+					<?php if ((strlen($pj_bp) > 2)){
 						echo "<li>$pj_bp</li>";
 					}?>	
 					
