@@ -671,6 +671,7 @@ class Fcas extends CI_model {
 		//cabecalho
 		$sx = '<table class="tabela00 lt1" width="100%">';
 		$sx .= '<tr class="lt3"><b>Notas individuais do projeto</b></tr>';
+		$sx .= '<tr><th>Notas dos formulário</th></tr>';
 		$sx .= '<tr>
 							<th>#</th>
 							<th align="left">Protocolo</th>
@@ -685,7 +686,7 @@ class Fcas extends CI_model {
 							<th align="center">13</th>
 							<th align="center">14</th>
 							<th align="center">15</th>
-							<th align="center">Observações</th>
+						  <th align="center">Observações</th>
 						</tr>';
 
 		/*linhas da tabela*/
@@ -703,7 +704,6 @@ class Fcas extends CI_model {
 			$nt_p13 = $line['pp_p13'];
 			$nt_p14 = $line['pp_p14'];
 			$nt_p15 = $line['pp_p15'];
-
 			
 			//variaveis
 			$proto = $line['pp_protocolo'];
@@ -780,6 +780,8 @@ class Fcas extends CI_model {
 			$sx .= '<td align="center">';
 			$sx .= $nt_p15;
 			$sx .= '</td>';
+			
+			if ((perfil("#ADM") == 1) or (perfil("#CPP") == 1)) {
 			//observações
 			if (strlen($observacoes) > 0) {
 					$sx .= '<td align="center">';
@@ -829,6 +831,7 @@ class Fcas extends CI_model {
 									  </div>
 									</div>';
 					$sx .= '</td>';
+				}
 			}
 
 		}

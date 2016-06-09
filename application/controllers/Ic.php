@@ -2862,6 +2862,30 @@ class ic extends CI_Controller {
 		$sx .= '</table>';
 		return ($sx);
 	}
+	
+	function resumo_orientacoes_ativas($edital = '', $xls=''){
+		/* Load Models */
+		$this -> load -> model('ics');
+		
+		if ($xls == '')
+			{
+		$data = array();
+		$this -> cab();
+		$data['submenu'] = '<a href="'.base_url('index.php/ic/resumo_orientacoes_ativas/'. $edital .'/xls').'" class="lt0 link">exportar para excel</a>';
+			} else {
+				xls('Projetos_ativos_semic_'. $edital .'.xls');
+			}
+		
+		$data['content'] = $this -> ics -> resumo_orientacoes_ativas_semic($edital);
+		$data['title'] = 'Orientações Ativas';
+		$this -> load -> view('content', $data);
+		
+		if ($xls == '')
+			{
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);		
+		}
+	}
 
 	function indicar_avaliador($tipo = '') {
 		/* Load Models */

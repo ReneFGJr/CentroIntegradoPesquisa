@@ -2176,15 +2176,20 @@ class ics extends CI_model {
 			$t[$edital][$fomento] = $total;
 		}
 
+		$link_a_resumo_pibic = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBIC' ). '">' . $ed['PIBIC'] . '</a>';
+		$link_b_resumo_pibiti = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBITI' ). '">' . $ed['PIBITI'] . '</a>';
+		$link_c_resumo_pibicjr = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBICEM' ). '">' . $ed['PIBICEM'] . '</a>';
+		
 		$sx = '<table width="100%" class="lt1 border1 radius10">
 					<tr><td colspan=2 align="left" class="lt6 borderb1"><b>' . msg('resumo') . '</b><br><font class="lt0">orintações ativas</td></tr>
-					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="40"></td><td class="lt6">' . $ed['PIBIC'] . '</td></tr>';
+					
+					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="40"></td><td class="lt6">'. $link_a_resumo_pibic. '</td></tr>';
 		$v = $t['PIBIC'];
 		foreach ($v as $key => $value) {
 			$sx .= '<tr><td align="right">' . $key . '</td><td class="lt3">' . $value . '</td></tr>' . cr();
 		}
 
-		$sx .= '<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibiti.png') . '" height="40"></td><td class="lt6">' . $ed['PIBITI'] . '</td></tr>';
+		$sx .= '<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibiti.png') . '" height="40"></td><td class="lt6">' . $link_b_resumo_pibiti . '</td></tr>';
 		$v = $t['PIBITI'];
 		foreach ($v as $key => $value) {
 			$sx .= '<tr><td align="right">' . $key . '</td><td class="lt3">' . $value . '</td></tr>' . cr();
@@ -2194,7 +2199,7 @@ class ics extends CI_model {
 
 		$sx .= '<tr><td>&nbsp;</td></tr>';
 
-		$sx .= '<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibicem.png') . '" height="40"></td><td class="lt6">' . $ed['PIBICEM'] . '</td></tr>';
+		$sx .= '<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibicem.png') . '" height="40"></td><td class="lt6">' . $link_c_resumo_pibicjr . '</td></tr>';
 
 		$v = $t['PIBICEM'];
 		foreach ($v as $key => $value) {
@@ -4492,6 +4497,97 @@ class ics extends CI_model {
 
 			}
 		}
+	}
+
+	function resumo_orientacoes_ativas_semic($edital){
+			$ano = date("Y");
+				if (date("m") < 7) {
+					$ano = $ano - 1;
+				}	
+			$sql = "select substring(ic_semic_area, 1,4) as area, ic_semic_area, ac_nome_area, ic_projeto_professor_codigo,  
+							       ic_plano_aluno_codigo, ic_cracha_prof, ic_aluno_cracha,
+							       mb_tipo, mb_fomento       
+							from ic
+							inner join ic_aluno as pa on ic_id = id_ic
+							left join ic_situacao on id_s = s_id
+							left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
+							left join area_conhecimento on ac_cnpq = ic_semic_area
+							where ic_ano = '2015' and (icas_id = 1)
+							and mb_tipo = '$edital' 
+							order by ic_semic_area, mb_fomento, mb_tipo
+						";		
+				
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		$sx = '<table width="100%" class="tabela00">';
+		$sx .= '<tr><td class="lt6" colspan=5> Iniciação Científica '. $ano .'</tr>';
+		$sx .= '<tr><th align="left">Id</th>
+									<th align="left">area</th>
+									<th align="left">Subarea</th>
+									<th align="left">Nome area</th>
+									<th align="left">Projeto prof.</th>
+									<th align="left">Plano Aluno</th>
+									<th align="left">Cracha prof.</th>
+									<th align="left">Cracha aluno</th>
+									<th align="left">Modalidade</th>
+									<th align="left">Fomento</th>
+						</tr>';
+		
+		$tot = 0;
+		
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			
+			$sx .= '<tr>';
+			
+			$sx .= '<td align="center">';
+			$sx .= $r + 1;
+			$sx .= '</td>';
+			
+			$sx .= '<td align="left">';
+			$sx .= $line['ic_semic_area'];
+			$sx .= '</td>';
+			
+			$sx .= '<td align="left">';
+			$sx .= $line['area'];
+			$sx .= '</td>';
+			
+			$sx .= '<td align="left">';
+			$sx .= $line['ac_nome_area'];
+			$sx .= '</td>';
+			
+			$sx .= '<td align="right">';
+			$sx .= $line['ic_projeto_professor_codigo'];
+			$sx .= '</td>';
+			
+			$sx .= '<td align="right">';
+			$sx .= $line['ic_plano_aluno_codigo'];
+			$sx .= '</td>';
+			
+			$sx .= '<td align="right">';
+			$sx .= $line['ic_cracha_prof'];
+			$sx .= '</td>';
+			
+			$sx .= '<td align="right">';
+			$sx .= $line['ic_aluno_cracha'];
+			$sx .= '</td>';
+			
+			$sx .= '<td align="center">';
+			$sx .= $line['mb_tipo'];
+			$sx .= '</td>';
+			
+			$sx .= '<td align="left">';
+			$sx .= $line['mb_fomento'];
+			$sx .= '</td>';
+		
+		}
+		$sx .= '<tr><td colspan=10 align="left">Total de ' . $tot . ' registros</td></tr>';
+		$sx .= '</table>';
+		
+		return ($sx);
+		
 	}
 
 }
