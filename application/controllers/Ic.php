@@ -2862,28 +2862,26 @@ class ic extends CI_Controller {
 		$sx .= '</table>';
 		return ($sx);
 	}
-	
-	function resumo_orientacoes_ativas($edital = '', $xls=''){
+
+	function resumo_orientacoes_ativas($edital = '', $xls = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
-		
-		if ($xls == '')
-			{
-		$data = array();
-		$this -> cab();
-		$data['submenu'] = '<a href="'.base_url('index.php/ic/resumo_orientacoes_ativas/'. $edital .'/xls').'" class="lt0 link">exportar para excel</a>';
-			} else {
-				xls('Projetos_ativos_semic_'. $edital .'.xls');
-			}
-		
+
+		if ($xls == '') {
+			$data = array();
+			$this -> cab();
+			$data['submenu'] = '<a href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . $edital . '/xls') . '" class="lt0 link">exportar para excel</a>';
+		} else {
+			xls('Projetos_ativos_semic_' . $edital . '.xls');
+		}
+
 		$data['content'] = $this -> ics -> resumo_orientacoes_ativas_semic($edital);
 		$data['title'] = 'Orientações Ativas';
 		$this -> load -> view('content', $data);
-		
-		if ($xls == '')
-			{
-		$this -> load -> view('header/content_close');
-		$this -> load -> view('header/foot', $data);		
+
+		if ($xls == '') {
+			$this -> load -> view('header/content_close');
+			$this -> load -> view('header/foot', $data);
 		}
 	}
 
@@ -3419,6 +3417,16 @@ class ic extends CI_Controller {
 		}
 	}
 
+	function view_proto($id = 0, $check = '') {
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$dados = $this -> ics -> le_protocolo($id);
+
+		redirect(base_url('index.php/ic/view/' . $dados['id_ic'] . '/' . checkpost_link($dados['id_ic'])));
+		print_r($dados);
+	}
+
 	function view($id = 0, $check = '') {
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -3568,7 +3576,8 @@ class ic extends CI_Controller {
 		}
 		if ($save == 'DEL') {
 			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO'; ;
+			$msg = 'REMOVIDO';
+			;
 		}
 
 		$data = array();
@@ -3904,6 +3913,16 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
+	function projeto_view_protocolo($id, $chk, $act = '') {
+		$this -> load -> model('ics');
+
+		$this -> cab();
+		$dados = $this -> ics -> le_projeto_protocolo($id);
+
+		redirect(base_url('index.php/ic/projeto_view/' . $dados['id_pj'] . '/' . checkpost_link($dados['id_pj'])));
+		print_r($dados);
+	}
+
 	function projeto_view($id, $chk, $act = '') {
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
@@ -3923,7 +3942,7 @@ class ic extends CI_Controller {
 		$this -> geds -> file_lock_all($dados['pj_codigo']);
 
 		$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
-		$dados['ged_arquivos'] .= $this -> geds ->form_upload($dados['pj_codigo'], 'ic', $type='');
+		$dados['ged_arquivos'] .= $this -> geds -> form_upload($dados['pj_codigo'], 'ic', $type = '');
 		$dados['ged'] = '<br>Arquivos:';
 
 		$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
@@ -4014,15 +4033,14 @@ class ic extends CI_Controller {
 
 				if ($av_aberta <= 1) {
 					$TIPO_AV = 'SUBMI';
-					switch ($dados_projeto['pj_edital'])
-						{
-						case 'IC':
+					switch ($dados_projeto['pj_edital']) {
+						case 'IC' :
 							$TIPO_AV = 'SUBMI';
 							break;
-						default:
-							$TIPO_AV = substr($dados_projeto['pj_edital'],0,5);
-							break;		
-						}
+						default :
+							$TIPO_AV = substr($dados_projeto['pj_edital'], 0, 5);
+							break;
+					}
 
 					$area = $dados_projeto['pj_area'];
 					$protocolo = $dados_projeto['pj_codigo'];

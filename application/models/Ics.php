@@ -4559,16 +4559,18 @@ class ics extends CI_model {
 			$sx .= '</td>';
 			
 			$sx .= '<td align="right">';
-			$sx .= $line['ic_projeto_professor_codigo'];
+			$sx .= link_projeto_proto($line['ic_projeto_professor_codigo']).$line['ic_projeto_professor_codigo'].'</a>';
 			$sx .= '</td>';
 			
 			$sx .= '<td align="right">';
-			$sx .= $line['ic_plano_aluno_codigo'];
+			$sx .= link_ic_proto($line['ic_plano_aluno_codigo']).$line['ic_plano_aluno_codigo'].'</a>';
 			$sx .= '</td>';
 			
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_prof'];
 			$sx .= '</td>';
+			
+			
 			
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_aluno_cracha'];

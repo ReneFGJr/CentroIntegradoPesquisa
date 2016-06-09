@@ -2002,7 +2002,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $tdn . $trn;
 				break;
 			case 'C' :
-				/* TR da tabela */
+				/* Checbox */
 				$tela .= $tr;
 
 				$dados = array('name' => $dn, 'id' => $dn, 'value' => '1', 'class' => 'form_checkbox ');
@@ -2082,7 +2082,7 @@ if (!function_exists('form_edit')) {
 				$dados = array($dn => $vlr);
 				$tela .= form_hidden($dados);
 				break;
-
+			/* Oculto com valor*/
 			case 'HV' :
 				$vlr = $cp[2];
 				$dados = array($dn => $vlr);
@@ -2228,7 +2228,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $form;
 				break;
 
-			/* String */
+			/* radiobox */
 			case 'R' :
 				$ntype = trim(substr($type, 2, strlen($type)));
 				$ntype = troca($ntype, '&', ';') . ';';
@@ -2268,7 +2268,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $form;
 				break;
 
-			/* String */
+			/* Date */
 			case 'D' :
 				/* TR da tabela */
 				$tela .= $tr;
@@ -2313,6 +2313,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $tdn . $trn;
 				break;
 
+			/** memo */
 			case 'M' :
 				/* TR da tabela */
 				$tela .= $tr;
@@ -2423,7 +2424,7 @@ if (!function_exists('form_edit')) {
 				$tela .= $td . form_textarea($data);
 				$tela .= $tdn . $trn;
 				break;
-			/* Password */
+			/* Validator */
 			case 'V' :
 				/* TR da tabela */
 				$tela .= $tr;
