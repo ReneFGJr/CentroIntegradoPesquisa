@@ -615,6 +615,7 @@ class avaliador extends CI_Controller {
 		array_push($cp, array('$M', '', '<hr>', False, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', '', 'Selecionar todos Orientador <b>Doutores</b> com IC?', False, True));
 		array_push($cp, array('$O 1:SIM&0:NÃO', '', 'Selecionar todos Orientador <b>Mestres</b> com IC?', False, True));
+		array_push($cp, array('$O 1:SIM&0:NÃO', '', 'Selecionar todos valiadores externos (enviar convite)?', False, True));
 		array_push($cp, array('$B8', '', 'Processar >>>', False, True));
 		$form = new form;
 		$tela = $form -> editar($cp, '');
@@ -626,10 +627,20 @@ class avaliador extends CI_Controller {
 				$tela .= '<h2>Zerando indicação de avaliador ....</h2>';
 				$this -> avaliadores -> zera_avaliadores();
 			}
+			
 			if (get("dd3") == '1') {
 				$tela .= '<h2>Selecionando prof. Doutores com IC....</h2>';
 				$tela .= $this -> avaliadores -> ativa_dr_com_ic_avaliadores() . ' selecionados';
 			}
+			if (get("dd4") == '1') {
+				$tela .= '<h2>Selecionando prof. Doutores com IC....</h2>';
+				$tela .= $this -> avaliadores -> ativa_msc_com_ic_avaliadores() . ' selecionados';
+			}			
+			if (get("dd5") == '1') {
+				$tela .= '<h2>Selecionando prof. Doutores Externos....</h2>';
+				$tela .= $this -> avaliadores -> ativa_av_externos() . ' selecionados';
+			}						
+
 			$data['title'] = 'Base de avaliadores';
 			$data['content'] = $tela;
 			$this -> load -> view('content', $data);

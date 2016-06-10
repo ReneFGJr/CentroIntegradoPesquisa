@@ -276,10 +276,9 @@ class avaliadores extends CI_Model {
 
 	function zera_avaliadores() {
 		$sql = "update us_usuario set us_avaliador = 0
-					where us_avaliador <> 0  
-					and ies_instituicao_ies_id = 1";
+					where us_avaliador > 0 ";
 		$rlt = $this -> db -> query($sql);
-		print_r($rlt);
+		return('');
 	}
 
 	function ativa_dr_com_ic_avaliadores() {
@@ -308,6 +307,59 @@ class avaliadores extends CI_Model {
 		}
 		return ($tot);
 	}
+	
+	function ativa_av_externos()
+		{
+		$ano = date("Y");
+		if (date("m") < 8) { $ano--;
+		}
+		$sql = "select distinct id_us, us_nome from us_usuario
+					WHERE (usuario_titulacao_ust_id = 6 or usuario_titulacao_ust_id = 7)
+					 	and ies_instituicao_ies_id > 1 and us_ativo = 1";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$wh = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			if (strlen($wh) > 0) { $wh .= ' OR ';
+			}
+			$wh .= '(id_us = ' . $line['id_us'] . ')';
+			$tot++;
+		}
+		if (strlen($wh) > 0) {
+			$sql = "update us_usuario set us_avaliador = 8 where " . $wh;
+			$this -> db -> query($sql);
+		}
+		return ($tot);
+		}
+	
+	function ativa_msc_com_ic_avaliadores() {
+		$ano = date("Y");
+		if (date("m") < 8) { $ano--;
+		}
+		$sql = "select distinct id_us from ic
+						left join ic_aluno as pa on ic_id = id_ic 
+						left join us_usuario on ic_cracha_prof = us_cracha
+					WHERE (usuario_titulacao_ust_id = 5)
+					 	and ic_ano = '$ano' and s_id = 1 and us_ativo = 1";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array($rlt);
+		$wh = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			if (strlen($wh) > 0) { $wh .= ' OR ';
+			}
+			$wh .= '(id_us = ' . $line['id_us'] . ')';
+			$tot++;
+		}
+		if (strlen($wh) > 0) {
+			$sql = "update us_usuario set us_avaliador = 1 where " . $wh;
+			$this -> db -> query($sql);
+		}
+		return ($tot);
+	}	
 
 	function avaliador_add_area($id = 0, $area = '') {
 		$area = trim($area);
