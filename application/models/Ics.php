@@ -1075,7 +1075,7 @@ class ics extends CI_model {
 			$this -> resumo = $bolsa;
 			return (1);
 		} else {
-			$sql = "select 1 from ic_submissao_projetos where pj_professor = '$cracha' ";
+			$sql = "select 1 from ic_submissao_projetos where pj_professor = '$us_cracha' ";
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
 			if (count($rlt) > 0)
