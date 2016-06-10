@@ -385,6 +385,12 @@ class artigos extends CI_Model {
 
 			case '16' :
 				// Com isenção e com bonificação pelo COORDENADOR //
+				$id_us = $artigo['id_us'];
+				$artigo['motivo'] = get("dd2");
+				
+				$txt = $this->mensagens->busca('artigo_indeferido',$artigo);
+				enviaremail_usuario($id_us,$txt['nw_titulo'],$txt['nw_texto'],$txt['nw_own']);
+				
 				$sql = "update cip_artigo set 
 								ar_bonificacao = 1,
 								ar_status = 90,

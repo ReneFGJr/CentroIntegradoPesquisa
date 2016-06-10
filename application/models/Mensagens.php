@@ -52,7 +52,12 @@ class mensagens extends CI_model {
 		
 		/* DADOS */
 		if (isset($data['dados'])) { $txt = troca($txt, '$DADOS', $data['dados']);
-		}			
+		}
+		
+		/********** ARTIGO ******************************/
+		if (isset($data['ar_titulo'])) { $txt = troca($txt, '$TITULO_ARTIGO', $data['ar_titulo']);
+		}
+							
 
 		/********** TITULO DO PROJETO & PLANO ***********/	
 
