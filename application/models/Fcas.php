@@ -646,8 +646,10 @@ class Fcas extends CI_model {
 	}
 
 	function avaliacao_notas_projetos($proto) {
-		$ano = date("Y");
-		$sql = "select pp_protocolo_mae, pp_protocolo,
+		$sx = '';
+		if ((perfil("#ADM#3AV#CPP") == 1)) {
+			$ano = date("Y");
+			$sql = "select pp_protocolo_mae, pp_protocolo,
 	                 pp_p01, pp_p02, pp_p03,
 	                 pp_p04, pp_p05, pp_p11,
 	                 pp_p12, pp_p13, pp_p14,
@@ -665,125 +667,127 @@ class Fcas extends CI_model {
 		        and pp_status = 'B'
 						";
 
-		$rlt = $this -> db -> query($sql);
-		$rlt = $rlt -> result_array($rlt);
-
-		//cabecalho
-		$sx = '<table class="tabela00 lt1" width="100%">';
-		$sx .= '<tr class="lt3"><b>Notas individuais do projeto</b></tr>';
-		$sx .= '<tr><th>Notas dos formulário</th></tr>';
-		$sx .= '<tr>
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array($rlt);
+			
+			//cabecalho
+			$sx = '<div class="alert alert-info" style="padding:5px 10px;">';
+			$sx .= '<table class="tabela00 lt1" width="100%">';
+			$sx .= '<tr class="lt3"><th></th>';
+			$sx .= '<tr class="lt3"><th><b></b></th>';
+			$sx .= '<th colspan=20>Notas dos formulário</th></tr>';
+			$sx .= '<tr>
 							<th>#</th>
 							<th align="left">Protocolo</th>
 							<th align="left">Protocolo mãe</th>	
-							<th align="center">01</th>
-							<th align="center">02</th>
-							<th align="center">03</th>
-							<th align="center">04</th>
-							<th align="center">05</th>
-							<th align="center">11</th>
-							<th align="center">12</th>
-							<th align="center">13</th>
-							<th align="center">14</th>
-							<th align="center">15</th>
+							<th align="center">nt_01</th>
+							<th align="center">nt_02</th>
+							<th align="center">nt_03</th>
+							<th align="center">nt_04</th>
+							<th align="center">nt_05</th>
+							<th align="center">nt_11</th>
+							<th align="center">nt_12</th>
+							<th align="center">nt_13</th>
+							<th align="center">nt_14</th>
+							<th align="center">nt_15</th>
 						  <th align="center">Observações</th>
 						</tr>';
 
-		/*linhas da tabela*/
-		for ($r = 0; $r < count($rlt); $r++) {
-			$line = $rlt[$r];
+			/*linhas da tabela*/
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
 
-			//notas
-			$nt_p01 = $line['pp_p01'];
-			$nt_p02 = $line['pp_p02'];
-			$nt_p03 = $line['pp_p03'];
-			$nt_p04 = $line['pp_p04'];
-			$nt_p05 = $line['pp_p05'];
-			$nt_p11 = $line['pp_p11'];
-			$nt_p12 = $line['pp_p12'];
-			$nt_p13 = $line['pp_p13'];
-			$nt_p14 = $line['pp_p14'];
-			$nt_p15 = $line['pp_p15'];
-			
-			//variaveis
-			$proto = $line['pp_protocolo'];
-			$proto_mae = $line['pp_protocolo_mae'];
-			$observacoes = '';
-			$obsv = '';
-			
-			//chama observacoes
-			for ($i = 1; $i < 15; $i++) {
-				if ($i == 6) {
-					$i = 11;
+				//notas
+				$nt_p01 = $line['pp_p01'];
+				$nt_p02 = $line['pp_p02'];
+				$nt_p03 = $line['pp_p03'];
+				$nt_p04 = $line['pp_p04'];
+				$nt_p05 = $line['pp_p05'];
+				$nt_p11 = $line['pp_p11'];
+				$nt_p12 = $line['pp_p12'];
+				$nt_p13 = $line['pp_p13'];
+				$nt_p14 = $line['pp_p14'];
+				$nt_p15 = $line['pp_p15'];
+
+				//variaveis
+				$proto = $line['pp_protocolo'];
+				$proto_mae = $line['pp_protocolo_mae'];
+				$observacoes = '';
+				$obsv = '';
+
+				//chama observacoes
+				for ($i = 1; $i < 15; $i++) {
+					if ($i == 6) {
+						$i = 11;
+					}
+					//variavel
+					$obs_ab = $line['pp_abe_' . strzero($i, 2)];
+
+					if (strlen($obs_ab) > 0) {
+						$observacoes .= $line['pp_protocolo'] . ': ' . $obs_ab . cr() . cr();
+					}
 				}
+
 				//variavel
-				$obs_ab = $line['pp_abe_' . strzero($i, 2)];
-				
-				if (strlen($obs_ab) > 0) {
-					$observacoes .= $line['pp_protocolo'] . ': ' . $obs_ab . cr(). cr();
-				}
-			}
-			
-			//variavel	
-			$observacoes2 = 'Sem observações';
+				$observacoes2 = 'Sem observações';
 
-			$sx .= '<tr>';
-			//indice
-			$sx .= '<td align="center">';
-			$sx .= $r + 1;
-			$sx .= '</td>';
-			//protocolo
-			$sx .= '<td align="center">';
-			$sx .= $proto;
-			$sx .= '</td>';
-			////protocolo mae
-			$sx .= '<td align="center">';
-			$sx .= $proto_mae;
-			$sx .= '</td>';
-			//nota 01
-			$sx .= '<td align="center">';
-			$sx .= $nt_p01;
-			$sx .= '</td>';
-			//nota 02
-			$sx .= '<td align="center">';
-			$sx .= $nt_p02;
-			$sx .= '</td>';
-			//nota 03
-			$sx .= '<td align="center">';
-			$sx .= $nt_p03;
-			$sx .= '</td>';
-			//nota 04	
-			$sx .= '<td align="center">';
-			$sx .= $nt_p04;
-			$sx .= '</td>';
-			//nota 05
-			$sx .= '<td align="center">';
-			$sx .= $nt_p05;
-			$sx .= '</td>';
-			//nota 11
-			$sx .= '<td align="center">';
-			$sx .= $nt_p11;
-			$sx .= '</td>';
-			//nota 12
-			$sx .= '<td align="center">';
-			$sx .= $nt_p12;
-			$sx .= '</td>';
-			//nota 13
-			$sx .= '<td align="center">';
-			$sx .= $nt_p13;
-			$sx .= '</td>';
-			//nota 14
-			$sx .= '<td align="center">';
-			$sx .= $nt_p14;
-			$sx .= '</td>';
-			//nota 15
-			$sx .= '<td align="center">';
-			$sx .= $nt_p15;
-			$sx .= '</td>';
-			
-			if ((perfil("#ADM") == 1) or (perfil("#CPP") == 1)) {
-			//observações
-			if (strlen($observacoes) > 0) {
+				$sx .= '<tr>';
+				//indice
+				$sx .= '<td align="center">';
+				$sx .= $r + 1;
+				$sx .= '</td>';
+				//protocolo
+				$sx .= '<td align="center">';
+				$sx .= $proto;
+				$sx .= '</td>';
+				////protocolo mae
+				$sx .= '<td align="center">';
+				$sx .= $proto_mae;
+				$sx .= '</td>';
+				//nota 01
+				$sx .= '<td align="center">';
+				$sx .= $nt_p01;
+				$sx .= '</td>';
+				//nota 02
+				$sx .= '<td align="center">';
+				$sx .= $nt_p02;
+				$sx .= '</td>';
+				//nota 03
+				$sx .= '<td align="center">';
+				$sx .= $nt_p03;
+				$sx .= '</td>';
+				//nota 04
+				$sx .= '<td align="center">';
+				$sx .= $nt_p04;
+				$sx .= '</td>';
+				//nota 05
+				$sx .= '<td align="center">';
+				$sx .= $nt_p05;
+				$sx .= '</td>';
+				//nota 11
+				$sx .= '<td align="center">';
+				$sx .= $nt_p11;
+				$sx .= '</td>';
+				//nota 12
+				$sx .= '<td align="center">';
+				$sx .= $nt_p12;
+				$sx .= '</td>';
+				//nota 13
+				$sx .= '<td align="center">';
+				$sx .= $nt_p13;
+				$sx .= '</td>';
+				//nota 14
+				$sx .= '<td align="center">';
+				$sx .= $nt_p14;
+				$sx .= '</td>';
+				//nota 15
+				$sx .= '<td align="center">';
+				$sx .= $nt_p15;
+				$sx .= '</td>';
+
+				//observações
+				echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+				if (strlen($observacoes) > 0) {
 					$sx .= '<td align="center">';
 					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-warning" data-toggle="modal" data-target="#myModal">
 									  Verificar
@@ -798,7 +802,7 @@ class Fcas extends CI_model {
 									        <h4 class="modal-title" id="myModalLabel">Observações do avaliador</h4>
 									      </div>
 									      <div class="modal-body text-left">
-									        '.mst($observacoes).'
+									        ' . mst($observacoes) . '
 									      </div>
 									      <div class="modal-footer">
 									        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
@@ -807,7 +811,7 @@ class Fcas extends CI_model {
 									  </div>
 									</div>';
 					$sx .= '</td>';
-			} else {
+				} else {
 					$sx .= '<td align="center">';
 					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-success" data-toggle="modal" data-target="#myModal">
 									  Verificar
@@ -822,7 +826,7 @@ class Fcas extends CI_model {
 									        <h4 class="modal-title" id="myModalLabel">Observações do avaliador</h4>
 									      </div>
 									      <div class="modal-body">
-									        '.mst($observacoes2).'
+									        ' . mst($observacoes2) . '
 									      </div>
 									      <div class="modal-footer">
 									        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
@@ -833,10 +837,11 @@ class Fcas extends CI_model {
 					$sx .= '</td>';
 				}
 			}
-
-		}
 		$sx .= '</table>';
+		$sx .= '</div>';	
+		}
 
+	
 		return ($sx);
 
 	}

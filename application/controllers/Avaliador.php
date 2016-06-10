@@ -216,6 +216,7 @@ class avaliador extends CI_Controller {
 		$this -> load -> model('usuarios');
 		$this -> load -> model('mensagens');
 		$this -> load -> model('ic_pareceres');
+		$this -> load -> model('fcas');
 
 		$this -> cab_avaliador();
 
@@ -331,7 +332,7 @@ class avaliador extends CI_Controller {
 		}
 		if (strlen($data['dd28']) > 0) { $ok++;
 		}
-
+		
 		/* arquivos */
 		$this -> geds -> tabela = 'ic_ged_documento';
 		if (isset($dados['ic_projeto_professor_codigo'])) {
@@ -345,7 +346,8 @@ class avaliador extends CI_Controller {
 		}
 		$data['ged'] .= $this -> geds -> list_files_table($proto, 'ic');
 		$data['plano'] = $this -> load -> view('ic/plano', $dados, true);
-
+		
+		
 		/* VALIDACOES */
 		switch ($tipo) {
 			case 'SUBMI' :
@@ -434,6 +436,7 @@ class avaliador extends CI_Controller {
 				exit ;
 		}
 
+
 		switch ($tipo) {
 			case 'FEIRA' :
 				/* AVALIACA FEIRA DE CIENCIAS JOVEM */
@@ -506,13 +509,14 @@ class avaliador extends CI_Controller {
 				$this -> load -> view('ic/avaliacao_rpar', $data);
 				break;
 			case 'RPRC' :
+				
 				$this -> load -> view('ic/avaliacao_rprc', $data);
 				break;
 			case 'SUBMI' :
 				/*************************************************************************** SUBMI
 				 *********************************************************************************
 				 *********************************************************************************/
-
+				
 				$proj = $this -> ics -> le_projeto_protocolo($proto);
 				$prof = $proj['pj_professor'];
 
@@ -541,13 +545,21 @@ class avaliador extends CI_Controller {
 				$data['projeto'] .= $this -> load -> view('ic/projeto', $proj, true);
 				$this -> geds -> tabela = 'ic_ged_documento';
 				$data['projeto'] .= '<b>Arquivos do projeto do professor</b><br>' . $this -> geds -> list_files($proto, 'ic');
+				
+				//mostra notas da avaliacao do projeto
+				$sx = '';
+				$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
+				$data['content'] = $sx;
+				$data['projeto'] .= $this -> load -> view('content', $data, true);
+				
 				$data['projeto'] .= '<h3>Ficha de avaliação - Projeto do professor</h3>';
 
 				$texto = $this -> mensagens -> busca('AVAL_INSTRUCOES', array());
 				$data['texto_introducao'] = mst($texto['nw_texto']);
 
 				$this -> load -> view('ic/avaliacao_submi', $data);
-
+				
+				
 				$sql = "select * from ic_submissao_plano 
 								where doc_protocolo_mae = '$proto'  
 								AND (doc_status <> '@' and doc_status <> 'X') ";
