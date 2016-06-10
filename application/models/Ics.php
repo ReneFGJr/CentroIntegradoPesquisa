@@ -429,34 +429,34 @@ class ics extends CI_model {
 		if (strlen($orderby) > 0) {
 			$orderby .= ', ';
 		}
-		$tabela = "	
-								SELECT * 
-									FROM ic
-									LEFT JOIN ic_aluno AS pa ON ic_id = id_ic
-									LEFT JOIN (SELECT us_campus_vinculo AS al_campus_vinculo, us_dt_nascimento as al_nasc, 
-													   us_cpf AS al_cpf, us_cracha AS id_al, id_us AS aluno_id, 
-													   us_nome AS al_nome, us_campus_vinculo AS al_campus, 
-													   us_genero AS al_genero, us_link_lattes AS al_lattes,us_ativo AS al_ativo, 
-											   usuario_tipo_ust_id AS al_tipo, us_cracha AS al_cracha, us_curso_vinculo AS al_curso, 
-											   bl_ativo, us_cpf, email, usm_email
-											   FROM us_usuario
-											   LEFT JOIN ic_blacklist ON id_us = bl_user_id
-											   LEFT JOIN(select 1 as email, usuario_id_us, usm_email from  us_email where usm_ativo = 1 and usm_email_preferencial = 1 group by usuario_id_us, email) as email on id_us = usuario_id_us
-											   ) AS us_est ON pa.ic_aluno_cracha = us_est.id_al                            
-									LEFT JOIN (SELECT us_campus_vinculo AS pf_campus_vinculo, us_dt_nascimento AS pf_nasc, us_cpf AS pf_cpf, 
-													  us_cracha AS id_pf, id_us AS prof_id, us_nome AS pf_nome,
-													  us_campus_vinculo AS pf_campus, us_genero AS pf_genero, us_link_lattes AS pf_lattes,
-													  us_ativo AS pf_ativo, usuario_tipo_ust_id AS pf_tipo, us_cracha AS pf_cracha, 
-													  us_curso_vinculo AS pf_curso, us_escola_vinculo
-												  FROM us_usuario) AS us_prof ON ic.ic_cracha_prof = us_prof.id_pf 
-									LEFT JOIN escola ON id_es = us_escola_vinculo		                           
-									LEFT JOIN ic_modalidade_bolsa AS mode ON pa.mb_id = mode.id_mb
-									LEFT JOIN ic_situacao ON id_s = icas_id
-									LEFT JOIN area_conhecimento ON ic_semic_area = ac_cnpq
-									$wh
-									ORDER BY $orderby ic_ano desc, s_id, ic_plano_aluno_codigo, pf_nome, al_nome
-									LIMIT  $limit 
-									OFFSET $offset							
+		$tabela = " SELECT * 
+								FROM ic
+								LEFT JOIN ic_aluno AS pa ON ic_id = id_ic
+								LEFT JOIN (SELECT us_campus_vinculo AS al_campus_vinculo, us_dt_nascimento as al_nasc, 
+												   us_cpf AS al_cpf, us_cracha AS id_al, id_us AS aluno_id, 
+												   us_nome AS al_nome, us_campus_vinculo AS al_campus, 
+												   us_genero AS al_genero, us_link_lattes AS al_lattes,us_ativo AS al_ativo, 
+										   usuario_tipo_ust_id AS al_tipo, us_cracha AS al_cracha, us_curso_vinculo AS al_curso, 
+										   bl_ativo, us_cpf, email, usm_email, us_escola_vinculo, ies_nome
+										   FROM us_usuario
+										   LEFT JOIN ies_instituicao on id_ies = ies_instituicao_ies_id
+										   LEFT JOIN ic_blacklist ON id_us = bl_user_id
+										   LEFT JOIN(select 1 as email, usuario_id_us, usm_email from  us_email where usm_ativo = 1 and usm_email_preferencial = 1 group by usuario_id_us, email) as email on id_us = usuario_id_us
+										   ) AS us_est ON pa.ic_aluno_cracha = us_est.id_al                            
+								LEFT JOIN (SELECT us_campus_vinculo AS pf_campus_vinculo, us_dt_nascimento AS pf_nasc, us_cpf AS pf_cpf, 
+												  us_cracha AS id_pf, id_us AS prof_id, us_nome AS pf_nome, ies_instituicao_ies_id,
+												  us_campus_vinculo AS pf_campus, us_genero AS pf_genero, us_link_lattes AS pf_lattes,
+												  us_ativo AS pf_ativo, usuario_tipo_ust_id AS pf_tipo, us_cracha AS pf_cracha, 
+												  us_curso_vinculo AS pf_curso
+											  FROM us_usuario) AS us_prof ON ic.ic_cracha_prof = us_prof.id_pf			   
+								LEFT JOIN escola ON id_es = us_escola_vinculo		                           
+								LEFT JOIN ic_modalidade_bolsa AS mode ON pa.mb_id = mode.id_mb
+								LEFT JOIN ic_situacao ON id_s = icas_id
+								LEFT JOIN area_conhecimento ON ic_semic_area = ac_cnpq
+								$wh
+								ORDER BY $orderby ic_ano desc, s_id, ic_plano_aluno_codigo, pf_nome, al_nome
+								LIMIT  $limit 
+								OFFSET $offset							
 							";
 		return ($tabela);
 	}
@@ -1308,6 +1308,7 @@ class ics extends CI_model {
 							<th align="left">cracha_prof</th>
 							<th align="left">curso_prof</th>
 							<th align="left">escola</th>
+							<th align="left">inst. vínculo_aluno</th>
 							<th align="left">bolsa</th>
 							<th align="left">modalidade</th>
 							<th align="left">fomento</th>
@@ -1391,6 +1392,10 @@ class ics extends CI_model {
 
 			$sx .= '<td>';
 			$sx .= $line['es_escola'];
+			$sx .= '</td>';
+			
+			$sx .= '<td>';
+			$sx .= $line['ies_nome'];
 			$sx .= '</td>';
 
 			$sx .= '<td>';
