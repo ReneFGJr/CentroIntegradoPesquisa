@@ -69,7 +69,7 @@ class produtividades extends CI_model {
 		$id = 0;
 		$sx = '';
 		if (perfil('#ADM#CPS') == '1') {
-			$sx .= '<a href="' . base_url('index.php/usuario/produtividade_ed/0') . '" class="botao3d back_green_shadown back_green nopr">inserir novo registro</a>';
+			$sx .= '<a href="' . base_url('index.php/usuario/produtividade_ed/0') . '" class="btn btn-primary nopr">inserir novo registro</a>';
 
 		}
 

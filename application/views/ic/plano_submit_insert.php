@@ -190,7 +190,7 @@ if ($dd33 == 'PIBICEM') { $check_dd33C = 'checked';
 		</table>
 		<input type="hidden" name="dd20" value="1">
 
-		<a href="#" class="botao3d back_green_shadown back_green" id="botao" style="display: <?php echo $dsp_bt; ?>;">Incluir novo Plano de Aluno >
+		<a href="#" class="btn btn-primary" id="botao" style="display: <?php echo $dsp_bt; ?>;">Incluir novo Plano de Aluno >
 		>></a>
 		<br>
 		<br>

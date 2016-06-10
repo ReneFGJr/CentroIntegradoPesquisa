@@ -288,6 +288,12 @@ class protocolos_ic extends CI_Model {
 			case 'form_ic_rpc' :
 				$wh = ' and ((s_id = 1) and (ic_rpc_data = \'0000-00-00\' and ic_nota_rp = 2))';
 				break;
+			case 'form_ic_rf' :
+				$wh = ' and ((s_id = 1) and (ic_rf_data = \'0000-00-00\'))';
+				break;
+			case 'form_ic_rfc' :
+				$wh = ' and ((s_id = 1) and (ic_rfc_data = \'0000-00-00\' and ic_nota_rf = 2))';
+				break;				
 		}
 
 		/* Relatorio parcial */

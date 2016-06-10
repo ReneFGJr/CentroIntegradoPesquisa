@@ -18,7 +18,7 @@ if ($bn_status == 'Z')
 if (($bn_status == 'A') and (perfil("#ADM#SCR#CPS") == 1))
 	{
 		$link = base_url('index.php/isencao/lanca/'.$id_bn.'/'.checkpost_link($id_bn));
-		$botao = '<A href="#" onclick="newwin(\''.$link.'\',800,600);" class="botao3d back_green_shadown back_green">';
+		$botao = '<A href="#" onclick="newwin(\''.$link.'\',800,600);" class="btn btn-primary">';
 		$botao .= msg('lancar_valor_isencao');
 		$botao .= '</a>';
 		$botao = '<td rowspan=10">'.$botao.'</td>';

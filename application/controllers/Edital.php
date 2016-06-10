@@ -255,7 +255,7 @@ class edital extends CI_Controller {
 			$tela .= '<br><br><table align="center">';
 			$tela .= '<tr>';
 			$tela .= '<td>';
-			$tela .= '<a href="' . $link . '/test"><span class="botao3d back_green_shadown back_green">enviar teste para ' . $email . '</span></a>';
+			$tela .= '<a href="' . $link . '/test"><span class="btn btn-primary">enviar teste para ' . $email . '</span></a>';
 			$tela .= '</td>';
 			$tela .= '<td>';
 			$tela .= '<a href="' . $link . '/send"><span class="botao3d back_red_shadown back_red">Dispar para todos</span></a>';

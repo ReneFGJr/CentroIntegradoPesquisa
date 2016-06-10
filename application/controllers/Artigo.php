@@ -151,7 +151,7 @@ class Artigo extends CI_Controller {
 
 		$form = new form;
 		$form -> id = $id;
-		$form -> class_buttom = 'botao3d back_green_shadown back_green';
+		$form -> class_buttom = 'btn btn-primary';
 
 		switch ($pag) {
 			case '1' :

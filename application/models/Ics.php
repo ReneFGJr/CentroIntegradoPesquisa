@@ -1049,6 +1049,8 @@ class ics extends CI_model {
 	}
 
 	function is_ic($us_cracha = '') {
+
+		
 		$sql = "SELECT count(*) as total, mb_tipo, id_s FROM ic_aluno 
 				INNER JOIN ic on id_ic = ic_id
 				INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
@@ -1073,7 +1075,16 @@ class ics extends CI_model {
 			$this -> resumo = $bolsa;
 			return (1);
 		} else {
-			return (0);
+			$sql = "select 1 from ic_submissao_projetos where pj_professor = '$cracha' ";
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array();
+			if (count($rlt) > 0)
+				{
+					return(1);
+				} else {
+					return (0);
+				}
+			
 		}
 	}
 
@@ -3838,12 +3849,12 @@ class ics extends CI_model {
 		array_push($cp, array('$H8', 'id_sw', '', False, True));
 		array_push($cp, array('$SW', 'sw_01', 'sem uso', False, True));
 		array_push($cp, array('$SW', 'sw_02', msg('sw_ic_rel_pacial'), False, True));
-		array_push($cp, array('$SW', 'sw_07', msg('sw_ic_rel_pacial_correcao'), False, True));
-		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_form_acompanhamento'), False, True));
-		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_rel_final'), False, True));
-		array_push($cp, array('$SW', 'sw_08', msg('sw_ic_rel_final_correcao'), False, True));
-		array_push($cp, array('$SW', 'sw_05', msg('sw_ic_resumo'), False, True));
-		array_push($cp, array('$SW', 'sw_06', msg('sw_ic_validacao'), False, True));
+		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_rel_pacial_correcao'), False, True));
+		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_form_acompanhamento'), False, True));
+		array_push($cp, array('$SW', 'sw_05', msg('sw_ic_rel_final'), False, True));
+		array_push($cp, array('$SW', 'sw_06', msg('sw_ic_rel_final_correcao'), False, True));
+		array_push($cp, array('$SW', 'sw_07', msg('sw_ic_resumo'), False, True));
+		array_push($cp, array('$SW', 'sw_08', msg('sw_ic_validacao'), False, True));
 		array_push($cp, array('$B', '', msg('update'), False, True));
 		return ($cp);
 	}
@@ -3852,7 +3863,7 @@ class ics extends CI_model {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_sw', '', False, True));
 		array_push($cp, array('$SW', 'sw_01', msg('sw_ic_submissao'), False, True));
-		array_push($cp, array('$SW', 'sw_02', msg('sw_ic_submissao_enable'), False, True));
+		array_push($cp, array('$SW', 'sw_02', msg('sw_ic_submissao_nova'), False, True));
 		array_push($cp, array('$SW', 'sw_03', msg('sw_ic_indicacao_estudante'), False, True));
 		array_push($cp, array('$SW', 'sw_04', msg('sw_ic_implementacao'), False, True));
 		//array_push($cp, array('$SW', 'sw_03', msg('sw_ic_form_acompanhamento'), False, True));

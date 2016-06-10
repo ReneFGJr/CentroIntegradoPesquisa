@@ -302,7 +302,10 @@ $lang['IC_FORM_RP'] = 'Entrega do Relatório Parcial (professor)';
 $lang['IC_FORM_RPC'] = 'Entrega das Correções do Relatório Parcial (professor)';
 $lang['IC_FORM_PROF'] = 'Formulário de acompanhamento (professor)';
 $lang['IC_FORM_ESTU'] = 'Formulário de acompanhamento (estudante)';
-$lang['IC_SUBM_EST'] = 'Alteração de Indicação de Estudante para o Edital PIBIC/PIBIT/PIBICEM';
+$lang['IC_SUBM_EST'] = 'Alteração de Indicação de Estudante para o Edital PIBIC/PIBITI/PIBICEM';
+$lang['IC_FORM_RESUMO'] = 'Entrega do Resumo para o SEMIC';
+$lang['IC_FORM_RF'] = 'Entrega Relatório Final (professor)';
+$lang['IC_FORM_RFC'] = 'Entrega das Correções do Relatório Final (professor)';
 $lang['bt_entregar'] = 'Visualizar';
 
 $lang['protocolo_F'] = 'Finalizados';

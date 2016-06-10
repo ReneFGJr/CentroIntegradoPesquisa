@@ -318,7 +318,6 @@ class ics_acompanhamento extends CI_model {
 		} else {
 			return (0);
 		}
-		print_r($rlt);
 	}
 
 	function form_acompanhamento_exist($proto = '', $tipo = '') {
@@ -381,7 +380,7 @@ class ics_acompanhamento extends CI_model {
 		/* Ações abertas */
 		$action = array();
 		/* Questionário de pré-relatorio parcial */
-		if (trim($sis['sw_03']) == '1') {
+		if (trim($sis['sw_04']) == '1') {
 			$f1 = $this -> submissao_questionarios_professor();
 			$action = array_merge($f1, $action);
 			$f2 = $this -> submissao_questionarios_aluno();
@@ -393,15 +392,31 @@ class ics_acompanhamento extends CI_model {
 			$action = array_merge($f1, $action);
 		}
 		/* Entrega do Relatório Parcial -  Correções*/
-		if (trim($sis['sw_07']) == '1') {
+		if (trim($sis['sw_03']) == '1') {
 			$f1 = $this -> submissao_relatorio_parcial_correcoes();
 			$action = array_merge($f1, $action);
 		}
+		/* Entrega do Relatório Final */
+		if (trim($sis['sw_05']) == '1') {
+			$f1 = $this -> submissao_relatorio_final();
+			$action = array_merge($f1, $action);
+		}
+		/* Entrega do Relatório Parcial -  Correções*/
+		if (trim($sis['sw_06']) == '1') {
+			$f1 = $this -> submissao_relatorio_final_correcoes();
+			$action = array_merge($f1, $action);
+		}
+		/* Entrega do Relatório Parcial -  Correções*/
+		if (trim($sis['sw_07']) == '1') {
+			$f1 = $this -> submissao_resumo();
+			$action = array_merge($f1, $action);
+		}		
+		
 
 		/* submissao */
 		$sis = $this -> sistemas_abertos_para_submissao('IC2');
 		/* Entrega do Relatório Parcial */
-		if (trim($sis['sw_01']) == '1') {
+		if (trim($sis['sw_03']) == '1') {
 			$f1 = $this -> submissao_ajuste_indicacao_estudante();
 			$action = array_merge($f1, $action);
 		}
@@ -409,18 +424,19 @@ class ics_acompanhamento extends CI_model {
 		/* Mostra atividades */
 		if (count($action) > 0) {
 			$size = round(250 + 60);
+			$size2 = (round(90/count($action))).'%';
 			$sa = '';
 			$sb = '';
 			$sc = '';
 			$st = '';
 			foreach ($action as $key => $value) {
 				$form_bt = '<form action="' . base_url('index.php/pibic/entrega/' . $key) . '" method="get">';
-				$form_bt .= '<input type="submit" value="' . msg('bt_entregar') . '" class="botao3d back_green_shadown back_green" style="width: ' . $size . 'px; text-align: center;">';
+				$form_bt .= '<input type="submit" value="' . msg('bt_entregar') . '" class="btn btn-primary">';
 				$form_bt .= '</form>';
-				$sa .= '<td class="lt4" align="left"><b>' . msg($key) . '</b></td>';
-				$sb .= '<td class="lt5" align="left">' . $value . ' atividades.</td>';
-				$sc .= '<td class="lt3" align="center">' . $form_bt . '</td>';
-				$st .= '<td class="lt2" align="left">' . $this -> periodo_atividade($key) . "</td>'";
+				$sa .= '<td class="lt3" align="left" width="'.$size2.'"><b>' . msg($key) . '</b></td>';
+				$sb .= '<td class="lt5" align="left" width="'.$size2.'">' . $value . ' atividades.</td>';
+				$sc .= '<td class="lt3" align="left" width="'.$size2.'">' . $form_bt . '</td>';
+				//$st .= '<td class="lt2" align="left">' . $this -> periodo_atividade($key) . "</td>'";
 			}
 			$sx = '<table width="100%" bgcolor="#ececec" style="padding: 10px;" class="border1">';
 			$label = '<td rowspan=5 width="50" >';
@@ -430,11 +446,10 @@ class ics_acompanhamento extends CI_model {
 
 			$sx .= $label;
 			$sx .= '<td class="lt5" width="' . $size . '" colspan=10><font class="red"><b>' . msg("ic_atividade_aberta") . '</b></font></td>';
-			$sx .= '<td width="50%"></td>';
-			$sx .= '<tr><td align="right" class="lt1">Atividade:</td>' . $sa . '</tr>';
-			$sx .= '<tr><td align="right" class="lt1">Período:</td>' . $st . '</tr>';
-			$sx .= '<tr><td align="right" class="lt1">Para entregar:</td>' . $sb . '</tr>';
-			$sx .= '<tr><td></td>' . $sc . '</tr>';
+			$sx .= '<tr valign="top"><td align="right" class="lt1">Atividade:</td>' . $sa . '</tr>';
+			//$sx .= '<tr valign="top"><td align="right" class="lt1">Período:</td>' . $st . '</tr>';
+			$sx .= '<tr valign="top"><td align="right" class="lt1">Para entregar:</td>' . $sb . '</tr>';
+			$sx .= '<tr valign="top"><td></td>' . $sc . '</tr>';
 			$sx .= '</table>';
 			$sx .= '<br><br><br>';
 		} else {
@@ -498,7 +513,40 @@ class ics_acompanhamento extends CI_model {
 		return ($it);
 
 	}
+	function submissao_relatorio_final() {
+		/* professor */
+		$ano = date("Y");
+		if (date("m") < 7) {
+			$ano--;
+		}
+		/* reliza consulta */
+		$cracha = $_SESSION['cracha'];
+		$sql = "select * from ic
+					left join ic_acompanhamento on pa_protocolo = ic_plano_aluno_codigo 
+					where ic_cracha_prof = '$cracha' 
+						and ic_ano = '" . $ano . "'
+						and s_id = 1
+			 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$proto = trim($line['ic_plano_aluno_codigo']);
+			$data_pre = $line['ic_rf_data'];
+			if ($data_pre == '0000-00-00') {
+				$tot++;
+			}
+		}
+		if ($tot > 0) {
+			$it = array('IC_FORM_RF' => $tot);
+		} else {
+			$it = array();
+		}
+		return ($it);
 
+	}
 	function submissao_relatorio_parcial_correcoes() {
 		/* professor */
 		$ano = date("Y");
@@ -535,7 +583,78 @@ class ics_acompanhamento extends CI_model {
 		return ($it);
 
 	}
+	function submissao_relatorio_final_correcoes() {
+		/* professor */
+		$ano = date("Y");
+		if (date("m") < 7) {
+			$ano--;
+		}
+		/* reliza consulta */
+		$cracha = $_SESSION['cracha'];
+		$sql = "select * from ic
+					left join ic_acompanhamento on pa_protocolo = ic_plano_aluno_codigo 
+					where ic_cracha_prof = '$cracha' 
+						and ic_ano = '" . $ano . "'
+						and s_id = 1
+			 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
 
+			$line = $rlt[$r];
+			$proto = trim($line['ic_plano_aluno_codigo']);
+			$data_pre = $line['ic_rfc_data'];
+			$nota = $line['ic_nota_rf'];
+			if (($data_pre == '0000-00-00') and ($nota == 2)) {
+				$tot++;
+			}
+		}
+		if ($tot > 0) {
+			$it = array('IC_FORM_RFC' => $tot);
+		} else {
+			$it = array();
+		}
+		return ($it);
+
+	}
+	
+	function submissao_resumo() {
+		/* professor */
+		$ano = date("Y");
+		if (date("m") < 7) {
+			$ano--;
+		}
+		/* reliza consulta */
+		$cracha = $_SESSION['cracha'];
+		$sql = "select * from ic
+					left join ic_acompanhamento on pa_protocolo = ic_plano_aluno_codigo 
+					where ic_cracha_prof = '$cracha' 
+						and ic_ano = '" . $ano . "'
+						and s_id = 1
+			 ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '';
+		$tot = 0;
+		for ($r = 0; $r < count($rlt); $r++) {
+
+			$line = $rlt[$r];
+			$proto = trim($line['ic_plano_aluno_codigo']);
+			$data_pre = $line['ic_resumo_data'];
+			if (($data_pre == '0000-00-00')) {
+				$tot++;
+			}
+		}
+		if ($tot > 0) {
+			$it = array('IC_FORM_RESUMO' => $tot);
+		} else {
+			$it = array();
+		}
+		return ($it);
+	}
+		
 	function submissao_questionarios_professor() {
 		/* professor */
 		$ano = date("Y");

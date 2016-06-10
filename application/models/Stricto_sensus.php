@@ -131,7 +131,7 @@ class Stricto_sensus extends CI_model {
 		$nova = '';
 		if (($sec1 == $id_us) OR ($sec2 == $id_us)) {
 			$link = base_url('index.php/stricto_sensu/orientacao_new/' . $pg . '/' . checkpost_link($pg));
-			$nova = '<span class="botao3d back_green_shadown back_green nopr" onclick="newwin(\'' . $link . '\')">' . msg('nova_orientacao') . '</span>';
+			$nova = '<span class="btn btn-primary nopr" onclick="newwin(\'' . $link . '\')">' . msg('nova_orientacao') . '</span>';
 			$data['content'] = $nova;
 			$this -> load -> view('content', $data);
 		}
@@ -772,7 +772,7 @@ class Stricto_sensus extends CI_model {
 		$sx = '';
 		if (perfil("#SEP#ADM")) {
 			$sx = '<br>
-						<span class="botao3d back_green_shadown back_green nopr" onclick="newwin(\'' . base_url('index.php/stricto_sensu/professor_ss_new/' . $id) . '\');">' . msg('novo_professor') . '</span>';
+						<span class="btn btn-primary nopr" onclick="newwin(\'' . base_url('index.php/stricto_sensu/professor_ss_new/' . $id) . '\');">' . msg('novo_professor') . '</span>';
 		}
 		return ($sx);
 

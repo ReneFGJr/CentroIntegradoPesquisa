@@ -237,9 +237,9 @@ class Captacao extends CI_Controller {
 		/* Botao de novo ou editar */
 		$nova_captacao = $this -> captacoes -> captacao_em_cadastro($cracha);
 		if ($nova_captacao == 0) {
-			$bt = '<a href="' . base_url('index.php/captacao/nova/') . '" class="botao3d back_green_shadown back_green">Cadastrar nova captacão >>></a>';
+			$bt = '<a href="' . base_url('index.php/captacao/nova/') . '" class="btn btn-primary">Cadastrar nova captacão >>></a>';
 		} else {
-			$bt = '<a href="' . base_url('index.php/captacao/editar/' . $nova_captacao . '/' . checkpost_link($nova_captacao)) . '" class="botao3d back_green_shadown back_green">Editar captacão em cadastro>>></a>';
+			$bt = '<a href="' . base_url('index.php/captacao/editar/' . $nova_captacao . '/' . checkpost_link($nova_captacao)) . '" class="btn btn-primary">Editar captacão em cadastro>>></a>';
 		}
 
 		$data['content'] .= '<br><br>' . $bt;

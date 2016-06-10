@@ -479,11 +479,11 @@ class ic extends CI_Controller {
 			$chk = checkpost_link($prj);
 			$tipo = 'ICMST';
 			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $prj . '/' . $chk . '/');
-			$botao = '<a href="' . $botao . '" class="botao3d back_green_shadown back_green">';
+			$botao = '<a href="' . $botao . '" class="btn btn-primary">';
 			$botao .= msg('ic_submit_edit_project');
 			$botao .= '</a>';
 		} else {
-			$botao = '<a href="' . base_url('index.php/ic/submit_new/ICMST') . '" class="botao3d back_green_shadown back_green">';
+			$botao = '<a href="' . base_url('index.php/ic/submit_new/ICMST') . '" class="btn btn-primary">';
 			$botao .= msg('ic_submit_new_project');
 			$botao .= '</a>';
 		}
@@ -510,11 +510,11 @@ class ic extends CI_Controller {
 		if ($prj > 0) {
 			$chk = checkpost_link($prj);
 			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $prj . '/' . $chk . '/');
-			$botao = '<a href="' . $botao . '" class="botao3d back_green_shadown back_green">';
+			$botao = '<a href="' . $botao . '" class="btn btn-primary">';
 			$botao .= msg('ic_submit_edit_project');
 			$botao .= '</a>';
 		} else {
-			$botao = '<a href="' . base_url('index.php/' . $tipo . '/submit_new/' . $tipo . '') . '" class="botao3d back_green_shadown back_green">';
+			$botao = '<a href="' . base_url('index.php/' . $tipo . '/submit_new/' . $tipo . '') . '" class="btn btn-primary">';
 			$botao .= msg('ic_submit_new_project');
 			$botao .= '</a>';
 		}
@@ -3195,7 +3195,7 @@ class ic extends CI_Controller {
 
 			$chk = checkpost_link($id);
 			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . $chk . '/');
-			$botao = '<a href="' . $botao . '" class="botao3d back_green_shadown back_green">';
+			$botao = '<a href="' . $botao . '" class="btn btn-primary">';
 			$botao .= msg('ic_submit_edit_project');
 			$botao .= '</a>';
 

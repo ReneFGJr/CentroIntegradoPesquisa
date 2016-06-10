@@ -1135,7 +1135,7 @@ class evento extends CI_controller {
 			/* Botao confirmar */
 			$sx .= '<td  class="borderb1">';
 			if ($ei_evento_confirmar == 0) {
-				$sx .= '<a href="' . base_url('index.php/evento/lista_presenca/' . $line['id_ei'] . '/' . checkpost_link($line['id_ei']) . '/1') . '" class="botao3d back_green_shadown back_green" style="width: 80px; text-align: center;">';
+				$sx .= '<a href="' . base_url('index.php/evento/lista_presenca/' . $line['id_ei'] . '/' . checkpost_link($line['id_ei']) . '/1') . '" class="btn btn-primary" style="width: 80px; text-align: center;">';
 				$sx .= 'chegou';
 				$sx .= '</a>';
 			} else {

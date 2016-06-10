@@ -452,7 +452,7 @@ class Ic_pareceres extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$link = base_url('index.php/avaliador/ficha/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp']));
-			$botao = '<a href="' . $link . '" class="botao3d back_green_shadown back_green">Avaliar</a>';
+			$botao = '<a href="' . $link . '" class="btn btn-primary">Avaliar</a>';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td align="center">' . ($r + 1) . '</td>';
 			$sx .= '<td class="border1">' . $line['pp_protocolo'] . '</td>';
@@ -477,7 +477,7 @@ class Ic_pareceres extends CI_model {
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$link = base_url('index.php/avaliador/ficha/' . $line['id_pp'] . '/' . checkpost_link($line['id_pp']));
-			$botao = '<a href="' . $link . '" class="botao3d back_green_shadown back_green">Avaliar</a>';
+			$botao = '<a href="' . $link . '" class="btn btn-primary">Avaliar</a>';
 			$sx .= '<tr valign="top">';
 			$sx .= '<td align="center">' . ($r + 1) . '</td>';
 			$sx .= '<td class="border1">' . $line['pp_protocolo'] . '</td>';

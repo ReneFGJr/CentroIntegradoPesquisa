@@ -596,7 +596,7 @@ class avaliador extends CI_Controller {
 					return ('');
 				}
 
-				$txt = '<input type="submit" name="acao" value="Finalizar avaliação >>>" class="botao3d back_green_shadown back_green">';
+				$txt = '<input type="submit" name="acao" value="Finalizar avaliação >>>" class="btn btn-primary">';
 				$txt .= '</form>';
 				$data['content'] = $txt;
 				$this -> load -> view('content', $data);

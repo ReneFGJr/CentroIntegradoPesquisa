@@ -416,7 +416,7 @@ class isencoes extends CI_model {
 				$tot++;
 				$line = $rlt[$r];
 				$link = base_url('index.php/ss/indicar_isencao/' . $line['id_bn'] . '/' . checkpost_link($line['id_bn']));
-				$acao = '<a href="' . $link . '" class="botao3d back_green_shadown back_green">Indicar isenção</a>';
+				$acao = '<a href="' . $link . '" class="btn btn-primary">Indicar isenção</a>';
 				$line['acao'] = $acao;
 				$sx .= $this -> load -> view('isencoes/simple_row', $line, true);
 			}

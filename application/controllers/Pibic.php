@@ -57,29 +57,26 @@ class pibic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function carta_horas_eventuais_pdf($tp='', $id='',$chk='')
-		{
-			$this->load->model('ics');
-			$this->load->model('mensagens');
-			switch($tp)
-				{
-					case 'horas':
-						$data = array();
-						$data = $this->ics->le_protocolo($id);
-						$data['DIA'] = date("d");
-						$data['MES'] = meses(date("m"));
-						$data['ANO'] = date("Y");
-						
-						$dado = $this->mensagens->busca('TERMO_CONVITE',$data);
-						$this->load->view('central_certificado/ic/carta_horas_eventuais',$dado);
-						break;
-					default:
-						echo 'OPS';
-				}
-		}	
-	
-	function carta_horas_eventuais($tp='horas')
-		{
+	function carta_horas_eventuais_pdf($tp = '', $id = '', $chk = '') {
+		$this -> load -> model('ics');
+		$this -> load -> model('mensagens');
+		switch($tp) {
+			case 'horas' :
+				$data = array();
+				$data = $this -> ics -> le_protocolo($id);
+				$data['DIA'] = date("d");
+				$data['MES'] = meses(date("m"));
+				$data['ANO'] = date("Y");
+
+				$dado = $this -> mensagens -> busca('TERMO_CONVITE', $data);
+				$this -> load -> view('central_certificado/ic/carta_horas_eventuais', $dado);
+				break;
+			default :
+				echo 'OPS';
+		}
+	}
+
+	function carta_horas_eventuais($tp = 'horas') {
 		$cracha = $_SESSION['cracha'];
 
 		$this -> load -> model('protocolos_ic');
@@ -107,7 +104,7 @@ class pibic extends CI_Controller {
 		$data['search'] = $tela . $this -> protocolos_ic -> orientacoes_protocolo($tp, $bt);
 		$this -> load -> view('ic/home', $data);
 		$this -> load -> view('header/content_close');
-		}
+	}
 
 	function pibic_protocolo_ver($id = '', $chk = '') {
 		$cracha = $_SESSION['cracha'];
@@ -476,13 +473,13 @@ class pibic extends CI_Controller {
 								if (isset($mss['nw_titulo'])) {
 									$id_own_pibic = $this -> id_own_pibic;
 									$texto = $mss['nw_texto'];
-									$texto = troca($texto,'$PROTOCOLO',$proto);
-									$texto = troca($texto,'$plano_titulo',$data['ic_projeto_professor_titulo']);
-									$texto = troca($texto,'$LINK','http://cip.pucpr.br/');
+									$texto = troca($texto, '$PROTOCOLO', $proto);
+									$texto = troca($texto, '$plano_titulo', $data['ic_projeto_professor_titulo']);
+									$texto = troca($texto, '$LINK', 'http://cip.pucpr.br/');
 									enviaremail_usuario($avaliador, $mss['nw_titulo'] . ' - [' . $proto . '] - ' . trim($data['pf_nome']), $texto, $id_own_pibic);
 								}
 								/* Indicar avaliacao */
-								$this->ic_pareceres->indicar_avaliador($avaliador, 'RPRC', $proto);
+								$this -> ic_pareceres -> indicar_avaliador($avaliador, 'RPRC', $proto);
 
 							}
 
@@ -535,6 +532,321 @@ class pibic extends CI_Controller {
 				$data['content'] = $rest;
 				$this -> load -> view('content', $data);
 				Break;
+				
+			case 'form_ic_rf' :
+				$this -> load -> model('area_conhecimentos');
+				$this -> load -> model('ics');
+				$this -> load -> model('ics_acompanhamento');
+				$this -> load -> model('idiomas');
+				$this -> load -> model('geds');
+
+				/* valida entrada no ic_acompanhamento */
+				$entregue = $this -> ics_acompanhamento -> form_entregue($proto, 'ic_rf_data');
+
+				$data = $this -> ics -> le_protocolo($proto);
+				$professor = $data['prof_id'];
+				$aluno = $data['aluno_id'];
+
+				$this -> load -> view('ic/plano', $data);
+
+				/* envio de dados */
+				$acao = get("acao");
+				$act = get("dd2");
+				$vlr = get("dd3");
+				if (strlen($acao) > 0) {
+					switch ($act) {
+						case 'AREA' :
+							$this -> ics -> set_area_semic($proto, $vlr);
+							redirect(base_url("index.php/pibic/form/$form/$proto/$chk"));
+							break;
+						case 'IDIOMA' :
+							$this -> ics -> set_idioma_semic($proto, $vlr);
+							redirect(base_url("index.php/pibic/form/$form/$proto/$chk"));
+							break;
+						case 'FINISH' :
+							$date = date("Y-m-d");
+							$sql = "update ic set 
+										ic_rf_data = '$date',
+										ic_nota_rf = '0'
+										where ic_plano_aluno_codigo = '$proto' ";
+							//echo $sql;
+							$rlt = $this -> db -> query($sql);
+
+							/* TRAVA ARQUIVOS */
+							$sql = "update ic_ged_documento set doc_status = 'A' where doc_dd0 =  '$proto' and doc_status = '@' ";
+							$rlt = $this -> db -> query($sql);
+
+							$mss = 'IC_RFIN_POSTED';
+							$ms = array();
+							$usid = $data['prof_id'];
+							$ms['nome'] = $data['pf_nome'];
+							$ms['ic_plano'] = $this -> load -> view('ic/plano-email.php', $data, true);
+
+							$mss = $this -> mensagens -> busca($mss, $ms);
+
+							$id_own_pibic = $this -> id_own_pibic;
+							enviaremail_usuario($professor, $mss['nw_titulo'] . ' - [' . $proto . '] - ' . trim($data['pf_nome']), $mss['nw_texto'], $id_own_pibic);
+
+							//enviaremail_usuario($aluno,$mss['nw_titulo'].' - ['.$proto.'] - '.trim($data['pf_nome']),$mss['nw_texto'],$id_own_pibic);
+
+							$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_RF');
+							$rest = $this -> load -> view('ic/tarefa_finalizada', $data, True);
+							$data['content'] = $rest;
+							$this -> load -> view('content', $data);
+							return ('');
+							break;
+					}
+
+				}
+
+				/* Formulário já finalizado */
+				if ($entregue == 1) {
+					$rest = 'Este formulário já foi enviado';
+					$data['content'] = $rest;
+					$this -> load -> view('errors/erro_msg', $data);
+
+					$this -> load -> view('header/content_close');
+					$this -> load -> view('header/foot', $data);
+					return ('');
+				}
+
+				/*  Validação da submissão */
+				$rest = '';
+				$check_1 = $this -> ics -> validar_area($data['ic_semic_area']);
+				$check_2 = $this -> ics -> validar_idioma($data['ic_semic_idioma']);
+				$check_3 = $this -> ics -> validar_arquivo($proto, 'RELAF');
+				if (($check_1 == 1) and ($check_2 == 1) and ($check_3 == 1)) {
+					$this -> load -> view('ic/form_finish', $data);
+				}
+
+				/* Mostra formulario de area */
+				$data['mostra_area'] = $this -> area_conhecimentos -> form_areas('dd3', $data['ic_semic_area']);
+				$data['mostra_idioma'] = $this -> idiomas -> form_idioma('dd3', $data['ic_semic_idioma']);
+
+				$this -> geds -> tabela = 'ic_ged_documento';
+				$data['mostra_arquivo'] = $this -> geds -> list_files_table($proto, 'ic', 'RELAF');
+				$data['mostra_arquivo'] .= $this -> geds -> form_upload($proto, 'pibic/ged/RELAF/' . $proto);
+				$data['tot_rp_posted'] = $this -> geds -> total_files;
+
+				$data['chk1'] = $check_1;
+				$data['chk2'] = $check_2;
+				$data['chk3'] = $check_3;
+
+				$rest = $this -> load -> view("ic/form_rf", $data, True);
+
+				$data['content'] = $rest;
+				$this -> load -> view('content', $data);
+				Break;
+			/************************************************************************************* RELATORIO PARCIAL - CORREÇOES */
+			case 'form_ic_rfc' :
+				$this -> load -> model('area_conhecimentos');
+				$this -> load -> model('ics');
+				$this -> load -> model('ics_acompanhamento');
+				$this -> load -> model('idiomas');
+				$this -> load -> model('geds');
+
+				/* valida entrada no ic_acompanhamento */
+				$entregue = $this -> ics_acompanhamento -> form_entregue($proto, 'ic_rfc_data');
+
+				$data = $this -> ics -> le_protocolo($proto);
+				$professor = $data['prof_id'];
+				$aluno = $data['aluno_id'];
+
+				$this -> load -> view('ic/plano', $data);
+
+				/* envio de dados */
+				$acao = get("acao");
+				$act = get("dd2");
+				$vlr = get("dd3");
+				if (strlen($acao) > 0) {
+					switch ($act) {
+						case 'FINISH' :
+							$date = date("Y-m-d");
+							$sql = "update ic set 
+										ic_rfc_data = '$date',
+										ic_nota_rfc = '0'
+										where ic_plano_aluno_codigo = '$proto' ";
+							$rlt = $this -> db -> query($sql);
+
+							/* TRAVA ARQUIVOS */
+							$sql = "update ic_ged_documento set doc_status = 'A' where doc_dd0 =  '$proto' and doc_status = '@' ";
+							$rlt = $this -> db -> query($sql);
+
+							$mss = 'IC_RFIMC_POSTED';
+							$ms = array();
+							$usid = $data['prof_id'];
+							$ms['nome'] = $data['pf_nome'];
+							$ms['ic_plano'] = $this -> load -> view('ic/plano-email.php', $data, true);
+
+							$mss = $this -> mensagens -> busca($mss, $ms);
+							if (isset($mss['nw_titulo'])) {
+								$id_own_pibic = $this -> id_own_pibic;
+								enviaremail_usuario($professor, $mss['nw_titulo'] . ' - [' . $proto . '] - ' . trim($data['pf_nome']), $mss['nw_texto'], $id_own_pibic);
+							}
+
+							/*************** Reindicar para avaliador *****************************************/
+							$avaliador = $this -> ic_pareceres -> que_foi_avaliador($proto, 'RFIN');
+
+							if ($avaliador > 0) {
+								$mss = 'IC_RPARC_INDICACAO';
+								$mss = $this -> mensagens -> busca($mss, $ms);
+								if (isset($mss['nw_titulo'])) {
+									$id_own_pibic = $this -> id_own_pibic;
+									$texto = $mss['nw_texto'];
+									$texto = troca($texto, '$PROTOCOLO', $proto);
+									$texto = troca($texto, '$plano_titulo', $data['ic_projeto_professor_titulo']);
+									$texto = troca($texto, '$LINK', 'http://cip.pucpr.br/');
+									enviaremail_usuario($avaliador, $mss['nw_titulo'] . ' - [' . $proto . '] - ' . trim($data['pf_nome']), $texto, $id_own_pibic);
+								}
+								/* Indicar avaliacao */
+								$this -> ic_pareceres -> indicar_avaliador($avaliador, 'RFRC', $proto);
+
+							}
+
+							//enviaremail_usuario($aluno,$mss['nw_titulo'].' - ['.$proto.'] - '.trim($data['pf_nome']),$mss['nw_texto'],$id_own_pibic);
+
+							$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_RFC');
+							$rest = $this -> load -> view('ic/tarefa_finalizada', $data, True);
+							$data['content'] = $rest;
+							$this -> load -> view('content', $data);
+							return ('');
+							break;
+					}
+				}
+
+				/* Formulário já finalizado */
+				if ($entregue == 1) {
+					$rest = 'Este formulário já foi enviado';
+					$data['content'] = $rest;
+					$this -> load -> view('errors/erro_msg', $data);
+
+					$this -> load -> view('header/content_close');
+					$this -> load -> view('header/foot', $data);
+					return ('');
+				}
+
+				/*  Validação da submissão */
+				$rest = '';
+				$check_1 = 1;
+				$check_2 = 1;
+				$check_3 = $this -> ics -> validar_arquivo($proto, 'RELFC');
+				if (($check_1 == 1) and ($check_2 == 1) and ($check_3 == 1)) {
+					$this -> load -> view('ic/form_finish', $data);
+				}
+
+				/* Mostra formulario de area */
+				$data['mostra_area'] = '';
+				$data['mostra_idioma'] = '';
+
+				$this -> geds -> tabela = 'ic_ged_documento';
+				$data['mostra_arquivo'] = $this -> geds -> list_files_table($proto, 'ic', 'RELFC');
+				$data['mostra_arquivo'] .= $this -> geds -> form_upload($proto, 'pibic/ged/RELFC/' . $proto);
+				$data['tot_rp_posted'] = $this -> geds -> total_files;
+
+				$data['chk1'] = $check_1;
+				$data['chk2'] = $check_2;
+				$data['chk3'] = $check_3;
+
+				$rest = $this -> load -> view("ic/form_rfc", $data, True);
+
+				$data['content'] = $rest;
+				$this -> load -> view('content', $data);
+				Break;
+			case 'form_ic_resumo' :
+				$this -> load -> model('area_conhecimentos');
+				$this -> load -> model('ics');
+				$this -> load -> model('ics_acompanhamento');
+				$this -> load -> model('idiomas');
+				$this -> load -> model('geds');
+
+				/* valida entrada no ic_acompanhamento */
+				$entregue = $this -> ics_acompanhamento -> form_entregue($proto, 'ic_resumo_data');
+
+				$data = $this -> ics -> le_protocolo($proto);
+				$professor = $data['prof_id'];
+				$aluno = $data['aluno_id'];
+
+				$this -> load -> view('ic/plano', $data);
+
+				/* envio de dados */
+				$acao = get("acao");
+				$act = get("dd2");
+				$vlr = get("dd3");
+				if (strlen($acao) > 0) {
+					switch ($act) {
+						case 'FINISH' :
+							$date = date("Y-m-d");
+							$sql = "update ic set 
+										ic_resumo_data = '$date',
+										where ic_plano_aluno_codigo = '$proto' ";
+							//echo $sql;
+							$rlt = $this -> db -> query($sql);
+
+							/* TRAVA ARQUIVOS */
+							$sql = "update ic_ged_documento set doc_status = 'A' where doc_dd0 =  '$proto' and doc_status = '@' ";
+							$rlt = $this -> db -> query($sql);
+
+							$mss = 'IC_RESUMO_POSTED';
+							$ms = array();
+							$usid = $data['prof_id'];
+							$ms['nome'] = $data['pf_nome'];
+							$ms['ic_plano'] = $this -> load -> view('ic/plano-email.php', $data, true);
+
+							$mss = $this -> mensagens -> busca($mss, $ms);
+
+							$id_own_pibic = $this -> id_own_pibic;
+							enviaremail_usuario($professor, $mss['nw_titulo'] . ' - [' . $proto . '] - ' . trim($data['pf_nome']), $mss['nw_texto'], $id_own_pibic);
+
+							//enviaremail_usuario($aluno,$mss['nw_titulo'].' - ['.$proto.'] - '.trim($data['pf_nome']),$mss['nw_texto'],$id_own_pibic);
+
+							$data['volta'] = base_url('index.php/pibic/entrega/IC_FORM_RESUMO');
+							$rest = $this -> load -> view('ic/tarefa_finalizada', $data, True);
+							$data['content'] = $rest;
+							$this -> load -> view('content', $data);
+							return ('');
+							break;
+					}
+
+				}
+
+				/* Formulário já finalizado */
+				if ($entregue == 1) {
+					$rest = 'Este formulário já foi enviado';
+					$data['content'] = $rest;
+					$this -> load -> view('errors/erro_msg', $data);
+
+					$this -> load -> view('header/content_close');
+					$this -> load -> view('header/foot', $data);
+					return ('');
+				}
+
+				/*  Validação da submissão */
+				$rest = '';
+				$check_1 = $this -> ics -> validar_area($data['ic_semic_area']);
+				$check_2 = $this -> ics -> validar_idioma($data['ic_semic_idioma']);
+				$check_3 = $this -> ics -> validar_arquivo($proto, 'RELAF');
+				if (($check_1 == 1) and ($check_2 == 2) and ($check_3 == 1)) {
+					$this -> load -> view('ic/form_finish', $data);
+				}
+
+				/* Mostra formulario de area */
+				$data['mostra_area'] = $this -> area_conhecimentos -> form_areas('dd3', $data['ic_semic_area']);
+				$data['mostra_idioma'] = $this -> idiomas -> form_idioma('dd3', $data['ic_semic_idioma']);
+
+				$this -> geds -> tabela = 'ic_ged_documento';
+				$data['mostra_arquivo'] = $this -> geds -> list_files_table($proto, 'ic', 'RELAF');
+				$data['mostra_arquivo'] .= $this -> geds -> form_upload($proto, 'pibic/ged/RELAF/' . $proto);
+				$data['tot_rp_posted'] = $this -> geds -> total_files;
+
+				$data['chk1'] = $check_1;
+				$data['chk2'] = $check_2;
+				$data['chk3'] = $check_3;
+
+				$rest = $this -> load -> view("ic/form_resumo", $data, True);
+
+				$data['content'] = $rest;
+				$this -> load -> view('content', $data);
+				Break;								
 		}
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -571,8 +883,8 @@ class pibic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		switch($tipo) {
-			case 'IC_SUBM_EST':
-				$data['title'] = 'Substituição de Estudante para o Edital IC';				
+			case 'IC_SUBM_EST' :
+				$data['title'] = 'Substituição de Estudante para o Edital IC';
 				$tp = 'form_pre';
 				$prof = $_SESSION['cracha'];
 				$bt = msg('protocolo_botao_' . $tp);
@@ -624,6 +936,60 @@ class pibic extends CI_Controller {
 					exit ;
 				}
 				$tp = 'form_ic_rpc';
+				$bt = msg('protocolo_botao_' . $tp);
+				$data['content'] = $this -> protocolos_ic -> orientacoes_protocolo($tp, $bt);
+				if (strlen($data['content']) < 40) {
+					$msg['content'] = 'Não existe formulário para envio';
+					$msg['volta'] = base_url('index.php/pibic');
+					$data['content'] = $this -> load -> view('errors/erro_msg', $msg, true);
+				}
+				$this -> load -> view('content', $data);
+				break;
+			case 'IC_FORM_RF' :
+				$data['content'] = '<h2>Entrega do Relatório Final</h2>';
+				$this -> load -> view('content', $data);
+
+				if (strlen($proto) > 0) {
+					redirect(base_url('index.php/pibic/form/' . get("dd4") . '/' . $proto . '/' . checkpost_link(get("dd4") . $proto)));
+					exit ;
+				}
+				$tp = 'form_ic_rf';
+				$bt = msg('protocolo_botao_' . $tp);
+				$data['content'] = $this -> protocolos_ic -> orientacoes_protocolo($tp, $bt);
+				if (strlen($data['content']) < 40) {
+					$msg['content'] = 'Não existe formulário para envio';
+					$msg['volta'] = base_url('index.php/pibic');
+					$data['content'] = $this -> load -> view('errors/erro_msg', $msg, true);
+				}
+				$this -> load -> view('content', $data);
+				break;
+			case 'IC_FORM_RFC' :
+				$data['content'] = '<h2>Entrega da Correção do Relatório Final</h2>';
+				$this -> load -> view('content', $data);
+
+				if (strlen($proto) > 0) {
+					redirect(base_url('index.php/pibic/form/' . get("dd4") . '/' . $proto . '/' . checkpost_link(get("dd4") . $proto)));
+					exit ;
+				}
+				$tp = 'form_ic_rfc';
+				$bt = msg('protocolo_botao_' . $tp);
+				$data['content'] = $this -> protocolos_ic -> orientacoes_protocolo($tp, $bt);
+				if (strlen($data['content']) < 40) {
+					$msg['content'] = 'Não existe formulário para envio';
+					$msg['volta'] = base_url('index.php/pibic');
+					$data['content'] = $this -> load -> view('errors/erro_msg', $msg, true);
+				}
+				$this -> load -> view('content', $data);
+				break;
+			case 'IC_FORM_RESUMO' :
+				$data['content'] = '<h2>Entrega do Resumo para o SEMIC</h2>';
+				$this -> load -> view('content', $data);
+
+				if (strlen($proto) > 0) {
+					redirect(base_url('index.php/pibic/form/' . get("dd4") . '/' . $proto . '/' . checkpost_link(get("dd4") . $proto)));
+					exit ;
+				}
+				$tp = 'form_ic_resumo';
 				$bt = msg('protocolo_botao_' . $tp);
 				$data['content'] = $this -> protocolos_ic -> orientacoes_protocolo($tp, $bt);
 				if (strlen($data['content']) < 40) {

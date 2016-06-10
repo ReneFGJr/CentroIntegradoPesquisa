@@ -727,7 +727,7 @@ class pagamentos extends CI_Model {
 		if ($to1 > 0) {
 			$sa .= '<td width="80" class="nopr">';
 			$sa .= '<form method="get" action="' . base_url('index.php/ic/pagamento_planilha_hsbc_rateio/' . $proto . '/' . $valor . '/' . $venc) . '">';
-			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="botao3d back_green_shadown back_green" >';
+			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="btn btn-primary" >';
 			$sa .= '</form>';
 			$sa .= '</td>';
 		}
@@ -865,7 +865,7 @@ class pagamentos extends CI_Model {
 		if ($to1 > 0) {
 			$sa .= '<td width="80" class="nopr">';
 			$sa .= '<form method="get" action="' . base_url('index.php/ic/pagamento_planilha_hsbc_avulso/' . $proto . '/' . $valor . '/' . $venc) . '">';
-			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="botao3d back_green_shadown back_green" >';
+			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="btn btn-primary" >';
 			$sa .= '</form>';
 			$sa .= '</td>';
 		}
@@ -998,7 +998,7 @@ class pagamentos extends CI_Model {
 		if ($to1 > 0) {
 			$sa .= '<td width="80" class="nopr">';
 			$sa .= '<form method="get" action="' . base_url('index.php/ic/pagamento_planilha_hsbc/' . $bolsa . '/' . $ano . '/' . $venc) . '">';
-			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="botao3d back_green_shadown back_green" >';
+			$sa .= '<input type="submit" name="button" value="' . msg("gerar_arquivo") . '" class="btn btn-primary" >';
 			$sa .= '</form>';
 			$sa .= '</td>';
 		}

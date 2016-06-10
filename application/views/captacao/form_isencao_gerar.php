@@ -42,7 +42,7 @@ $erro = '';
 		</td>
 		<td>		<textarea cols=40 rows=5 name="dd2"><?php echo get("dd2");?></textarea></td>
 		<td>
-		<input type="submit" name="acao" value="<?php echo $acao;?>" class="botao3d back_green_shadown back_green">
+		<input type="submit" name="acao" value="<?php echo $acao;?>" class="btn btn-primary">
 		<input type="hidden" name="xacao" value="<?php echo $xacao;?>">
 		<input type="hidden" name="dd4" value="<?php echo $id_ca;?>">
 		<input type="hidden" name="dd5" value="<?php echo checkpost_link($id_ca);?>">

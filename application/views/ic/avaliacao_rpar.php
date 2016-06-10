@@ -303,7 +303,7 @@ if (strlen($dd9) > 0)
 		<br>
 		<br>
 		<br>
-		<input type="submit" name="acao" value="Finalizar avaliação >>>" class="botao3d back_green_shadown back_green">
+		<input type="submit" name="acao" value="Finalizar avaliação >>>" class="btn btn-primary">
 		</td>
 	</tr>
 </table>
