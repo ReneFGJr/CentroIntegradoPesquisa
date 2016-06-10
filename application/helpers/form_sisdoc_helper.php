@@ -303,7 +303,7 @@ function enviaremail($para, $assunto, $texto, $de, $anexos = array()) {
 		$email_footer = $line['m_foot'];
 
 		if (strlen($email_header) > 0) {
-			$email_header = '<table><tr><td><img src="' . base_url($email_header) . '"></td><tr><tr><td><br><br>';
+			$email_header = '<table width="550"><tr><td><img src="' . base_url($email_header) . '"></td><tr><tr><td><br><br>';
 		}
 		if (strlen($email_footer) > 0) {
 			$email_footer = '</td></tr><tr><td><img src="' . base_url($email_footer) . '"></td></tr></table>';

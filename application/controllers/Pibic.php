@@ -532,7 +532,7 @@ class pibic extends CI_Controller {
 				$data['content'] = $rest;
 				$this -> load -> view('content', $data);
 				Break;
-				
+
 			case 'form_ic_rf' :
 				$this -> load -> model('area_conhecimentos');
 				$this -> load -> model('ics');
@@ -758,6 +758,11 @@ class pibic extends CI_Controller {
 				$this -> load -> model('ics_acompanhamento');
 				$this -> load -> model('idiomas');
 				$this -> load -> model('geds');
+				$this -> load -> model('semics');
+				$this -> load -> model('mensagens');
+				
+
+				$this -> ics -> resumo_postado($proto);
 
 				/* valida entrada no ic_acompanhamento */
 				$entregue = $this -> ics_acompanhamento -> form_entregue($proto, 'ic_resumo_data');
@@ -773,17 +778,16 @@ class pibic extends CI_Controller {
 				$act = get("dd2");
 				$vlr = get("dd3");
 				if (strlen($acao) > 0) {
+					/******* SALVAR DADOS */
+					//$this->ics->salva_resumo($proto);
+
 					switch ($act) {
 						case 'FINISH' :
 							$date = date("Y-m-d");
 							$sql = "update ic set 
-										ic_resumo_data = '$date',
+										ic_resumo_data = '$date'
 										where ic_plano_aluno_codigo = '$proto' ";
 							//echo $sql;
-							$rlt = $this -> db -> query($sql);
-
-							/* TRAVA ARQUIVOS */
-							$sql = "update ic_ged_documento set doc_status = 'A' where doc_dd0 =  '$proto' and doc_status = '@' ";
 							$rlt = $this -> db -> query($sql);
 
 							$mss = 'IC_RESUMO_POSTED';
@@ -819,34 +823,36 @@ class pibic extends CI_Controller {
 					$this -> load -> view('header/foot', $data);
 					return ('');
 				}
-
-				/*  Validação da submissão */
-				$rest = '';
-				$check_1 = $this -> ics -> validar_area($data['ic_semic_area']);
-				$check_2 = $this -> ics -> validar_idioma($data['ic_semic_idioma']);
-				$check_3 = $this -> ics -> validar_arquivo($proto, 'RELAF');
-				if (($check_1 == 1) and ($check_2 == 2) and ($check_3 == 1)) {
-					$this -> load -> view('ic/form_finish', $data);
-				}
+				
+				$info = $this->mensagens->busca('IC_RESUMO_INSTRUCOES',null);
+				if (isset($info['nw_titulo']))
+					{
+						$txt = '<h2>'.$info['nw_titulo'].'</h2>';
+						$txt .= mst($info['nw_texto']);
+						$info['content'] = $txt;
+						$this->load->view('content',$info);		
+					}
+				
 
 				/* Mostra formulario de area */
-				$data['mostra_area'] = $this -> area_conhecimentos -> form_areas('dd3', $data['ic_semic_area']);
-				$data['mostra_idioma'] = $this -> idiomas -> form_idioma('dd3', $data['ic_semic_idioma']);
+				$rest = $this -> semics -> mostra_autores($proto);
+				$rest .= $this -> load -> view("ic/postar_resumo_autores_js.php", null, true);
+				$rest .= $this -> load -> view("ic/form_resumo", $data, True);
 
-				$this -> geds -> tabela = 'ic_ged_documento';
-				$data['mostra_arquivo'] = $this -> geds -> list_files_table($proto, 'ic', 'RELAF');
-				$data['mostra_arquivo'] .= $this -> geds -> form_upload($proto, 'pibic/ged/RELAF/' . $proto);
-				$data['tot_rp_posted'] = $this -> geds -> total_files;
-
-				$data['chk1'] = $check_1;
-				$data['chk2'] = $check_2;
-				$data['chk3'] = $check_3;
-
-				$rest = $this -> load -> view("ic/form_resumo", $data, True);
+				/*  Validação da submissão */
+				if (strlen($acao) > 0) {
+					$check_1 = $this -> ics -> validar_resumos($proto);
+					if ($check_1 == 1) {
+						$this -> load -> view('ic/form_finish', $data);
+					} else {
+						$erros['content'] = $this -> ics -> erros;
+						$this -> load -> view('content', $erros);
+					}
+				}
 
 				$data['content'] = $rest;
 				$this -> load -> view('content', $data);
-				Break;								
+				Break;
 		}
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);

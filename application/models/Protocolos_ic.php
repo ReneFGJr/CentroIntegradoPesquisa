@@ -293,7 +293,10 @@ class protocolos_ic extends CI_Model {
 				break;
 			case 'form_ic_rfc' :
 				$wh = ' and ((s_id = 1) and (ic_rfc_data = \'0000-00-00\' and ic_nota_rf = 2))';
-				break;				
+				break;
+			case 'form_ic_resumo' :
+				$wh = ' and ((s_id = 1) and (ic_resumo_data = \'0000-00-00\'))';
+				break;
 		}
 
 		/* Relatorio parcial */
@@ -664,26 +667,26 @@ class protocolos_ic extends CI_Model {
 			if ($esc == 1) { $chk2 = 'checked';
 			}
 			$proto = trim($line['doc_protocolo']);
-			
+
 			$sx .= '<tr valign="top" style="background-color: #efefef;">';
 			$sx .= '<td width="5%" align="center">';
 			$sx .= $line['doc_protocolo'];
-			$sx .= '<img src="'.base_url('img/logo/logo_ic_'.lowercase($line['doc_edital']).'.png').'" height="50">'.cr();
+			$sx .= '<img src="' . base_url('img/logo/logo_ic_' . lowercase($line['doc_edital']) . '.png') . '" height="50">' . cr();
 			$sx .= '</td>';
 			$sx .= '<td width="40%">';
 			$sx .= $line['doc_1_titulo'];
-			
+
 			$sx .= '<br>';
-			$sx .= '<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true" onclick="mostra_div(\''.$proto.'\');"></span>';
+			$sx .= '<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true" onclick="mostra_div(\'' . $proto . '\');"></span>';
 			$sx .= '</td>';
 			$sx .= '<td width="45%">';
 			$sx .= '<b>' . $line['us_nome'] . '</b><br>';
-			
+
 			if ($line['doc_aluno'] != '00000000') {
 				$sx .= '<input type="checkbox" name="dd' . $proto . 'A" id="dd' . $proto . 'A" ' . $chk1 . ' value="1" onclick="muda_situacao_trabalho(\'' . $proto . 'A\');"> ' . msg('estudante_trabalha') . '<br>';
 				$sx .= '<input type="checkbox" name="dd' . $proto . 'B" id="dd' . $proto . 'B" ' . $chk2 . ' value="1" onclick="muda_situacao_publico(\'' . $proto . 'B\');"> ' . msg('estudante_esc_publica') . '<br>';
 			}
-			$sx .= '<a href="'.base_url('index.php/ic/substituir_estudante/'.$line['doc_protocolo'].'/'.checkpost_link($line['doc_protocolo'])).'" class="btn btn-primary">' . msg('estudante_substituir') . '</a>';
+			$sx .= '<a href="' . base_url('index.php/ic/substituir_estudante/' . $line['doc_protocolo'] . '/' . checkpost_link($line['doc_protocolo'])) . '" class="btn btn-primary">' . msg('estudante_substituir') . '</a>';
 			$sx .= '</td>';
 			$sx .= '</tr>';
 

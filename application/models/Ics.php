@@ -8,6 +8,8 @@ class ics extends CI_model {
 	var $tabela_planos = "ic_submissao_plano";
 	var $resumo = array();
 
+	var $erros = '';
+
 	/* Lista Professores sem escola cadastrada*/
 	function professores_sem_escola() {
 		//consulta
@@ -1050,7 +1052,6 @@ class ics extends CI_model {
 
 	function is_ic($us_cracha = '') {
 
-		
 		$sql = "SELECT count(*) as total, mb_tipo, id_s FROM ic_aluno 
 				INNER JOIN ic on id_ic = ic_id
 				INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
@@ -1078,13 +1079,12 @@ class ics extends CI_model {
 			$sql = "select 1 from ic_submissao_projetos where pj_professor = '$us_cracha' ";
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array();
-			if (count($rlt) > 0)
-				{
-					return(1);
-				} else {
-					return (0);
-				}
-			
+			if (count($rlt) > 0) {
+				return (1);
+			} else {
+				return (0);
+			}
+
 		}
 	}
 
@@ -1393,7 +1393,7 @@ class ics extends CI_model {
 			$sx .= '<td>';
 			$sx .= $line['es_escola'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td>';
 			$sx .= $line['ies_nome'];
 			$sx .= '</td>';
@@ -1810,8 +1810,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1876,8 +1875,7 @@ class ics extends CI_model {
 		$sx = '<table width="100%" class="tabela01" border=0>';
 		while ($line = db_read($rlt)) {
 			$edital = trim($line['mb_tipo']);
-			$line['img'] = $this -> logo_modalidade($edital);
-			;
+			$line['img'] = $this -> logo_modalidade($edital); ;
 			$line['page'] = 'ic';
 			$sx .= $this -> load -> view('ic/plano-lista', $line, True);
 		}
@@ -1913,41 +1911,37 @@ class ics extends CI_model {
 	}
 
 	function resumo_autores_mostra($id) {
-		$funcao = array();
-		$funcao['0'] = 'Discente';
-		$funcao['1'] = '???';
-		$funcao['2'] = 'Co-orientador';
-		$funcao['3'] = 'Colaborador';
-		$funcao['4'] = 'Pibic Junior';
-		$funcao['5'] = 'Supervisor Pibic Junior';
-		$funcao['6'] = 'Escola (para Pibic Júnior)';
-		$funcao['7'] = 'Mestrando de Pós-Graduação';
-		$funcao['8'] = 'Doutorando de Pós-Graduação';
-		$funcao['9'] = 'Orientador';
-
 		$sql = "select * from semic_trabalho_autor 
+					INNER JOIN  semic_trabalho_autor_tipo on sma_funcao = id_stat
 					where sma_protocolo = '$id'
 						and sma_ativo > 0 
-					order by sma_funcao
+					order by stat_ordem, sma_funcao
 			";
 		$rlt = db_query($sql);
-		$sx = '<table width="100%" class="lt2" border=0>';
+		$sx = '<h2>Autores</h2>';
+		$sx .= '<table width="100%" class="table lt2" border=0>';
 		$sx .= '<tr align="center">
+						<th width="1%">#</th>
 						<th width="40%">Autor</th>
 						<th width="20%">participacao</th>
 						<th width="20%">Instituição (SIGLA)</th>
-						<th width="10%">ação</th>
+						<th width="1%">ação</th>
 					</tr>';
 		$tot = 0;
 		while ($line = db_read($rlt)) {
-			$link = '<a href="#" onclick="remove(' . $line['id_sma'] . ');" class="link">remover</a>';
+			$link = '<span onclick="remove_autor(' . $line['id_sma'] . ');" class="link alert">remover</span>';
 			if ($line['sma_ativo'] > 1) { $link = '';
 			}
 			$sx .= '<tr>';
+			$sx .= '<td align="center">' . ($tot + 1) . '</td>';
 			$sx .= '<td class="tabela01">' . $line['sma_nome'] . '</td>';
-			$sx .= '<td class="tabela01" align="center">' . $funcao[$line['sma_funcao']] . '</td>';
+			$sx .= '<td class="tabela01" align="left">' . $line['stat_descricao'] . '</td>';
 			$sx .= '<td class="tabela01" align="center">' . $line['sma_instituicao'] . '</td>';
-			$sx .= '<td class="tabela01" align="center">' . $link . '</td>';
+			if ($line['stat_editavel'] == 1) {
+				$sx .= '<td class="tabela01" align="center">' . $link . '</td>';
+			} else {
+				$sx .= '<td>-</td>';
+			}
 			$tot++;
 		}
 		if ($tot == 0) {
@@ -2083,7 +2077,7 @@ class ics extends CI_model {
 		}
 	}
 
-	function resumo_postado_inserir_autores($rs) {
+	function resumo_postado_inserir_autores_lixo($rs) {
 		$line = $rs;
 		$professor = $line['ic_cracha_prof'];
 		$estudante = $line['ic_cracha_aluno'];
@@ -2109,8 +2103,7 @@ class ics extends CI_model {
 
 	function resumo_postado($id) {
 		$this -> load -> model("ics");
-
-		$rs = $this -> ics -> le($id);
+		$rs = $this -> ics -> le_protocolo($id);
 
 		$protocolo = $rs['ic_plano_aluno_codigo'];
 
@@ -2121,6 +2114,7 @@ class ics extends CI_model {
 
 		if (count($rlt) == 0) {
 			$line = $rs;
+
 			$titulo = trim($rs['ic_projeto_professor_titulo']);
 			$data = date("Ymd");
 			$professor = $line['ic_cracha_prof'];
@@ -2150,8 +2144,6 @@ class ics extends CI_model {
 							)
 					 ";
 			$this -> db -> query($sql);
-			/* Cadastro automático do estudante e orientador */
-			$this -> resumo_postado_inserir_autores($rs);
 		}
 		return (0);
 	}
@@ -2192,14 +2184,14 @@ class ics extends CI_model {
 			$t[$edital][$fomento] = $total;
 		}
 
-		$link_a_resumo_pibic = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBIC' ). '">' . $ed['PIBIC'] . '</a>';
-		$link_b_resumo_pibiti = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBITI' ). '">' . $ed['PIBITI'] . '</a>';
-		$link_c_resumo_pibicjr = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBICEM' ). '">' . $ed['PIBICEM'] . '</a>';
-		
+		$link_a_resumo_pibic = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBIC') . '">' . $ed['PIBIC'] . '</a>';
+		$link_b_resumo_pibiti = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBITI') . '">' . $ed['PIBITI'] . '</a>';
+		$link_c_resumo_pibicjr = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBICEM') . '">' . $ed['PIBICEM'] . '</a>';
+
 		$sx = '<table width="100%" class="lt1 border1 radius10">
 					<tr><td colspan=2 align="left" class="lt6 borderb1"><b>' . msg('resumo') . '</b><br><font class="lt0">orintações ativas</td></tr>
 					
-					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="40"></td><td class="lt6">'. $link_a_resumo_pibic. '</td></tr>';
+					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="40"></td><td class="lt6">' . $link_a_resumo_pibic . '</td></tr>';
 		$v = $t['PIBIC'];
 		foreach ($v as $key => $value) {
 			$sx .= '<tr><td align="right">' . $key . '</td><td class="lt3">' . $value . '</td></tr>' . cr();
@@ -4515,12 +4507,12 @@ class ics extends CI_model {
 		}
 	}
 
-	function resumo_orientacoes_ativas_semic($edital){
-			$ano = date("Y");
-				if (date("m") < 7) {
-					$ano = $ano - 1;
-				}	
-			$sql = "select substring(ic_semic_area, 1,4) as area, ic_semic_area, ac_nome_area, ic_projeto_professor_codigo,  
+	function resumo_orientacoes_ativas_semic($edital) {
+		$ano = date("Y");
+		if (date("m") < 7) {
+			$ano = $ano - 1;
+		}
+		$sql = "select substring(ic_semic_area, 1,4) as area, ic_semic_area, ac_nome_area, ic_projeto_professor_codigo,  
 							       ic_plano_aluno_codigo, ic_cracha_prof, ic_aluno_cracha,
 							       mb_tipo, mb_fomento       
 							from ic
@@ -4531,13 +4523,13 @@ class ics extends CI_model {
 							where ic_ano = '2015' and (icas_id = 1)
 							and mb_tipo = '$edital' 
 							order by ic_semic_area, mb_fomento, mb_tipo
-						";		
-				
+						";
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
+
 		$sx = '<table width="100%" class="tabela00">';
-		$sx .= '<tr><td class="lt6" colspan=5> Iniciação Científica '. $ano .'</tr>';
+		$sx .= '<tr><td class="lt6" colspan=5> Iniciação Científica ' . $ano . '</tr>';
 		$sx .= '<tr><th align="left">Id</th>
 									<th align="left">area</th>
 									<th align="left">Subarea</th>
@@ -4549,63 +4541,178 @@ class ics extends CI_model {
 									<th align="left">Modalidade</th>
 									<th align="left">Fomento</th>
 						</tr>';
-		
+
 		$tot = 0;
-		
+
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
-			
+
 			$sx .= '<tr>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $r + 1;
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $line['ic_semic_area'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $line['area'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $line['ac_nome_area'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="right">';
-			$sx .= link_projeto_proto($line['ic_projeto_professor_codigo']).$line['ic_projeto_professor_codigo'].'</a>';
+			$sx .= link_projeto_proto($line['ic_projeto_professor_codigo']) . $line['ic_projeto_professor_codigo'] . '</a>';
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="right">';
-			$sx .= link_ic_proto($line['ic_plano_aluno_codigo']).$line['ic_plano_aluno_codigo'].'</a>';
+			$sx .= link_ic_proto($line['ic_plano_aluno_codigo']) . $line['ic_plano_aluno_codigo'] . '</a>';
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_cracha_prof'];
 			$sx .= '</td>';
-			
-			
-			
+
 			$sx .= '<td align="right">';
 			$sx .= $line['ic_aluno_cracha'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="center">';
 			$sx .= $line['mb_tipo'];
 			$sx .= '</td>';
-			
+
 			$sx .= '<td align="left">';
 			$sx .= $line['mb_fomento'];
 			$sx .= '</td>';
-		
+
 		}
 		$sx .= '<tr><td colspan=10 align="left">Total de ' . $tot . ' registros</td></tr>';
 		$sx .= '</table>';
-		
+
 		return ($sx);
+
+	}
+
+	function salva_resumo($proto) {
+		$sql = "select * from semic_trabalho where sm_codigo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0) {
+
+		} else {
+			/* Recupera protocolo */
+			$dados = $this -> ics -> le_protocolo($proto);
+			print_r($dados);
+		}
+	}
+
+	function validar_resumos($proto) {
+		$sql = "select * from semic_trabalho where sm_codigo = '$proto' ";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
 		
+		$line = $rlt[0];
+		$erro = '<font color="red">Error</font>';
+		$ok = 1;
+		$sx = '<h3>Validação</h3>';
+		$sx .= '<table width="100%" class="lt1">';
+
+		/***/
+		if (strlen($line['sm_rem_01']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Introdução (português)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_02']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Objetivo (português)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_03']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Metodologia (português)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_04']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Resultado (português)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_05']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Considerações (português)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_06']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Palavras-chave (português)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		
+		/*************************************************** INGLES*****************/
+		
+		/***/
+		if (strlen($line['sm_rem_11']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Introdução (Inglês)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_12']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Objetivo (Inglês)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_13']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Metodologia (Inglês)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_14']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Resultado (Inglês)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_15']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Considerações (Inglês)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}
+		/***/
+		if (strlen($line['sm_rem_16']) < 10) {
+			$ok = 0;
+			$sx .= '<tr class="alert-danger">
+						<td width="90%">Resumo - Palavras-chave (Inglês)</td>
+						<td width="10%">' . $erro . '</td></tr>' . cr();
+		}		
+
+		$sx .= '</table>';
+		$this -> erros = $sx;
+		return ($ok);
 	}
 
 }

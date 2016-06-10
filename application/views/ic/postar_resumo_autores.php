@@ -9,13 +9,18 @@
 		<td><input type="text" id="nome" name="nome" class="form_string" style="width: 100%;" value=""></td>
 		<td><select id="tipo" class="form_string" style="width: 100%;" size=1>
 			<option value=""></option>
-			<option value="2">Coorientador</option>
-			<option value="3">Colaborador</option>
-			<option value="7">Mestrando de Pós-Graduação</option>
-			<option value="8">Doutorando de Pós-Graduação</option>
-			<option value="4">Pibic Junior</option>
-			<option value="5">Supervisor Pibic Junior</option>
-			<option value="6">Escola (para Pibic Júnior)</option>
+			<?php
+			$sql = "select * from semic_trabalho_autor_tipo 
+							where stat_editavel = 1 
+							order by stat_ordem ";
+			$rlt = $this->db->query($sql);
+			$rlt = $rlt->result_array();
+			for ($r=0;$r < count($rlt);$r++)
+				{
+					$line = $rlt[$r];
+					echo '<option value="'.$line['id_stat'].'">'.$line['stat_descricao'].'</option>'.cr();
+				}
+			?>
 			</select>
 		</td>
 		<td><input type="text" id="instituicao" class="form_string" style="width: 100%;"></td>
@@ -26,24 +31,3 @@
 		<td class="error" colspan=3><?php echo $msg; ?></td>
 	</tr>
 </table>
-<script>
-function send($this)
-	{
-		var nome = document.getElementById("nome").value;
-		var tipo = document.getElementById("tipo").value;
-		var inst = document.getElementById("instituicao").value;
-		
-		$.post( "<?php echo base_url('index.php/ic/resumo_autores/'.$id.'/'.$check);?>", { dd10: nome, dd11: tipo, dd12: inst, acao: 'ADD' })
-  			.done(function( data ) {
-   			 $("#autores").html(data);
-  		});
-	}
-function remove(id)
-	{
-		$.post( "<?php echo base_url('index.php/ic/resumo_autores/'.$id.'/'.$check);?>", { dd10: id, acao: 'DEL' })
-  			.done(function( data ) {
-   			 $("#autores").html(data);
-  		});	
-	}
-	
-</script>

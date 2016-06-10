@@ -306,6 +306,8 @@ class eventos extends CI_model {
 					
 				$sql = troca($sql, '$id_us', $id_us);
 				$sql = troca($sql, '$CRACHA', $us_cracha);
+				$sql = troca($sql, '$us_cracha', $us_cracha);
+				$sql = troca($sql, '$cracha', $us_cracha);
 				$sql = troca($sql,"´", "'");
 				
 				$rrr = $this -> db -> query($sql);

@@ -523,8 +523,9 @@ class Ic_pareceres extends CI_model {
 		$txt = $this -> mensagens -> busca($tipo, $data);
 		$texto = mst($txt['nw_texto']);
 		$ass = mst($txt['nw_titulo']);
+		$dono = mst($txt['nw_own']);
 
-		enviaremail_usuario($id_us, $ass, $texto, 2);
+		enviaremail_usuario($id_us, $ass, $texto, $dono);
 	}
 
 	function avaliacoes_abertas($proto, $tipo = '') {

@@ -3560,35 +3560,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-	function resumo_autores($id = '', $check = '') {
-		/* Load Models */
-		$this -> load -> model('ics');
 
-		/* Form */
-		$save = $this -> input -> post("acao");
-		$nome = utf8_decode($this -> input -> post("dd10"));
-		$tipo = $this -> input -> post("dd11");
-		$instituicao = utf8_decode($this -> input -> post("dd12"));
-		$msg = '';
-
-		if ($save == 'ADD') {
-			$msg = $this -> ics -> resumo_inserir_autor($id, $nome, $tipo, $instituicao);
-		}
-		if ($save == 'DEL') {
-			$msg = $this -> ics -> resumo_remove_autor($nome);
-			$msg = 'REMOVIDO';
-			;
-		}
-
-		$data = array();
-		$data['content'] = $this -> ics -> resumo_autores_mostra($id);
-		$this -> load -> view('content', $data);
-		$data['id'] = $id;
-		$data['check'] = $check;
-		$data['msg'] = $msg;
-
-		$this -> load -> view('ic/postar_resumo_autores', $data);
-	}
 
 	function postar_resumo($id = '', $check = '', $page = '') {
 		global $dd;
