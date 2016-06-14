@@ -3291,7 +3291,7 @@ class ics extends CI_model {
 		$sql = "select * from ic_submissao_projetos_equipe 
 						where ispe_protocolo = '$proto'
 							and ispe_ativo = 1 
-						order by id_ispe ";
+						order by ispe_tipo_user ";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
