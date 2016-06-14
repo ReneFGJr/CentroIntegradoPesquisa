@@ -139,7 +139,7 @@ class Main extends CI_Controller {
 		if (perfil('#ADM#SEP') == 1) {
 			array_push($menu, array('Stricto Sensu', 'Secretaria e Coordenação do <i>stricto sensu</i>', 'BTA', '/stricto_sensu'));
 		}
-		if (perfil('#ADM') == 1) {
+		if (perfil('#ADM#CPP') == 1) {
 			array_push($menu, array('CNPq', 'Administração', 'BTN', '/cnpq'));
 		}
 		if (perfil('#CPP#SPI#ADM#EVE') == 1) {
