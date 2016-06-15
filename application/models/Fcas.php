@@ -11,7 +11,7 @@ class Fcas extends CI_model {
 		//consulta
 		$sql = "select distinct id_ed, ed_nota_normalizada, ed_edital, ust_titulacao_sigla,us_nome,
 						id_us, us_campus_vinculo, bpn_bolsa_descricao, ed_protocolo, ed_estudante,
-						ed_protocolo_mae, mb_descricao, us_professor_tipo,
+						ed_protocolo_mae, mb_descricao, us_professor_tipo, ed_avaliacoes, 
 						(ed_nota_normalizada + ed_bn_produtividade + ed_bn_titulacao + ed_bn_ss + ed_bn_jr - ed_bn_penalidade) as nota,
 						(ed_bn_produtividade + ed_bn_titulacao + ed_bn_ss + ed_bn_jr - ed_bn_penalidade) as nota_bn, ed_area
 				FROM ic_edital
@@ -46,10 +46,12 @@ class Fcas extends CI_model {
 								<th align="center">Aval.</th>
 								<th align="center">Protocolo mãe</th>
 								<th align="center">Protocolo</th>
+								<th align="center">Qtd. Aval</th>
 								<th align="center">ação</th>
 						</tr>';
 
 		$tot = 0;
+		$tot2 = 0;
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
@@ -146,7 +148,9 @@ class Fcas extends CI_model {
 			//Nota bonificação
 			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($line['nota_bn'], 2, ',', '.') . '</td>';
 			//$sx .= $line['ed_nota_normalizada'];
-			if ($nota < 70) { $cor = 'red';
+			if ($nota < 70) {
+				 $tot2++; 
+				 $cor = 'red';
 			}
 			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($nota, 2, ',', '.') . '</td>';
 			//Protocolo mae
@@ -157,6 +161,10 @@ class Fcas extends CI_model {
 			$sx .= '<td align="center">';
 			$sx .= $link_projeto . $line['ed_protocolo'] . '</a>';
 			$sx .= '</td>';
+			//Qtd de avaliações
+			$sx .= '<td align="center">';
+			$sx .= $line['ed_avaliacoes'];
+			$sx .= '</td>';			
 			//acao
 			//diferencia indicações em aberto
 			$sf = '';
@@ -177,7 +185,10 @@ class Fcas extends CI_model {
 			}
 		}
 		//qtd de registros
-		$sx .= '<tr><td colspan=16 align="right">Total de ' . $tot . ' registros</td></tr>';
+		$sx .= '<tr><td colspan=16 align="right">Total de ' . $tot . ' registro(s)</td></tr>';
+		if ($nota < 70) {
+			$sx .= '<tr><td colspan=16 align="right" style="color: ' . $cor . ';">' . $tot2 . ' nota(s) esta(ão) abaixo da linha de corte</td></tr>';
+		}
 		$sx .= '</table>';
 
 		return ($sx);
@@ -786,7 +797,6 @@ class Fcas extends CI_model {
 				$sx .= '</td>';
 
 				//observações
-				echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 				if (strlen($observacoes) > 0) {
 					$sx .= '<td align="center">';
 					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-warning" data-toggle="modal" data-target="#myModal">

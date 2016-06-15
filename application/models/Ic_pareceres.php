@@ -616,7 +616,8 @@ class Ic_pareceres extends CI_model {
 			if (($ed == 0) and (get("av" . $line['id_us']) == '1')) {
 				$av_aberta = $this -> ic_pareceres -> avaliacoes_abertas($proto, 'SUBMI');
 
-				if ($av_aberta <= 1) {
+				if (($av_aberta <= 1) or (perfil('#CPI#TST'))) {
+					
 					$this -> ic_pareceres -> indicar_avaliador($line['id_us'], $tipo, $proto);
 
 					switch($tipo) {

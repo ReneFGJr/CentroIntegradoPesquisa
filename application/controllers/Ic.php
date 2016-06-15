@@ -3995,6 +3995,8 @@ class ic extends CI_Controller {
 				$av_aberta = $this -> ic_pareceres -> avaliacoes_abertas($proto, 'SUBMI');
 
 				if ($av_aberta > 0) {
+					
+					
 					$comt['content'] = '<div class="danger border1 lt4" style="border-radius: 10px; padding: 10px;">
 											<img src="' . base_url('img/icon/icone_exclamation.png') . '" height="30" align="left">
 											Já existe(m) a(s) indicação(ões) de ' . $av_aberta . ' avaliador(es) para este projeto
@@ -4008,7 +4010,8 @@ class ic extends CI_Controller {
 					$this -> load -> view('content', $data);
 				}
 
-				if ($av_aberta <= 1) {
+				if (($av_aberta <= 1) or (perfil('#CPI#TST'))) {
+					
 					$TIPO_AV = 'SUBMI';
 					switch ($dados_projeto['pj_edital']) {
 						case 'IC' :
