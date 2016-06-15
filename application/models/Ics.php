@@ -3046,7 +3046,7 @@ class ics extends CI_model {
 				$prof = $this -> usuarios -> le_cracha($pj['pj_professor']);
 				$us_id = $prof['id_us'];
 
-				$txt = $this -> Mensagens -> busca('PJ_CANCELA_PROF', $pj);
+				$txt = $this -> mensagens -> busca('PJ_CANCELA_PROF', $pj);
 
 				enviaremail_usuario($us_id, $txt['nw_assunto'], $txt['nw_texto'], $txt['nw_own']);
 

@@ -930,7 +930,9 @@ class pagamentos extends CI_Model {
 			$sx .= $cor . $line['us_nome'] . '</font>';
 			//$sx .= '('.$line['id_us'].')';
 			$sx .= ' (' . $line['ic_aluno_cracha'] . ')';
-			$sx .= '</td>';
+			$sx .= ' (' . $line['ic_aluno_cracha'] . ')';
+			$sx .= '</td>';	
+			
 
 			$sx .= '<td class="borderb1" align="center" width="110"><nobr>';
 			$sx .= $cor . mask_cpf($line['us_cpf']) . '</font>';
