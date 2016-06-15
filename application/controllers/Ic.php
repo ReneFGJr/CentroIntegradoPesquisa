@@ -1635,6 +1635,7 @@ class ic extends CI_Controller {
 		$ano_fim = get("dd3");
 		$modalidade = get("dd4");
 		$escola = get("dd5");
+		$campus = get("dd6");
 
 		/* Load Models */
 		$this -> load -> model('ics');
@@ -1652,21 +1653,25 @@ class ic extends CI_Controller {
 		$cp = array();
 		array_push($cp, array('$H8', '', '', False, False));
 		array_push($cp, array('$A', '', msg('Guia do Estudante'), False, true));
+		//período
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('lb_ano_inicio'), True, TRUE));
 		array_push($cp, array('$[2009-' . date("Y") . ']D', '', msg('lb_ano_final'), True, True));
-
+		//modalidadee de bolsa
 		$sql = "select * from ic_modalidade_bolsa order by mb_tipo";
 		array_push($cp, array('$Q id_mb:mb_descricao:' . $sql, '', msg('lb_ic_modalidade'), False, False));
-
+		//escola
 		$sql = "select * from escola where es_ativo = 1 order by es_escola";
 		array_push($cp, array('$Q id_es:es_escola:' . $sql, '', msg('Escola'), False, False));
+		//campus
+		$sql = "select * from campus where c_ativo = 1 order by c_campus";
+		array_push($cp, array('$Q id_c:c_campus:' . $sql, '', msg('Campus'), False, False));
 
 		$tela = $form -> editar($cp, '');
 
 		if ($form -> saved) {
 
 			$data['title'] = 'Orientações de Iniciação Científica de ' . $ano_ini . ' até ' . $ano_fim . ' ';
-			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade, $escola);
+			$data['content'] = $this -> ics -> report_guia_estudante_xls($ano_ini, $ano_fim, $modalidade, $escola, $campus);
 			$this -> load -> view('content', $data);
 
 		} else {
