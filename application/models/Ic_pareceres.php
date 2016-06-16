@@ -201,6 +201,9 @@ class Ic_pareceres extends CI_model {
 				case 'SUBMP':
 					$link_ic = link_projeto($line['pp_protocolo_mae']);
 					break;
+				case 'FEIRA':
+					$link_ic = link_projeto($line['pp_protocolo']);
+					break;	
 				}
 
 			//Resultado das avaliações

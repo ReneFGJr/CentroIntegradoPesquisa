@@ -3439,7 +3439,7 @@ class ic extends CI_Controller {
 		$this -> load -> model('geds');
 
 		$data = $this -> ics -> le($id);
-
+		
 		$this -> cab();
 
 		$this -> load -> view('ic/plano', $data);
@@ -3449,6 +3449,7 @@ class ic extends CI_Controller {
 		$data['ged'] = '';
 		if (strlen(trim($data['ic_projeto_professor_codigo'])) > 0) {
 			$data['ged'] = $this -> geds -> list_files_table($data['ic_projeto_professor_codigo'], 'ic');
+			
 		}
 		$data['ged'] .= $this -> geds -> list_files_table($data['ic_plano_aluno_codigo'], 'ic');
 		$data['ged_arquivos'] = $this -> geds -> form_upload($data['ic_plano_aluno_codigo'], 'ic');
