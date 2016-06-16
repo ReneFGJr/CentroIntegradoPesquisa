@@ -9,7 +9,7 @@
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBIC/V');?>" class="link">Ciências da Vida</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBIC/A');?>" class="link">Ciências Agrárias</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBIC/S');?>" class="link">Ciências Sociais Aplicadas</a></li>
-			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBIC/S');?>" class="link">Ciências Humanas e Literatura</a></li>
+			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBIC/H');?>" class="link">Ciências Humanas e Literatura</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBIC/N');?>" class="link"><font color="red">Problemas de Áreas</font></a></li>
 		</ul>
 	</div>
