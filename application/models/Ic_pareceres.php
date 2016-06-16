@@ -195,15 +195,15 @@ class Ic_pareceres extends CI_model {
 			/********** LINK */
 			switch ($line['pp_tipo'])
 				{
-				case 'SUBMI':
-					$link_ic = link_projeto($line['pp_protocolo']);
-					break;
-				case 'SUBMP':
-					$link_ic = link_projeto($line['pp_protocolo_mae']);
-					break;
-				case 'FEIRA':
-					$link_ic = link_projeto($line['pp_protocolo']);
-					break;	
+					case 'SUBMI':
+						$link_ic = link_projeto($line['pp_protocolo']);
+						break;
+					case 'SUBMP':
+						$link_ic = link_projeto($line['pp_protocolo_mae']);
+						break;
+					case 'FEIRA':
+						$link_ic = link_projeto($line['pp_protocolo']);
+						break;	
 				}
 
 			//Resultado das avaliações

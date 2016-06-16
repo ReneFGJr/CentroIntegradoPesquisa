@@ -247,6 +247,9 @@ $lang['comunicacoes_cadastradas'] = 'Comunicações por e-mail';
 $lang['page_usuarios'] = 'Cadastro de pessoas';
 $lang['add_email'] = 'novo e-mail';
 
+/* Feira de Ciências Jr */
+$lang['ic_tipo_FEIRA'] = 'Feira de Ciências Jr';
+
 $lang['lb_us_nome'] 	= 'Nome';
 $lang['lb_us_cracha'] 	= 'Cracha';
 $lang['lb_us_cpf'] 	= 'CPF';
@@ -276,7 +279,6 @@ $lang['lb_blu_motivo'] 		= 'Motivo do impedimento';
 $lang['lb_blu_dt_inicio'] = 'Data início do impedimento ';
 $lang['lb_blu_dt_fim'] 		= 'Data fim do impedimento';
 $lang['lb_blu_ativo'] 		= 'Deseja ativar impedimento?';
-
 
 
 /* Contratos IC */
