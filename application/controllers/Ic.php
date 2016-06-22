@@ -2689,6 +2689,15 @@ class ic extends CI_Controller {
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_nao_entregue($ano);
 				break;
+			case 'IC_FORM_RF' :
+				$fld = 'ic_rp_data';
+				$tit = 'Relatório Final';
+				$ano = date("Y");
+				if (date("m") < 8) {
+					$ano = $ano - 1;
+				}
+				$tela01 = $this -> ics_acompanhamento -> relatorio_final_nao_entregue($ano);
+				break;				
 			default :
 				$fld = '';
 				$tit = '';
@@ -2725,6 +2734,15 @@ class ic extends CI_Controller {
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_correcao_parcial_nao_entregue($ano);
 				break;
+			case 'IC_FORM_RFC' :
+				$fld = 'ic_rp_data';
+				$tit = 'Correção do Relatório Final';
+				$ano = date("Y");
+				if (date("m") < 8) {
+					$ano = $ano - 1;
+				}
+				$tela01 = $this -> ics_acompanhamento -> relatorio_correcao_final_nao_entregue($ano);
+				break;				
 			default :
 				$fld = '';
 				$tit = '';
@@ -2774,7 +2792,16 @@ class ic extends CI_Controller {
 				}
 
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano);
-				break;
+				break;			
+			case 'IC_FORM_RF' :
+				$fld = 'ic_rf_data';
+				$tit = 'Relatório Final';
+				$ano = date("Y");
+				if (date("m") < 8) { $ano = $ano - 1;
+				}
+
+				$tela01 = $this -> ics_acompanhamento -> relatorio_final_entregue($ano);
+				break;				
 			default :
 				$fld = '';
 				$tit = '';
@@ -2917,6 +2944,15 @@ class ic extends CI_Controller {
 				$sem_idicacao = 1;
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano, $sem_idicacao);
 				break;
+			case 'IC_FORM_RF' :
+				$fld = 'ic_rf_data';
+				$tit = 'Relatório Final';
+				$ano = date("Y");
+				if (date("m") < 8) { $ano = $ano - 1;
+				}
+				$sem_idicacao = 1;
+				$tela01 = $this -> ics_acompanhamento -> relatorio_final_entregue($ano, $sem_idicacao);
+				break;				
 			case 'IC_SUBMI' :
 				$fld = '';
 				$tit = 'Análise Projeto Submetidos';
@@ -3015,6 +3051,15 @@ class ic extends CI_Controller {
 		array_push($menu, array('Relatório Parcial', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
+		
+		array_push($menu, array('Relatório Final', 'RF Entregues', 'ITE', '/ic/rp_entregue/IC_FORM_RF'));
+		array_push($menu, array('Relatório Final', 'RF Não Entregues', 'ITE', '/ic/rp_nao_entregue/IC_FORM_RF'));
+		array_push($menu, array('Relatório Final', 'RF cancelados', 'ITE', '/ic/rp_cancelados/IC_FORM_RF'));
+		array_push($menu, array('Relatório Final', 'RF correção não entregues', 'ITE', '/ic/rpc_nao_entregue/IC_FORM_RFC'));		
+
+		array_push($menu, array('Relatório Final', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RF'));
+		array_push($menu, array('Relatório Final', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RF'));
+		array_push($menu, array('Relatório Final', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
 
 		array_push($menu, array('Submissão de Projetos e Planos', 'Cockpit (Resumo)', 'ITE', '/ic/cockpit'));
 		array_push($menu, array('Submissão de Projetos e Planos', 'Validar submissão', 'ITE', '/ic/submit_mostrar_status/A'));
