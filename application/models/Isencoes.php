@@ -210,7 +210,7 @@ class isencoes extends CI_model {
 							where bn_codigo = '' ";
 			$rlt = $this -> db -> query($sql);
 		} else {
-			print_r($rlt);
+			//print_r($rlt);
 			echo 'OPS, já existe uma isenção para este projeto';
 		}
 	}
