@@ -373,12 +373,12 @@ class pagamentos extends CI_Model {
 		$sx .= '27665982';
 		$sx .= '00001510';
 		// $sx .= '51462'; Trocado convenio de Salário para Outros
-
 		// Solicitidado pelo Fernando em 17/07/2013
 		// $sx .= '90565';
-
 		// Solicitidado pelo Fernando em 16/06/2014
-		$sx .= '51462';
+		//$sx .= '51462';//<--contrato anterior valido até 23/06/2016
+		// Solicitidado pelo Fernando em 22/06/2016 alterar o contrato 51462 para 246107
+		$sx .= '246107';//<--novo contrato a partir de 23/06/2016
 		$sx .= '              ';
 		$sx .= '00000';
 		$sx .= ' ';
@@ -1030,7 +1030,6 @@ class pagamentos extends CI_Model {
 					select * from pibic_bolsa_contempladas
 				 	inner join pibic_bolsa_tipo on pbt_codigo = pb_tipo
 				 	left join pibic_aluno on pb_aluno = pa_cracha
-				 	
 					where (pb_status <> 'C' and pb_status <> 'S' and pb_status <> 'F') 
 					and $wh pb_ano = '$ano'
 					order by us_nome

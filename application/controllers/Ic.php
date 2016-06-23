@@ -1884,7 +1884,7 @@ class ic extends CI_Controller {
 		array_push($cp, array('$[' . $ano1 . '-' . $ano2 . ']', '', 'Edital', True, True));
 		array_push($cp, array('$Q id_mb:mb_descricao:select * from ic_modalidade_bolsa where mb_vigente = 1 and mb_valor > 0', '', 'Modalidade', True, True));
 		array_push($cp, array('$D8', '', msg('data vencimento'), True, True));
-		array_push($cp, array('$B8', '', msg('avancar') . ' >>', False, True));
+		array_push($cp, array('$B8', '', msg('avançar') . ' >>', False, True));
 
 		$form = new form;
 		$tela = $form -> editar($cp, '');
