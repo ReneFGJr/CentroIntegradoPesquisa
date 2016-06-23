@@ -66,6 +66,8 @@ $lang['isencoes_para_indicar'] = 'Isenções para indicar';
 $lang['isencoes_ativas'] = 'Isenções ativas';
 $lang['comunicacao'] = 'Comunicação';
 
+$lang['ic_acomanhamento_title'] = 'Abrir(on) e Fechar(off) o Sistema';
+
 $lang['modalidade_M'] = 'Mestrado';
 $lang['modalidade_D'] = 'Doutorado';
 $lang['modalidade_P'] = 'Pós-Doutorado';
@@ -246,6 +248,14 @@ $lang['messagem_cadastradas'] = 'Mensagens / Comunicações';
 $lang['comunicacoes_cadastradas'] = 'Comunicações por e-mail';
 $lang['page_usuarios'] = 'Cadastro de pessoas';
 $lang['add_email'] = 'novo e-mail';
+
+/* pagina de perfil do usuarios */
+$lang['us_login'] = 'Login: ';
+$lang['us_nome'] = 'Nome: ';
+$lang['us_cpf'] = 'CPF: ';
+$lang['us_ultimo_acesso'] = 'Ultimo acesso: ';
+$lang['associar_perfil'] = 'Associar perfil';
+
 
 /* Feira de Ciências Jr */
 $lang['ic_tipo_FEIRA'] = 'Feira de Ciências Jr';

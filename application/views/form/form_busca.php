@@ -19,7 +19,7 @@ if (!isset($link_form)) {
 				<input type="text" name="dd89" id="dd89" class="form_search_in" value="<?php echo $dd89;?>" placeholder="<?php echo $this->lang->line('fast_search_place');?>">
 				</td>
 				<td>
-				<input type="submit" name="acao" id="acao" class="form_search_bt" value="BUSCA">
+				<input type="submit" name="acao" id="acao" class="btn btn-default" value="BUSCA">
 				</td>
 			</tr>
 		</table>

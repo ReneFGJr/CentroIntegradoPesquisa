@@ -4065,9 +4065,8 @@ class ic extends CI_Controller {
 				if ($av_aberta > 0) {
 					
 					
-					$comt['content'] = '<div class="danger border1 lt4" style="border-radius: 10px; padding: 10px;">
-											<img src="' . base_url('img/icon/icone_exclamation.png') . '" height="30" align="left">
-											Já existe(m) a(s) indicação(ões) de ' . $av_aberta . ' avaliador(es) para este projeto
+					$comt['content'] = '<div class="alert alert-warning ">
+							<p><span class="glyphicon glyphicon-alert "></span> Já existe(m) a(s) indicação(ões) de <strong> ' . $av_aberta . ' avaliador(es) </strong> para este projeto</p>
 											</div>';
 					$this -> load -> view('content', $comt);
 
