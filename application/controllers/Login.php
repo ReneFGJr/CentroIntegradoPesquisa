@@ -127,7 +127,6 @@ class login extends CI_Controller {
 
 	function ac($id = 0, $chk = '') {
 		/* Remover */
-		$chk = checkpost_link($id);
 
 		if ($chk != checkpost_link($id)) {
 			//echo checkpost_link($id);
@@ -153,7 +152,10 @@ class login extends CI_Controller {
 				redirect($link);
 			}
 		}
-		echo 'ERRO DE ACESSO!';
+		
+		$link = base_url('index.php/error');
+		redirect($link);
+		
 		exit ;
 	}
 
