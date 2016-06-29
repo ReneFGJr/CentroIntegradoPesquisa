@@ -864,9 +864,9 @@ class Fcas extends CI_model {
 		$rlt = $rlt -> result_array();
 
 		$max = $rlt[0]['max'];
-
 		$fc_max = 100 / $max;
-
+		$nota = '';
+		
 		$sql = "select * from ic_edital
 					INNER JOIN us_usuario on id_us = ed_professor
 					where ed_ano = '$ano' 
@@ -881,26 +881,33 @@ class Fcas extends CI_model {
 					<th>Pesquisador</th>
 					<th width="80">Nota</th>
 				</tr>';
+		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$notaB = $line['ed_nota'];
-			$nota = round($notaB * $fc_max * 100) / 100;
+			$nota = round((($notaB * $fc_max) * 100) / 100);
 
 			//atualiza tabela ic_edital
 			$sql_update = "UPDATE ic_edital 
-								SET ed_nota_normalizada = $nota
-						   WHERE id_ed = " . $line['id_ed'] . cr();
+										 SET ed_nota_normalizada = $nota
+						   			 WHERE id_ed = " . $line['id_ed'] . cr();
 			$this -> db -> query($sql_update);
+			
 			$sx .= '<tr>';
 			$sx .= '<td width="20" align="center">' . ($r + 1) . '</td>';
 			$sx .= '<td>' . $line['ed_protocolo'] . '</td>';
 			$sx .= '<td>' . link_user($line['us_nome'], $line['id_us']) . '</td>';
+			
 			$cor = 'blue';
-			if ($nota < 70) { $cor = 'red';
+			
+			if ($nota < 70) {
+				 $cor = 'red';
 			}
+			
 			$sx .= '<td width="20" align="center" style="color: ' . $cor . ';">' . number_format($nota, 2, ',', '.') . '</td>';
 		}
 		$sx .= '</table>';
+		
 		return ($sx);
 	}
 
@@ -909,7 +916,7 @@ class Fcas extends CI_model {
 			$ano = date('Y');
 		}
 		$sql = "select doc_edital, pp_protocolo, round(1000 * avg(media_notas + resultado.us_fc))/1000 as nota, count(*) as avaliacoes,
-				prof.us_cracha as pf_cracha, prof.id_us as id_pf, prof.us_nome as pf_nome, prof.us_professor_tipo as pf_ss, usuario_titulacao_ust_id as pf_tit 
+					  prof.us_cracha as pf_cracha, prof.id_us as id_pf, prof.us_nome as pf_nome, prof.us_professor_tipo as pf_ss, usuario_titulacao_ust_id as pf_tit 
 						from (select  pp_protocolo, pp_protocolo_mae, media_notas, us_fc, pp_avaliador_id 
 						      from (select pp_protocolo_mae, pp_protocolo, round(1000 * AVG((pp_p01+pp_p02+pp_p03+pp_p04+pp_p05+pp_p11+pp_p12+pp_p13+pp_p14+pp_p15)/10))/1000 as media_notas, us_fc, pp_avaliador_id
 								        from pibic_parecer_" . $ano . "
@@ -920,10 +927,10 @@ class Fcas extends CI_model {
 								        group by pp_protocolo, pp_avaliador_id
 						           ) as media
 						       ) as resultado
-				INNER JOIN ic_submissao_plano ON doc_protocolo = pp_protocolo
-				INNER JOIN us_usuario as prof ON prof.us_cracha = doc_autor_principal
-						group by pp_protocolo, doc_edital, id_pf, prof.us_professor_tipo      
-						order by pp_protocolo, doc_edital, id_pf
+					 INNER JOIN ic_submissao_plano ON doc_protocolo = pp_protocolo
+					 INNER JOIN us_usuario as prof ON prof.us_cracha = doc_autor_principal
+					 group by pp_protocolo, doc_edital, id_pf, prof.us_professor_tipo      
+					 order by pp_protocolo, doc_edital, id_pf
 		";
 
 		$rlt = $this -> db -> query($sql);
@@ -931,7 +938,7 @@ class Fcas extends CI_model {
 
 		//cabecalho
 		$sx = '<table class="tabela00 lt1" width="100%">';
-		$sx .= '<tr class="lt3"><b>Notas individuais atualizadas por protocolo</b></tr>';
+		$sx .= '<tr class="lt3"><b>Edital Geral - Notas individuais atualizadas por protocolo</b></tr>';
 		$sx .= '<tr>
 							<th width="2%">#</th>
 							<th width="8%" align="right">Protocolo</th>

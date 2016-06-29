@@ -365,20 +365,19 @@ class pagamentos extends CI_Model {
 		//$fl = '<a href="'.base_url($file).'">Download do Arquivo</a>';
 		return ($fl);
 	}
-
+	
+	//header do arquivo
 	function header_rq() {
 		$sx = '399';
 		$sx .= '00000';
 		$sx .= '         ';
 		$sx .= '27665982';
-		$sx .= '00001510';
-		// $sx .= '51462'; Trocado convenio de Salário para Outros
-		// Solicitidado pelo Fernando em 17/07/2013
-		// $sx .= '90565';
-		// Solicitidado pelo Fernando em 16/06/2014
-		//$sx .= '51462';//<--contrato anterior valido até 23/06/2016
-		// Solicitidado pelo Fernando em 22/06/2016 alterar o contrato 51462 para 246107
-		$sx .= '246107';//<--novo contrato a partir de 23/06/2016
+		//$sx .= '00001510'; //<-- antigo contrato continha 6 poisições
+		$sx .= '0000151'; //<-- retirado o 0 para atender posicionamento de caracteres para o novo contrato
+		//$sx .= '51462'; //<-- Trocado convenio de Salário para Outros
+		//$sx .= '90565'; //<-- Solicitidado pelo Fernando em 17/07/2013
+		//$sx .= '51462';//<--contrato anterior valido até 23/06/2016 - Solicitidado pelo Fernando em 16/06/2014
+		$sx .= '246107';//<--novo contrato Solicitidado pelo Fernando em 23/06/2016 alterar o contrato 51462 para 246107
 		$sx .= '              ';
 		$sx .= '00000';
 		$sx .= ' ';
@@ -397,13 +396,17 @@ class pagamentos extends CI_Model {
 		return ($sx);
 	}
 
+	//header do lote
 	function header_rq2() {
 		$sx = '399';
-		$sx .= '00011C3001020';
+		//$sx .= '00011C3001020'; //<--o numero 30 nas posições 10 e 11 referece a "salario"
+		$sx .= '00011C2001020'; //<-- alterado para o numero 20 nas posições 10 e 11 refrente a "fornecedor"
 		$sx .= ' ';
-		$sx .= '2766598200001510';
-		//$sx .= '51462';
-		$sx .= '90565';
+		//$sx .= '2766598200001510'; //<-- retirado o 0 para atender posicionamento de caracteres para o novo contrato
+		$sx .= '276659820000151'; //<-- retirado o 0 para atender posicionamento de caracteres para o novo contrato
+		//$sx .= '51462'; //<--contrato anterior valido até 23/06/2016
+		//$sx .= '90565'; //<-- Solicitidado pelo Fernando em 17/07/2013
+		$sx .= '246107';//<--novo contrato Solicitidado pelo Fernando em 23/06/2016 alterar o contrato 51462 para 246107
 		$sx .= '              ';
 		$sx .= '00000';
 		$sx .= ' ';
@@ -449,10 +452,12 @@ class pagamentos extends CI_Model {
 		$conta = $situacao = $this -> bancos -> checadv($line['usc_agencia'], $line['usc_conta_corrente'], $banco, $mod);
 		$agencia = trim($line['usc_agencia']);
 
-		if (strlen($banco) == 0) { echo '<BR>Banco inválido';
+		if (strlen($banco) == 0) {
+			echo '<BR>Banco inválido';
 			return ('');
 		}
-		if (strlen($agencia) == 0) { echo '<BR>Agência inválida';
+		if (strlen($agencia) == 0) {
+			echo '<BR>Agência inválida';
 			return ('');
 		}
 
