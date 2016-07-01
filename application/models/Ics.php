@@ -968,7 +968,7 @@ class ics extends CI_model {
 		$cr = '103.646';
 		$ano = date("Y");
 
-		if (date("m") < 7) {
+		if (date("m") <= 7) {
 			$ano = $ano - 1;
 		}
 
@@ -2158,16 +2158,17 @@ class ics extends CI_model {
 	function resumo($ano = '') {
 		if (strlen($ano) == 0) {
 			$ano = date("Y");
-			if (date("m") < 7) { $ano = (date("Y") - 1);
+			if (date("m") <= 7) {
+				 $ano = (date("Y") - 1);
 			}
 		}
 
 		$sql = "select count(*) as total, mb_tipo, mb_fomento from ic
-            			inner join ic_aluno as pa on ic_id = id_ic
+            inner join ic_aluno as pa on ic_id = id_ic
 						left join ic_situacao on id_s = s_id
 						left join ic_modalidade_bolsa as mode on pa.mb_id = mode.id_mb
 						where ic_ano = '$ano' and (icas_id = 1) 
-            	group by mb_fomento, mb_tipo";
+            group by mb_fomento, mb_tipo";
 
 		$rlt = db_query($sql);
 		$t = array();
@@ -2182,6 +2183,7 @@ class ics extends CI_model {
 			} else {
 				$ed[$edital] = $total;
 			}
+			
 			if (isset($t[$edital][$fomento])) {
 				$t[$edital][$fomento] = $t[$edital][$fomento] + $total;
 			} else {
@@ -4516,7 +4518,7 @@ class ics extends CI_model {
 
 	function resumo_orientacoes_ativas_semic($edital) {
 		$ano = date("Y");
-		if (date("m") < 7) {
+		if (date("m") <= 7) {
 			$ano = $ano - 1;
 		}
 		$sql = "select substring(ic_semic_area, 1,4) as area, ic_semic_area, ac_nome_area, ic_projeto_professor_codigo,  

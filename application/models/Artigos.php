@@ -912,36 +912,123 @@ class artigos extends CI_Model {
 						left join cip_artigo_status on ar_status = cas_status 
 						left join us_usuario on us_cracha = ar_professor
 					where ar_status = $sit
-					order by ar_issn, ar_titulo, ar_update desc
+					order by ar_update desc
 					";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		$sx = '<table width="100%" class="lt1">';
+		$sx = '<table width="100%" class="tabela00">';
+		
+		//Troca de titulo conforme status
+		switch($sit) {
+			case '1' :
+				$sx .= '<tr><td class="lt6" colspan=4> Em cadastro pelo professor </tr>';
+				break;
+			case '8' :
+				$sx .= '<tr><td class="lt6" colspan=4> Em correção pelo professor </tr>';
+				break;
+			case '9' :
+				$sx .= '<tr><td class="lt6" colspan=4> Processos cancelados </tr>';
+				break;
+			case '10' :
+				$sx .= '<tr><td class="lt6" colspan=4> Em validação pelo coordenador </tr>';
+				break;
+			case '15' :
+				$sx .= '<tr><td class="lt6" colspan=4> Processando gratificação </tr>';
+				break;
+			case '70' :
+				$sx .= '<tr><td class="lt6" colspan=4> Selecionado Como CC do Fundo de Pesquisa </tr>';
+				break;
+			case '71' :
+				$sx .= '<tr><td class="lt6" colspan=4> Professor define forma de repasse </tr>';
+				break;
+			case '80' :
+				$sx .= '<tr><td class="lt6" colspan=4> Em validação documental </tr>';
+				break;
+			case '90' :
+				$sx .= '<tr><td class="lt6" colspan=4> Processos finalizados </tr>';
+				break;
+			case '91' :
+				$sx .= '<tr><td class="lt6" colspan=4> Em validação com a Diretoria </tr>';
+				break;
+		}
+		$sx .= '<tr><th align="left" class="lt2">#</th>
+								<th align="left" class="lt2">Protocolo</th>
+								<th align="left" class="lt2">ISSN</th>
+								<th align="left" class="lt2">Professor</th>
+								<th align="left" class="lt2">Projeto</th>
+								<th align="left" class="lt2">Situação</th>
+								<th align="left" class="lt2">Timer</th>
+						</tr>';
+		$tot='';
+		$colorfonta = '';
+		$colorfontb = '';
+			
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
+			//variaveis
 			$id = $line['id_ar'];
 			$link = '<a href="' . base_url('index.php/artigo/detalhe/' . $id . '/' . checkpost_link($id)) . '" class="link lt1">';
-
+			$hoje = strtotime(date('Y-m-d'));//inicio data do sistema
+			$criado = strtotime($line['ar_update']);// data da criacao do protocolo
+			$diferenca = $hoje - $criado;//Calculo da diferença
+			$dias_atraso = (int)floor( $diferenca / (60 * 60 * 24));// Calculando diferença em dias
+			
+			/* Linhas de registros */
+			//identificador
 			$sx .= '<tr>';
-			$sx .= '<td align="center" width="10" class="borderb1">';
+			$sx .= '<td align="center" width="2%">';
 			$sx .= ($r + 1) . '.';
 			$sx .= '</td>';
-
-			$sx .= '<td align="center" class="borderb1">' . $link . $line['ar_protocolo'] . '</a></td>';
-			$sx .= '<td class="borderb1">';
+			//issn
+			$sx .= '<td align="center" width="6%">' . $link . $line['ar_protocolo'] . '</a></td>';
+			//Protocolo
+			$sx .= '<td align="center" width="6%">';
 			$sx .= $line['ar_issn'];
 			$sx .= '</td>';
-
-			$sx .= '<td class="borderb1">' . $line['us_nome'] . '</td>';
-
-			$sx .= '<td width="50%" class="borderb1">' . $line['ar_titulo'] . '</td>';
-
-			$sx .= '<td class="borderb1">' . $line['cas_descricao'] . '</td>';
-
-			$sx .= '</tr>';
-
+			//nome professor
+			$sx .= '<td align="left" width="17%">' . $line['us_nome'] . '</td>';
+			//titulo do projeto
+			$sx .= '<td align="left" width="53%">' . $line['ar_titulo'] . '</td>';
+			//Situacao
+			$sx .= '<td align="left" width="12%">' . $line['cas_descricao'] . '</td>';
+		
+			//somente para perfis autorizados ---------------------------------
+			if(perfil('#OBS')){
+				//Dias atrasado
+				if ($dias_atraso >= 90 ) {
+					$colorfonta = '<font color="red">';
+					$colorfontb = '</font>';
+					$tot++;
+				} else {
+					$colorfonta = '<font color="green">';
+					$colorfontb = '</font>';
+				}
+				
+				if(($sit == 9) or ($sit == 90)){
+					$sx .= '<td align="center" width="4%"> - </td>';
+					$sx .= '</tr>';
+				}else{
+					if($dias_atraso <= 1){
+						$sx .= '<td align="right" width="4%">' . $colorfonta .$dias_atraso . $colorfontb .' dia</td>';
+						$sx .= '</tr>';
+					}
+						$sx .= '<td align="right" width="4%">' . $colorfonta .$dias_atraso . $colorfontb .' dias</td>';
+						$sx .= '</tr>';
+				}
+			}
+			//end ---------------------------------
+		}
+					//somente para perfis autorizados ---------------------------------
+		if(perfil('#OBS')){
+			//totalizados de registros
+			if(($sit == 9) or ($sit == 90)){
+				$sx .= '<tr><td colspan=7 align="right">Sem observações no protocolo</td></tr>';
+			}else{
+				$sx .= '<tr><td colspan=7 align="right">Total de <b>' . $tot . '</b> protocolos atrasados a mais de 90 dias</td></tr>';
+			}
 		}
 		$sx .= '</table>';
+		
 		return ($sx);
 	}
 

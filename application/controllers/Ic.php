@@ -4077,7 +4077,7 @@ class ic extends CI_Controller {
 					$this -> load -> view('content', $data);
 				}
 
-				if (($av_aberta <= 1) or (perfil('#CPI#TST'))) {
+				if (($av_aberta <= 1) or (perfil('#CPI#TST#CPP'))) {
 					
 					$TIPO_AV = 'SUBMI';
 					switch ($dados_projeto['pj_edital']) {

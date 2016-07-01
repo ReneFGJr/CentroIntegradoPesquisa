@@ -57,6 +57,7 @@ $lang['participacao'] = 'participação';
 $lang['Isencoes'] = 'Isenções';
 $lang['isencoes'] = 'isenções';
 $lang['artigos'] = 'Artigos';
+$lang['artigos_bonificacoes'] = 'Artigos e Bonificações';
 $lang['Isencoes_!'] = 'Isenções para indicar';
 $lang['Isencoes_A'] = 'Isenções em processo de liberação';
 $lang['Isencoes_H'] = 'Isenções concedidas';
