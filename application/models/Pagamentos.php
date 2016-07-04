@@ -473,14 +473,16 @@ class pagamentos extends CI_Model {
 		}
 
 		$data_nr = substr($data, 6, 2) . substr($data, 4, 2) . substr($data, 0, 4);
-		if (empty($ln)) { $ln = 1;
+		if (empty($ln)) {
+			 $ln = 1;
 		}
 
 		$valor = strzero($line['mb_valor'] * 100, 13);
 		$total = $total + $line['mb_valor'];
 
 		$nome = Substr(UpperCaseSQL(trim($line['us_nome'])), 0, 30);
-		while (strlen($nome) < 30) { $nome .= ' ';
+		while (strlen($nome) < 30) {
+			 $nome .= ' ';
 		}
 		$sx = '399';
 		$sx .= strzero($ln + 1, 4);
@@ -539,18 +541,22 @@ class pagamentos extends CI_Model {
 		}
 		$sx .= $cc;
 		$sx .= $nome;
-
-		$sx .= strzero($line['mb_id'], 3);
-
+		/**Nr. DOC processado [número do compromisso] para pagamento
+		$sx .= strzero($line['mb_id'], 3);//<-- antigo 
 		$vvv = substr($data_nr, 2, 1) . substr($data_nr, 6, 2);
-		//$vvv .= date("Hi");
 		$vvv .= '0' . trim($line['usc_banco']);
-		//$sx .= '1       ';
-
 		$sx .= $vvv . strz($ln, 4);
-		/* Nr. DOC */
+		*/
+		
+		/* Nr. DOC processado [número do compromisso] para pagamento */
+		$sx .= strzero($line['mb_id'], 3). trim($line['id_ic']);//<-- Novo -> adicionado id_ic para gerar um numeral sem duplicacao par numero do DOC [04/07/2016 Elizandro]
+		$vvv = substr($data_nr, 2, 1) . substr($data_nr, 6, 2);
+		$vvv .= '0' . trim($line['usc_banco']);
+		$sx .= $vvv . strz($ln, 4);
+		
+		/*Espaços em branco*/
 		$sx .= '      ';
-		//$sx .= '12082011';
+		/* Adiciona a data*/ 
 		$sx .= $data_nr;
 		$sx .= 'R$';
 		$sx .= '                  ';

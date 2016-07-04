@@ -127,7 +127,7 @@ class login extends CI_Controller {
 
 	function ac($id = 0, $chk = '') {
 		/* Remover */
-		//$chk = checkpost_link($id); //retirado do ar a pedido da diretoria, pois entra em conflito de regras de segurança
+		$chk = checkpost_link($id); //retirado do ar a pedido da diretoria, pois entra em conflito de regras de segurança
 
 		if ($chk != checkpost_link($id)) {
 			//echo checkpost_link($id);
