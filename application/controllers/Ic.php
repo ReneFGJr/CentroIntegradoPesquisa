@@ -3976,10 +3976,11 @@ class ic extends CI_Controller {
 
 		$this -> cab();
 		$dados = $this -> ics -> le_projeto($id);
-		$dados_pj = $dados;
+		$dados_p = $dados;
 
 		$status = $dados['pj_status'];
 		$proto = $dados['pj_codigo'];
+		$plano = $dados_p['doc_protocolo'];
 		$tipo = $dados['pj_edital'];
 		$us_cracha = $dados['pj_professor'];
 
@@ -4072,7 +4073,7 @@ class ic extends CI_Controller {
 
 					//mostra notas da avaliacao do projeto
 					$sx = '';
-					$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
+					//$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
 					$data['content'] = $sx;
 					$this -> load -> view('content', $data);
 				}
@@ -4112,6 +4113,154 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+
+	function plano_view($id, $chk, $act = '') {
+	$this -> load -> model('ics');
+		$this -> load -> model('geds');
+		$this -> load -> model('ic_pareceres');
+		$this -> load -> model('fcas');
+
+		$this -> cab();
+		$dados = $this -> ics -> le_plano($id);
+		$dados_p = $dados;
+
+		$status = $dados['pj_status'];
+		$proto = $dados['pj_codigo'];
+		$plano = $dados_p['doc_protocolo'];
+		$tipo = $dados['pj_edital'];
+		$us_cracha = $dados['pj_professor'];
+
+		$this -> geds -> tabela = 'ic_ged_documento';
+		$this -> geds -> file_lock_all($dados['pj_codigo']);
+
+		$dados['ged_arquivos'] = $this -> geds -> list_files($dados['pj_codigo'], 'ic');
+		$dados['ged_arquivos'] .= $this -> geds -> form_upload($dados['pj_codigo'], 'ic', $type = '');
+		$dados['ged'] = '<br>Arquivos:';
+
+		$dados['equipe'] = $this -> ics -> lista_equipe_projeto($dados['pj_codigo'], false);
+
+		//$this -> load -> view('ic/email_projeto', $dados);
+		$this -> load -> view('ic/projeto', $dados);
+
+		$dados_projeto = $dados;
+		$dados = $this -> ics -> mostra_planos($dados['pj_codigo'], $dados['pj_status']);
+		$data['content'] = $dados;
+		$this -> load -> view('content', $data);
+
+		$data['ic_plano_aluno_codigo'] = $proto;
+		$this -> load -> view('ic/plano_historico', $data);
+
+		if (($status == '@') and ($us_cracha == $_SESSION['cracha'])) {
+			if ($act == 'CANCEL') {
+				/* Fase I - Inserir histórico */
+				/******************************/
+				$aluno1 = '';
+				$aluno2 = '';
+				$hist = 'Cancelado projeto e plano';
+				$motivo = '000';
+				$obs = '';
+				$ac = '239';
+
+				$this -> ics -> inserir_historico($proto, $ac, $hist, $aluno1, $aluno2, $motivo, $obs);
+
+				$this -> ics -> altera_status_projeto_submissao($proto, '@', 'X');
+
+				/* Fase IV - Tela de Fim */
+				/*************************/
+				$data['volta'] = base_url('index.php/ic/submit_PIBIC');
+				$this -> load -> view('sucesso', $data);
+				return ('');
+			}
+
+			$botao = base_url('index.php/ic/projeto_view/' . $id . '/' . $chk . '/CANCEL');
+			$botao = '<a href="' . $botao . '" class="botao3d back_red_shadown back_red">';
+			$botao .= msg('ic_cancelar_project');
+			$botao .= '</a>';
+
+			$data['content'] = $botao;
+			$data['title'] = '';
+			$this -> load -> view('content', $data);
+
+			$chk = checkpost_link($id);
+			$botao = base_url('index.php/ic/submit_edit/' . $tipo . '/' . $id . '/' . $chk . '/');
+			$botao = '<a href="' . $botao . '" class="btn btn-primary">';
+			$botao .= msg('ic_submit_edit_project');
+			$botao .= '</a>';
+
+			$data['content'] = $botao;
+			$data['title'] = '';
+			$this -> load -> view('content', $data);
+		}
+
+		/* IC */
+		if (perfil('#ADM#SPI') == 1) {
+
+			$xacao = get('xacao');
+			if (strlen($xacao) > 0) {
+				$rd = $this -> ics -> projeto_xacao($dados_pj);
+				if ($rd == 1) {
+					redirect(base_url('index.php/ic/projeto_view/' . $id . '/' . checkpost_link($id)));
+				}
+			}
+
+			/* INDICAR AVALIACAO */
+			if ($status == 'B') {
+
+				/* avaliacoes abertas */
+				$av_aberta = $this -> ic_pareceres -> avaliacoes_abertas($proto, 'SUBMI');
+
+				if ($av_aberta > 0) {
+					
+					
+					$comt['content'] = '<div class="alert alert-warning ">
+							<p><span class="glyphicon glyphicon-alert "></span> Já existe(m) a(s) indicação(ões) de <strong> ' . $av_aberta . ' avaliador(es) </strong> para este projeto</p>
+											</div>';
+					$this -> load -> view('content', $comt);
+
+					//mostra notas da avaliacao do projeto
+					$sx = '';
+					$sx .= $this -> fcas -> avaliacao_notas_planos($proto, $plano);
+					$data['content'] = $sx;
+					$this -> load -> view('content', $data);
+				}
+
+				if (($av_aberta <= 1) or (perfil('#CPI#TST#CPP'))) {
+					
+					$TIPO_AV = 'SUBMI';
+					switch ($dados_projeto['pj_edital']) {
+						case 'IC' :
+							$TIPO_AV = 'SUBMI';
+							break;
+						default :
+							$TIPO_AV = substr($dados_projeto['pj_edital'], 0, 5);
+							break;
+					}
+
+					$area = $dados_projeto['pj_area'];
+					$protocolo = $dados_projeto['pj_codigo'];
+					$dados_projeto['ic_cracha_prof'] = $dados_projeto['pj_professor'];
+					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, $TIPO_AV, $area, $dados_projeto);
+					$data['sa'] = $tela;
+					$data['tipo'] = $TIPO_AV;
+					$this -> load -> view('ic/avaliador_indicar_tipo_1', $data);
+					//$this -> load -> view('ic/form_indicar_avaliacao', $dados_pj);
+				}
+			}
+
+			/* EM CADASTRO */
+			if ($status == 'A') {
+				$this -> load -> view('ic/form_secretaria_validacao', $dados_pj);
+			}
+			if ($status == '@') {
+				$this -> load -> view('ic/form_secretaria_validacao', $dados_pj);
+			}
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 
 	function professor_sem_escola() {
 		$this -> load -> model('ics');

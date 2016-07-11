@@ -23,7 +23,7 @@ class Fcas extends CI_model {
 						where ed_edital = '$edital'
 						$wh
 						and ed_ano = '$ano'
-						order by nota desc
+						order by ed_protocolo_mae, nota desc
 					";
 
 		$rlt = $this -> db -> query($sql);
@@ -52,12 +52,17 @@ class Fcas extends CI_model {
 
 		$tot = 0;
 		$tot2 = 0;
+		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tot++;
 			$edit = '';
+			
 			$proto = round(substr($line['ed_protocolo_mae'], 1, 6));
 			$link_projeto = '<a href="' . base_url('index.php/ic/projeto_view/' . $proto . '/' . checkpost_link($proto)) . '" class="link nopr">';
+			
+			$plano = round(substr($line['ed_protocolo'], 1, 6));
+			$link_plano = '<a href="' . base_url('index.php/ic/plano_view/' . $plano . '/' . checkpost_link($plano)) . '" class="link nopr">';
 			//$nota = $line['ed_nota_normalizada'];
 			$nota = $line['nota'];
 			$cor = '';
@@ -159,7 +164,7 @@ class Fcas extends CI_model {
 			$sx .= '</td>';
 			//Protocolo
 			$sx .= '<td align="center">';
-			$sx .= $link_projeto . $line['ed_protocolo'] . '</a>';
+			$sx .= $link_plano . $line['ed_protocolo'] . '</a>';
 			$sx .= '</td>';
 			//Qtd de avaliações
 			$sx .= '<td align="center">';
@@ -660,7 +665,7 @@ class Fcas extends CI_model {
 		$sx = '';
 		if ((perfil("#ADM#3AV#CPP") == 1)) {
 			$ano = date("Y");
-			$sql = "select pp_protocolo_mae, pp_protocolo,
+			$sql = "select pp_protocolo_mae, pp_protocolo, pp_avaliador_id, id_pp, 
 	                 pp_p01, pp_p02, pp_p03,
 	                 pp_p04, pp_p05, pp_p11,
 	                 pp_p12, pp_p13, pp_p14,
@@ -673,7 +678,7 @@ class Fcas extends CI_model {
 	                 pp_abe_16, pp_abe_17, pp_abe_18,
 	                 pp_abe_19
 		        from pibic_parecer_" . $ano . "
-		        where pp_protocolo_mae = " . $proto . "
+		        where pp_protocolo = " . $proto . "
 		        and pp_tipo <> 'SUBMI'
 		        and pp_status = 'B'
 						";
@@ -701,7 +706,10 @@ class Fcas extends CI_model {
 							<th align="center">nt_13</th>
 							<th align="center">nt_14</th>
 							<th align="center">nt_15</th>
-						  <th align="center">Observações</th>
+							<th align="center">id Proj.</th>
+							<th align="center">id Prof.</th>
+						  <th align="center">Comentários projeto Professor</th>
+						  <th align="center">Comentários plano do aluno</th>
 						</tr>';
 
 			/*linhas da tabela*/
@@ -723,7 +731,7 @@ class Fcas extends CI_model {
 				//variaveis
 				$proto = $line['pp_protocolo'];
 				$proto_mae = $line['pp_protocolo_mae'];
-				$observacoes = '';
+				$observacoes = 'pp_abe_01';
 				$obsv = '';
 
 				//chama observacoes
@@ -795,6 +803,25 @@ class Fcas extends CI_model {
 				$sx .= '<td align="center">';
 				$sx .= $nt_p15;
 				$sx .= '</td>';
+				
+				$sx .= '<td align="left">';
+				$sx .= $line['id_pp'];
+				$sx .= '</td>';
+				
+				$sx .= '<td align="left">';
+				$sx .= $line['pp_avaliador_id'];
+				$sx .= '</td>';				
+				
+				$sx .= '<td align="left" width="50%">';
+				$sx .= $line['pp_abe_01'];
+				$sx .= '</td>';				
+				
+				$sx .= '<td align="left" width="50%">';
+				$sx .= $line['pp_abe_11'];
+				$sx .= '</td>';
+
+			
+			/**
 
 				//observações
 				if (strlen($observacoes) > 0) {
@@ -847,7 +874,237 @@ class Fcas extends CI_model {
 					$sx .= '</td>';
 				}
 			}
-		$sx .= '</table>';
+		
+			 * */
+			 }
+			 $sx .= '</table>';
+		$sx .= '</div>';	
+		}
+
+	
+		return ($sx);
+
+	}
+
+		function avaliacao_notas_planos($proto, $plano) {
+		$sx = '';
+		if ((perfil("#ADM#3AV#CPP") == 1)) {
+			$ano = date("Y");
+			$sql = "select distinct id_pp, pp_protocolo_mae, pp_protocolo, pp_avaliador_id,  
+	                 pp_p01, pp_p02, pp_p03,
+	                 pp_p04, pp_p05, pp_p11,
+	                 pp_p12, pp_p13, pp_p14,
+	                 pp_p15,
+	                 pp_abe_01, pp_abe_02, pp_abe_03,
+	                 pp_abe_04, pp_abe_05, pp_abe_06,
+	                 pp_abe_07, pp_abe_08, pp_abe_09,
+	                 pp_abe_10, pp_abe_11, pp_abe_12,
+	                 pp_abe_13, pp_abe_14, pp_abe_15,
+	                 pp_abe_16, pp_abe_17, pp_abe_18,
+	                 pp_abe_19
+		        from pibic_parecer_" . $ano . "
+		        where pp_protocolo_mae = " . $proto . "
+		        and pp_protocolo = " . $plano . "
+		        and pp_tipo <> 'SUBMI'
+		        and pp_status = 'B'
+		        group by pp_abe_01
+						";
+
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array($rlt);
+			
+			//cabecalho
+			$sx = '<div class="alert alert-info" style="padding:5px 10px;">';
+			$sx .= '<table class="tabela00 lt1" width="100%">';
+			$sx .= '<tr class="lt3"><th></th>';
+			$sx .= '<tr class="lt3"><th><b></b></th>';
+			$sx .= '<th colspan=20>Notas dos formulário</th></tr>';
+			$sx .= '<tr>
+							<th>#</th>
+							<th align="left">Protocolo</th>
+							<th align="left">Protocolo mãe</th>	
+							<th align="center">nt_01</th>
+							<th align="center">nt_02</th>
+							<th align="center">nt_03</th>
+							<th align="center">nt_04</th>
+							<th align="center">nt_05</th>
+							<th align="center">nt_11</th>
+							<th align="center">nt_12</th>
+							<th align="center">nt_13</th>
+							<th align="center">nt_14</th>
+							<th align="center">nt_15</th>
+							<th align="center">id Proj.</th>
+							<th align="center">id Prof.</th>
+						  <th align="center">Comentários projeto Professor</th>
+						  <th align="center">Comentários plano do aluno</th>
+						</tr>';
+
+			/*linhas da tabela*/
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+
+				//notas
+				$nt_p01 = $line['pp_p01'];
+				$nt_p02 = $line['pp_p02'];
+				$nt_p03 = $line['pp_p03'];
+				$nt_p04 = $line['pp_p04'];
+				$nt_p05 = $line['pp_p05'];
+				$nt_p11 = $line['pp_p11'];
+				$nt_p12 = $line['pp_p12'];
+				$nt_p13 = $line['pp_p13'];
+				$nt_p14 = $line['pp_p14'];
+				$nt_p15 = $line['pp_p15'];
+
+				//variaveis
+				$plano_proj = $plano;
+				$proto_mae = $proto;
+				$observacoes = 'pp_abe_01';
+				$obsv = '';
+
+				//chama observacoes
+				for ($i = 1; $i < 15; $i++) {
+					if ($i == 6) {
+						$i = 11;
+					}
+					//variavel
+					$obs_ab = $line['pp_abe_' . strzero($i, 2)];
+
+					if (strlen($obs_ab) > 0) {
+						$observacoes .= $line['pp_protocolo'] . ': ' . $obs_ab . cr() . cr();
+					}
+				}
+
+				//variavel
+				$observacoes2 = 'Sem observações';
+
+				$sx .= '<tr>';
+				//indice
+				$sx .= '<td align="center">';
+				$sx .= $r + 1;
+				$sx .= '</td>';
+				//protocolo
+				$sx .= '<td align="center">';
+				$sx .= $plano_proj;
+				$sx .= '</td>';
+				////protocolo mae
+				$sx .= '<td align="center">';
+				$sx .= $proto;
+				$sx .= '</td>';
+				//nota 01
+				$sx .= '<td align="center">';
+				$sx .= $nt_p01;
+				$sx .= '</td>';
+				//nota 02
+				$sx .= '<td align="center">';
+				$sx .= $nt_p02;
+				$sx .= '</td>';
+				//nota 03
+				$sx .= '<td align="center">';
+				$sx .= $nt_p03;
+				$sx .= '</td>';
+				//nota 04
+				$sx .= '<td align="center">';
+				$sx .= $nt_p04;
+				$sx .= '</td>';
+				//nota 05
+				$sx .= '<td align="center">';
+				$sx .= $nt_p05;
+				$sx .= '</td>';
+				//nota 11
+				$sx .= '<td align="center">';
+				$sx .= $nt_p11;
+				$sx .= '</td>';
+				//nota 12
+				$sx .= '<td align="center">';
+				$sx .= $nt_p12;
+				$sx .= '</td>';
+				//nota 13
+				$sx .= '<td align="center">';
+				$sx .= $nt_p13;
+				$sx .= '</td>';
+				//nota 14
+				$sx .= '<td align="center">';
+				$sx .= $nt_p14;
+				$sx .= '</td>';
+				//nota 15
+				$sx .= '<td align="center">';
+				$sx .= $nt_p15;
+				$sx .= '</td>';
+				
+				$sx .= '<td align="left">';
+				$sx .= $line['id_pp'];
+				$sx .= '</td>';
+				
+				$sx .= '<td align="left">';
+				$sx .= $line['pp_avaliador_id'];
+				$sx .= '</td>';				
+				
+				$sx .= '<td align="left" width="50%">';
+				$sx .= $line['pp_abe_01'];
+				$sx .= '</td>';				
+				
+				$sx .= '<td align="left" width="50%">';
+				$sx .= $line['pp_abe_11'];
+				$sx .= '</td>';
+
+			
+			/**
+
+				//observações
+				if (strlen($observacoes) > 0) {
+					$sx .= '<td align="center">';
+					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-warning" data-toggle="modal" data-target="#myModal">
+									  Verificar
+									</button>
+
+									<!-- Modal -->
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+									  <div class="modal-dialog" role="document">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									        <h4 class="modal-title" id="myModalLabel">Observações do avaliador</h4>
+									      </div>
+									      <div class="modal-body text-left">
+									        ' . mst($observacoes) . '
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+									      </div>
+									    </div>
+									  </div>
+									</div>';
+					$sx .= '</td>';
+				} else {
+					$sx .= '<td align="center">';
+					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-success" data-toggle="modal" data-target="#myModal">
+									  Verificar
+									</button>
+
+									<!-- Modal -->
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+									  <div class="modal-dialog" role="document">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									        <h4 class="modal-title" id="myModalLabel">Observações do avaliador</h4>
+									      </div>
+									      <div class="modal-body">
+									        ' . mst($observacoes2) . '
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+									      </div>
+									    </div>
+									  </div>
+									</div>';
+					$sx .= '</td>';
+				}
+			}
+		
+			 * */
+			 }
+			 $sx .= '</table>';
 		$sx .= '</div>';	
 		}
 
