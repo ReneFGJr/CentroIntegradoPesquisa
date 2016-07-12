@@ -2616,7 +2616,6 @@ class ics extends CI_model {
 	}
 
 	function le_projeto($id) {
-		/**	
 		$sql = "select *, 
 					aluno.us_nome as al_nome, aluno.id_us as id_al,
 					prof.us_nome as pf_nome, prof.id_us as id_pf
@@ -2626,22 +2625,9 @@ class ics extends CI_model {
 					LEFT JOIN area_conhecimento ON pj_area = ac_cnpq
 					LEFT JOIN ic_submissao_situacao on pj_status = ssi_status  
 				where id_pj = " . $id;
-			*/	
-		$sql = "select *, 
-						aluno.us_nome as al_nome, aluno.id_us as id_al,
-						prof.us_nome as pf_nome, prof.id_us as id_pf
-						FROM ic_submissao_projetos
-						LEFT JOIN us_usuario as prof  on prof.us_cracha = pj_professor
-						LEFT JOIN us_usuario as aluno on aluno.us_cracha = pj_aluno
-						LEFT JOIN area_conhecimento ON pj_area = ac_cnpq
-						LEFT JOIN ic_submissao_situacao on pj_status = ssi_status
-						left join ic_submissao_plano on  pj_codigo =  doc_protocolo_mae
-						where id_pj =" . $id;
-				
 				
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		
 		
 		if (count($rlt) > 0) {
 			$rlt = $rlt[0];

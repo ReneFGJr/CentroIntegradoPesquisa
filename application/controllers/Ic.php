@@ -3980,7 +3980,6 @@ class ic extends CI_Controller {
 
 		$status = $dados['pj_status'];
 		$proto = $dados['pj_codigo'];
-		$plano = $dados_p['doc_protocolo'];
 		$tipo = $dados['pj_edital'];
 		$us_cracha = $dados['pj_professor'];
 
@@ -4073,7 +4072,7 @@ class ic extends CI_Controller {
 
 					//mostra notas da avaliacao do projeto
 					$sx = '';
-					//$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
+					$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
 					$data['content'] = $sx;
 					$this -> load -> view('content', $data);
 				}

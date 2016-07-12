@@ -667,7 +667,7 @@ class Fcas extends CI_model {
 			$ano = date("Y");
 			$sql = "select pp_protocolo_mae, pp_protocolo, pp_avaliador_id, id_pp, 
 	                 pp_p01, pp_p02, pp_p03,
-	                 pp_p04, pp_p05, pp_p11,
+	                 pp_p04, pp_p05, pp_p06, pp_p11,
 	                 pp_p12, pp_p13, pp_p14,
 	                 pp_p15,
 	                 pp_abe_01, pp_abe_02, pp_abe_03,
@@ -678,9 +678,10 @@ class Fcas extends CI_model {
 	                 pp_abe_16, pp_abe_17, pp_abe_18,
 	                 pp_abe_19
 		        from pibic_parecer_" . $ano . "
-		        where pp_protocolo = " . $proto . "
+		        where pp_protocolo_mae = " . $proto . "
 		        and pp_tipo <> 'SUBMI'
 		        and pp_status = 'B'
+		        group by pp_avaliador_id
 						";
 
 			$rlt = $this -> db -> query($sql);
@@ -691,28 +692,23 @@ class Fcas extends CI_model {
 			$sx .= '<table class="tabela00 lt1" width="100%">';
 			$sx .= '<tr class="lt3"><th></th>';
 			$sx .= '<tr class="lt3"><th><b></b></th>';
-			$sx .= '<th colspan=20>Notas dos formulário</th></tr>';
+			$sx .= '<th colspan="9" class="lt3">Avaliação sobre o Projeto do professor</th></tr>';
 			$sx .= '<tr>
 							<th>#</th>
-							<th align="left">Protocolo</th>
-							<th align="left">Protocolo mãe</th>	
-							<th align="center">nt_01</th>
-							<th align="center">nt_02</th>
-							<th align="center">nt_03</th>
-							<th align="center">nt_04</th>
-							<th align="center">nt_05</th>
-							<th align="center">nt_11</th>
-							<th align="center">nt_12</th>
-							<th align="center">nt_13</th>
-							<th align="center">nt_14</th>
-							<th align="center">nt_15</th>
-							<th align="center">id Proj.</th>
-							<th align="center">id Prof.</th>
-						  <th align="center">Comentários projeto Professor</th>
-						  <th align="center">Comentários plano do aluno</th>
+							<th align="left"   class="lt2">Protocolo Proj.</th>	
+							<th align="center" class="lt2">CT_01</th>
+							<th align="center" class="lt2">CT_02</th>
+							<th align="center" class="lt2">CT_03</th>
+							<th align="center" class="lt2">CT_04</th>
+							<th align="center" class="lt2">CT_05</th>
+							<th align="center" class="lt2">CT_06</th>
+						  <th align="center" class="lt2">Comentários do projeto</th>
 						</tr>';
 
 			/*linhas da tabela*/
+			
+			$id_aval = '';
+			
 			for ($r = 0; $r < count($rlt); $r++) {
 				$line = $rlt[$r];
 
@@ -722,6 +718,7 @@ class Fcas extends CI_model {
 				$nt_p03 = $line['pp_p03'];
 				$nt_p04 = $line['pp_p04'];
 				$nt_p05 = $line['pp_p05'];
+				$nt_p06 = $line['pp_p06'];
 				$nt_p11 = $line['pp_p11'];
 				$nt_p12 = $line['pp_p12'];
 				$nt_p13 = $line['pp_p13'];
@@ -731,7 +728,7 @@ class Fcas extends CI_model {
 				//variaveis
 				$proto = $line['pp_protocolo'];
 				$proto_mae = $line['pp_protocolo_mae'];
-				$observacoes = 'pp_abe_01';
+				$observacoes = '';
 				$obsv = '';
 
 				//chama observacoes
@@ -755,71 +752,201 @@ class Fcas extends CI_model {
 				$sx .= '<td align="center">';
 				$sx .= $r + 1;
 				$sx .= '</td>';
-				//protocolo
-				$sx .= '<td align="center">';
-				$sx .= $proto;
-				$sx .= '</td>';
-				////protocolo mae
+				
+				//protocolo mae
 				$sx .= '<td align="center">';
 				$sx .= $proto_mae;
 				$sx .= '</td>';
+				
 				//nota 01
-				$sx .= '<td align="center">';
-				$sx .= $nt_p01;
-				$sx .= '</td>';
+				switch ($nt_p01) {
+					case '20':
+						$sx .= '<td align="center">';
+						$sx .= 'Excelente';
+						$sx .= '</td>';
+						break;
+					case '15':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito bom';
+						$sx .= '</td>';
+						break;
+					case '11':
+						$sx .= '<td align="center">';
+						$sx .= 'Bom';
+						$sx .= '</td>';
+						break;
+					case '7':
+						$sx .= '<td align="center">';
+						$sx .= 'Regular';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Ruim';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito ruim';
+						$sx .= '</td>';
+						break;	
+					default:
+						echo "Erro!";
+						break;
+				}
+								
 				//nota 02
-				$sx .= '<td align="center">';
-				$sx .= $nt_p02;
-				$sx .= '</td>';
+				switch ($nt_p02) {
+					case '20':
+						$sx .= '<td align="center">';
+						$sx .= 'Excelente';
+						$sx .= '</td>';
+						break;
+					case '15':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito bom';
+						$sx .= '</td>';
+						break;
+					case '11':
+						$sx .= '<td align="center">';
+						$sx .= 'Bom';
+						$sx .= '</td>';
+						break;
+					case '7':
+						$sx .= '<td align="center">';
+						$sx .= 'Regular';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Ruim';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito ruim';
+						$sx .= '</td>';
+						break;	
+					default:
+						echo "Erro!";
+						break;
+				}
 				//nota 03
-				$sx .= '<td align="center">';
-				$sx .= $nt_p03;
-				$sx .= '</td>';
+				switch ($nt_p03) {
+					case '20':
+						$sx .= '<td align="center">';
+						$sx .= 'Excelente';
+						$sx .= '</td>';
+						break;
+					case '15':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito bom';
+						$sx .= '</td>';
+						break;
+					case '11':
+						$sx .= '<td align="center">';
+						$sx .= 'Bom';
+						$sx .= '</td>';
+						break;
+					case '7':
+						$sx .= '<td align="center">';
+						$sx .= 'Regular';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Ruim';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito ruim';
+						$sx .= '</td>';
+						break;	
+					default:
+						echo "Erro!";
+						break;
+				}
 				//nota 04
-				$sx .= '<td align="center">';
-				$sx .= $nt_p04;
-				$sx .= '</td>';
+				switch ($nt_p04) {
+					case '11':
+						$sx .= '<td align="center">';
+						$sx .= 'Sim';
+						$sx .= '</td>';
+						break;
+					case '10':
+						$sx .= '<td align="center">';
+						$sx .= 'Não';
+						$sx .= '</td>';
+						break;
+					default:
+						echo "Erro!";
+						break;
+				}
 				//nota 05
-				$sx .= '<td align="center">';
-				$sx .= $nt_p05;
-				$sx .= '</td>';
-				//nota 11
-				$sx .= '<td align="center">';
-				$sx .= $nt_p11;
-				$sx .= '</td>';
-				//nota 12
-				$sx .= '<td align="center">';
-				$sx .= $nt_p12;
-				$sx .= '</td>';
-				//nota 13
-				$sx .= '<td align="center">';
-				$sx .= $nt_p13;
-				$sx .= '</td>';
-				//nota 14
-				$sx .= '<td align="center">';
-				$sx .= $nt_p14;
-				$sx .= '</td>';
-				//nota 15
-				$sx .= '<td align="center">';
-				$sx .= $nt_p15;
-				$sx .= '</td>';
+				switch ($nt_p05) {
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Sim';
+						$sx .= '</td>';
+						break;
+					case '2':
+						$sx .= '<td align="center">';
+						$sx .= 'Não';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Tenho dúvidas';
+						$sx .= '</td>';
+						break;
+					case '4':
+						$sx .= '<td align="center">';
+						$sx .= 'Já existe o parecer';
+						$sx .= '</td>';
+						break;		
+					default:
+						echo "Erro!";
+						break;
+				}	
 				
-				$sx .= '<td align="left">';
-				$sx .= $line['id_pp'];
-				$sx .= '</td>';
+				//nota 06
+				if(isset($nt_p06)){
+					switch ($nt_p06) {
+						case '1':
+							$sx .= '<td align="center">';
+							$sx .= 'Sim';
+							$sx .= '</td>';
+							break;
+						case '2':
+							$sx .= '<td align="center">';
+							$sx .= 'Não';
+							$sx .= '</td>';
+							break;
+						case '3':
+							$sx .= '<td align="center">';
+							$sx .= 'Tenho dúvidas';
+							$sx .= '</td>';
+							break;
+						case '4':
+							$sx .= '<td align="center">';
+							$sx .= 'Já existe o parecer';
+							$sx .= '</td>';
+							break;		
+						default:
+							break;
+					} 
+					}else{
+						$sx .= '<td align="center">';
+						$sx .= '-';
+						$sx .= '</td>';
+					}		
 				
-				$sx .= '<td align="left">';
-				$sx .= $line['pp_avaliador_id'];
-				$sx .= '</td>';				
 				
-				$sx .= '<td align="left" width="50%">';
+				//comentario
+				$sx .= '<td width="50%" align="left">';
 				$sx .= $line['pp_abe_01'];
 				$sx .= '</td>';				
-				
-				$sx .= '<td align="left" width="50%">';
-				$sx .= $line['pp_abe_11'];
-				$sx .= '</td>';
-
 			
 			/**
 
@@ -890,9 +1017,9 @@ class Fcas extends CI_model {
 		$sx = '';
 		if ((perfil("#ADM#3AV#CPP") == 1)) {
 			$ano = date("Y");
-			$sql = "select distinct id_pp, pp_protocolo_mae, pp_protocolo, pp_avaliador_id,  
+			$sql = "select pp_protocolo_mae, pp_protocolo, pp_avaliador_id, id_pp, 
 	                 pp_p01, pp_p02, pp_p03,
-	                 pp_p04, pp_p05, pp_p11,
+	                 pp_p04, pp_p05, pp_p06, pp_p11,
 	                 pp_p12, pp_p13, pp_p14,
 	                 pp_p15,
 	                 pp_abe_01, pp_abe_02, pp_abe_03,
@@ -918,25 +1045,16 @@ class Fcas extends CI_model {
 			$sx .= '<table class="tabela00 lt1" width="100%">';
 			$sx .= '<tr class="lt3"><th></th>';
 			$sx .= '<tr class="lt3"><th><b></b></th>';
-			$sx .= '<th colspan=20>Notas dos formulário</th></tr>';
+			$sx .= '<th colspan="7" class="lt3">Avaliação do Plano do Aluno</th></tr>';
 			$sx .= '<tr>
 							<th>#</th>
-							<th align="left">Protocolo</th>
-							<th align="left">Protocolo mãe</th>	
-							<th align="center">nt_01</th>
-							<th align="center">nt_02</th>
-							<th align="center">nt_03</th>
-							<th align="center">nt_04</th>
-							<th align="center">nt_05</th>
-							<th align="center">nt_11</th>
-							<th align="center">nt_12</th>
-							<th align="center">nt_13</th>
-							<th align="center">nt_14</th>
-							<th align="center">nt_15</th>
-							<th align="center">id Proj.</th>
-							<th align="center">id Prof.</th>
-						  <th align="center">Comentários projeto Professor</th>
-						  <th align="center">Comentários plano do aluno</th>
+							<th align="left" class="lt2">Plano</th>
+							<th align="left" class="lt2">Protocolo mãe</th>	
+							<th align="center" class="lt2">CT_01</th>
+							<th align="center" class="lt2">CT_02</th>
+							<th align="center" class="lt2">CT_03</th>
+							<th align="center" class="lt2">Pergunta</th>
+						  <th align="center" class="lt2">Comentários sobre plano do aluno</th>
 						</tr>';
 
 			/*linhas da tabela*/
@@ -990,58 +1108,121 @@ class Fcas extends CI_model {
 				$sx .= '<td align="center">';
 				$sx .= $proto;
 				$sx .= '</td>';
-				//nota 01
-				$sx .= '<td align="center">';
-				$sx .= $nt_p01;
-				$sx .= '</td>';
-				//nota 02
-				$sx .= '<td align="center">';
-				$sx .= $nt_p02;
-				$sx .= '</td>';
-				//nota 03
-				$sx .= '<td align="center">';
-				$sx .= $nt_p03;
-				$sx .= '</td>';
-				//nota 04
-				$sx .= '<td align="center">';
-				$sx .= $nt_p04;
-				$sx .= '</td>';
-				//nota 05
-				$sx .= '<td align="center">';
-				$sx .= $nt_p05;
-				$sx .= '</td>';
-				//nota 11
-				$sx .= '<td align="center">';
-				$sx .= $nt_p11;
-				$sx .= '</td>';
-				//nota 12
-				$sx .= '<td align="center">';
-				$sx .= $nt_p12;
-				$sx .= '</td>';
+			
+				//nota 1
+				switch ($nt_p11) {
+					case '20':
+						$sx .= '<td align="center">';
+						$sx .= 'Excelente';
+						$sx .= '</td>';
+						break;
+					case '15':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito bom';
+						$sx .= '</td>';
+						break;
+					case '11':
+						$sx .= '<td align="center">';
+						$sx .= 'Bom';
+						$sx .= '</td>';
+						break;
+					case '7':
+						$sx .= '<td align="center">';
+						$sx .= 'Regular';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Ruim';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito ruim';
+						$sx .= '</td>';
+						break;	
+					default:
+						echo "Erro!";
+						break;
+				}
+				//nota 2
+				switch ($nt_p12) {
+					case '20':
+						$sx .= '<td align="center">';
+						$sx .= 'Excelente';
+						$sx .= '</td>';
+						break;
+					case '15':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito bom';
+						$sx .= '</td>';
+						break;
+					case '11':
+						$sx .= '<td align="center">';
+						$sx .= 'Bom';
+						$sx .= '</td>';
+						break;
+					case '7':
+						$sx .= '<td align="center">';
+						$sx .= 'Regular';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Ruim';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito ruim';
+						$sx .= '</td>';
+						break;	
+					default:
+						echo "Erro!";
+						break;
+				}
 				//nota 13
-				$sx .= '<td align="center">';
-				$sx .= $nt_p13;
-				$sx .= '</td>';
+				switch ($nt_p13) {
+					case '10':
+						$sx .= '<td align="center">';
+						$sx .= 'Adequado';
+						$sx .= '</td>';
+						break;
+					case '5':
+						$sx .= '<td align="center">';
+						$sx .= 'Parcialmente adequado';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Inadequado';
+						$sx .= '</td>';
+						break;
+					default:
+						echo "Erro!";
+						break;
+				}
 				//nota 14
-				$sx .= '<td align="center">';
-				$sx .= $nt_p14;
-				$sx .= '</td>';
-				//nota 15
-				$sx .= '<td align="center">';
-				$sx .= $nt_p15;
-				$sx .= '</td>';
-				
-				$sx .= '<td align="left">';
-				$sx .= $line['id_pp'];
-				$sx .= '</td>';
-				
-				$sx .= '<td align="left">';
-				$sx .= $line['pp_avaliador_id'];
-				$sx .= '</td>';				
-				
-				$sx .= '<td align="left" width="50%">';
-				$sx .= $line['pp_abe_01'];
-				$sx .= '</td>';				
+				switch ($nt_p14) {
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'SIM';
+						$sx .= '</td>';
+						break;
+					case '2':
+						$sx .= '<td align="center">';
+						$sx .= 'Não';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Tenho dúvidas';
+						$sx .= '</td>';
+						break;
+					default:
+						echo "Erro!";
+						break;
+				}						
 				
 				$sx .= '<td align="left" width="50%">';
 				$sx .= $line['pp_abe_11'];
