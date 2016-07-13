@@ -14,6 +14,7 @@ array_push($cp,array('$T80:4','sm_rem_04','Resultado(s)',False,True));
 array_push($cp,array('$T80:4','sm_rem_05','Considerações',False,True));
 array_push($cp,array('$S250','sm_rem_06','Palavras-chave',False,True));
 
+/** retirado do ar em 13/07/2016 -->solicitado pela Cleybe pois para este semic 2016 não havera resumo em inglês
 array_push($cp,array('$A','','Resumo em Inglês',False,True));
 array_push($cp,array('$T80:4','sm_rem_11','Introduction',False,True));
 array_push($cp,array('$T80:4','sm_rem_12','Purpose',False,True));
@@ -21,6 +22,7 @@ array_push($cp,array('$T80:4','sm_rem_13','Method',False,True));
 array_push($cp,array('$T80:4','sm_rem_14','Result(s)',False,True));
 array_push($cp,array('$T80:4','sm_rem_15','Conclusions ',False,True));
 array_push($cp,array('$S250','sm_rem_16','Keywords',False,True));
+*/
 
 array_push($cp,array('$B8','','Salvar resumo',False,True));
 $form = new form;

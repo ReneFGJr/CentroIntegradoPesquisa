@@ -23,7 +23,7 @@ class Fcas extends CI_model {
 						where ed_edital = '$edital'
 						$wh
 						and ed_ano = '$ano'
-						order by ed_protocolo_mae, nota desc
+						order by nota desc
 					";
 
 		$rlt = $this -> db -> query($sql);
@@ -158,14 +158,30 @@ class Fcas extends CI_model {
 				 $cor = 'red';
 			}
 			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($nota, 2, ',', '.') . '</td>';
+			
+			if ((perfil("#CPP") == 1)) {
 			//Protocolo mae
 			$sx .= '<td align="center">';
 			$sx .= $link_projeto . $line['ed_protocolo_mae'] . '</a>';
 			$sx .= '</td>';
+			
 			//Protocolo
 			$sx .= '<td align="center">';
 			$sx .= $link_plano . $line['ed_protocolo'] . '</a>';
 			$sx .= '</td>';
+			}else{
+				//Protocolo mae
+			$sx .= '<td align="center">';
+			$sx .= $line['ed_protocolo_mae'];
+			$sx .= '</td>';
+			
+			//Protocolo
+			$sx .= '<td align="center">';
+			$sx .= $line['ed_protocolo'];
+			$sx .= '</td>';
+				
+			}
+			
 			//Qtd de avaliações
 			$sx .= '<td align="center">';
 			$sx .= $line['ed_avaliacoes'];
@@ -706,9 +722,6 @@ class Fcas extends CI_model {
 						</tr>';
 
 			/*linhas da tabela*/
-			
-			$id_aval = '';
-			
 			for ($r = 0; $r < count($rlt); $r++) {
 				$line = $rlt[$r];
 
@@ -728,9 +741,10 @@ class Fcas extends CI_model {
 				//variaveis
 				$proto = $line['pp_protocolo'];
 				$proto_mae = $line['pp_protocolo_mae'];
-				$observacoes = '';
+				//$observacoes = '';
 				$obsv = '';
-
+				
+				/**
 				//chama observacoes
 				for ($i = 1; $i < 15; $i++) {
 					if ($i == 6) {
@@ -743,10 +757,11 @@ class Fcas extends CI_model {
 						$observacoes .= $line['pp_protocolo'] . ': ' . $obs_ab . cr() . cr();
 					}
 				}
-
-				//variavel
-				$observacoes2 = 'Sem observações';
-
+				
+					//variavel
+					//$observacoes2 = 'Sem observações';
+				*/
+					
 				$sx .= '<tr>';
 				//indice
 				$sx .= '<td align="center">';
@@ -911,8 +926,8 @@ class Fcas extends CI_model {
 				}	
 				
 				//nota 06
-				if(isset($nt_p06)){
-					switch ($nt_p06) {
+				if($nt_p06 != ''){
+					switch ($nt_p06){
 						case '1':
 							$sx .= '<td align="center">';
 							$sx .= 'Sim';

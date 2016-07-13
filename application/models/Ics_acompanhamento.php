@@ -667,7 +667,8 @@ class ics_acompanhamento extends CI_model {
 	function periodo_atividade($n, $ano = 0) {
 		if ($ano == 0) {
 			$ano = date("Y");
-			if (date("m") < 7) { $ano--;
+			if (date("m") <= 10) {
+				 $ano--;
 			}
 		}
 		$sql = "select * from ic_atividade where at_atividade = '$n' and at_ano = '$ano' ";
@@ -722,7 +723,7 @@ class ics_acompanhamento extends CI_model {
 	function submissao_relatorio_final() {
 		/* professor */
 		$ano = date("Y");
-		if (date("m") < 7) {
+		if (date("m") <= 10) {//substituiu o range de <7 para aparecer a submissão do RF
 			$ano--;
 		}
 		/* reliza consulta */
@@ -792,7 +793,7 @@ class ics_acompanhamento extends CI_model {
 	function submissao_relatorio_final_correcoes() {
 		/* professor */
 		$ano = date("Y");
-		if (date("m") < 7) {
+		if (date("m") <= 10) {//substituiu o range de <7 para aparecer a submissão do RF
 			$ano--;
 		}
 		/* reliza consulta */
@@ -823,13 +824,12 @@ class ics_acompanhamento extends CI_model {
 			$it = array();
 		}
 		return ($it);
-
 	}
 	
 	function submissao_resumo() {
 		/* professor */
 		$ano = date("Y");
-		if (date("m") < 7) {
+		if (date("m") <= 10) { //Trava no sistema para bloquear a submissão de resumo
 			$ano--;
 		}
 		/* reliza consulta */

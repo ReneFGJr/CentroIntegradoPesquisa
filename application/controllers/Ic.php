@@ -4115,7 +4115,7 @@ class ic extends CI_Controller {
 
 
 	function plano_view($id, $chk, $act = '') {
-	$this -> load -> model('ics');
+		$this -> load -> model('ics');
 		$this -> load -> model('geds');
 		$this -> load -> model('ic_pareceres');
 		$this -> load -> model('fcas');

@@ -26,9 +26,12 @@ if (strlen($acao) > 0) {
 		}	
 }
 ?>
-
 <br>
-<h3>Ficha de avaliação do Plano do estudante - Plano <?php echo round(($ddx/10)-3);?></h3>
+<ul>
+		<br>
+    <hr style="height:2px; border:none; color:#000; background-color:#000; margin-top: 0px; margin-bottom: 0px;">
+</ul>
+<h3>Avaliação do Plano do estudante - Plano <?php echo round(($ddx/10)-3);?></h3>
 <form method="post">
 <table width="90%" align="center">
 <tr>
@@ -120,24 +123,27 @@ switch ($doc_edital)
 		break;
 		
 	case 'PIBITI':
-		
-		$resposta = array('1'=>'SIM, deve migrar para o PIBITI','2'=>'NÃO','3'=>'Tenho dúvidas');
-		$size = "33%";
-		
-		echo '<table cellpadding="5">'.cr();
-		echo '<tr '.$obtr[$r].'>'.cr();
-		echo '5) '.$ob[$r].' <b>Critério 4:</b> ';
-		echo 'Este projeto apresenta inovação tecnológica ?';
-		foreach ($resposta as $item => $valor) {
-			$checked = '';
-			$bg = '';
-			if (get("dd".$r) == $item) { $checked = 'checked'; $bg = 'background-color: #80ff80;';}
-			echo '<td class="border1" style="'.$bg.'" width="'.$size.'">';
-			echo '<input name="dd'.$r.'" type="radio" value="'.$item.'" '.$checked.'>'.$valor;
-			echo '</td>';
-			}
-		echo '</tr></table>';
-		break;
+		if($doc_edital = 'PIBITI'){
+				$resposta = array('1'=>'SIM, deve migrar para o PIBITI','2'=>'NÃO','3'=>'Tenho dúvidas');
+				$size = "33%";
+				
+				echo '<table cellpadding="5">'.cr();
+				echo '<tr '.$obtr[$r].'>'.cr();
+				echo '5) '.$ob[$r].' <b>Critério 4:</b> ';
+				echo 'Este projeto apresenta inovação tecnológica ?';
+				foreach ($resposta as $item => $valor) {
+					$checked = '';
+					$bg = '';
+					if (get("dd".$r) == $item) { $checked = 'checked'; $bg = 'background-color: #80ff80;';}
+					echo '<td class="border1" style="'.$bg.'" width="'.$size.'">';
+					echo '<input name="dd'.$r.'" type="radio" value="'.$item.'" '.$checked.'>'.$valor;
+					echo '</td>';
+					}
+				echo '</tr></table>';
+				break;
+		}else{
+			
+		}
 	case 'DEFAULT':
 		echo '<input name="dd'.$r.'" type="hidden" value="0">';
 		break;

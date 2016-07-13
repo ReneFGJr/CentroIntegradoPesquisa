@@ -507,6 +507,20 @@ class Ic_pareceres extends CI_model {
 			return ( array());
 		}
 	}
+	
+	function le_projetos_e_planos($id) {
+		$sql = "select * from " . $this -> tabela . " 
+		left join ic_submissao_projetos on pj_codigo = pp_protocolo
+		left join ic_submissao_plano on doc_protocolo_mae = pp_protocolo
+		where id_pp = " . $id;
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt)) {
+			return ($rlt[0]);
+		} else {
+			return ( array());
+		}
+	}
 
 	function avaliacoes_avaliador($id) {
 		for ($r = date("Y"); $r < (date("Y") - 4); $r--) {

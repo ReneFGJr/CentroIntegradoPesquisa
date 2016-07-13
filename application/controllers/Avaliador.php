@@ -222,10 +222,13 @@ class avaliador extends CI_Controller {
 
 		$data = array();
 
-		$dados = $this -> ic_pareceres -> le($id);
+		//$dados = $this -> ic_pareceres -> le($id);
+		$dados = $this -> ic_pareceres -> le_projetos_e_planos($id);
+		
 		$proto = $dados['pp_protocolo'];
 		$tipo = $dados['pp_tipo'];
 		$sta = $dados['pp_status'];
+		$plano = $dados['doc_protocolo'];
 		/* Avaliação não disponível */
 		if ($sta != 'A') {
 			$txt = '<center><h1 color="red">Avaliação não disponível</h1></center>';
@@ -544,15 +547,22 @@ class avaliador extends CI_Controller {
 				$data['projeto'] .= '<h1>Projeto de pesquisa do professor</h1>';
 				$data['projeto'] .= $this -> load -> view('ic/projeto', $proj, true);
 				$this -> geds -> tabela = 'ic_ged_documento';
-				$data['projeto'] .= '<b>Arquivos do projeto do professor</b><br>' . $this -> geds -> list_files($proto, 'ic');
+				$data['projeto'] .= '<br><b>Arquivos do projeto do professor</b><br>' . $this -> geds -> list_files($proto, 'ic');
 				
-				//mostra notas da avaliacao do projeto
+					
 				$sx = '';
+				$data['projeto'] .= '<br><ul><hr style="height:2px; border:none; color:#000; background-color:#000; margin-top: 0px; margin-bottom: 0px;"></ul><br>';
+				$data['projeto'] .= '<h1>Avaliações</h1>';
 				$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
+				$sx .= $this -> fcas -> avaliacao_notas_planos($proto, $plano);
 				$data['content'] = $sx;
 				$data['projeto'] .= $this -> load -> view('content', $data, true);
 				
-				$data['projeto'] .= '<h3>Ficha de avaliação - Projeto do professor</h3>';
+				$data['projeto'] .= '<ul><br>
+    												 <hr style="height:2px; border:none; color:#000; background-color:#000; margin-top: 0px; margin-bottom: 0px;">
+						                 </ul>';
+				$data['projeto'] .= '<h1><center> >>>> Formulário de avaliações <<<< </center></h1>';
+				$data['projeto'] .= '<h3>Avaliação do Projeto do professor</h3>';
 
 				$texto = $this -> mensagens -> busca('AVAL_INSTRUCOES', array());
 				$data['texto_introducao'] = mst($texto['nw_texto']);
@@ -576,7 +586,7 @@ class avaliador extends CI_Controller {
 					$plano['arquivos'] = 'Arquivos do plano';
 					$plano['bloquear'] = 'SIM';
 					$plano['arquivos_submit'] = $this -> geds -> list_files($plano['doc_protocolo'], 'ic');
-					;
+					
 					$plano['projeto'] = $this -> load -> view('ic/plano_submit', $plano, True);
 
 					switch ($plano['doc_edital']) {
@@ -607,8 +617,9 @@ class avaliador extends CI_Controller {
 					redirect(base_url('index.php/avaliador/ficha_salva/' . $id . '/' . $check));
 					return ('');
 				}
-
-				$txt = '<input type="submit" name="acao" value="Finalizar avaliação >>>" class="btn btn-primary">';
+				
+				$txt = '<br>';
+				$txt .= '<input type="submit" name="acao" value="Finalizar avaliação >>>" class="btn btn-primary">';
 				$txt .= '</form>';
 				$data['content'] = $txt;
 				$this -> load -> view('content', $data);
