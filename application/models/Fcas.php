@@ -159,7 +159,7 @@ class Fcas extends CI_model {
 			}
 			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($nota, 2, ',', '.') . '</td>';
 			
-			if ((perfil("#CPP") == 1)) {
+			if ((perfil("#CPP#ADM") == 1)) {
 			//Protocolo mae
 			$sx .= '<td align="center">';
 			$sx .= $link_projeto . $line['ed_protocolo_mae'] . '</a>';
@@ -1028,7 +1028,289 @@ class Fcas extends CI_model {
 
 	}
 
-		function avaliacao_notas_planos($proto, $plano) {
+	function avaliacao_notas_planos_id($proto, $id_plano) {
+		$sx = '';
+		if ((perfil("#ADM#3AV#CPP") == 1)) {
+			$ano = date("Y");
+			$sql = "select pp_protocolo_mae, pp_protocolo, pp_avaliador_id, id_pp, 
+	                 pp_p01, pp_p02, pp_p03,
+	                 pp_p04, pp_p05, pp_p06, pp_p11,
+	                 pp_p12, pp_p13, pp_p14,
+	                 pp_p15,
+	                 pp_abe_01, pp_abe_02, pp_abe_03,
+	                 pp_abe_04, pp_abe_05, pp_abe_06,
+	                 pp_abe_07, pp_abe_08, pp_abe_09,
+	                 pp_abe_10, pp_abe_11, pp_abe_12,
+	                 pp_abe_13, pp_abe_14, pp_abe_15,
+	                 pp_abe_16, pp_abe_17, pp_abe_18,
+	                 pp_abe_19
+		        from pibic_parecer_" . $ano . "
+		        left join ic_submissao_plano on doc_protocolo_mae = pp_protocolo
+						left join ic_submissao_projetos on pj_codigo = pp_protocolo_mae
+		        where pp_protocolo_mae = " . $proto . "
+		        and id_pj = " . $id_plano . "
+		        and pp_tipo <> 'SUBMI'
+		        and pp_status = 'B'
+						";
+
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array($rlt);
+			
+			//cabecalho
+			$sx = '<div class="alert alert-info" style="padding:5px 10px;">';
+			$sx .= '<table class="tabela00 lt1" width="100%">';
+			$sx .= '<tr class="lt3"><th></th>';
+			$sx .= '<tr class="lt3"><th><b></b></th>';
+			$sx .= '<th colspan="7" class="lt3">Avaliação do Plano do Aluno</th></tr>';
+			$sx .= '<tr>
+							<th>#</th>
+							<th align="left" class="lt2">Plano</th>
+							<th align="left" class="lt2">Protocolo mãe</th>	
+							<th align="center" class="lt2">CT_01</th>
+							<th align="center" class="lt2">CT_02</th>
+							<th align="center" class="lt2">CT_03</th>
+							<th align="center" class="lt2">Pergunta</th>
+						  <th align="center" class="lt2">Comentários sobre plano do aluno</th>
+						</tr>';
+
+			/*linhas da tabela*/
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+
+				//notas
+				$nt_p01 = $line['pp_p01'];
+				$nt_p02 = $line['pp_p02'];
+				$nt_p03 = $line['pp_p03'];
+				$nt_p04 = $line['pp_p04'];
+				$nt_p05 = $line['pp_p05'];
+				$nt_p11 = $line['pp_p11'];
+				$nt_p12 = $line['pp_p12'];
+				$nt_p13 = $line['pp_p13'];
+				$nt_p14 = $line['pp_p14'];
+				$nt_p15 = $line['pp_p15'];
+
+				//variaveis
+				$plano_proj = $line['pp_protocolo'];;
+				$proto_mae = $proto;
+				$observacoes = 'pp_abe_01';
+				$obsv = '';
+
+				//chama observacoes
+				for ($i = 1; $i < 15; $i++) {
+					if ($i == 6) {
+						$i = 11;
+					}
+					//variavel
+					$obs_ab = $line['pp_abe_' . strzero($i, 2)];
+
+					if (strlen($obs_ab) > 0) {
+						$observacoes .= $line['pp_protocolo'] . ': ' . $obs_ab . cr() . cr();
+					}
+				}
+
+				//variavel
+				$observacoes2 = 'Sem observações';
+
+				$sx .= '<tr>';
+				//indice
+				$sx .= '<td align="center">';
+				$sx .= $r + 1;
+				$sx .= '</td>';
+				//protocolo
+				$sx .= '<td align="center">';
+				$sx .= $plano_proj;
+				$sx .= '</td>';
+				////protocolo mae
+				$sx .= '<td align="center">';
+				$sx .= $proto;
+				$sx .= '</td>';
+			
+				//nota 1
+				switch ($nt_p11) {
+					case '20':
+						$sx .= '<td align="center">';
+						$sx .= 'Excelente';
+						$sx .= '</td>';
+						break;
+					case '15':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito bom';
+						$sx .= '</td>';
+						break;
+					case '11':
+						$sx .= '<td align="center">';
+						$sx .= 'Bom';
+						$sx .= '</td>';
+						break;
+					case '7':
+						$sx .= '<td align="center">';
+						$sx .= 'Regular';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Ruim';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito ruim';
+						$sx .= '</td>';
+						break;	
+					default:
+						echo "Erro!";
+						break;
+				}
+				//nota 2
+				switch ($nt_p12) {
+					case '20':
+						$sx .= '<td align="center">';
+						$sx .= 'Excelente';
+						$sx .= '</td>';
+						break;
+					case '15':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito bom';
+						$sx .= '</td>';
+						break;
+					case '11':
+						$sx .= '<td align="center">';
+						$sx .= 'Bom';
+						$sx .= '</td>';
+						break;
+					case '7':
+						$sx .= '<td align="center">';
+						$sx .= 'Regular';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Ruim';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Muito ruim';
+						$sx .= '</td>';
+						break;	
+					default:
+						echo "Erro!";
+						break;
+				}
+				//nota 13
+				switch ($nt_p13) {
+					case '10':
+						$sx .= '<td align="center">';
+						$sx .= 'Adequado';
+						$sx .= '</td>';
+						break;
+					case '5':
+						$sx .= '<td align="center">';
+						$sx .= 'Parcialmente adequado';
+						$sx .= '</td>';
+						break;
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'Inadequado';
+						$sx .= '</td>';
+						break;
+					default:
+						echo "Erro!";
+						break;
+				}
+				//nota 14
+				switch ($nt_p14) {
+					case '1':
+						$sx .= '<td align="center">';
+						$sx .= 'SIM';
+						$sx .= '</td>';
+						break;
+					case '2':
+						$sx .= '<td align="center">';
+						$sx .= 'Não';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Tenho dúvidas';
+						$sx .= '</td>';
+						break;
+					default:
+						echo "Erro!";
+						break;
+				}						
+				
+				$sx .= '<td align="left" width="50%">';
+				$sx .= $line['pp_abe_11'];
+				$sx .= '</td>';
+
+			
+			/**
+
+				//observações
+				if (strlen($observacoes) > 0) {
+					$sx .= '<td align="center">';
+					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-warning" data-toggle="modal" data-target="#myModal">
+									  Verificar
+									</button>
+
+									<!-- Modal -->
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+									  <div class="modal-dialog" role="document">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									        <h4 class="modal-title" id="myModalLabel">Observações do avaliador</h4>
+									      </div>
+									      <div class="modal-body text-left">
+									        ' . mst($observacoes) . '
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+									      </div>
+									    </div>
+									  </div>
+									</div>';
+					$sx .= '</td>';
+				} else {
+					$sx .= '<td align="center">';
+					$sx .= '<button type="button" class="glyphicon glyphicon-comment btn btn-success" data-toggle="modal" data-target="#myModal">
+									  Verificar
+									</button>
+
+									<!-- Modal -->
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+									  <div class="modal-dialog" role="document">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									        <h4 class="modal-title" id="myModalLabel">Observações do avaliador</h4>
+									      </div>
+									      <div class="modal-body">
+									        ' . mst($observacoes2) . '
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+									      </div>
+									    </div>
+									  </div>
+									</div>';
+					$sx .= '</td>';
+				}
+			}
+		
+			 * */
+			 }
+			 $sx .= '</table>';
+		$sx .= '</div>';	
+		}
+
+	
+		return ($sx);
+
+	}
+
+	function avaliacao_notas_planos($proto, $plano) {
 		$sx = '';
 		if ((perfil("#ADM#3AV#CPP") == 1)) {
 			$ano = date("Y");

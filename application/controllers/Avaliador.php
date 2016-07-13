@@ -229,6 +229,7 @@ class avaliador extends CI_Controller {
 		$tipo = $dados['pp_tipo'];
 		$sta = $dados['pp_status'];
 		$plano = $dados['doc_protocolo'];
+		$id_pl = $dados['id_pj'];
 		/* Avaliação não disponível */
 		if ($sta != 'A') {
 			$txt = '<center><h1 color="red">Avaliação não disponível</h1></center>';
@@ -236,6 +237,7 @@ class avaliador extends CI_Controller {
 			$this -> load -> view('content', $data);
 			return ('');
 		}
+		
 
 		$dados2 = $this -> ics -> le_protocolo($proto);
 		$dados = array_merge($dados, $dados2);
@@ -554,7 +556,11 @@ class avaliador extends CI_Controller {
 				$data['projeto'] .= '<br><ul><hr style="height:2px; border:none; color:#000; background-color:#000; margin-top: 0px; margin-bottom: 0px;"></ul><br>';
 				$data['projeto'] .= '<h1>Avaliações</h1>';
 				$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
-				$sx .= $this -> fcas -> avaliacao_notas_planos($proto, $plano);
+				//$sx .= $this -> fcas -> avaliacao_notas_planos($proto, $plano);
+				
+
+				$sx .= $this -> fcas -> avaliacao_notas_planos_id($proto, $id_pl);
+				
 				$data['content'] = $sx;
 				$data['projeto'] .= $this -> load -> view('content', $data, true);
 				
