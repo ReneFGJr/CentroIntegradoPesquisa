@@ -14,7 +14,7 @@ class Fcas extends CI_model {
 						ed_protocolo_mae, mb_descricao, us_professor_tipo, ed_avaliacoes, 
 						(ed_nota_normalizada + ed_bn_produtividade + ed_bn_titulacao + ed_bn_ss + ed_bn_jr - ed_bn_penalidade) as nota,
 						(ed_bn_produtividade + ed_bn_titulacao + ed_bn_ss + ed_bn_jr - ed_bn_penalidade) as nota_bn, ed_area
-				FROM ic_edital
+						FROM ic_edital
 						left join us_usuario on id_us = ed_professor
 						left join us_titulacao on ust_id = usuario_titulacao_ust_id
 						left join (select distinct bpn_id, us_id as id_prod from us_bolsa_produtividade where usb_ativo = 1) as produtividade on id_prod = id_us 
@@ -23,18 +23,45 @@ class Fcas extends CI_model {
 						where ed_edital = '$edital'
 						$wh
 						and ed_ano = '$ano'
-						order by nota desc
+						order by nota desc, ed_avaliacoes asc
 					";
 
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 
+		$sx = '';
+		//area selecionada
+			$area_select = $area;
+			
+			
+		
 		//Colunas da tabela
-		$sx = '<table class="tabela00 lt1" width="100%">';
-		$sx .= '<tr class="lt3"><b>>>>></b></tr>';
+		$sx .= '<table class="tabela00 lt1" width="100%">';
+		//Troca de sub-titulo conforme area selecionada
+		switch($area_select) {
+			case 'V' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"> Ciências da Vida </font></tr>';
+				break;
+			case 'E' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"> Exatas e Engenharias </font></tr>';
+				break;
+			case 'H' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"> Humanas </font></tr>';
+				break;
+			case 'A' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"> Ciências Agrárias </font></tr>';
+				break;
+			case 'S' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"> Ciências Sociais Aplicadas </font></tr>';
+				break;	
+			default :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"> Todas as áreas </font></tr>';
+				break;			
+			}	
 		$sx .= '<tr><th align="center" class="lt01">#</th>
 							  <th align="center">Bolsa indicada</th>
 								<th align="center">Professor</th>
+						
 								<th align="center">Área</th>
 								<th align="center">Centro</th>
 								<th align="center">SS</th>
@@ -87,7 +114,12 @@ class Fcas extends CI_model {
 			$sx .= '<td align="left">';
 			$sx .= $line['ust_titulacao_sigla'] . ' ' . link_user($line['us_nome'], $line['id_us']);
 			$sx .= '</td>';
-
+			/**
+			//professor
+			$sx .= '<td align="left">';
+			$sx .= link_user($line['us_nome'], $line['id_us']);
+			$sx .= '</td>';
+    */
 			//area do professor
 			$area_prof = $line['ed_area'];
 			switch ($area_prof) {
@@ -140,10 +172,12 @@ class Fcas extends CI_model {
 			$sx .= '<td align="center">';
 			$sx .= $line['bpn_bolsa_descricao'];
 			$sx .= '</td>';
+			
 			//Estudante
 			$sx .= '<td align="center">';
 			$sx .= $line['ed_estudante'];
 			$sx .= '</td>';
+			
 			//ICV
 			$sx .= '<td align="center">';
 			$sx .= '-';
@@ -698,6 +732,7 @@ class Fcas extends CI_model {
 		        and pp_tipo <> 'SUBMI'
 		        and pp_status = 'B'
 		        group by pp_avaliador_id
+		        order by id_pp
 						";
 
 			$rlt = $this -> db -> query($sql);
@@ -1332,6 +1367,7 @@ class Fcas extends CI_model {
 		        and pp_tipo <> 'SUBMI'
 		        and pp_status = 'B'
 		        group by pp_abe_01
+		        order by id_pp
 						";
 
 			$rlt = $this -> db -> query($sql);

@@ -4375,7 +4375,8 @@ class ic extends CI_Controller {
 		$this -> load -> model('fcas');
 		$this -> cab();
 		$data = array();
-		$data['title'] = msg('Indicar Bolsas');
+		$data['title'] = msg('Indicar Bolsas para o edital '.$edital);
+
 
 		if (strlen($edital) > 0) {
 			$sx = $this -> fcas -> indicar_bolsas($edital, $area);
