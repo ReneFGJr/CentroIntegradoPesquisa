@@ -319,7 +319,7 @@ class ic extends CI_Controller {
 				enviaremail($para, $assunto, $texto, $de);
 			}
 			enviaremail(array('cleybe.vieira@pucpr.br'), $assunto, $texto, $de);
-			enviaremail(array('rene.gabriel@pucpr.br'), $assunto, $texto, $de);
+			//enviaremail(array('rene.gabriel@pucpr.br'), $assunto, $texto, $de);
 		}
 
 		$data['content'] = '<table width="100%">
@@ -4371,17 +4371,22 @@ class ic extends CI_Controller {
 	}
 
 	function indicar_bolsa($edital = '', $area = '') {
-		/*carrega model */
+		/*carrega model*/
 		$this -> load -> model('fcas');
 		$this -> cab();
 		$data = array();
+		$ano = date('Y');
+		
 		$data['title'] = msg('Indicar Bolsas para o edital '.$edital);
-
-
+		
 		if (strlen($edital) > 0) {
-			$sx = $this -> fcas -> indicar_bolsas($edital, $area);
+			$sx = $this -> fcas -> resumo_bolsas_indicadas($edital, $ano);
+			
+			$sx .= $this -> fcas -> indicar_bolsas($edital, $area);
+			
 			$data['content'] = $sx;
 			$this -> load -> view('content', $data);
+		
 		} else {
 			$this -> load -> view('ic_edital/edital_areas', null);
 		}
@@ -4391,23 +4396,42 @@ class ic extends CI_Controller {
 	}
 
 	function indicar_bolsa_ed($id = 0, $chk = '') {
+		//load model	
 		$this -> load -> model("fcas");
+		$this -> load -> model('usuarios');
+		
 		$this -> load -> view('header/header', null);
-
+		
+		//le dados do edital
 		$data = $this -> fcas -> le($id);
 		$ano = $data['ed_ano'];
 		$prof = $data['ed_professor'];
 		$edital = $data['ed_edital'];
+		$projeto = $data['ed_protocolo_mae'];
+		$plano = $data['ed_protocolo'];
+		$area_conhecimento = $data['ed_area_conhecimento'];
+		//$estudante = $data['us_nome'];
+
+		
+		//le dados do usuario
+		$data2 = $this -> usuarios -> le($prof);
+		$prof_nome = $data2['us_nome'];
+		$prof_tit = $data2['ust_titulacao'];
+		$prof_escola = $data2['es_escola'];
 
 		$sx = '<table width="100%" class="table lt1">';
+		$sx .= '<tr><td class="lt6" colspan=5> Edital '. $edital .' '. (date("Y")).'</tr>';
+		$sx .= '<tr><td class="lt1" colspan=5> <b>Professor:</b> '. $prof_tit .' '.$prof_nome .' - '. $prof_escola .'  </tr>';
+		$sx .= '<tr><td class="lt1" colspan=5> <b>Projeto:</b> '. $projeto .'</tr>';
+		$sx .= '<tr><td class="lt1" colspan=5> <b>Plano:</b> '. $plano .'</tr>';
 		$sx .= '<tr valign="top">';
-		$sx .= '	<th width="70%">INDICAR</td>';
-		$sx .= '	<th width="30%">INDICADAS</td>';
+		$sx .= '	<th width="33%" class="lt2">Bolsas disponíveis</td>';
+		$sx .= '	<th width="33%" class="lt2">Bolsas Indicadas</td>';
 		$sx .= '</tr>';
 
 		$sx .= '<tr valign="top">';
 		$sx .= '<td>';
-		$sx .= $this -> fcas -> mostra_modalidades($data);
+		$sx .= $this -> fcas -> mostra_modalidades($data, $data2);
 		$sx .= '</td>';
 
 		$sx .= '<td>';
@@ -4421,6 +4445,42 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 
 	}
+
+	function remover_bolsa_indicada($id = 0, $orientador = 0, $edital = 0){
+		//load model	
+		$this -> load -> model("fcas");
+		$this -> load -> model('ics');
+		
+		$this -> cab();
+		
+		if ($id >= 0 ) {
+			//$dados = $this -> fcas -> remover_bolsa_modalidade_indicada($id_mod, $id_orientador, $id_edital);
+			print '<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+							decisao = confirm("Clique em um botão!");
+							if (decisao){
+							    alert ("Você clicou no botão OK,\n"+
+							               "porque foi retornado o valor: "+decisao);
+							} else { 
+							    alert ("Você clicou no botão CANCELAR,\n"+
+							               "porque foi retornado o valor: "+decisao);
+							}
+							</SCRIPT>';
+							exit;
+		} else {
+			echo 'Erro';
+			exit;
+		}
+		
+		$dados = 'erro';
+		
+		
+
+		
+		$data['content'] = $dados;
+		$this -> load -> view('content', $data);
+	}
+
+	
 
 	function substituir_estudante($id = 0, $chk = '') {
 		/*carrega model */

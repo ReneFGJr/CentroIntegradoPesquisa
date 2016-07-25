@@ -113,9 +113,17 @@ $lang['lb_cdm_assinatura_posicao_x'] = 'Assinatura(Posição x)';
 $lang['lb_cdm_assinatura_posicao_y'] = 'Assinatura(Posição y)';
 $lang['lb_cdm_ativar_qrcode'] = 'Ativar QRcode';
 $lang['lb_cdm_query'] = 'Query';
-
 $lang['lb_gravar_modelo'] = 'Gravar modelo';
 
+/*Eventos */
+$lang['ev_acao'] = 'Criar Evento';
+$lang['ev_nome'] = 'Nome do evento';
+$lang['ev_de']   = 'Início do evento';
+$lang['ev_ate']  = 'Fim do evento';
+$lang['ev_logo'] = 'Logo do evento';
+$lang['ev_ativo'] = 'Evento ativo';
+$lang['ev_lista'] = 'Lista';
+$lang['ev_responsavel'] = 'Responável do evento';
 
 	
 /* Menu Princicpal */

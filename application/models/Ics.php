@@ -4725,49 +4725,51 @@ class ics extends CI_model {
 		
 		/*************************************************** INGLES*****************/
 		
-		/***/
+		/**
 		if (strlen($line['sm_rem_11']) < 10) {
 			$ok = 0;
 			$sx .= '<tr class="alert-danger">
 						<td width="90%">Resumo - Introdução (Inglês)</td>
 						<td width="10%">' . $erro . '</td></tr>' . cr();
 		}
-		/***/
+		
 		if (strlen($line['sm_rem_12']) < 10) {
 			$ok = 0;
 			$sx .= '<tr class="alert-danger">
 						<td width="90%">Resumo - Objetivo (Inglês)</td>
 						<td width="10%">' . $erro . '</td></tr>' . cr();
 		}
-		/***/
+		
 		if (strlen($line['sm_rem_13']) < 10) {
 			$ok = 0;
 			$sx .= '<tr class="alert-danger">
 						<td width="90%">Resumo - Metodologia (Inglês)</td>
 						<td width="10%">' . $erro . '</td></tr>' . cr();
 		}
-		/***/
+		
 		if (strlen($line['sm_rem_14']) < 10) {
 			$ok = 0;
 			$sx .= '<tr class="alert-danger">
 						<td width="90%">Resumo - Resultado (Inglês)</td>
 						<td width="10%">' . $erro . '</td></tr>' . cr();
 		}
-		/***/
+		
 		if (strlen($line['sm_rem_15']) < 10) {
 			$ok = 0;
 			$sx .= '<tr class="alert-danger">
 						<td width="90%">Resumo - Considerações (Inglês)</td>
 						<td width="10%">' . $erro . '</td></tr>' . cr();
 		}
-		/***/
+		
 		if (strlen($line['sm_rem_16']) < 10) {
 			$ok = 0;
 			$sx .= '<tr class="alert-danger">
 						<td width="90%">Resumo - Palavras-chave (Inglês)</td>
 						<td width="10%">' . $erro . '</td></tr>' . cr();
 		}		
-
+		
+		 * 
+		 */
 		$sx .= '</table>';
 		$this -> erros = $sx;
 		return ($ok);

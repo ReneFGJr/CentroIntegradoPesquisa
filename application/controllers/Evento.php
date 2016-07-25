@@ -266,6 +266,7 @@ class evento extends CI_controller {
 		/* Menu de botões na tela Admin*/
 		$menu = array();
 		array_push($menu, array('Eventos', 'Lista dos Eventos', 'ITE', '/evento/row'));
+		array_push($menu, array('Eventos', 'Criar Eventos', 'ITE', '/evento/novo_evento'));
 		/*View principal*/
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu de Eventos';
@@ -446,6 +447,33 @@ class evento extends CI_controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
+
+	function novo_evento($id = 0, $chk = '') {
+		/* Load Models */
+		$this -> load -> model('evento/eventos');
+		$cp = $this -> eventos -> cp_novo_evento();
+
+		$this -> cab();
+		$data = array();
+		$this -> load -> view('header/content_open');
+
+		$form = new form;
+		$form -> id = $id;
+
+		$tela = $form -> editar($cp, $this -> eventos -> tabela);
+		$data['title'] = msg('ev_acao');
+		$data['tela'] = $tela;
+		$this -> load -> view('form/form', $data);
+
+		/* Salva */
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/evento/row'));
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
 
 	function editar($id = 0, $chk = '') {
 		/* Load Models */

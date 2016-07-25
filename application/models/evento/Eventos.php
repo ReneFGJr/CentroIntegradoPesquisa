@@ -599,7 +599,23 @@ class eventos extends CI_model {
 		array_push($cp, array('$D8', 'ev_de', msg('ev_de'), True, True));
 		array_push($cp, array('$D8', 'ev_ate', msg('ev_ate'), True, True));
 		array_push($cp, array('$S100', 'ev_logo', msg('ev_logo'), False, True));
-		array_push($cp, array('$O 1:SIM&0:NÃO', 'ev_ativo', msg('ev_ativo'), True, True));
+		array_push($cp, array('$O 1:Sim&0:Não', 'ev_ativo', msg('ev_ativo'), True, True));
+		array_push($cp, array('$T80:4', 'ev_query', msg('ev_lista'), False, True));
+		array_push($cp, array('$Q id_m:m_descricao:select * from mensagem_own where m_ativo = 1', 'ev_own', msg('ev_responsavel'), True, True));
+
+		array_push($cp, array('$B', '', msg('enviar'), false, True));
+
+		return ($cp);
+	}
+	
+		function cp_novo_evento() {
+		$cp = array();
+		array_push($cp, array('$H8', 'id_ev', '', False, True));
+		array_push($cp, array('$S100', 'ev_nome', msg('ev_nome'), True, True));
+		array_push($cp, array('$D8', 'ev_de', msg('ev_de'), True, True));
+		array_push($cp, array('$D8', 'ev_ate', msg('ev_ate'), True, True));
+		array_push($cp, array('$S100', 'ev_logo', msg('ev_logo'), False, True));
+		array_push($cp, array('$O 1:Sim&0:Não', 'ev_ativo', msg('ev_ativo'), True, True));
 		array_push($cp, array('$T80:4', 'ev_query', msg('ev_lista'), False, True));
 		array_push($cp, array('$Q id_m:m_descricao:select * from mensagem_own where m_ativo = 1', 'ev_own', msg('ev_responsavel'), True, True));
 

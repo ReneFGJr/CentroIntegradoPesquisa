@@ -256,7 +256,32 @@ class comunicacoes extends CI_Model
 							$email .= $line['usm_email'].cr();
 						}
 						$email .= 'cleybe.vieira@pucpr.br'.cr();
-				}				
+				}
+			/* Professores orientadores IC com planos vigente em 2016 */
+			if ($gr == 23){
+				$ano = date("Y");
+					$sql = "SELECT DISTINCT usm_email
+									FROM ic_submissao_plano
+									LEFT JOIN ic_submissao_projetos ON doc_protocolo_mae = pj_codigo
+									LEFT JOIN us_usuario ON us_cracha = pj_professor
+									LEFT JOIN us_email ON usuario_id_us = id_us
+									WHERE pj_ano = '$ano'
+									AND (pj_status = 'B')
+									AND (doc_status = 'B')
+									AND usm_ativo = 1
+									AND us_ativo = 1
+									";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$email = '';
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$email .= $line['usm_email'].cr();
+						}
+						$email .= 'cleybe.vieira@pucpr.br'.cr();
+						$email .= 'evandro.cavalheri@pucpr.br'.cr();
+				}					
 				
 			return($email);
 		}

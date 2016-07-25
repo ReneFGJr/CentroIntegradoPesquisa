@@ -99,7 +99,7 @@ class Ic_pareceres extends CI_model {
 		$rs = array();
 		$rs['RPAR'] = array();
 		$rs['RPRC'] = array();
-
+		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
 			$tipo = $line['pp_tipo'];
