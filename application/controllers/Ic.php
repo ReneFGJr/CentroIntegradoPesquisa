@@ -4404,26 +4404,29 @@ class ic extends CI_Controller {
 		
 		//le dados do edital
 		$data = $this -> fcas -> le($id);
+		
+		//print_r($data);
+		//exit;
+		
 		$ano = $data['ed_ano'];
 		$prof = $data['ed_professor'];
 		$edital = $data['ed_edital'];
 		$projeto = $data['ed_protocolo_mae'];
 		$plano = $data['ed_protocolo'];
 		$area_conhecimento = $data['ed_area_conhecimento'];
-		//$estudante = $data['us_nome'];
+		$estudante = $data['us_nome'];
 
-		
-		//le dados do usuario
+		//le dados do Professor
 		$data2 = $this -> usuarios -> le($prof);
 		$prof_nome = $data2['us_nome'];
 		$prof_tit = $data2['ust_titulacao'];
 		$prof_escola = $data2['es_escola'];
 
 		$sx = '<table width="100%" class="table lt1">';
-		$sx .= '<tr><td class="lt6" colspan=5> Edital '. $edital .' '. (date("Y")).'</tr>';
-		$sx .= '<tr><td class="lt1" colspan=5> <b>Professor:</b> '. $prof_tit .' '.$prof_nome .' - '. $prof_escola .'  </tr>';
-		$sx .= '<tr><td class="lt1" colspan=5> <b>Projeto:</b> '. $projeto .'</tr>';
-		$sx .= '<tr><td class="lt1" colspan=5> <b>Plano:</b> '. $plano .'</tr>';
+		$sx .= '<tr><td class="lt6" colspan=5> Edital '. $edital .' '. (date("Y")).' <br><font color="red">Plano Escolhido: '.$plano.'</font></tr>';
+		$sx .= '<tr><td class="lt3" colspan=5> <b>Professor:</b> '. $prof_tit .' '.$prof_nome .' - '. $prof_escola .'</tr>';
+		$sx .= '<tr><td class="lt3" colspan=5> <b>Projeto:</b> '. $projeto .'</tr>';
+		$sx .= '<tr><td class="lt3" colspan=5> <b>Plano/Estudante:</b> '. $plano .' - '.$estudante.'</tr>';
 		$sx .= '<tr valign="top">';
 		$sx .= '	<th width="33%" class="lt2">Bolsas disponíveis</td>';
 		$sx .= '	<th width="33%" class="lt2">Bolsas Indicadas</td>';
@@ -4446,35 +4449,31 @@ class ic extends CI_Controller {
 
 	}
 
-	function remover_bolsa_indicada($id = 0, $orientador = 0, $edital = 0){
+	function remover_bolsa_indicada($plano = 0, $id_orientador = 0 , $id_edital = '', $ano = 0){
 		//load model	
 		$this -> load -> model("fcas");
 		$this -> load -> model('ics');
 		
 		$this -> cab();
 		
-		if ($id >= 0 ) {
-			//$dados = $this -> fcas -> remover_bolsa_modalidade_indicada($id_mod, $id_orientador, $id_edital);
-			print '<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-							decisao = confirm("Clique em um botão!");
-							if (decisao){
-							    alert ("Você clicou no botão OK,\n"+
-							               "porque foi retornado o valor: "+decisao);
-							} else { 
-							    alert ("Você clicou no botão CANCELAR,\n"+
-							               "porque foi retornado o valor: "+decisao);
-							}
-							</SCRIPT>';
-							exit;
+		if ($plano > 0 ) {
+				
+			print"<script language= 'javascript'>
+							function aviso(id){
+								if(confirm (' Deseja realmente excluir? ')){
+									window.alert(' Continuando.. ');
+									location.href='".$dados = $this -> fcas -> remover_bolsa_modalidade_indicada($plano, $id_orientador, $id_edital, $ano)."';
+									}else{
+										return false;
+									}
+								}
+						</script>";
+						redirect($this -> load -> view('header/windows_close_only', null));
 		} else {
 			echo 'Erro';
 			exit;
 		}
-		
 		$dados = 'erro';
-		
-		
-
 		
 		$data['content'] = $dados;
 		$this -> load -> view('content', $data);

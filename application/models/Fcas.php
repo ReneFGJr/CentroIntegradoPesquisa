@@ -28,8 +28,8 @@ class Fcas extends CI_model {
                 professor.us_ativo as ativo,
                 ust_titulacao_sigla AS sigla_titulacao,
                 bpn_bolsa_descricao,
-                mb_link_logo_bolsas,
-                mb_descricao,
+                mb.mb_link_logo_bolsas,
+                mb.mb_descricao,
                 doc_escola_publica, 
                 doc_icv,  
                 doc_protocolo, 
@@ -37,6 +37,7 @@ class Fcas extends CI_model {
                 aluno.id_us as id_aluno,
                 aluno.us_nome as aluno_nome,
                 aluno.us_cracha as aluno_cracha
+								
 		FROM ic_edital
 		left join(SELECT id_us,
 		                 us_nome,
@@ -47,7 +48,7 @@ class Fcas extends CI_model {
 		left join us_titulacao on ust_id = professor.usuario_titulacao_ust_id
 		left join (select distinct bpn_id, us_id as id_prod from us_bolsa_produtividade where usb_ativo = 1) as produtividade on id_prod =  professor.id_us 
 		left join us_bolsa_prod_nome on id_bpn = bpn_id
-		left join ic_modalidade_bolsa on ed_modalidade = id_mb
+		left join ic_modalidade_bolsa as mb on ed_modalidade = mb.id_mb
 		left join ic_submissao_plano on doc_protocolo = ed_protocolo
 		left join(SELECT id_us, 
 		                 us_nome,
@@ -56,8 +57,9 @@ class Fcas extends CI_model {
 		where ed_edital = '$edital'
 		$wh
 		and ed_ano = '$ano'
-		order by nota desc, ed_avaliacoes asc
+		order by ed_protocolo_mae
 		";
+		//order by nota desc, ed_avaliacoes asc
 		/**
 		$sql = "select distinct id_ed, ed_nota_normalizada, ed_edital, ust_titulacao_sigla,us_nome,
 						id_us, us_campus_vinculo, bpn_bolsa_descricao, ed_protocolo, ed_estudante, 
@@ -163,11 +165,13 @@ class Fcas extends CI_model {
 				$link2 = base_url('index.php/ic/indicar_bolsa_ed/' . $line['id_ed'] . '/' . checkpost_link($line['id_ed']));
 				$edit2 = '<span class="link lt1" onclick="newwin(\'' . $link . '\')">indicado</span>';
 			}
+			/*################### INICIO DO PREENCHIMENTO DA TABELA ####################################*/
 			//indice
 			$sx .= '<tr>';
 			$sx .= '<td align="center">';
 			$sx .= $r + 1;
 			$sx .= '</td>';
+			
 			//logo da bolsa e bolsa indicada
 			$sx .= '<td align="left" width="15%">';
 			$sx .= $img.' '.$line['mb_descricao'];
@@ -1878,7 +1882,11 @@ class Fcas extends CI_model {
 
 	function le($id) {
 		$sql = "select * from ic_edital
-					WHERE id_ed = " . round($id);
+						left join ic_submissao_plano on doc_protocolo = ed_protocolo
+						left join(SELECT id_us, 
+		                 	us_nome,
+						         	us_cracha FROM us_usuario where us_ativo = 1)AS aluno on doc_aluno = aluno.us_cracha
+						         	WHERE id_ed = " . round($id);
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) > 0) {
@@ -1919,7 +1927,7 @@ class Fcas extends CI_model {
 		
 		switch ($edital) {
 			case 'PIBIC':
-				if ($idx == $id_modalidade) {
+				if ($idx == $idx) {
 					if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
 					$sql = "SELECT * from ic_modalidade_bolsa 
 									WHERE mb_tipo_2 = '$edital'
@@ -1929,6 +1937,7 @@ class Fcas extends CI_model {
 								 ";
 							break;
 					} else {
+							//não mostra a mesma bolsa que já tenha sido indicada
 							$sql = "SELECT * from ic_modalidade_bolsa 
 											WHERE mb_tipo_2 = '$edital'
 											       and mb_ativo = 1 
@@ -1950,7 +1959,7 @@ class Fcas extends CI_model {
 				break;
 			}		
 			case 'PIBITI':
-				if ($idx == $id_modalidade) {
+				if ($idx == $idx) {
 					if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
 					$sql = "SELECT * from ic_modalidade_bolsa 
 									WHERE mb_tipo_2 = '$edital'
@@ -1981,7 +1990,7 @@ class Fcas extends CI_model {
 				break;
 			}
 			case 'PIBICEM':
-				if ($idx == $id_modalidade) {
+				if ($idx == $idx) {
 					if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
 					$sql = "SELECT * from ic_modalidade_bolsa 
 									WHERE mb_tipo_2 = '$edital'
@@ -2046,11 +2055,9 @@ class Fcas extends CI_model {
 						and ed_edital = '$edital'
 						AND pj_status = 'B'
 						AND doc_status = 'B'
-						GROUP BY id_pj
+						GROUP BY ed_protocolo
 					
 					";	
-		
-		
 					
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
@@ -2061,19 +2068,19 @@ class Fcas extends CI_model {
 			
 			$id_modalidade = $line['id_mb'];
 			$orientador = $line['ed_professor'];
-			$id_edital_bolsa = $line['id_ed'];
+			$id_edital_bolsa = $line['ed_edital'];
 			$plano = $line['ed_protocolo'];
 			$estudante = $line['us_nome'];
 
-			$link_edital = '<a href="' . base_url('index.php/ic/remover_bolsa_indicada/'.$plano .'/'. $orientador .'/'. $id_edital_bolsa.'/'.$ano) .'" class="link nopr">';
+			$link_edital = '<a href="'. base_url('index.php/ic/remover_bolsa_indicada/'.$plano .'/'. $orientador .'/'. $id_edital_bolsa.'/'.$ano).'"  class="link nopr">';
 			
 			if (strlen($estudante) > 0) {
-					$sx .= '<div class="btn btn-info" style="width: 100%; margin-bottom: 5px; aligne="left">';
-					//$sx .= $link_edital.$line['mb_descricao'].''.'</a>';
-					$sx .= $line['mb_descricao'].' Plano: ' .$plano.' aluno: '.$estudante;
+					$sx .= '<div class="btn btn-info" style="width: 100%; margin-bottom: 5px; text-align:left;">';
+					$sx .= $link_edital.$line['mb_descricao'].' Plano: ' .$plano.' aluno: '.$estudante.''.'</a>';
+					//$sx .= $line['mb_descricao'].' Plano: ' .$plano.' aluno: '.$estudante;
 					$sx .= '</div>';
 				} else {
-					$sx .= '<div class="btn btn-info" style="width: 100%; margin-bottom: 5px;">';
+					$sx .= '<div class="btn btn-info" style="width: 100%; margin-bottom: 5px; text-align:left;">';
 					$sx .= $line['mb_descricao'].' Plano: ' .$plano.' Aluno: '.$estudante;  
 					$sx .= '</div>';
 				}
@@ -2083,13 +2090,14 @@ class Fcas extends CI_model {
 	}
 	
 	function remover_bolsa_modalidade_indicada($plano, $id_orientador, $id_edital, $ano){
-		$sql = "--update ic_edital set ed_modalidade = 'null'
+		$sql = "update ic_edital set ed_modalidade = 'null'
 						WHERE ed_ano = '$ano' 
 						and ed_professor = '$id_orientador' 
 						and ed_edital = '$id_edital'
 						and ed_protocolo = '$plano'
 						";
 		$rlt = $this -> db -> query($sql);
+		exit;
 	}
 	
 	function resumo_bolsas_indicadas($id_edital, $ano) {
@@ -2107,9 +2115,9 @@ class Fcas extends CI_model {
 		$rlt = $rlt -> result_array();
 		
 		//Colunas da tabela
-		$sx = '<table class="tabela00 lt2" width="40%" border="1 solid">';
-		$sx .= '<tr><td class="lt3" colspan=2><font color="red"> Bolsas Indicadas </font></tr>';	
-		$sx .= '<tr><th align="center" class="lt01">Modalidade</th>
+		$sx = '<table class="tabela00 lt3" width="40%" border="1 solid">';
+		$sx .= '<tr><td colspan=2 align="center" class="lt3"><font color="red"><i>Bolsas Indicadas</i></font></tr>';	
+		$sx .= '<tr><th align="center">Modalidade</th>
 							  <th align="center">Bolsa indicada</th>
 						</tr>';
 		$tot = 0;				
