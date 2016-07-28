@@ -3982,7 +3982,8 @@ class ic extends CI_Controller {
 		$proto = $dados['pj_codigo'];
 		$tipo = $dados['pj_edital'];
 		$us_cracha = $dados['pj_professor'];
-
+		//$doc_edital = $dados['doc_edital'];
+		
 		$this -> geds -> tabela = 'ic_ged_documento';
 		$this -> geds -> file_lock_all($dados['pj_codigo']);
 
@@ -4070,11 +4071,12 @@ class ic extends CI_Controller {
 											</div>';
 					$this -> load -> view('content', $comt);
 
-					//mostra notas da avaliacao do projeto
-					$sx = '';
-					$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
-					$data['content'] = $sx;
-					$this -> load -> view('content', $data);
+					 //mostra notas da avaliacao do projeto do professor
+					 $sx = '';
+					 $sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
+					 $data['content'] = $sx;
+					 $this -> load -> view('content', $data);
+					
 				}
 
 				if (($av_aberta <= 1) or (perfil('#CPI#TST#CPP'))) {
@@ -4123,12 +4125,13 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$dados = $this -> ics -> le_plano($id);
 		$dados_p = $dados;
-
+		
 		$status = $dados['pj_status'];
 		$proto = $dados['pj_codigo'];
 		$plano = $dados_p['doc_protocolo'];
 		$tipo = $dados['pj_edital'];
 		$us_cracha = $dados['pj_professor'];
+		$doc_edital = $dados['doc_edital'];
 
 		$this -> geds -> tabela = 'ic_ged_documento';
 		$this -> geds -> file_lock_all($dados['pj_codigo']);
@@ -4217,11 +4220,22 @@ class ic extends CI_Controller {
 											</div>';
 					$this -> load -> view('content', $comt);
 
-					//mostra notas da avaliacao do projeto
 					$sx = '';
-					$sx .= $this -> fcas -> avaliacao_notas_planos($proto, $plano);
-					$data['content'] = $sx;
-					$this -> load -> view('content', $data);
+					//se avaliacao de projetos Jr.
+					if ($doc_edital == 'PIBICEM') {
+						//se avaliacao de plano PIBIC E PIBITI
+						$sx = '';
+						$sx .= $this -> fcas -> avaliacao_notas_planos_jr($proto, $plano);
+						$data['content'] = $sx;
+						$this -> load -> view('content', $data);
+					} else {
+						//se avaliacao de plano PIBIC E PIBITI
+						$sx = '';
+						$sx .= $this -> fcas -> avaliacao_notas_planos($proto, $plano);
+						$data['content'] = $sx;
+						$this -> load -> view('content', $data);
+					}
+					
 				}
 
 				if (($av_aberta <= 1) or (perfil('#CPI#TST#CPP'))) {
@@ -4369,7 +4383,7 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-
+	
 	function indicar_bolsa($edital = '', $area = '') {
 		/*carrega model*/
 		$this -> load -> model('fcas');

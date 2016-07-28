@@ -43,7 +43,8 @@ if (strlen($acao) > 0) {
 <?php echo $projeto; ?>
 
 1) <?php echo $ob[1]; ?>
-<b>Critério 1: Relevância do projeto do orientador e contribuição para a formação do estudante de graduação.</b>:
+<b>Critério 1:</b> 
+Relevância do projeto do orientador e contribuição para a formação do estudante de graduação.
 </br>
 <?php
 $r = 1; /* numero da questão */
@@ -98,7 +99,8 @@ $size = round(100/count($resposta)).'%';
 <br>
 <br>
 3) <?php echo $ob[3]; ?>
-<b>Critério 3:</b> Coerência e adequação entre a capacitação e a experiência do professor orientador proponente e a realização do projeto, considerando as informações curriculares apresentadas.
+<b>Critério 3:</b> 
+Coerência e adequação entre a capacitação e a experiência do professor orientador proponente e a realização do projeto, considerando as informações curriculares apresentadas.
 <br>
 <?php
 $r = 3; /* numero da questão */

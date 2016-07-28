@@ -799,9 +799,19 @@ class Fcas extends CI_model {
 		return ($sx);
 	}
 
+	/**
+	 * documented function
+	 * Função para trazer notas e comentários dados pelos avaliadores 
+	 *  ao projetos submetidos para o edital PIBIC E PIBITI.
+	 * Recebe o protocolo($proto) como parâmetro
+	 *
+	 * @return $sx
+	 * @author elizandro Lima 
+	 * Data: 28/06/2016
+	 */
 	function avaliacao_notas_projetos($proto) {
 		$sx = '';
-		if ((perfil("#ADM#3AV#CPP") == 1)) {
+		if ((perfil("#ADM#3AV#CPP") == 1)) {//Perfis atorizados para ver notas e comentários
 			$ano = date("Y");
 			$sql = "select pp_protocolo_mae, pp_protocolo, pp_avaliador_id, id_pp, 
 	                 pp_p01, pp_p02, pp_p03,
@@ -929,7 +939,7 @@ class Fcas extends CI_model {
 						$sx .= '</td>';
 						break;	
 					default:
-						echo "Erro!";
+						echo "Erro na nota 01!";
 						break;
 				}
 								
@@ -966,7 +976,7 @@ class Fcas extends CI_model {
 						$sx .= '</td>';
 						break;	
 					default:
-						echo "Erro!";
+						echo "Erro na nota 02!";
 						break;
 				}
 				//nota 03
@@ -1002,7 +1012,7 @@ class Fcas extends CI_model {
 						$sx .= '</td>';
 						break;	
 					default:
-						echo "Erro!";
+						echo "Erro na nota 03!";
 						break;
 				}
 				//nota 04
@@ -1017,8 +1027,13 @@ class Fcas extends CI_model {
 						$sx .= 'Não';
 						$sx .= '</td>';
 						break;
+					case '12':
+						$sx .= '<td align="center">';
+						$sx .= 'Não aplicável';
+						$sx .= '</td>';
+						break;						
 					default:
-						echo "Erro!";
+						echo "Erro na nota 04!";
 						break;
 				}
 				//nota 05
@@ -1044,42 +1059,41 @@ class Fcas extends CI_model {
 						$sx .= '</td>';
 						break;		
 					default:
-						echo "Erro!";
+						echo "Erro na nota 05!";
 						break;
 				}	
 				
 				//nota 06
-				if($nt_p06 != ''){
-					switch ($nt_p06){
-						case '1':
-							$sx .= '<td align="center">';
-							$sx .= 'Sim';
-							$sx .= '</td>';
-							break;
-						case '2':
-							$sx .= '<td align="center">';
-							$sx .= 'Não';
-							$sx .= '</td>';
-							break;
-						case '3':
-							$sx .= '<td align="center">';
-							$sx .= 'Tenho dúvidas';
-							$sx .= '</td>';
-							break;
-						case '4':
-							$sx .= '<td align="center">';
-							$sx .= 'Já existe o parecer';
-							$sx .= '</td>';
-							break;		
-						default:
-							break;
-					} 
-					}else{
+				switch ($nt_p06) {
+					case '1':
 						$sx .= '<td align="center">';
-						$sx .= '-';
+						$sx .= 'Sim';
 						$sx .= '</td>';
-					}		
-				
+						break;
+					case '2':
+						$sx .= '<td align="center">';
+						$sx .= 'Não';
+						$sx .= '</td>';
+						break;
+					case '3':
+						$sx .= '<td align="center">';
+						$sx .= 'Tenho dúvidas';
+						$sx .= '</td>';
+						break;
+					case '4':
+						$sx .= '<td align="center">';
+						$sx .= 'Já existe o parecer';
+						$sx .= '</td>';
+						break;	
+					case '':
+						$sx .= '<td align="center">';
+						$sx .= ' - ';
+						$sx .= '</td>';
+						break;		
+					default:
+						echo "Erro na nota 06!";
+						break;
+				} 
 				
 				//comentario
 				$sx .= '<td width="50%" align="left">';
@@ -1145,13 +1159,21 @@ class Fcas extends CI_model {
 			 $sx .= '</table>';
 		$sx .= '</div>';	
 		}
-
-	
 		return ($sx);
 
 	}
 
-	function avaliacao_notas_planos_id($proto, $id_plano) {
+	/**
+	 * documented function
+	 * Função para trazer comentários dados pelos avaliadores 
+	 *  ao plano submetidos para o edital Jr.
+	 * Recebe o protocolo mãe e o plano($proto, $plano) como os parâmetros
+	 *
+	 * @return $sx
+	 * @author elizandro Lima 
+	 * Data: 27/07/2016
+	 */
+	function avaliacao_notas_planos_jr($proto, $plano) {
 		$sx = '';
 		if ((perfil("#ADM#3AV#CPP") == 1)) {
 			$ano = date("Y");
@@ -1168,6 +1190,99 @@ class Fcas extends CI_model {
 	                 pp_abe_16, pp_abe_17, pp_abe_18,
 	                 pp_abe_19
 		        from pibic_parecer_" . $ano . "
+		        where pp_protocolo_mae = " . $proto . "
+		        and pp_protocolo = " . $plano . "
+		        and pp_tipo <> 'SUBMI'
+		        and pp_status = 'B'
+		        group by pp_abe_01
+		        order by id_pp
+						";
+
+			$rlt = $this -> db -> query($sql);
+			$rlt = $rlt -> result_array($rlt);
+			
+			/*linhas da tabela*/
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+				
+				//variaveis
+				$plano_proj_jr = $plano;
+				$proto_mae_jr = $proto;
+				
+				}
+			
+			
+			//cabecalho
+			$sx = '<div class="alert alert-info" style="padding:5px 10px;">';
+			$sx .= '<table class="tabela00 lt1" width="100%">';
+			$sx .= '<tr class="lt3"><th></th>';
+			$sx .= '<tr class="lt3"><th><b></b></th>';
+			$sx .= '<th colspan="7" class="lt3">Avaliação do Plano <font color="red">'. $plano_proj_jr . '</font> do Aluno Jr</th></tr>';
+			$sx .= '<tr>
+							<th>#</th>
+							<th align="left" class="lt2">Protocolo mãe</th>	
+							<th align="left" class="lt2">Plano</th>
+						  <th align="center" class="lt2">Comentários sobre plano do aluno</th>
+						</tr>';
+
+			/*linhas da tabela*/
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+
+				//variaveis
+				$plano_proj = $plano;
+				$proto_mae = $proto;
+				$observacoes = 'pp_abe_01';
+				$obsv = '';
+
+				$sx .= '<tr>';
+				//indice
+				$sx .= '<td width="5%" align="center">';
+				$sx .= $r + 1;
+				$sx .= '</td>';
+				
+				//protocolo mae
+				$sx .= '<td width="15%" align="left">';
+				$sx .= $proto;
+				$sx .= '</td>';
+				
+				//protocolo
+				$sx .= '<td width="15%" align="left">';
+				$sx .= $plano_proj;
+				$sx .= '</td>';	
+								
+				//Comentários
+				$sx .= '<td align="left" width="70%">';
+				$sx .= $line['pp_abe_11'];
+				$sx .= '</td>';
+
+			 }
+			 $sx .= '</table>';
+		$sx .= '</div>';	
+		}
+
+	
+		return ($sx);
+
+	}
+
+	function avaliacao_notas_planos_id($proto, $id_plano) {
+		$sx = '';
+		if ((perfil("#ADM#3AV#CPP") == 1)) {
+			$ano = date("Y");
+			$sql = "select pp_protocolo_mae, pp_protocolo, pp_avaliador_id, id_pp, 
+		                 pp_p01, pp_p02, pp_p03,
+		                 pp_p04, pp_p05, pp_p06, pp_p11,
+		                 pp_p12, pp_p13, pp_p14,
+		                 pp_p15,
+		                 pp_abe_01, pp_abe_02, pp_abe_03,
+		                 pp_abe_04, pp_abe_05, pp_abe_06,
+		                 pp_abe_07, pp_abe_08, pp_abe_09,
+		                 pp_abe_10, pp_abe_11, pp_abe_12,
+		                 pp_abe_13, pp_abe_14, pp_abe_15,
+		                 pp_abe_16, pp_abe_17, pp_abe_18,
+		                 pp_abe_19, doc_edital, pj_edital
+		        from pibic_parecer_" . $ano . "
 		        left join ic_submissao_plano on doc_protocolo_mae = pp_protocolo
 						left join ic_submissao_projetos on pj_codigo = pp_protocolo_mae
 		        where pp_protocolo_mae = " . $proto . "
@@ -1179,23 +1294,32 @@ class Fcas extends CI_model {
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array($rlt);
 			
+			
+			for ($r = 0; $r < count($rlt); $r++) {
+				$line = $rlt[$r];
+					//variaveis
+					$plano_proj_aux = $line['pp_protocolo'];;
+					$proto_mae_aux = $proto;
+				}
+			
 			//cabecalho
 			$sx = '<div class="alert alert-info" style="padding:5px 10px;">';
 			$sx .= '<table class="tabela00 lt1" width="100%">';
 			$sx .= '<tr class="lt3"><th></th>';
 			$sx .= '<tr class="lt3"><th><b></b></th>';
-			$sx .= '<th colspan="7" class="lt3">Avaliação do Plano do Aluno</th></tr>';
+			$sx .= '<th colspan="7" class="lt3">Avaliação do Plano do Aluno <font color="red">'. $plano_proj_aux .' </font></th></tr>';
 			$sx .= '<tr>
 							<th>#</th>
-							<th align="left" class="lt2">Plano</th>
-							<th align="left" class="lt2">Protocolo mãe</th>	
+							<th align="left" class="lt2">Protocolo mãe</th>
+							<th align="left" class="lt2">Plano</th>	
 							<th align="center" class="lt2">CT_01</th>
 							<th align="center" class="lt2">CT_02</th>
 							<th align="center" class="lt2">CT_03</th>
+							<th align="center" class="lt2">CT_04</th>
 							<th align="center" class="lt2">Pergunta</th>
 						  <th align="center" class="lt2">Comentários sobre plano do aluno</th>
 						</tr>';
-
+			
 			/*linhas da tabela*/
 			for ($r = 0; $r < count($rlt); $r++) {
 				$line = $rlt[$r];
@@ -1239,15 +1363,14 @@ class Fcas extends CI_model {
 				$sx .= '<td align="center">';
 				$sx .= $r + 1;
 				$sx .= '</td>';
-				//protocolo
-				$sx .= '<td align="center">';
-				$sx .= $plano_proj;
-				$sx .= '</td>';
 				////protocolo mae
 				$sx .= '<td align="center">';
 				$sx .= $proto;
 				$sx .= '</td>';
-			
+				//protocolo
+				$sx .= '<td align="center">';
+				$sx .= $plano_proj;
+				$sx .= '</td>';
 				//nota 1
 				switch ($nt_p11) {
 					case '20':
@@ -1281,7 +1404,7 @@ class Fcas extends CI_model {
 						$sx .= '</td>';
 						break;	
 					default:
-						echo "Erro!";
+						echo "Erro nota 1!";
 						break;
 				}
 				//nota 2
@@ -1317,7 +1440,7 @@ class Fcas extends CI_model {
 						$sx .= '</td>';
 						break;	
 					default:
-						echo "Erro!";
+						echo "Erro nota 2!";
 						break;
 				}
 				//nota 13
@@ -1338,14 +1461,14 @@ class Fcas extends CI_model {
 						$sx .= '</td>';
 						break;
 					default:
-						echo "Erro!";
+						echo "Erro nota 13";
 						break;
 				}
 				//nota 14
 				switch ($nt_p14) {
 					case '1':
 						$sx .= '<td align="center">';
-						$sx .= 'SIM';
+						$sx .= 'SIM, deve migrar para o PIBITI';
 						$sx .= '</td>';
 						break;
 					case '2':
@@ -1359,10 +1482,11 @@ class Fcas extends CI_model {
 						$sx .= '</td>';
 						break;
 					default:
-						echo "Erro!";
+						echo "Erro nota 14!";
 						break;
 				}						
 				
+				//comentário
 				$sx .= '<td align="left" width="50%">';
 				$sx .= $line['pp_abe_11'];
 				$sx .= '</td>';
@@ -1460,6 +1584,8 @@ class Fcas extends CI_model {
 
 			$rlt = $this -> db -> query($sql);
 			$rlt = $rlt -> result_array($rlt);
+			
+			
 			
 			//cabecalho
 			$sx = '<div class="alert alert-info" style="padding:5px 10px;">';
@@ -1903,7 +2029,10 @@ class Fcas extends CI_model {
 		$id         = $data['id_ed'];
 		$ed_id_prof = $data['ed_professor'];
 		$ano        = $data['ed_ano'];
+		$prof_tit   = $data2['usuario_titulacao_ust_id'];
 
+			//print_r($data2);exit;
+			
 		/* Salvar */
 		$rs = get("dd20");
 		if ($rs > 0) {
@@ -1926,38 +2055,42 @@ class Fcas extends CI_model {
 		}
 		
 		switch ($edital) {
+//*############################  INDICAÇÃO DE BOLSAS PIBIC    #######################################################*/			
 			case 'PIBIC':
-				if ($idx == $idx) {
-					if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
-					$sql = "SELECT * from ic_modalidade_bolsa 
-									WHERE mb_tipo_2 = '$edital'
-					        and mb_ativo = 1 
-					        and mb_ano_edicao = '$ano' 
-									order by mb_descricao
-								 ";
+					if ($idx == $idx) {
+									//mostra bolsa PUC, mesmo que já tenha uma indicada
+									if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
+									$sql = "SELECT * from ic_modalidade_bolsa 
+													WHERE mb_tipo_2 = '$edital'
+									        and mb_ativo = 1 
+									        and mb_ano_edicao = '$ano' 
+													order by mb_descricao
+												 ";
+											break;
+									} else {
+											//não mostra a mesma bolsa que já tenha sido indicada, menos a PUC que pode ter mais de uma
+											$sql = "SELECT * from ic_modalidade_bolsa 
+															WHERE mb_tipo_2 = '$edital'
+															       and mb_ativo = 1 
+															       and mb_ano_edicao = '$ano' 
+															       and id_mb not in (
+																						            SELECT ed_modalidade from ic_edital
+																											 	INNER JOIN ic_modalidade_bolsa ON id_mb = ed_modalidade
+																												WHERE ed_ano = '$ano' 
+																						            and ed_professor = '$ed_id_prof' 
+																						            and ed_edital = '$edital'          
+																						            )     
+															order by mb_descricao
+															";
+												break;
+									}
+						} else {
+							//mostra todas as modalidades de bolsas
+							$sql = "select * from ic_modalidade_bolsa WHERE (mb_tipo_2 = '$edital' and mb_ativo = 1 and mb_ano_edicao = '2016') order by mb_descricao ";
 							break;
-					} else {
-							//não mostra a mesma bolsa que já tenha sido indicada
-							$sql = "SELECT * from ic_modalidade_bolsa 
-											WHERE mb_tipo_2 = '$edital'
-											       and mb_ativo = 1 
-											       and mb_ano_edicao = '$ano' 
-											       and id_mb not in (
-																		            SELECT ed_modalidade from ic_edital
-																							 	INNER JOIN ic_modalidade_bolsa ON id_mb = ed_modalidade
-																								WHERE ed_ano = '$ano' 
-																		            and ed_professor = '$ed_id_prof' 
-																		            and ed_edital = '$edital'          
-																		            )     
-											order by mb_descricao
-											";
-								break;
-					}
-								
-			} else {
-				$sql = "select * from ic_modalidade_bolsa WHERE (mb_tipo_2 = '$edital' and mb_ativo = 1 and mb_ano_edicao = '2016') order by mb_descricao ";
-				break;
-			}		
+						}	
+							
+//*############################  INDICAÇÃO DE BOLSAS PIBITI   #######################################################*/		
 			case 'PIBITI':
 				if ($idx == $idx) {
 					if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
@@ -1989,6 +2122,8 @@ class Fcas extends CI_model {
 				$sql = "select * from ic_modalidade_bolsa WHERE (mb_tipo_2 = '$edital' and mb_ativo = 1 and mb_ano_edicao = '2016') order by mb_descricao ";
 				break;
 			}
+			
+//*############################   INDICAÇÃO DE BOLSAS JR     #######################################################*/			
 			case 'PIBICEM':
 				if ($idx == $idx) {
 					if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {

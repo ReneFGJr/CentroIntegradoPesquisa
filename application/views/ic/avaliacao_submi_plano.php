@@ -43,7 +43,7 @@ if (strlen($acao) > 0) {
 <!----------------- item 1 ---------------------------->
 <?php $r = $ddx+1; /* numero da questão */ ?>
 1) <?php echo $ob[$r]; ?>
-<b>Critério 1 (plano <?php echo $doc_protocolo;?>): Coerência entre o projeto do orientador e o plano de trabalho do estudante, considerando a contribuição para a formação do discente.</b>:
+<b>Critério 1 (plano <?php echo $doc_protocolo;?>)</b>: Coerência entre o projeto do orientador e o plano de trabalho do estudante, considerando a contribuição para a formação do discente.
 </br>
 <?php
 $resposta = array('20'=>'Excelente','15'=>'Muito Bom','11'=>'Bom','7'=>'Regular', '3'=> 'Ruim','1'=>'Muito ruim');

@@ -22,6 +22,7 @@
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBITI/V');?>" class="link">Ciências da Vida</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBITI/A');?>" class="link">Ciências Agrárias</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBITI/S');?>" class="link">Ciências Sociais Aplicadas</a></li>
+			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBITI/H');?>" class="link">Ciências Humanas e Literatura</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBITI/N');?>" class="link"><font color="red">Problemas de Áreas</font></a></li>
 		</ul>		
 	</div>
@@ -34,6 +35,7 @@
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBICEM/V');?>" class="link">Ciências da Vida</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBICEM/A');?>" class="link">Ciências Agrárias</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBICEM/S');?>" class="link">Ciências Sociais Aplicadas</a></li>
+			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBICEM/H');?>" class="link">Ciências Humanas e Literatura</a></li>
 			<li><a href="<?php echo base_url('index.php/ic/indicar_bolsa/PIBICEM/N');?>" class="link"><font color="red">Problemas de Áreas</font></a></li>
 		</ul>		
 	</div>
