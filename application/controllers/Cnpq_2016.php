@@ -1,5 +1,5 @@
 <?php
-class cnpq extends CI_Controller {
+class cnpq_2016 extends CI_Controller {
 
 	function __construct() {
 		global $dd, $acao;
@@ -33,6 +33,7 @@ class cnpq extends CI_Controller {
 		array_push($css, 'style_cab.css');
 		array_push($css, 'switch_onoff.css');
 		array_push($css, 'form_sisdoc.css');
+		array_push($css, 'custom_theme_16.css');
 		array_push($js, 'js_cab.js');
 		array_push($js, 'unslider.min.js');
 		array_push($js, 'high/highcharts.js');
@@ -57,8 +58,9 @@ class cnpq extends CI_Controller {
 
 		/* Adiciona logo da IC*/
 		$this -> load -> view('header/content_open');
-		$data['logo'] = base_url('img/logo/logo_cnpq_2016.png');
-		$this -> load -> view('header/logo', $data);
+		//$data['logo'] = base_url('img/logo/logo_cnpq_2016.png');
+		//$data['logo'] = base_url('');
+		//$this -> load -> view('header/logo', $data);
 		
 	}
 
@@ -69,8 +71,9 @@ class cnpq extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		
-		$this -> load -> view('cnpq/view_welcome');
-		$this -> load -> view('cnpq/view_box');
+		//$this -> load -> view('cnpq/view_welcome');
+		//$this -> load -> view('cnpq/view_box');
+		$this -> load -> view('cnpq2016/index_cnpq');
 		$this -> load -> view('header/content_close');
 		
 		$this -> load -> view('header/content_close');
@@ -86,70 +89,70 @@ class cnpq extends CI_Controller {
 		
 		switch($view){
 			case 'semic_about':
-				$this -> load -> view('cnpq/semic_about');
+				$this -> load -> view('cnpq2016/semic_about');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 			
 			case 'semic_premiacao':
-				$this -> load -> view('cnpq/semic_premiacao');
+				$this -> load -> view('cnpq2016/semicpremiacoes');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 			
 			case 'cnpq_experiencia_institucional_ic_2015':
-				$this -> load -> view('cnpq/cnpq_experiencia_institucional_ic_2015');
+				$this -> load -> view('cnpq2016/cnpq_experiencia_institucional_ic_2015');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 
 			case 'cnpq_experiencia_institucional_ic_2015_jr':
-				$this -> load -> view('cnpq/cnpq_experiencia_institucional_ic_2015_jr');
+				$this -> load -> view('cnpq2016/cnpq_experiencia_institucional_ic_2015_jr');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 			
 			case 'cnpq_relato_do_processo_de_selecao_2015':
-				$this -> load -> view('cnpq/cnpq_relato_do_processo_de_selecao_2015');
+				$this -> load -> view('cnpq2016/cnpq_relato_do_processo_de_selecao_2015');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 			
 			case 'cnpq_membros_do_comite_gestor_2015':
-				$this -> load -> view('cnpq/cnpq_membros_do_comite_gestor_2015');
+				$this -> load -> view('cnpq2016/cnpq_membros_do_comite_gestor_2015');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 
 			case 'cnpq_semic_2015':
-				$this -> load -> view('cnpq/cnpq_semic_2015');
+				$this -> load -> view('cnpq2016/cnpq_semic_2015');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 
 			case 'cnpq_mobilidade_2015':
-				$this -> load -> view('cnpq/cnpq_mobilidade_2015');
+				$this -> load -> view('cnpq2016/cnpq_mobilidade_2015');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 
 			case 'cnpq_editais_2015':
-				$this -> load -> view('cnpq/cnpq_editais_2015');
+				$this -> load -> view('cnpq2016/cnpq_editais_2015');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;				
 
 			case 'Análise do Edital 2016/2017':
-				$this -> load -> view('cnpq/cc');
+				$this -> load -> view('cnpq2016/cc');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);

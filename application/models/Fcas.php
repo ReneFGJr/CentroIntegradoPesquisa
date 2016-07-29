@@ -1,6 +1,262 @@
 <?php
 class Fcas extends CI_model {
 
+	function bolsas_indicadas($edital = '', $area = '') {
+		$ano = date("Y");
+		if (strlen($area) > 0) {
+			$wh = " and ed_area = '$area' ";
+		} else {
+			$wh = "";
+		}
+		//consulta
+		$sql = "select distinct id_ed,
+                ed_nota_normalizada, 
+                ed_edital, 
+                ed_protocolo,
+                ed_protocolo, 
+                ed_estudante, 
+                ed_protocolo_mae, 
+                ed_avaliacoes, 
+                (ed_nota_normalizada + ed_bn_produtividade + ed_bn_titulacao + ed_bn_ss + ed_bn_jr - ed_bn_penalidade) as nota,
+                (ed_bn_produtividade + ed_bn_titulacao + ed_bn_ss + ed_bn_jr - ed_bn_penalidade) as nota_bn, 
+                ed_area,               
+                professor.id_us as id_professor,
+                professor.us_nome as nome_professor,
+                professor.us_campus_vinculo as campus_professor,
+                professor.us_professor_tipo as tipo_professor,
+                professor.usuario_titulacao_ust_id AS id_titulacao,
+                professor.us_ativo as ativo,
+                ust_titulacao_sigla AS sigla_titulacao,
+                bpn_bolsa_descricao,
+                mb.mb_link_logo_bolsas,
+                mb.mb_descricao,
+                doc_escola_publica, 
+                doc_icv,  
+                doc_protocolo, 
+                doc_aluno,
+                aluno.id_us as id_aluno,
+                aluno.us_nome as aluno_nome,
+                aluno.us_cracha as aluno_cracha
+		FROM ic_edital
+		left join(SELECT id_us,
+		                 us_nome,
+		                 us_campus_vinculo,
+		                 us_professor_tipo,
+		                 usuario_titulacao_ust_id,
+		                 us_ativo FROM us_usuario)as professor on professor.id_us = ed_professor
+		left join us_titulacao on ust_id = professor.usuario_titulacao_ust_id
+		left join (select distinct bpn_id, us_id as id_prod from us_bolsa_produtividade where usb_ativo = 1) as produtividade on id_prod =  professor.id_us 
+		left join us_bolsa_prod_nome on id_bpn = bpn_id
+		left join ic_modalidade_bolsa as mb on ed_modalidade = mb.id_mb
+		left join ic_submissao_plano on doc_protocolo = ed_protocolo
+		left join(SELECT id_us, 
+		                 us_nome,
+						         us_cracha FROM us_usuario where us_ativo = 1)AS aluno on doc_aluno = aluno.us_cracha  
+		where ed_edital = '$edital'
+		$wh
+		and ed_ano = '$ano'
+		AND doc_status = 'B'
+		order by nota desc, ed_protocolo_mae
+		";
+		
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		$sx = '';
+		//area selecionada
+		$area_select = $area;
+		
+		//Colunas da tabela
+		$sx .= '<table class="tabela00 lt2" width="100%">';
+		//Troca de sub-titulo conforme area selecionada
+		switch($area_select) {
+			case 'V' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Ciências da Vida </strong></font></tr>';
+				break;
+			case 'E' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Exatas e Engenharias </strong></font></tr>';
+				break;
+			case 'H' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Humanas </strong></font></tr>';
+				break;
+			case 'A' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Ciências Agrárias </strong></font></tr>';
+				break;
+			case 'S' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Ciências Sociais Aplicadas </strong></font></tr>';
+				break;	
+			default :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Indique uma área no menu anterior! </strong></font></tr>';
+				break;			
+			}	
+		$sx .= '<tr><th align="center" class="lt01">#</th>
+							  <th align="center">Bolsa indicada</th>
+							  <th align="center">Nome do Orientador</th>
+								<th align="center">Câmpus do professor</th>
+								<th align="center">Nome do Aluno</th>
+								<th align="center">Aluno Trabalha?</th>
+								<th align="center">Estudou em Esc. pública?</th>
+								<th align="center">Nota da Avaliação</th>
+								<th align="center">Projeto do Professor</th>
+								<th align="center">Plano do Aluno</th>
+						</tr>';
+			
+		$tot = 0;
+		$tot2 = 0;
+		
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			
+			//logo da bolsa
+			$nome_bolsa = $line['mb_descricao'];
+			$logo = $line['mb_link_logo_bolsas'];
+			$img = '<img src="' . base_url( $logo ) . '" width="40" height="40" alt="image">';
+			
+			//link do projeto
+			$proto = round(substr($line['ed_protocolo_mae'], 1, 6));
+			$link_projeto = '<a href="' . base_url('index.php/ic/projeto_view/' . $proto . '/' . checkpost_link($proto)) . '" class="link nopr">';
+			//link do plano
+			$plano = round(substr($line['ed_protocolo'], 1, 6));
+			$link_plano = '<a href="' . base_url('index.php/ic/plano_view/' . $plano . '/' . checkpost_link($plano)) . '" class="link nopr">';
+			//$nota = $line['ed_nota_normalizada'];
+			$nota = $line['nota'];
+			$cor = '';
+			
+			/*################### INICIO DO PREENCHIMENTO DA TABELA ####################################*/
+			//indice
+			$sx .= '<tr>';
+			$sx .= '<td align="center">';
+			$sx .= $r + 1;
+			$sx .= '</td>';
+			
+			//logo da bolsa e bolsa indicada
+			$sx .= '<td align="left" width="23%">';
+			$sx .= $img.' '.$line['mb_descricao'];
+			$sx .= '</td>';
+			
+			//diferencia professor inativo no sistema
+			$sf = '';
+			$sf2 = '';
+			$prof_ativo = $line['ativo'];//professor ativo
+			if ($prof_ativo == '0') {
+				//$sf = '<font color="red"><strong> * <strong></font>';
+				$sf = '<font color="red"><strike>';
+				$sf2 = '<strike></font>';
+			} else {
+				
+			}
+			//professor
+			$sx .= '<td align="left" width="18%">';
+			//$sx .= $sf.$line['sigla_titulacao'] . ' ' . link_user($line['nome_professor'], $line['id_professor']).$sf2;
+			$sx .= $sf.$line['sigla_titulacao'] . ' ' .$line['nome_professor'].$sf2;
+			$sx .= '</td>';
+			
+			/**
+			//area do professor
+			$area_prof = $line['ed_area'];
+			switch ($area_prof) {
+				case 'V' :
+					$sx .= '<td align="left">';
+					$sx .= msg("Vida");
+					$sx .= '</td>';
+					break;
+				case 'E' :
+					$sx .= '<td align="left">';
+					$sx .= msg("Exatas");
+					$sx .= '</td>';
+					break;
+				case 'H' :
+					$sx .= '<td align="left">';
+					$sx .= msg("Humanas");
+					$sx .= '</td>';
+					break;
+				case 'A' :
+					$sx .= '<td align="left">';
+					$sx .= msg("Agrárias");
+					$sx .= '</td>';
+					break;
+				case 'S' :
+					$sx .= '<td align="left">';
+					$sx .= msg("Sociais aplicadas");
+					$sx .= '</td>';
+					break;
+				default :
+					$sx .= '<td align="left">';
+					$sx .= msg("Não indicada");
+					$sx .= '</td>';
+					break;
+			}
+			*/
+			
+			//Centro
+			$sx .= '<td align="left" width="8%">';
+			$sx .= $line['campus_professor'];
+			$sx .= '</td>';
+			
+			//Nome aluno
+			$sx .= '<td align="left" width="18%">';
+			//$sx .= link_user($line['aluno_nome'], $line['id_aluno']);
+			$sx .= $line['aluno_nome'];
+			$sx .= '</td>';
+     	//Aluno trabalha ?
+			$sx .= '<td align="center" width="5%">';
+			$tb = $line['doc_icv'];
+			if ($tb == '1') {
+				$sx .= '<font color="red">Sim</font>';
+			} else {
+				$sx .= 'Não';
+			}
+			$sx .= '</td>';
+			//Aluno estudou escola publica ?
+			$sx .= '<td align="center" width="5%">';
+			$ep = $line['doc_escola_publica'];
+			if ($ep == '1') {
+				$sx .= '<font color="red">Sim</font>';
+			} else {
+				$sx .= 'Não';
+			}
+			$sx .= '</td>';
+			
+			//$sx .= $line['ed_nota_normalizada'];
+			if ($nota < 70) {
+				 $tot2++; 
+				 $cor = 'red';
+			}
+			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($nota, 2, ',', '.') . '</td>';
+			//só pode editar se for perfil admin ou coordenador pibic
+			if ((perfil("#CPP#ADM#CNQ") == 1)) {
+				//Protocolo mae
+				$sx .= '<td align="center" width="10%">';
+				$sx .= $link_projeto . $line['ed_protocolo_mae'] . '</a>';
+				$sx .= '</td>';
+				//Protocolo
+				$sx .= '<td align="center" width="10%">';
+				$sx .= $link_plano . $line['ed_protocolo'] . '</a>';
+				$sx .= '</td>';
+			}else{
+				//Protocolo mae
+				$sx .= '<td align="center" width="10%">';
+				$sx .= $line['ed_protocolo_mae'];
+				$sx .= '</td>';
+				//Protocolo
+				$sx .= '<td align="center" width="10%">';
+				$sx .= $line['ed_protocolo'];
+				$sx .= '</td>';
+			}
+		}
+		//qtd de registros
+		$sx .= '<tr><td colspan=16 align="right">Total de ' . $tot . ' registro(s)</td></tr>';
+		if ($nota < 70) {
+			$sx .= '<tr><td colspan=16 align="right" style="color: ' . $cor . ';">' . $tot2 . ' nota(s) esta(ão) abaixo da linha de corte</td></tr>';
+		}
+		$sx .= '</table>';
+
+		return ($sx);
+
+	}
+
+
 	function indicar_bolsas($edital = '', $area = '') {
 		$ano = date("Y");
 		if (strlen($area) > 0) {
@@ -57,7 +313,7 @@ class Fcas extends CI_model {
 		where ed_edital = '$edital'
 		$wh
 		and ed_ano = '$ano'
-		order by ed_protocolo_mae
+		order by nota desc, ed_protocolo_mae
 		";
 		//order by nota desc, ed_avaliacoes asc
 		/**
@@ -2031,8 +2287,6 @@ class Fcas extends CI_model {
 		$ano        = $data['ed_ano'];
 		$prof_tit   = $data2['usuario_titulacao_ust_id'];
 
-			//print_r($data2);exit;
-			
 		/* Salvar */
 		$rs = get("dd20");
 		if ($rs > 0) {
@@ -2058,16 +2312,23 @@ class Fcas extends CI_model {
 //*############################  INDICAÇÃO DE BOLSAS PIBIC    #######################################################*/			
 			case 'PIBIC':
 					if ($idx == $idx) {
-									//mostra bolsa PUC, mesmo que já tenha uma indicada
-									if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
+							//mostra bolsa PUC, mesmo que já tenha uma indicada
+							if (($id_modalidade == '3' ) or 
+									($id_modalidade == '4' ) or 
+					        ($id_modalidade == '5' ) or 
+					        ($id_modalidade == '14') or
+					        ($id_modalidade == '16') or
+					        ($id_modalidade == '17') or 
+					        ($id_modalidade == '18')  
+					    ) {
 									$sql = "SELECT * from ic_modalidade_bolsa 
-													WHERE mb_tipo_2 = '$edital'
-									        and mb_ativo = 1 
-									        and mb_ano_edicao = '$ano' 
-													order by mb_descricao
-												 ";
-											break;
-									} else {
+											WHERE mb_tipo_2 = '$edital'
+							        and mb_ativo = 1 
+							        and mb_ano_edicao = '$ano' 
+											order by mb_descricao
+										 ";
+									break;
+							} else {
 											//não mostra a mesma bolsa que já tenha sido indicada, menos a PUC que pode ter mais de uma
 											$sql = "SELECT * from ic_modalidade_bolsa 
 															WHERE mb_tipo_2 = '$edital'
@@ -2093,7 +2354,15 @@ class Fcas extends CI_model {
 //*############################  INDICAÇÃO DE BOLSAS PIBITI   #######################################################*/		
 			case 'PIBITI':
 				if ($idx == $idx) {
-					if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
+					//caso o prof. já tenha recebido uma dessas bolsas, para um proximo plano ele pode indicar mais uma bolsa da mesma modalidade
+					if (($id_modalidade == '8')  or 
+					    ($id_modalidade == '9' ) or
+					    ($id_modalidade == '21') or 
+					    ($id_modalidade == '23') or 
+					    ($id_modalidade == '27') or
+					    ($id_modalidade == '28') or   
+					    ($id_modalidade == '2')  
+					    ) {
 					$sql = "SELECT * from ic_modalidade_bolsa 
 									WHERE mb_tipo_2 = '$edital'
 					        and mb_ativo = 1 
@@ -2102,6 +2371,7 @@ class Fcas extends CI_model {
 								 ";
 							break;
 					} else {
+							//não mostra a bolsa da mesma modalidade caso o prof. já tenha recebido ela na indicação
 							$sql = "SELECT * from ic_modalidade_bolsa 
 											WHERE mb_tipo_2 = '$edital'
 											       and mb_ativo = 1 
@@ -2126,20 +2396,23 @@ class Fcas extends CI_model {
 //*############################   INDICAÇÃO DE BOLSAS JR     #######################################################*/			
 			case 'PIBICEM':
 				if ($idx == $idx) {
-					if (($id_modalidade == '14') or ($id_modalidade == '8') or ($id_modalidade == '24')) {
-					$sql = "SELECT * from ic_modalidade_bolsa 
-									WHERE mb_tipo_2 = '$edital'
-					        and mb_ativo = 1 
-					        and mb_ano_edicao = '$ano' 
-									order by mb_descricao
-								 ";
-							break;
-					} else {
-							$sql = "SELECT * from ic_modalidade_bolsa 
-											WHERE mb_tipo_2 = '$edital'
-											       and mb_ativo = 1 
-											       and mb_ano_edicao = '$ano' 
-											       and id_mb not in (
+					if (($id_modalidade == '24') or 
+					    ($id_modalidade == '25') or
+					    ($id_modalidade == '42')   
+					    ) {
+									$sql = "SELECT * from ic_modalidade_bolsa 
+													WHERE mb_tipo_2 = '$edital'
+									        and mb_ativo = 1 
+									        and mb_ano_edicao = '$ano' 
+													order by mb_descricao
+												 ";
+											break;
+									} else {
+											$sql = "SELECT * from ic_modalidade_bolsa 
+															WHERE mb_tipo_2 = '$edital'
+															       and mb_ativo = 1 
+															       and mb_ano_edicao = '$ano' 
+															       and id_mb not in (
 																		            SELECT ed_modalidade from ic_edital
 																							 	INNER JOIN ic_modalidade_bolsa ON id_mb = ed_modalidade
 																								WHERE ed_ano = '$ano' 
@@ -2174,12 +2447,6 @@ class Fcas extends CI_model {
 	}
 
 	function mostra_indicacoes_professor($id_us, $edital, $ano) {
-		/*	
-		$sql = "SELECT * from ic_edital
-					 	INNER JOIN ic_modalidade_bolsa ON id_mb = ed_modalidade
-						WHERE ed_ano = '$ano' and ed_professor = $id_us and ed_edital = '$edital' 
-					";
-			*/
 		$sql = "SELECT * from ic_edital
 						INNER JOIN ic_modalidade_bolsa ON id_mb = ed_modalidade
 						left join ic_submissao_projetos on pj_codigo = ed_protocolo_mae

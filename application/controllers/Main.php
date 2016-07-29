@@ -69,7 +69,7 @@ class Main extends CI_Controller {
 		$this -> load -> view('header/content_open.php');
 
 		$this -> load -> view('header/cab', $data);
-
+			
 		/* Chamadas editais */
 		$data['editais'] = $this->fomento_editais->editais_abertos_resumo();
 		$this -> load -> view('fomento/chamadas_resumo', $data);
@@ -139,9 +139,15 @@ class Main extends CI_Controller {
 		if (perfil('#ADM#SEP') == 1) {
 			array_push($menu, array('Stricto Sensu', 'Secretaria e Coordenação do <i>stricto sensu</i>', 'BTA', '/stricto_sensu'));
 		}
-		if (perfil('#ADM#CPP') == 1) {
+		//cnpq old
+		if (perfil('#ADM#CPP#CNQ') == 1) {
+		//if (perfil('#CNQ') == 1) {	
 			array_push($menu, array('CNPq', 'Administração', 'BTN', '/cnpq'));
 		}
+		//observatório cnp 2016
+		if (perfil('#CNQ') == 1) {
+			array_push($menu, array('CNPq 2016', 'Observatório estatístico 2016', 'BTN', '/cnpq_2016'));
+		}		
 		if (perfil('#CPP#SPI#ADM#EVE') == 1) {
 			array_push($menu, array('Eventos', 'Sistema de Gestão de Eventos', 'BTA', '/evento'));
 		}

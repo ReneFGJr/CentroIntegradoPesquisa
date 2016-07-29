@@ -59,7 +59,9 @@ class ic extends CI_Controller {
 			array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
 			array_push($menus, array('Contratos', 'index.php/ic_contrato/contratos/'));
 			array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
-		} else {
+		}elseif (perfil('#CNQ') == 1){
+			array_push($menus, array('Home', 'index.php/ic/'));
+		}else{
 			array_push($menus, array('Home', 'index.php/ic/submit_PIBIC/'));
 			array_push($menus, array('Iniciação Científica', 'index.php/pibic/'));
 		}
@@ -74,7 +76,13 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 
 		$this -> load -> view('header/content_open');
-		$data['logo'] = base_url('img/logo/logo_ic.png');
+		
+			if (perfil('#CNQ') == 1){
+				$data['logo'] = base_url('img/cnpq/logos_IC.png');
+			} else {
+				$data['logo'] = base_url('img/logo/logo_ic.png');
+			}
+		
 		$this -> load -> view('header/logo', $data);
 	}
 
@@ -3097,7 +3105,8 @@ class ic extends CI_Controller {
 		array_push($menu, array('Montagem Edital (Pré)', 'Pontos Apr. Externa / Área (IV)', 'ITE', '/ic/avaliacoes/projeto_externo'));
 		array_push($menu, array('Montagem Edital (Pré)', 'Normaliza Notas (V)', 'ITE', '/ic/avaliacoes/normaliza_nota'));
 
-		array_push($menu, array('Montagem Edital', 'Indicar Bolsas', 'ITE', '/ic/indicar_bolsa'));
+		array_push($menu, array('Montagem Edital (Final)', 'Indicar Bolsas', 'ITE', '/ic/indicar_bolsa'));
+		array_push($menu, array('Montagem Edital (Final)', 'Bolsas indicadas', 'ITE', '/ic/bolsa_indicadas'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -4419,9 +4428,6 @@ class ic extends CI_Controller {
 		//le dados do edital
 		$data = $this -> fcas -> le($id);
 		
-		//print_r($data);
-		//exit;
-		
 		$ano = $data['ed_ano'];
 		$prof = $data['ed_professor'];
 		$edital = $data['ed_edital'];
@@ -4429,7 +4435,7 @@ class ic extends CI_Controller {
 		$plano = $data['ed_protocolo'];
 		$area_conhecimento = $data['ed_area_conhecimento'];
 		$estudante = $data['us_nome'];
-
+		
 		//le dados do Professor
 		$data2 = $this -> usuarios -> le($prof);
 		$prof_nome = $data2['us_nome'];
@@ -4493,7 +4499,27 @@ class ic extends CI_Controller {
 		$this -> load -> view('content', $data);
 	}
 
-	
+	function bolsa_indicadas($edital = '', $area = '') {
+		/*carrega model*/
+		$this -> load -> model('fcas');
+		$this -> cab();
+		$data = array();
+		$ano = date('Y');
+		
+		$data['title'] = msg('Bolsas indicadas para o edital '.$edital);
+		
+		if (strlen($edital) > 0) {
+			$sx = $this -> fcas -> bolsas_indicadas($edital, $area);
+			$data['content'] = $sx;
+			$this -> load -> view('content', $data);
+		
+		} else {
+			$this -> load -> view('ic_edital/edital_areas_cnpq', null);
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
 
 	function substituir_estudante($id = 0, $chk = '') {
 		/*carrega model */

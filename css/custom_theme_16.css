@@ -1,0 +1,37 @@
+/* 
+CUSTOM THEME 2016 - CIP
+Arquivos com as classes customizadas para o CIP
+Data: 29/07/2016
+Autor: Paulo Cezar Teilor Junior
+E-mail: cezar.teilor@pucpr.br
+Descrição:  Arquivo criado na tentativa de amenizar conflitos e organizar as classes existentes hoje no CIP.
+*/
+
+
+/* Classes experimentais para landing CNPq */
+
+/* Paddings */
+
+section {padding-top: 10px; padding-bottom: 20px;}
+section.container {padding-top: 50px; padding-bottom: 50px;}
+
+
+/* Links Decoration */
+a[href^="tel:"] { color:#000; text-decoration: none;}
+a[href^="tel:"]:before {content: "\260e"; margin-right: 0.5em;}
+
+a[href^="mail:"]{color:#000; text-decoration: none;}
+
+/* UL e LI */ 
+.ulnav{}
+.ulnav a{color: #1f1f1f;}
+.ulnav a:before {content: "\25B8";}
+.ulnav h4{color:#1f1f1f;}
+.ulnav hr{ width: 90%; border: solid 1; color: #1c1c1c;}
+
+
+/* Tables */ 
+
+
+
+/* /Classes e IDs experimentais para Landing CNPq 2016 */
