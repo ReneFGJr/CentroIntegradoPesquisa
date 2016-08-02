@@ -140,7 +140,7 @@ class Main extends CI_Controller {
 			array_push($menu, array('Stricto Sensu', 'Secretaria e Coordenação do <i>stricto sensu</i>', 'BTA', '/stricto_sensu'));
 		}
 		//cnpq old
-		if (perfil('#ADM#CPP#CNQ') == 1) {
+		if (perfil('#ADM#CPP') == 1) {
 		//if (perfil('#CNQ') == 1) {	
 			array_push($menu, array('CNPq', 'Administração', 'BTN', '/cnpq'));
 		}
@@ -197,15 +197,15 @@ class Main extends CI_Controller {
 		if (perfil('#CEU#TST') == 1) {
 			array_push($menu, array('CEUA', 'Comitê de Ética em Pesquisa no Uso de Animais', 'BTA', '/ceua'));
 		}
-		if (perfil('#ADM') == 1) {
-			array_push($menu, array('Central Certificados e Declarações', 'Configurações dos certificados!', 'BTA', '/Central_declaracao_gestao'));
-		}
+		//if (perfil('#ADM') == 1) {
+		//	array_push($menu, array('Central Certificados e Declarações', 'Configurações dos certificados!', 'BTA', '/Central_declaracao_gestao'));
+		//}
 		
 		if (perfil('#TST') == 1) {
 			array_push($menu, array('FCA', 'Fator de correção de Avaliações', 'BTA', '/fca'));
 		}
 		
-		array_push($menu, array('Central de Certificados e Declarações', 'Emita suas declarações e certificados!', 'BTN', '/Central_declaracao/certificados/'.$_SESSION['id_us'].'/'.checkpost_link($_SESSION['id_us'])));
+		//array_push($menu, array('Central de Certificados e Declarações', 'Emita suas declarações e certificados!', 'BTN', '/Central_declaracao/certificados/'.$_SESSION['id_us'].'/'.checkpost_link($_SESSION['id_us'])));
 		
 		$data['menu'] = $menu;
 		$data['title_menu'] = 'Menu Principal';

@@ -191,7 +191,7 @@ class ics_acompanhamento extends CI_model {
 	}
 
 
-/* Relatorio Final */
+  /* Relatorio Final */
 	function relatorio_final_entregue($ano = 0, $sem_indicacao = 0) {
 		$wh = " (ic_ano = '$ano') ";
 		$wh .= " and (ic_rf_data > '2000-01-01')";

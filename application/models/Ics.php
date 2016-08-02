@@ -968,7 +968,7 @@ class ics extends CI_model {
 		$cr = '103.646';
 		$ano = date("Y");
 
-		if (date("m") <= 7) {
+		if (date("m") <= 8) {
 			$ano = $ano - 1;
 		}
 
@@ -1011,16 +1011,16 @@ class ics extends CI_model {
 			$seq++;
 
 			$sx .= '<tr>';
-			$sx .= '<td align="center">' . $seq . '.</td>';
-			$sx .= '<td align="left">' . $line['al_nome'] . '</td>';
-			$sx .= '<td align="center">' . $line['al_cpf'] . '</td>';
-			$sx .= '<td align="center">' . stodbr($line['al_nasc']) . '</td>';
-			$sx .= '<td align="right">' . number_format($custo, 4, ',', '.') . '</td>';
-			$sx .= '<td align="right">' . number_format($vlr, 2, ',', '.') . '</td>';
-			$sx .= '<td align="center">' . $sub . '</td>';
-			$sx .= '<td align="center">' . $areaIC . '</td>';
-			$sx .= '<td align="center">' . $cr . '</td>';
-			$sx .= '<td align="right">' . $line['al_campus_vinculo'] . '</td>';
+			$sx .= '<td align="center">' 	. $seq . '.</td>';
+			$sx .= '<td align="left">' 		. $line['al_nome'] . '</td>';
+			$sx .= '<td align="center">' 	. $line['al_cpf'] . '</td>';
+			$sx .= '<td align="center">' 	. stodbr($line['al_nasc']) . '</td>';
+			$sx .= '<td align="right">' 	. number_format($custo, 4, ',', '.') . '</td>';
+			$sx .= '<td align="right">' 	. number_format($vlr, 2, ',', '.') . '</td>';
+			$sx .= '<td align="center">' 	. $sub . '</td>';
+			$sx .= '<td align="center">' 	. $areaIC . '</td>';
+			$sx .= '<td align="center">' 	. $cr . '</td>';
+			$sx .= '<td align="right">' 	. $line['al_campus_vinculo'] . '</td>';
 
 			//$sx .= '<td align="center">' . $line['al_genero'] . '</td>';
 			//$sx .= '<td align="center">' . 'T' . '</td>';
@@ -2158,7 +2158,7 @@ class ics extends CI_model {
 	function resumo($ano = '') {
 		if (strlen($ano) == 0) {
 			$ano = date("Y");
-			if (date("m") <= 7) {
+			if (date("m") <= 10) {
 				 $ano = (date("Y") - 1);
 			}
 		}
@@ -2196,22 +2196,22 @@ class ics extends CI_model {
 		$link_a_resumo_pibic = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBIC') . '">' . $ed['PIBIC'] . '</a>';
 		$link_b_resumo_pibiti = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBITI') . '">' . $ed['PIBITI'] . '</a>';
 		$link_c_resumo_pibicjr = '<A href="' . base_url('index.php/ic/resumo_orientacoes_ativas/' . 'PIBICEM') . '">' . $ed['PIBICEM'] . '</a>';
-
+		
 		$sx = '<table width="100%" class="lt1 border1 radius10">
 					<tr><td colspan=2 align="left" class="lt6 borderb1"><b>' . msg('resumo') . '</b><br><font class="lt0">orintações ativas</td></tr>
-					
 					<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibic.png') . '" height="40"></td><td class="lt6">' . $link_a_resumo_pibic . '</td></tr>';
+		
 		$v = $t['PIBIC'];
 		foreach ($v as $key => $value) {
 			$sx .= '<tr><td align="right">' . $key . '</td><td class="lt3">' . $value . '</td></tr>' . cr();
 		}
-
 		$sx .= '<tr><td align="right"><img src="' . base_url('img/logo/logo_ic_pibiti.png') . '" height="40"></td><td class="lt6">' . $link_b_resumo_pibiti . '</td></tr>';
+		
 		$v = $t['PIBITI'];
 		foreach ($v as $key => $value) {
-			$sx .= '<tr><td align="right">' . $key . '</td><td class="lt3">' . $value . '</td></tr>' . cr();
-		}
-
+				$sx .= '<tr><td align="right">' . $key . '</td><td class="lt3">' . $value . '</td></tr>' . cr();
+			}
+		
 		$sx .= '<tr><td align="right" class="borderb1">Total de estudantes de graduação</td><td class="lt5 borderb1">' . ($ed['PIBIC'] + $ed['PIBITI']) . '</td></tr>';
 
 		$sx .= '<tr><td>&nbsp;</td></tr>';

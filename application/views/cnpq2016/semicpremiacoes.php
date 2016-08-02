@@ -6,7 +6,7 @@
             <ul class="nav nav-stacked ulnav">
                 <li>
                 	<a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq2016/cnpq2016/index_cnpq.php');?>">
-						       	<img src="<?php echo base_url('img/cnpq/logos_IC.png');?>" width="250"; />
+						       	<img src="<?php echo base_url('img/cnpq/logos_IC.png');?>" width="250";/>
 						      </a>
 					       </li>
                 <li><hr align="left"></li>
@@ -32,18 +32,40 @@
             </ul>
         </div>
         <!-- /menu interno -->
-        
         <!-- Conteúdo -->
+
         <div class="col-md-8">
             <section>
-                <h2>Prezado avaliador CNPq,</h2>    
-                <p>Bem vindo ao processo de avaliação do <b>Edital 2016/2017 PIBIC/PIBITI/ PIBIC_EM</b>.
-                 <br> <br>
-                Organizamos ao lado um menu para seu acesso ao processo de submissão, avaliação e resultado final, além de informações sobre a pesquisa na <b>PUCPR</b> e do <b>SEMIC</b>.
-                <br> <br>
-                Em caso de dúvida não hesite em entrar em contato pelo e-mail <a href="mailto:cleybe.vieira@pucpr.br">cleybe.vieira@pucpr.br</a> ou diretamente com nossa equipe de Iniciação Científica, <a href="mailto:pibicpr@pucpr.br">pibicpr@pucpr.br</a> ou pelos telefones (41) <a href="tel:4132712112">3271-2112</a>, <a href="tel:4132711602">3271-1602</a>, <a href="tel:4132711165">3271-1165</a> de <b>segunda a sexta-feira das 08h00 às 18h00</b>.
-                </p>
-                <p><img src="<?php echo base_url('img/cnpq/capa_cnpq_2.jpg');?>" width="500"></p>
+              <h2>Premiações do SEMIC</h2>  
+              <br><br>
+                <table width="100%" class="table">
+                  <tr>
+                    <td rowspan="2"><strong>PIBIC </strong></td>
+                    <td><strong>Apresentações orais:</strong> 5 prêmios 
+                       <br> 1º colocado de cada grande área – passagem e inscrição para congresso nacional – o estudante e professor.</td>
+                  </tr>
+                  <tr>
+                    <td>Sessão de Pôster - menção honrosa para o melhor trabalho de cada grande área.  </td>
+                  </tr>
+                  <tr>
+                    <td rowspan="2"><strong>PIBITI</strong></td>
+                    <td><strong>Apresentações orais:</strong> 2 prêmios 
+                <br>Dois melhores trabalhos – passagem e inscrição para congresso nacional  – o estudante e professor 
+                </td>
+                  </tr>
+                  <tr>
+                    <td>Sessão de Pôster -  menção honrosa para o melhor trabalho de cada grande área.</td>
+                  </tr>
+                  <tr>
+                    <td><p><strong>Sessão Internacional</strong> (apresentação oral em inglês)</p></td>
+                    <td>Dois melhores trabalhos – passagem e inscrição para congresso internacional – o estudante e professor</td>
+                  </tr>
+                  <tr>
+                    <td><strong>PIBIC  Jr</strong></td>
+                    <td>Dois melhores trabalhos  - 1 Tablet </td>
+                  </tr>
+                </table>
+        
             </section>
         </div>
         <!-- /Conteúdo -->

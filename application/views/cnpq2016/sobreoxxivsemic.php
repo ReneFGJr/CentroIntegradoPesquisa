@@ -1,12 +1,12 @@
 <div class="">
 <section class="container">
     <div class="row">
-         <!-- menu interno -->
+        <!-- menu interno -->
         <div class="col-md-4">
             <ul class="nav nav-stacked ulnav">
                 <li>
                 	<a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq2016/cnpq2016/index_cnpq.php');?>">
-						       	<img src="<?php echo base_url('img/cnpq/logos_IC.png');?>" width="250"; />
+						       	<img src="<?php echo base_url('img/cnpq/logos_IC.png');?>" width="250";/>
 						      </a>
 					       </li>
                 <li><hr align="left"></li>
@@ -36,14 +36,16 @@
         <!-- Conteúdo -->
         <div class="col-md-8">
             <section>
-                <h2>Prezado avaliador CNPq,</h2>    
-                <p>Bem vindo ao processo de avaliação do <b>Edital 2016/2017 PIBIC/PIBITI/ PIBIC_EM</b>.
-                 <br> <br>
-                Organizamos ao lado um menu para seu acesso ao processo de submissão, avaliação e resultado final, além de informações sobre a pesquisa na <b>PUCPR</b> e do <b>SEMIC</b>.
-                <br> <br>
-                Em caso de dúvida não hesite em entrar em contato pelo e-mail <a href="mailto:cleybe.vieira@pucpr.br">cleybe.vieira@pucpr.br</a> ou diretamente com nossa equipe de Iniciação Científica, <a href="mailto:pibicpr@pucpr.br">pibicpr@pucpr.br</a> ou pelos telefones (41) <a href="tel:4132712112">3271-2112</a>, <a href="tel:4132711602">3271-1602</a>, <a href="tel:4132711165">3271-1165</a> de <b>segunda a sexta-feira das 08h00 às 18h00</b>.
-                </p>
-                <p><img src="<?php echo base_url('img/cnpq/capa_cnpq_2.jpg');?>" width="500"></p>
+               <h2><b>SOBRE O XXIV SEMIC</b></h2>
+                <br>    
+               <p>A <b>PUCPR</b> definiu recentemente algumas áreas estratégicas que estão alinhadas com os desafios globais, com as competências internas, com o planejamento e a missão institucional, a saber: Direitos Humanos, Cidades, Energia, Biotecnologia, Saúde, Tecnologia da Comunicação e Informação. </p> 
+                <p><img src="<?php echo base_url('img/cnpq/img_desafios.png');?>" width="270" align="left"></p>
+                <br>
+                <p>Para difundir essa posição da Universidade entre a própria comunidade universitária e contribuir para o aprofundamento das questões emergentes de cada área estratégica, decidiu-se que a cada ano o SEMIC assumirá uma delas como temática central. 
+                       <br>   <br>
+                Em 2015, Direitos Humanos esteve em foco; Cidades será o tema de 2016! O <b>XXIV SEMIC</b> acontecerá nos <b>dias 18, 19 e 20 de outubro</b>.
+                       <br>   <br>
+                    Teremos ainda como novidade a <a href="https://cip.pucpr.br/eventos/feiradeciencias/1/"><b>1ª. Feira de Ciências Júnior da PUCPR </b></a>acontecendo simultaneamente. Desafiamos os estudantes de ensino médio e fundamental e a pensarem ideias que possam transformar as nossas cidades e tivemos a adesão de vários colégios. No evento haverá a exposição de 56 projetos! Informações no site pelo link: <a href="https://cip.pucpr.br/eventos/feiradeciencias/1/">https://cip.pucpr.br/eventos/feiradeciencias/1/</a> </p>
             </section>
         </div>
         <!-- /Conteúdo -->

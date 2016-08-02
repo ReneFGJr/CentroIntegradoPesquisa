@@ -961,7 +961,7 @@ class ic extends CI_Controller {
 		}
 		$tit = 'Seguro';
 
-		$sx = $this -> ics -> ic_seguro($id, '2016-02-01');
+		$sx = $this -> ics -> ic_seguro($id, '2016-08-01');
 		$data['content'] = $sx;
 		$this -> load -> view('content', $data);
 
@@ -2656,11 +2656,17 @@ class ic extends CI_Controller {
 				$fld = 'ic_rp_data';
 				$tit = 'Relatório Parcial';
 				$ano = date("Y");
-				if (date("m") < 8) {
-					$ano = $ano - 1;
-				}
+				if (date("m") < 8) {$ano = $ano - 1;}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_cancelados($ano);
 				break;
+			case 'IC_FORM_RF' :
+				$fld = 'ic_rp_data';
+				$tit = 'Relatório Final';
+				$ano = date("Y");
+				if (date("m") <= 8) {$ano = $ano - 1;}
+				$tit = 'Relatório Final';
+				$tela01 = $this -> ics_acompanhamento -> relatorio_final_cancelados($ano);
+				break;	
 			default :
 				$fld = '';
 				$tit = '';
@@ -2701,7 +2707,7 @@ class ic extends CI_Controller {
 				$fld = 'ic_rp_data';
 				$tit = 'Relatório Final';
 				$ano = date("Y");
-				if (date("m") < 8) {
+				if (date("m") <= 8) {
 					$ano = $ano - 1;
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_final_nao_entregue($ano);
@@ -2710,7 +2716,7 @@ class ic extends CI_Controller {
 				$fld = 'ic_resumo_data';
 				$tit = 'Resumo';
 				$ano = date("Y");
-				if (date("m") < 8) {
+				if (date("m") <= 8) {
 					$ano = $ano - 1;
 				}
 				$tela01 = $this -> ics_acompanhamento -> resumo_nao_entregue($ano);
@@ -2755,7 +2761,7 @@ class ic extends CI_Controller {
 				$fld = 'ic_rp_data';
 				$tit = 'Correção do Relatório Final';
 				$ano = date("Y");
-				if (date("m") < 8) {
+				if (date("m") <= 8) {
 					$ano = $ano - 1;
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_correcao_final_nao_entregue($ano);
@@ -2796,36 +2802,28 @@ class ic extends CI_Controller {
 				$fld = 'ic_pre_data';
 				$tit = 'Formulário do Professor';
 				$ano = date("Y");
-				if (date("m") < 8) { $ano = $ano - 1;
-				}
-
+				if (date("m") < 8) { $ano = $ano - 1;}
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
 			case 'IC_FORM_RP' :
 				$fld = 'ic_rp_data';
 				$tit = 'Relatório Parcial';
 				$ano = date("Y");
-				if (date("m") < 8) { $ano = $ano - 1;
-				}
-
+				if (date("m") < 8) { $ano = $ano - 1;}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano);
 				break;			
 			case 'IC_FORM_RF' :
 				$fld = 'ic_rf_data';
 				$tit = 'Relatório Final';
 				$ano = date("Y");
-				if (date("m") < 8) { $ano = $ano - 1;
-				}
-
+				if (date("m") <= 8) { $ano = $ano - 1;}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_final_entregue($ano);
 				break;	
 			case 'IC_FORM_RS' :
 				$fld = 'ic_rf_data';
 				$tit = 'Relatório Final';
 				$ano = date("Y");
-				if (date("m") < 8) { $ano = $ano - 1;
-				}
-
+				if (date("m") <= 8) { $ano = $ano - 1;}
 				$tela01 = $this -> ics_acompanhamento -> resumo_entregue($ano);
 				break;							
 			default :
@@ -2848,17 +2846,17 @@ class ic extends CI_Controller {
 
 	function resumo_entrega_2($fld, $ano, $tit, $tp = 0) {
 		$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao, mb_tipo from ic
-	INNER JOIN ic_aluno on ic_id = id_ic
-	INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
-	where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
-	and icas_id = 1 group by mb_tipo
-	union
-	select 2 as ordem, count(*) as total, 'Não entregue' as descricao, mb_tipo from ic
-	INNER JOIN ic_aluno on ic_id = id_ic
-	INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
-	where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
-	and icas_id = 1 group by mb_tipo
-	order by ordem";
+						INNER JOIN ic_aluno on ic_id = id_ic
+						INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
+						where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
+						and icas_id = 1 group by mb_tipo
+						union
+						select 2 as ordem, count(*) as total, 'Não entregue' as descricao, mb_tipo from ic
+						INNER JOIN ic_aluno on ic_id = id_ic
+						INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
+						where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
+						and icas_id = 1 group by mb_tipo
+						order by ordem";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="400" class="lt1 border1">';

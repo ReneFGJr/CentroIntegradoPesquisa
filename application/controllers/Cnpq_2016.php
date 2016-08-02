@@ -44,7 +44,7 @@ class cnpq_2016 extends CI_Controller {
 
 		/* Menu */
 		$menus = array();
-		array_push($menus, array('Home', 'index.php/cnpq/'));
+		array_push($menus, array('Home', 'index.php/cnpq_2016/'));
 
 		/* Carrega Menu*/
 		$data['menu'] = 1;
@@ -88,43 +88,43 @@ class cnpq_2016 extends CI_Controller {
 		$data = array();
 		
 		switch($view){
-			case 'semic_about':
-				$this -> load -> view('cnpq2016/semic_about');
+			case 'sobreoxxivsemic':
+				$this -> load -> view('cnpq2016/sobreoxxivsemic');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 			
-			case 'semic_premiacao':
+			case 'semicpremiacoes':
 				$this -> load -> view('cnpq2016/semicpremiacoes');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 			
-			case 'cnpq_experiencia_institucional_ic_2015':
-				$this -> load -> view('cnpq2016/cnpq_experiencia_institucional_ic_2015');
+			case 'cnpq_experiencia_institucional_ic_2016':
+				$this -> load -> view('cnpq2016/cnpq_experiencia_institucional_ic_2016');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 
-			case 'cnpq_experiencia_institucional_ic_2015_jr':
-				$this -> load -> view('cnpq2016/cnpq_experiencia_institucional_ic_2015_jr');
+			case 'cnpq_experiencia_institucional_ic_2016_jr':
+				$this -> load -> view('cnpq2016/cnpq_experiencia_institucional_ic_2016_jr');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 			
-			case 'cnpq_relato_do_processo_de_selecao_2015':
-				$this -> load -> view('cnpq2016/cnpq_relato_do_processo_de_selecao_2015');
+			case 'cnpq_relato_processo_de_selecao_2016':
+				$this -> load -> view('cnpq2016/cnpq_relato_processo_de_selecao_2016');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 			
 			case 'cnpq_membros_do_comite_gestor_2015':
-				$this -> load -> view('cnpq2016/cnpq_membros_do_comite_gestor_2015');
+				$this -> load -> view('cnpq/cnpq_membros_do_comite_gestor_2015');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
@@ -137,15 +137,15 @@ class cnpq_2016 extends CI_Controller {
 				$this -> load -> view('header/foot', $data);
 			break;
 
-			case 'cnpq_mobilidade_2015':
-				$this -> load -> view('cnpq2016/cnpq_mobilidade_2015');
+			case 'novos_programas':
+				$this -> load -> view('cnpq2016/novos_programas');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
 			break;
 
-			case 'cnpq_editais_2015':
-				$this -> load -> view('cnpq2016/cnpq_editais_2015');
+			case 'editaisenormas':
+				$this -> load -> view('cnpq2016/editaisenormas');
 				
 				$this -> load -> view('header/content_close');
 				$this -> load -> view('header/foot', $data);
@@ -159,7 +159,7 @@ class cnpq_2016 extends CI_Controller {
 			break;
 
 			default:
-			$this -> load -> view('cnpq/view_welcome');
+			$this -> load -> view('cnpq2016/view_welcome');
 				break;
 		}
 		

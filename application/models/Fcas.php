@@ -65,6 +65,46 @@ class Fcas extends CI_model {
 		$sx = '';
 		//area selecionada
 		$area_select = $area;
+		$edital_select = $edital;
+		
+		if ($edital_select == 'PIBIC' OR $edital_select == 'PIBITI') {
+		//Colunas da tabela
+		$sx .= '<table class="tabela00 lt2" width="100%">';
+		//Troca de sub-titulo conforme area selecionada
+		switch($area_select) {
+			case 'V' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Ciências da Vida </strong></font></tr>';
+				break;
+			case 'E' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Exatas e Engenharias </strong></font></tr>';
+				break;
+			case 'H' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Humanas </strong></font></tr>';
+				break;
+			case 'A' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Ciências Agrárias </strong></font></tr>';
+				break;
+			case 'S' :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Área de Ciências Sociais Aplicadas </strong></font></tr>';
+				break;	
+			default :
+				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Indique uma área no menu anterior! </strong></font></tr>';
+				break;			
+			}	
+			
+		$sx .= '<tr><th align="center" class="lt01">#</th>
+							  <th align="center">Bolsa indicada</th>
+							  <th align="center">Nome do Orientador</th>
+								<th align="center">Câmpus do professor</th>
+								<th align="center">Nome do Aluno</th>
+								<th align="center">Aluno Trabalha?</th>
+								<th align="center">Estudou em Esc. pública?</th>
+								<th align="center">Nota da Avaliação</th>
+								<th align="center">Projeto do Professor</th>
+								<th align="center">Plano do Aluno</th>
+						</tr>';
+		
+		} elseif($edital_select == 'PIBICEM') {
 		
 		//Colunas da tabela
 		$sx .= '<table class="tabela00 lt2" width="100%">';
@@ -89,6 +129,7 @@ class Fcas extends CI_model {
 				$sx .= '<tr><td class="lt3" colspan=4><font color="red"><strong> Indique uma área no menu anterior! </strong></font></tr>';
 				break;			
 			}	
+			
 		$sx .= '<tr><th align="center" class="lt01">#</th>
 							  <th align="center">Bolsa indicada</th>
 							  <th align="center">Nome do Orientador</th>
@@ -96,11 +137,13 @@ class Fcas extends CI_model {
 								<th align="center">Nome do Aluno</th>
 								<th align="center">Aluno Trabalha?</th>
 								<th align="center">Estudou em Esc. pública?</th>
-								<th align="center">Nota da Avaliação</th>
 								<th align="center">Projeto do Professor</th>
 								<th align="center">Plano do Aluno</th>
 						</tr>';
 			
+				}
+		
+		
 		$tot = 0;
 		$tot2 = 0;
 		
@@ -152,43 +195,6 @@ class Fcas extends CI_model {
 			$sx .= $sf.$line['sigla_titulacao'] . ' ' .$line['nome_professor'].$sf2;
 			$sx .= '</td>';
 			
-			/**
-			//area do professor
-			$area_prof = $line['ed_area'];
-			switch ($area_prof) {
-				case 'V' :
-					$sx .= '<td align="left">';
-					$sx .= msg("Vida");
-					$sx .= '</td>';
-					break;
-				case 'E' :
-					$sx .= '<td align="left">';
-					$sx .= msg("Exatas");
-					$sx .= '</td>';
-					break;
-				case 'H' :
-					$sx .= '<td align="left">';
-					$sx .= msg("Humanas");
-					$sx .= '</td>';
-					break;
-				case 'A' :
-					$sx .= '<td align="left">';
-					$sx .= msg("Agrárias");
-					$sx .= '</td>';
-					break;
-				case 'S' :
-					$sx .= '<td align="left">';
-					$sx .= msg("Sociais aplicadas");
-					$sx .= '</td>';
-					break;
-				default :
-					$sx .= '<td align="left">';
-					$sx .= msg("Não indicada");
-					$sx .= '</td>';
-					break;
-			}
-			*/
-			
 			//Centro
 			$sx .= '<td align="left" width="8%">';
 			$sx .= $line['campus_professor'];
@@ -218,12 +224,21 @@ class Fcas extends CI_model {
 			}
 			$sx .= '</td>';
 			
+			//NOTAS
+			if ($edital_select == 'PIBITI'  OR $edital_select == 'PIBIC') {
 			//$sx .= $line['ed_nota_normalizada'];
 			if ($nota < 70) {
 				 $tot2++; 
 				 $cor = 'red';
 			}
 			$sx .= '<td width="50" align="center" style="color: ' . $cor . ';">' . number_format($nota, 2, ',', '.') . '</td>';
+			
+			} elseIF($edital_select == 'PIBICEM') {
+			
+			}
+			
+			
+			
 			//só pode editar se for perfil admin ou coordenador pibic
 			if ((perfil("#CPP#ADM#CNQ") == 1)) {
 				//Protocolo mae

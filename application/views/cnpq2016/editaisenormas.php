@@ -1,12 +1,12 @@
 <div class="">
 <section class="container">
     <div class="row">
-         <!-- menu interno -->
+        <!-- menu interno -->
         <div class="col-md-4">
             <ul class="nav nav-stacked ulnav">
                 <li>
                 	<a href="<?php echo base_url('index.php/' . 'cnpq/view/cnpq2016/cnpq2016/index_cnpq.php');?>">
-						       	<img src="<?php echo base_url('img/cnpq/logos_IC.png');?>" width="250"; />
+						       	<img src="<?php echo base_url('img/cnpq/logos_IC.png');?>" width="250";/>
 						      </a>
 					       </li>
                 <li><hr align="left"></li>
@@ -32,21 +32,16 @@
             </ul>
         </div>
         <!-- /menu interno -->
-        
-        <!-- Conteúdo -->
+        <!-- Conteï¿½do -->
+
         <div class="col-md-8">
             <section>
-                <h2>Prezado avaliador CNPq,</h2>    
-                <p>Bem vindo ao processo de avaliação do <b>Edital 2016/2017 PIBIC/PIBITI/ PIBIC_EM</b>.
-                 <br> <br>
-                Organizamos ao lado um menu para seu acesso ao processo de submissão, avaliação e resultado final, além de informações sobre a pesquisa na <b>PUCPR</b> e do <b>SEMIC</b>.
-                <br> <br>
-                Em caso de dúvida não hesite em entrar em contato pelo e-mail <a href="mailto:cleybe.vieira@pucpr.br">cleybe.vieira@pucpr.br</a> ou diretamente com nossa equipe de Iniciação Científica, <a href="mailto:pibicpr@pucpr.br">pibicpr@pucpr.br</a> ou pelos telefones (41) <a href="tel:4132712112">3271-2112</a>, <a href="tel:4132711602">3271-1602</a>, <a href="tel:4132711165">3271-1165</a> de <b>segunda a sexta-feira das 08h00 às 18h00</b>.
-                </p>
-                <p><img src="<?php echo base_url('img/cnpq/capa_cnpq_2.jpg');?>" width="500"></p>
+            <h3><b>Editais e Normas</b></h3>                
+                <p><b><a href="http://www.pucpr.br/arquivosUpload/5395931791457634832.pdf">Edital 05/2016</a></b> - Processo de Seleção de Propostas para os Programas Institucionais de Iniciação Científica (PIBIC, PIBITI, PIBIC Jr e PIBIC - EM) 2016/2017</p>
+                <p><a href="http://www.pucpr.br/arquivosUpload/5395931791460045143.pdf"><b>Caderno de Normas da Iniciação Científica - 2016</b></a></p>
             </section>
         </div>
-        <!-- /Conteúdo -->
+        <!-- /Conteï¿½do -->
 
     </div>
 </section>

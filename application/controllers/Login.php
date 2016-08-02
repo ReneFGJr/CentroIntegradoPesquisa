@@ -130,7 +130,7 @@ class login extends CI_Controller {
 		$chk = checkpost_link($id); //retirado do ar a pedido da diretoria, pois entra em conflito de regras de segurança
 
 		if ($chk != checkpost_link($id)) {
-			//echo checkpost_link($id);
+			echo checkpost_link($id);
 		} else {
 			$id = round($id);
 			$sql = "select * from us_usuario where id_us = " . $id;
