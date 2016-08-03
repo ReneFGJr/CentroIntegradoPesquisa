@@ -1,5 +1,187 @@
 <?php
 class Fcas extends CI_model {
+	
+	function resultado_bolsas_indicadas($edital = '', $area = '') {
+		$ano = date("Y");
+		if (strlen($area) > 0) {
+			$wh = " and ed_area = '$area' ";
+		} else {
+			$wh = "";
+		}
+		//consulta
+		$sql = "select  
+								ed_area, 
+                ed_nota_normalizada, 
+                ed_estudante, 
+                professor.us_nome as nome_professor,
+                professor.usuario_titulacao_ust_id AS id_titulacao,
+                professor.us_ativo as prof_ativo,
+                professor.us_genero as us_gen_prof,
+                ust_titulacao_sigla as sigla_titulacao,
+                mb.mb_link_logo_bolsas,
+                mb.mb_descricao,
+                doc_1_titulo, 
+                aluno.us_nome as aluno_nome,
+                aluno.us_ativo as al_ativo
+		FROM ic_edital
+		left join(SELECT id_us,
+		                 us_nome,
+		                 us_campus_vinculo,
+		                 us_professor_tipo,
+		                 usuario_titulacao_ust_id,
+		                 us_ativo, us_genero FROM us_usuario where us_ativo = 1)as professor on professor.id_us = ed_professor
+		left join us_titulacao on ust_id = professor.usuario_titulacao_ust_id
+		left join (select distinct bpn_id, us_id as id_prod from us_bolsa_produtividade where usb_ativo = 1) as produtividade on id_prod =  professor.id_us 
+		left join us_bolsa_prod_nome on id_bpn = bpn_id
+		left join ic_modalidade_bolsa as mb on ed_modalidade = mb.id_mb
+		left join ic_submissao_plano on doc_protocolo = ed_protocolo
+		left join(SELECT id_us, 
+		                 us_nome,
+						         us_cracha,
+						         us_ativo FROM us_usuario where us_ativo = 1)AS aluno on doc_aluno = aluno.us_cracha  
+		where ed_edital = '$edital'
+		$wh
+		and ed_ano = '$ano'
+		and doc_status = 'B'
+		and id_mb not in (4, 17,18,27,28,9)
+		and professor.us_ativo = 1
+		order by nome_professor, ed_area
+		";
+		
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		
+		$sx = '';
+		$sh = '';
+		//area selecionada
+		$edital_select = $edital;
+		
+		//Colunas da tabela
+		$sx .= '<table class="lt3" width="100%"';
+		$sh .= '<tr><th align="letf"></th>';
+		$sh .= '<tr>
+							  <th align="letf" class="lt3" bgcolor="#D3D3D3">Bolsa</th>
+							  <th align="letf" class="lt3" bgcolor="#D3D3D3">Tit. e Nome do Professor</th>
+								<th align="letf" class="lt3" bgcolor="#D3D3D3">Nome do Aluno</th>
+								<th align="letf" class="lt3" bgcolor="#D3D3D3">Título do plano de trabalho</th>
+						</tr>';
+		
+		$tot = 0;
+		$tot2 = 0;
+		$xarea = '-';
+		
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$tot++;
+			/** VARIAVEIS */
+			//logo da bolsa
+			$nome_bolsa = $line['mb_descricao'];
+			$logo = $line['mb_link_logo_bolsas'];
+			$img = '<img src="' . base_url( $logo ) . '" width="40" height="40" alt="image">';
+			
+			$area_select = $area;
+			$area = $line['ed_area'];
+			
+			if ($area_select != $xarea) {
+				$edital = trim($edital);
+				
+				$sx .= '<tr>';
+				$sx .= '<TD class="lt4" colspan=6><letf>' . $this -> areas_mostra($area);
+				$sx .= $sh . chr(13);
+				$xarea = $area_select;
+			}
+			
+			/*################### INICIO DO PREENCHIMENTO DA TABELA ####################################*/
+			//indice
+			$sx .= '<tr width="10%">';
+			//logo da bolsa e bolsa indicada
+			$sx .= '<td align="letf" width="5%" style="border-bottom:1px solid;">';
+			$sx .= $img;
+			$sx .= '</td>';
+			
+			//diferencia professor inativo no sistema
+			$nome_prof = $this->tratar_nome($line['nome_professor']);
+			$prof_ativo = $line['prof_ativo'];//professor ativo
+			$gen = $line['us_gen_prof'];
+			$titulacao = $line['sigla_titulacao'];
+			
+			$artigo_gen = '';
+			if ($gen == 'F') {
+				$artigo_gen = 'a';
+			}
+			
+			if ($prof_ativo == '0') {
+				//professor ativo
+				$sx .= '<td align="letf" width="18%" style="border-bottom:1px solid;">';
+				$sx .= ' - ';
+				//$sx .= '<font color=red>'.$line['sigla_titulacao'] . ' ' .$nome_prof.'</font>';
+				$sx .= '</td>';
+			} else {
+				//professor desativo
+				$sx .= '<td align="left" width="25%" style="border-bottom:1px solid;" class="lt2">';
+				$sx .= $titulacao . $artigo_gen. '  ' .$nome_prof;
+				$sx .= '</td>';
+			}
+			
+			//Nome aluno
+			$nome_al = $this->tratar_nome($line['aluno_nome']);
+			$al_nome = $line['aluno_nome'];//aluno ativo
+			if (strlen($al_nome) == NULL) {//trata se o nome do aluno não existe e subistitui por um texto
+				//aluno ativo
+				$sx .= '<td align="letf" width="18%" style="border-bottom:1px solid;" class="lt2">';
+				$sx .= ':: Sem Definição de Aluno ::';
+				$sx .= '</td>';
+			}else{
+				$sx .= '<td align="letf" width="25%" style="border-bottom:1px solid;" class="lt2">';
+				$sx .= $nome_al;
+				$sx .= '</td>';
+			}
+			
+			//Titulo do Protocolo
+			$titulo = strtoupper($line['doc_1_titulo']);
+			
+			$sx .= '<td align="left" width="45%" style="border-bottom:1px solid;" class="lt2">';
+			$sx .= $titulo;
+			$sx .= '</td>';
+		}
+		$sx .= '</table>';
+		
+		return ($sx);
+	}
+	
+	//**************************** Inicio do metodo **************************************
+	/* @function: tratar_nome($var)
+	 *           Faz tratamento de nome proprio
+	 * @date: 04/05/2015
+	 */	
+	  function tratar_nome($nome) {
+	    $nome = strtolower($nome); // Converter o nome(campo) todo para minúsculo
+	    $nome = explode(" ", $nome); // Separa todo o nome(campo) por espaços
+	    $saida = '';
+	    for ($i=0; $i < count($nome); $i++) {
+	        // Tratar cada palavra do nome(campo)
+	        if ($nome[$i] == "de" or $nome[$i] == "da" or $nome[$i] == "e" or $nome[$i] == "dos" or $nome[$i] == "do") {
+	            $saida .= $nome[$i].' '; // Se a palavra estiver dentro das complementares mostrar toda em minúsculo
+	        }else {
+	            $saida .= ucfirst($nome[$i]).' '; // Se for um nome, mostrar a primeira letra maiúscula
+	        }
+	    }
+	    return $saida;
+	}
+	
+	function areas_mostra($c) {
+		if ($c == 'E') { $sx = '<font style="color: #006b9f; font-size: 30px;">Ciências Exatas</font>';
+		}
+		if ($c == 'H') { $sx = '<font style="color: #ff0000; font-size: 30px;">Ciências Humanas</font>';
+		}
+		if ($c == 'S') { $sx = '<font style="color: #204D6E; font-size: 30px;">Ciências Sociais Aplicadas</font>';
+		}
+		if ($c == 'V') { $sx = '<font style="color: #00A000; font-size: 30px;">Ciências da Vida</font>';
+		}
+		if ($c == 'A') { $sx = '<font style="color: #4B0082; font-size: 30px;">Ciências Agrárias</font>';
+		}
+		return ($sx);
+	}
 
 	function bolsas_indicadas($edital = '', $area = '') {
 		$ano = date("Y");

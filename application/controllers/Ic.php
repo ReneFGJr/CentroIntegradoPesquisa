@@ -59,9 +59,9 @@ class ic extends CI_Controller {
 			array_push($menus, array('Indicadores', 'index.php/ic/indicadores'));
 			array_push($menus, array('Contratos', 'index.php/ic_contrato/contratos/'));
 			array_push($menus, array('Administrativo', 'index.php/ic/admin/'));
-		}elseif (perfil('#CNQ') == 1){
+		} elseif (perfil('#CNQ') == 1) {
 			array_push($menus, array('Home', 'index.php/ic/'));
-		}else{
+		} else {
 			array_push($menus, array('Home', 'index.php/ic/submit_PIBIC/'));
 			array_push($menus, array('Iniciação Científica', 'index.php/pibic/'));
 		}
@@ -76,14 +76,14 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/cab', $data);
 
 		$this -> load -> view('header/content_open');
-		
-			if (perfil('#CNQ') == 1){
-				$data['logo'] = base_url('img/cnpq/logos_IC.png');
-			} else {
-				$data['logo'] = base_url('img/logo/logo_ic.png');
-			}
-		
-		$this -> load -> view('header/logo', $data);
+
+		if (perfil('#CNQ') == 1) {
+			$data['logo'] = base_url('img/cnpq/logos_IC.png');
+		} else {
+			$data['logo'] = base_url('img/logo/logo_ic.png');
+		}
+		//mostra imagem da IC
+		//$this -> load -> view('header/logo', $data);
 	}
 
 	function implementacao_manual() {
@@ -2656,17 +2656,19 @@ class ic extends CI_Controller {
 				$fld = 'ic_rp_data';
 				$tit = 'Relatório Parcial';
 				$ano = date("Y");
-				if (date("m") < 8) {$ano = $ano - 1;}
+				if (date("m") < 8) {$ano = $ano - 1;
+				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_cancelados($ano);
 				break;
 			case 'IC_FORM_RF' :
 				$fld = 'ic_rp_data';
 				$tit = 'Relatório Final';
 				$ano = date("Y");
-				if (date("m") <= 8) {$ano = $ano - 1;}
+				if (date("m") <= 8) {$ano = $ano - 1;
+				}
 				$tit = 'Relatório Final';
 				$tela01 = $this -> ics_acompanhamento -> relatorio_final_cancelados($ano);
-				break;	
+				break;
 			default :
 				$fld = '';
 				$tit = '';
@@ -2711,7 +2713,7 @@ class ic extends CI_Controller {
 					$ano = $ano - 1;
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_final_nao_entregue($ano);
-				break;				
+				break;
 			case 'IC_FORM_RS' :
 				$fld = 'ic_resumo_data';
 				$tit = 'Resumo';
@@ -2720,7 +2722,7 @@ class ic extends CI_Controller {
 					$ano = $ano - 1;
 				}
 				$tela01 = $this -> ics_acompanhamento -> resumo_nao_entregue($ano);
-				break;								
+				break;
 			default :
 				$fld = '';
 				$tit = '';
@@ -2765,7 +2767,7 @@ class ic extends CI_Controller {
 					$ano = $ano - 1;
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_correcao_final_nao_entregue($ano);
-				break;				
+				break;
 			default :
 				$fld = '';
 				$tit = '';
@@ -2802,30 +2804,34 @@ class ic extends CI_Controller {
 				$fld = 'ic_pre_data';
 				$tit = 'Formulário do Professor';
 				$ano = date("Y");
-				if (date("m") < 8) { $ano = $ano - 1;}
+				if (date("m") < 8) { $ano = $ano - 1;
+				}
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
 			case 'IC_FORM_RP' :
 				$fld = 'ic_rp_data';
 				$tit = 'Relatório Parcial';
 				$ano = date("Y");
-				if (date("m") < 8) { $ano = $ano - 1;}
+				if (date("m") < 8) { $ano = $ano - 1;
+				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano);
-				break;			
+				break;
 			case 'IC_FORM_RF' :
 				$fld = 'ic_rf_data';
 				$tit = 'Relatório Final';
 				$ano = date("Y");
-				if (date("m") <= 8) { $ano = $ano - 1;}
+				if (date("m") <= 8) { $ano = $ano - 1;
+				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_final_entregue($ano);
-				break;	
+				break;
 			case 'IC_FORM_RS' :
 				$fld = 'ic_rf_data';
 				$tit = 'Relatório Final';
 				$ano = date("Y");
-				if (date("m") <= 8) { $ano = $ano - 1;}
+				if (date("m") <= 8) { $ano = $ano - 1;
+				}
 				$tela01 = $this -> ics_acompanhamento -> resumo_entregue($ano);
-				break;							
+				break;
 			default :
 				$fld = '';
 				$tit = '';
@@ -2976,7 +2982,7 @@ class ic extends CI_Controller {
 				}
 				$sem_idicacao = 1;
 				$tela01 = $this -> ics_acompanhamento -> relatorio_final_entregue($ano, $sem_idicacao);
-				break;				
+				break;
 			case 'IC_SUBMI' :
 				$fld = '';
 				$tit = 'Análise Projeto Submetidos';
@@ -3075,16 +3081,16 @@ class ic extends CI_Controller {
 		array_push($menu, array('Relatório Parcial', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RP'));
 		array_push($menu, array('Relatório Parcial', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
-		
+
 		array_push($menu, array('Relatório Final', 'RF Entregues', 'ITE', '/ic/rp_entregue/IC_FORM_RF'));
 		array_push($menu, array('Relatório Final', 'RF Não Entregues', 'ITE', '/ic/rp_nao_entregue/IC_FORM_RF'));
 		array_push($menu, array('Relatório Final', 'RF cancelados', 'ITE', '/ic/rp_cancelados/IC_FORM_RF'));
-		array_push($menu, array('Relatório Final', 'RF correção não entregues', 'ITE', '/ic/rpc_nao_entregue/IC_FORM_RFC'));		
+		array_push($menu, array('Relatório Final', 'RF correção não entregues', 'ITE', '/ic/rpc_nao_entregue/IC_FORM_RFC'));
 
 		array_push($menu, array('Relatório Final', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RF'));
 		array_push($menu, array('Relatório Final', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RF'));
 		array_push($menu, array('Relatório Final', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
-		
+
 		array_push($menu, array('Resumo', 'Resumo Entregues', 'ITE', '/ic/rp_entregue/IC_FORM_RS'));
 		array_push($menu, array('Resumo', 'Resumo Não Entregues', 'ITE', '/ic/rp_nao_entregue/IC_FORM_RS'));
 		array_push($menu, array('Resumo', 'Resumo cancelados', 'ITE', '/ic/rp_cancelados/IC_FORM_RS'));
@@ -3105,6 +3111,7 @@ class ic extends CI_Controller {
 
 		array_push($menu, array('Montagem Edital (Final)', 'Indicar Bolsas', 'ITE', '/ic/indicar_bolsa'));
 		array_push($menu, array('Montagem Edital (Final)', 'Bolsas indicadas', 'ITE', '/ic/bolsa_indicadas'));
+		array_push($menu, array('Montagem Edital (Final)', 'Resultado das Bolsas indicadas', 'ITE', '/ic/Resultado_de_bolsa_indicadas_edital'));
 
 		/*View principal*/
 		$data['menu'] = $menu;
@@ -3513,7 +3520,7 @@ class ic extends CI_Controller {
 		$this -> load -> model('geds');
 
 		$data = $this -> ics -> le($id);
-		
+
 		$this -> cab();
 
 		$this -> load -> view('ic/plano', $data);
@@ -3523,7 +3530,7 @@ class ic extends CI_Controller {
 		$data['ged'] = '';
 		if (strlen(trim($data['ic_projeto_professor_codigo'])) > 0) {
 			$data['ged'] = $this -> geds -> list_files_table($data['ic_projeto_professor_codigo'], 'ic');
-			
+
 		}
 		$data['ged'] .= $this -> geds -> list_files_table($data['ic_plano_aluno_codigo'], 'ic');
 		$data['ged_arquivos'] = $this -> geds -> form_upload($data['ic_plano_aluno_codigo'], 'ic');
@@ -3639,8 +3646,6 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-
-
 
 	function postar_resumo($id = '', $check = '', $page = '') {
 		global $dd;
@@ -3990,7 +3995,7 @@ class ic extends CI_Controller {
 		$tipo = $dados['pj_edital'];
 		$us_cracha = $dados['pj_professor'];
 		//$doc_edital = $dados['doc_edital'];
-		
+
 		$this -> geds -> tabela = 'ic_ged_documento';
 		$this -> geds -> file_lock_all($dados['pj_codigo']);
 
@@ -4071,23 +4076,22 @@ class ic extends CI_Controller {
 				$av_aberta = $this -> ic_pareceres -> avaliacoes_abertas($proto, 'SUBMI');
 
 				if ($av_aberta > 0) {
-					
-					
+
 					$comt['content'] = '<div class="alert alert-warning ">
 							<p><span class="glyphicon glyphicon-alert "></span> Já existe(m) a(s) indicação(ões) de <strong> ' . $av_aberta . ' avaliador(es) </strong> para este projeto</p>
 											</div>';
 					$this -> load -> view('content', $comt);
 
-					 //mostra notas da avaliacao do projeto do professor
-					 $sx = '';
-					 $sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
-					 $data['content'] = $sx;
-					 $this -> load -> view('content', $data);
-					
+					//mostra notas da avaliacao do projeto do professor
+					$sx = '';
+					$sx .= $this -> fcas -> avaliacao_notas_projetos($proto);
+					$data['content'] = $sx;
+					$this -> load -> view('content', $data);
+
 				}
 
 				if (($av_aberta <= 1) or (perfil('#CPI#TST#CPP'))) {
-					
+
 					$TIPO_AV = 'SUBMI';
 					switch ($dados_projeto['pj_edital']) {
 						case 'IC' :
@@ -4122,7 +4126,6 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/foot', $data);
 	}
 
-
 	function plano_view($id, $chk, $act = '') {
 		$this -> load -> model('ics');
 		$this -> load -> model('geds');
@@ -4132,7 +4135,7 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$dados = $this -> ics -> le_plano($id);
 		$dados_p = $dados;
-		
+
 		$status = $dados['pj_status'];
 		$proto = $dados['pj_codigo'];
 		$plano = $dados_p['doc_protocolo'];
@@ -4220,8 +4223,7 @@ class ic extends CI_Controller {
 				$av_aberta = $this -> ic_pareceres -> avaliacoes_abertas($proto, 'SUBMI');
 
 				if ($av_aberta > 0) {
-					
-					
+
 					$comt['content'] = '<div class="alert alert-warning ">
 							<p><span class="glyphicon glyphicon-alert "></span> Já existe(m) a(s) indicação(ões) de <strong> ' . $av_aberta . ' avaliador(es) </strong> para este projeto</p>
 											</div>';
@@ -4242,11 +4244,11 @@ class ic extends CI_Controller {
 						$data['content'] = $sx;
 						$this -> load -> view('content', $data);
 					}
-					
+
 				}
 
 				if (($av_aberta <= 1) or (perfil('#CPI#TST#CPP'))) {
-					
+
 					$TIPO_AV = 'SUBMI';
 					switch ($dados_projeto['pj_edital']) {
 						case 'IC' :
@@ -4280,7 +4282,6 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-
 
 	function professor_sem_escola() {
 		$this -> load -> model('ics');
@@ -4390,24 +4391,24 @@ class ic extends CI_Controller {
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
 	}
-	
+
 	function indicar_bolsa($edital = '', $area = '') {
 		/*carrega model*/
 		$this -> load -> model('fcas');
 		$this -> cab();
 		$data = array();
 		$ano = date('Y');
-		
-		$data['title'] = msg('Indicar Bolsas para o edital '.$edital);
-		
+
+		$data['title'] = msg('Indicar Bolsas para o edital ' . $edital);
+
 		if (strlen($edital) > 0) {
 			$sx = $this -> fcas -> resumo_bolsas_indicadas($edital, $ano);
-			
+
 			$sx .= $this -> fcas -> indicar_bolsas($edital, $area);
-			
+
 			$data['content'] = $sx;
 			$this -> load -> view('content', $data);
-		
+
 		} else {
 			$this -> load -> view('ic_edital/edital_areas', null);
 		}
@@ -4417,15 +4418,15 @@ class ic extends CI_Controller {
 	}
 
 	function indicar_bolsa_ed($id = 0, $chk = '') {
-		//load model	
+		//load model
 		$this -> load -> model("fcas");
 		$this -> load -> model('usuarios');
-		
+
 		$this -> load -> view('header/header', null);
-		
+
 		//le dados do edital
 		$data = $this -> fcas -> le($id);
-		
+
 		$ano = $data['ed_ano'];
 		$prof = $data['ed_professor'];
 		$edital = $data['ed_edital'];
@@ -4433,7 +4434,7 @@ class ic extends CI_Controller {
 		$plano = $data['ed_protocolo'];
 		$area_conhecimento = $data['ed_area_conhecimento'];
 		$estudante = $data['us_nome'];
-		
+
 		//le dados do Professor
 		$data2 = $this -> usuarios -> le($prof);
 		$prof_nome = $data2['us_nome'];
@@ -4441,10 +4442,10 @@ class ic extends CI_Controller {
 		$prof_escola = $data2['es_escola'];
 
 		$sx = '<table width="100%" class="table lt1">';
-		$sx .= '<tr><td class="lt6" colspan=5> Edital '. $edital .' '. (date("Y")).' <br><font color="red">Plano Escolhido: '.$plano.'</font></tr>';
-		$sx .= '<tr><td class="lt3" colspan=5> <b>Professor:</b> '. $prof_tit .' '.$prof_nome .' - '. $prof_escola .'</tr>';
-		$sx .= '<tr><td class="lt3" colspan=5> <b>Projeto:</b> '. $projeto .'</tr>';
-		$sx .= '<tr><td class="lt3" colspan=5> <b>Plano/Estudante:</b> '. $plano .' - '.$estudante.'</tr>';
+		$sx .= '<tr><td class="lt6" colspan=5> Edital ' . $edital . ' ' . (date("Y")) . ' <br><font color="red">Plano Escolhido: ' . $plano . '</font></tr>';
+		$sx .= '<tr><td class="lt3" colspan=5> <b>Professor:</b> ' . $prof_tit . ' ' . $prof_nome . ' - ' . $prof_escola . '</tr>';
+		$sx .= '<tr><td class="lt3" colspan=5> <b>Projeto:</b> ' . $projeto . '</tr>';
+		$sx .= '<tr><td class="lt3" colspan=5> <b>Plano/Estudante:</b> ' . $plano . ' - ' . $estudante . '</tr>';
 		$sx .= '<tr valign="top">';
 		$sx .= '	<th width="33%" class="lt2">Bolsas disponíveis</td>';
 		$sx .= '	<th width="33%" class="lt2">Bolsas Indicadas</td>';
@@ -4467,32 +4468,32 @@ class ic extends CI_Controller {
 
 	}
 
-	function remover_bolsa_indicada($plano = 0, $id_orientador = 0 , $id_edital = '', $ano = 0){
-		//load model	
+	function remover_bolsa_indicada($plano = 0, $id_orientador = 0, $id_edital = '', $ano = 0) {
+		//load model
 		$this -> load -> model("fcas");
 		$this -> load -> model('ics');
-		
+
 		$this -> cab();
-		
-		if ($plano > 0 ) {
-				
-			print"<script language= 'javascript'>
+
+		if ($plano > 0) {
+
+			print "<script language= 'javascript'>
 							function aviso(id){
 								if(confirm (' Deseja realmente excluir? ')){
 									window.alert(' Continuando.. ');
-									location.href='".$dados = $this -> fcas -> remover_bolsa_modalidade_indicada($plano, $id_orientador, $id_edital, $ano)."';
+									location.href='" . $dados = $this -> fcas -> remover_bolsa_modalidade_indicada($plano, $id_orientador, $id_edital, $ano) . "';
 									}else{
 										return false;
 									}
 								}
 						</script>";
-						redirect($this -> load -> view('header/windows_close_only', null));
+			redirect($this -> load -> view('header/windows_close_only', null));
 		} else {
 			echo 'Erro';
-			exit;
+			exit ;
 		}
 		$dados = 'erro';
-		
+
 		$data['content'] = $dados;
 		$this -> load -> view('content', $data);
 	}
@@ -4503,16 +4504,111 @@ class ic extends CI_Controller {
 		$this -> cab();
 		$data = array();
 		$ano = date('Y');
-		
-		$data['title'] = msg('Bolsas indicadas para o edital '.$edital);
-		
+
+		$data['title'] = msg('Bolsas indicadas para o edital ' . $edital);
+
 		if (strlen($edital) > 0) {
 			$sx = $this -> fcas -> bolsas_indicadas($edital, $area);
 			$data['content'] = $sx;
 			$this -> load -> view('content', $data);
-		
+
 		} else {
 			$this -> load -> view('ic_edital/edital_areas_cnpq', null);
+		}
+
+		$this -> load -> view('header/content_close');
+		$this -> load -> view('header/foot', $data);
+	}
+
+	function resultado_de_bolsa_indicadas_edital($edital = '', $area = '') {
+		/*carrega model*/
+		$this -> load -> model('fcas');
+		$this -> cab();
+		$data = array();
+		$ano = date('Y');
+		
+		if ($edital == 'PIBIC') {
+			$sx = '<div>
+								<div style="float:left; margin-left:60px;">
+									<img src="'.base_url('img/logo/Logos PIBIC.png').'"height="60" alt="" border="0">
+								</div>
+								<div style="float:left; width:50%; margin-left:5px;" >
+									<p align="center" >
+										<font style=" font-family: Verdana;
+															    font-size: 26px;
+															    color: #993300;
+															    text-decoration: none;">
+											Edital ' . $edital. ' 2016/2017 - Resultado do Processo de Seleção de Bolsas de Iniciação Científica
+										</font>
+									</p>
+								</div>
+								<div style="float:left; margin-left:5px;">
+									<img src="'.base_url('img/logo/logo_cnpq.png').'"height="50" alt="" border="0">
+								</div>
+								
+								<div style="float:left; margin-left:5px;">
+									<img src="'.base_url('img/logo/Logos_PUC-05.png').'"height="100" alt="" border="0">
+								</div>
+							</div>';
+
+		} elseif($edital == 'PIBITI') {
+			$sx = '<div>
+								<div style="float:left; margin-left:60px;">
+									<img src="'.base_url('img/logo/Logos PIBITI.png').'"height="60" alt="" border="0">
+								</div>
+								<div style="float:left; width:50%; margin-left:5px;" >
+									<p align="center" >
+										<font style=" font-family: Verdana;
+															    font-size: 26px;
+															    color: #993300;
+															    text-decoration: none;">
+											Edital ' . $edital. ' 2016/2017 - Resultado do Processo de Seleção de Bolsas de Iniciação Científica
+										</font>
+									</p>
+								</div>
+								<div style="float:left; margin-left:5px;">
+									<img src="'.base_url('img/logo/logo_cnpq.png').'"height="50" alt="" border="0">
+								</div>
+								
+								<div style="float:left; margin-left:5px;">
+									<img src="'.base_url('img/logo/Logos_PUC-05.png').'"height="100" alt="" border="0">
+								</div>
+							</div>';
+							
+			
+		}elseif($edital == 'PIBICEM') {
+			$sx = '<div>
+								<div style="float:left; margin-left:60px;">
+									<img src="'.base_url('img/logo/Logos PIBIC Jr.png').'"height="60" alt="" border="0">
+								</div>
+								<div style="float:left; width:50%; margin-left:5px;" >
+									<p align="center" >
+										<font style=" font-family: Verdana;
+															    font-size: 26px;
+															    color: #993300;
+															    text-decoration: none;">
+											Edital ' . $edital. ' 2016/2017 - Resultado do Processo de Seleção de Bolsas de Iniciação Científica
+										</font>
+									</p>
+								</div>
+								<div style="float:left; margin-left:5px;">
+									<img src="'.base_url('img/logo/logo_cnpq.png').'"height="50" alt="" border="0">
+								</div>
+								
+								<div style="float:left; margin-left:5px;">
+									<img src="'.base_url('img/logo/Logos_PUC-05.png').'"height="100" alt="" border="0">
+								</div>
+							</div>';
+		}
+		
+		if (strlen($edital) > 0) {
+			
+			$sx .= $this -> fcas -> resultado_bolsas_indicadas($edital, $area);
+			$data['content'] = $sx;
+			$this -> load -> view('content', $data);
+
+		} else {
+			$this -> load -> view('ic_edital/edital_resultado_geral', null);
 		}
 
 		$this -> load -> view('header/content_close');
