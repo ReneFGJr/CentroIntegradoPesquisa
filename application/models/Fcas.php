@@ -9,19 +9,19 @@ class Fcas extends CI_model {
 			$wh = "";
 		}
 		//consulta
-		$sql = "select  
-								ed_area, 
+		$sql = "select    
+								ed_area,
+								mb.mb_link_logo_bolsas,
+                mb.mb_descricao,
+								professor.us_nome as nome_professor, 
+								aluno.us_nome as aluno_nome,
                 ed_nota_normalizada, 
                 ed_estudante, 
-                professor.us_nome as nome_professor,
                 professor.usuario_titulacao_ust_id AS id_titulacao,
                 professor.us_ativo as prof_ativo,
                 professor.us_genero as us_gen_prof,
                 ust_titulacao_sigla as sigla_titulacao,
-                mb.mb_link_logo_bolsas,
-                mb.mb_descricao,
                 doc_1_titulo, 
-                aluno.us_nome as aluno_nome,
                 aluno.us_ativo as al_ativo
 		FROM ic_edital
 		left join(SELECT id_us,
@@ -44,8 +44,8 @@ class Fcas extends CI_model {
 		and ed_ano = '$ano'
 		and doc_status = 'B'
 		and id_mb not in (4, 17,18,27,28,9)
-		and professor.us_ativo = 1
-		order by nome_professor, ed_area
+		and professor.us_ativo = 1 
+		order by ed_area, nome_professor
 		";
 		
 		$rlt = $this -> db -> query($sql);
@@ -60,14 +60,13 @@ class Fcas extends CI_model {
 		$sx .= '<table class="lt3" width="100%"';
 		$sh .= '<tr><th align="letf"></th>';
 		$sh .= '<tr>
-							  <th align="letf" class="lt3" bgcolor="#D3D3D3">Bolsa</th>
-							  <th align="letf" class="lt3" bgcolor="#D3D3D3">Tit. e Nome do Professor</th>
+							  <th align="letf" class="lt3" bgcolor="#D3D3D3" >Bolsa</th>
+							  <th align="letf" class="lt3" bgcolor="#D3D3D3">Titulação e Nome do Professor</th>
 								<th align="letf" class="lt3" bgcolor="#D3D3D3">Nome do Aluno</th>
 								<th align="letf" class="lt3" bgcolor="#D3D3D3">Título do plano de trabalho</th>
 						</tr>';
 		
 		$tot = 0;
-		$tot2 = 0;
 		$xarea = '-';
 		
 		for ($r = 0; $r < count($rlt); $r++) {
@@ -95,7 +94,7 @@ class Fcas extends CI_model {
 			//indice
 			$sx .= '<tr width="10%">';
 			//logo da bolsa e bolsa indicada
-			$sx .= '<td align="letf" width="5%" style="border-bottom:1px solid;">';
+			$sx .= '<td align="letf" width="5%" style="border-bottom:1px solid; solid; border-top:1px solid;">';
 			$sx .= $img;
 			$sx .= '</td>';
 			
@@ -112,13 +111,13 @@ class Fcas extends CI_model {
 			
 			if ($prof_ativo == '0') {
 				//professor ativo
-				$sx .= '<td align="letf" width="18%" style="border-bottom:1px solid;">';
+				$sx .= '<td align="letf" width="18%" style="border-bottom:1px solid; border-top:1px solid;">';
 				$sx .= ' - ';
 				//$sx .= '<font color=red>'.$line['sigla_titulacao'] . ' ' .$nome_prof.'</font>';
 				$sx .= '</td>';
 			} else {
 				//professor desativo
-				$sx .= '<td align="left" width="25%" style="border-bottom:1px solid;" class="lt2">';
+				$sx .= '<td align="left" width="25%" style="border-bottom:1px solid; solid; border-top:1px solid;" class="lt2">';
 				$sx .= $titulacao . $artigo_gen. '  ' .$nome_prof;
 				$sx .= '</td>';
 			}
@@ -128,11 +127,11 @@ class Fcas extends CI_model {
 			$al_nome = $line['aluno_nome'];//aluno ativo
 			if (strlen($al_nome) == NULL) {//trata se o nome do aluno não existe e subistitui por um texto
 				//aluno ativo
-				$sx .= '<td align="letf" width="18%" style="border-bottom:1px solid;" class="lt2">';
+				$sx .= '<td align="letf" width="18%" style="border-bottom:1px solid; solid; border-top:1px solid;" class="lt2">';
 				$sx .= ':: Sem Definição de Aluno ::';
 				$sx .= '</td>';
 			}else{
-				$sx .= '<td align="letf" width="25%" style="border-bottom:1px solid;" class="lt2">';
+				$sx .= '<td align="letf" width="25%" style="border-bottom:1px solid; solid; border-top:1px solid;" class="lt2">';
 				$sx .= $nome_al;
 				$sx .= '</td>';
 			}
@@ -140,10 +139,12 @@ class Fcas extends CI_model {
 			//Titulo do Protocolo
 			$titulo = strtoupper($line['doc_1_titulo']);
 			
-			$sx .= '<td align="left" width="45%" style="border-bottom:1px solid;" class="lt2">';
+			$sx .= '<td align="left" width="45%" style="border-bottom:1px solid; solid; border-top:1px solid;" class="lt2">';
 			$sx .= $titulo;
 			$sx .= '</td>';
 		}
+		//qtd de registros
+		//$sx .= '<tr><td colspan=16 align="right">Total de ' . $tot . ' registro(s)</td></tr>';
 		$sx .= '</table>';
 		
 		return ($sx);
@@ -170,15 +171,15 @@ class Fcas extends CI_model {
 	}
 	
 	function areas_mostra($c) {
-		if ($c == 'E') { $sx = '<font style="color: #006b9f; font-size: 30px;">Ciências Exatas</font>';
+		if ($c == 'E') { $sx = '<center><font style="color: #006b9f; font-size: 40px;">Ciências Exatas</font></center>';
 		}
-		if ($c == 'H') { $sx = '<font style="color: #ff0000; font-size: 30px;">Ciências Humanas</font>';
+		if ($c == 'H') { $sx = '<center><font style="color: #ff0000; font-size: 40px;">Ciências Humanas</font></center>';
 		}
-		if ($c == 'S') { $sx = '<font style="color: #204D6E; font-size: 30px;">Ciências Sociais Aplicadas</font>';
+		if ($c == 'S') { $sx = '<center><font style="color: #204D6E; font-size: 40px;">Ciências Sociais Aplicadas</font></center>';
 		}
-		if ($c == 'V') { $sx = '<font style="color: #00A000; font-size: 30px;">Ciências da Vida</font>';
+		if ($c == 'V') { $sx = '<center><font style="color: #00A000; font-size: 40px;">Ciências da Vida</font></center>';
 		}
-		if ($c == 'A') { $sx = '<font style="color: #4B0082; font-size: 30px;">Ciências Agrárias</font>';
+		if ($c == 'A') { $sx = '<center><font style="color: #4B0082; font-size: 40px;">Ciências Agrárias</font></center>';
 		}
 		return ($sx);
 	}
@@ -2509,7 +2510,7 @@ class Fcas extends CI_model {
 //*############################  INDICAÇÃO DE BOLSAS PIBIC    #######################################################*/			
 			case 'PIBIC':
 					if ($idx == $idx) {
-							//mostra bolsa PUC, mesmo que já tenha uma indicada
+							//mostra bolsas mesmo que já tenha uma indicada
 							if (($id_modalidade == '3' ) or 
 									($id_modalidade == '4' ) or 
 					        ($id_modalidade == '5' ) or 

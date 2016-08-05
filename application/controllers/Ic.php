@@ -661,7 +661,7 @@ class ic extends CI_Controller {
 			case 'IC' :
 				$tipom = 'ics';
 				$model = 'ics';
-				$enable_new = 0;
+				$enable_new = 1;
 				break;
 			case 'ICMST' :
 				$tipom = 'icmst';
@@ -4532,13 +4532,14 @@ class ic extends CI_Controller {
 								<div style="float:left; margin-left:60px;">
 									<img src="'.base_url('img/logo/Logos PIBIC.png').'"height="60" alt="" border="0">
 								</div>
-								<div style="float:left; width:50%; margin-left:5px;" >
+								<div style="float:left; width:50%; margin-left:5px; padding:0px 50px 0px 50px;" >
 									<p align="center" >
 										<font style=" font-family: Verdana;
 															    font-size: 26px;
 															    color: #993300;
-															    text-decoration: none;">
-											Edital ' . $edital. ' 2016/2017 - Resultado do Processo de Seleção de Bolsas de Iniciação Científica
+															    text-decoration: none;
+															    ">
+											<b>Edital ' . $edital. ' 2016/2017</b></br>Resultado do Processo de Seleção de Bolsas de Iniciação Científica
 										</font>
 									</p>
 								</div>
@@ -4546,7 +4547,7 @@ class ic extends CI_Controller {
 									<img src="'.base_url('img/logo/logo_cnpq.png').'"height="50" alt="" border="0">
 								</div>
 								
-								<div style="float:left; margin-left:5px;">
+								<div style="float:left; margin-left:5px; padding:0px 50px 0px 50px;">
 									<img src="'.base_url('img/logo/Logos_PUC-05.png').'"height="100" alt="" border="0">
 								</div>
 							</div>';
@@ -4556,13 +4557,14 @@ class ic extends CI_Controller {
 								<div style="float:left; margin-left:60px;">
 									<img src="'.base_url('img/logo/Logos PIBITI.png').'"height="60" alt="" border="0">
 								</div>
-								<div style="float:left; width:50%; margin-left:5px;" >
+								<div style="float:left; width:50%; margin-left:5px; padding:0px 50px 0px 50px;"" >
 									<p align="center" >
 										<font style=" font-family: Verdana;
 															    font-size: 26px;
 															    color: #993300;
-															    text-decoration: none;">
-											Edital ' . $edital. ' 2016/2017 - Resultado do Processo de Seleção de Bolsas de Iniciação Científica
+															    text-decoration: none;
+															    ">
+											<b>Edital ' . $edital. ' 2016/2017</b></br>Resultado do Processo de Seleção de Bolsas de Iniciação Científica
 										</font>
 									</p>
 								</div>
@@ -4570,7 +4572,7 @@ class ic extends CI_Controller {
 									<img src="'.base_url('img/logo/logo_cnpq.png').'"height="50" alt="" border="0">
 								</div>
 								
-								<div style="float:left; margin-left:5px;">
+								<div style="float:left; margin-left:5px; padding:0px 50px 0px 50px;">
 									<img src="'.base_url('img/logo/Logos_PUC-05.png').'"height="100" alt="" border="0">
 								</div>
 							</div>';
@@ -4581,13 +4583,14 @@ class ic extends CI_Controller {
 								<div style="float:left; margin-left:60px;">
 									<img src="'.base_url('img/logo/Logos PIBIC Jr.png').'"height="60" alt="" border="0">
 								</div>
-								<div style="float:left; width:50%; margin-left:5px;" >
+								<div style="float:left; width:50%; margin-left:5px; padding:0px 50px 0px 50px;"" >
 									<p align="center" >
 										<font style=" font-family: Verdana;
 															    font-size: 26px;
 															    color: #993300;
-															    text-decoration: none;">
-											Edital ' . $edital. ' 2016/2017 - Resultado do Processo de Seleção de Bolsas de Iniciação Científica
+															    text-decoration: none;
+															    ">
+											<b>Edital ' . $edital. ' 2016/2017</b></br>Resultado do Processo de Seleção de Bolsas de Iniciação Científica
 										</font>
 									</p>
 								</div>
@@ -4595,7 +4598,7 @@ class ic extends CI_Controller {
 									<img src="'.base_url('img/logo/logo_cnpq.png').'"height="50" alt="" border="0">
 								</div>
 								
-								<div style="float:left; margin-left:5px;">
+								<div style="float:left; margin-left:5px; padding:0px 50px 0px 50px;">
 									<img src="'.base_url('img/logo/Logos_PUC-05.png').'"height="100" alt="" border="0">
 								</div>
 							</div>';

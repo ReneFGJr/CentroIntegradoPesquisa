@@ -479,9 +479,12 @@ class pagamentos extends CI_Model {
 
 		$valor = strzero($line['mb_valor'] * 100, 13);
 		$total = $total + $line['mb_valor'];
+		
 
-		$nome = Substr(UpperCaseSQL(trim($line['us_nome'])), 0, 30);
-		while (strlen($nome) < 30) {
+		//$nome = Substr(UpperCaseSQL(trim($line['us_nome'])), 0, 30);//<-- old retirado 2 caracter para atender pagamento de Agosto - 03/08/2016 Elizandro
+		$nome = Substr(UpperCaseSQL(trim($line['us_nome'])), 0, 28); //novo => retirado 2 caracter para atender pagamento de Agosto - 03/08/2016 Elizandro
+		//while (strlen($nome) < 30) { //<-- old retirado 2 caracter para atender pagamento de Agosto - 03/08/2016 Elizandro
+		while (strlen($nome) < 28) {	 //novo => retirado 2 caracter para atender pagamento de Agosto - 03/08/2016 Elizandro
 			 $nome .= ' ';
 		}
 		$sx = '399';
@@ -549,13 +552,14 @@ class pagamentos extends CI_Model {
 		*/
 		
 		/* Nr. DOC processado [número do compromisso] para pagamento */
-		$sx .= strzero($line['mb_id'], 3). trim($line['id_ic']);//<-- Novo -> adicionado id_ic para gerar um numeral sem duplicacao par numero do DOC [04/07/2016 Elizandro]
-		$vvv = substr($data_nr, 2, 1) . substr($data_nr, 6, 2);
+		$sx .= strzero($line['mb_id'], 3). trim($line['id_ic']);//<-- Novo -> adicionado id_ic para gerar um numeral 
+		$vvv = substr($data_nr, 2, 1) . substr($data_nr, 6, 2);//             sem duplicacao do numero do DOC [04/07/2016 Elizandro]
 		$vvv .= '0' . trim($line['usc_banco']);
 		$sx .= $vvv . strz($ln, 4);
 		
 		/*Espaços em branco*/
-		$sx .= '      ';
+		//$sx .= '      '; //<-- old retirado 2 espaços para atender pagamento de Agosto  - 03/08/2016 Elizandro
+		$sx .= '    '; //novo => retirado 2 espaços para atender pagamento de Agosto  - 03/08/2016 Elizandro
 		/* Adiciona a data*/ 
 		$sx .= $data_nr;
 		$sx .= 'R$';

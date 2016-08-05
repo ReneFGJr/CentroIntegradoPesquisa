@@ -8,7 +8,7 @@ if (!isset($tipo))
 <h1>Indicar avaliador - <?php echo msg('avaliacao_'.$tipo);?></h1>
 <form method="post">
 	<input type="submit" value="Indicar >>>" name="acao" class="botao3d">
-	<input type="hidden" value="RPAR" name="dd1">
+	<input type="hidden" value="RFIN" name="dd1">
 <h3><?php echo msg('ic_avaliador_indicar'); ?></h3>
 <?php echo $sa; ?>
 </form>
