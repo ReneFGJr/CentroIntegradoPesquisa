@@ -24,15 +24,15 @@
 
 <table width="100%">
 	<tr>
-		<td style="font-size: 8px;" align="right" width="30%">Nome do orientador (professor) </td><td><B><?php echo $pf_nome . ' (' . $ic_cracha_prof . ')';?></B></td>
+		<td style="font-size: 8px;" align="right" width="30%">Nome do orientador (professor) </td><td> <B><?php echo $pf_nome . ' (' . $ic_cracha_prof . ')';?></B></td>
 	</tr>
 	<tr >
-		<td style="font-size: 8px;" align="right" width="30%">Nome do estudante </td><td><B><?php echo $al_nome . ' (' . $id_al . ')';?></B></td>
+		<td style="font-size: 8px;" align="right" width="30%">Nome do estudante </td><td> <B><?php echo $al_nome . ' (' . $id_al . ')';?></B></td>
 	</tr>
 	<tr >
-		<td style="font-size: 8px;" align="right" width="30%">Bolsa: </td><td><b><?php echo $mb_descricao;?>/ <?php echo $ic_ano;?></B></td>
+		<td style="font-size: 8px;" align="right" width="30%">Bolsa: </td><td> <b><?php echo $mb_descricao;?>/ <?php echo $ic_ano;?></B></td>
 	</tr>
 	<tr >
-		<td  style="font-size: 8px;" align="right" width="30%"><?php echo msg('Vigencia');?>:</td><td><B><?php echo stodbr($aic_dt_entrada);?>- <?php echo stodbr($aic_dt_saida);?></B></td>
+		<td  style="font-size: 8px;" align="right" width="30%"><?php echo msg('Vigencia');?>:</td><td> <B><?php echo stodbr($aic_dt_entrada);?>- <?php echo stodbr($aic_dt_saida);?></B></td>
 	</tr>
 </table>

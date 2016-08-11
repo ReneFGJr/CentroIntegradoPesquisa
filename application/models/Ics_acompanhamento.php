@@ -196,7 +196,7 @@ class ics_acompanhamento extends CI_model {
 		$wh = " (ic_ano = '$ano') ";
 		$wh .= " and (ic_rf_data > '2000-01-01')";
 		$wh .= " and (icas_id = 1)";
-		$sql = $this -> ics -> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
+		$sql = $this -> ics -> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rf_data');
 
 		/* sem indicacao */
 		if ($sem_indicacao == 1) {
@@ -204,6 +204,7 @@ class ics_acompanhamento extends CI_model {
 			$sqla .= ' WHERE (pp_protocolo is null ) AND ';
 			$sql = troca($sql, 'where', $sqla);
 		}
+
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="100%" class="tabela00">';
@@ -231,11 +232,11 @@ class ics_acompanhamento extends CI_model {
 		$wh .= " and (s_id = 1)";
 		$wh .= " and (ic_rf_data <= '2000-01-01')";
 
-		$sql = $this -> ics -> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rp_data');
+		$sql = $this -> ics -> table_view($wh, 0, 9999999, 'ic_semic_area, ic_rf_data');
 
 		/* sem indicacao */
 		if ($sem_indicacao == 1) {
-			$sqla = " LEFT JOIN pibic_parecer_" . date("Y") . " on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
+			$sqla = " LEFT JOIN pibic_parecer_" . date("Y") . " on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RFIN') AND (pp_status = 'A' or pp_status = 'B')) ";
 			$sqla .= ' WHERE (pp_protocolo is null ) AND ';
 			$sql = troca($sql, 'where', $sqla);
 		}
@@ -257,7 +258,7 @@ class ics_acompanhamento extends CI_model {
 			$sx .= $this -> load -> view('ic/plano-row.php', $line, true);
 		}
 		$sx .= '</table>';
-		$sx .= '</br> Total de <font class="red"><strong>' . $tot . '</strong></font> protocolos não entregues';
+		$sx .= '</br> Total de <font font color="red" size="8"><strong>' . $tot . '</strong></font> protocolos não entregues';
 		return ($sx);
 	}
 
@@ -294,7 +295,7 @@ class ics_acompanhamento extends CI_model {
 			$sx .= $this -> load -> view('ic/plano-row.php', $line, true);
 		}
 		$sx .= '</table>';
-		$sx .= '</br> Total de <font class="red"><strong>' . $tot . '</strong></font> protocolos não entregues';
+		$sx .= '</br> Total de <font color="red"><strong>' . $tot . '</strong></font> protocolos não entregues';
 		return ($sx);
 	}
 
@@ -306,7 +307,7 @@ class ics_acompanhamento extends CI_model {
 
 		/* sem indicacao */
 		if ($sem_indicacao == 1) {
-			$sqla = " LEFT JOIN pibic_parecer_" . date("Y") . " on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RPAR') AND (pp_status = 'A' or pp_status = 'B')) ";
+			$sqla = " LEFT JOIN pibic_parecer_" . date("Y") . " on ((pp_protocolo = ic_plano_aluno_codigo) AND (pp_tipo = 'RFIN') AND (pp_status = 'A' or pp_status = 'B')) ";
 			$sqla .= ' WHERE (pp_protocolo is null ) AND ';
 			$sql = troca($sql, 'where', $sqla);
 		}

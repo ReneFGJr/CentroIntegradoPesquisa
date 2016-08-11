@@ -23,7 +23,7 @@ class comunicacoes extends CI_Controller {
 	}
 
 	function index() {
-		enviaremail('renefgj@gmail.com', 'teste', 'teste de <I>e-mail</i>',2);
+		enviaremail('elizandro.slima@gmail.com', 'teste', 'teste de <I>e-mail</i>',2);
 		echo 'Enviado Teste!';
 	}
 

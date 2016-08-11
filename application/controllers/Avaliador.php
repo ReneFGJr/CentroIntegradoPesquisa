@@ -357,7 +357,7 @@ class avaliador extends CI_Controller {
 		switch ($tipo) {
 			case 'SUBMI' :
 				/* validado pela checa_dados_pareceres */
-				break;
+				break;		
 			case 'RPAR' :
 				if ($ok == 15) {
 					$dados = $this -> ic_pareceres -> le($id);
@@ -394,7 +394,7 @@ class avaliador extends CI_Controller {
 						echo '<script> alert("Existe campos não preenchidos!"); </script>';
 					}
 				}
-				break;
+				break;		
 			case 'RPRC' :
 				if ($ok == 4) {
 					$dados = $this -> ic_pareceres -> le($id);
@@ -435,12 +435,47 @@ class avaliador extends CI_Controller {
 			case 'FEIRA' :
 				/* AVALIACA FEIRA DE CIENCIAS JOVEM */
 				break;
-
+			case 'RFIN' : //relatório final
+						if ($ok == 11) {
+							$dados = $this -> ic_pareceres -> le($id);
+							$dados = array_merge($dados, $dados2);
+							$nota = get('dd6');
+							$proto = $dados['pp_protocolo'];
+							$this -> ic_pareceres -> finaliza_nota_ic($proto, $nota);
+							
+							$aluno = $this -> usuarios -> le_cracha($dados['ic_cracha_aluno']);
+			
+							/* gera PDF */
+							$file_local = $this -> ic_pareceres -> gera_parecer('RFIN', $dados);
+							$anexos = array($file_local);
+			
+							/* Envia e-mail */
+							$txt = $this -> mensagens -> busca('RFIN_RESULT_' . get("dd6"), $dados);
+			
+							$ass = $txt['nw_titulo'];
+							$texto = $txt['nw_texto'];
+							$prof_id = $dados['prof_id'];
+							
+							/* troca */
+							$texto = troca($texto, '$aluno', $aluno['us_nome']);
+							enviaremail_usuario($prof_id, $ass, $texto, 2, $anexos);
+							
+							/* Finaliza avaliacao */
+							$this -> ic_pareceres -> finaliza_avaliacao($id);
+			
+							$data['volta'] = base_url('index.php/avaliador');
+							$this -> load -> view('sucesso', $data);
+							return ('');
+						} else {
+							if (strlen($acao) > 0) {
+								echo '<script> alert("Existe campos não preenchidos!"); </script>';
+							}
+						}
+			break;				
 			default :
 				echo 'OPS - Ficha não localizada - ' . $tipo;
 				exit ;
 		}
-
 
 		switch ($tipo) {
 			case 'FEIRA' :
@@ -513,10 +548,12 @@ class avaliador extends CI_Controller {
 			case 'RPAR' :
 				$this -> load -> view('ic/avaliacao_rpar', $data);
 				break;
-			case 'RPRC' :
-				
+			case 'RPRC' :			
 				$this -> load -> view('ic/avaliacao_rprc', $data);
 				break;
+			case 'RFIN' :
+				$this -> load -> view('ic/avaliacao_rfin', $data);
+				break;	
 			case 'SUBMI' :
 				/*************************************************************************** SUBMI
 				 *********************************************************************************

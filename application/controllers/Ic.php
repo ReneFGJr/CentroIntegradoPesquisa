@@ -871,9 +871,9 @@ class ic extends CI_Controller {
 			$proto = $line['doc_dd0'];
 
 			$sql = "select * from pibic_parecer_" . date("Y") . " 
-	where pp_protocolo = '$proto' 
-	and pp_tipo = 'RPAR' 
-	and pp_status = 'B' ";
+							where pp_protocolo = '$proto' 
+							and pp_tipo = 'RFIN' 
+							and pp_status = 'B' ";
 			$rrlt = $this -> db -> query($sql);
 			$rrlt = $rrlt -> result_array();
 			$dados = $rrlt[0];
@@ -888,7 +888,7 @@ class ic extends CI_Controller {
 			$aluno = $this -> usuarios -> le_cracha($dados['ic_cracha_aluno']);
 
 			/* gera PDF */
-			$file_local = $this -> ic_pareceres -> gera_parecer('RPAR', $dados);
+			$file_local = $this -> ic_pareceres -> gera_parecer('RFIN', $dados);
 
 			for ($r = 0; $r < 9999; $r++) {
 				$file1 = $dados['doc_arquivo'];
@@ -2660,15 +2660,6 @@ class ic extends CI_Controller {
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_cancelados($ano);
 				break;
-			case 'IC_FORM_RF' :
-				$fld = 'ic_rp_data';
-				$tit = 'Relatório Final';
-				$ano = date("Y");
-				if (date("m") <= 8) {$ano = $ano - 1;
-				}
-				$tit = 'Relatório Final';
-				$tela01 = $this -> ics_acompanhamento -> relatorio_final_cancelados($ano);
-				break;
 			default :
 				$fld = '';
 				$tit = '';
@@ -2706,7 +2697,7 @@ class ic extends CI_Controller {
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_nao_entregue($ano);
 				break;
 			case 'IC_FORM_RF' :
-				$fld = 'ic_rp_data';
+				$fld = 'ic_rf_data';
 				$tit = 'Relatório Final';
 				$ano = date("Y");
 				if (date("m") <= 8) {
@@ -2790,6 +2781,7 @@ class ic extends CI_Controller {
 		$sx = $this -> rp_entregue($tipo);
 		return ($sx);
 	}
+	
 
 	function rp_entregue($tipo = '') {
 		/* Load Models */
@@ -2816,14 +2808,6 @@ class ic extends CI_Controller {
 				}
 				$tela01 = $this -> ics_acompanhamento -> relatorio_parcial_entregue($ano);
 				break;
-			case 'IC_FORM_RF' :
-				$fld = 'ic_rf_data';
-				$tit = 'Relatório Final';
-				$ano = date("Y");
-				if (date("m") <= 8) { $ano = $ano - 1;
-				}
-				$tela01 = $this -> ics_acompanhamento -> relatorio_final_entregue($ano);
-				break;
 			case 'IC_FORM_RS' :
 				$fld = 'ic_rf_data';
 				$tit = 'Relatório Final';
@@ -2832,6 +2816,15 @@ class ic extends CI_Controller {
 				}
 				$tela01 = $this -> ics_acompanhamento -> resumo_entregue($ano);
 				break;
+			case 'IC_FORM_RF' :
+				$fld = 'ic_rf_data';
+				$tit = 'Relatório Final';
+				$ano = date("Y");
+				if (date("m") <= 8) {
+					 $ano = $ano - 1;
+				}
+				$tela01 = $this -> ics_acompanhamento -> relatorio_final_entregue($ano);
+				break;	
 			default :
 				$fld = '';
 				$tit = '';
@@ -2890,17 +2883,17 @@ class ic extends CI_Controller {
 
 	function resumo_entrega($fld, $ano, $tit) {
 		$sql = "select 1 as ordem, count(*) as total, 'Entregue' as descricao from ic
-	INNER JOIN ic_aluno on ic_id = id_ic
-	INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
-	where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
-	and icas_id = 1
-	union
-	select 2 as ordem, count(*) as total, 'Não entregue' as descricao from ic
-	INNER JOIN ic_aluno on ic_id = id_ic
-	INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
-	where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
-	and icas_id = 1
-	order by ordem";
+						INNER JOIN ic_aluno on ic_id = id_ic
+						INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
+						where ic_ano = '$ano' and s_id = 1 and $fld >= '2010-01-01'
+						and icas_id = 1
+						union
+						select 2 as ordem, count(*) as total, 'Não entregue' as descricao from ic
+						INNER JOIN ic_aluno on ic_id = id_ic
+						INNER JOIN ic_modalidade_bolsa ON id_mb = mb_id
+						where ic_ano = '$ano' and s_id = 1 and $fld <= '2010-01-01'
+						and icas_id = 1
+						order by ordem";
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		$sx = '<table width="400" class="lt1 border1">';
@@ -2962,7 +2955,6 @@ class ic extends CI_Controller {
 				$ano = date("Y");
 				if (date("m") < 8) { $ano = $ano - 1;
 				}
-
 				$tela01 = $this -> ics_acompanhamento -> form_acompanhamento_prof($ano);
 				break;
 			case 'IC_FORM_RP' :
@@ -3086,7 +3078,6 @@ class ic extends CI_Controller {
 		array_push($menu, array('Relatório Final', 'RF Não Entregues', 'ITE', '/ic/rp_nao_entregue/IC_FORM_RF'));
 		array_push($menu, array('Relatório Final', 'RF cancelados', 'ITE', '/ic/rp_cancelados/IC_FORM_RF'));
 		array_push($menu, array('Relatório Final', 'RF correção não entregues', 'ITE', '/ic/rpc_nao_entregue/IC_FORM_RFC'));
-
 		array_push($menu, array('Relatório Final', 'Indicar avaliador', 'ITE', '/ic/indicar_avaliador/IC_FORM_RF'));
 		array_push($menu, array('Relatório Final', 'Devolver para submissão', 'ITE', '/ic/devolver_para_submissao/IC_FORM_RF'));
 		array_push($menu, array('Relatório Final', 'Situação das avaliações', 'ITE', '/ic/avaliacoes_situacao'));
@@ -3218,6 +3209,11 @@ class ic extends CI_Controller {
 				$cp1 = 'ic_rp_data';
 				$cp2 = 'ic_nota_rp';
 				break;
+			case 'IC_FORM_RF' :
+				$title = 'Devolução para resubmissão do Relatório Final';
+				$cp1 = 'ic_rf_data';
+				$cp2 = 'ic_nota_rp';
+				break;	
 			default :
 				$data['content'] = $tipo . ' não implementado';
 				$this -> load -> view('content', $data);
@@ -3542,7 +3538,6 @@ class ic extends CI_Controller {
 		$subm = $this -> ics -> submissoes_abertas();
 
 		/***** RELATARIO PARCIAL ***/
-
 		if (($subm['sw_06'] == '1') and ($data['ic_rp_data'] < '2010-01-01')) {
 			$data['content'] = 'FORM';
 			$cp = array();
@@ -3579,8 +3574,9 @@ class ic extends CI_Controller {
 		}
 
 		$this -> load -> view('ic/plano_resumo', $data);
-
-		/* Indicação relatório parcial */
+			
+		/**	
+		/* Indicação relatório parcial 
 		if (($data['ic_rp_data'] > 0) and ($data['ic_nota_rp'] < 1)) {
 			if ($this -> ic_pareceres -> existe_documento($protocolo, 'RELAP') == 1) {
 
@@ -3600,6 +3596,28 @@ class ic extends CI_Controller {
 				$this -> load -> view('content', $data);
 			}
 		}
+		
+		
+		/*************************** Indicação relatório final ***********************************************/
+		if (($data['ic_rf_data'] > 0) and ($data['ic_nota_rf'] < 1)) {
+			if ($this -> ic_pareceres -> existe_documento($protocolo, 'RELAF') == 1) {
+				if ($this -> ic_pareceres -> existe_indicacao($protocolo, 'RFIN') == 0) {
+					$area = $data['ic_semic_area'];
+					$tela = $this -> ic_pareceres -> mostra_indicacoes_interna($protocolo, 'RFIN', $area, $data);
+					$data['sa'] = $tela;
+					$data['tipo'] = 'RFIN';
+					$this -> load -> view('ic/avaliador_indicar_tipo_2', $data);
+					if (get("dd1") > 0) {
+						redirect(base_url('index.php/ic/view/' . $id . '/' . $check));
+					}
+				}
+			} else {
+				$tela = '<h1><font color="red">Problemas ao abrir o arquivo do relatório final enviado</font></h1>';
+				$data['content'] = $tela;
+				$this -> load -> view('content', $data);
+			}
+		}
+		
 
 		$this -> load -> view('header/content_close');
 		$this -> load -> view('header/foot', $data);
@@ -4315,12 +4333,12 @@ class ic extends CI_Controller {
 		if (!isset($txt['nw_texto'])) {
 			return ('');
 		}
-
+		
 		$texto = $txt['nw_texto'];
 		$title = $txt['nw_titulo'];
 		$own = mst($txt['nw_own']);
 		$idm = $txt['id_nw'];
-
+		
 		for ($r = 0; $r < count($users); $r++) {
 			$line = $users[$r];
 			$status = '<font color="orange">enviar aviso</font>';

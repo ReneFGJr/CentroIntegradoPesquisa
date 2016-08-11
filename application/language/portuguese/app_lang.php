@@ -634,6 +634,7 @@ $lang['lb_parecer_avaliador'] = 'id avaliador';
 $lang['lb_parecer_data_declinou'] = 'Data declinio';
 $lang['ic_tipo_RPAR'] = 'Relatório Parcial';
 $lang['ic_tipo_RPRC'] = 'Correção do Relatório Parcial';
+$lang['avaliacao_RFIN'] = 'Para Relatório Final';
 
 /* Guia de estudante - gera Excel */
 $lang['lb_ano_inicio'] = 'Ano Inicial';

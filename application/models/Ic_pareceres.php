@@ -64,7 +64,7 @@ class Ic_pareceres extends CI_model {
 
 	function existe_documento($proto, $tipo) {
 		$sql = "select * from ic_ged_documento 
-					where doc_dd0 = '$proto'  
+					  where doc_dd0 = '$proto'  
 						  and doc_tipo = '$tipo' 
 						  and doc_status <> 'X'";
 		$rlt = $this -> db -> query($sql);
@@ -99,6 +99,7 @@ class Ic_pareceres extends CI_model {
 		$rs = array();
 		$rs['RPAR'] = array();
 		$rs['RPRC'] = array();
+		//$rs['RFIN'] = array();
 		
 		for ($r = 0; $r < count($rlt); $r++) {
 			$line = $rlt[$r];
@@ -203,7 +204,8 @@ class Ic_pareceres extends CI_model {
 						break;
 					case 'FEIRA':
 						$link_ic = link_projeto($line['pp_protocolo']);
-						break;	
+						break;
+							
 				}
 
 			//Resultado das avaliações
@@ -249,11 +251,15 @@ class Ic_pareceres extends CI_model {
 			$sx .= '</td>';
 
 			/* Aletar */
-			if (($tipo = 'RPAR') and ($line['pp_p06'] == '1')) {
+			//if (($tipo = 'RPAR') and ($line['pp_p06'] == '1')) {
+			if (($tipo = 'RFIN') and ($line['pp_p06'] == '1')) {
 				$sx .= '<td align="center"><font color="red">Alerta</font>';
 			} else {
 				$sx .= '<td></td>';
 			}
+			
+			
+			
 			//resultado do RP
 			$sx .= '<td class="lt2" align="center">' . $acao2 . '</td>';
 		}
@@ -269,6 +275,67 @@ class Ic_pareceres extends CI_model {
 		$this -> geds -> tabela = 'ic_ged_documento';
 
 		switch($tipo) {
+			case 'RFIN' :
+				/* Background */
+				$avaliacao = $this -> load -> view('ic/avaliacao_rfin_pdf', $dados, true);
+
+				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
+				$content = utf8_encode($content . $avaliacao);
+				//$content = troca($content,'<','&lt;');
+				//$content = troca($content,'>','&gt;');
+
+				$image_file = 'img/headers/header_model_contrato_ic_150.JPG';
+
+				/* Construção do PDF */
+				tcpdf();
+
+				$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+				// PAGE 1 - BIG background image
+				$pdf -> AddPage();
+				$pdf -> SetAutoPageBreak(True, 0);
+
+				// set image scale factor
+				//$pdf -> Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
+				//$pdf->Image($image_file, 0, 0, '', '', 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
+				$pdf -> Image($image_file, 0, 0, 220, 50, 'JPG', '', '', true, 150, '', false, false, '', false, false, false);
+				/* Background */
+				//$pdf -> Image($img_file, 0, 0, 297, 210, '', '', '', false, 300, '', false, false, 0);
+				/* Posição de impressão */
+				$pdf -> SetXY(20, 50);
+
+				$pdf -> writeHTMLCell(0, 0, '', '', $content, 0, 2, 0, true, 'J', true);
+				/* Arquivo de saida */
+				$proto = UpperCaseSql($dados['pp_protocolo']) . '-';
+				//$nome_asc = troca($nome_asc,' ','_');
+				$nome_asc = substr(md5(date("YmdHis")), 4, 5);
+				$file = $proto . 'avaliacao-rf-' . $nome_asc . '.pdf';
+
+				$path = $_SERVER['DOCUMENT_ROOT'];
+				$this -> geds -> dir('_document');
+				$this -> geds -> dir('_document/' . date("Y"));
+				$this -> geds -> dir('_document/' . date("Y") . "/" . date("m"));
+				$file_long = $path . '_document/' . $file;
+				$pdf -> Output($file_long, 'F');
+				$file_local = '_document/' . date("Y") . '/' . date("m") . '/' . $file;
+
+				copy($file_long, $file_local);
+				unlink($file_long);
+
+				/* Save File */
+				$this -> geds -> protocol = $dados['pp_protocolo'];
+				$this -> geds -> file_type = 'PRP';
+				$this -> geds -> file_name = $file;
+				$this -> geds -> file_status = 'A';
+				$this -> geds -> file_data = date("Ymd"); ;
+				$this -> geds -> file_time = date("H:is");
+				$this -> geds -> file_saved = $file_local;
+				$this -> geds -> file_extensao($this -> geds -> file_name) . "'";
+				$this -> geds -> file_size = filesize($file_local);
+				$this -> geds -> versao = "0.1";
+				$this -> geds -> user = $_SESSION['id_us'];
+				$this -> geds -> save();
+				return ($file_local);
+				break;
 			case 'RPRC' :
 				/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rprc_pdf', $dados, true);
@@ -330,17 +397,13 @@ class Ic_pareceres extends CI_model {
 			case 'RPAR' :
 				/* Background */
 				$avaliacao = $this -> load -> view('ic/avaliacao_rpar_pdf', $dados, true);
-
 				$content = $this -> load -> view('ic/plano-parecer', $dados, true);
 				$content = utf8_encode($content . $avaliacao);
 				//$content = troca($content,'<','&lt;');
 				//$content = troca($content,'>','&gt;');
-
 				$image_file = 'img/headers/header_model_contrato_ic_150.JPG';
-
 				/* Construção do PDF */
 				tcpdf();
-
 				$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 				// PAGE 1 - BIG background image
 				$pdf -> AddPage();
@@ -391,8 +454,19 @@ class Ic_pareceres extends CI_model {
 		}
 	}
 
-	function finaliza_nota_ic($proto, $nota, $tipo = 'RPAR') {
+	function finaliza_nota_ic($proto, $nota, $tipo = 'RFIN') {
 		switch ($tipo) {
+			case 'RFIN' :
+				if ($nota == 1) {
+					$sql = "update ic set ic_nota_rf = $nota, ic_nota_rfc = 0
+						where ic_plano_aluno_codigo = '$proto' ";
+				} else {
+					$sql = "update ic set ic_nota_rf = 2, ic_nota_rfc = -1
+						where ic_plano_aluno_codigo = '$proto' ";
+				}
+				$rlt = $this -> db -> query($sql);
+				return (1);
+				break;
 			case 'RPAR' :
 				if ($nota == 1) {
 					$sql = "update ic set ic_nota_rp = $nota, ic_nota_rpc = 0
@@ -556,15 +630,14 @@ class Ic_pareceres extends CI_model {
 		}
 	}
 
-	function mostra_indicacoes_interna($proto = '', $tipo = 'RPAR', $ic_semic_area = '', $data) {
+	function mostra_indicacoes_interna($proto = '', $tipo = '', $ic_semic_area = '', $data) {
 		
 		/* avaliadores */
 		$sav = $this->lista_de_avaliacoes_protocolo($proto);
 		
 		$indicados = array();
-		
-		
 		$cracha = $data['ic_cracha_prof'];
+		
 		$area = substr($ic_semic_area, 0, 5);
 		$sql = "select * from us_avaliador_area
 			inner join us_usuario on pa_parecerista = id_us
@@ -633,7 +706,7 @@ class Ic_pareceres extends CI_model {
 			if (($ed == 0) and (get("av" . $line['id_us']) == '1')) {
 				$av_aberta = $this -> ic_pareceres -> avaliacoes_abertas($proto, 'SUBMI');
 
-				if (($av_aberta <= 1) or (perfil('#CPI#TST'))) {
+				if (($av_aberta <= 1) or (perfil('#CPI#CPP'))) {
 					
 					$this -> ic_pareceres -> indicar_avaliador($line['id_us'], $tipo, $proto);
 
@@ -641,6 +714,9 @@ class Ic_pareceres extends CI_model {
 						case 'RPAR' :
 							$tipom = 'IC_RPAR_INDICACAO';
 							break;
+						case 'RFIN' :
+							$tipom = 'IC_RFIN_INDICACAO';
+							break;	
 						case 'SUBMI' :
 							$tipom = 'IC_SUBMI_INDICACAO';
 							break;
