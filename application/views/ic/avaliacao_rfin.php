@@ -66,7 +66,8 @@ $color = '<font color="#3030ef">';
 ?>
 
 <!-- ##################### Inicio da ficha $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$-->
-<h1>Ficha de avaliação do Relatório Final</h1>
+<br>
+<br>
 <?php echo $plano;?>
 <?php echo $ged;?>
 <br>
@@ -74,33 +75,13 @@ $color = '<font color="#3030ef">';
 <br>
 <form method="post">
 <table width="90%" align="center">
+	
 	<tr>
-		<td> Prezado avaliador
+		<td> 
+		<fieldset>
+		<h1><b>PARECER</b> </h1>
 		<br>
 		<br>
-			Com o intuito de aprimoramento dos programas PIBIC e PIBITI, todos os trabalhos que encerram sua vigência
-			em julho de 2016 serão classificados em quartil superior para realizar apresentação oral no XXIV SEMIC, os demais 
-			trabalhos participarão da sessão de pôster. Essa classificação será a média aritmética das notas obtidas nas três etapas:
-			 sumissão, relatório parcial e relatório final.
-			Esse procedimento visa inserir o aluno de IC e IT em mais uma etapa da formação do pesquisador.  		
-		<br>
-		<br>
-			Pedimos a sua especial atenção para o preenchimento do campo 5, com comentários sobre a sua avaliação geral do trabalho 
-			desenvolvido. Esse feedback é preciso para o aluno, para o orientador e para a melhoria da qualidade dos programas como um todo.
-		<br>
-			No resultado da avaliação, você deverá atribuir uma nota de 0-100 para o conjunto das informações apresentadas.	
-		<br>
-		<br>
-		<b>Comitê Gestor</b>
-		<br>
-		<br>
-		<br>
-		<br>
-		<fieldset class="form-group">
-		<b>AVALIAÇÃO</b>
-		<br>
-		<br>
-		
 		
 		<!----------------- Questão 1 do RF----------------------------> 
 		1) <?php echo $ob[1];?>
@@ -120,11 +101,9 @@ $color = '<font color="#3030ef">';
 		Ruim <?php echo $color;?>(o relatório precisa ser refeito)</font>
 		<br>
 		<br>
-		<br>
 		Comentários sobre sua avaliação deste item:
 		<br>
-		<textarea name="dd21" cols=80 rows=4 style="width: 100%"><?php echo $dd21;?></textarea>		
-		
+		<textarea name="dd21" cols=80 rows=4 style="width: 100%"><?php echo $dd21;?></textarea>
 		
 		<!----------------- Questão 2 do RF---------------------------->
 		<br>
@@ -217,7 +196,6 @@ $color = '<font color="#3030ef">';
 		5) <?php echo $ob[5];?>
 		<b>Outros comentários</b>:
 		<br>
-		<br>
 		O avaliador fica livre para suas sugestões e comentários sobre a apreciação geral do trabalho:
 		<br>
 		<textarea name="dd25" cols=80 rows=4 style="width: 100%" id="dd25"><?php echo $dd25;?></textarea>		
@@ -248,7 +226,7 @@ $color = '<font color="#3030ef">';
 		<br>
 		<br>
 		<br>
-		7) <?php echo $ob[7];?><b>Considerando o relatório como um todo, assinale atribua uma nota de 0 a 10,0</b>
+		7) <?php echo $ob[10];?><b>Considerando o relatório como um todo, assinale atribua uma nota de 0 a 10,0</b>
 		&nbsp;
 		<select name="dd10"  class="lt3">
 			<option value=""></option>

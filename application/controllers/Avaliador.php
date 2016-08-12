@@ -230,6 +230,7 @@ class avaliador extends CI_Controller {
 		$sta = $dados['pp_status'];
 		$plano = $dados['doc_protocolo'];
 		$id_pl = $dados['id_pj'];
+		
 		/* Avaliação não disponível */
 		if ($sta != 'A') {
 			$txt = '<center><h1 color="red">Avaliação não disponível</h1></center>';
@@ -349,9 +350,9 @@ class avaliador extends CI_Controller {
 		if (strlen($proto_mae) > 0) {
 			$data['ged'] .= $this -> geds -> list_files_table($proto_mae, 'ic');
 		}
+		
 		$data['ged'] .= $this -> geds -> list_files_table($proto, 'ic');
 		$data['plano'] = $this -> load -> view('ic/plano', $dados, true);
-		
 		
 		/* VALIDACOES */
 		switch ($tipo) {
@@ -552,6 +553,16 @@ class avaliador extends CI_Controller {
 				$this -> load -> view('ic/avaliacao_rprc', $data);
 				break;
 			case 'RFIN' :
+				/*###################################################### */
+				/**mostra Resumo */
+				$rs = $this -> ics -> le_resumo($proto);
+				
+				if (count($rs) > 0) {
+					$data['line'] = $rs;
+					$data['resumo'] = '1';
+				}
+				$this -> load -> view('ic/plano_resumo_2', $data);
+		    /*###################################################### */
 				$this -> load -> view('ic/avaliacao_rfin', $data);
 				break;	
 			case 'SUBMI' :

@@ -2970,7 +2970,7 @@ class ic extends CI_Controller {
 				$fld = 'ic_rf_data';
 				$tit = 'Relatório Final';
 				$ano = date("Y");
-				if (date("m") < 8) { $ano = $ano - 1;
+				if (date("m") <= 8) { $ano = $ano - 1;
 				}
 				$sem_idicacao = 1;
 				$tela01 = $this -> ics_acompanhamento -> relatorio_final_entregue($ano, $sem_idicacao);
