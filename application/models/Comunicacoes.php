@@ -279,8 +279,35 @@ class comunicacoes extends CI_Model
 							$line = $rlt[$r];
 							$email .= $line['usm_email'].cr();
 						}
+						//$email .= 'cleybe.vieira@pucpr.br'.cr();
+						//$email .= 'evandro.cavalheri@pucpr.br'.cr();
+				}
+			/* Avaliadores Indicador para Avaliar Relatório Final 2015/2016 */
+			if ($gr == 29){
+				$ano = date("Y");
+					$sql = "select distinct usm_email 
+									from pibic_parecer_2016
+									inner join us_email on pp_avaliador_id = usuario_id_us
+									left join us_usuario on pp_avaliador_id = id_us
+									left join ic on ic_plano_aluno_codigo = pp_protocolo
+									where pp_status = 'A'
+									and pp_tipo = 'RFIN'
+									AND usm_ativo = 1
+									AND us_ativo = 1
+									group by pp_avaliador_id, usm_email
+									order by usm_email
+									";
+					$rlt = $this->db->query($sql);
+					$rlt = $rlt->result_array();
+					$email = '';
+					for ($r=0;$r < count($rlt);$r++)
+						{
+							$line = $rlt[$r];
+							$email .= $line['usm_email'].cr();
+						}
 						$email .= 'cleybe.vieira@pucpr.br'.cr();
 						$email .= 'evandro.cavalheri@pucpr.br'.cr();
+					  $email .= 'elizandro.slima@gmail.com'.cr();
 				}					
 				
 			return($email);
