@@ -1,4 +1,7 @@
 <div class="container">
+
+<?php echo anchor('main/service/edit/','novo','class="btn btn-primary"');?>
+
 <table class="table">
     <tr>
     <th>Service Name</th>
@@ -9,8 +12,8 @@
         <tr>
             <td><?php echo $service['serviceName'];?></td>
             <td><?php echo $service['service'];?></td>
-            <td><?php echo anchor('main/edit/'.$service['id_service'],'[ed]');?></td>
-            <td><?php echo anchor('main/delete/'.$service['id_service'],'[X]');?></td>
+            <td><?php echo anchor('main/service/edit/'.$service['id_service'],'[ed]');?></td>
+            <td><?php echo anchor('main/service/delete/'.$service['id_service'],'[X]');?></td>
         </tr> 
     <?php endforeach; ?>
 </table>
