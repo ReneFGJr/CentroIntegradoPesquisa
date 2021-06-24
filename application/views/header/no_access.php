@@ -1,3 +1,0 @@
-<center>
-	ACESSO RESTRITO
-</center>

@@ -1,1 +1,0 @@
-Teste: <?php echo 'ok';?>

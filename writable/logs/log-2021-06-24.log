@@ -1,0 +1,248 @@
+CRITICAL - 2021-06-24 07:44:08 --> Class 'App\Controllers\MainModel' not found
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(900): App\Controllers\Main->__construct()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(426): CodeIgniter\CodeIgniter->createController()
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#4 {main}
+CRITICAL - 2021-06-24 07:44:53 --> Class 'App\Controllers\MainModel' not found
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(900): App\Controllers\Main->__construct()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(426): CodeIgniter\CodeIgniter->createController()
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#4 {main}
+CRITICAL - 2021-06-24 07:44:54 --> Class 'App\Controllers\MainModel' not found
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(900): App\Controllers\Main->__construct()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(426): CodeIgniter\CodeIgniter->createController()
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#4 {main}
+CRITICAL - 2021-06-24 07:46:51 --> Class 'App\Controllers\MainModel' not found
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(900): App\Controllers\Main->__construct()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(426): CodeIgniter\CodeIgniter->createController()
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#4 {main}
+CRITICAL - 2021-06-24 07:46:52 --> Class 'App\Controllers\MainModel' not found
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(900): App\Controllers\Main->__construct()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(426): CodeIgniter\CodeIgniter->createController()
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#4 {main}
+CRITICAL - 2021-06-24 07:48:50 --> Class 'App\Controllers\MainModel' not found
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#4 {main}
+CRITICAL - 2021-06-24 07:48:51 --> Class 'App\Controllers\MainModel' not found
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#4 {main}
+CRITICAL - 2021-06-24 07:50:43 --> Call to undefined method App\Models\MainModel::findaAll
+#0 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): CodeIgniter\Model->__call('findaAll', Array)
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#5 {main}
+ERROR - 2021-06-24 07:51:03 --> Error connecting to the database: php_network_getaddresses: getaddrinfo failed: Este host não é conhecido. 
+CRITICAL - 2021-06-24 07:51:03 --> Unable to connect to the database.
+Main connection [MySQLi]: php_network_getaddresses: getaddrinfo failed: Este host não é conhecido. 
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(625): CodeIgniter\Database\BaseConnection->initialize()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseBuilder.php(1881): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\Model.php(197): CodeIgniter\Database\BaseBuilder->get()
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\BaseModel.php(603): CodeIgniter\Model->doFindAll(0, 0)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): CodeIgniter\BaseModel->findAll()
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#6 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#7 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#9 {main}
+CRITICAL - 2021-06-24 07:51:03 --> Uncaught ErrorException: print_r(): Property access is not allowed yet in D:\Projetos\www\CentroIntegradoPesquisa\app\Views\errors\html\error_exception.php:99
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'print_r(): Prop...', 'D:\\Projetos\\www...', 99, Array)
+#1 D:\Projetos\www\CentroIntegradoPesquisa\app\Views\errors\html\error_exception.php(99): print_r(Object(App\Controllers\Main), true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\Debug\Exceptions.php(278): include('D:\\Projetos\\www...')
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\Debug\Exceptions.php(147): CodeIgniter\Debug\Exceptions->render(Object(CodeIgniter\Database\Exceptions\DatabaseException), 500)
+#4 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler(Object(CodeIgniter\Database\Exceptions\DatabaseException))
+#5 {main}
+  thrown
+#0 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+#1 {main}
+ERROR - 2021-06-24 07:53:08 --> Table 'cip.mains' doesn't exist
+CRITICAL - 2021-06-24 07:53:08 --> Table 'cip.mains' doesn't exist
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\MySQLi\Connection.php(329): mysqli->query('SELECT *\nFROM `...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(732): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(647): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseBuilder.php(1881): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\Model.php(197): CodeIgniter\Database\BaseBuilder->get()
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\BaseModel.php(603): CodeIgniter\Model->doFindAll(0, 0)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): CodeIgniter\BaseModel->findAll()
+#7 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#8 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#9 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#11 {main}
+ERROR - 2021-06-24 09:35:08 --> Table 'cip.mains' doesn't exist
+CRITICAL - 2021-06-24 09:35:08 --> Table 'cip.mains' doesn't exist
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\MySQLi\Connection.php(329): mysqli->query('SELECT *\nFROM `...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(732): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(647): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseBuilder.php(1881): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\Model.php(197): CodeIgniter\Database\BaseBuilder->get()
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\BaseModel.php(603): CodeIgniter\Model->doFindAll(0, 0)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): CodeIgniter\BaseModel->findAll()
+#7 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#8 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#9 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#11 {main}
+ERROR - 2021-06-24 09:40:32 --> Can't create database 'cip'; database exists
+ERROR - 2021-06-24 09:48:36 --> Table 'cip.mains' doesn't exist
+CRITICAL - 2021-06-24 09:48:36 --> Table 'cip.mains' doesn't exist
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\MySQLi\Connection.php(329): mysqli->query('SELECT *\nFROM `...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(732): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(647): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseBuilder.php(1881): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\Model.php(197): CodeIgniter\Database\BaseBuilder->get()
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\BaseModel.php(603): CodeIgniter\Model->doFindAll(0, 0)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(21): CodeIgniter\BaseModel->findAll()
+#7 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#8 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#9 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#11 {main}
+ERROR - 2021-06-24 09:48:37 --> Table 'cip.mains' doesn't exist
+CRITICAL - 2021-06-24 09:48:37 --> Table 'cip.mains' doesn't exist
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\MySQLi\Connection.php(329): mysqli->query('SELECT *\nFROM `...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(732): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(647): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseBuilder.php(1881): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\Model.php(197): CodeIgniter\Database\BaseBuilder->get()
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\BaseModel.php(603): CodeIgniter\Model->doFindAll(0, 0)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(21): CodeIgniter\BaseModel->findAll()
+#7 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#8 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#9 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#11 {main}
+ERROR - 2021-06-24 09:49:37 --> Table 'cip.mains' doesn't exist
+CRITICAL - 2021-06-24 09:49:37 --> Table 'cip.mains' doesn't exist
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\MySQLi\Connection.php(329): mysqli->query('SELECT *\nFROM `...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(732): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseConnection.php(647): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\Database\BaseBuilder.php(1881): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\Model.php(197): CodeIgniter\Database\BaseBuilder->get()
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\BaseModel.php(603): CodeIgniter\Model->doFindAll(0, 0)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(22): CodeIgniter\BaseModel->findAll()
+#7 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#8 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#9 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#11 {main}
+CRITICAL - 2021-06-24 10:08:57 --> Invalid file: mainServices.php
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(213): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('mainServices.ph...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#7 {main}
+CRITICAL - 2021-06-24 10:09:58 --> Invalid file: mainServices.php
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(213): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('mainServices.ph...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#7 {main}
+CRITICAL - 2021-06-24 10:09:59 --> Invalid file: mainServices.php
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(213): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('mainServices.ph...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#7 {main}
+CRITICAL - 2021-06-24 10:10:00 --> Invalid file: mainServices.php
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(213): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('mainServices.ph...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#7 {main}
+CRITICAL - 2021-06-24 10:10:00 --> Invalid file: mainServices.php
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(213): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('mainServices.ph...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#7 {main}
+CRITICAL - 2021-06-24 10:10:00 --> Invalid file: mainServices.php
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(213): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('mainServices.ph...')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#7 {main}
+CRITICAL - 2021-06-24 10:10:36 --> syntax error, unexpected '(', expecting ';'
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(232): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#7 {main}
+CRITICAL - 2021-06-24 10:11:30 --> syntax error, unexpected '(', expecting ';'
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(232): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#2 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#6 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#7 {main}
+CRITICAL - 2021-06-24 10:11:51 --> Undefined variable: services
+#0 D:\Projetos\www\CentroIntegradoPesquisa\app\Views\mainServices.php(8): CodeIgniter\Debug\Exceptions->errorHandler(8, 'Undefined varia...', 'D:\\Projetos\\www...', 8, Array)
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(230): include('D:\\Projetos\\www...')
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(232): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(20): view('mainServices', Array)
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#6 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#7 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#9 {main}
+CRITICAL - 2021-06-24 10:36:25 --> Undefined variable: pager
+#0 D:\Projetos\www\CentroIntegradoPesquisa\app\Views\mainServices.php(15): CodeIgniter\Debug\Exceptions->errorHandler(8, 'Undefined varia...', 'D:\\Projetos\\www...', 15, Array)
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(230): include('D:\\Projetos\\www...')
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(232): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(23): view('mainServices', Array)
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#6 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#7 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#9 {main}
+CRITICAL - 2021-06-24 10:36:50 --> Call to undefined method CodeIgniter\Pager\Pager::link()
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(230): include()
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\View\View.php(232): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\Common.php(1271): CodeIgniter\View\View->render('mainServices', Array, true)
+#3 D:\Projetos\www\CentroIntegradoPesquisa\app\Controllers\Main.php(23): view('mainServices', Array)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(928): App\Controllers\Main->index()
+#5 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(436): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Main))
+#6 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#7 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#8 {main}
