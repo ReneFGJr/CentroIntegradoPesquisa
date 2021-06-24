@@ -246,3 +246,10 @@ CRITICAL - 2021-06-24 10:36:50 --> Call to undefined method CodeIgniter\Pager\Pa
 #6 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
 #7 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
 #8 {main}
+CRITICAL - 2021-06-24 10:56:46 --> syntax error, unexpected '}', expecting ';'
+#0 D:\Projetos\www\CentroIntegradoPesquisa\system\Router\Router.php(169): CodeIgniter\Router\Router->autoRoute('main')
+#1 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(809): CodeIgniter\Router\Router->handle('main')
+#2 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(389): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+#3 D:\Projetos\www\CentroIntegradoPesquisa\system\CodeIgniter.php(336): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#4 D:\Projetos\www\CentroIntegradoPesquisa\public\index.php(37): CodeIgniter\CodeIgniter->run()
+#5 {main}

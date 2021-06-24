@@ -16,12 +16,13 @@ class Main extends BaseController
 	public function index()
 	{
 		//https://www.youtube.com/watch?v=MmG1zzztELs
-		return view('mainServices', 
+		$sx = view('header/head');
+		$sx .= view('mainServices', 
 			//['services' => $this->MainModel->findAll()]
 			[
 				'services' => $this->MainModel->paginate(10),
 				'pages' => $this->MainModel->pager
-			]
-	);
+			]);
+		return $sx;
 	}
 }
