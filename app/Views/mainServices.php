@@ -12,8 +12,8 @@
         <tr>
             <td><?php echo $service['serviceName'];?></td>
             <td><?php echo $service['service'];?></td>
-            <td><?php echo anchor('main/service/edit/'.$service['id_service'],'[ed]');?></td>
-            <td><?php echo anchor('main/service/delete/'.$service['id_service'],'[X]');?></td>
+            <td><?php echo linked('main/service/edit/'.$service['id_service'],'[ed]');?></td>
+            <td><?php echo linkdel('main/service/delete/'.$service['id_service']);?></td>
         </tr> 
     <?php endforeach; ?>
 </table>

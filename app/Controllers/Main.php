@@ -6,49 +6,87 @@ use App\Controllers\BaseController;
 
 class Main extends BaseController
 {
-	private $MainModel;
+	private $MainModel, $Socials;
 
 	public function __construct()
 	{
 		$this->MainModel = new \App\Models\MainModel();
-		helper('boostrap');
+		$this->Socials = new \App\Models\Socials();
+		$this->LattesExtrator = new \App\Models\LattesExtrator();
+		$this->session = \Config\Services::session();
+
+		helper(['boostrap']);
+		define("PATH", "index.php/main/");
+		define("LIBRARY", "");
+		define("LIBRARY_NAME", "");
 	}
 
 	public function index()
 	{
 		$sx = view('header/head');
-		$sx .= '<a href="'.base_url('main/service/').'">Services</a>';
+
+		#### Logado
+		if (isset($_SESSION['user']['id']))
+			{
+				$sx = $this->MainModel->cab();
+				$p = $_SESSION['user']['id'];
+				$sx .= $this->MainModel->index();				
+			} else {
+				$sx = view('welcome', ['form' => $this->Socials->login()]);
+			}		
 		return $sx;
 	}
 
-	public function service($mod='',$id='')
+	public function social($d1 = '', $id = '')
 	{
+		$cab = $this->MainModel->cab();
+		$dt = $this->request->getPost();
+		$sx = $this->Socials->index($d1,$id,$dt,$cab);
+		return $sx;
+	}
+
+	public function lattes($d1 = '', $d2 = '', $d3='',$d4='',$d5='')
+	{
+		$sx = $this->MainModel->cab();
+		$dt = $this->request->getPost();
+		$sx .= $this->LattesExtrator->index($dt,$d1,$d2,$d3,$d4,$d5);
+		return $sx;
+	}	
+
+	public function service($mod = '', $id = '')
+	{
+		$sx = $this->MainModel->cab();
 		//https://www.youtube.com/watch?v=MmG1zzztELs
-		$sx = view('header/head');
 		$sx .= bscontainer();
 		$sx .= bsrow();
 		$sx .= bscol(12);
 
-		switch($mod)
-		{
+		switch ($mod) {
 			case 'edit':
-				$sx .= h("Serviços - Editar",1);
-				$dt = $this->request->getPost();
-				$sx .= $this->MainModel->editar($id,$dt);
+				$sx .= h("Serviços - Editar", 1);
+				$this->MainModel->id = $id;
+				$sx .= form($this->MainModel);
+				break;
+			case 'delete':
+				$sx .= h("Serviços - Excluir", 1);
+				$this->MainModel->id = $id;
+				return form_del($this->MainModel);				
 				break;
 			default:
-			$sx .= view('mainServices', 
-			//['services' => $this->MainModel->findAll()]
-			[
-				'services' => $this->MainModel->paginate(10),
-				'pages' => $this->MainModel->pager
-			]);
+				$sx .= view(
+					'mainServices',
+					//['services' => $this->MainModel->findAll()]
+					[
+						'services' => $this->MainModel->paginate(10),
+						'pages' => $this->MainModel->pager
+					]
+				);
 		}
 
 		$sx .= bsdivclose();
 		$sx .= bsdivclose();
 		$sx .= bsdivclose();
-		
+
 		return $sx;
 	}
 }

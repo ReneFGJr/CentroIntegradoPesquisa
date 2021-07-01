@@ -18,14 +18,18 @@ class MainModel extends Model
 		'id_service',
 		'service',
 		'serviceName',
-		'serviceGroup'
+		'serviceGroup',
+		'serviceDescription',
+		'servicePath'
 	];
 
 	protected $typeFields        = [
 		'hi',
 		'st20*',
 		'st100*',
-		'st20'
+		'st20',
+		'tx5',
+		'st50'
 	];	
 
 	// Dates
@@ -37,23 +41,48 @@ class MainModel extends Model
 
 	protected $url         = 'service';
 
-	function editar($dt)
+	function index()
 		{
-			$sx = h('Hello',1);
-			$url = base_url('main/'.$this->url.'/edit');
-			$sx .= form($url,$this);
-			
-			echo '<pre>';
-			print_r($dt);
-			if ($this->save($dt))
-				{
-					echo "OK";
-				} else {
-					echo "ERRO";
-				}		
-			echo '</pre>';
+			$sx = '';
+			$sx .= bscontainer();
+			$sx .= bsrow();
+			$sx .= bscol(12);
+			$sx .= h('Serviços',1);
+			$sx .= bsdivclose();
 
+			$menu = $this->findAll();
+			for ($r=0;$r < count($menu);$r++)
+				{
+					$line = $menu[$r];
+					$sx .= bscol(4);
+					$sx .= '<div class="card mt-1">
+							<!--
+							<img class="card-img-top" src="..." alt="Card image cap">
+							-->
+							<div class="card-body">
+								<h5 class="card-title">'.msg($line['serviceName']).'</h5>
+								<p class="card-text">'.$line['serviceDescription'].'</p>
+								<a href="'.base_url('main/'.strtolower($line['servicePath'])).'" class="btn btn-primary">'.$line['service'].'</a>
+							</div>
+							</div>';
+							
+					$sx .= bsdivclose();
+				}
+			$sx .= '<a href="'.base_url('main/service/view').'">Service</a>';
+			$sx .= bsdivclose();
+			$sx .= bsdivclose();
+			$sx .= bsdivclose();
 			return($sx);
 		}
+
+	function cab($nv=1)
+		{
+			$sx = view('header/head');
+			if ($nv != 0)
+			{
+				$sx .= view('header/navbar');
+			}
+			return($sx);
+		}	
 
 }

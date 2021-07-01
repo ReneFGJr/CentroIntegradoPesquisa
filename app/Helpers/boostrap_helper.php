@@ -10,10 +10,39 @@
 * @version     v0.21.06.24
 */
 
-function bscontainer($fluid=false)
+function bs($n)
+    {
+        $sx = bscontainer().cr();
+        $sx .= bsrow().cr();
+        if ($n > 0)
+            {
+                $sx .= bscol($n).cr();
+            }
+        return($sx);
+    }
+
+function bsclose($n=0)
+    {
+        $sx = '';
+        for ($r=0;$r < $n; $r++)
+            {
+                $sx .= bsdivclose().cr();
+            }
+        return($sx);
+    }
+function bsmessage($txt,$t=0)
+    {
+        $sx = '
+            <div class="alert alert-primary" role="alert">
+            '.$txt.'
+            </div>';      
+        $sx .= cr();
+        return($sx);
+    }
+function bscontainer($fluid=0)
     {
         $class = "container";
-        if ($fluid) { $class = "container-fluid"; }
+        if ($fluid == 1) { $class = "container-fluid"; }
         $sx = '<div class="'.$class.'">';
         return($sx);
     }

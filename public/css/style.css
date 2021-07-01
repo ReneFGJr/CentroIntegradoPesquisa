@@ -1,0 +1,23 @@
+        /* Pagination */
+        
+        ul.pagination li {
+            display: inline;
+        }
+        
+        ul.pagination li a {
+            color: #333;
+            float: left;
+            padding: 1px 4px;
+            text-decoration: none;
+        }
+        
+        ul.pagination li a:hover(.active) {
+            background-color: #ddd;
+            color: #000;
+        }
+        
+        .active {
+            background-color: #b7f8b9;
+            border-radius: 2px;
+            color: #000;
+        }
