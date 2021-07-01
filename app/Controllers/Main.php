@@ -12,6 +12,7 @@ class Main extends BaseController
 	{
 		$this->MainModel = new \App\Models\MainModel();
 		helper('boostrap');
+		helper('url');
 	}
 
 	public function index()
