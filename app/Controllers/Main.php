@@ -11,6 +11,7 @@ class Main extends BaseController
 	public function __construct()
 	{
 		$this->MainModel = new \App\Models\MainModel();
+<<<<<<< HEAD
 		$this->Socials = new \App\Models\Socials();
 		$this->LattesExtrator = new \App\Models\LattesExtrator();
 		$this->session = \Config\Services::session();
@@ -19,6 +20,9 @@ class Main extends BaseController
 		define("PATH", "index.php/main/");
 		define("LIBRARY", "");
 		define("LIBRARY_NAME", "");
+=======
+		helper(['boostrap','url']);
+>>>>>>> 4dd372f27d7be30fc5910eec70e221eb943f7ef9
 	}
 
 	public function index()
