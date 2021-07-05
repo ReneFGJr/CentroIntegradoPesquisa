@@ -12,6 +12,7 @@ class Main extends BaseController
 	{
 		$this->MainModel = new \App\Models\MainModel();
 		$this->Socials = new \App\Models\Socials();
+		$this->DDI = new \App\Models\Ddi();
 		$this->LattesExtrator = new \App\Models\LattesExtrator();
 		$this->session = \Config\Services::session();
 
@@ -44,6 +45,15 @@ class Main extends BaseController
 		$sx = $this->Socials->index($d1,$id,$dt,$cab);
 		return $sx;
 	}
+
+	public function ddi($d1 = '', $d2 = '', $d3='',$d4='',$d5='')
+	{
+		$sx = $this->MainModel->cab();
+		$dt = $this->request->getPost();
+		model("ddi");
+		$sx .= $this->DDI->index($dt,$d1,$d2,$d3,$d4,$d5);
+		return $sx;
+	}	
 
 	public function lattes($d1 = '', $d2 = '', $d3='',$d4='',$d5='')
 	{
