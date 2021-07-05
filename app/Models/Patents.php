@@ -86,10 +86,30 @@ class Patents extends Model
 		}
 	function process($field,$txt)
 		{
+			$sx = '';
 			$ln = explode(chr(10),$txt);
+			$pr = '';
 			for ($r=0;$r < count($ln);$r++)
 				{
-					echo $ln[$r].'<hr>';
+					$l = $ln[$r];
+					$cod = substr($l,0,4);
+					switch($cod)
+						{
+							case '(21)':
+								$pr = trim(substr($l,5,strlen($l)));
+								break;
+							/* Depositante */
+							case '(71)':
+								break;
+							/* Inventor */
+							case '(72)':
+								$sx .= $pr.$ln.'<hr>';
+								break;								
+							/* Representante */
+							case '(73)':
+								break;								
+						}
 				}
+			return $sx;
 		}
 }
