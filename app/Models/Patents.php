@@ -56,6 +56,9 @@ class Patents extends Model
 		$sx = '';
 		switch($d1)
 			{
+				case 'cron':
+					$sx = $this->cron_week('');
+					break;
 				default:
 				$sx = $this->drashboard();
 				break;
@@ -70,5 +73,15 @@ class Patents extends Model
 			$sx .= bsdivclose(3);
 
 			return $sx;
+		}
+
+	function cron_week($file)
+		{
+			$d = dir('/data/www/patent/_inpi/patente/txt');
+			print_r($d);
+		}
+	function process($field,$txt)
+		{
+
 		}
 }
