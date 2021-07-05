@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class Lattes extends Migration
+class Lattes3 extends Migration
 {
 	public function up()
 	{
