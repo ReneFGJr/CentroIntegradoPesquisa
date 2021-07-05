@@ -62,7 +62,7 @@ class MainModel extends Model
 							<div class="card-body">
 								<h5 class="card-title">'.msg($line['serviceName']).'</h5>
 								<p class="card-text">'.$line['serviceDescription'].'</p>
-								<a href="'.base_url('main/'.strtolower($line['servicePath'])).'" class="btn btn-primary">'.$line['service'].'</a>
+								<a href="'.base_url(PATH.strtolower($line['servicePath'])).'" class="btn btn-primary">'.$line['service'].'</a>
 							</div>
 							</div>';
 							
