@@ -94,7 +94,7 @@ class Socials extends Model
 						'services' => $this->paginate(3),
 						'pages' => $this->pager
 					];
-				$sx .= tableview($this);
+				$sx .= tableview($this,$dt);
 				break;
 			case 'edit':
 				$sx = $cab;

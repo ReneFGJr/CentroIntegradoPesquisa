@@ -14,7 +14,7 @@ class Main extends BaseController
 		$this->Socials = new \App\Models\Socials();
 		$this->DDI = new \App\Models\Ddi();
 		$this->LattesExtrator = new \App\Models\LattesExtrator();
-		$this->Patents = new \App\Models\Patents();
+		$this->Patents = new \App\Models\Patents();		
 		$this->session = \Config\Services::session();
 
 		helper(['boostrap','url']);

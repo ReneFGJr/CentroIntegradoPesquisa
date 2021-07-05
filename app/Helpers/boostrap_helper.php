@@ -21,6 +21,20 @@ function bs($n)
         return($sx);
     }
 
+    function bscard($title,$desc)
+    {
+        $sx = '<div class="card mt-1">
+        <!--
+        <img class="card-img-top" src="..." alt="Card image cap">
+        -->
+        <div class="card-body">
+            <h5 class="card-title">'.$title.'</h5>
+            <p class="card-text">'.$desc.'</p>
+        </div>
+        </div>';  
+        return $sx;
+    }
+
 function bsclose($n=0)
     {
         $sx = '';
