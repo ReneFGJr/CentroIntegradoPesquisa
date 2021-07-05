@@ -77,11 +77,19 @@ class Patents extends Model
 
 	function cron_week($file)
 		{
-			$d = dir('/data/www/patent/_inpi/patente/txt');
+			$d = scandir('/data/www/patent/_inpi/patente/txt');
+
+			$file = '/data/www/patent/_inpi/patente/txt/p2634.txt';
+			$txt = file_get_contents($file);
+			$this->process('71',$txt);
 			print_r($d);
 		}
 	function process($field,$txt)
 		{
-
+			$ln = explode(chr(10),$txt);
+			for ($r=0;$r < count($ln);$r++)
+				{
+					echo $ln[$r].'<hr>';
+				}
 		}
 }
