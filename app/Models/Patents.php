@@ -66,7 +66,7 @@ class Patents extends Model
 	function drashboard()
 		{
 			$sx = bs(12);
-			$sx .= h1('Drashboard',1);
+			$sx .= h('Drashboard',1);
 			$sx .= bsdivclose(3);
 
 			return $sx;
