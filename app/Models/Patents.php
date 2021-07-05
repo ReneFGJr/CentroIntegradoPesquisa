@@ -50,4 +50,25 @@ class Patents extends Model
 	protected $afterFind            = [];
 	protected $beforeDelete         = [];
 	protected $afterDelete          = [];
+
+	function index($dt, $d1='',$d2='',$id='',$d4='',$d5='')		
+		{
+		$sx = '';
+		switch($d1)
+			{
+				default:
+				$sx = $this->drashboard();
+				break;
+			}
+			return $sx;		
+		}	
+
+	function drashboard()
+		{
+			$sx = bs(12);
+			$sx .= h1('Drashboard',1);
+			$sx .= bsdivclose(3);
+
+			return $sx;
+		}
 }
