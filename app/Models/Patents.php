@@ -103,7 +103,7 @@ class Patents extends Model
 								break;
 							/* Inventor */
 							case '(72)':
-								$sx .= $pr.$ln.'<hr>';
+								$sx .= $pr.$l.'<hr>';
 								break;								
 							/* Representante */
 							case '(73)':
