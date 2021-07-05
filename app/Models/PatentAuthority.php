@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class PatentAuthority extends Model
 {
 	protected $DBGroup              = 'default';
-	protected $table                = 'patentsauthority';
+	protected $table                = 'patentsAuthority';
 	protected $primaryKey           = 'id_pa';
 	protected $useAutoIncrement     = true;
 	protected $insertID             = 0;
