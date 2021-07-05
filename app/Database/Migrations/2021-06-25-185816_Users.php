@@ -15,7 +15,7 @@ class Users extends Migration
             ],
             'us_nome' => [
                 'type' => 'VARCHAR',
-                'constraint' => '20'
+                'constraint' => '100'
             ],
             'us_email' => [
                 'type' => 'VARCHAR',
@@ -35,7 +35,7 @@ class Users extends Migration
 			],
             'us_login' => [
                 'type' => 'VARCHAR',
-                'constraint' => '50'
+                'constraint' => '100'
 			],
             'us_password' => [
                 'type' => 'VARCHAR',
