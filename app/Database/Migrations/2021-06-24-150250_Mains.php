@@ -24,7 +24,11 @@ class Mains extends Migration
             'serviceGroup' => [
                 'type' => 'VARCHAR',
                 'constraint' => '100'
-			],			
+			],
+            'serviceDescription' => [
+                'type' => 'TEXT'
+            ],
+            'servicePath' => ['type' => 'VARCHAR', 'constraint' => '20'],
             'created_at datetime default current_timestamp',
             'updated_at datetime default current_timestamp on update current_timestamp'
         ]);
