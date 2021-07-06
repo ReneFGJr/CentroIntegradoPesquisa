@@ -245,8 +245,22 @@ function tableview($th)
 	    $v = $th->paginate(15);
         $p = $th->pager;
 
-        $sx = bscontainer();
+        print_r($th);
+
+        $sx = bs(2);
         $sx .= anchor($url.'/edit/','novo','class="btn btn-primary"');
+        $sx .= bsdivclose(1);
+        $sx .= bscol(10);
+        $sx .= '<table>';
+        $sx .= '<tr><td>';
+        $sx .= form_open();
+        $sx .= '<input type="text" class="form-control" value="">';
+        $sx .= '</td><td>';
+        $sx .= '<input type="submit" class="btn btn-primary" value="FILTER">';
+        $sx .= form_close();
+        $sx .= '</td></tr>';
+        $sx .= '</table>';
+        $sx .= bsdivclose(1);
         $sx .= '<table class="table">';
 
         /* Header */
