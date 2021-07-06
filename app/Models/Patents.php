@@ -104,6 +104,9 @@ class Patents extends Model
 		{
 			$ll = $l;
 			$l = trim(troca($l,array('(71)','(72)','(73)'),''));
+			$l = troca($l,'?','-');
+			$l = troca($l,' -','-');			
+			$l = troca($l,'- ','-');
 			$l = troca($l,'.,','.');
 			$l = troca($l,'  ',' ');
 			if (strpos($l,';') > 0)
