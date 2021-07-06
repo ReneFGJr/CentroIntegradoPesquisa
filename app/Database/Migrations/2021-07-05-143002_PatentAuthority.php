@@ -35,6 +35,7 @@ class PatentAuthority extends Migration
             'updated_at datetime default current_timestamp on update current_timestamp'
         ]);
         $this->forge->addKey('id_pa', true);
+        $this->forge->addKey('pa_name', FALSE,FALSE);
         $this->forge->createTable('patentsAuthority');		
 	}
 
