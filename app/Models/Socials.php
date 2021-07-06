@@ -98,10 +98,20 @@ class Socials extends Model
 				break;
 			case 'edit':
 				$sx = $cab;
+				$sx .= bs(12);
 				$sx .= h("Users - Editar", 1);
-				$this->id = $id;
+				$this->id = $id;				
 				$sx .= form($this);
+				$sx .= bsdivclose(3);
 				break;
+			case 'signup':
+					$sx = $cab;
+					$sx .= bs(12);
+					$sx .= h("Users - Signup", 1);
+					$this->id = $id;					
+					$sx .= form($this);
+					$sx .= bsdivclose(3);
+					break;				
 			case 'access_denied':
 				$sx = view('access_denied');
 				break;				

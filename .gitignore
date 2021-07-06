@@ -53,3 +53,4 @@ _document/temp.xml
 writable/debugar/*.json
 writable/logs/*.log
 writable/session/ci_*.*
+*.json
