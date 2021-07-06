@@ -125,6 +125,17 @@ class Patents extends Model
 			$l = troca($l,'- ','-');
 			$l = troca($l,'.,','.');
 			$l = troca($l,'  ',' ');
+			$l = troca($l,'$c','ç');
+			$l = troca($l,'~a','ã');
+			$l = troca($l,'~o','õ');
+			$l = troca($l,'~a','ã');
+			$l = troca($l,'\'e','é');
+			$l = troca($l,'\'o','ó');
+			$l = troca($l,'\'i','í');
+			$l = troca($l,'\'a','á');
+			$l = troca($l,'^o','ô');
+			$l = troca($l,'^a','â');
+
 			if (strpos($l,';') > 0)
 				{
 					$ln = explode(';',$l);
