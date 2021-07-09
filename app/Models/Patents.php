@@ -54,6 +54,7 @@ class Patents extends Model
 	function __construct()
 	{
 		$this->PatentAuthority = new \App\Models\PatentAuthority();
+		$this->PatentFiles = new \App\Models\PatentesFileProcessing();
 	}
 
 	function index($dt, $d1='',$d2='',$id='',$d4='',$d5='')		
@@ -93,10 +94,25 @@ class Patents extends Model
 	function cron_week($file)
 		{
 			$d = scandir('/data/www/patent/_inpi/patente/txt');
-			$fim = count($d)-1;
-			$file = '/data/www/patent/_inpi/patente/txt/'.$d[$fim];
-			$txt = file_get_contents($file);
-			$sx = $this->process('71',$txt);
+			$sx = '';
+			for ($r=2;$r < count($d);$r++)
+				{
+					$fim = count($d)-1;
+					$fl = $d[$r];
+					$rst = $this->PatentFiles->processed($fl);
+					if ($rst == 1)
+					{
+						$file = '/data/www/patent/_inpi/patente/txt/'.$fl;
+						$txt = file_get_contents($file);
+						$sx .= bs(12);
+						$sx .= h('Processing '.$fl,5);
+						$sx .= bsdivclose(3);
+						$sx .= $this->process('71',$txt);
+						$this->PatentFiles->close($fl);		
+						$sx .= '<meta http-equiv="refresh" content="2;"/>';
+						break;
+					}
+				}
 			return $sx;
 			
 		}
@@ -104,8 +120,22 @@ class Patents extends Model
 		{
 			$ll = $l;
 			$l = trim(troca($l,array('(71)','(72)','(73)'),''));
+			$l = troca($l,'?','-');
+			$l = troca($l,' -','-');			
+			$l = troca($l,'- ','-');
 			$l = troca($l,'.,','.');
 			$l = troca($l,'  ',' ');
+			$l = troca($l,'$c','ç');
+			$l = troca($l,'~a','ã');
+			$l = troca($l,'~o','õ');
+			$l = troca($l,'~a','ã');
+			$l = troca($l,'\'e','é');
+			$l = troca($l,'\'o','ó');
+			$l = troca($l,'\'i','í');
+			$l = troca($l,'\'a','á');
+			$l = troca($l,'^o','ô');
+			$l = troca($l,'^a','â');
+
 			if (strpos($l,';') > 0)
 				{
 					$ln = explode(';',$l);

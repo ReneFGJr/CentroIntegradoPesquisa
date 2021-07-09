@@ -50,3 +50,7 @@ _document/scimago.sql
 _document/temp.xml
 
 *.pdf
+writable/debugar/*.json
+writable/logs/*.log
+writable/session/ci_*.*
+*.json
