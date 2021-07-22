@@ -13,6 +13,7 @@ class Main extends BaseController
 		$this->MainModel = new \App\Models\MainModel();
 		$this->Socials = new \App\Models\Socials();
 		$this->DDI = new \App\Models\Ddi();
+		$this->Patent = new \App\Models\Patents();
 		$this->LattesExtrator = new \App\Models\LattesExtrator();
 		$this->session = \Config\Services::session();
 
@@ -54,6 +55,15 @@ class Main extends BaseController
 		$sx .= $this->DDI->index($dt,$d1,$d2,$d3,$d4,$d5);
 		return $sx;
 	}	
+
+	public function patent($d1 = '', $d2 = '', $d3='',$d4='',$d5='')
+	{
+		$sx = $this->MainModel->cab();
+		$dt = $this->request->getPost();
+		model("Patent");
+		$sx .= $this->Patent->index($dt,$d1,$d2,$d3,$d4,$d5);
+		return $sx;
+	}		
 
 	public function lattes($d1 = '', $d2 = '', $d3='',$d4='',$d5='')
 	{
