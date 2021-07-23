@@ -34,7 +34,8 @@ class Main extends BaseController
 				$p = $_SESSION['user']['id'];
 				$sx .= $this->MainModel->index();				
 			} else {
-				$sx = view('welcome', ['form' => $this->Socials->login()]);
+				$sx = $this->MainModel->cab(0);
+				$sx .= view('welcome', ['form' => $this->Socials->login()]);
 			}		
 		return $sx;
 	}

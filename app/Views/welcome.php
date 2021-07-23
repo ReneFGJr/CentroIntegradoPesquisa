@@ -1,36 +1,61 @@
 <?php
 $modo = $_SERVER['CI_ENVIRONMENT'];
 ?>
-<head>
-    <title>CIP - UFRGS</title>
-</head>
-<!--- LOGIN --->
-<link rel="stylesheet" href="<?php echo base_url('css/style_welcome.css?v1_0_1');?>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap" rel="stylesheet">
 
-<div id="login_cab" style="font-family: 'Open Sans Condensed', sans-serif;">
-    <div id="login_logos">
-        <img src="<?php echo base_url('img/imagem_lampada_cabecalho.png');?>" style="width: 30%;">
-        <div id="login_logos_img"></div>
-        <div id="contato">
-            <h2>O que é o CIP?</h2>
-            O CIP é o Centro Integrado de Pesquisa. Aqui é possível acessar informações
-            de pesquisa, geração de relatórios, entre outras atividades.
+<style>
+body { 
+    background-color: #AA2439; 
+    color: white;
+}
 
-            <h3>Contatos</h3>
-            rene.gabriel@ufrgs.br
-            </br>
-            </br>
+.login_cab { 
+    padding: 0px;
+    margin: 0px;
+    min-height: 180px;
+}
+
+#logo {
+     display: block;
+     top: 10px;
+     right: 20px;
+     position: absolute;
+   }
+#lamp {
+    display: block;
+     top: 0px;
+     left: 20px;
+     position: absolute;
+   }
+
+</style>
+<!--- LOGIN --->
+
+
+<div class="container">
+    <div class="row">
+        <?php echo bscol(2);?>&nbsp;</div>
+        <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 login_cab">
+                <img id="lamp" src="<?php echo base_url('img/imagem_lampada_cabecalho.png');?>" style="width: 150px;">
+                <img id="logo" src="<?php echo base_url('img/logo_cip.png');?>" style="width: 30%;">
+        </div>
+        <?php echo bscol(2);?>&nbsp;</div>
+    </div>
+    <div class="row">
+        <?php echo bscol(2);?>&nbsp;</div>
+        <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 login_cab text-center">
+        <?php echo $form; ?>
+        </div>
+        <?php echo bscol(2);?>&nbsp;</div>
+        
         </div>
     </div>
+    <div class="row" style="height: 200px;">
 
-    <!--- LOGIN FORMULARIO --->
-    <div id="login_form">
-        <?php echo $form; ?>
     </div>
-    <div id="modo"><?php echo $modo;?></div>
-    <?php echo form_close(); ?>
-    <!--- FIM --->
 </div>
+<!--
+
+-->

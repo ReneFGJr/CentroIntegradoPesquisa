@@ -13,6 +13,11 @@
 
 function msg($txt)
     {
+        global $msg;
+        if (isset($msg[$txt]))
+            {
+                $txt = $msg[$txt];
+            }
         return($txt);
     }
 

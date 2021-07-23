@@ -222,6 +222,25 @@ class Socials extends Model
 
 	function login($err = '')
 	{
+		global $msg;
+		$msg['social_login'] = "Acessar";
+		$msg['social_sign_in'] = "Acessar";
+		$msg['social_sign_up'] = "Cadastra-se";
+		$msg['social_type_login'] = "Seu login";
+		$msg['social_type_password'] = "Senha";
+		$msg['social_retype_password'] = "Redigite a senha";
+		$msg['social_forgot_password'] = "Esqueceu a senha?";
+		$msg['social_contact_us'] = "Entre em contato";
+		$msg['social_subscrime'] = "Fique informado";
+		$msg['social_not_user'] = "Não tem um usuário?";
+		$msg['social_forgot_password_info'] = "Entre com seu e-mail para podermos enviar um link para ressetar sua senha";
+		$msg['social_alread_user'] = "Já tem usuário?";
+		$msg['social_subscribe'] = 'Se inscreva!';
+		$msg['social_subscribe_inf'] = 'Entre com seu e-mail para podermos enviar nossas últimas novidades';
+		$msg['social_name'] = 'Informe seu nome';
+		$msg['social_yourmessage'] = 'Digite sua mensagem';
+		
+
 		$sx = '';
 		$sx .= '
         <!---- Social Login ---->
@@ -236,61 +255,16 @@ class Socials extends Model
 		$sx .= '
         <form method="post" action="' . base_url(PATH . 'social/login_local') . '">
         <span class="form_title"> ' . LIBRARY_NAME . ' </span>
-
-        <!-- TITLE -->
-        <h2 class="text-center">' . msg('SignIn') . '</h2>
-        
-        <!--- email login social --->
-        <div class="" data-validate = "Valid email is: name@domain.com">
-        <span>' . msg('e-mail') . '</span>
-            <input class="form-control" type="text" name="user_login">
-            <span class="focus-input100" data-placeholder="Email"></span>
-        </div>
-        
-        <!--- password login social --->
-        <br/>
-
-        <div class="" data-validate="Enter password">
-            <span>' . msg('password') . '</span>
-            <input class="form-control" type="password" name="user_password">
-            <span class="focus-input100" data-placeholder="Password"></span>
-        </div>
-        <br/>
-
-        <div class="">
-            <input type="submit" class="btn btn-primary" style="width: 100%;" value="' . msg('login') . '">
-        </div>
-        <br/>';
-
-		if (!isset($data['forgot'])) {
-			$sx .= '
         <!--- Forgot Password --->
         <div class="text-center p-t-115">
         <a class="txt2 text-dark" href="' . base_url(PATH . 'social/forgot') . '"> ' . msg('Forgot Password?') . ' </a>
         </div>
         <br/>';
-		}
-
-		if (!isset($data['signup'])) {
-			$sx .= '
-        <!--- Create a Passwrod --->
-        <div class="text-center p-t-115">
-        <span class="txt1">' . msg('Don’t have an account?') . '</span>                
-        <a class="txt2 text-dark" href="' . base_url(PATH . 'social/signup') . '"> ' . msg('SignUp') . ' </a>
-        </div>
-        <br/>';
-		}
-
-		$sx .= '
-        </form>';
-		$sx .= bsdivclose();
-		$sx .= bsdivclose();
-		$sx .= bsdivclose();
-
-		$sx .= bsmessage($err, 1);
-
+		
+		
 		$sx = '';
 		$bk = '#AA2439';
+		$bknav = '#FFFFFF';
 		$sx .= '
 		<style>
 		* {
@@ -300,15 +274,13 @@ class Socials extends Model
 		body {
 		  font-family: Tahoma, Verdana, Segoe, sans-serif;
 		  font-size: 14px;
-		  background: #f6fffd;
-		  padding: 20px;
 		  text-align: center;
 		}
 		
 		.wrapper {
 		  width: 250px;
 		  height: 350px;
-		  margin: 60px auto;
+		  margin: 30px auto;
 		  perspective: 600px;
 		  text-align: left;
 		}
@@ -457,15 +429,16 @@ class Socials extends Model
 		}
 		
 		.nav {
-		  margin: 20px 0;
 		  padding: 0;
+		  text-align: center;
 		}
+
 		.nav li {
 		  display: inline-block;
 		  list-style-type: none;
 		  font-size: 1em;
 		  margin: 0 10px;
-		  color: #42509e;
+		  color: '.$bknav.';
 		  position: relative;
 		  cursor: pointer;
 		}
@@ -475,7 +448,7 @@ class Socials extends Model
 		  bottom: 0;
 		  left: 0;
 		  width: 20px;
-		  border-bottom: 1px solid #42509e;
+		  border-bottom: 1px solid '.$bknav.';
 		  transition: all ease-in 0.25s;
 		}
 		.nav li:hover:after {
@@ -505,35 +478,26 @@ class Socials extends Model
 		}
 		</style>
 		
-		  <script>
+		<script>
 		  window.console = window.console || function(t) {};
-		</script>
-		
-		  
-		  
-		  <script>
 		  if (document.location.search.match(/type=embed/gi)) {
 			window.parent.postMessage("resize", "*");
 		  }
-		</script>
-		
-		
-		</head>
-		
-		<body translate="no" >
-		  <ul class="nav">
-		  <li onclick="showLogin()">Login</li>
-		  <li onclick="showSignup()">Sign up</li>
-		  <li onclick="showForgotPassword()">Forgot password</li>
-		  <li onclick="showSubscribe()">Subscribe</li>
-		  <li onclick="showContactUs()">Contact us</li>
+		</script>		
+		<ul class="nav center" style="margin: 0% 20%;">
+		<li onclick="showLogin()">'.msg('social_login').'</li>
+		<li onclick="showSignup()">'.msg('social_sign_up').'</li>
+		<li onclick="showForgotPassword()">'.msg('social_forgot_password').'</li>
+		<li onclick="showSubscribe()">'.msg('social_subscrime').'</li>
+		<li onclick="showContactUs()">'.msg('social_contact_us').'</li>
 		</ul>
+		
 		<div class="wrapper">
 		  <div class="rec-prism">
 			<div class="face face-top">
 			  <div class="content">
-				<h2>Subscribe</h2>
-				<small>Enter your email so we can send you the latest updates!</small>
+				<h2>'.msg('social_subscribe').'</h2>
+				<small>'.msg('social_subscribe_inf').'</small>
 				<form onsubmit="event.preventDefault()">
 				  <div class="field-wrapper">
 					<input type="text" name="email" placeholder="email">
@@ -547,28 +511,28 @@ class Socials extends Model
 			</div>
 			<div class="face face-front">
 			  <div class="content">
-				<h2>Sign in</h2>
+				<h2>'.msg('social_sign_in').'</h2>
 				<form action="' . base_url(PATH . 'social/login_local') . '" method="post">
 				  <div class="field-wrapper">
 					<input type="text" name="user_login" placeholder="'.msg('user_login').'">
-					<label>username</label>
+					<label>'.msg('social_type_login').'</label>
 				  </div>
 				  <div class="field-wrapper">
 					<input type="password" name="user_password" placeholder="'.msg('user_password').'" autocomplete="new-password">
-					<label>password</label>
+					<label>'.msg('social_type_password').'</label>
 				  </div>
 				  <div class="field-wrapper">
 					<input type="submit" onclick="showThankYou()">
 				  </div>
-				  <span class="psw" onclick="showForgotPassword()">Forgot Password?   </span>
-				  <span class="signup" onclick="showSignup()">Not a user?  Sign up</span>
+				  <span class="psw" onclick="showForgotPassword()">'.msg('social_forgot_password').'</span>
+				  <span class="signup" onclick="showSignup()">'.msg('social_not_user').'  '.msg('social_sign_up').'</span>
 				</form>
 			  </div>
 			</div>
 			<div class="face face-back">
 			  <div class="content">
-				<h2>Forgot your password?</h2>
-				<small>Enter your email so we can send you a reset link for your password</small>
+				<h2>'.msg('social_forgot_password').'</h2>
+				<small>'.msg('social_forgot_password_info').'</small>
 				<form onsubmit="event.preventDefault()">
 				  <div class="field-wrapper">
 					<input type="text" name="email" placeholder="email">
@@ -582,7 +546,7 @@ class Socials extends Model
 			</div>
 			<div class="face face-right">
 			  <div class="content">
-				<h2>Sign up</h2>
+				<h2>'.msg('social_sign_up').'</h2>
 				<form onsubmit="event.preventDefault()">
 				  <div class="field-wrapper">
 					<input type="text" name="email" placeholder="email">
@@ -590,34 +554,34 @@ class Socials extends Model
 				  </div>
 				  <div class="field-wrapper">
 					<input type="password" name="password" placeholder="password" autocomplete="new-password">
-					<label>password</label>
+					<label>'.msg('social_type_password').'</label>
 				  </div>
 				  <div class="field-wrapper">
 					<input type="password" name="password2" placeholder="password" autocomplete="new-password">
-					<label>re-enter password</label>
+					<label>'.msg('social_retype_password').'</label>
 				  </div>
 				  <div class="field-wrapper">
 					<input type="submit" onclick="showThankYou()">
 				  </div>
-				  <span class="singin" onclick="showLogin()">Already a user?  Sign in</span>
+				  <span class="singin" onclick="showLogin()">'.msg('social_alread_user').'  '.msg('social_sign_in').'</span>
 				</form>
 			  </div>
 			</div>
 			<div class="face face-left">
 			  <div class="content">
-				<h2>Contact us</h2>
+				<h2>'.msg('social_contact_us').'</h2>
 				<form onsubmit="event.preventDefault()">
 				  <div class="field-wrapper">
 					<input type="text" name="name" placeholder="name">
-					<label>Name</label>
+					<label>'.msg('social_name').'</label>
 				  </div>
 				  <div class="field-wrapper">
 					<input type="text" name="email" placeholder="email">
 					<label>e-mail</label>
 				  </div>
 				  <div class="field-wrapper">
-					<textarea placeholder="your message"></textarea>
-					<label>your message</label>
+					<textarea placeholder="'.msg('social_yourmessage').'" rows=4></textarea>
+					<label>'.msg('social_yourmessage').'</label>
 				  </div>
 				  <div class="field-wrapper">
 					<input type="submit" onclick="showThankYou()">
@@ -628,7 +592,7 @@ class Socials extends Model
 			<div class="face face-bottom">
 			  <div class="content">
 				<div class="thank-you-msg">
-				  Thank you!
+				  '.msg('thank you').'
 				</div>
 			  </div>
 			</div>

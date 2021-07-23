@@ -92,19 +92,19 @@ function bscol($c,$class='')
 
                 case '2':
                     $sx = '';
-                    $sx .= ' col-6';        /* < 756px  */
-                    $sx .= ' col-sm-6';     /* > 576px  */
+                    $sx .= ' col-12';        /* < 756px  */
+                    $sx .= ' col-sm-12';     /* > 576px  */
                     $sx .= ' col-md-6';     /* > 768px  */
                     $sx .= ' col-lg-2';     /* > 992px  */
                     $sx .= ' col-xl-2';     /* > 1200px */
                 break;   
 
                 case '3':
-                    $sx = 'col-md-6';
-                    $sx .= ' col-6';
+                    $sx = 'col-md-3';
+                    $sx .= ' col-3';
                     $sx .= ' col-sm-6';
-                    $sx .= ' col-lg-2';
-                    $sx .= ' col-xl-2';
+                    $sx .= ' col-lg-3';
+                    $sx .= ' col-xl-3';
                 break; 
 
                 case '4':
