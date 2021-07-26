@@ -94,6 +94,12 @@ class LattesExtrator extends Model
 					];
 				$sx .= tableview($this);
 				break;
+			case 'viewid':
+					$sx = '';
+					$sx .= h("Lattes - View", 1);
+					$this->id = $id;
+					$sx .= $this->view_person($id);
+					break;				
 			case 'edit':
 				$sx .= bs(12);
 				$sx .= h("Users - Editar", 1);
@@ -133,5 +139,9 @@ class LattesExtrator extends Model
 			$sx .= bsclose(3);
 
 			return($sx);
+		}
+	function view_person($id)
+		{
+			
 		}
 }
