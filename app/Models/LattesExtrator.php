@@ -120,9 +120,9 @@ class LattesExtrator extends Model
 			$sx .= 'MENU';
 			$sx .= '
 			<ul>
-				<a href="'.base_url('main/lattes/extract').'"><li class="">Teste</li></a>
-				<a href="'.base_url('main/lattes/view').'"><li class="">View</li></a>
-				<a href="'.base_url('main/lattes/groups').'"><li class="">Groups</li></a>
+				<a href="'.base_url(PATH.'lattes/extract').'"><li class="">Teste</li></a>
+				<a href="'.base_url(PATH.'lattes/view').'"><li class="">View</li></a>
+				<a href="'.base_url(PATH.'lattes/groups').'"><li class="">Groups</li></a>
 				<li class="">Asas 2</li>
 				<li class="">Asas 3</li>
 			</ul>
